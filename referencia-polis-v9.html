@@ -1,0 +1,1818 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Polis: gobierna el territorio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E4EBE6; --panel:#F6F8F4; --ink:#22291F; --muted:#5C6656; --line:#C6D0C2;
+  --llano:#C6D293; --bosque:#5E8A4D; --montana:#8E877A; --rio:#4D9AC1;
+  --gold:#A8781F; --good:#2F7542; --bad:#B0402C; --accent:#2D5D72; --sel:#F2C94C;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A18; --panel:#1C2523; --ink:#E6ECE3; --muted:#9AA698; --line:#33403B;
+    --llano:#6B7743; --bosque:#33563A; --montana:#5A564F; --rio:#2C6D90;
+    --gold:#E2B24F; --good:#72BE80; --bad:#E57E66; --accent:#86BCD2; --sel:#E9C04A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A18; --panel:#1C2523; --ink:#E6ECE3; --muted:#9AA698; --line:#33403B;
+  --llano:#6B7743; --bosque:#33563A; --montana:#5A564F; --rio:#2C6D90;
+  --gold:#E2B24F; --good:#72BE80; --bad:#E57E66; --accent:#86BCD2; --sel:#E9C04A;
+  color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Alegreya Sans",system-ui,sans-serif;font-size:16px;line-height:1.45}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+h1{font-family:Alegreya,Georgia,serif;font-weight:800;font-size:2.4rem;line-height:1;margin:0;letter-spacing:-.01em}
+.era{font-family:Alegreya,Georgia,serif;font-size:1.1rem;color:var(--muted);margin-top:4px}
+.era b{color:var(--ink)}
+.hbtns{display:flex;gap:6px}
+.ibtn{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.9rem}
+.layout{display:grid;gap:14px}
+@media(min-width:860px){.layout{grid-template-columns:minmax(0,1fr) 330px;align-items:start}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.num{text-align:center}
+.num strong{display:block;font-family:Alegreya,Georgia,serif;font-size:1.35rem;line-height:1.1}
+.num span{font-size:.8rem;color:var(--muted)}
+.gold{color:var(--gold)}
+.neg{color:var(--bad)}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.bar{font-size:.85rem}
+.bar .lab{display:flex;justify-content:space-between}
+.track{height:7px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:2px}
+.fill{height:100%;border-radius:4px;transition:width .4s}
+.goal{font-size:.85rem;color:var(--muted);margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+.map{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;padding:3px;background:var(--line);border-radius:12px;margin-top:12px;touch-action:manipulation}
+.tile{aspect-ratio:1;border:0;padding:0;display:grid;place-items:center;cursor:pointer;font-size:clamp(12px,3.5vw,24px);line-height:1;border-radius:3px;position:relative}
+.t-llano{background:var(--llano)}
+.t-bosque{background:var(--bosque)}
+.t-montana{background:linear-gradient(135deg,var(--montana) 0 55%,color-mix(in srgb,var(--montana) 70%,#fff) 55% 100%)}
+.t-rio{background:repeating-linear-gradient(160deg,var(--rio) 0 5px,color-mix(in srgb,var(--rio) 80%,#fff) 5px 7px);cursor:default}
+.deco{opacity:.5;filter:saturate(.7)}
+.tile.can{box-shadow:inset 0 0 0 2px var(--sel)}
+.tile.dim{opacity:.55}
+.tray{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 4px;scrollbar-width:thin}
+.tool{flex:0 0 auto;min-width:84px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 8px;cursor:pointer;text-align:center}
+.tool .em{font-size:1.4rem;display:block}
+.tool small{display:block;color:var(--muted);font-size:.78rem}
+.tool.on{border-color:var(--sel);box-shadow:0 0 0 2px var(--sel)}
+.tool:disabled{opacity:.45;cursor:not-allowed}
+.hint{font-size:.85rem;color:var(--muted);min-height:1.3em;margin-top:4px}
+h2{font-family:Alegreya,Georgia,serif;font-size:1.2rem;margin:0 0 8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.budget{width:100%;border-collapse:collapse;font-size:.92rem;margin:6px 0 10px}
+.budget td{padding:3px 0;border-bottom:1px dotted var(--line)}
+.budget td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.budget tr.tot td{border-bottom:0;font-weight:700;padding-top:6px}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.main{width:100%;background:var(--accent);color:var(--panel);border:0;border-radius:12px;padding:12px;font-family:Alegreya,Georgia,serif;font-size:1.15rem;font-weight:700;cursor:pointer;margin-top:8px}
+.main:disabled{opacity:.5;cursor:not-allowed}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.log{max-height:260px;overflow:auto;font-size:.92rem}
+.log p{margin:0 0 8px}
+.log b{font-family:Alegreya,Georgia,serif}
+.side{display:grid;gap:14px}
+.overlay{position:fixed;inset:0;background:rgba(10,15,12,.55);display:none;align-items:flex-end;justify-content:center;z-index:10;padding:12px}
+.overlay.show{display:flex}
+@media(min-width:600px){.overlay{align-items:center}}
+.card{background:var(--panel);color:var(--ink);border-radius:18px;max-width:520px;width:100%;max-height:88vh;overflow:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border:1px solid var(--line)}
+.card .big{font-size:2.4rem;line-height:1}
+.card h3{font-family:Alegreya,Georgia,serif;font-size:1.5rem;margin:6px 0 6px;line-height:1.15}
+.card p{margin:0 0 12px}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.opt small{display:block;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.chip{font-size:.85rem;border-radius:999px;padding:2px 10px;border:1px solid var(--line)}
+.chip.g{color:var(--good);border-color:var(--good)}
+.chip.b{color:var(--bad);border-color:var(--bad)}
+.phil{border-left:4px solid var(--accent);padding:6px 10px;margin:0 0 14px;background:var(--bg);border-radius:0 10px 10px 0}
+.phil b{font-family:Alegreya,Georgia,serif}
+.pbar{display:grid;grid-template-columns:120px 1fr 24px;gap:8px;align-items:center;font-size:.88rem;margin:4px 0}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:8px 14px;border-radius:10px;font-size:.92rem;opacity:0;transition:opacity .25s;pointer-events:none;z-index:20;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){.fill,.toast{transition:none}}
+
+.small{font-size:.85rem;color:var(--muted);margin:6px 0 0}
+.cls{display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center;margin:8px 0;font-size:.92rem}
+.cls .ce{font-size:1.6rem;text-align:center}
+.cls .lab{display:flex;justify-content:space-between}
+.cls small{color:var(--muted);font-size:.8rem}
+.macro{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;margin:10px 0 4px}
+.macro strong{display:block;font-family:Alegreya,Georgia,serif;font-size:1.15rem}
+.macro span{font-size:.75rem;color:var(--muted)}
+.rA{color:var(--good)}.rB{color:var(--gold)}.rC{color:var(--bad)}
+.four{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.txrow{display:grid;grid-template-columns:92px 1fr 40px;gap:8px;align-items:center;font-size:.92rem}
+.guide{background:var(--bg);border:1px dashed var(--accent);border-radius:10px;padding:8px 10px;margin-bottom:8px;color:var(--ink)}
+.lnk{background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0;font-size:.85rem}
+.chk{display:flex;gap:8px;align-items:center;font-size:.92rem;margin-top:6px}
+:root{--paper:#F1ECE0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#E4DDCB}}
+:root[data-theme="dark"]{--paper:#E4DDCB}
+.mapbox{position:relative;margin-top:12px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--paper);height:clamp(300px,78vw,540px)}
+#cv{width:100%;height:100%;display:block;touch-action:none;cursor:pointer}
+.mapctl{position:absolute;right:8px;bottom:8px;display:flex;flex-direction:column;gap:6px}
+.mapctl button{width:38px;height:38px;border-radius:50%;background:var(--panel);border:1px solid var(--line);font-size:1.15rem;cursor:pointer;line-height:1}
+.tool img{width:48px;height:40px;display:block;margin:0 auto}
+.ticon{width:96px;height:80px;display:block}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.tab{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.85rem;cursor:pointer}
+.tab.on{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+.chart{width:100%;height:auto;display:block}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart .zero{stroke:var(--muted);stroke-dasharray:3 3}
+.chart .ax{fill:var(--muted);font-size:10px;font-family:"Alegreya Sans",sans-serif}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.82rem;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.vig{width:100%;height:auto;display:block;border-radius:12px;margin-bottom:6px}
+.prev{display:block;margin-top:3px;color:var(--ink)}
+.undo{margin-top:6px;font-size:.9rem}
+.inp{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.chk .inp{width:110px}
+.slot{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;margin:6px 0;font-size:.92rem}
+.achs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ach{border:1px solid var(--line);border-radius:10px;padding:6px 8px;opacity:.55;font-size:.88rem}
+.ach.on{opacity:1;border-color:var(--gold)}
+.ach small{display:block;color:var(--muted)}
+.hud{position:absolute;left:8px;top:8px;right:8px;display:flex;flex-wrap:wrap;gap:6px;z-index:2;pointer-events:none}
+.pill{display:flex;align-items:center;gap:4px;background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 5px;font-family:Alegreya,Georgia,serif;font-size:1.02rem;box-shadow:0 2px 6px rgba(40,40,20,.08)}
+.pill small{font-family:"Alegreya Sans",sans-serif;font-size:.78rem;color:var(--muted)}
+.ic{width:20px;height:20px;flex:none}
+.tool small .ic{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
+.tool{background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel) 85%,var(--gold)));}
+img.ce{width:44px;height:44px;border-radius:50%;display:block}
+.cls{grid-template-columns:48px 1fr}
+.quote{font-style:italic;font-size:.84rem;color:var(--muted);margin-top:2px}
+.stances{float:right;display:flex;gap:3px;margin-left:6px}
+.st{display:flex;align-items:center;font-size:.8rem;font-weight:700}
+.st img{width:24px;height:24px;border-radius:50%}
+.st.pro{color:var(--good)}.st.con{color:var(--bad)}
+.says{display:grid;gap:8px;margin:0 0 14px}
+.say{display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center;font-size:.92rem}
+.say img{width:40px;height:40px;border-radius:50%}
+.say b{display:block;font-family:Alegreya,Georgia,serif}
+.say.con span{color:var(--bad)}.say.pro span{color:var(--good)}
+.ledger{position:relative;padding:4px 6px 4px 22px;border-radius:8px;background:repeating-linear-gradient(to bottom,transparent 0 25px,color-mix(in srgb,var(--accent) 20%,transparent) 25px 26px),color-mix(in srgb,var(--panel) 90%,#F4E9C8);margin:6px 0 10px}
+.ledger::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:1px;background:#C8553D;opacity:.6}
+.ledger .budget{margin:0}
+.ledger .budget td{border-bottom:0;height:26px;padding:0}
+.ledger .budget td:last-child{font-family:Caveat,cursive;font-size:1.3rem;font-weight:700}
+.card{background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel) 92%,#E9DDB8));box-shadow:0 18px 40px rgba(20,25,15,.3)}
+.cover{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--bg) 55%,transparent),color-mix(in srgb,var(--bg) 92%,transparent));backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);padding:24px}
+.cover[hidden]{display:none}
+.cv-in{text-align:center;max-width:460px}
+.cv-t{font-size:clamp(4rem,20vw,7.5rem);letter-spacing:-.02em;margin:0;line-height:.9;color:var(--ink);text-shadow:0 2px 0 color-mix(in srgb,var(--panel) 80%,transparent)}
+.cv-s{font-family:Alegreya,Georgia,serif;font-size:1.2rem;color:var(--muted);margin:12px 0 22px}
+.cv-b{display:grid;gap:8px}
+.cv-b .btn{padding:11px}
+.map, .tile{display:none}
+:root{--regc:#2D5D72;--accent:var(--regc)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--accent:color-mix(in srgb,var(--regc) 55%,#fff)}}
+:root[data-theme="dark"]{--accent:color-mix(in srgb,var(--regc) 55%,#fff)}
+.panel{border-top:3px solid var(--accent)}
+.emb{width:22px;height:22px;flex:none}
+.regb{display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--accent);color:var(--ink);border-radius:999px;padding:2px 10px 2px 5px;cursor:pointer;font:inherit;margin-right:4px}
+.regb b{color:var(--accent)}
+.opt.reg{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;border-left:4px solid var(--rc)}
+.opt.reg .emb{width:28px;height:28px}
+.regh{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--rc) 18%,transparent);border:2px solid var(--rc)}
+.regh .emb{width:38px;height:38px}
+.rumbob{display:block;width:100%;grid-column:1/-1;background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;color:inherit;margin-top:2px}
+.rumbo{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--good),var(--gold),var(--bad));position:relative;margin:6px 0 2px}
+.rumbo div{position:absolute;top:-3px;bottom:-3px;right:auto;border-right:3px solid var(--ink)}
+.rlab{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+.main{background:var(--accent)}
+
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--paper)}
+#game{position:fixed;inset:0;overflow:hidden;background:var(--paper)}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:pointer}
+.top{position:absolute;left:0;right:0;top:0;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 6px;display:grid;gap:6px;z-index:3;pointer-events:none;background:linear-gradient(to bottom,color-mix(in srgb,var(--paper) 88%,transparent),transparent)}
+.top>*{pointer-events:auto}
+.row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.era{font-family:Alegreya,Georgia,serif;font-size:.98rem;color:var(--muted);margin:0;line-height:1.2}
+.tbtns{display:flex;gap:6px}
+.rb{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 88%,transparent);cursor:pointer;font-size:1rem;display:grid;place-items:center}
+.hud{position:static;display:flex;flex-wrap:wrap;gap:5px;pointer-events:none}
+.meters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.meters::-webkit-scrollbar{display:none}
+.meters .bar,.meters .rumbob{flex:0 0 auto;min-width:92px;background:color-mix(in srgb,var(--panel) 85%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;padding:4px 8px;cursor:pointer;font-size:.78rem;margin:0}
+.meters .rumbob{min-width:130px}
+.meters .track{height:5px}
+.mapctl{position:absolute;right:10px;top:50%;transform:translateY(-50%);bottom:auto;z-index:2}
+.goalchip{position:absolute;left:10px;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:2;font-size:.84rem;color:var(--ink);background:color-mix(in srgb,var(--panel) 86%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:12px;padding:6px 10px;max-height:4.4em;overflow:hidden;margin:0;border-top:1px solid var(--line)}
+.goalchip .guide{margin:0 0 3px;padding:0;border:0;background:none}
+.goalchip:empty{display:none}
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:stretch;gap:2px;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.dock::-webkit-scrollbar{display:none}
+.dk{flex:1 0 54px;background:none;border:0;border-radius:10px;cursor:pointer;font-size:.7rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 2px}
+.dk .di{font-size:1.3rem;line-height:1.2;display:grid;place-items:center;height:24px}
+.dk .di svg{width:24px;height:24px}
+.dk.on{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--ink)}
+.endb{flex:0 0 auto;background:var(--accent);color:#fff;border:0;border-radius:14px;padding:0 14px;font-family:Alegreya,Georgia,serif;font-weight:700;font-size:1rem;cursor:pointer;min-width:96px;line-height:1.1}
+.endb:disabled{opacity:.5}
+.sheet{position:absolute;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:4;max-height:min(64dvh,560px);overflow:auto;background:var(--panel);border-top:3px solid var(--accent);border-radius:18px 18px 0 0;padding:4px 14px 16px;box-shadow:0 -10px 30px rgba(20,25,15,.18);transform:translateY(110%);transition:transform .28s ease;visibility:hidden}
+.sheet.open{transform:none;visibility:visible}
+.sheet.mini{max-height:none}
+.sheet.mini .tray,.sheet.mini .sh-head{display:none}
+.sh-head{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--panel);padding:8px 0 6px;z-index:1}
+.sh-head h2{margin:0}
+.x{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+@media(min-width:900px){
+  .sheet{left:auto;right:12px;top:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:380px;max-height:none;border-radius:16px;border:1px solid var(--line);border-top:3px solid var(--accent);transform:translateX(115%)}
+  .sheet.open{transform:none}
+  .mapctl{right:auto;left:12px}
+  .dock{left:50%;right:auto;transform:translateX(-50%);bottom:12px;border-radius:18px;border:1px solid var(--line);max-width:720px}
+  .goalchip{left:50%;right:auto;transform:translateX(-50%);width:min(640px,90vw);bottom:94px}
+}
+.law{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:8px 0;display:grid;gap:4px}
+.law.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.law b{font-family:Alegreya,Georgia,serif;font-size:1.02rem}
+.law small{color:var(--muted)}
+.law .btn{justify-self:start;padding:5px 12px}
+.slots{font-size:.88rem;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.sheet{transition:none}}
+
+.era{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:nowrap}
+.eral{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem}
+.regb{flex:none;padding:2px 9px 2px 4px;font-size:.95rem}
+.hud{gap:4px}
+.pill{font-size:.95rem;padding:2px 8px 2px 4px}
+.meters{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;overflow:visible}
+.meters .bar,.meters .rumbob{min-width:0;padding:3px 6px;font-size:.72rem;border-radius:9px}
+.meters .lab{display:flex;justify-content:space-between;gap:2px;white-space:nowrap}
+.meters .lab span{overflow:hidden;text-overflow:ellipsis}
+.meters .lab b{font-family:Alegreya,Georgia,serif;font-size:.85rem}
+.goalchip{max-height:none;padding:6px 10px;font-size:.86rem;line-height:1.35;cursor:pointer;background:color-mix(in srgb,var(--panel) 94%,transparent);box-shadow:0 4px 14px rgba(20,25,15,.12)}
+.goalchip .gl1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goalchip .gmore{display:none;margin-top:4px;color:var(--ink)}
+.goalchip.open .gl1{white-space:normal}
+.goalchip.open .gmore{display:block}
+.goalchip.has .gl1::after{content:" ▾";color:var(--muted)}
+.goalchip.open .gl1::after{content:" ▴"}
+.dock{overflow:visible;gap:0}
+.dk{flex:1 1 0;min-width:0;font-size:.68rem;padding:4px 0}
+.dk.build{color:var(--ink);font-weight:700}
+.dk.build .di{background:color-mix(in srgb,var(--accent) 18%,transparent);border-radius:10px;width:36px}
+.endb{flex:0 0 auto;min-width:84px;padding:0 10px;font-size:.95rem}
+.endb small{font-family:"Alegreya Sans",sans-serif;font-weight:500;font-size:.72rem;opacity:.9}
+.goalchip{bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+</style>
+</head>
+<body>
+<div id="game">
+  <canvas id="cv" aria-label="Mapa del territorio. Toca una casilla para construir o inspeccionar."></canvas>
+  <header class="top">
+    <div class="row1">
+      <div class="era" id="era"></div>
+      <div class="tbtns"><button class="rb" id="helpB" aria-label="Cómo jugar">?</button><button class="rb" id="newB" aria-label="Partidas">☰</button><button class="rb" id="sndB" aria-label="Activar sonido">🔇</button></div>
+    </div>
+    <div class="hud" id="nums"></div>
+    <div class="meters" id="bars"></div>
+  </header>
+  <div class="mapctl"><button id="zin" aria-label="Acercar">+</button><button id="zout" aria-label="Alejar">−</button><button id="zfit" aria-label="Ver todo">⤢</button></div>
+  <div class="goalchip" id="goal"></div>
+  <section class="sheet" id="sh-build" aria-label="Construir">
+    <div class="sh-head"><h2>Construir</h2><button class="x" data-close>✕</button></div>
+    <div class="tray" id="tray"></div>
+    <div class="hint" id="hint"></div>
+    <div class="two"><button class="btn" id="cancelB" hidden>Soltar la obra</button><button class="btn undo" id="undoB" hidden>Deshacer última obra</button></div>
+  </section>
+  <section class="sheet" id="sh-fin" aria-label="Hacienda">
+    <div class="sh-head"><h2>Libro de cuentas</h2><button class="x" data-close>✕</button></div>
+    <div class="txrow"><span>Campesinos</span><input type="range" id="txc" min="0" max="40" aria-label="Impuesto a campesinos"><strong id="tvc"></strong></div>
+    <div class="txrow"><span>Artesanos</span><input type="range" id="txa" min="0" max="40" aria-label="Impuesto a artesanos"><strong id="tva"></strong></div>
+    <div class="txrow"><span>Élite</span><input type="range" id="txe" min="0" max="50" aria-label="Impuesto a la élite"><strong id="tve"></strong></div>
+    <div class="macro" id="macro"></div>
+    <div class="ledger"><table class="budget" id="budget"></table></div>
+    <div class="four"><button class="btn" id="loanB">Pedir préstamo</button><button class="btn" id="bondB">Emitir bono</button><button class="btn" id="printB">Imprimir moneda</button><button class="btn" id="payB">Abonar 50</button></div>
+    <div class="hint" id="loanInfo"></div><div class="hint" id="bondList"></div>
+  </section>
+  <section class="sheet" id="sh-soc" aria-label="Sociedad">
+    <div class="sh-head"><h2>Sociedad</h2><button class="x" data-close>✕</button></div>
+    <div id="soc"></div>
+  </section>
+  <section class="sheet" id="sh-law" aria-label="Leyes">
+    <div class="sh-head"><h2>Leyes</h2><button class="x" data-close>✕</button></div>
+    <div id="laws"></div>
+  </section>
+  <section class="sheet" id="sh-log" aria-label="Crónica">
+    <div class="sh-head"><h2>Crónica del territorio</h2><button class="x" data-close>✕</button></div>
+    <div class="tabs" id="htabs"></div><div id="hist"></div>
+    <h2 style="margin-top:12px">Lo que ha pasado</h2>
+    <div class="log" id="log"></div>
+  </section>
+  <nav class="dock">
+    <button class="dk build" data-sheet="sh-build"><span class="di">🔨</span>Construir</button>
+    <button class="dk" data-sheet="sh-fin"><span class="di" id="dkFin"></span>Hacienda</button>
+    <button class="dk" data-sheet="sh-soc"><span class="di" id="dkSoc"></span>Sociedad</button>
+    <button class="dk" data-sheet="sh-law"><span class="di">📜</span>Leyes</button>
+    <button class="dk" data-sheet="sh-log"><span class="di">📰</span>Crónica</button>
+    <button class="endb" id="endB">Terminar el año</button>
+  </nav>
+</div>
+<div class="cover" id="cover" hidden></div>
+<div class="overlay" id="ov"><div class="card" id="card" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const N = 20;
+const B = {
+  casa:{e:'🏠',n:'Casas',a:'unas casas',cost:30,up:1,st:0,ok:['llano','bosque'],d:'Alojan 10 personas.'},
+  cultivo:{e:'🌾',n:'Cultivo',a:'un cultivo',cost:25,up:1,st:0,ok:['llano'],jc:7,d:'Emplea 7 campesinos. Da 12 de alimento (16 junto al río) si tiene todos sus trabajadores.'},
+  mercado:{e:'🏪',n:'Mercado',a:'un mercado',cost:60,up:3,st:0,ok:['llano'],ja:5,fee:8,d:'Emplea 5 artesanos, cobra 8 de tasas y atrae élite comerciante.'},
+  parque:{e:'🌳',n:'Parque',a:'un parque',cost:30,up:2,st:0,ok:['llano','bosque'],d:'Mejora el ánimo de los artesanos y el ambiente.'},
+  escuela:{e:'🏫',n:'Escuela',a:'una escuela',cost:80,up:8,st:1,ok:['llano'],ja:3,d:'Cubre a 50 personas. Emplea 3. Sube igualdad.'},
+  hospital:{e:'🏥',n:'Hospital',a:'un hospital',cost:100,up:10,st:1,ok:['llano'],ja:3,d:'Cubre a 60 personas. Emplea 3.'},
+  taller:{e:'🏭',n:'Taller',a:'un taller',cost:90,up:4,st:1,ok:['llano'],ja:9,d:'Emplea 9 artesanos y enriquece a la élite. Contamina.'},
+  agora:{e:'🏛️',n:'Ágora',a:'un ágora',cost:150,up:6,st:2,ok:['llano'],ja:1,d:'Lugar de deliberación. Sube la confianza. Necesaria para la Polis.'},
+  mina:{e:'⛏️',n:'Mina',a:'una mina',cost:120,up:5,st:2,ok:['montana'],ja:10,fee:25,d:'Solo en montaña. Emplea 10 y paga 25 de regalías. Daña mucho el ambiente.'},
+  banco:{e:'🏦',n:'Banco',a:'un banco',cost:200,up:6,st:2,ok:['llano'],ja:2,d:'Baja 2 puntos tu tasa, frena la inflación y atrae élite.'},
+  cafetal:{e:'☕',n:'Cafetal',a:'un cafetal',cost:45,up:1,st:0,ok:['llano','bosque'],hmin:1,jc:6,fee:10,d:'Solo en ladera (terreno alto). Emplea 6 campesinos y exporta café: 10 de oro al año.'},
+  acueducto:{e:'💧',n:'Acueducto',a:'un acueducto',cost:70,up:4,st:1,ok:['llano'],river:true,ja:2,water:70,d:'Junto al río. Da agua a 70 personas más. Sin agua, el pueblo no crece y se enoja.'},
+  molino:{e:'⚙️',n:'Molino de agua',a:'un molino',cost:80,up:3,st:1,ok:['llano'],river:true,ja:2,energy:3,d:'Junto al río. Da energía a 3 talleres. Un taller sin energía no da empleo.'},
+  puerto:{e:'⛵',n:'Puerto fluvial',a:'un puerto',cost:110,up:4,st:2,ok:['llano'],river:true,ja:5,fee:18,d:'Junto al río. Emplea 5 y cobra 18 de comercio. Atrae élite comerciante.'},
+  universidad:{e:'🎓',n:'Universidad',a:'una universidad',cost:250,up:15,st:3,ok:['llano'],ja:5,d:'10% más productividad. Sube igualdad.'}
+};
+const STAGES = [
+  {n:'Aldea'},
+  {n:'Pueblo', req:'40 habitantes', ok:c=>S.pop>=40,
+   lesson:'Con más gente llegan más exigencias: ahora el pueblo espera escuelas y hospitales. Se abren préstamos, bonos y la emisión de moneda. Cuidado: tu calificación de riesgo decide cuánto te cobran.'},
+  {n:'Ciudad', req:'80 habitantes, una escuela y un hospital', ok:c=>S.pop>=80&&c.escuela>=1&&c.hospital>=1,
+   lesson:'La ciudad produce riqueza y también desigualdad entre clases. Se abren el ágora, la mina y el banco. Decide qué modelo de desarrollo quieres.'},
+  {n:'Polis', req:'150 habitantes, un ágora y confianza de 55', ok:c=>S.pop>=150&&c.agora>=1&&S.tr>=55,
+   lesson:'Ahora el poder se renueva en elecciones cada 4 años: si la confianza está por debajo de 50, pierdes el mandato. Sostén la Polis el tiempo que exige tu nivel de dificultad. Y ojo: cada año el pueblo espera más calidad de vida.'}
+];
+const PH = {util:{n:'Utilitarismo',a:'Mill'},deon:{n:'Ética del deber',a:'Kant'},contr:{n:'Justicia como equidad',a:'Rawls'},real:{n:'Realismo político',a:'Maquiavelo'},virt:{n:'Ética de la virtud',a:'Aristóteles'}};
+const PROFILE = {
+  util:'Buscaste el mayor bien para el mayor número, aunque algunos pagaran el costo.',
+  deon:'Gobernaste por principios: cumpliste deberes aunque salieran caros.',
+  contr:'Pusiste primero a los menos favorecidos: reglas que aceptarías sin saber qué lugar te tocaría.',
+  real:'Priorizaste conservar el poder y la estabilidad por encima de los ideales.',
+  virt:'Buscaste el término medio y el florecimiento de la comunidad.'
+};
+const FXL = {t:'oro',f:'alimento',p:'habitantes',h:'ánimo general',e:'igualdad',c:'confianza',a:'ambiente',d:'deuda',sc:'campesinos',sa:'artesanos',se:'élite',i:'% inflación',txe:'% impuesto élite'};
+const BADUP = {d:1,i:1};
+const RAT = [[85,'AAA',0],[75,'AA',.01],[65,'A',.02],[55,'BBB',.04],[45,'BB',.07],[35,'B',.11],[-999,'CCC',.16]];
+
+const EV = [
+ {id:'crecida',st:0,e:'🌊',title:'El río se desborda',text:'Tras semanas de lluvia, el río inunda las casas de la orilla. Las familias esperan tu decisión.',opts:[
+  {l:'Construir diques',fx:{t:-80,c:8},f:'deon',why:'Proteger a cada ciudadano es un deber, no un cálculo de costos.',later:[6,'diques']},
+  {l:'Reubicar a las familias ribereñas',fx:{t:-15,sc:-6,e:-4,a:4},f:'util',why:'Sale más barato para la mayoría, aunque algunas familias pierden su hogar.'},
+  {l:'Esperar a que baje el agua',fx:{c:-10,p:-3,f:-10,se:2},f:'real',why:'Ahorras hoy, pero el pueblo recuerda quién lo dejó solo.',later:[3,'crecida_mal']}]},
+ {id:'festival',st:0,e:'🎺',title:'Llega el festival folclórico',text:'Músicos y danzantes quieren celebrar en la plaza. Alguien tiene que pagar.',opts:[
+  {l:'Financiar el festival',fx:{t:-45,h:8,c:3},f:'virt',why:'La vida buena también se construye celebrando en comunidad.'},
+  {l:'Cobrar entrada',fx:{t:30,se:3,sc:-4,e:-5},f:'util',why:'Hay fiesta y el tesoro gana, pero los más pobres miran desde afuera.'},
+  {l:'Cancelarlo',fx:{h:-6},f:'real',why:'Austeridad: el tesoro se protege, el ánimo no.'}]},
+ {id:'sal',st:0,e:'🧂',title:'Un mercader quiere el monopolio',text:'Ofrece 80 de oro a cambio de ser el único que venda sal en el territorio.',opts:[
+  {l:'Aceptar el trato',fx:{t:80,e:-8,c:-5,se:6},f:'real',why:'Ganas recursos y un aliado poderoso, a costa del precio que pagará todo el pueblo.',later:[4,'sal_mal']},
+  {l:'Rechazarlo',fx:{c:4,sa:-3,se:-3},f:'contr',why:'Ninguna ventaja privada es justa si empeora la situación de los más débiles.'}]},
+ {id:'sequia',st:0,e:'☀️',title:'Sequía',text:'No llueve. Las cosechas de este año serán escasas.',cond:c=>c.cultivo>0,opts:[
+  {l:'Racionar por igual',fx:{f:-15,h:-5,e:5},f:'contr',why:'Si la escasez es de todos, el sacrificio también.'},
+  {l:'Comprar alimento afuera',fx:{t:-50,i:2,f:5},f:'util',why:'El dinero resuelve hoy el problema de todos, aunque los precios suben.'},
+  {l:'Dar prioridad a quienes trabajan la tierra',fx:{f:-15,e:-6,sa:-6,sc:4},f:'real',why:'Mantienes la producción, pero dejas atrás a quienes no producen.'}]},
+ {id:'migra',st:0,e:'🧳',title:'Familias desplazadas piden refugio',text:'Llegan huyendo de la violencia en otra región. No traen nada.',opts:[
+  {l:'Acogerlas',fx:{p:8,f:-8,sa:-3,c:3,e:2},f:'deon',why:'Toda persona es un fin en sí misma, nunca un simple costo.',later:[5,'migra_bien']},
+  {l:'Acogerlas a cambio de trabajo',fx:{p:6,t:10,e:-3},f:'util',why:'Todos ganan algo, aunque la dignidad quede condicionada.'},
+  {l:'Cerrar el paso',fx:{c:-4,sa:3,se:2},f:'real',why:'Proteges los recursos propios; la historia juzgará.',later:[5,'migra_mal']}]},
+ {id:'donante',st:0,e:'💰',title:'Una familia rica ofrece una donación',text:'Darán 100 de oro si la plaza principal lleva su apellido.',opts:[
+  {l:'Aceptar',fx:{t:100,e:-2,se:4},f:'util',why:'El beneficio es concreto; el costo parece simbólico.',later:[5,'donante_mal']},
+  {l:'Rechazar',fx:{c:3,se:-3},f:'deon',why:'Lo público no se vende, aunque la oferta sea generosa.'}]},
+ {id:'plaga',st:0,e:'🐛',title:'Plaga en los cultivos',text:'Un insecto avanza sobre las cosechas.',cond:c=>c.cultivo>1,opts:[
+  {l:'Fumigar con químicos',fx:{t:-20,a:-8,sc:3},f:'util',why:'Rápido y barato; el costo lo paga la tierra.'},
+  {l:'Control biológico',fx:{t:-35,a:2,f:-8},f:'virt',why:'Más lento y caro: el término medio entre producir y cuidar.'},
+  {l:'Dejar que pase',fx:{f:-20,sc:-6},f:'real',why:'Ahorras oro y pierdes comida.'}]},
+ {id:'evasion',st:1,e:'📜',title:'Un terrateniente evade impuestos',text:'Todos lo saben. Todos miran qué harás.',opts:[
+  {l:'Cobrarle y multarlo',fx:{t:50,c:7,se:-5,sc:3},f:'deon',why:'La ley vale igual para todos o no vale.',later:[4,'evasion_venganza',.5]},
+  {l:'Negociar un pago parcial',fx:{t:20,c:-2},f:'util',why:'Algo es mejor que nada, aunque el mensaje sea ambiguo.'},
+  {l:'Perdonarlo a cambio de su apoyo',fx:{c:-9,e:-5,se:6},f:'real',why:'Ganas un aliado; pierdes autoridad moral.',later:[4,'evasion2']}]},
+ {id:'tierras',st:1,e:'🌱',title:'Los campesinos piden tierras',text:'Trabajan haciendas ajenas y quieren parcelas propias.',opts:[
+  {l:'Hacer una reforma agraria',fx:{t:-30,sc:15,se:-15,e:8},f:'contr',why:'La distribución inicial de la riqueza también es un asunto de justicia.',later:[3,'reforma_fuga',.6]},
+  {l:'Ofrecer créditos para comprar tierra',fx:{d:60,sc:7,se:-2},f:'util',why:'Una solución de mercado: lenta, pero sin choques.'},
+  {l:'Rechazar la petición',fx:{sc:-10,se:5},f:'real',why:'Proteges a los propietarios y a tus aliados.',later:[5,'tierras_mal']}]},
+ {id:'maestros',st:1,e:'🧑‍🏫',title:'Los maestros piden mejor salario',text:'Dicen que sin maestros bien pagados no hay futuro.',cond:c=>c.escuela>0,opts:[
+  {l:'Subir el salario',fx:{t:-40,sa:5,e:4},f:'contr',why:'La educación es la vía para que los menos favorecidos mejoren su lugar.',later:[6,'maestros_bien']},
+  {l:'Pagar con deuda',fx:{d:50,sa:4},f:'util',why:'Resuelves hoy y trasladas el costo a los gobiernos de mañana.'},
+  {l:'Negarse',fx:{sa:-8,c:-4,se:3},f:'real',why:'Cuidas el tesoro; pierdes a quienes forman ciudadanos.'}]},
+ {id:'huelga',st:1,e:'✊',title:'Huelga en los talleres',text:'Los artesanos paran: exigen salarios que alcancen.',cond:c=>c.taller>0,opts:[
+  {l:'Mediar por un salario justo',fx:{sa:12,se:-8,e:4},f:'contr',why:'El trabajo digno no es un favor del patrón.'},
+  {l:'Subsidiar el aumento con el tesoro',fx:{t:-50,sa:8},f:'util',why:'Todos contentos, pero lo paga el erario.'},
+  {l:'Romper la huelga',fx:{sa:-15,c:-8,se:6},f:'real',why:'El orden vuelve; el resentimiento queda.',later:[4,'huelga_mal']}]},
+ {id:'humo',st:1,e:'🌫️',title:'Los talleres contaminan el río',text:'Los pescadores denuncian peces muertos río abajo.',cond:c=>c.taller>0,opts:[
+  {l:'Obligar a poner filtros',fx:{t:-40,a:12,se:-3},f:'deon',why:'Nadie tiene derecho a dañar lo que es de todos.'},
+  {l:'Multar a los dueños',fx:{t:30,a:3,se:-4},f:'util',why:'El tesoro gana y el daño se reduce un poco.'},
+  {l:'Ignorar la denuncia',fx:{a:-10,c:-5,se:5},f:'real',why:'La producción sigue; el río no vota.',later:[4,'humo_mal']}]},
+ {id:'corrup',st:1,e:'🕵️',title:'Rumores de corrupción',text:'Dicen que tu tesorero desvía fondos públicos.',opts:[
+  {l:'Investigar públicamente',fx:{t:-20,c:10},f:'deon',why:'La transparencia duele, pero sostiene la confianza.',later:[4,'corrup_bien']},
+  {l:'Destituirlo en silencio',fx:{t:-10,c:3},f:'util',why:'Resuelves el problema sin escándalo, pero nadie aprende nada.',later:[4,'corrup_filtra',.5]},
+  {l:'No hacer nada',fx:{c:-3,se:3},f:'real',why:'El silencio también es una decisión, y cuesta.',later:[3,'corrup_mal']}]},
+ {id:'epidemia',st:1,e:'🦠',title:'Brota una epidemia',text:'La fiebre se extiende por los barrios más pobres.',opts:[
+  {l:'Atención gratuita para todos',fx:{t:-60,p:-2,c:6},f:'deon',why:'La vida no tiene precio de mercado.'},
+  {l:'Atender a quien pueda pagar',fx:{t:20,p:-6,e:-8,sc:-8},f:'real',why:'El tesoro se salva; la desigualdad decide quién vive.',later:[3,'epidemia_mal']},
+  {l:'Vacunar primero a los trabajadores',fx:{t:-30,p:-3,e:-2,sa:4},f:'util',why:'Proteges la economía de todos, aunque no a todos por igual.'}]},
+ {id:'elite',st:1,e:'🧳',title:'La élite amenaza con irse',text:'Dicen que tus impuestos los ahogan y que se llevarán su capital.',cond:()=>S.tx.e>=28,opts:[
+  {l:'Bajarles el impuesto',fx:{txe:-10,se:12,e:-5},f:'util',why:'Retienes la inversión, pero el esfuerzo fiscal recae en otros.'},
+  {l:'Mantener la tasa',fx:{se:-10,c:4,sc:3},f:'deon',why:'Las reglas no se negocian bajo amenaza.'},
+  {l:'Pactar inversión social a cambio',fx:{se:-6,t:25,sc:4},f:'virt',why:'Un punto medio: el capital se queda y devuelve algo.'}]},
+ {id:'precios',st:1,e:'📈',title:'Los precios suben sin control',text:'El pan cuesta cada semana más. La gente culpa al gobierno.',cond:()=>S.infl>.08,opts:[
+  {l:'Congelar precios por decreto',fx:{i:-3,se:-6,sc:5,sa:-3},f:'real',why:'Alivio inmediato, pero ocultas el síntoma sin curar la causa.'},
+  {l:'Recortar el gasto público',fx:{i:-5,sc:-6,sa:-6,t:30},f:'util',why:'Enfrías la economía: duele hoy, estabiliza mañana.'},
+  {l:'Explicar la situación y esperar',fx:{c:3,sc:-6,sa:-6},f:'virt',why:'La honestidad no baja los precios.'}]},
+ {id:'oro',st:2,e:'✨',title:'Hallan oro en la montaña',text:'Llegan compradores de fuera ofreciendo inversión.',cond:()=>countT('montana')>0,opts:[
+  {l:'Explotar a gran escala',fx:{t:150,a:-18,e:-5,se:8},f:'util',why:'Mucha riqueza hoy; mucho daño para mañana.',later:[4,'oro_mal']},
+  {l:'Explotar con control ambiental',fx:{t:45,a:-5},f:'virt',why:'Ni todo ni nada: prudencia.'},
+  {l:'Declarar reserva natural',fx:{a:8,c:3,se:-4},f:'deon',why:'Hay bienes que no deberían tener precio.'}]},
+ {id:'protesta',st:2,e:'📣',title:'Protesta estudiantil',text:'Los jóvenes exigen educación superior accesible.',opts:[
+  {l:'Dialogar y subsidiar',fx:{t:-50,c:8,e:5},f:'contr',why:'Abrir oportunidades a quien no las tiene es justicia.'},
+  {l:'Mesa de diálogo sin dinero',fx:{c:1,sa:-4},f:'virt',why:'Escuchar es necesario, pero no siempre suficiente.'},
+  {l:'Dispersarla con la guardia',fx:{c:-15,sa:-6,sc:-4,se:5},f:'real',why:'El orden se impone, la legitimidad se pierde.',later:[5,'protesta_mal']}]},
+ {id:'prestamo',st:2,e:'🌐',title:'Un banco extranjero ofrece crédito',text:'Te entregan 250 de oro, pero deberás 300 (incluye comisión) más intereses.',opts:[
+  {l:'Aceptar',fx:{t:250,d:300},f:'util',why:'Liquidez inmediata. Revisa si tu flujo de caja soporta la cuota.'},
+  {l:'Rechazar',fx:{},f:'virt',why:'Crecer con lo propio es más lento y más seguro.'}]},
+ {id:'alianza',st:2,e:'🤝',title:'El pueblo vecino propone una alianza',text:'Quieren comerciar sin aranceles durante años.',opts:[
+  {l:'Aceptar en igualdad',fx:{t:40,c:3,sa:4,sc:-5},f:'contr',why:'Un acuerdo justo es el que ambas partes aceptarían.'},
+  {l:'Exigir ventajas',fx:{t:90,c:-4,se:4,sc:-5},f:'real',why:'Sacas provecho de tu posición de fuerza.',later:[4,'alianza_rota',.5]}]},
+ {id:'progresivo',st:3,e:'⚖️',title:'Proponen un impuesto de solidaridad',text:'Un aporte único de quienes más tienen para obras sociales.',opts:[
+  {l:'Aprobarlo por decreto',fx:{e:10,se:-12,t:60},f:'contr',why:'Las desigualdades solo se justifican si benefician a los peores situados.'},
+  {l:'Rechazarlo',fx:{e:-4,c:-3,se:5},f:'real',why:'Mantienes contentas a las élites.'},
+  {l:'Convocar consulta popular',fx:{c:8,e:5,se:-5,t:-20},f:'virt',why:'Por el pueblo y con el pueblo: la deliberación también educa.'}]}
+];
+const LATER = {
+ crecida_mal:{e:'🌊',title:'El río vuelve a crecer',text:'Esta vez los daños son mayores: nadie reforzó la orilla.',fx:{p:-5,f:-15,c:-8},why:'Ahorrar en prevención suele salir más caro después.'},
+ diques:{e:'🧱',title:'Los diques resisten',text:'Llega una creciente fuerte, y los diques que construiste salvan las cosechas, aunque alteraron el cauce.',fx:{f:20,c:6,a:-4},why:'La inversión pública bien hecha paga dividendos que no siempre se ven.'},
+ evasion2:{e:'📜',title:'Otros también dejan de pagar',text:'Tras tu perdón, más terratenientes evaden impuestos.',fx:{t:-60,c:-6,e:-4},why:'Una excepción se vuelve regla cuando la ley no se aplica.'},
+ migra_bien:{e:'🧵',title:'Las familias acogidas prosperan',text:'Abrieron talleres y hoy pagan impuestos.',fx:{t:40,sa:6},why:'Acoger también es invertir.'},
+ migra_mal:{e:'🚫',title:'Te pagan con la misma moneda',text:'Otra región cierra su comercio con la tuya.',fx:{t:-30,sa:-5},why:'El trato que das define el trato que recibes.'},
+ oro_mal:{e:'☠️',title:'El río baja envenenado',text:'El mercurio de la mina llegó al agua.',fx:{a:-15,p:-4,sc:-8},why:'La riqueza extractiva cobra su factura años después.'},
+ corrup_mal:{e:'🏃',title:'El tesorero huye',text:'Se fue con parte del tesoro.',fx:{t:-100,c:-10},why:'La impunidad crece si nadie la enfrenta.'},
+ corrup_bien:{e:'🤝',title:'La honestidad atrae inversión',text:'Comerciantes de fuera confían en tu gobierno.',fx:{t:50,se:5},why:'La confianza institucional es un activo económico.'},
+ maestros_bien:{e:'🎓',title:'Los primeros bachilleres',text:'Una generación mejor formada entra a trabajar.',fx:{e:6,sa:6,sc:4},why:'La educación es la inversión de más largo plazo.'},
+ humo_mal:{e:'🤒',title:'Enferman los pescadores',text:'El agua contaminada pasó factura.',fx:{p:-4,c:-8,sc:-6},why:'Las externalidades no desaparecen: se trasladan a otros.'},
+ sal_mal:{e:'🧂',title:'El precio de la sal se dispara',text:'El monopolista abusa de su posición.',fx:{i:3,sc:-6,sa:-6},why:'Sin competencia, el precio lo decide el más fuerte.'},
+ protesta_mal:{e:'✊',title:'La oposición crece',text:'Los jóvenes que reprimiste hoy lideran la oposición.',fx:{c:-12},why:'La represión aplaza los conflictos, no los resuelve.'},
+ epidemia_mal:{e:'🦠',title:'Rebrote en los barrios pobres',text:'Quienes no pudieron pagar atención contagiaron a otros.',fx:{p:-5,e:-4,sc:-5},why:'La salud de todos depende de la salud de los más pobres.'},
+ donante_mal:{e:'🎩',title:'La familia donante exige favores',text:'Quieren contratos públicos sin licitación.',fx:{c:-6,e:-3,se:5},why:'En política, nada es gratis.'},
+ tierras_mal:{e:'🔥',title:'Invasiones de tierra',text:'Los campesinos sin tierra ocupan haciendas.',fx:{sc:-5,se:-10,c:-8},why:'Las demandas ignoradas buscan otros caminos.'},
+ evasion_venganza:{e:'🗞️',title:'El terrateniente financia a tu oposición',text:'No perdonó la multa: ahora paga periódicos contra tu gobierno.',fx:{c:-7},why:'Aplicar la ley tiene costos políticos; aplicarla igual es lo que la hace ley.'},
+ reforma_fuga:{e:'💼',title:'Los hacendados sacan su capital',text:'Tras la reforma agraria, parte de la élite invierte en otra región.',fx:{se:-6,t:-40},why:'Toda redistribución tiene perdedores que reaccionan.'},
+ corrup_filtra:{e:'📰',title:'Se filtra el encubrimiento',text:'Un periodista revela que despediste al tesorero sin investigarlo.',fx:{c:-9},why:'Lo que se oculta suele salir a la luz, y peor.'},
+ alianza_rota:{e:'💔',title:'El vecino rompe la alianza',text:'Cansado de condiciones abusivas, cierra el comercio.',fx:{t:-50,sa:-5},why:'Los acuerdos injustos son frágiles.'},
+ huelga_mal:{e:'🔧',title:'Sabotaje en los talleres',text:'El resentimiento tras la huelga rota se hace sentir.',fx:{t:-40,sa:-6},why:'Ganar por la fuerza deja cuentas pendientes.'}
+};
+
+const DIFFS={
+  facil:{n:'Fácil',gold:200,good:1.15,bad:.8,sat:4,polis:5,elec:45,evp:.6,exp:.2,reward:30,d:'Más oro al inicio y dilemas menos duros. Sostén la Polis 5 años.'},
+  normal:{n:'Normal',gold:150,good:1,bad:1.2,sat:-3,polis:6,elec:52,evp:.75,exp:.45,reward:20,d:'Exigente: los errores se pagan. Sostén la Polis 6 años; las elecciones piden confianza de 52.'},
+  dificil:{n:'Difícil',gold:110,good:.9,bad:1.35,sat:-5,polis:8,elec:55,evp:.85,exp:.5,reward:0,d:'Poco oro, dilemas duros y un pueblo muy exigente. Sostén la Polis 8 años; las elecciones piden confianza de 55. La guía no da recompensas.'}
+};
+function D(){return DIFFS[S.diff||'normal']}
+const GUIDE=[
+  {t:'Construye un mercado: da empleo a artesanos y cobra tasas.',ok:c=>c.mercado>=1},
+  {t:'Construye más casas para que llegue gente (4 en total).',ok:c=>c.casa>=4},
+  {t:'Pon un tercer cultivo, mejor junto al río.',ok:c=>c.cultivo>=3},
+  {t:'Revisa la Hacienda y termina tu tercer año de gobierno.',ok:()=>S.year>=4},
+  {t:'Llega a 40 habitantes para convertirte en Pueblo.',ok:()=>S.stage>=1},
+  {t:'Construye una escuela: el pueblo ya la espera.',ok:c=>c.escuela>=1}
+];
+function checkGuide(){
+  if(!S.guide||S.gstep>=GUIDE.length)return null;
+  if(GUIDE[S.gstep].ok(counts())){const r=D().reward;S.gold+=r;S.gstep++;return r?`Meta cumplida: +${r} de oro.`:'Meta cumplida.'}
+  return null;
+}
+const REG={
+  monarquia:{n:'Monarquía',t:'Monarca',rect:true,cor:'tirania',cyc:'tirania',col:'#5B3A7A',
+    d:'Gobierna uno, para el bien de todos. La corona da estabilidad y la nobleza la respalda, pero el poder sin contrapesos tiende a corromperse, no hay elecciones y la sucesión es una lotería.',
+    m:{tr:2,se:5,admin:1,drift:1.6}},
+  aristocracia:{n:'Aristocracia',t:'Príncipe del Senado',rect:true,cor:'oligarquia',cyc:'oligarquia',col:'#2F5B45',
+    d:'Gobiernan los mejores. Administración eficiente y experta, pero el Senado solo permite mover cada impuesto 5 puntos por año.',
+    m:{se:6,sa:2,admin:.8,taxStep:5,drift:.8}},
+  republica:{n:'República democrática',t:'Presidente',rect:true,cor:'demagogia',cyc:'demagogia',col:'#2D5D72',
+    d:'Gobiernan muchos, con leyes y libertades. Máxima legitimidad, pero hay elecciones cada 4 años desde que eres Pueblo y la administración es más costosa.',
+    m:{tr:4,sc:2,sa:3,admin:1.05,elect:true}},
+  tirania:{n:'Dictadura',t:'Dictador',rect:false,cor:'tirania',cyc:'aristocracia',col:'#9E2B25',
+    d:'Tiranía: uno gobierna para sí. Las protestas se silencian y el Estado es barato, pero la confianza cae y el descontento oculto termina en revolución.',
+    m:{tr:-10,sc:-4,sa:-4,eq:-5,admin:.9,silence:true,drift:1}},
+  oligarquia:{n:'Plutocracia',t:'Canciller',rect:false,cor:'oligarquia',cyc:'republica',col:'#6B5420',
+    d:'Oligarquía: gobiernan los ricos para los ricos. La élite paga máximo 10% y está feliz; el pueblo se empobrece y la desigualdad crece.',
+    m:{tr:-4,se:10,sc:-8,sa:-6,eq:-10,admin:1,eliteCap:10}},
+  demagogia:{n:'Populismo',t:'Caudillo',rect:false,cor:'demagogia',cyc:'monarquia',col:'#C0602A',
+    d:'Demagogia: se gobierna para el aplauso. El ánimo popular sube, pero el gasto dispara la inflación y la élite desconfía. Hay elecciones.',
+    m:{sc:6,sa:6,se:-6,admin:1.2,infl:.02,elect:true}}
+};
+const CYCLE=['monarquia','tirania','aristocracia','oligarquia','republica','demagogia'];
+function RG(){return REG[S.reg||'republica']}
+function RM(k,d){const v=RG().m[k];return v===undefined?(d===undefined?0:d):v}
+let S;
+function rnd(n){return Math.floor(Math.random()*n)}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function idx(r,c){return r*N+c}
+function neigh(i){const r=Math.floor(i/N),c=i%N,o=[];[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{const R=r+dr,C=c+dc;if(R>=0&&R<N&&C>=0&&C<N)o.push(idx(R,C))});return o}
+function nearRiver(i){return neigh(i).some(j=>S.map[j].t==='rio')}
+function countT(t){return S.map.filter(x=>x.t===t).length}
+function cost(k){return Math.round(B[k].cost*S.price)}
+
+function genMap(seed){
+  const R=mulberry(seed),rn=n=>Math.floor(R()*n);
+  let m=Array.from({length:N*N},()=>({t:'llano',b:null}));
+  let col=Math.floor(N*.3)+rn(Math.floor(N*.35));
+  for(let r=0;r<N;r++){
+    m[idx(r,col)].t='rio';
+    if(R()<.35){const nc=clamp(col+(R()<.5?-1:1),2,N-4);m[idx(r,nc)].t='rio';col=nc}
+  }
+  if(R()<.6){let row=Math.floor(N*.55)+rn(Math.floor(N*.3)),c=0;while(c<col){m[idx(row,c)].t='rio';if(R()<.3&&row>2&&row<N-2){row+=R()<.5?-1:1;m[idx(row,c)].t='rio'}c++}}
+  const size=(2.5+R()*2)*N/12;
+  for(let r=0;r<Math.ceil(N*.5);r++)for(let c=Math.floor(N*.45);c<N;c++){
+    if(m[idx(r,c)].t==='llano'&&r+(N-1-c)<size+R()*2.5)m[idx(r,c)].t='montana';
+  }
+  const lakes=R()<.5?1:0;
+  for(let k=0;k<lakes;k++){const lr=Math.floor(N*.5)+rn(Math.floor(N*.3)),lc=rn(Math.floor(N*.2))+1;[[0,0],[0,1],[1,0],[1,1]].forEach(([a,b])=>{if(R()<.85)m[idx(lr+a,lc+b)].t='rio'})}
+  const forests=Math.round((4+rn(3))*N*N/144);
+  for(let k=0;k<forests;k++){
+    const cr=rn(N),cc=rn(N);
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+      const r2=cr+dr,c2=cc+dc;
+      if(r2>=0&&r2<N&&c2>=0&&c2<N&&m[idx(r2,c2)].t==='llano'&&R()<.65)m[idx(r2,c2)].t='bosque';
+    }
+  }
+  // relieve: ruido suave, laderas cerca de las montañas, río en el fondo del valle
+  const nz=Array.from({length:N*N},()=>R());
+  for(let pass=0;pass<3;pass++)for(let i=0;i<N*N;i++){const r=Math.floor(i/N),c=i%N;let t=nz[i],n=1;[[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const r2=r+a,c2=c+b;if(r2>=0&&r2<N&&c2>=0&&c2<N){t+=nz[r2*N+c2];n++}});nz[i]=t/n}
+  for(let i=0;i<N*N;i++){const x=m[i];const r=Math.floor(i/N),c=i%N;const nearM=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].some(([a,b])=>{const r2=r+a,c2=c+b;return r2>=0&&r2<N&&c2>=0&&c2<N&&m[r2*N+c2].t==='montana'});
+    x.h=x.t==='rio'?0:x.t==='montana'?2:(nz[i]>.58?2:nz[i]>.47?1:0);if(nearM&&x.t!=='rio')x.h=Math.max(x.h,1)}
+  for(let i=0;i<N*N;i++){if(m[i].t==='rio')continue;const r=Math.floor(i/N),c=i%N;if([[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>{const r2=r+a,c2=c+b;return r2>=0&&r2<N&&c2>=0&&c2<N&&m[r2*N+c2].t==='rio'}))m[i].h=Math.min(m[i].h,1)}
+  // orientación: montañas a la derecha, a la izquierda o al fondo (nunca tapando el frente)
+  const o=rn(3),out=Array.from({length:N*N});
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const [r2,c2]=o===0?[r,c]:o===1?[c,r]:[r,N-1-c];
+    out[idx(r2,c2)]=m[idx(r,c)];
+  }
+  return out;
+}
+function freshState(diff,guide,seed,reg){
+  seed=(seed===undefined||seed===null||seed==='')?Math.floor(Math.random()*899999)+100000:+seed;
+  S={reg:reg||'republica',corr:REG[reg||'republica'].rect?20:60,tx0:null,regLog:[],diff:diff||'normal',guide:guide!==false,gstep:0,year:1,stage:0,gold:DIFFS[diff||'normal'].gold,debt:0,bonds:[],food:40,pop:15,tx:{c:10,a:12,e:15},
+     sat:{c:62,a:62,e:62},hap:62,eq:50,tr:55,env:70,price:1,infl:.02,issue:0,shock:0,rev:13,
+     laws:{},seed,undo:[],kept:0,hungry:false,vis:null,deficit:0,defaults:0,eliteMood:1,map:genMap(seed),log:[],hist:[],
+     phil:{util:0,deon:0,contr:0,real:0,virt:0},promises:[],later:[],polisYears:0,recent:[],pend:null,over:false};
+  const riv=S.map.map((x,i)=>i).filter(i=>S.map[i].t==='llano'&&nearRiver(i));
+  const R0=mulberry(seed+1);const start=riv[Math.floor(R0()*riv.length)];
+  S.map[start].b='cultivo';
+  const want=['cultivo','casa','casa'];
+  const q=[start],seen=new Set([start]);
+  while(q.length&&want.length){
+    const i=q.shift();
+    for(const j of neigh(i)){
+      if(seen.has(j))continue;seen.add(j);
+      if(want.length&&S.map[j].t==='llano'&&!S.map[j].b){S.map[j].b=want.shift()}
+      q.push(j);
+    }
+  }
+  S.log.unshift({y:1,t:'Quince personas fundan una aldea junto al río. Te eligen para gobernar.'});
+}
+
+function counts(){const c={};Object.keys(B).forEach(k=>c[k]=0);S.map.forEach(x=>{if(x.b)c[x.b]++});return c}
+function cap(){return counts().casa*10}
+function totDebt(){return S.debt+S.bonds.reduce((a,b)=>a+b.amt,0)}
+function rating(){
+  const score=clamp(100-totDebt()/Math.max(20,S.rev)*8-S.deficit*12-Math.max(0,S.infl-.03)*300+(S.tr-50)*.4-S.defaults*25,0,100);
+  const r=RAT.find(x=>score>=x[0]);return {score,l:r[1],sp:r[2]};
+}
+function loanRate(){return clamp(.05+rating().sp-counts().banco*.02,.03,.3)}
+function canBorrow(){return S.stage>=1&&rating().l!=='CCC'}
+
+function energy(c){return (S.stage>=1?1:0)+c.molino*3}
+function poweredT(c){return S.stage>=1?Math.min(c.taller,energy(c)):c.taller}
+function waterCap(c){return S.stage>=1?40+c.acueducto*70:9999}
+function hasLaw(k){return !!(S.laws&&S.laws[k])}
+function society(){
+  const c=counts(),P=S.pop;
+  let el=Math.round((2+c.mercado*.5+poweredT(c)*1.5+c.mina*2+c.banco*3+c.puerto*1.5+c.cafetal*.3)*S.eliteMood);
+  el=clamp(el,P>=5?1:0,Math.floor(P*.2));
+  const W=P-el,jc=c.cultivo*7+c.cafetal*6;
+  let ja=0;Object.keys(B).forEach(k=>{if(k!=='taller')ja+=(B[k].ja||0)*c[k]});ja+=poweredT(c)*9;
+  let camp,art,un;
+  if(W>=jc+ja){camp=jc;art=ja;un=W-jc-ja}
+  else{const t=jc+ja;camp=t?Math.round(W*jc/t):0;art=W-camp;un=0}
+  return {el,camp,art,un,jc,ja,P};
+}
+function finance(){
+  const c=counts(),so=society(),w=S.price*(1+.1*c.universidad)*(hasLaw('jornada')?.95:1);
+  const inc={c:so.camp*4*w,a:so.art*7*w,e:so.el*25*w,u:so.un*w};
+  const taxC=Math.round(inc.c*S.tx.c/100),taxA=Math.round(inc.a*S.tx.a/100),taxE=Math.round(inc.e*S.tx.e/100);
+  let fee=0,up=0;S.map.forEach(x=>{if(x.b){fee+=B[x.b].fee||0;up+=B[x.b].up}});
+  fee=Math.round(fee*S.price*(hasLaw('ambiente')?.75:1)*(hasLaw('arancel')?1.2:1));up=Math.round(up*S.price);
+  const lawCost=Math.round(((hasLaw('educacion')?S.pop*.15:0)+(hasLaw('subsidio')?so.camp*.8:0))*S.price);
+  const admin=Math.round(S.pop*(.1+.12*S.stage)*(1+S.year*.01)*S.price*RM('admin',1));
+  const rate=loanRate(),interest=Math.round(S.debt*rate);
+  const pay=Math.min(S.debt+interest,Math.ceil((S.debt+interest)*.15));
+  let cpn=0,mat=0;S.bonds.forEach(b=>{cpn+=Math.round(b.amt*b.cpn);if(b.due<=S.year)mat+=b.amt});
+  const rev=taxC+taxA+taxE+fee,net=rev-up-admin-lawCost-pay-cpn-mat;
+  let fcap=0;S.map.forEach((x,i)=>{if(x.b==='cultivo')fcap+=nearRiver(i)?16:12});
+  const fprod=so.jc?Math.round(fcap*so.camp/so.jc):0,cons=Math.ceil(S.pop*.5);
+  const post={c:inc.c*(1-S.tx.c/100),a:inc.a*(1-S.tx.a/100),e:inc.e*(1-S.tx.e/100),u:inc.u};
+  return {so,taxC,taxA,taxE,fee,up,admin,lawCost,interest,pay,cpn,mat,rev,net,fprod,cons,post,rate};
+}
+function envTarget(c){return (hasLaw('ambiente')?12:0)+62+Math.min(20,c.parque*4)+countT('bosque')*.6-c.taller*7-c.mina*12-c.cultivo*1.5-c.casa*.4}
+function satTargets(c,hunger){
+  const P=Math.max(1,S.pop),so=society(),ur=so.un/Math.max(1,so.P),ip=S.infl*100;
+  const sc=S.stage>=1?Math.min(1,c.escuela*50/P):.8,hc=S.stage>=1?Math.min(1,c.hospital*60/P):.8;
+  const cov=(sc+hc)*8;
+  const expc=S.stage>=1?Math.max(0,Math.min(20,S.year*D().exp)-(c.universidad*5+c.agora*3+Math.min(6,c.parque*1.5))):0;
+  const ds=D().sat;
+  const wc=waterCap(c),thirst=S.pop>wc?Math.min(25,(S.pop-wc)/Math.max(1,wc)*60):0;
+  const L=k=>hasLaw(k)?1:0;
+  return {sc,expc,thirst,
+    c:RM('sc')+48+0-(S.tx.c-10)*2+(hunger?-20:5)+cov-ur*30-ip*1.5+(S.eq-50)*.2+(S.env<35?-8:0)-expc+ds+(L('educacion')*3+L('subsidio')*10-thirst),
+    a:RM('sa')+48-(S.tx.a-12)*1.8+cov+Math.min(8,c.parque*2)-ur*30-ip*1.5+(S.eq-50)*.1+(S.env<35?-8:0)-expc+ds+(L('educacion')*3+L('jornada')*8+L('arancel')*3-thirst),
+    e:58-(S.tx.e-15)*1.4+c.banco*4-(S.eq-50)*.1-ip+ds+RM('se')-(L('jornada')*6+L('ambiente')*4+L('arancel')*3)};
+}
+function calcHap(so){
+  so=so||society();const P=Math.max(1,S.pop);
+  return clamp((so.camp*S.sat.c+(so.art+so.un)*S.sat.a+so.el*S.sat.e)/P-so.un/P*15,0,100);
+}
+function applyFx(fx0){
+  const fx={};for(const [k,v] of Object.entries(fx0)){const bad=(k==='d'||k==='i')?v>0:k==='txe'?false:v<0;fx[k]=k==='txe'?v:Math.round(v*(bad?D().bad:D().good))}
+  if(fx.t)S.gold+=fx.t;
+  if(fx.f)S.food=Math.max(0,S.food+fx.f);
+  if(fx.p)S.pop=clamp(S.pop+fx.p,1,Math.max(1,cap()));
+  if(fx.h){S.sat.c=clamp(S.sat.c+fx.h,0,100);S.sat.a=clamp(S.sat.a+fx.h,0,100);S.sat.e=clamp(S.sat.e+fx.h,0,100)}
+  if(fx.sc)S.sat.c=clamp(S.sat.c+fx.sc,0,100);
+  if(fx.sa)S.sat.a=clamp(S.sat.a+fx.sa,0,100);
+  if(fx.se)S.sat.e=clamp(S.sat.e+fx.se,0,100);
+  if(fx.e)S.eq=clamp(S.eq+fx.e,0,100);
+  if(fx.c)S.tr=clamp(S.tr+fx.c,0,100);
+  if(fx.a)S.env=clamp(S.env+fx.a,0,100);
+  if(fx.d)S.debt=Math.max(0,S.debt+fx.d);
+  if(fx.i)S.shock+=fx.i/100;
+  if(fx.txe)S.tx.e=clamp(S.tx.e+fx.txe,0,50);
+  S.hap=calcHap();
+  return fx;
+}
+
+// Avanza un año. Devuelve {stageUp, end:{win,title,text}|null}
+function advance(){
+  S.undo=[];
+  const c=counts(),F=finance(),so=F.so,p0=S.pop,news=[];
+  S.debt=Math.max(0,S.debt+F.interest-F.pay);
+  if(F.mat)news.push(`Venció un bono: pagaste ${F.mat} de capital.`);
+  S.bonds=S.bonds.filter(b=>b.due>S.year);
+  S.gold+=F.net;S.rev=F.rev;
+  S.food+=F.fprod-F.cons;
+  let hunger=false;
+  if(S.stage>=1&&S.pop>waterCap(c))news.push(`Falta agua: ${S.pop} habitantes y acueductos para ${waterCap(c)}.`);
+  if(S.food<0){hunger=true;S.hungry=true;S.pop-=Math.ceil(S.pop*.12);S.food=0;news.push('Faltó alimento: hubo hambre y se perdieron vidas.')}
+  const cp=c.casa*10;
+  const wcap=waterCap(c);
+  if(!hunger&&S.pop<cp&&S.pop<wcap)S.pop=Math.min(cp,S.pop+Math.max(1,Math.round(S.pop*.18*S.hap/60)));
+  if(S.pop>cp)S.pop=cp;
+  if(S.hap<25){S.pop-=Math.ceil(S.pop*.06);news.push('El descontento empuja a familias a irse.')}
+  S.pop=Math.max(0,S.pop);
+  // inflación
+  const tI=.02+RM('infl')+(hasLaw('bancoCentral')?-.015:0)+(hasLaw('arancel')?.005:0)+S.issue/Math.max(50,F.rev)*.25+(S.gold<0?.03:0)+(hunger?.04:0)-c.banco*.01+S.shock;
+  S.infl=clamp(S.infl*.4+tI*.6,-.02,.6);S.shock*=.5;S.issue=0;S.price*=1+S.infl;
+  if(S.infl>.08)news.push(`La inflación llegó a ${Math.round(S.infl*100)}%.`);
+  // satisfacción por clase
+  const TG=satTargets(c,hunger),tSC=TG.c,tSA=TG.a,tSE=TG.e,sc=TG.sc,expc=TG.expc,ip=S.infl*100;
+  S.sat.c=clamp(S.sat.c+(tSC-S.sat.c)*.35,0,100);
+  S.sat.a=clamp(S.sat.a+(tSA-S.sat.a)*.35,0,100);
+  S.sat.e=clamp(S.sat.e+(tSE-S.sat.e)*.35,0,100);
+  const so2=society();
+  S.hap=calcHap(so2);
+  if(S.sat.e<25){S.eliteMood=Math.max(.4,S.eliteMood-.3);news.push('Fuga de capitales: parte de la élite se va con su dinero.')}
+  else if(S.sat.e>45)S.eliteMood=Math.min(1,S.eliteMood+.1);
+  // igualdad
+  const tot=(F.post.c+F.post.a+F.post.e+F.post.u)||1,es=F.post.e/tot,ps=so.el/Math.max(1,so.P);
+  const tE=85-(es-ps)*120+sc*10+c.universidad*5+RM('eq')+(hasLaw('educacion')?8:0)+(hasLaw('censura')?-3:0);
+  S.eq=clamp(S.eq+(tE-S.eq)*.3,0,100);
+  // confianza
+  const tT=50+RM('tr')+(hasLaw('censura')?6:0)+(hasLaw('prensa')?-3:0)+(S.hap-50)*.4+c.agora*10+(S.gold<0?-10:0)-Math.max(0,ip-3)*.8;
+  S.tr=clamp(S.tr+(tT-S.tr)*.3,0,100);
+  if(S.sat.c<25||S.sat.a<25){if(RM('silence',false)){S.corr=clamp(S.corr+4,0,100);news.push('La guardia disolvió protestas. Nadie habla, pero el descontento crece.')}else{S.tr=clamp(S.tr-5,0,100);news.push(S.sat.c<25?'Protestas campesinas en los caminos.':'Protestas de artesanos en la plaza.')}}
+  // ambiente
+  const tA=envTarget(c);
+  S.env=clamp(S.env+(tA-S.env)*.3,0,100);
+  // déficit y cesación de pagos
+  S.deficit=F.net<0?S.deficit+1:0;
+  if(F.net<0)news.push(`El presupuesto cerró con déficit de ${-F.net} de oro.`);
+  if(S.gold<0&&S.deficit>=2){S.tr=clamp(S.tr-8,0,100);news.push('Años en rojo: el pueblo duda de tu manejo.')}
+  if(S.gold<-150){
+    S.defaults++;
+    if(S.defaults>=2){S.log.unshift({y:S.year,t:news.join(' ')});return {end:{win:false,title:'Bancarrota',text:'Segunda cesación de pagos. Nadie vuelve a prestarle al territorio.'}}}
+    S.debt=Math.round(S.debt/2);S.bonds.forEach(b=>b.amt=Math.round(b.amt/2));S.gold=0;S.tr=clamp(S.tr-20,0,100);
+    S.sat.c-=10;S.sat.a-=10;S.sat.e-=15;
+    news.push('Cesación de pagos: reestructuraste la deuda a la mitad. Tu calificación se desploma.');
+  }
+  // promesas
+  S.promises=S.promises.filter(pr=>{
+    if(counts()[pr.k]>pr.base){S.kept++;S.corr=clamp(S.corr-5,0,100);S.tr=clamp(S.tr+8,0,100);S.sat.c+=4;S.sat.a+=4;news.push(`Cumpliste tu promesa: ${B[pr.k].a}. El pueblo lo celebra.`);return false}
+    if(S.year>=pr.dl){S.corr=clamp(S.corr+8,0,100);S.tr=clamp(S.tr-15,0,100);news.push(`Promesa incumplida: no construiste ${B[pr.k].a}.`);return false}
+    return true;
+  });
+  const d=S.pop-p0;
+  if(d>0)news.push(`Llegaron ${d} habitantes.`);else if(d<0)news.push(`La población bajó en ${-d}.`);
+  let stageUp=false;const nx=STAGES[S.stage+1];
+  if(nx&&nx.ok(counts())){S.stage++;stageUp=true;news.push(`El territorio ahora es ${STAGES[S.stage].n}.`)}
+  if(RM('elect',false)&&S.stage>=1&&S.stage<3&&S.year%4===0){
+    const th=34;if(S.tr<th){S.log.unshift({y:S.year,t:news.join(' ')});return {end:{win:false,title:'Perdiste las elecciones',text:`El pueblo votó por otro proyecto: la confianza estaba en ${Math.round(S.tr)} y necesitabas ${th}.`}}}
+    news.push('Hubo elecciones y el pueblo renovó tu mandato.');S.tr=clamp(S.tr+3,0,100);
+  }
+  if(S.stage===3){
+    S.polisYears++;
+    if(!stageUp&&S.polisYears%4===0&&!RM('elect',false)&&S.tr<D().elec){
+      S.polisYears=0;S.corr=clamp(S.corr+20,0,100);S.tr=clamp(S.tr-5,0,100);
+      news.push(`El pueblo niega su apoyo al ${RG().t.toLowerCase()}: sin elecciones, la legitimidad se mide en la calle. La cuenta de años como Polis vuelve a cero.`);
+    }
+    if(!stageUp&&S.polisYears%4===0&&RM('elect',false)){
+      if(S.tr<D().elec){S.log.unshift({y:S.year,t:news.join(' ')});return {end:{win:false,title:'Perdiste las elecciones',text:'El pueblo votó por otro proyecto. La confianza no alcanzó.'}}}
+      S.tr=clamp(S.tr+5,0,100);news.push('Ganaste las elecciones: el pueblo renueva tu mandato.');
+    }
+  }
+  // rumbo del gobierno: corrupción, reforma y revolución
+  const minSat=Math.min(S.sat.c,S.sat.a,S.sat.e);
+  S.corr=clamp(S.corr+RM('drift')+(hasLaw('censura')?1.5:0)-(hasLaw('prensa')?1.5:0),0,100);
+  if(minSat<25)S.corr=clamp(S.corr+3,0,100);
+  if(minSat>50&&S.tr>55)S.corr=clamp(S.corr-2,0,100);
+  S.regChange=null;
+  if(RG().rect&&S.corr>=70){const from=S.reg;S.reg=RG().cor;S.corr=45;S.regChange={type:'cor',from,to:S.reg};news.push(`El gobierno se corrompió: ${REG[from].n} se volvió ${REG[S.reg].n}.`)}
+  else if(!RG().rect){
+    const nx=RG().cyc;
+    if(S.corr<=20){const from=S.reg;S.reg=Object.keys(REG).find(k=>REG[k].cor===from&&REG[k].rect)||nx;S.corr=35;S.regChange={type:'ref',from,to:S.reg};news.push(`Reformaste el gobierno: ${REG[from].n} vuelve a ser ${REG[S.reg].n}.`)}
+    else if((S.tr<(S.reg==='tirania'?40:30)||minSat<22)&&Math.random()<(S.reg==='tirania'?.6:.45)){const from=S.reg;S.reg=nx;S.corr=25;S.tr=clamp(S.tr+15,0,100);S.gold=Math.round(S.gold*.6);S.pop=Math.round(S.pop*.92);if(S.stage===3)S.polisYears=0;['c','a','e'].forEach(k=>S.sat[k]=clamp(S.sat[k]+8,0,100));S.regChange={type:'rev',from,to:S.reg};news.push(`¡Revolución! Cae ${REG[from].n} y nace ${REG[S.reg].n}.`)}
+  }
+  if(S.reg==='monarquia'&&S.year%15===0){if(Math.random()<.5){S.corr=clamp(S.corr-10,0,100);S.tr=clamp(S.tr+5,0,100);news.push('Sucesión en la corona: el heredero es prudente y querido.')}else{S.corr=clamp(S.corr+15,0,100);S.tr=clamp(S.tr-5,0,100);news.push('Sucesión en la corona: el heredero es caprichoso y la corte murmura.')}}
+  if(RM('eliteCap',0)&&S.tx.e>RM('eliteCap',0))S.tx.e=RM('eliteCap',0);
+  S.tx0={...S.tx};
+  S.expc=Math.round(expc);
+  S.hist.push({y:S.year,pop:S.pop,gold:Math.round(S.gold),debt:Math.round(totDebt()),eq:Math.round(S.eq),hap:Math.round(S.hap),tr:Math.round(S.tr),env:Math.round(S.env),infl:+(S.infl*100).toFixed(1)});
+  S.log.unshift({y:S.year,t:news.join(' ')||'Un año tranquilo.'});
+  if(S.log.length>60)S.log.pop();
+  if(S.tr<=5)return {end:{win:false,title:'Revuelta popular',text:'El pueblo perdió toda confianza y tomó la plaza.'}};
+  if(S.env<=5)return {end:{win:false,title:'Colapso ecológico',text:'El río y la tierra ya no sostienen la vida.'}};
+  if(S.pop<=3)return {end:{win:false,title:'Territorio abandonado',text:'Las últimas familias se marcharon.'}};
+  if(S.polisYears>=D().polis)return {end:{win:true,title:'Tu Polis perdura',text:`Sostuviste ${D().polis} años un gobierno del pueblo y para el pueblo.`}};
+  if(S.vis&&S.vis.y<=S.year)S.vis=null;
+  S.year++;
+  if(!stageUp)S.pend=drawEvent();
+  return {stageUp,end:null};
+}
+
+function drawEvent(){
+  const due=S.later.findIndex(l=>l.y<=S.year);
+  if(due>=0){
+    const l=S.later.splice(due,1)[0],L=LATER[l.id];
+    return {id:l.id,e:L.e,title:L.title,text:`${L.text} Es consecuencia de lo que decidiste en el año ${l.from}.`,followUp:true,
+      opts:[{l:'Asumir las consecuencias',fx:L.fx,f:null,why:L.why}]};
+  }
+  if(S.year<3||Math.random()>D().evp)return null;
+  if(S.stage>=1&&S.promises.length===0&&Math.random()<.2)return petition();
+  const c=counts();
+  const pool=EV.filter(e=>S.stage>=e.st&&(!e.cond||e.cond(c))&&!S.recent.includes(e.id));
+  if(!pool.length)return null;
+  const e=pool[rnd(pool.length)];
+  S.recent.push(e.id);if(S.recent.length>7)S.recent.shift();
+  return {id:e.id,e:e.e,title:e.title,text:e.text,opts:e.opts};
+}
+function petition(){
+  const ks=['escuela','hospital','parque','mercado','agora','universidad'].filter(k=>B[k].st<=S.stage);
+  const k=ks[rnd(ks.length)];
+  return {id:'pet',e:'✍️',title:`El pueblo pide ${B[k].a}`,text:'Una asamblea de vecinos te entrega una petición firmada. Si lo prometes, tendrás 3 años para cumplir.',opts:[
+    {l:'Prometerlo',fx:{c:6},f:'deon',why:'Una promesa pública obliga. Cumplirla construye confianza; romperla la destruye.',promise:k},
+    {l:'Explicar que ahora no hay recursos',fx:{c:-5,sc:-2,sa:-2},f:'virt',why:'La franqueza cuesta un poco hoy, pero no hipoteca tu palabra.'},
+    {l:'Ignorar la petición',fx:{c:-8,sc:-3,sa:-3},f:'real',why:'Gobernar sin escuchar es gobernar en nombre del pueblo, no para él.'}]};
+}
+const VIS={crecida:[['flood'],['flood'],['flood']],crecida_mal:[['flood']],sequia:[['drought'],['drought'],['drought']],
+  festival:[['festival'],['festival'],null],protesta:[['crowd'],['crowd'],['crowd']],huelga:[['crowd'],['crowd'],['crowd']],
+  tierras_mal:[['crowd']],protesta_mal:[['crowd']],humo:[null,null,['smog']],humo_mal:[['smog']],plaga:[['pests'],null,['pests']],
+  oro_mal:[['poison']],pet:[['crowd'],null,['crowd']],precios:[['crowd'],null,['crowd']]};
+function choose(i){
+  const ev=S.pend,o=ev.opts[i];
+  const vv=VIS[ev.id]&&VIS[ev.id][i];if(vv)S.vis={k:vv[0],y:S.year};
+  const real=applyFx(o.fx);if(o.f){S.phil[o.f]++;S.corr=clamp(S.corr+(o.f==='real'?9:o.f==='util'?1:-4),0,100)}
+  if(o.promise)S.promises.push({k:o.promise,base:counts()[o.promise],dl:S.year+3});
+  if(o.later&&(o.later[2]===undefined||Math.random()<o.later[2]))S.later.push({y:S.year+o.later[0],id:o.later[1],from:S.year});
+  S.log.unshift({y:S.year,t:ev.followUp?`${ev.title}.`:`${ev.title}. Decidiste: ${o.l.toLowerCase()}.`});
+  S.pend=null;return Object.assign({},o,{fx:real});
+}
+// acciones financieras
+function takeLoan(){if(!canBorrow())return false;S.gold+=150;S.debt+=150;return true}
+function payDebt(){const p=Math.min(50,S.debt,Math.floor(S.gold));S.gold-=p;S.debt-=p;return p}
+function issueBond(){if(!canBorrow())return false;const cpn=Math.max(.02,loanRate()-.015);S.bonds.push({amt:200,cpn,due:S.year+5});S.gold+=200;return cpn}
+function printMoney(){if(S.stage<1||hasLaw('bancoCentral'))return false;S.gold+=50;S.issue+=50;return true}
+function whyNot(k,i){
+  const x=S.map[i],b=B[k];
+  if(x.t==='rio')return 'No se puede construir sobre el río.';
+  if(x.b)return 'Esa casilla ya está ocupada.';
+  if(!b.ok.includes(x.t))return `${b.n}: ese terreno no sirve.`;
+  if(b.hmin&&(x.h||0)<b.hmin)return `${b.n}: necesita ladera (terreno alto).`;
+  if(b.river&&!nearRiver(i))return `${b.n}: debe estar junto al río.`;
+  if(S.gold<cost(k))return `Te faltan ${cost(k)-Math.floor(S.gold)} de oro.`;
+  return '';
+}
+function undoBuild(){
+  const u=S.undo.pop();if(!u)return null;const x=S.map[u.i];x.b=null;S.gold+=u.paid;
+  if(u.forest){x.t='bosque';S.env=clamp(S.env+3,0,100)}
+  if(S.pop>cap())S.pop=cap();return u;
+}
+function build(k,i){
+  const r=whyNot(k,i);if(r)return r;
+  const x=S.map[i];S.gold-=cost(k);
+  let msg='';
+  if(x.t==='bosque'){x.t='llano';S.env=clamp(S.env-3,0,100);msg='Talaste bosque: el ambiente baja.'}
+  S.undo.push({i,k,paid:cost(k),forest:x.t==='llano'&&!!msg});
+  x.b=k;return msg||true;
+}
+
+const ACH=[
+  {id:'pueblo',n:'Primeros pasos',d:'Convierte la aldea en Pueblo.',ok:()=>S.stage>=1},
+  {id:'ciudad',n:'La ciudad crece',d:'Llega a Ciudad.',ok:()=>S.stage>=2},
+  {id:'polis',n:'Nace la Polis',d:'Llega a Polis.',ok:()=>S.stage>=3},
+  {id:'sindeuda',n:'Cuentas claras',d:'Llega a Polis sin deuda.',ok:()=>S.stage>=3&&totDebt()===0},
+  {id:'igualdad',n:'Tierra de iguales',d:'Igualdad de 80 o más siendo Ciudad.',ok:()=>S.stage>=2&&S.eq>=80},
+  {id:'verde',n:'Territorio verde',d:'Ambiente de 80 o más siendo Ciudad.',ok:()=>S.stage>=2&&S.env>=80},
+  {id:'aaa',n:'Triple A',d:'Calificación AAA siendo Ciudad.',ok:()=>S.stage>=2&&rating().l==='AAA'},
+  {id:'palabra',n:'Hombre de palabra',d:'Cumple 3 promesas al pueblo.',ok:()=>S.kept>=3},
+  {id:'sinhambre',n:'Nadie pasa hambre',d:'Gobierna 30 años sin una sola hambruna.',ok:()=>S.year>=30&&!S.hungry},
+  {id:'kant',n:'Gobierno kantiano',d:'Gana con la ética del deber como perfil.',ok:e=>e&&e.win&&topPhil()==='deon'},
+  {id:'rawls',n:'Velo de ignorancia',d:'Gana con la justicia como equidad como perfil.',ok:e=>e&&e.win&&topPhil()==='contr'},
+  {id:'maquiavelo',n:'El príncipe',d:'Gana con el realismo político como perfil.',ok:e=>e&&e.win&&topPhil()==='real'},
+  {id:'fenix',n:'Ave fénix',d:'Gana después de una cesación de pagos.',ok:e=>e&&e.win&&S.defaults>0},
+  {id:'dificil',n:'Estadista',d:'Gana en Difícil.',ok:e=>e&&e.win&&S.diff==='dificil'}
+];
+function topPhil(){return Object.keys(S.phil).sort((a,b)=>S.phil[b]-S.phil[a])[0]}
+
+const ADV={
+  rosa:{n:'Doña Rosa',r:'Lideresa campesina',k:'sc',sat:'c',
+    pro:['Por fin alguien mira hacia el campo.','Así sí. La tierra se lo va a agradecer.'],con:['Otra vez el campo paga los platos rotos.','Los campesinos no olvidamos, gobernante.'],
+    mood:['El campo está cansado de promesas.','Vamos bien, pero cuide la cosecha.','El campo está contento con usted.']},
+  julian:{n:'Julián',r:'Maestro artesano',k:'sa',sat:'a',
+    pro:['Los talleres respiran con esta decisión.','Eso es respeto por el trabajo.'],con:['Los artesanos no vamos a aguantar esto callados.','Con esto no alcanza para el pan.'],
+    mood:['En los talleres se habla de huelga.','Hay trabajo, pero la plata no rinde.','Da gusto trabajar en este pueblo.']},
+  aurelio:{n:'Don Aurelio',r:'Hacendado',k:'se',sat:'e',
+    pro:['Una decisión sensata. El capital sabrá corresponder.','Así se gobierna, con cabeza fría.'],con:['Mi dinero puede irse a otra región, no lo olvide.','Esto espanta la inversión, gobernante.'],
+    mood:['Estoy pensando seriamente en irme.','Los negocios van, sin más.','Excelente clima para invertir.']}
+};
+function stance(a,fx){const v=(fx[ADV[a].k]||0)+(fx.h||0)+(a==='aurelio'&&fx.txe?-fx.txe:0);return v>1?1:v<-1?-1:0}
+
+function taxLimit(k,v){
+  let lo=0,hi=k==='e'?50:40;
+  const st=RM('taxStep',99);if(S.tx0){lo=Math.max(lo,S.tx0[k]-st);hi=Math.min(hi,S.tx0[k]+st)}
+  if(k==='e'&&RM('eliteCap',0))hi=Math.min(hi,RM('eliteCap',0));
+  return clamp(v,lo,hi);
+}
+function seatName(){return {monarquia:'Palacio real',aristocracia:'Senado',republica:'Ágora',tirania:'Palacio de gobierno',oligarquia:'Bolsa',demagogia:'Balcón del pueblo'}[S.reg||'republica']}
+
+const LAWS=[
+  {id:'educacion',n:'Educación pública gratuita',d:'Sube igualdad y el ánimo de campesinos y artesanos. Cuesta oro por cada habitante.',st:0},
+  {id:'subsidio',n:'Subsidio al campo',d:'Los campesinos ganan mucho ánimo. Cuesta oro por cada campesino.',st:0},
+  {id:'jornada',n:'Jornada de 8 horas',d:'Artesanos más contentos; la élite protesta y la productividad baja 5%.',st:1},
+  {id:'ambiente',n:'Protección ambiental',d:'El ambiente mejora mucho, pero tasas y regalías bajan 25% y la élite se molesta.',st:1},
+  {id:'arancel',n:'Aranceles al comercio',d:'Tasas y comercio rinden 20% más y protegen al artesano; la élite comercial se molesta y los precios suben un poco.',st:1},
+  {id:'prensa',n:'Libertad de prensa',d:'La prensa vigila: el rumbo mejora cada año, aunque las críticas bajan algo la confianza.',st:1,no:['tirania']},
+  {id:'censura',n:'Censura',d:'Silencia las críticas: sube la confianza aparente, pero el rumbo se tuerce cada año.',st:1,no:['republica','demagogia']},
+  {id:'bancoCentral',n:'Banco central independiente',d:'La inflación baja 1,5 puntos, pero ya no puedes imprimir moneda.',st:2}
+];
+function lawSlots(){return 1+S.stage}
+function lawCostNow(){return Math.round(40*S.price)}
+function lawBlock(l){
+  if(l.st>S.stage)return `Se abre en ${STAGES[l.st].n}.`;
+  if(l.no&&l.no.includes(S.reg))return `No es posible en ${RG().n}.`;
+  if(!hasLaw(l.id)){
+    if(Object.keys(S.laws).length>=lawSlots())return `Solo caben ${lawSlots()} leyes en esta etapa. Deroga una primero.`;
+    if(S.gold<lawCostNow())return `Te faltan ${lawCostNow()-Math.floor(S.gold)} de oro.`;
+    if(S.reg==='aristocracia'&&['jornada','ambiente','arancel'].includes(l.id)&&S.sat.e<45)return 'El Senado la rechaza: la élite está descontenta.';
+    if(RM('elect',false)&&S.tr<40)return 'El Congreso no la aprueba: necesitas confianza de 40.';
+  }
+  return '';
+}
+function toggleLaw(id){
+  const l=LAWS.find(x=>x.id===id),bl=lawBlock(l);if(bl)return bl;
+  if(hasLaw(id)){delete S.laws[id];S.tr=clamp(S.tr-2,0,100);S.log.unshift({y:S.year,t:`Derogaste la ley: ${l.n}.`});return true}
+  S.gold-=lawCostNow();if(S.reg!=='monarquia'&&S.reg!=='tirania')S.tr=clamp(S.tr-2,0,100);S.laws[id]=S.year;S.log.unshift({y:S.year,t:`Promulgaste la ley: ${l.n}.`});return true;
+}
+
+// ---------- Pintura en acuarela (isométrica) ----------
+const TW=64,TH=32,PAD=36,TOPM=120;
+const WW=N*TW+PAD*2,WH=N*TH+TOPM+70;
+const OX=WW/2,OY=TOPM;
+function rgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function hex(a){return '#'+a.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('')}
+function shade(h,f){const c=rgb(h);return hex(c.map(v=>f<0?v*(1+f):v+(255-v)*f))}
+function mix(a,b,t){const x=rgb(a),y=rgb(b);return hex(x.map((v,i)=>v+(y[i]-v)*t))}
+function tileTop(i){const r=Math.floor(i/N),c=i%N;return [OX+(c-r)*TW/2,OY+(c+r)*TH/2]}
+const EL=10;
+function tileH(i){const x=S.map[i];return x?(x.h||0):0}
+function tileGround(i){const t=tileTop(i);return [t[0],t[1]+TH/2]}
+function tileCenter(i){const t=tileTop(i);return [t[0],t[1]+TH/2-tileH(i)*EL]}
+function diamond(cx,cy,s){s=s||1;return [[cx,cy-TH/2*s],[cx+TW/2*s,cy],[cx,cy+TH/2*s],[cx-TW/2*s,cy]]}
+function poly(g,pts){g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath()}
+function wash(g,pts,col,rng,al,edge){
+  al=al===undefined?.55:al;
+  for(let k=0;k<3;k++){
+    const j=pts.map(p=>[p[0]+(rng()-.5)*2,p[1]+(rng()-.5)*2]);
+    g.globalAlpha=k?al*.5:al;g.fillStyle=k===2?shade(col,-.08):col;poly(g,j);g.fill();
+  }
+  g.globalAlpha=1;
+  if(edge!==false){g.globalAlpha=.22;g.strokeStyle=shade(col,-.4);g.lineWidth=.7;poly(g,pts);g.stroke();g.globalAlpha=1}
+}
+function blob(g,x,y,r,col,rng,al){
+  for(let k=0;k<3;k++){g.globalAlpha=(al||.6)*(k?.5:1);g.fillStyle=k===1?shade(col,.12):col;g.beginPath();g.ellipse(x+(rng()-.5)*2,y+(rng()-.5)*2,r*(0.9+rng()*.2),r*(0.85+rng()*.2),0,0,Math.PI*2);g.fill()}
+  g.globalAlpha=1;
+}
+function V(cx,cy,u,v,h){return [cx+(u-v)*TW/2,cy+(u+v)*TH/2-(h||0)]}
+function up(p,h){return [p[0],p[1]-h]}
+function lerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]}
+function box(g,cx,cy,w,d,h,cl,cr,ct,rng,ou,ov){
+  ou=ou||0;ov=ov||0;
+  const A=V(cx,cy,ou-w/2,ov-d/2),Bq=V(cx,cy,ou+w/2,ov-d/2),C=V(cx,cy,ou+w/2,ov+d/2),Dq=V(cx,cy,ou-w/2,ov+d/2);
+  wash(g,[Dq,C,up(C,h),up(Dq,h)],cl,rng,.92);
+  wash(g,[C,Bq,up(Bq,h),up(C,h)],cr,rng,.92);
+  if(ct)wash(g,[up(A,h),up(Bq,h),up(C,h),up(Dq,h)],ct,rng,.92);
+  return {A,B:Bq,C,D:Dq,h};
+}
+function boxZ(g,cx,cy,w,d,z,h,cl,cr,ct,rng){
+  const A=V(cx,cy,-w/2,-d/2,z),Bq=V(cx,cy,w/2,-d/2,z),C=V(cx,cy,w/2,d/2,z),Dq=V(cx,cy,-w/2,d/2,z);
+  wash(g,[Dq,C,up(C,h),up(Dq,h)],cl,rng,.95);wash(g,[C,Bq,up(Bq,h),up(C,h)],cr,rng,.95);
+  if(ct)wash(g,[up(A,h),up(Bq,h),up(C,h),up(Dq,h)],ct,rng,.95);
+  return {A,B:Bq,C,D:Dq,h};
+}
+function gable(g,b,rh,roof,wall,rng){
+  const h=b.h,m1=up(lerp(b.A,b.D,.5),h+rh),m2=up(lerp(b.B,b.C,.5),h+rh);
+  wash(g,[up(b.A,h),up(b.B,h),m2,m1],shade(roof,-.18),rng,.95);
+  wash(g,[up(b.C,h),up(b.B,h),m2],wall,rng,.95);
+  wash(g,[up(b.D,h),up(b.C,h),m2,m1],roof,rng,.95);
+}
+function leftFace(g,b,s,w,z,hh,col,rng){const p=lerp(b.D,b.C,s),q=lerp(b.D,b.C,s+w);wash(g,[up(p,z),up(q,z),up(q,z+hh),up(p,z+hh)],col,rng,.9,false)}
+function rightFace(g,b,s,w,z,hh,col,rng){const p=lerp(b.C,b.B,s),q=lerp(b.C,b.B,s+w);wash(g,[up(p,z),up(q,z),up(q,z+hh),up(p,z+hh)],col,rng,.9,false)}
+function tree(g,x,y,s,col,rng){
+  g.strokeStyle='#6B4F3A';g.globalAlpha=.8;g.lineWidth=1.4*s;g.beginPath();g.moveTo(x,y);g.lineTo(x,y-5*s);g.stroke();g.globalAlpha=1;
+  blob(g,x,y-9*s,6*s,col,rng,.7);blob(g,x-3*s,y-7*s,4*s,shade(col,-.12),rng,.6);blob(g,x+2*s,y-12*s,4*s,shade(col,.15),rng,.55);
+}
+function palma(g,x,y,s,col,rng){
+  g.strokeStyle='#CFC6B0';g.lineWidth=1.3*s;g.globalAlpha=.95;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+1*s,y-12*s,x,y-24*s);g.stroke();
+  g.strokeStyle=col;g.lineWidth=1.4*s;for(let k=0;k<7;k++){const a=-Math.PI/2+(k-3)*.45;g.beginPath();g.moveTo(x,y-24*s);g.quadraticCurveTo(x+Math.cos(a)*6*s,y-24*s+Math.sin(a)*6*s-2*s,x+Math.cos(a)*9*s,y-24*s+Math.sin(a)*9*s+3*s);g.stroke()}g.globalAlpha=1}
+function guadua(g,x,y,s,col,rng){g.lineWidth=1.1*s;for(let k=0;k<7;k++){const dx=(k-3)*1.6*s,h=(16+rng()*8)*s,bend=(k-3)*2.2*s;g.strokeStyle=k%2?col:shade(col,.2);g.globalAlpha=.9;g.beginPath();g.moveTo(x+dx,y);g.quadraticCurveTo(x+dx,y-h*.6,x+dx+bend,y-h);g.stroke()}
+  g.globalAlpha=.7;for(let k=0;k<6;k++)blob(g,x+(rng()-.5)*14*s,y-(14+rng()*8)*s,2.2*s,col,rng,.6);g.globalAlpha=1}
+function platano(g,x,y,s,col,rng){g.strokeStyle='#8A9A5A';g.lineWidth=1.4*s;g.beginPath();g.moveTo(x,y);g.lineTo(x,y-10*s);g.stroke();g.fillStyle=col;g.globalAlpha=.85;
+  for(let k=0;k<5;k++){const a=-Math.PI/2+(k-2)*.7;g.save();g.translate(x,y-10*s);g.rotate(a+Math.PI/2);g.beginPath();g.ellipse(0,-5*s,2*s,6*s,0,0,7);g.fill();g.restore()}g.globalAlpha=1}
+function shadowQuad(g,cx,cy,w,d,h,ou,ov){ou=ou||0;ov=ov||0;const s=[h*.55,h*.2];
+  const P=[V(cx,cy,ou-w/2,ov-d/2),V(cx,cy,ou+w/2,ov-d/2),V(cx,cy,ou+w/2,ov+d/2),V(cx,cy,ou-w/2,ov+d/2)];
+  g.globalAlpha=.16;g.fillStyle='#2A2A1E';poly(g,[P[0],[P[0][0]+s[0],P[0][1]+s[1]],[P[1][0]+s[0],P[1][1]+s[1]],[P[2][0]+s[0],P[2][1]+s[1]],[P[3][0]+s[0],P[3][1]+s[1]],P[3]]);g.fill();g.globalAlpha=1}
+const SHADOW={molino:[.46,.44,20],puerto:[.5,.4,16],acueducto:[.9,.2,16],casa:[.56,.46,18],escuela:[.8,.52,24],hospital:[.72,.6,19],taller:[.62,.52,20],mercado:[.7,.6,10],agora:[.86,.86,30],banco:[.66,.58,22],universidad:[.86,.62,26]};
+function dryness(){return clamp((58-S.env)/48,0,1)}
+const PAL={llano:'#B7C98A',seco:'#CDB98C',rio:'#79AFCB',bosque:'#8DB072',hoja:'#4E7C45',hojaSeca:'#A08A4F',roca:'#A89F8E',tierra:'#B99A6A',
+  cal:'#F0E7D3',calS:'#D7C8AC',teja:'#B4553A',ladrillo:'#AD6A4E',ladrilloS:'#8B4F3A',piedra:'#DAD3C4',piedraS:'#BDB4A2',oro:'#D9A93E'};
+
+function drawTerrain(g,i,rng,dry){
+  const x=S.map[i],[cx,cy]=tileCenter(i),dm=diamond(cx,cy),h=tileH(i);
+  if(h>0){const dz=h*EL,Lv=[cx-TW/2,cy],Bv=[cx,cy+TH/2],Rv=[cx+TW/2,cy];
+    const top=x.t==='montana'?'#9C927F':mix('#8FAE6A',PAL.seco,dry);
+    wash(g,[Lv,Bv,[Bv[0],Bv[1]+dz],[Lv[0],Lv[1]+dz]],x.t==='montana'?'#958A77':'#A2825C',rng,.97,false);
+    wash(g,[Bv,Rv,[Rv[0],Rv[1]+dz],[Bv[0],Bv[1]+dz]],x.t==='montana'?'#7A7060':'#86694A',rng,.97,false);
+    g.globalAlpha=.8;g.fillStyle=top;poly(g,[Lv,Bv,Rv,[Rv[0],Rv[1]+2.5],[Bv[0],Bv[1]+2.5],[Lv[0],Lv[1]+2.5]]);g.fill();g.globalAlpha=1;
+    g.globalAlpha=.25;g.strokeStyle='#5E4A33';g.lineWidth=.6;for(let k=1;k<=h;k++){const y=k*EL-EL/2+2;g.beginPath();g.moveTo(Lv[0],Lv[1]+y);g.lineTo(Bv[0],Bv[1]+y);g.lineTo(Rv[0],Rv[1]+y);g.stroke()}g.globalAlpha=1}
+  if(x.t==='rio'){
+    wash(g,diamond(cx,cy,1.06),PAL.rio,rng,.9,false);
+    const r=Math.floor(i/N),c=i%N,T=[cx,cy-TH/2],Rv=[cx+TW/2,cy],Bv=[cx,cy+TH/2],Lv=[cx-TW/2,cy];
+    [[r,c+1,Rv,Bv],[r,c-1,Lv,T],[r+1,c,Bv,Lv],[r-1,c,T,Rv]].forEach(([rr,cc,p,q])=>{if(rr<0||cc<0||rr>=N||cc>=N)return;if(S.map[rr*N+cc].t==='rio')return;
+      g.strokeStyle='#D8C79B';g.globalAlpha=.85;g.lineWidth=2.6;g.beginPath();g.moveTo(...p);g.lineTo(...q);g.stroke();g.strokeStyle='#5D8FA8';g.globalAlpha=.35;g.lineWidth=1;const m=[(p[0]+q[0])/2-cx,(p[1]+q[1])/2-cy];g.beginPath();g.moveTo(p[0]-m[0]*.12,p[1]-m[1]*.12);g.lineTo(q[0]-m[0]*.12,q[1]-m[1]*.12);g.stroke();g.globalAlpha=1});
+    wash(g,diamond(cx,cy,.6),shade(PAL.rio,-.12),rng,.35,false);
+    g.globalAlpha=.35;g.fillStyle='#fff';g.beginPath();g.ellipse(cx-6,cy-3,7,1.2,-.4,0,7);g.fill();g.globalAlpha=1;return}
+  let base=x.t==='bosque'?mix(PAL.bosque,PAL.seco,dry*.7):x.t==='montana'?PAL.roca:mix(PAL.llano,PAL.seco,dry);
+  base=shade(base,(rng()-.5)*.05+h*.035);
+  {const r=Math.floor(i/N),c=i%N,far=1-(r+c)/(2*N-2);base=mix(base,'#DCE4E2',far*.18)}
+  wash(g,diamond(cx,cy,1.04),base,rng,.8,false);
+  if(x.t==='llano'&&!x.b){const fl=['#F3E6A0','#FFFFFF','#C9A3D6','#E8A2A2'];for(let k=0;k<5;k++){if(rng()<.5){g.globalAlpha=.8;g.fillStyle=fl[Math.floor(rng()*4)];g.beginPath();g.arc(cx+(rng()-.5)*34,cy+(rng()-.5)*14,.9,0,7);g.fill();g.globalAlpha=1}}
+    if(rng()<.18)blob(g,cx+(rng()-.5)*26,cy+(rng()-.5)*10,2,'#A69F92',rng,.8)}
+  if(x.t==='llano'&&!x.b){g.strokeStyle=shade(base,-.3);g.globalAlpha=.35;g.lineWidth=.7;for(let k=0;k<4;k++){const px=cx+(rng()-.5)*30,py=cy+(rng()-.5)*12;g.beginPath();g.moveTo(px,py);g.lineTo(px+1,py-3);g.stroke()}g.globalAlpha=1}
+}
+function drawObjects(g,i,rng,dry){
+  const x=S.map[i],[cx,cy]=tileCenter(i);
+  if(x.t==='bosque'&&!x.b){const hc=mix(PAL.hoja,PAL.hojaSeca,dry);
+    [[-10,-2],[8,-3],[-1,5],[12,6]].forEach(([dx,dy],k)=>{g.globalAlpha=.14;g.fillStyle='#22301E';g.beginPath();g.ellipse(cx+dx+4,cy+dy+3,6,2.4,0,0,7);g.fill();g.globalAlpha=1;
+      const r=rng();if(r<.2)palma(g,cx+dx,cy+dy+2,.9,mix('#5E8C4A',PAL.hojaSeca,dry),rng);else if(r<.35&&nearRiver(i))guadua(g,cx+dx,cy+dy+2,.8,mix('#7DA85A',PAL.hojaSeca,dry),rng);else tree(g,cx+dx,cy+dy+2,.9+rng()*.3,hc,rng)})}
+  if(x.t==='llano'&&!x.b&&nearRiver(i)&&rng()<.35)guadua(g,cx+(rng()-.5)*20,cy+4,.75,mix('#7DA85A',PAL.hojaSeca,dry),rng);
+  if(x.t==='montana'){
+    const L=[cx-TW/2,cy],R=[cx+TW/2,cy],F=[cx,cy+TH/2],hgt=38+rng()*22,P=[cx+(rng()-.5)*8,cy-hgt];
+    wash(g,[L,F,P],'#B3A995',rng,.9);wash(g,[F,R,P],'#8E8574',rng,.9);
+    if(!x.b){const s1=lerp(P,L,.3),s2=lerp(P,F,.33),s3=lerp(P,R,.3);wash(g,[P,s1,[s2[0]-2,s2[1]+2],s3],'#FBFBF7',rng,.9,false)}
+  }
+}
+function flag(g,x,y,h,col,rng,wave){g.strokeStyle='#5A4A3A';g.lineWidth=1;g.beginPath();g.moveTo(x,y);g.lineTo(x,y-h);g.stroke();const w=wave||0;
+  wash(g,[[x,y-h],[x+11,y-h+1+w],[x+11,y-h+7+w],[x,y-h+6]],col,rng,.95,false)}
+function roofCone(g,p,r,h,col,rng){wash(g,[[p[0]-r,p[1]],[p[0],p[1]-h],[p[0]+r,p[1]]],col,rng,.95);wash(g,[[p[0],p[1]-h],[p[0]+r,p[1]],[p[0],p[1]+r*.35]],shade(col,-.2),rng,.95)}
+const SEDE={
+  republica(g,cx,cy,rng){
+    const p=box(g,cx,cy,.84,.84,4,PAL.piedra,PAL.piedraS,'#E9E3D6',rng);
+    const col=(q,c)=>wash(g,[up(q,4),[q[0]+2.6,q[1]-4],[q[0]+2.6,q[1]-23],up(q,23)],c,rng,.95);
+    for(let k=0;k<4;k++){const q=V(cx,cy,-.34+k*.23,.3);col(q,'#F3EFE6')}
+    for(let k=0;k<3;k++){const q=V(cx,cy,.34,-.3+k*.23);col(q,'#DAD3C4')}
+    const t=boxZ(g,cx,cy,.84,.84,23,4,PAL.piedra,PAL.piedraS,'#EAE4D7',rng);
+    gable(g,t,9,'#D9D1BF','#C9C0AC',rng);
+  },
+  monarquia(g,cx,cy,rng){
+    const b=box(g,cx,cy,.7,.5,17,'#EDE4D0','#D2C4A6',null,rng,0,.05);gable(g,b,7,'#6A4A8A','#D2C4A6',rng);
+    for(let k=0;k<4;k++)leftFace(g,b,.08+k*.24,.1,6,7,'#6E93A8',rng);
+    [[-.38,-.3],[.38,-.3],[-.38,.36]].forEach(([u,v])=>{const t=box(g,cx,cy,.18,.18,30,'#E6DCC5','#C9BA9A',null,rng,u,v);roofCone(g,up(V(cx,cy,u,v),30),7,14,'#5B3A7A',rng)});
+    const t=box(g,cx,cy,.2,.2,30,'#E6DCC5','#C9BA9A',null,rng,.38,.36);roofCone(g,up(V(cx,cy,.38,.36),30),7,14,'#5B3A7A',rng);
+    const p=up(V(cx,cy,.38,.36),44);flag(g,p[0],p[1],12,'#D9A93E',rng);
+  },
+  aristocracia(g,cx,cy,rng){
+    const p=box(g,cx,cy,.9,.7,3,'#CFC8B6','#B3AB97','#DDD6C5',rng);
+    const hall=boxZ(g,cx,cy,.84,.6,3,16,'#E4DECF','#C4BCA8',null,rng);gable(g,hall,8,'#2F5B45','#C4BCA8',rng);
+    for(let k=0;k<6;k++){const q=V(cx,cy,-.38+k*.155,.3);wash(g,[up(q,3),[q[0]+2,q[1]-3],[q[0]+2,q[1]-17],up(q,17)],'#F4F0E6',rng,.95)}
+    const tp=up(V(cx,cy,0,0),27);blob(g,tp[0],tp[1],6,'#A07A3E',rng,.9);flag(g,tp[0],tp[1]-4,10,'#2F5B45',rng);
+  },
+  tirania(g,cx,cy,rng){
+    const b=box(g,cx,cy,.76,.62,22,'#A7A5A0','#85837E','#9A9893',rng);
+    for(let k=0;k<5;k++)leftFace(g,b,.06+k*.19,.08,10,4,'#3E3E42',rng);
+    leftFace(g,b,.4,.2,4,16,'#9E2B25',rng);rightFace(g,b,.35,.3,6,12,'#9E2B25',rng);
+    const tp=up(V(cx,cy,.25,-.2),22);flag(g,tp[0],tp[1],16,'#9E2B25',rng);
+    const st=V(cx,cy,-.1,.62);box(g,st[0],st[1],.12,.12,6,'#8E8C88','#6F6D69','#A09E99',rng);blob(g,st[0],st[1]-12,2.4,'#5A5854',rng,.95);g.fillStyle='#5A5854';g.fillRect(st[0]-1.5,st[1]-10.5,3,5);
+  },
+  oligarquia(g,cx,cy,rng){
+    const b=box(g,cx,cy,.72,.62,18,'#E6DFCF','#C9BFA9','#DAD2BF',rng);
+    for(let k=0;k<5;k++)leftFace(g,b,.06+k*.2,.08,0,18,'#F6F2E8',rng);
+    leftFace(g,b,0,1,16,2,'#C9962E',rng);rightFace(g,b,0,1,16,2,'#A87A20',rng);
+    const tp=up(V(cx,cy,0,0),18);blob(g,tp[0],tp[1]-5,10,'#D9A93E',rng,.95);blob(g,tp[0]-3,tp[1]-8,3,'#F4D67A',rng,.8);blob(g,tp[0],tp[1]-15,1.8,'#8C6A1E',rng,.95);
+    coins(g,...V(cx,cy,.3,.55),rng);
+  },
+  demagogia(g,cx,cy,rng){
+    const b=box(g,cx,cy,.66,.52,20,'#EFB98A','#D69A68',null,rng);gable(g,b,8,'#B4553A','#D69A68',rng);
+    leftFace(g,b,.25,.5,9,2.2,'#6B4F3A',rng);leftFace(g,b,.3,.12,11,7,'#3E2E25',rng);leftFace(g,b,.58,.12,11,7,'#3E2E25',rng);
+    for(let k=0;k<4;k++)leftFace(g,b,.1+k*.22,.14,0,9,k%2?'#E7C76B':'#C0602A',rng);
+    flags(g,up(V(cx,cy,-.5,.4),16),up(V(cx,cy,.4,.5),6),rng);
+  }
+};
+const DRAW={
+  casa(g,cx,cy,rng){
+    if(S.stage>=2){const b=box(g,cx,cy,.56,.46,23,PAL.cal,PAL.calS,null,rng,-.05,.05);gable(g,b,10,PAL.teja,PAL.calS,rng);leftFace(g,b,.42,.16,0,8,'#6B4A33',rng);leftFace(g,b,.1,.2,13,6,'#6E93A8',rng);leftFace(g,b,.62,.2,13,6,'#6E93A8',rng);leftFace(g,b,0,1,11.5,1.4,'#7A5536',rng);rightFace(g,b,.35,.25,14,5,'#6E93A8',rng);blob(g,cx+17,cy+4,3.5,'#5F8F4E',rng,.7);blob(g,cx-4,cy-10,2,'#C4513B',rng,.8);return}
+    const b=box(g,cx,cy,.52,.42,13,PAL.cal,PAL.calS,null,rng,-.05,.05);gable(g,b,10,PAL.teja,PAL.calS,rng);leftFace(g,b,.42,.16,0,8,'#6B4A33',rng);rightFace(g,b,.35,.25,6,4,'#6E93A8',rng);blob(g,cx+16,cy+4,3.5,'#5F8F4E',rng,.7)},
+  cultivo(g,cx,cy,rng){
+    wash(g,diamond(cx,cy,.9),PAL.tierra,rng,.7);
+    const col=mix('#4F8A43','#C9A94A',dryness()*.8);
+    for(let k=0;k<5;k++){const u=-.38+k*.19;for(let m=0;m<5;m++){const v=-.38+m*.19;const p=V(cx,cy,u,v);g.globalAlpha=.15;g.fillStyle='#22301E';g.beginPath();g.ellipse(p[0]+2,p[1]+.5,2.6,1,0,0,7);g.fill();g.globalAlpha=1;blob(g,p[0],p[1]-2,2.6,col,rng,.85);if(rng()<.25){g.fillStyle='#B0302A';g.beginPath();g.arc(p[0]+1,p[1]-2,.6,0,7);g.fill()}}}
+    platano(g,...V(cx,cy,.3,-.3),.9,mix('#6FA04A',PAL.hojaSeca,dryness()),rng);
+  },
+  mercado(g,cx,cy,rng){if(S.stage>=2){const b=box(g,cx,cy,.8,.7,14,'#E9DBBB','#CDBB96',null,rng);gable(g,b,8,'#B4553A','#CDBB96',rng);for(let k=0;k<6;k++)leftFace(g,b,k/6,1/6,0,6,k%2?'#F4ECDB':'#2D6E5E',rng);box(g,cx,cy,.14,.14,5,'#9C7447','#7E5C37','#B58B58',rng,.48,.3);box(g,cx,cy,.14,.14,5,'#C4513B','#9E3F2E','#D06A52',rng,.48,.05);return}const b=box(g,cx,cy,.66,.56,10,'#E9DBBB','#CDBB96','#DCCAA4',rng);for(let k=0;k<5;k++)leftFace(g,b,k*.2,.2,8,5,k%2?'#F4ECDB':'#C4513B',rng);for(let k=0;k<4;k++)rightFace(g,b,k*.25,.25,8,5,k%2?'#F4ECDB':'#C4513B',rng);box(g,cx,cy,.12,.12,5,'#9C7447','#7E5C37','#B58B58',rng,.42,.2);box(g,cx,cy,.12,.12,4,'#9C7447','#7E5C37','#B58B58',rng,.42,.4)},
+  parque(g,cx,cy,rng){wash(g,diamond(cx,cy,.9),'#9CC57D',rng,.8);g.globalAlpha=.6;g.fillStyle='#E7DDC4';g.beginPath();g.ellipse(cx,cy,12,5,0,0,7);g.fill();g.globalAlpha=1;const hc=mix(PAL.hoja,PAL.hojaSeca,dryness());tree(g,cx-12,cy-1,1,hc,rng);tree(g,cx+13,cy+1,.9,hc,rng);tree(g,cx+1,cy+8,.8,hc,rng);blob(g,cx,cy-1,2.5,'#7FB3CF',rng,.8)},
+  escuela(g,cx,cy,rng){const b=box(g,cx,cy,.78,.5,15,'#E7C76B','#CBAA50',null,rng);gable(g,b,9,'#A94B32','#CBAA50',rng);for(let k=0;k<3;k++)leftFace(g,b,.12+k*.3,.12,5,6,'#6E93A8',rng);const t=box(g,cx,cy,.16,.16,30,'#F0E7D3','#D7C8AC',null,rng,.0,-.05);gable(g,t,6,'#A94B32','#D7C8AC',rng);blob(g,...up(V(cx,cy,0,-.05),27),1.5,'#C9A13E',rng,.9)},
+  hospital(g,cx,cy,rng){const b=box(g,cx,cy,.72,.6,19,'#F4F3EE','#D9D8D0','#E6E5DD',rng);for(let k=0;k<3;k++)leftFace(g,b,.1+k*.3,.14,6,6,'#8FB3C4',rng);const [px,py]=up(lerp(b.C,b.B,.5),11);g.fillStyle='#C0392B';g.globalAlpha=.9;g.fillRect(px-1.5,py-5,3,10);g.beginPath();g.moveTo(px-5,py-1.2);g.lineTo(px+5,py+1.2);g.lineTo(px+5,py+4.2);g.lineTo(px-5,py+1.8);g.fill();g.globalAlpha=1},
+  taller(g,cx,cy,rng){const ch=box(g,cx,cy,.12,.12,32,PAL.ladrillo,PAL.ladrilloS,'#5A3A2C',rng,.22,-.22);const b=box(g,cx,cy,.62,.52,13,PAL.ladrillo,PAL.ladrilloS,null,rng,-.05,.08);gable(g,b,7,'#5E4A40',PAL.ladrilloS,rng);leftFace(g,b,.2,.25,0,9,'#3E2E25',rng);return up(V(cx,cy,.22,-.22),34)},
+  agora(g,cx,cy,rng){return (SEDE[S.reg]||SEDE.republica)(g,cx,cy,rng)},
+  mina(g,cx,cy,rng){g.fillStyle='#2E2620';g.globalAlpha=.85;g.beginPath();g.ellipse(cx-2,cy+2,7,6,0,Math.PI,0);g.lineTo(cx+5,cy+6);g.lineTo(cx-9,cy+6);g.fill();g.globalAlpha=1;g.strokeStyle='#7A5A3A';g.lineWidth=2;g.beginPath();g.moveTo(cx-10,cy+7);g.lineTo(cx-10,cy-6);g.lineTo(cx+6,cy-6);g.lineTo(cx+6,cy+7);g.stroke();box(g,cx,cy,.18,.12,5,'#6B6B6B','#555','#7A7A7A',rng,.35,.35);return [cx,cy-4]},
+  banco(g,cx,cy,rng){const b=box(g,cx,cy,.66,.58,18,PAL.piedra,PAL.piedraS,'#E6E0D2',rng);for(let k=0;k<4;k++)leftFace(g,b,.08+k*.25,.07,0,18,'#F4F1E9',rng);const tp=up(V(cx,cy,0,0),18);blob(g,tp[0],tp[1]-3,8,PAL.oro,rng,.85);blob(g,tp[0],tp[1]-9,1.5,'#8C6A1E',rng,.9)},
+  cafetal(g,cx,cy,rng){
+    wash(g,diamond(cx,cy,.92),'#9A7B52',rng,.6,false);
+    for(let k=0;k<4;k++){const v=-.33+k*.22;for(let m=0;m<6;m++){const u=-.4+m*.16;const p=V(cx,cy,u,v+Math.sin(m*.9)*.04);g.globalAlpha=.16;g.fillStyle='#22301E';g.beginPath();g.ellipse(p[0]+2,p[1]+.6,3,1.1,0,0,7);g.fill();g.globalAlpha=1;blob(g,p[0],p[1]-2.5,3,'#2F5E36',rng,.9);if(rng()<.45){g.fillStyle='#B8322A';g.beginPath();g.arc(p[0]+(rng()-.5)*3,p[1]-2.5,.8,0,7);g.fill()}}}
+    platano(g,...V(cx,cy,-.32,-.32),.95,'#6FA04A',rng);platano(g,...V(cx,cy,.34,.1),.85,'#6FA04A',rng);
+  },
+  acueducto(g,cx,cy,rng){
+    const A=V(cx,cy,-.46,-.05),Bq=V(cx,cy,.46,-.05),h=14;
+    wash(g,[up(A,h),up(Bq,h),up(Bq,h+4),up(A,h+4)],'#D8CDB6',rng,.97);
+    wash(g,[up(A,h+4),up(Bq,h+4),[Bq[0],Bq[1]-h-5.5],[A[0],A[1]-h-5.5]],'#7FB3CF',rng,.95,false);
+    for(let k=0;k<4;k++){const p=lerp(A,Bq,k/3);wash(g,[[p[0]-2.4,p[1]],[p[0]+2.4,p[1]],[p[0]+2.4,p[1]-h],[p[0]-2.4,p[1]-h]],'#CFC3AA',rng,.97)}
+    g.strokeStyle='#A89B80';g.globalAlpha=.8;g.lineWidth=1;for(let k=0;k<3;k++){const p=lerp(A,Bq,k/3+1/6);g.beginPath();g.arc(p[0],p[1]-h+6+(k*0),7,Math.PI*1.05,Math.PI*1.95);g.stroke()}g.globalAlpha=1;
+    const t=box(g,cx,cy,.22,.22,9,'#D8CDB6','#BDB09A','#7FB3CF',rng,.3,.3);
+  },
+  molino(g,cx,cy,rng){
+    const b=box(g,cx,cy,.46,.44,15,'#A9825A','#8B6844',null,rng,.1,-.05);gable(g,b,8,'#6B4A35','#8B6844',rng);
+    leftFace(g,b,.55,.2,0,8,'#3E2E25',rng);
+    const w=V(cx,cy,-.26,.2),r=10;g.strokeStyle='#5E4330';g.lineWidth=1.6;g.globalAlpha=.95;g.beginPath();g.ellipse(w[0],w[1]-8,r*.55,r,0,0,7);g.stroke();
+    g.lineWidth=1;for(let k=0;k<8;k++){const a=k/8*Math.PI*2;g.beginPath();g.moveTo(w[0],w[1]-8);g.lineTo(w[0]+Math.cos(a)*r*.55,w[1]-8+Math.sin(a)*r);g.stroke()}
+    g.globalAlpha=1;blob(g,w[0],w[1]+2,3,'#CFE5F0',rng,.6);
+  },
+  puerto(g,cx,cy,rng){
+    const b=box(g,cx,cy,.5,.4,13,'#C9A874','#A8864F',null,rng,.15,-.15);gable(g,b,7,'#7A5536','#A8864F',rng);
+    const d1=V(cx,cy,-.55,.05),d2=V(cx,cy,-.05,.05),d3=V(cx,cy,-.05,.35),d4=V(cx,cy,-.55,.35);
+    wash(g,[up(d1,2),up(d2,2),up(d3,2),up(d4,2)],'#9B7650',rng,.95);
+    box(g,cx,cy,.1,.1,4,'#8C6A1E','#6E5217','#A87F2A',rng,-.2,.2);
+    const bt=V(cx,cy,-.62,.5);wash(g,[[bt[0]-10,bt[1]-2],[bt[0]+8,bt[1]-4],[bt[0]+5,bt[1]+1],[bt[0]-7,bt[1]+3]],'#6B4A35',rng,.95);
+    g.strokeStyle='#4A3A2C';g.lineWidth=1;g.beginPath();g.moveTo(bt[0]-1,bt[1]-2);g.lineTo(bt[0]-1,bt[1]-18);g.stroke();
+    wash(g,[[bt[0]-1,bt[1]-18],[bt[0]+8,bt[1]-6],[bt[0]-1,bt[1]-5]],'#F2ECDD',rng,.95);
+    coins(g,...V(cx,cy,.4,.4),rng);
+  },
+  universidad(g,cx,cy,rng){const b=box(g,cx,cy,.86,.62,17,'#C98160','#A8623F',null,rng);gable(g,b,8,'#6D4A39','#A8623F',rng);for(let k=0;k<4;k++)leftFace(g,b,.07+k*.24,.1,5,7,'#F0E7D3',rng);const t=box(g,cx,cy,.24,.24,30,'#F0E7D3','#D7C8AC','#E4D8C0',rng,0,0);const tp=up(V(cx,cy,0,0),30);blob(g,tp[0],tp[1]-4,6,'#5F8C8A',rng,.9)}
+};
+function drawBackdrop(g,rng){
+  const gr=g.createLinearGradient(0,0,0,OY+30);gr.addColorStop(0,'rgba(120,170,200,.38)');gr.addColorStop(1,'rgba(120,170,200,0)');g.fillStyle=gr;g.fillRect(0,0,WW,OY+40);
+  // cordillera lejana y nevado
+  const base=OY+18;
+  const fade=(top,col,al)=>{const q=g.createLinearGradient(0,top,0,base+40);q.addColorStop(0,col);q.addColorStop(1,'rgba(241,236,224,0)');return q};
+  const ridge=(pts,col)=>{g.globalAlpha=.9;g.fillStyle=fade(base-100,col);poly(g,pts);g.fill();g.globalAlpha=1};
+  const nx=WW*.64,nt=base-98;
+  ridge([[nx-170,base+40],[nx-40,nt+18],[nx,nt],[nx+46,nt+14],[nx+180,base+40]],'rgba(150,172,184,.75)');
+  ridge([[0,base+40],[0,base-30],[WW*.12,base-42],[WW*.28,base-24],[WW*.42,base-58],[WW*.55,base-30],[WW*.8,base-26],[WW,base-50],[WW,base+40]],'rgba(150,178,170,.55)');
+  wash(g,[[nx-52,nt+26],[nx-40,nt+18],[nx,nt],[nx+46,nt+14],[nx+60,nt+28],[nx+30,nt+22],[nx+8,nt+34],[nx-18,nt+24]],'#FDFDFB',rng,.95,false);
+}
+let GRAIN=null;
+function makeGrain(mk){const c=mk(160,160),x=c.getContext('2d'),im=x.createImageData(160,160),r=mulberry(42);for(let k=0;k<im.data.length;k+=4){const v=205+r()*50;im.data[k]=v;im.data[k+1]=v*.98;im.data[k+2]=v*.93;im.data[k+3]=255}x.putImageData(im,0,0);return c}
+function drawSides(g,rng){
+  const L=[tileGround((N-1)*N)[0]-TW/2,tileGround((N-1)*N)[1]],Bt=[tileGround(N*N-1)[0],tileGround(N*N-1)[1]+TH/2],R=[tileGround(N-1)[0]+TW/2,tileGround(N-1)[1]],dz=30;
+  g.globalAlpha=.1;g.fillStyle='#3A3020';g.beginPath();g.ellipse(Bt[0],Bt[1]+dz+4,WW*.46,20,0,0,7);g.fill();g.globalAlpha=1;
+  wash(g,[L,Bt,[Bt[0],Bt[1]+dz],[L[0],L[1]+dz]],'#9C7C57',rng,.95,false);
+  wash(g,[Bt,R,[R[0],R[1]+dz],[Bt[0],Bt[1]+dz]],'#7E6245',rng,.95,false);
+  // estratos
+  [[.3,'#B89A6E'],[.62,'#6F563D']].forEach(([f,c])=>{g.strokeStyle=c;g.globalAlpha=.5;g.lineWidth=1.2;g.beginPath();g.moveTo(L[0],L[1]+dz*f);g.lineTo(Bt[0],Bt[1]+dz*f);g.lineTo(R[0],R[1]+dz*f);g.stroke()});
+  for(let k=0;k<40;k++){const t=rng(),left=rng()<.5,p=left?lerp(L,Bt,t):lerp(Bt,R,t);blob(g,p[0],p[1]+6+rng()*(dz-10),1.2+rng(),left?'#8A6B48':'#6A523A',rng,.7)}
+  g.globalAlpha=.45;g.fillStyle='#4E8A3E';g.beginPath();g.moveTo(L[0],L[1]);g.lineTo(Bt[0],Bt[1]);g.lineTo(R[0],R[1]);g.lineTo(R[0],R[1]+3);g.lineTo(Bt[0],Bt[1]+3);g.lineTo(L[0],L[1]+3);g.fill();g.globalAlpha=1;
+  // río que cae por el borde
+  for(let i=0;i<N*N;i++){if(S.map[i].t!=='rio')continue;const r=Math.floor(i/N),c=i%N;
+    if(r===N-1){const [cx,cy]=tileGround(i);const a=[cx-TW/2,cy],b=[cx,cy+TH/2];wash(g,[a,b,[b[0],b[1]+dz],[a[0],a[1]+dz]],'#8FC0D8',rng,.9,false)}
+    if(c===N-1){const [cx,cy]=tileGround(i);const a=[cx,cy+TH/2],b=[cx+TW/2,cy];wash(g,[a,b,[b[0],b[1]+dz],[a[0],a[1]+dz]],'#7FB0C8',rng,.9,false)}}
+}
+function isBuilt(i){const x=S.map[i];return !!x.b&&x.b!=='mina'}
+function drawPaths(g,rng){
+  const segs=[],bridges=[];
+  for(let i=0;i<N*N;i++){
+    if(!isBuilt(i))continue;const r=Math.floor(i/N),c=i%N;
+    [[0,1],[1,0]].forEach(([dr,dc])=>{
+      const r1=r+dr,c1=c+dc;if(r1>=N||c1>=N)return;const j=r1*N+c1;
+      if(isBuilt(j))segs.push([i,j]);
+      else if(S.map[j].t==='rio'){const r2=r1+dr,c2=c1+dc;if(r2<N&&c2<N){const k=r2*N+c2;if(isBuilt(k)){segs.push([i,k]);bridges.push([j,dr])}}}
+    });
+  }
+  const col='#C9A874';
+  segs.forEach(([i,j])=>{const a=tileCenter(i),b=tileCenter(j);
+    for(let k=0;k<2;k++){g.globalAlpha=k?.45:.8;g.strokeStyle=k?shade(col,-.2):col;g.lineWidth=k?2.2:7;g.lineCap='round';g.beginPath();g.moveTo(a[0]+(rng()-.5)*1.5,a[1]+(rng()-.5));g.lineTo(b[0]+(rng()-.5)*1.5,b[1]+(rng()-.5));g.stroke()}});
+  g.globalAlpha=1;
+  return bridges;
+}
+function drawBridge(g,j,dr,rng){
+  const [cx,cy]=tileCenter(j);
+  const L=dr?[V(cx,cy,-.13,-.55),V(cx,cy,.13,-.55),V(cx,cy,.13,.55),V(cx,cy,-.13,.55)]:[V(cx,cy,-.55,-.13),V(cx,cy,.55,-.13),V(cx,cy,.55,.13),V(cx,cy,-.55,.13)];
+  const lift=p=>[p[0],p[1]-3];
+  wash(g,L.map(lift),'#9B7650',rng,.95);
+  g.strokeStyle='#5E4330';g.lineWidth=.8;g.globalAlpha=.7;
+  for(let k=1;k<7;k++){const t=k/7;const p=dr?lerp(lift(L[0]),lift(L[3]),t):lerp(lift(L[0]),lift(L[1]),t),q=dr?lerp(lift(L[1]),lift(L[2]),t):lerp(lift(L[3]),lift(L[2]),t);g.beginPath();g.moveTo(...p);g.lineTo(...q);g.stroke()}
+  const e1=dr?[lift(L[0]),lift(L[3])]:[lift(L[0]),lift(L[1])],e2=dr?[lift(L[1]),lift(L[2])]:[lift(L[3]),lift(L[2])];
+  g.lineWidth=1.1;[e1,e2].forEach(([p,q])=>{g.beginPath();g.moveTo(p[0],p[1]-4);g.lineTo(q[0],q[1]-4);g.stroke()});
+  g.globalAlpha=1;
+}
+const LIGHT_H={molino:6,puerto:6,casa:7,escuela:9,hospital:12,taller:6,mercado:6,banco:9,universidad:10,agora:12};
+function paintStatic(g,mk,paper,skip){
+  const em=[],riv=[],lights=[],blds=[];
+  g.setTransform(2,0,0,2,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';
+  g.fillStyle=paper;g.fillRect(0,0,WW,WH);
+  drawBackdrop(g,mulberry(7));
+  const dry=dryness();
+  const order=[...Array(N*N).keys()].sort((a,b)=>(Math.floor(a/N)+a%N)-(Math.floor(b/N)+b%N)||(a%N)-(b%N));
+  drawSides(g,mulberry(12));
+  for(const i of order){drawTerrain(g,i,mulberry(i*9973+11),dry);if(S.map[i].t==='rio')riv.push(tileCenter(i))}
+  const bridges=drawPaths(g,mulberry(3));
+  const bset=new Map(bridges.map(([j,dr])=>[j,dr]));
+  for(const i of order){
+    const rng=mulberry(i*7919+5),x=S.map[i];
+    if(bset.has(i))drawBridge(g,i,bset.get(i),rng);
+    drawObjects(g,i,rng,dry);
+    if(x.b&&DRAW[x.b]&&!(skip&&skip.has(i))){const [cx,cy]=tileCenter(i);const sh=SHADOW[x.b];if(sh)shadowQuad(g,cx,cy,sh[0],sh[1],x.b==='casa'&&S.stage>=2?26:sh[2]);const e=DRAW[x.b](g,cx,cy,rng);if(e)em.push({x:e[0],y:e[1],k:x.b});
+      if(x.b==='casa'&&(i*7)%5===0){const reg=S.reg||'republica';const colr=(REG[reg]||REG.republica).col;const tp=up(V(cx,cy,.18,-.12),S.stage>=2?30:22);
+        if(reg==='tirania'){g.fillStyle='#9E2B25';g.globalAlpha=.9;const p=V(cx,cy,-.2,.28);g.fillRect(p[0]-3,p[1]-11,6,7);g.fillStyle='#EFE3C2';g.fillRect(p[0]-1.5,p[1]-10,3,2);g.globalAlpha=1}
+        else if(reg==='demagogia'){flags(g,up(V(cx,cy,-.3,.2),12),up(V(cx,cy,.3,.25),12),rng)}
+        else flag(g,tp[0],tp[1],9,colr,rng)}
+      blds.push({i,k:x.b,x:cx,y:cy});if(LIGHT_H[x.b]){const h=S.stage>=2&&x.b==='casa'?16:LIGHT_H[x.b];lights.push([cx-8,cy-h],[cx+9,cy-h+1])}}
+  }
+  if(!GRAIN)GRAIN=makeGrain(mk);
+  g.globalCompositeOperation='multiply';g.globalAlpha=.22;g.fillStyle=g.createPattern(GRAIN,'repeat');g.fillRect(0,0,WW,WH);
+  g.globalCompositeOperation='source-over';g.globalAlpha=1;
+  return {em,riv,lights,blds};
+}
+function iconCanvas(k,mk){
+  const c=mk(144,120),g=c.getContext('2d');g.scale(2,2);
+  const cx=36,cy=40,rng=mulberry(k.length*131);
+  const t=B[k].ok[0]==='montana'?'montana':'llano';
+  wash(g,diamond(cx,cy),t==='montana'?PAL.roca:PAL.llano,rng,.8);
+  if(t==='montana'){const L=[cx-TW/2,cy],R=[cx+TW/2,cy],F=[cx,cy+TH/2],P=[cx,cy-34];wash(g,[L,F,P],'#B3A995',rng,.9);wash(g,[F,R,P],'#8E8574',rng,.9)}
+  const sx=S;DRAW[k](g,cx,cy,rng);
+  return c;
+}
+
+// ---------- Efectos y viñetas ----------
+function person(g,x,y,col,rng,s){s=s||1;g.globalAlpha=.25;g.fillStyle='#000';g.beginPath();g.ellipse(x,y,2*s,.8*s,0,0,7);g.fill();g.globalAlpha=.92;g.fillStyle=col;g.fillRect(x-1*s,y-5*s,2*s,4.2*s);g.fillStyle='#E2B894';g.beginPath();g.arc(x,y-6.3*s,1.3*s,0,7);g.fill();g.globalAlpha=1}
+const PPL=['#B4553A','#2D5D72','#C9A13E','#5E8A4D','#7B4F8A','#3E3A34','#D07A3A'];
+function crowd(g,x,y,n,rng,s){for(let k=0;k<n;k++)person(g,x+(rng()-.5)*34*(s||1),y+(rng()-.5)*12*(s||1),PPL[Math.floor(rng()*PPL.length)],rng,s)}
+function flags(g,a,b,rng){g.strokeStyle='#6B4F3A';g.lineWidth=.6;g.beginPath();g.moveTo(...a);g.quadraticCurveTo((a[0]+b[0])/2,(a[1]+b[1])/2+6,...b);g.stroke();
+  for(let k=1;k<10;k++){const t=k/10,x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t+Math.sin(Math.PI*t)*5;g.fillStyle=['#C4513B','#E7C76B','#2D6E5E','#2D5D72'][k%4];g.beginPath();g.moveTo(x-2,y);g.lineTo(x+2,y);g.lineTo(x,y+4);g.fill()}}
+function coins(g,x,y,rng){for(let k=0;k<4;k++){g.fillStyle=k%2?'#E2B24F':'#C9962E';g.beginPath();g.ellipse(x,y-k*2.2,5,2,0,0,7);g.fill()}g.fillStyle='#E2B24F';g.beginPath();g.ellipse(x+9,y+1,5,2,0,0,7);g.fill()}
+function sun(g,x,y,rng){blob(g,x,y,9,'#F0C24A',rng,.8);g.strokeStyle='#E8A93A';g.globalAlpha=.6;g.lineWidth=1.2;for(let k=0;k<10;k++){const a=k/10*Math.PI*2;g.beginPath();g.moveTo(x+Math.cos(a)*12,y+Math.sin(a)*12);g.lineTo(x+Math.cos(a)*17,y+Math.sin(a)*17);g.stroke()}g.globalAlpha=1}
+function rain(g,w,h,rng,off){g.strokeStyle='rgba(70,110,140,.45)';g.lineWidth=.7;for(let k=0;k<70;k++){const x=(rng()*w+(off||0)*40)%w,y=(rng()*h+(off||0)*120)%h;g.beginPath();g.moveTo(x,y);g.lineTo(x-2,y+6);g.stroke()}}
+function smokeBlobs(g,x,y,rng,n){for(let k=0;k<(n||5);k++)blob(g,x+k*3+(rng()-.5)*4,y-k*7,4+k*1.6,'#8E8A86',rng,.35)}
+function bugs(g,x,y,rng){g.fillStyle='#3A2A1A';for(let k=0;k<14;k++){g.beginPath();g.ellipse(x+(rng()-.5)*40,y+(rng()-.5)*16,1.3,.9,0,0,7);g.fill()}}
+function arrowUp(g,x,y){g.strokeStyle='#B0402C';g.fillStyle='#B0402C';g.lineWidth=3;g.globalAlpha=.85;g.beginPath();g.moveTo(x-18,y+14);g.lineTo(x-6,y+2);g.lineTo(x+2,y+8);g.lineTo(x+16,y-8);g.stroke();g.beginPath();g.moveTo(x+20,y-12);g.lineTo(x+10,y-9);g.lineTo(x+17,y-2);g.fill();g.globalAlpha=1}
+function scroll(g,x,y,rng){wash(g,[[x-9,y-7],[x+9,y-7],[x+9,y+7],[x-9,y+7]],'#EFE3C2',rng,.95);g.strokeStyle='#8B6F4A';g.globalAlpha=.6;g.lineWidth=.6;for(let k=0;k<4;k++){g.beginPath();g.moveTo(x-6,y-4+k*2.6);g.lineTo(x+6,y-4+k*2.6);g.stroke()}g.globalAlpha=1}
+const SCENES={
+  crecida:{g:'LRLLRL',b:{0:'casa',3:'casa'},fx:['flood','rain']},festival:{b:{1:'mercado',5:'casa'},fx:['flags','crowd']},
+  sal:{b:{1:'mercado'},fx:['coins']},sequia:{b:{0:'cultivo',1:'cultivo',4:'cultivo'},fx:['dry','sun']},
+  migra:{b:{2:'casa'},fx:['walk']},donante:{b:{1:'banco'},fx:['coins']},plaga:{b:{0:'cultivo',1:'cultivo',4:'cultivo'},fx:['bugs']},
+  evasion:{b:{1:'casa',2:'cultivo'},fx:['scroll']},tierras:{b:{0:'cultivo',1:'cultivo',5:'casa'},fx:['crowd']},
+  maestros:{b:{1:'escuela'},fx:['crowd']},huelga:{b:{1:'taller'},fx:['crowd','smoke']},humo:{g:'LLLRRR',b:{1:'taller'},fx:['smoke','poison']},
+  corrup:{b:{1:'banco'},fx:['shadow']},epidemia:{b:{1:'hospital',3:'casa'},fx:['crowd']},elite:{b:{1:'banco'},fx:['walk','coins']},
+  precios:{b:{1:'mercado'},fx:['arrow']},oro:{g:'MMLLLL',b:{1:'mina'},fx:['coins']},protesta:{b:{1:'agora'},fx:['crowd']},
+  prestamo:{b:{1:'banco'},fx:['scroll','coins']},alianza:{g:'LRLLRL',b:{0:'mercado',2:'mercado'},fx:['bridge']},
+  progresivo:{b:{1:'agora'},fx:['scroll','coins']},pet:{b:{1:'agora'},fx:['crowd','scroll']},
+  default:{b:{1:'casa'},fx:[]}
+};
+const SCENE_ALIAS={crecida_mal:'crecida',diques:'alianza',evasion2:'evasion',evasion_venganza:'evasion',migra_bien:'migra',migra_mal:'migra',oro_mal:'humo',
+  corrup_mal:'corrup',corrup_bien:'corrup',corrup_filtra:'corrup',maestros_bien:'maestros',humo_mal:'humo',sal_mal:'precios',protesta_mal:'protesta',
+  epidemia_mal:'epidemia',donante_mal:'donante',tierras_mal:'tierras',huelga_mal:'huelga',reforma_fuga:'elite',alianza_rota:'alianza'};
+function vignette(id,mk){
+  const sc=SCENES[id]||SCENES[SCENE_ALIAS[id]]||SCENES.default,Wv=320,Hv=136;
+  const c=mk(Wv*2,Hv*2),g=c.getContext('2d');g.scale(2,2);const rng=mulberry(id.length*977+id.charCodeAt(0));
+  g.fillStyle='#F1ECE0';g.fillRect(0,0,Wv,Hv);
+  const q=g.createLinearGradient(0,0,0,70);q.addColorStop(0,'rgba(120,170,200,.4)');q.addColorStop(1,'rgba(120,170,200,0)');g.fillStyle=q;g.fillRect(0,0,Wv,70);
+  wash(g,[[0,62],[50,38],[110,52],[170,30],[230,50],[280,36],[320,48],[320,80],[0,80]],'#AFC2BE',rng,.35,false);
+  const types=(sc.g||'LLLLLL').split('').map(ch=>({L:'llano',R:'rio',M:'montana'}[ch]));
+  const pos=[];for(let r=0;r<2;r++)for(let k=0;k<3;k++){pos.push([Wv/2+((k-1)-(r-.5))*TW/2*1.15,84+((k-1)+(r-.5))*TH/2*1.15])}
+  const dry=(sc.fx||[]).includes('dry');
+  const bridgeOn=(sc.fx||[]).includes('bridge');
+  pos.forEach(([x,y],n)=>{const t=types[n];let col=t==='rio'?PAL.rio:t==='montana'?PAL.roca:mix(PAL.llano,PAL.seco,dry?.9:0);
+    if(t==='rio'&&(sc.fx||[]).includes('poison'))col='#7C8A5A';
+    wash(g,diamond(x,y,1.15),col,rng,.8)});
+  if((sc.fx||[]).includes('flood'))pos.forEach(([x,y],n)=>{if(types[n]!=='rio')wash(g,diamond(x,y,.95),PAL.rio,rng,.35,false)});
+  if(bridgeOn){[1,4].forEach(n=>{const [x,y]=pos[n];wash(g,[[x-16,y-2],[x+16,y+6],[x+12,y+9],[x-20,y+1]],'#9B7650',rng,.95)})}
+  pos.forEach(([x,y],n)=>{const t=types[n];if(t==='montana'){const L=[x-TW*.575,y],R=[x+TW*.575,y],F=[x,y+TH*.575],P=[x,y-42];wash(g,[L,F,P],'#B3A995',rng,.9);wash(g,[F,R,P],'#8E8574',rng,.9);wash(g,[P,lerp(P,L,.3),lerp(P,F,.3),lerp(P,R,.3)],'#FBFBF7',rng,.9,false)}
+    const k=sc.b[n];if(k&&DRAW[k]){g.save();g.translate(x,y);g.scale(1.15,1.15);g.translate(-x,-y);DRAW[k](g,x,y,rng);g.restore()}});
+  const main=pos[1];
+  (sc.fx||[]).forEach(f=>{
+    if(f==='crowd')crowd(g,main[0]+30,main[1]+18,12,rng,1.2);
+    if(f==='walk')for(let k=0;k<6;k++)person(g,40+k*16,100-k*3,PPL[k%PPL.length],rng,1.3);
+    if(f==='flags')flags(g,[main[0]-50,main[1]-20],[main[0]+60,main[1]-12],rng);
+    if(f==='coins')coins(g,main[0]+44,main[1]+12,rng);
+    if(f==='sun')sun(g,40,24,rng);
+    if(f==='rain')rain(g,Wv,Hv,rng);
+    if(f==='smoke')smokeBlobs(g,main[0]+14,main[1]-40,rng,6);
+    if(f==='bugs')pos.forEach(([x,y],n)=>{if(sc.b[n]==='cultivo')bugs(g,x,y,rng)});
+    if(f==='arrow')arrowUp(g,main[0]+52,main[1]-6);
+    if(f==='scroll')scroll(g,main[0]-48,main[1]+14,rng);
+    if(f==='shadow'){g.globalAlpha=.8;g.fillStyle='#2A2622';g.fillRect(main[0]+34,main[1]-2,4,12);g.beginPath();g.arc(main[0]+36,main[1]-5,3,0,7);g.fill();g.fillRect(main[0]+31,main[1]-8,10,2);g.globalAlpha=1;coins(g,main[0]+46,main[1]+12,rng)}
+  });
+  if(!GRAIN)GRAIN=makeGrain(mk);
+  g.globalCompositeOperation='multiply';g.globalAlpha=.2;g.fillStyle=g.createPattern(GRAIN,'repeat');g.fillRect(0,0,Wv,Hv);g.globalCompositeOperation='source-over';g.globalAlpha=1;
+  return c;
+}
+
+function portrait(kind,mk){
+  const c=mk(128,128),g=c.getContext('2d');g.scale(2,2);const rng=mulberry(kind.length*31+7);
+  const bg={rosa:'#DCE7C9',julian:'#E9D9C0',aurelio:'#D9DDE6'}[kind];
+  blob(g,32,32,30,bg,rng,.9);
+  const skin={rosa:'#C98E62',julian:'#E0B08A',aurelio:'#EBC7A6'}[kind];
+  // cuerpo
+  const body={rosa:'#B4553A',julian:'#5A6F7E',aurelio:'#3B3A40'}[kind];
+  wash(g,[[14,64],[16,46],[24,40],[40,40],[48,46],[50,64]],body,rng,.95,false);
+  if(kind==='rosa'){wash(g,[[16,48],[32,58],[48,48],[46,44],[32,52],[18,44]],'#E7C76B',rng,.9,false)}
+  if(kind==='julian'){wash(g,[[24,44],[40,44],[42,64],[22,64]],'#C9B28A',rng,.9,false)}
+  if(kind==='aurelio'){wash(g,[[28,40],[36,40],[34,56],[30,56]],'#F1ECE0',rng,.95,false);g.fillStyle='#8C1C1C';g.fillRect(30.5,41,3,7)}
+  blob(g,32,30,10,skin,rng,.95);
+  g.fillStyle='#2A2018';g.beginPath();g.arc(28.5,30,1.1,0,7);g.arc(35.5,30,1.1,0,7);g.fill();
+  g.strokeStyle='#7A4A34';g.lineWidth=1;g.beginPath();g.arc(32,33.5,3,.2,Math.PI-.2);g.stroke();
+  if(kind==='rosa'){g.fillStyle='#2A2018';g.beginPath();g.ellipse(32,22,11,5,0,Math.PI,0);g.fill();wash(g,[[18,20],[46,20],[42,16],[22,16]],'#F4F1E6',rng,.95,false);wash(g,[[23,16],[41,16],[39,10],[25,10]],'#F4F1E6',rng,.95,false);g.fillStyle='#1E1E1E';g.fillRect(24,14.5,16,2);g.strokeStyle='#2A2018';g.lineWidth=2;g.beginPath();g.moveTo(22,28);g.quadraticCurveTo(20,40,24,44);g.stroke()}
+  if(kind==='julian'){g.fillStyle='#4A3A2C';g.beginPath();g.ellipse(32,22,10,5,0,Math.PI,0);g.fill();g.strokeStyle='#4A3A2C';g.lineWidth=1.4;g.beginPath();g.moveTo(26,36);g.quadraticCurveTo(32,40,38,36);g.stroke()}
+  if(kind==='aurelio'){wash(g,[[20,20],[44,20],[44,18],[20,18]],'#1E1E22',rng,.95,false);wash(g,[[24,18],[40,18],[39,4],[25,4]],'#26262C',rng,.95,false);g.strokeStyle='#DDD';g.lineWidth=1.2;g.beginPath();g.moveTo(27,35);g.lineTo(31,34);g.moveTo(33,34);g.lineTo(37,35);g.stroke()}
+  return c;
+}
+
+const EMB={
+  monarquia:'<svg viewBox="0 0 24 24" class="emb"><path d="M3 17l2-9 4 4 3-7 3 7 4-4 2 9z" fill="#D9A93E" stroke="#8C6A1E"/><rect x="3" y="17" width="18" height="3" fill="#5B3A7A"/></svg>',
+  aristocracia:'<svg viewBox="0 0 24 24" class="emb"><path d="M12 21c-6-3-8-8-7-14M12 21c6-3 8-8 7-14" fill="none" stroke="#2F5B45" stroke-width="2"/><g fill="#5E8A4D"><ellipse cx="6" cy="10" rx="1.6" ry="3" transform="rotate(-25 6 10)"/><ellipse cx="7.5" cy="15" rx="1.6" ry="3" transform="rotate(-45 7.5 15)"/><ellipse cx="18" cy="10" rx="1.6" ry="3" transform="rotate(25 18 10)"/><ellipse cx="16.5" cy="15" rx="1.6" ry="3" transform="rotate(45 16.5 15)"/></g></svg>',
+  republica:'<svg viewBox="0 0 24 24" class="emb"><rect x="4" y="10" width="16" height="10" rx="1" fill="#E9E3D6" stroke="#2D5D72"/><rect x="9" y="4" width="6" height="8" fill="#F4EFE2" stroke="#2D5D72" transform="rotate(-8 12 8)"/><rect x="8" y="10" width="8" height="1.6" fill="#2D5D72"/></svg>',
+  tirania:'<svg viewBox="0 0 24 24" class="emb"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L3.3 9.2l6.1-.6z" fill="#9E2B25"/></svg>',
+  oligarquia:'<svg viewBox="0 0 24 24" class="emb"><ellipse cx="12" cy="17" rx="8" ry="3" fill="#C9962E"/><ellipse cx="12" cy="13" rx="8" ry="3" fill="#D9A93E"/><ellipse cx="12" cy="9" rx="8" ry="3" fill="#E6BC55" stroke="#8C6A1E"/></svg>',
+  demagogia:'<svg viewBox="0 0 24 24" class="emb"><path d="M4 10h4l9-5v14l-9-5H4z" fill="#C0602A"/><path d="M8 14l1.5 5h2.5l-1.5-5" fill="#8A4420"/></svg>'
+};
+
+</script>
+<script>
+// ---------- Sonido: río, pájaros y tiple (WebAudio, sin descargas) ----------
+const Sound=(()=>{
+  let ac=null,master=null,on=false,timer=null,next=0,bar=0,birdT=0;
+  const NOTE=n=>440*Math.pow(2,(n-69)/12);
+  const MODES={
+    republica:{s:[64,67,69,71,74,76,79],b:[[40,47],[45,52],[47,54],[40,47]],beat:.62},
+    monarquia:{s:[67,69,71,74,76,79,81],b:[[43,50],[48,55],[50,57],[43,50]],beat:.72},
+    aristocracia:{s:[62,64,65,67,69,72,74],b:[[38,45],[43,50],[45,52],[38,45]],beat:.66},
+    tirania:{s:[57,60,62,64,65,67,69],b:[[33,40],[33,40],[38,45],[40,47]],beat:.82},
+    oligarquia:{s:[65,67,69,71,72,74,77],b:[[41,48],[43,50],[41,48],[36,43]],beat:.64},
+    demagogia:{s:[60,62,64,67,69,72,74],b:[[36,43],[41,48],[43,50],[36,43]],beat:.5}};
+  let SCALE=MODES.republica.s,BASS=MODES.republica.b,BEAT=.62;
+  function init(){
+    ac=new (window.AudioContext||window.webkitAudioContext)();
+    master=ac.createGain();master.gain.value=0;master.connect(ac.destination);
+    // río: ruido filtrado que respira
+    const len=ac.sampleRate*2,buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);let l=0;
+    for(let i=0;i<len;i++){const w=Math.random()*2-1;l=(l+.02*w)/1.02;d[i]=l*3.2}
+    const src=ac.createBufferSource();src.buffer=buf;src.loop=true;
+    const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=650;
+    const rg=ac.createGain();rg.gain.value=.05;
+    const lfo=ac.createOscillator(),lg=ac.createGain();lfo.frequency.value=.08;lg.gain.value=.02;lfo.connect(lg);lg.connect(rg.gain);lfo.start();
+    src.connect(lp);lp.connect(rg);rg.connect(master);src.start();
+  }
+  function pluck(f,t,dur,vol){
+    const o=ac.createOscillator(),o2=ac.createOscillator(),g=ac.createGain(),g2=ac.createGain(),lp=ac.createBiquadFilter();
+    o.type='triangle';o.frequency.value=f;o2.type='sine';o2.frequency.value=f*2.003;g2.gain.value=.25;
+    lp.type='lowpass';lp.frequency.setValueAtTime(3200,t);lp.frequency.exponentialRampToValueAtTime(700,t+dur);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.006);g.gain.exponentialRampToValueAtTime(.0008,t+dur);
+    o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(master);o.start(t);o2.start(t);o.stop(t+dur+.05);o2.stop(t+dur+.05);
+  }
+  function bird(t){
+    const base=2600+Math.random()*1400,n=2+Math.floor(Math.random()*3);
+    for(let k=0;k<n;k++){const o=ac.createOscillator(),g=ac.createGain(),s=t+k*.13;o.type='sine';
+      o.frequency.setValueAtTime(base,s);o.frequency.exponentialRampToValueAtTime(base*1.35,s+.06);o.frequency.exponentialRampToValueAtTime(base*.9,s+.1);
+      g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(.018,s+.01);g.gain.exponentialRampToValueAtTime(.0005,s+.11);
+      o.connect(g);g.connect(master);o.start(s);o.stop(s+.13)}
+  }
+  let deg=2;
+  function schedule(){
+    const beat=BEAT;
+    while(next<ac.currentTime+.8){
+      const ch=BASS[bar%4];
+      pluck(NOTE(ch[0]),next,1.6,.09);pluck(NOTE(ch[1]),next+beat,1,.05);pluck(NOTE(ch[1]),next+beat*2,1,.05);
+      if(Math.random()<.8){const steps=[0,.5,1,1.5,2,2.5].filter(()=>Math.random()<.55);
+        steps.forEach(s=>{deg=clamp(deg+Math.floor(Math.random()*3)-1,0,SCALE.length-1);pluck(NOTE(SCALE[deg]),next+s*beat,1.1,.06)})}
+      next+=beat*3;bar++;
+    }
+    if(ac.currentTime>birdT){bird(ac.currentTime+.1);birdT=ac.currentTime+4+Math.random()*9}
+  }
+  function start(){
+    if(!ac)init();ac.resume();on=true;next=Math.max(next,ac.currentTime+.1);
+    master.gain.cancelScheduledValues(ac.currentTime);master.gain.linearRampToValueAtTime(.55,ac.currentTime+1.2);
+    if(!timer)timer=setInterval(schedule,200);
+  }
+  function stop(){on=false;if(!ac)return;master.gain.cancelScheduledValues(ac.currentTime);master.gain.linearRampToValueAtTime(0,ac.currentTime+.5);clearInterval(timer);timer=null}
+  function chime(){if(!on)return;const t=ac.currentTime;[76,83,88].forEach((n,k)=>pluck(NOTE(n),t+k*.12,1.8,.07))}
+  function tap(){if(!on)return;pluck(NOTE(59),ac.currentTime,.25,.08)}
+  function mode(r){const m=MODES[r]||MODES.republica;SCALE=m.s;BASS=m.b;BEAT=m.beat}
+  return {start,stop,chime,tap,mode,get on(){return on}};
+})();
+
+// ---------- Vista del mapa: cámara, animación e interacción ----------
+const PICK_ORDER=[...Array(N*N).keys()].sort((a,b)=>(Math.floor(b/N)+b%N)-(Math.floor(a/N)+a%N));
+const MapView=(()=>{
+  let floats=[],shake=0,sweep=null,anim=new Map(),dust=[],lights=[],blds=[],cv,ctx,stat,dirty=true,cam={s:1,x:0,y:0},dpr=1,W=0,H=0,moved=false,em=[],riv=[],parts=[],walkers=[],hover=-1,pass=null,last=0;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+  const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  function init(){
+    cv=document.getElementById('cv');ctx=cv.getContext('2d');stat=mk(WW*2,WH*2);
+    new ResizeObserver(()=>{resize();if(!moved)fit()}).observe(cv);
+    resize();fit();bind();requestAnimationFrame(loop);
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>dirty=true);
+  }
+  function resize(){dpr=window.devicePixelRatio||1;W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.max(1,W*dpr);cv.height=Math.max(1,H*dpr)}
+  function fit(){const s=Math.min(W/(WW-40),H/(WH-60));cam.s=s;cam.x=(W-WW*s)/2;cam.y=(H-WH*s)/2+10*s;moved=false}
+  function zoomAt(f,px,py){const s2=clamp(cam.s*f,Math.min(W/WW,H/WH)*.8,3.2);const k=s2/cam.s;cam.x=px-(px-cam.x)*k;cam.y=py-(py-cam.y)*k;cam.s=s2;moved=true}
+  function pick(px,py){
+    const wx=(px-cam.x)/cam.s,wy=(py-cam.y)/cam.s;
+    for(const i of PICK_ORDER){const [cx,cy]=tileCenter(i);if(Math.abs(wx-cx)/(TW/2)+Math.abs(wy-cy)/(TH/2)<=1)return i}
+    return -1;
+  }
+  function bind(){
+    const pts=new Map();let st=null,pinch=null;
+    const pos=e=>{const b=cv.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top]};
+    cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,pos(e));
+      if(pts.size===1)st={p:pos(e),cx:cam.x,cy:cam.y,t:Date.now(),d:0};
+      if(pts.size===2){const [a,b]=[...pts.values()];pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1]),s:cam.s};st=null}});
+    cv.addEventListener('pointermove',e=>{
+      const p=pos(e);
+      if(!pts.has(e.pointerId)){hover=pick(...p);return}
+      pts.set(e.pointerId,p);
+      if(pts.size===2&&pinch){const [a,b]=[...pts.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);zoomAt(pinch.s*d/pinch.d/cam.s,(a[0]+b[0])/2,(a[1]+b[1])/2);return}
+      if(st){const dx=p[0]-st.p[0],dy=p[1]-st.p[1];st.d=Math.max(st.d,Math.hypot(dx,dy));if(st.d>6){cam.x=st.cx+dx;cam.y=st.cy+dy;moved=true}}
+    });
+    const end=e=>{
+      if(st&&pts.size===1&&st.d<=6&&Date.now()-st.t<600){const i=pick(...pos(e));if(i>=0&&MapView.onTap)MapView.onTap(i)}
+      pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size)st=null;
+    };
+    cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',e=>{pts.delete(e.pointerId);st=null;pinch=null});
+    cv.addEventListener('pointerleave',()=>{hover=-1});
+    cv.addEventListener('wheel',e=>{e.preventDefault();const p=pos(e);zoomAt(e.deltaY<0?1.12:1/1.12,...p)},{passive:false});
+    document.getElementById('zin').onclick=()=>zoomAt(1.25,W/2,H/2);
+    document.getElementById('zout').onclick=()=>zoomAt(1/1.25,W/2,H/2);
+    document.getElementById('zfit').onclick=fit;
+  }
+  function rebuild(){
+    dirty=false;const r=paintStatic(stat.getContext('2d'),mk,css('--paper')||'#F1ECE0',new Set(anim.keys()));em=r.em;riv=r.riv;lights=r.lights;blds=r.blds;
+  }
+  function builtCenters(){const o=[];S.map.forEach((x,i)=>{if(x.b&&x.t!=='montana')o.push(tileCenter(i))});return o}
+  function syncWalkers(){
+    const spots=builtCenters();if(spots.length<2){walkers=[];return}
+    const want=Math.round(clamp(S.pop/7,2,34)*(.4+S.hap/100*.8));
+    const pal=['#B4553A','#2D5D72','#C9A13E','#5E8A4D','#7B4F8A','#3E3A34'];
+    while(walkers.length<want){const a=spots[rnd(spots.length)];walkers.push({x:a[0]+(Math.random()-.5)*20,y:a[1]+(Math.random()-.5)*8,t:null,c:pal[rnd(pal.length)],sp:6+Math.random()*6,wait:Math.random()*2})}
+    walkers.length=Math.min(walkers.length,want);
+    walkers.forEach(w=>{if(!w.t||Math.random()<.002){const b=spots[rnd(spots.length)];w.t=[b[0]+(Math.random()-.5)*22,b[1]+(Math.random()-.5)*8]}});
+  }
+  function loop(t){
+    const dt=Math.min(.05,(t-last)/1000||0);last=t;
+    if(!S){requestAnimationFrame(loop);return}
+    if(dirty){rebuild();syncWalkers()}
+    ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);
+    let sx=0,sy=0;if(shake>0){shake=Math.max(0,shake-dt);const k=shake*18;sx=(Math.random()-.5)*k;sy=(Math.random()-.5)*k}
+    ctx.setTransform(dpr*cam.s,0,0,dpr*cam.s,dpr*(cam.x+sx),dpr*(cam.y+sy));
+    ctx.drawImage(stat,0,0,WW,WH);
+    const sec=t/1000;
+    // brillo del río
+    ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=.9;
+    riv.forEach(([x,y],k)=>{const o=reduce?0:Math.sin(sec*1.4+k*.9)*4;ctx.beginPath();ctx.moveTo(x-9+o,y-2);ctx.quadraticCurveTo(x-4+o,y-4,x+1+o,y-2);ctx.stroke();ctx.beginPath();ctx.moveTo(x+2-o,y+3);ctx.quadraticCurveTo(x+6-o,y+1,x+10-o,y+3);ctx.stroke()});
+    // marcas de construcción
+    const tl=typeof tool!=='undefined'?tool:null;
+    S.map.forEach((x,i)=>{
+      if(tl){const ok=!whyNot(tl,i);const [cx,cy]=tileCenter(i);if(ok){ctx.fillStyle='rgba(242,201,76,.25)';poly(ctx,diamond(cx,cy,.92));ctx.fill();ctx.strokeStyle='rgba(180,130,20,.9)';ctx.lineWidth=1.2;ctx.setLineDash([3,2]);ctx.stroke();ctx.setLineDash([])}}
+    });
+    if(hover>=0){const [cx,cy]=tileCenter(hover);ctx.strokeStyle='rgba(40,40,30,.55)';ctx.lineWidth=1.3;poly(ctx,diamond(cx,cy,.96));ctx.stroke()}
+    // obras en construcción
+    anim.forEach((t0,i)=>{const p=(t-t0)/1000;if(p>=1){anim.delete(i);dirty=true;return}const [cx,cy]=tileCenter(i),h=18*Math.min(1,p*1.4);
+      ctx.strokeStyle='#8B6A45';ctx.lineWidth=1.2;const cs=[V(cx,cy,-.3,-.25),V(cx,cy,.3,-.25),V(cx,cy,.3,.25),V(cx,cy,-.3,.25)];
+      cs.forEach(q=>{ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-h);ctx.stroke()});
+      for(let z=6;z<h;z+=6){ctx.beginPath();cs.forEach((q,k)=>k?ctx.lineTo(q[0],q[1]-z):ctx.moveTo(q[0],q[1]-z));ctx.closePath();ctx.stroke()}
+      if(Math.random()<.4)dust.push({x:cx+(Math.random()-.5)*30,y:cy+(Math.random()-.5)*8,r:2,l:1})});
+    dust=dust.filter(d=>(d.l-=dt*1.2)>0);dust.forEach(d=>{d.r+=dt*8;d.y-=dt*4;ctx.globalAlpha=d.l*.35;ctx.fillStyle='#B9A27E';ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,7);ctx.fill()});ctx.globalAlpha=1;
+    // dilemas visibles
+    const vk=S.vis&&S.vis.k;
+    if(vk==='flood'){ctx.fillStyle=`rgba(95,160,200,${.3+.08*Math.sin(sec*2)})`;S.map.forEach((x,i)=>{if(x.t!=='rio'&&nearRiver(i)){const [cx,cy]=tileCenter(i);poly(ctx,diamond(cx,cy,.9));ctx.fill()}});
+      ctx.strokeStyle='rgba(70,110,140,.4)';ctx.lineWidth=.8;const rr=mulberry(5);for(let k=0;k<120;k++){const x=rr()*WW,y=(rr()*WH+sec*140)%WH;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-2,y+7);ctx.stroke()}}
+    if(vk==='poison'){ctx.fillStyle='rgba(120,130,60,.45)';riv.forEach(([x,y])=>{poly(ctx,diamond(x,y,.95));ctx.fill()})}
+    if(vk==='pests'){ctx.fillStyle='#3A2A1A';blds.forEach(b=>{if(b.k==='cultivo'){const rr=mulberry(b.i);for(let k=0;k<10;k++){ctx.beginPath();ctx.ellipse(b.x+(rr()-.5)*36+Math.sin(sec*3+k)*1.5,b.y+(rr()-.5)*14,1.2,.8,0,0,7);ctx.fill()}}})}
+    const hub=blds.find(b=>b.k==='agora')||blds.find(b=>b.k==='mercado')||blds.find(b=>b.k==='casa');
+    if(hub&&(vk==='crowd'||vk==='festival')){const rr=mulberry(hub.i+3);for(let k=0;k<18;k++){const x=hub.x+(rr()-.5)*44,y=hub.y+16+(rr()-.5)*12,bob=vk==='crowd'?Math.abs(Math.sin(sec*4+k))*1.5:0;person(ctx,x,y-bob,PPL[k%PPL.length],rr)}
+      if(vk==='festival'){flags(ctx,[hub.x-40,hub.y-14],[hub.x+40,hub.y-10],mulberry(9));flags(ctx,[hub.x-30,hub.y+2],[hub.x+44,hub.y+6],mulberry(10))}
+      if(vk==='crowd'){ctx.fillStyle='#EFE3C2';for(let k=0;k<3;k++){const x=hub.x-18+k*16,y=hub.y+2-Math.abs(Math.sin(sec*3+k))*2;ctx.fillRect(x,y-12,10,6);ctx.fillStyle='#6B4F3A';ctx.fillRect(x+4.5,y-6,1,7);ctx.fillStyle='#EFE3C2'}}}
+    // gente
+    if(!reduce)walkers.forEach(w=>{if(w.wait>0){w.wait-=dt;return}const dx=w.t[0]-w.x,dy=w.t[1]-w.y,d=Math.hypot(dx,dy);if(d<1){w.wait=1+Math.random()*3;w.t=null;syncWalkers();return}w.x+=dx/d*w.sp*dt;w.y+=dy/d*w.sp*dt});
+    walkers.forEach(w=>{ctx.globalAlpha=.25;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(w.x,w.y,2,.8,0,0,7);ctx.fill();ctx.globalAlpha=.9;ctx.fillStyle=w.c;ctx.fillRect(w.x-1,w.y-5,2,4.2);ctx.fillStyle='#E2B894';ctx.beginPath();ctx.arc(w.x,w.y-6.3,1.3,0,7);ctx.fill();ctx.globalAlpha=1});
+    // humo
+    if(!reduce){em.forEach(e=>{if(Math.random()<dt*(e.k==='taller'?3:1.5))parts.push({x:e.x+(Math.random()-.5)*2,y:e.y,vx:(Math.random()-.2)*4,vy:-7-Math.random()*4,l:1,r:2+Math.random()*1.5,c:e.k==='mina'?'150,130,110':'120,115,110'})});
+      parts=parts.filter(p=>(p.l-=dt*.35)>0);parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.r+=dt*3})}
+    parts.forEach(p=>{ctx.globalAlpha=p.l*.45;ctx.fillStyle=`rgb(${p.c})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill()});ctx.globalAlpha=1;
+    // nubes que pasan
+    if(!reduce){for(let k=0;k<3;k++){const x=((sec*6+k*330)%(WW+300))-150,y=OY+60+k*90;ctx.globalAlpha=.07;ctx.fillStyle='#1d2a30';ctx.beginPath();ctx.ellipse(x,y,90,26,0,0,7);ctx.fill()}ctx.globalAlpha=1}
+    // números flotantes del cierre del año
+    const now=performance.now();
+    floats=floats.filter(f=>now-f.t0<f.dur+f.delay);
+    floats.forEach(f=>{const p=(now-f.t0-f.delay)/f.dur;if(p<0)return;const a=p<.15?p/.15:1-(p-.15)/.85;
+      ctx.globalAlpha=Math.max(0,a);ctx.font=`700 ${f.big?15:10}px Alegreya, Georgia, serif`;ctx.textAlign='center';
+      ctx.lineWidth=3;ctx.strokeStyle='rgba(255,250,235,.9)';ctx.strokeText(f.txt,f.x,f.y-p*26);ctx.fillStyle=f.col;ctx.fillText(f.txt,f.x,f.y-p*26);
+      if(f.coin){ctx.fillStyle='#D9A93E';ctx.beginPath();ctx.ellipse(f.x-(f.big?30:16),f.y-p*26-4,4,4,0,0,7);ctx.fill()}});
+    ctx.globalAlpha=1;
+    // contaminación y noche
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const tint={tirania:'rgba(70,70,80,.12)',monarquia:'rgba(110,70,150,.05)',oligarquia:'rgba(120,90,20,.06)',demagogia:'rgba(210,110,40,.06)',aristocracia:'rgba(40,90,70,.04)'}[S.reg];if(tint){ctx.fillStyle=tint;ctx.fillRect(0,0,W,H)}
+    let smog=clamp((45-S.env)/45,0,1)*.28;if(vk==='smog')smog+=.2;
+    if(vk==='drought'){ctx.fillStyle='rgba(225,170,60,.16)';ctx.fillRect(0,0,W,H);const r0=mulberry(2);sun(ctx,44,40,r0)}if(smog>0){ctx.fillStyle=`rgba(120,105,80,${smog})`;ctx.fillRect(0,0,W,H)}
+    if(matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark'){ctx.fillStyle='rgba(20,30,50,.22)';ctx.fillRect(0,0,W,H)}
+    if(pass){const p=(t-pass.t0)/1900;if(p>=1)pass=null;else{const a=Math.sin(Math.PI*Math.min(1,p*1.0));ctx.fillStyle=`rgba(18,26,48,${a*.62})`;ctx.fillRect(0,0,W,H);
+      ctx.globalAlpha=a;ctx.fillStyle='#F4EFE2';ctx.font='800 34px Alegreya, Georgia, serif';ctx.textAlign='center';ctx.fillText(pass.txt,W/2,H/2-6);if(pass.sub){ctx.font='500 15px Alegreya, Georgia, serif';ctx.fillText(pass.sub,W/2,H/2+20)}ctx.strokeStyle='rgba(244,239,226,.6)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W/2-90,H/2+32);ctx.lineTo(W/2+90,H/2+32);ctx.stroke();ctx.globalAlpha=1;
+      ctx.setTransform(dpr*cam.s,0,0,dpr*cam.s,dpr*cam.x,dpr*cam.y);lights.forEach(([x,y],k)=>{ctx.globalAlpha=a*(.7+.3*Math.sin(k));ctx.fillStyle='#FFD27A';ctx.beginPath();ctx.arc(x,y,2.2,0,7);ctx.fill();ctx.globalAlpha=a*.25;ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fill()});ctx.globalAlpha=1;ctx.setTransform(dpr,0,0,dpr,0,0);
+      for(let k=0;k<30;k++){const r=mulberry(k*77);ctx.globalAlpha=a*.8*r();ctx.fillStyle='#fff';ctx.fillRect(r()*W,r()*H*.5,1.4,1.4)}ctx.globalAlpha=1}}
+    if(sweep){const p=(now-sweep)/1100;if(p>=1)sweep=null;else if(p>0){const x=-W*.4+p*W*1.8;const gr=ctx.createLinearGradient(x-120,0,x+120,H);gr.addColorStop(0,'rgba(255,220,140,0)');gr.addColorStop(.5,'rgba(255,225,150,.28)');gr.addColorStop(1,'rgba(255,220,140,0)');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H)}}
+    requestAnimationFrame(loop);
+  }
+  function turnFX(d){
+    const t0=performance.now(),delay=900;let n=0;
+    const add=(x,y,txt,col,o)=>floats.push(Object.assign({x,y,txt,col,t0,delay:delay+(n++%12)*70,dur:1500},o||{}));
+    blds.forEach(b=>{const k=b.k,fee=B[k]&&B[k].fee;
+      if(fee)add(b.x,b.y-20,'+'+Math.round(fee*S.price),'#9C7420',{coin:true});
+      else if(k==='cultivo'&&d.df!==0)add(b.x,b.y-10,(d.hunger?'−':'+')+(d.hunger?'hambre':'cosecha'),d.hunger?'#B0402C':'#3F7A3A');
+    });
+    const casas=blds.filter(b=>b.k==='casa');
+    if(d.dp)casas.slice(0,Math.min(casas.length,Math.abs(d.dp))).forEach(b=>add(b.x+6,b.y-26,(d.dp>0?'+':'−')+'1','#2D5D72'));
+    const hub=blds.find(b=>b.k==='agora')||casas[0];
+    if(hub)floats.push({x:hub.x,y:hub.y-44,txt:(d.dg>=0?'+':'−')+Math.abs(Math.round(d.dg))+' oro',col:d.dg>=0?'#8C6A1E':'#B0402C',t0,delay:delay+300,dur:2000,big:true,coin:true});
+    sweep=t0+delay-200;
+    if(d.bad&&!reduce)setTimeout(()=>{shake=.45},delay);
+  }
+  function busy(){return !!pass}
+  function focus(i){const s0=Math.min(W/(WW-40),H/(WH-60));const [cx,cy]=tileCenter(i);cam.s=clamp(Math.max(s0*1.4,.85),.3,3.2);cam.x=W/2-cx*cam.s;cam.y=H/2-cy*cam.s;moved=true}
+  return {init,focus,built(i){anim.set(i,performance.now());dirty=true},razed(i){const [cx,cy]=tileCenter(i);for(let k=0;k<14;k++)dust.push({x:cx+(Math.random()-.5)*34,y:cy+(Math.random()-.5)*10,r:3,l:1});dirty=true},refresh(){dirty=true},night(txt,sub){if(!reduce)pass={t0:performance.now(),txt,sub}},turnFX,busy,onTap:null};
+})();
+// ---------- Gráficas históricas ----------
+function chartSVG(series,opts){
+  const h=S.hist;if(h.length<2)return '<p class="small">La historia se dibuja cuando pasen al menos dos años.</p>';
+  const W=320,H=150,L=34,R=8,T=10,Bm=22;
+  let lo=Infinity,hi=-Infinity;series.forEach(s=>h.forEach(p=>{lo=Math.min(lo,p[s.k]);hi=Math.max(hi,p[s.k])}));
+  if(opts&&opts.fixed){lo=opts.fixed[0];hi=opts.fixed[1]}else{lo=Math.min(0,lo);hi=hi===lo?lo+1:hi*1.08}
+  const X=i=>L+(W-L-R)*i/(h.length-1),Y=v=>T+(H-T-Bm)*(1-(v-lo)/(hi-lo));
+  const fmt=v=>Math.abs(v)>=1000?(v/1000).toFixed(1)+'k':Math.round(v);
+  let g=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="${series.map(s=>s.n).join(', ')}">`;
+  [0,.5,1].forEach(f=>{const v=lo+(hi-lo)*f,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="gl"/><text x="${L-4}" y="${y+3}" text-anchor="end" class="ax">${fmt(v)}</text>`});
+  if(lo<0&&hi>0)g+=`<line x1="${L}" x2="${W-R}" y1="${Y(0)}" y2="${Y(0)}" class="zero"/>`;
+  g+=`<text x="${L}" y="${H-5}" class="ax">Año ${h[0].y}</text><text x="${W-R}" y="${H-5}" text-anchor="end" class="ax">Año ${h[h.length-1].y}</text>`;
+  series.forEach(s=>{g+=`<polyline fill="none" stroke="${s.c}" stroke-width="2" stroke-linejoin="round" points="${h.map((p,i)=>X(i).toFixed(1)+','+Y(p[s.k]).toFixed(1)).join(' ')}"/>`});
+  g+='</svg><div class="legend">'+series.map(s=>`<span><i style="background:${s.c}"></i>${s.n}: ${fmt(h[h.length-1][s.k])}${s.u||''}</span>`).join('')+'</div>';
+  return g;
+}
+const CHARTS={
+  pop:{n:'Población',s:[{k:'pop',n:'Habitantes',c:'#2D5D72'}]},
+  fin:{n:'Finanzas',s:[{k:'gold',n:'Oro',c:'#B8871F'},{k:'debt',n:'Deuda',c:'#B0402C'}]},
+  soc:{n:'Sociedad',s:[{k:'hap',n:'Bienestar',c:'#2F7542'},{k:'eq',n:'Igualdad',c:'#7B4F8A'},{k:'tr',n:'Confianza',c:'#2D5D72'},{k:'env',n:'Ambiente',c:'#8A9A3A'}],o:{fixed:[0,100]}},
+  inf:{n:'Inflación',s:[{k:'infl',n:'Inflación',c:'#B0402C',u:'%'}]}
+};
+let chartKey='pop';
+function renderChart(){
+  const el=document.getElementById('hist');if(!el)return;
+  document.getElementById('htabs').innerHTML=Object.entries(CHARTS).map(([k,v])=>`<button class="tab${k===chartKey?' on':''}" data-c="${k}">${v.n}</button>`).join('');
+  el.innerHTML=chartSVG(CHARTS[chartKey].s,CHARTS[chartKey].o);
+}
+
+let tool=null;
+const IC={"gold": "<svg viewBox=\"0 0 20 20\" class=\"ic\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"#D9A93E\"/><circle cx=\"10\" cy=\"10\" r=\"5.5\" fill=\"none\" stroke=\"#9C7420\" stroke-width=\"1.2\"/><path d=\"M8.5 7.5h3M10 7.5v5\" stroke=\"#9C7420\" stroke-width=\"1.3\"/></svg>", "debt": "<svg viewBox=\"0 0 20 20\" class=\"ic\"><path d=\"M4 3h10l2 2v12H4z\" fill=\"#F1E6C8\" stroke=\"#8B6F4A\"/><path d=\"M6.5 8h7M6.5 11h7M6.5 14h4\" stroke=\"#B0402C\" stroke-width=\"1.3\"/></svg>", "food": "<svg viewBox=\"0 0 20 20\" class=\"ic\"><path d=\"M10 18V6\" stroke=\"#8A7A3A\" stroke-width=\"1.4\"/><ellipse cx=\"10\" cy=\"5\" rx=\"2\" ry=\"3\" fill=\"#E1B84A\"/><ellipse cx=\"7\" cy=\"9\" rx=\"2\" ry=\"3\" transform=\"rotate(-30 7 9)\" fill=\"#E1B84A\"/><ellipse cx=\"13\" cy=\"9\" rx=\"2\" ry=\"3\" transform=\"rotate(30 13 9)\" fill=\"#E1B84A\"/><ellipse cx=\"7\" cy=\"13\" rx=\"2\" ry=\"3\" transform=\"rotate(-30 7 13)\" fill=\"#D5A93E\"/><ellipse cx=\"13\" cy=\"13\" rx=\"2\" ry=\"3\" transform=\"rotate(30 13 13)\" fill=\"#D5A93E\"/></svg>", "pop": "<svg viewBox=\"0 0 20 20\" class=\"ic\"><circle cx=\"7\" cy=\"6\" r=\"2.6\" fill=\"#C98E62\"/><path d=\"M2.5 17c0-4 2-6 4.5-6s4.5 2 4.5 6z\" fill=\"#B4553A\"/><circle cx=\"13.5\" cy=\"7\" r=\"2.3\" fill=\"#E0B08A\"/><path d=\"M9.5 17c0-3.5 1.8-5.2 4-5.2s4 1.7 4 5.2z\" fill=\"#2D5D72\"/></svg>"};
+const ICONS={};function icon(k){const key=k==='agora'?k+(S&&S.reg):k;k=k;if(!ICONS[key]){const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};ICONS[key]=iconCanvas(k,mk).toDataURL()}return ICONS[key]}
+const $=id=>document.getElementById(id);
+const PORTS={};function port(k){if(!PORTS[k]){const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};PORTS[k]=portrait(k,mk).toDataURL()}return PORTS[k]}
+const VIGS={};function vig(id){if(!VIGS[id]){const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};VIGS[id]=vignette(id,mk).toDataURL('image/jpeg',.86)}return VIGS[id]}
+const ov=$('ov'),card=$('card');
+function openCard(h){card.innerHTML=h;ov.classList.add('show');const f=card.querySelector('button');if(f)f.focus()}
+function closeCard(){ov.classList.remove('show')}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400)}
+function save(){try{localStorage.setItem('polis-v2',JSON.stringify(S))}catch(e){}}
+function load(){try{const s=localStorage.getItem('polis-v2');if(s){const x=JSON.parse(s);if(!x.map||x.map.length!==N*N)return false;S=x;return true}}catch(e){}return false}
+function col(v){return v>=60?'var(--good)':v>=35?'var(--gold)':'var(--bad)'}
+function chips(fx){
+  const ks=Object.keys(fx);
+  if(!ks.length)return '<span class="chip">Sin efectos inmediatos</span>';
+  return ks.map(k=>{const v=fx[k],good=BADUP[k]?v<0:k==='txe'?v<0:v>0;return `<span class="chip ${good?'g':'b'}">${v>0?'+':'−'}${Math.abs(v)} ${FXL[k]}</span>`}).join('');
+}
+function newGame(){
+  if(!S){freshState('normal');render()}
+  hideCover();
+  openCard(`<div class="big">🏛️</div><h3>Elige la dificultad</h3>
+    ${Object.entries(DIFFS).map(([k,v])=>`<button class="opt" data-d="${k}">${v.n}<small>${v.d}</small></button>`).join('')}
+    <label class="chk"><input type="checkbox" id="gChk" checked> Mostrar la guía de los primeros años</label>
+    <label class="chk">Código de mapa (opcional) <input type="text" inputmode="numeric" id="seedIn" placeholder="al azar" maxlength="7" class="inp"></label>`);
+  card.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const sd=$('seedIn').value.replace(/\D/g,''),g=$('gChk').checked,d=b.dataset.d;pickRegime(r=>{freshState(d,g,sd||null,r);tool=null;save();render();focusHome();help(true)})});
+}
+function pickRegime(cb){
+  const row=k=>`<button class="opt reg" data-r="${k}" style="--rc:${REG[k].col}">${EMB[k]}<span><b>${REG[k].n}</b><small>${REG[k].d}</small></span></button>`;
+  openCard(`<h3>Elige cómo se gobierna</h3><p class="small">Aristóteles distinguía tres formas rectas, que gobiernan para el bien común, y sus desviaciones, que gobiernan para sí. Tu forma de gobernar puede transformar el régimen.</p>
+    <h2>Formas rectas</h2>${['monarquia','aristocracia','republica'].map(row).join('')}
+    <h2>Formas corruptas (más difíciles)</h2>${['tirania','oligarquia','demagogia'].map(row).join('')}`);
+  card.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>cb(b.dataset.r));
+}
+function guideToast(){const m=checkGuide();if(m){toast(m)}}
+function endYear(){
+  if(S.pend||S.over)return;
+  const g0=S.gold,p0=S.pop,f0=S.food,t0=S.tr;
+  closeSheets();tool=null;
+  const r=advance();
+  const dg=Math.round(S.gold-g0),dp=S.pop-p0;
+  const hunger=!!(S.log[0]&&S.log[0].t.includes('hambre'));
+  MapView.night('Año '+S.year,`Oro ${dg>=0?'+':'−'}${Math.abs(dg)}   Habitantes ${dp>=0?'+':'−'}${Math.abs(dp)}`);Sound.chime();
+  MapView.turnFX({dg,dp,df:S.food-f0,hunger,bad:dg<0||hunger||S.tr<t0-5||!!S.regChange});
+  $('endB').disabled=true;
+  if(r.end){setTimeout(()=>finish(r.end),1800);return}
+  guideToast();checkAch();
+  save();render();$('endB').disabled=true;
+  setTimeout(()=>{render();
+  const next=()=>{if(r.stageUp)showStage();else if(S.pend)showEvent()};
+  if(S.regChange)showRegChange(S.regChange,next);else next();
+  },1900);
+}
+function showEvent(){
+  const ev=S.pend;
+  openCard(`<img class="vig" src="${vig(ev.id)}" alt=""><h3>${ev.title}</h3><p>${ev.text}</p>
+    ${ev.opts.map((o,i)=>`<button class="opt" data-o="${i}">${ev.followUp?'':`<span class="stances">${Object.keys(ADV).map(a=>{const st=stance(a,o.fx);return st?`<span class="st ${st>0?'pro':'con'}"><img src="${port(a)}" alt="${ADV[a].n}">${st>0?'✓':'✗'}</span>`:''}).join('')}</span>`}${o.l}${ev.followUp?`<small>${Object.keys(o.fx).length?'Ver efectos':''}</small>`:`<small>${o.fx.t?(o.fx.t>0?'+':'−')+Math.abs(o.fx.t)+' oro':'Sin costo en oro'}. Las demás consecuencias se verán después.</small>`}</button>`).join('')}`);
+  card.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{
+    const ev2=S.pend,o=choose(+b.dataset.o);save();render();
+    const p=o.f?PH[o.f]:null;
+    openCard(`<img class="vig" src="${vig(ev2.id)}" alt=""><h3>${ev2.followUp?ev2.title:o.l}</h3><div class="chips">${chips(o.fx)}</div>
+      <div class="phil"><b>${p?`${p.n} (${p.a})`:'Lección'}</b><br>${o.why}</div>${reactions(o.fx)}${o.later?'<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>':''}
+      <button class="main" id="okB">Continuar</button>`);
+    $('okB').onclick=closeCard;
+  });
+}
+function showRegChange(ch,next){
+  const T={cor:`${REG[ch.from].n} se corrompió en ${REG[ch.to].n}`,rev:`Revolución: cae ${REG[ch.from].n}`,ref:`Reforma: vuelve ${REG[ch.to].n}`}[ch.type];
+  const L={cor:'Aristóteles distinguía las formas rectas, que gobiernan para el bien común, de sus desviaciones, que gobiernan para el interés propio. Tus decisiones inclinaron el poder hacia una facción.',
+    rev:'Polibio describió un ciclo: cada forma corrupta provoca la reacción que la derriba y da paso a la siguiente forma recta. La revolución costó oro y vidas.',
+    ref:'Un gobierno desviado puede enderezarse cuando vuelve a servir al bien común. Lo lograste sin revolución.'}[ch.type];
+  Sound.mode(S.reg);
+  openCard(`<div class="regh" style="--rc:${REG[ch.to].col}">${EMB[ch.to]}</div><h3>${T}</h3><div class="phil"><b>${ch.type==='rev'?'Polibio':'Aristóteles'}</b><br>${L}</div>
+    <p><b>Ahora gobierna: ${REG[ch.to].n}.</b> ${REG[ch.to].d}</p><button class="main" id="okB">Continuar</button>`);
+  $('okB').onclick=()=>{closeCard();next()};
+}
+function regInfo(){
+  const R0=RG(),c=Math.round(S.corr);
+  openCard(`<div class="regh" style="--rc:${R0.col}">${EMB[S.reg]}</div><h3>${R0.n}</h3><p>${R0.d}</p>
+    <p class="small">Tu cargo: ${R0.t}. Sede: ${seatName()}.</p>
+    <h2>Rumbo del gobierno</h2><div class="rumbo"><div style="width:${c}%"></div></div><div class="rlab"><span>Bien común</span><span>Interés propio</span></div>
+    <p class="small">${R0.rect?`Si llega a 70, ${R0.n.toLowerCase()} se corrompe en ${REG[R0.cor].n.toLowerCase()}.`:`Si baja a 20, puedes reformarlo. Si la confianza se hunde, estalla una revolución y llega ${REG[R0.cyc].n.toLowerCase()}.`}
+    Sube al elegir por conveniencia o represión, al incumplir promesas y al abandonar a una clase. Baja al actuar por deber, justicia o prudencia y al cumplirle al pueblo.</p>
+    <p class="small">Ciclo de Polibio: ${CYCLE.map(k=>k===S.reg?`<b>${REG[k].n}</b>`:REG[k].n).join(', ')}.</p>
+    <button class="main" id="okB">Cerrar</button>`);
+  $('okB').onclick=closeCard;
+}
+function showStage(){
+  const st=STAGES[S.stage];
+  const un=Object.values(B).filter(b=>b.st===S.stage).map(b=>`${b.e} ${b.n}`).join(', ');
+  openCard(`<div class="big">🎉</div><h3>Tu territorio es ahora ${st.n}</h3><p>${st.lesson}</p>${un?`<p><b>Nuevas construcciones:</b> ${un}.</p>`:''}<button class="main" id="okB">Seguir gobernando</button>`);
+  $('okB').onclick=()=>{closeCard();if(S.pend)showEvent()};
+}
+function finish(end){
+  S.over=true;save();render();const nu=checkAch(end);
+  const tot=Object.values(S.phil).reduce((a,b)=>a+b,0)||1;
+  const top=Object.keys(S.phil).sort((a,b)=>S.phil[b]-S.phil[a])[0];
+  const bars=Object.keys(PH).map(k=>`<div class="pbar"><span>${PH[k].a}</span><div class="track"><div class="fill" style="width:${S.phil[k]/tot*100}%;background:var(--accent)"></div></div><span>${S.phil[k]}</span></div>`).join('');
+  openCard(`<div class="big">${end.win?'🏛️':'🕯️'}</div><h3>${end.title}</h3><p>${end.text}</p>
+    <p>Gobernaste ${S.year} años. Llegaste a ${STAGES[S.stage].n} con ${S.pop} habitantes, ${Math.round(S.gold)} de oro, ${Math.round(totDebt())} de deuda y calificación ${rating().l}.</p>
+    <h2>Tu perfil de gobierno</h2>${S.phil[top]?`<p><b>${PH[top].n} (${PH[top].a}).</b> ${PROFILE[top]}</p>`:''}${bars}
+    <div class="phil" style="margin-top:12px"><b>Para reflexionar</b><br>¿Tu gobierno fue del pueblo, por el pueblo y para el pueblo, o solo en su nombre? ¿Qué decisión cambiarías y por qué?</div>
+    ${nu.length?`<p><b>Logros nuevos:</b> ${nu.map(a=>a.n).join(', ')}.</p>`:''}
+    <button class="main" id="againB">Nueva partida</button>`);
+  $('againB').onclick=()=>{closeCard();newGame()};
+}
+function help(first){
+  openCard(`<div class="big">🏛️</div><h3>${first?'Bienvenido, gobernante':'Cómo jugar'}</h3>
+    <p>Gobiernas un territorio junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis 8 años.</p>
+    <p><b>Tres clases sociales.</b> Campesinos, artesanos y élite tienen ingresos y ánimo propios. Las casas traen gente, pero cada persona necesita un empleo: cultivos, mercados, talleres. Sin empleo crece el descontento.</p>
+    <p><b>Hacienda.</b> Fija un impuesto para cada clase. Desde Pueblo puedes pedir préstamos, emitir bonos o imprimir moneda. Imprimir genera inflación; endeudarte baja tu calificación y encarece el crédito.</p>
+    <p><b>Dilemas.</b> Cada respuesta refleja una corriente filosófica, y algunas regresan años después como consecuencia.</p>
+    <p><b>Régimen.</b> Eliges cómo se gobierna. Cada régimen cambia la sede, los colores, la música y las reglas. Si gobiernas para ti o para una facción, el régimen se corrompe; si el pueblo pierde la confianza, estalla una revolución. Toca el emblema para ver tu rumbo.</p>
+    <p><b>Agua, energía y ladera.</b> Desde Pueblo necesitas acueductos para crecer y molinos para que los talleres funcionen. El café solo crece en ladera y el puerto va junto al río.</p>
+    <p><b>Leyes.</b> Abre Leyes en el dock: cada etapa te da un cupo más, y cada ley tiene ganadores y perdedores.</p>
+    <p><b>Exigencia creciente.</b> Con los años el pueblo espera más calidad de vida. Lo que bastaba al principio no basta al final.</p>
+    <p>Pierdes si la confianza o el ambiente llegan a cero, si caes dos veces en cesación de pagos o si pierdes una elección en la Polis.</p>
+    <button class="main" id="okB">${first?'Empezar a gobernar':'Entendido'}</button>`);
+  $('okB').onclick=closeCard;
+}
+function tileInfo(i){
+  const x=S.map[i],tn={llano:'Llanura',bosque:'Bosque',montana:'Montaña',rio:'Río'}[x.t];
+  let h=`${x.b?`<img class="ticon" src="${icon(x.b)}" alt="">`:''}<h3>${x.b?B[x.b].n:tn}</h3>`;
+  if(x.b){h+=`<p>${B[x.b].d} Mantenimiento: ${Math.round(B[x.b].up*S.price)} de oro al año.</p><div class="two"><button class="btn" id="demB">Demoler (+${Math.round(cost(x.b)*.3)} oro)</button><button class="btn" id="okB">Cerrar</button></div>`}
+  else h+=`<p>${x.t==='bosque'?'Construir aquí tala el bosque y baja el ambiente.':x.t==='montana'?'Solo admite minas (desde Ciudad).':nearRiver(i)?'Tierra fértil: un cultivo aquí rinde más.':'Terreno libre.'}</p><button class="main" id="okB">Cerrar</button>`;
+  openCard(h);$('okB').onclick=closeCard;
+  const d=$('demB');if(d)d.onclick=()=>{S.gold+=Math.round(cost(x.b)*.3);x.b=null;if(S.pop>cap())S.pop=cap();MapView.razed(i);save();render();closeCard()};
+}
+function reactions(fx){
+  const r=Object.keys(ADV).map(a=>{const st=stance(a,fx);if(!st)return '';const L=st>0?ADV[a].pro:ADV[a].con;return `<div class="say ${st>0?'pro':'con'}"><img src="${port(a)}" alt=""><div><b>${ADV[a].n}</b><span>“${L[S.year%L.length]}”</span></div></div>`}).join('');
+  return r?`<div class="says">${r}</div>`:'';
+}
+function preview(k){
+  let t=S.map.map((x,i)=>i).filter(i=>!whyNot(k,i));
+  if(!t.length)return `<span class="neg">${S.gold<cost(k)?`Te faltan ${cost(k)-Math.floor(S.gold)} de oro.`:'No hay terreno disponible.'}</span>`;
+  if(k==='cultivo'){const rv=t.filter(i=>nearRiver(i));if(rv.length)t=rv}
+  const i=t[0],x=S.map[i],F0=finance(),c0=counts(),e0=envTarget(c0);
+  const tt=x.t;x.b=k;if(tt==='bosque')x.t='llano';
+  const F1=finance(),c1=counts(),e1=envTarget(c1);
+  x.b=null;x.t=tt;
+  const out=[],sg=v=>(v>0?'+':'−')+Math.abs(Math.round(v));
+  const dn=F1.net-F0.net;out.push(`resultado anual ${sg(dn)} (queda en ${sg(F1.net)})`);
+  const dj=(F1.so.jc+F1.so.ja)-(F0.so.jc+F0.so.ja);if(dj)out.push(`${dj} empleos`);
+  const df=F1.fprod-F0.fprod;if(df)out.push(`alimento ${sg(df)} al año`);
+  if(k==='casa')out.push('10 cupos más');
+  const de=e1-e0-(tt==='bosque'?3:0);if(Math.abs(de)>=1)out.push(`ambiente ${sg(de)}`);
+  return `<span class="prev">Si lo construyes: ${out.join(', ')}. Cuesta ${cost(k)} de oro.</span>`;
+}
+function checkAch(end){
+  let got={};try{got=JSON.parse(localStorage.getItem('polis-logros')||'{}')}catch(e){}
+  const nu=ACH.filter(a=>!got[a.id]&&a.ok(end));
+  nu.forEach(a=>got[a.id]=S.year);
+  if(nu.length){try{localStorage.setItem('polis-logros',JSON.stringify(got))}catch(e){};if(!end)toast('Logro: '+nu.map(a=>a.n).join(', '))}
+  return nu;
+}
+function closeSheets(){document.querySelectorAll('.sheet.open').forEach(s=>s.classList.remove('open','mini'));document.querySelectorAll('.dk.on').forEach(d=>d.classList.remove('on'))}
+function openSheet(id){const el=$(id),was=el.classList.contains('open');closeSheets();if(id!=='sh-build'){tool=null}if(!was){el.classList.add('open');const d=document.querySelector(`.dk[data-sheet="${id}"]`);if(d)d.classList.add('on')}render()}
+document.querySelectorAll('.dk').forEach(d=>d.onclick=()=>openSheet(d.dataset.sheet));
+$('goal').onclick=()=>$('goal').classList.toggle('open');
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>{tool=null;closeSheets();render()});
+function renderLaws(){
+  const n=Object.keys(S.laws||{}).length;
+  $('laws').innerHTML=`<p class="slots">Leyes vigentes: ${n} de ${lawSlots()}. Promulgar cuesta ${lawCostNow()} de oro${S.reg==='monarquia'||S.reg==='tirania'?'':' y 2 de confianza'}. Cada etapa abre un cupo más.</p>`+
+    LAWS.map(l=>{const on=hasLaw(l.id),bl=lawBlock(l);return `<div class="law ${on?'on':''}"><b>${l.n}</b><small>${l.d}</small>${on?`<small>Vigente desde el año ${S.laws[l.id]}.</small>`:''}${bl&&!on?`<small class="neg">${bl}</small>`:''}<button class="btn" data-law="${l.id}" ${bl&&!on?'disabled':''}>${on?'Derogar':'Promulgar'}</button></div>`}).join('');
+  $('laws').querySelectorAll('[data-law]').forEach(b=>b.onclick=()=>{const r=toggleLaw(b.dataset.law);if(r!==true)toast(r);else{Sound.tap();save()}render()});
+}
+function render(){
+  const c=counts(),F=finance(),so=F.so,nx=STAGES[S.stage+1],R=rating();
+  document.documentElement.style.setProperty('--regc',RG().col);Sound.mode(S.reg);
+  $('era').innerHTML=`<button class="regb" id="regB">${EMB[S.reg]}<b>${RG().n.split(' ')[0]}</b></button><span class="eral">${STAGES[S.stage].n}, año ${S.year}${S.stage===3?`. Polis ${S.polisYears}/${D().polis}`:''}</span>`;
+  $('regB').onclick=regInfo;
+  $('nums').innerHTML=`
+    <div class="pill" title="Oro">${IC.gold}<b class="${S.gold<0?'neg':''}">${Math.round(S.gold)}</b></div>
+    <div class="pill" title="Deuda">${IC.debt}<b>${Math.round(totDebt())}</b></div>
+    <div class="pill" title="Alimento">${IC.food}<b>${Math.round(S.food)}</b><small class="${F.fprod-F.cons<0?'neg':''}">${F.fprod-F.cons>=0?'+':'−'}${Math.abs(F.fprod-F.cons)}</small></div>
+    <div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa*10}</small></div>`+
+    (S.stage>=1?`<div class="pill" title="Agua">💧<b class="${S.pop>waterCap(c)?'neg':''}">${waterCap(c)}</b></div><div class="pill" title="Energía para talleres">⚡<b class="${c.taller>energy(c)?'neg':''}">${poweredT(c)}/${c.taller}</b></div>`:'');
+  $('dkFin').innerHTML=IC.gold;$('dkSoc').innerHTML=IC.pop;
+  $('bars').innerHTML=[['Bienestar',S.hap],['Igualdad',S.eq],['Confianza',S.tr],['Ambiente',S.env]].map(([n,v])=>`<div class="bar"><div class="lab"><span>${n}</span><b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${col(v)}"></div></div></div>`).join('')+
+    `<button class="bar rumbob" id="rumB"><div class="lab"><span>Rumbo</span><b>${Math.round(S.corr)}</b></div><div class="track"><div class="fill" style="width:${S.corr}%;background:${col(100-S.corr)}"></div></div></button>`;
+  $('rumB').onclick=regInfo;
+  $('bars').querySelectorAll('.bar:not(.rumbob)').forEach(b=>b.onclick=()=>openSheet('sh-soc'));
+  const pr=S.promises.map(p=>`Promesa: ${B[p.k].a} antes del año ${p.dl}.`).join(' ');
+  const g=S.guide&&S.gstep<GUIDE.length?GUIDE[S.gstep]:null;
+  const meta=nx?`Meta: ${nx.n} (${nx.req}).`:`Meta: sostener la Polis ${D().polis} años.`;
+  $('goal').innerHTML=`<div class="gl1">${g?`<b>Guía ${S.gstep+1}/${GUIDE.length}</b> ${g.t}`:meta}</div>`+
+    `<div class="gmore">${g?meta+' ':''}${pr?pr+' ':''}${S.expc>0?`<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> `:''}${g?'<button class="lnk" id="hideG">Ocultar guía</button>':''}</div>`;
+  $('goal').classList.toggle('has',!!(g||pr||S.expc>0));
+  const hg=$('hideG');if(hg)hg.onclick=e=>{e.stopPropagation();S.guide=false;save();render()};
+  // sociedad
+  const TG=satTargets(c,false),tr=(v,t)=>{const d=Math.round(t-v);return Math.abs(d)<2?'estable':d>0?`sube hacia ${Math.round(clamp(t,0,100))}`:`baja hacia ${Math.round(clamp(t,0,100))}`};
+  const cls=[['🧑‍🌾','Campesinos',so.camp,S.sat.c,`${so.camp} de ${so.jc} puestos. Ánimo ${tr(S.sat.c,TG.c)}`],['🧑‍🔧','Artesanos',so.art,S.sat.a,`${so.art} de ${so.ja} puestos. Ánimo ${tr(S.sat.a,TG.a)}`],['🎩','Élite',so.el,S.sat.e,`Dueños de comercio e industria. Ánimo ${tr(S.sat.e,TG.e)}`]];
+  const who=['rosa','julian','aurelio'];
+  $('soc').innerHTML=cls.map(([e,n,k,v,sub],j)=>{const A=ADV[who[j]],md=A.mood[v<35?0:v<62?1:2];return `<div class="cls"><img class="ce" src="${port(who[j])}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${col(v)}"></div></div><small>${sub}</small><div class="quote">${A.n}: “${md}”</div></div></div>`}).join('')+
+    `<p class="small ${so.un>0?'neg':''}">${so.un>0?`${so.un} personas sin empleo. Construye cultivos, mercados o talleres.`:'Todos tienen empleo.'}</p>`;
+  // mapa
+  MapView.refresh();renderChart();renderLaws();
+  const bs=$('sh-build');bs.classList.toggle('mini',!!tool&&bs.classList.contains('open'));$('cancelB').hidden=!tool;
+  $('tray').innerHTML=Object.entries(B).map(([k,b])=>{const lk=b.st>S.stage;return `<button class="tool${tool===k?' on':''}" data-k="${k}" ${lk?'disabled':''}>${lk?'<span class="em">🔒</span>':`<img src="${icon(k)}" alt="">`}${k==='agora'?seatName():b.n}<small>${lk?STAGES[b.st].n:IC.gold+cost(k)}</small></button>`}).join('');
+  $('hint').innerHTML=tool?`<b>${B[tool].n}.</b> ${B[tool].d} ${preview(tool)}`:'Elige una obra para construir, o toca una casilla para inspeccionarla.';
+  $('undoB').hidden=!S.undo||!S.undo.length||S.over;
+  // hacienda
+  ['c','a','e'].forEach(k=>{$('tx'+k).value=S.tx[k];$('tv'+k).textContent=S.tx[k]+'%'});
+  $('macro').innerHTML=`<div><strong class="${S.infl>.06?'neg':''}">${(S.infl*100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="rat r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate*100)}%</strong><span>Tasa de interés</span></div>`;
+  $('budget').innerHTML=`
+    <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr>
+    <tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr>
+    <tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
+    <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr>
+    <tr><td>Mantenimiento de obras</td><td>−${F.up}</td></tr>
+    <tr><td>Administración pública</td><td>−${F.admin}</td></tr>
+    ${F.pay?`<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>`:''}
+    ${F.cpn?`<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>`:''}
+    ${F.mat?`<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>`:''}
+    <tr class="tot"><td>Resultado del año</td><td class="${F.net<0?'neg':''}">${F.net>=0?'+':'−'}${Math.abs(F.net)}</td></tr>`;
+  const cb=canBorrow()&&!S.over;
+  $('loanB').disabled=!cb;$('bondB').disabled=!cb;
+  $('printB').disabled=S.stage<1||S.over;
+  $('payB').disabled=S.debt<=0||S.gold<1||S.over;
+  $('bondList').textContent=S.bonds.length?'Bonos: '+S.bonds.map(b=>`${b.amt} al ${Math.round(b.cpn*100)}%, vence año ${b.due}`).join('; ')+'.':'';
+  $('loanInfo').textContent=S.stage<1?'El crédito y la emisión se abren al llegar a Pueblo.':R.l==='CCC'?'Calificación CCC: nadie te presta. Reduce deuda y déficit.':'Préstamo: 150, se paga 15% por año. Bono: 200 a 5 años, interés más bajo, pagas todo al vencer.';
+  $('endB').disabled=!!S.pend||S.over;
+  $('endB').innerHTML=S.over?'Fin':`Año ${S.year}<br><small>terminar ▸</small>`;
+  $('log').innerHTML=S.log.slice(0,40).map(l=>`<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('');
+}
+MapView.onTap=i=>{
+  if(S.over||S.pend)return;
+  if(!tool&&document.querySelector('.sheet.open')){closeSheets();render();return}
+  if(!tool){if(S.map[i].t!=='rio')tileInfo(i);return}
+  const was=S.map[i].b,r=build(tool,i);
+  if(S.map[i].b!==tool||was===tool){return toast(typeof r==='string'?r:'No se puede construir ahí.')}
+  MapView.built(i);Sound.tap();if(typeof r==='string')toast(r);
+  guideToast();save();render();
+};
+$('htabs').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;chartKey=b.dataset.c;renderChart()});
+$('tray').addEventListener('click',e=>{const t=e.target.closest('.tool');if(!t||t.disabled)return;tool=tool===t.dataset.k?null:t.dataset.k;render()});
+$('cancelB').onclick=()=>{tool=null;render()};
+['c','a','e'].forEach(k=>$('tx'+k).addEventListener('input',e=>{const want=+e.target.value,v=taxLimit(k,want);S.tx[k]=v;
+  if(v!==want)toast(RM('eliteCap',0)&&k==='e'&&want>RM('eliteCap',0)?'La plutocracia no permite cobrar más de 10% a la élite.':'El Senado solo permite mover cada impuesto 5 puntos por año.');save();render()}));
+$('loanB').onclick=()=>{if(takeLoan()){S.log.unshift({y:S.year,t:`Préstamo de 150 al ${Math.round(loanRate()*100)}%.`});save();render();toast('Recibiste 150 de oro.')}};
+$('bondB').onclick=()=>{const c=issueBond();if(c){S.log.unshift({y:S.year,t:`Emitiste un bono de 200 al ${Math.round(c*100)}% a 5 años.`});save();render();toast('Recibiste 200. Pagarás cupones y el capital al vencer.')}};
+$('printB').onclick=()=>{if(printMoney()){save();render();toast('Imprimiste 50 de oro. Los precios subirán el próximo año.')}};
+$('payB').onclick=()=>{const p=payDebt();save();render();toast(`Abonaste ${p} a los préstamos.`)};
+$('endB').onclick=endYear;
+$('helpB').onclick=()=>help(false);
+$('undoB').onclick=()=>{const u=undoBuild();if(u){MapView.razed(u.i);toast(`Deshiciste: ${B[u.k].n}. Recuperaste ${u.paid} de oro.`);save();render()}};
+function slotInfo(n){try{const s=JSON.parse(localStorage.getItem('polis-slot-'+n));return s?`${STAGES[s.stage].n}, año ${s.year} (${DIFFS[s.diff||'normal'].n})`:null}catch(e){return null}}
+function menu(){
+  let got={};try{got=JSON.parse(localStorage.getItem('polis-logros')||'{}')}catch(e){}
+  openCard(`<h3>Partidas</h3><p class="small">Código de este mapa: <b>${S.seed}</b>. Úsalo al iniciar para repetir el mismo territorio.</p>
+    ${[1,2,3].map(n=>{const si=slotInfo(n);return `<div class="slot"><span>Ranura ${n}: ${si||'vacía'}</span><button class="btn" data-sv="${n}">Guardar</button><button class="btn" data-ld="${n}" ${si?'':'disabled'}>Cargar</button></div>`}).join('')}
+    <div class="two" style="margin-top:8px"><button class="btn" id="expB">Copiar código de partida</button><button class="btn" id="impB">Pegar código</button></div>
+    <textarea id="impT" class="inp" rows="3" placeholder="Pega aquí un código de partida" hidden></textarea>
+    <h2 style="margin-top:14px">Logros (${Object.keys(got).length} de ${ACH.length})</h2>
+    <div class="achs">${ACH.map(a=>`<div class="ach ${got[a.id]?'on':''}"><b>${got[a.id]?'🏅':'○'} ${a.n}</b><small>${a.d}</small></div>`).join('')}</div>
+    <div class="two" style="margin-top:12px"><button class="btn" id="newG">Nueva partida</button><button class="main" id="okB" style="margin:0">Cerrar</button></div>`);
+  $('okB').onclick=closeCard;
+  card.querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>{try{localStorage.setItem('polis-slot-'+b.dataset.sv,JSON.stringify(S));toast('Partida guardada en la ranura '+b.dataset.sv+'.');menu()}catch(e){toast('No se pudo guardar.')}});
+  card.querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>{try{S=JSON.parse(localStorage.getItem('polis-slot-'+b.dataset.ld));tool=null;save();render();closeCard();toast('Partida cargada.')}catch(e){toast('No se pudo cargar.')}});
+  $('expB').onclick=()=>{const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));const done=()=>toast('Código copiado. Guárdalo donde quieras.');
+    if(navigator.clipboard)navigator.clipboard.writeText(code).then(done,()=>{$('impT').hidden=false;$('impT').value=code;$('impT').select();toast('Copia el código del recuadro.')});else{$('impT').hidden=false;$('impT').value=code}};
+  $('impB').onclick=()=>{const t=$('impT');if(t.hidden){t.hidden=false;t.value='';t.focus();return}
+    try{const s=JSON.parse(decodeURIComponent(escape(atob(t.value.trim()))));if(!s.map||!s.tx)throw 0;S=s;tool=null;save();render();closeCard();toast('Partida cargada desde el código.')}catch(e){toast('Ese código no es válido.')}};
+  $('newG').onclick=()=>{openCard(`<h3>¿Empezar de nuevo?</h3><p>Se pierde la partida actual si no la guardaste en una ranura.</p><div class="two"><button class="btn" id="noB">Seguir aquí</button><button class="btn" id="yesB">Nueva partida</button></div>`);$('noB').onclick=closeCard;$('yesB').onclick=()=>{closeCard();newGame()}};
+}
+$('newB').onclick=menu;
+function soundUI(){$('sndB').textContent=Sound.on?'🔊':'🔇';$('sndB').setAttribute('aria-label',Sound.on?'Silenciar':'Activar sonido')}
+$('sndB').onclick=()=>{if(Sound.on)Sound.stop();else Sound.start();try{localStorage.setItem('polis-sound',Sound.on?'1':'0')}catch(e){}soundUI()};
+let wantSound=false;try{wantSound=localStorage.getItem('polis-sound')==='1'}catch(e){}
+if(wantSound)document.addEventListener('pointerdown',function f(){if(!Sound.on){Sound.start();soundUI()}document.removeEventListener('pointerdown',f)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ov.classList.contains('show')&&!S.pend&&!S.over)closeCard()});
+try{localStorage.removeItem('polis-v1')}catch(e){}
+function focusHome(){const i=S.map.findIndex(x=>x.b==='casa');if(i>=0)MapView.focus(i)}
+function showCover(saved){
+  $('cover').innerHTML=`<div class="cv-in"><h1 class="cv-t">Polis</h1><p class="cv-s">Gobierna un territorio junto al río.<br>Del pueblo, por el pueblo, para el pueblo.</p>
+    <div class="cv-b">${saved?`<button class="main" id="cvC">Continuar: ${STAGES[S.stage].n}, año ${S.year}</button>`:''}<button class="${saved?'btn':'main'}" id="cvN">Nueva partida</button><button class="btn" id="cvH">Cómo jugar</button></div></div>`;
+  $('cover').hidden=false;
+  if(saved)$('cvC').onclick=()=>{hideCover();if(S.pend)showEvent()};
+  $('cvN').onclick=()=>{hideCover();newGame()};
+  $('cvH').onclick=()=>help(false);
+}
+function hideCover(){$('cover').hidden=true}
+MapView.init();
+if(load()){if(!S.diff){S.diff='normal';S.guide=false;S.gstep=GUIDE.length}if(!S.undo)S.undo=[];if(S.kept===undefined){S.kept=0;S.hungry=false}if(!S.seed)S.seed=0;if(!S.reg){S.reg='republica';S.corr=20}render();focusHome();showCover(!S.over)}else{freshState('normal');render();focusHome();showCover(false)}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Hola. Este es el proyecto Pactum: la nueva polis.
+
+1. Lee completos CLAUDE.md y DISENO.md antes de hacer cualquier cosa.
+2. Revisa las dos referencias: referencia-polis-v9.html (el juego actual) y referencia-estilo-acuarela.html (el estilo visual aprobado).
+3. Corre "node herramientas-balance.js" para conocer el balance actual.
+4. Organiza el repositorio según la arquitectura de CLAUDE.md: mueve DISENO.md a docs/, las referencias a referencia/ y la herramienta de balance a herramientas/. Haz ese commit.
+5. Luego explícame en máximo 10 líneas, en español sencillo, tu plan para la fase 0 (migración), dividido en pasos pequeños que yo pueda probar en el celular.
+
+No empieces la migración hasta que yo apruebe el plan.
