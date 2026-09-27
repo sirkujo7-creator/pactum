@@ -1,6 +1,6 @@
 # Pactum: la nueva polis — instrucciones para Claude Code
 
-Lee este archivo completo al inicio de cada sesión. Después lee `docs/DISENO.md` (o `DISENO.md` si aún no se ha movido): es la fuente de verdad del diseño, y su sección **Balance general** manda sobre las demás.
+Lee este archivo completo al inicio de cada sesión. Después lee `docs/DISENO.md`: es la fuente de verdad del diseño, y su sección **Balance general** manda sobre las demás.
 
 ## Con quién trabajas
 
@@ -21,10 +21,10 @@ Simulador de gobierno para un jugador. Cada decisión enseña un concepto de fil
 
 | Archivo | Qué es |
 | --- | --- |
-| `DISENO.md` | Documento de diseño completo |
-| `referencia-polis-v9.html` | Versión 9 del juego (se llamaba Polis). Contiene toda la lógica y el contenido que hay que conservar: economía, clases, regímenes, leyes, 20 dilemas, 20 consecuencias diferidas, logros, sonido |
-| `referencia-estilo-acuarela.html` | Prueba de estilo aprobada: terreno continuo con luz, 7 entornos, casas de bahareque, pobladores con identidad, luz del día y temporadas. Es la guía visual obligatoria |
-| `herramientas-balance.js` | Lógica económica de la v9 más robots que juegan cientos de partidas. Uso: `node herramientas-balance.js` (variables opcionales `DIF`, `REG`, `NG`, `ETH`) |
+| `docs/DISENO.md` | Documento de diseño completo |
+| `referencia/referencia-polis-v9.html` | Versión 9 del juego (se llamaba Polis). Contiene toda la lógica y el contenido que hay que conservar: economía, clases, regímenes, leyes, 20 dilemas, 20 consecuencias diferidas, logros, sonido |
+| `referencia/referencia-estilo-acuarela.html` | Prueba de estilo aprobada: terreno continuo con luz, 7 entornos, casas de bahareque, pobladores con identidad, luz del día y temporadas. Es la guía visual obligatoria |
+| `herramientas/balance.js` | Lógica económica de la v9 más robots que juegan cientos de partidas. Uso: `node herramientas/balance.js` (variables opcionales `DIF`, `REG`, `NG`, `ETH`) |
 
 ## Decisiones fijas
 
@@ -93,7 +93,7 @@ No adelantes sistemas de fases futuras.
 4. Revisa en tamaño celular y en tamaño computador.
 5. Push y publicación.
 6. Explícale a Juan qué cambió y cómo probarlo.
-7. Actualiza la tabla de estado de `DISENO.md` si cambió algo del diseño.
+7. Actualiza la tabla de estado de `docs/DISENO.md` si cambió algo del diseño.
 
 ## Qué no hacer
 

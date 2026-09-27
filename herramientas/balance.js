@@ -1,5 +1,5 @@
 // PACTUM - herramienta de balance.
-// Uso: node herramientas-balance.js   (opcional: DIF=facil|normal|dificil  REG=republica|monarquia|...  NG=300  ETH=util|deon|contr|real|virt)
+// Uso: node herramientas/balance.js   (opcional: DIF=facil|normal|dificil  REG=republica|monarquia|...  NG=300  ETH=util|deon|contr|real|virt)
 // Contiene la lógica económica de la versión 9 (Polis) y robots que juegan cientos de partidas con distintas estrategias.
 // Estrategias: pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 

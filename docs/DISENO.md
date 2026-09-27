@@ -21,13 +21,13 @@ Pactum es un simulador de gobierno para un jugador en el que cada decisión ense
 - **Nombre:** PACTUM: la nueva polis.
 - **Público:** no se fija uno; la profundidad es moderada, con suficiente fondo para que los sistemas funcionen bien pero sin volverse complejo.
 - **Ideas:** se aprueban todas, organizadas según el balance general.
-- **Estilo visual:** acuarela propia por capas, sin paquetes de arte externos. La referencia aprobada es `referencia-estilo-acuarela.html`.
+- **Estilo visual:** acuarela propia por capas, sin paquetes de arte externos. La referencia aprobada es `referencia/referencia-estilo-acuarela.html`.
 - **Repositorio:** https://github.com/sirkujo7-creator/pactum
 - **Herramienta de desarrollo:** Claude Code.
 
 ## Estado actual (versión 9, llamada Polis)
 
-El juego ya funciona completo en un solo archivo HTML (`referencia-polis-v9.html`), con balance probado en miles de partidas simuladas. Todo esto se conserva en la migración.
+El juego ya funciona completo en un solo archivo HTML (`referencia/referencia-polis-v9.html`), con balance probado en miles de partidas simuladas. Todo esto se conserva en la migración.
 
 | Sistema | Qué hace hoy |
 | --- | --- |
@@ -111,7 +111,7 @@ Regla: cada edificio muestra lo que está pasando; el jugador entiende el pueblo
 
 ## Escenarios y pobladores
 
-La prueba de estilo (`referencia-estilo-acuarela.html`) ya resuelve la forma del relieve, los entornos y los pobladores. Es la referencia visual aprobada.
+La prueba de estilo (`referencia/referencia-estilo-acuarela.html`) ya resuelve la forma del relieve, los entornos y los pobladores. Es la referencia visual aprobada.
 
 ### Forma del relieve
 
