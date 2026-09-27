@@ -56,7 +56,8 @@ export class Arranque extends Phaser.Scene {
     // La portada cubre la pantalla, apoyada en el borde de abajo.
     // Se centra lo más posible en el nevado sin dejar bordes vacíos.
     const s = Math.max(w / 1600, h / 1000) * 1.02, borde = w / (2 * 1600 * s);
-    this.fondo.setOrigin(clampN(.66, borde, 1 - borde), 1).setPosition(w / 2, h).setScale(s);
+    // Si sobra alto (pantallas anchas y bajas), se recorta más el valle que el cielo, para no cortar el nevado.
+    this.fondo.setOrigin(clampN(.66, borde, 1 - borde), .3).setPosition(w / 2, h * .3).setScale(s);
 
     const base = Math.min(w, h * .9);
     this.titulo.setFontSize(Math.round(clampN(base * .16, 44, 120))).setPosition(w / 2, h * (celular ? .08 : .07));
