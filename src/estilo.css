@@ -1,0 +1,19 @@
+/* Fuentes guardadas en vendor/ para que el juego funcione sin internet. */
+@font-face{font-family:"Alegreya";font-weight:500;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya";font-weight:700;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya";font-weight:800;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:400;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:500;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:700;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-700-normal.woff2) format("woff2")}
+
+:root{
+  --papel:#ECEAE2; --tinta:#2B2A22;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var(--tinta);
+  font-family:"Alegreya Sans",system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;overscroll-behavior:none;touch-action:none}
+#juego{position:fixed;inset:0;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+#juego canvas{display:block;outline:none}
+#juego canvas:focus-visible{outline:3px solid #2D5D72;outline-offset:-3px}

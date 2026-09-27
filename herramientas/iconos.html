@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- Genera los iconos de la app. Uso: node herramientas/crear-iconos.mjs -->
+<meta charset="utf-8">
+<link rel="stylesheet" href="../src/estilo.css">
+<body>
+<script type="module">
+import { lienzo, mulberry, wash, blob, papel, PAPEL, TINTA } from '../src/arte/acuarela.js';
+
+function icono(t, margen) {
+  const c = lienzo(t, t), g = c.getContext('2d'), R = mulberry(11), m = t * margen, u = (t - 2 * m) / 100;
+  g.fillStyle = PAPEL; g.fillRect(0, 0, t, t);
+  const P = (x, y) => [m + x * u, m + y * u];
+  wash(g, [P(-20, 70), P(38, 22), P(50, 16), P(62, 24), P(120, 70), P(120, 120), P(-20, 120)], '#A9B3B8', R, .9, t / 90);
+  wash(g, [P(42, 22), P(50, 16), P(58, 23), P(54, 27), P(47, 25)], '#F6F5EF', R, .95, t / 120);
+  wash(g, [P(-20, 78), P(20, 60), P(50, 70), P(80, 58), P(120, 72), P(120, 120), P(-20, 120)], '#6E9567', R, .9, t / 90);
+  wash(g, [P(-20, 92), P(30, 80), P(70, 88), P(120, 82), P(120, 120), P(-20, 120)], '#C9C27E', R, .9, t / 90);
+  g.globalAlpha = .9; g.strokeStyle = '#7DB0C6'; g.lineWidth = 4 * u; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(...P(-5, 104)); g.bezierCurveTo(...P(30, 88), ...P(60, 108), ...P(105, 94)); g.stroke(); g.globalAlpha = 1;
+  for (let k = 0; k < 6; k++) blob(g, ...P(8 + k * 17, 76 + (k % 2) * 4), 4 * u, 2.6 * u, '#3E6B3F', R, .8);
+  g.fillStyle = TINTA; g.font = `800 ${46 * u}px Alegreya, Georgia, serif`; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.fillText('P', ...P(50, 62));
+  papel(g, t, t, .22);
+  return c.toDataURL('image/png');
+}
+
+await document.fonts.load('800 40px Alegreya', 'P');
+window.ICONOS = {
+  'icono-180.png': icono(180, 0),
+  'icono-192.png': icono(192, 0),
+  'icono-512.png': icono(512, 0),
+  'icono-maskable-512.png': icono(512, .1)
+};
+</script>
