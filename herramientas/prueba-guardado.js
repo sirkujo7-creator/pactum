@@ -32,4 +32,8 @@ ok(N.year === viejo.year && N.gold === viejo.gold && N.reg === viejo.reg && N.st
 let r;
 for (let y = 0; y < 10; y++) { r = advance(N); if (r.end) break; if (N.pend) choose(N, 0); }
 ok(isFinite(N.gold) && N.year > viejo.year, `se puede seguir jugando (año ${N.year})`);
+// 3) Partida guardada en la fase 0 (versión 2 del guardado, sin clima): se abre y recibe el clima.
+const F0 = freshState('normal', true, 1234, 'republica'); delete F0.clima;
+const V2 = desempaquetar(JSON.stringify({ juego: 'pactum', version: 2, estado: F0 }));
+ok(V2.clima && V2.clima.lluvias === 'normales', 'una partida de la fase 0 se abre y recibe el clima');
 process.exit(fallas ? 1 : 0);

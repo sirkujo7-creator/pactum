@@ -1,6 +1,6 @@
 // Efectos del mapa (de la versión 9): números que flotan al cerrar el año, huellas visibles de los
 // dilemas (crecida, sequía, plaga, río envenenado, multitud, fiesta, humo) y tintes del régimen y del esmog.
-import { C, nearRiver, clamp } from '../core/index.js';
+import { C, nearRiver, clamp, lluvias } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { DPR, reducirMovimiento } from './pantalla.js';
 
@@ -11,7 +11,7 @@ export class Efectos {
     this.scene = scene;
     this.capa = scene.add.graphics().setDepth(-700);      // sobre el terreno, bajo las figuras
     this.encima = scene.add.container(0, 0).setDepth(30000); // multitudes y banderines
-    this.velos = [0x000000, 0x000000, 0x000000].map(() => scene.add.rectangle(0, 0, 1, 1, 0, 0).setOrigin(0).setDepth(39990).setVisible(false));
+    this.velos = [0, 0, 0, 0].map(() => scene.add.rectangle(0, 0, 1, 1, 0, 0).setOrigin(0).setDepth(39990).setVisible(false));
     this.textos = [];
     this.lluvia = [];
     this.visto = null;
@@ -61,12 +61,24 @@ export class Efectos {
       } else for (let k = 0; k < 3; k++) { const x = hx - 18 + k * 16, y = hy + 2; b.fillStyle(0xEFE3C2, 1).fillRect(x, y - 12, 10, 6); b.fillStyle(0x6B4F3A, 1).fillRect(x + 4.5, y - 6, 1, 7); }
       this.encima.add(b);
     }
-    if (vk === 'flood' && !reducirMovimiento()) this.lluvia = Array.from({ length: 70 }, (_, k) => ({ x: Math.random(), y: Math.random(), v: .6 + Math.random() * .4 }));
+    this.inundacion = vk === 'flood';
   }
 
   // Cada cuadro: lluvia, tintes del régimen, esmog y sequía.
   update(dt) {
     const S = this.scene.S, v = this.vista(), vk = S.vis && S.vis.k;
+    // Aguaceros: siempre durante una crecida; en la temporada de lluvias, a ratos (más si el año es lluvioso).
+    const L = lluvias(S), pob = this.scene.pob, temp = pob ? pob.temporada() : 'lluvias';
+    if (!reducirMovimiento()) {
+      this.cambioChubasco = (this.cambioChubasco || 0) - dt;
+      if (this.cambioChubasco <= 0) {
+        const p = !L ? 0 : temp === 'lluvias' ? (L.cosecha > 1 ? .7 : L.cosecha < 1 ? .2 : .45) : 0;
+        this.chubasco = Math.random() < p; this.cambioChubasco = 25 + Math.random() * 30;
+      }
+      const quiere = this.inundacion || this.chubasco;
+      if (quiere && !this.lluvia.length) this.lluvia = Array.from({ length: this.inundacion ? 70 : 45 }, () => ({ x: Math.random(), y: Math.random(), v: .6 + Math.random() * .4 }));
+      if (!quiere && this.lluvia.length) this.lluvia = [];
+    }
     if (this.lluvia.length) {
       if (!this.gl) this.gl = this.scene.add.graphics().setDepth(39980);
       const g = this.gl; g.clear().lineStyle(1 / this.scene.escala, 0x466E8C, .45);
@@ -74,7 +86,8 @@ export class Efectos {
     } else if (this.gl) this.gl.clear();
     const tinte = TINTE[S.reg];
     let smog = clamp((45 - S.env) / 45, 0, 1) * .28; if (vk === 'smog') smog += .2;
-    const capas = [tinte ? [tinte[0], tinte[1]] : null, smog > 0 ? [0x786950, smog] : null, vk === 'drought' ? [0xE1AA3C, .16] : null];
+    const seca = L && temp === 'seca' ? (L.cosecha < 1 ? .09 : .04) : 0;
+    const capas = [tinte ? [tinte[0], tinte[1]] : null, smog > 0 ? [0x786950, smog] : null, vk === 'drought' ? [0xE1AA3C, .16] : null, seca ? [0xE6B45A, seca] : null];
     capas.forEach((c, k) => {
       const r = this.velos[k];
       if (!c) { r.setVisible(false); return; }

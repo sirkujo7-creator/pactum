@@ -1,0 +1,8 @@
+{
+  "lluvias": {
+    "abundantes": { "nombre": "Lluvias abundantes", "icono": "🌧️", "probabilidad": 0.25, "cosecha": 1.1, "seco": 0, "texto": "Las lluvias llegaron completas: las cosechas rinden 10% más." },
+    "normales": { "nombre": "Lluvias normales", "icono": "⛅", "probabilidad": 0.55, "cosecha": 1.0, "seco": 0.1, "texto": "Un año de lluvias normales." },
+    "escasas": { "nombre": "Lluvias escasas", "icono": "🌤️", "probabilidad": 0.2, "cosecha": 0.85, "seco": 0.5, "texto": "Las lluvias se quedaron cortas: las cosechas rinden 15% menos. Guardar alimento ayuda." }
+  },
+  "leccion": "El campo depende de las temporadas de lluvia. Cuando llueve poco, la cosecha baja aunque el trabajo sea el mismo: por eso los pueblos guardan reservas."
+}

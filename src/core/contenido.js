@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -73,6 +73,7 @@ export function usarContenido(d) {
     if (o.f && !C.PH[o.f]) throw new Error(`Filosofía desconocida "${o.f}" en "${e.title}"`);
   }
   C.POB = d.pobladores;
+  C.CLIMA = d.clima;
   C.cargado = true;
   return C;
 }

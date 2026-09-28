@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -224,6 +224,8 @@ export class Mapa extends Phaser.Scene {
       this.cambio(true);
       if (r.end) { S.over = true; guardarYa(S); this.ui.render(); this.ui.final(r.end); return; }
       this.ui.logros();
+      const L = lluvias(S);
+      if (L && L.cosecha !== 1) this.ui.toast(`${L.icono} ${L.texto}`);
       const fin = () => this.ui.render();
       const sigue = () => { if (r.stageUp) this.ui.etapa(() => this.ui.suceso(fin)); else this.ui.suceso(fin); };
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();
@@ -262,8 +264,8 @@ export class Mapa extends Phaser.Scene {
     const altos = this.T.tiles.filter(t => t.b === 'niebla').filter((t, i) => i % 5 === 0);
     this.nieblas = altos.map((t, i) => {
       const p = P(t.r + .5, t.c + .5, t.h + 1.6);
-      const img = this.add.image(p[0], p[1], 'bancoNiebla').setDisplaySize(150, 34).setAlpha(.32).setDepth(PROF_NIEBLA);
-      if (!quieto) this.tweens.add({ targets: img, x: p[0] + 16, alpha: .2, duration: 7000 + (i % 5) * 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: i * 170 });
+      const img = this.add.image(p[0], p[1], 'bancoNiebla').setDisplaySize(150, 34).setAlpha(.3).setDepth(PROF_NIEBLA);
+      if (!quieto) this.tweens.add({ targets: img, x: p[0] + 16, duration: 7000 + (i % 5) * 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: i * 170 });
       return img;
     });
 
@@ -282,6 +284,9 @@ export class Mapa extends Phaser.Scene {
     if (!this.listo) return;
     this.pob.update(Math.min(.05, delta / 1000));
     this.efectos.update(Math.min(.05, delta / 1000));
+    // Niebla más espesa en las mañanas (fase 1).
+    const m = this.pob.manana(), a = .2 + .3 * m;
+    if (Math.abs(a - (this._nieblaA || 0)) > .01) { this._nieblaA = a; for (const n of this.nieblas) n.setAlpha(a); }
     const s = tiempo / 1000, quieto = reducirMovimiento();
     const g = this.brillo; g.clear();
     const total = this.largoRio[this.largoRio.length - 1];
@@ -432,4 +437,5 @@ export class Mapa extends Phaser.Scene {
 }
 
 // Sequedad del paisaje según el ambiente (como en la v9): 0 verde, 1 seco.
-function sequedad(S) { return Math.round(clamp((58 - S.env) / 48, 0, 1) * 10) / 10; }
+// Fase 1: también se seca en los años de lluvias escasas.
+function sequedad(S) { const L = lluvias(S); return Math.round(Math.max(clamp((58 - S.env) / 48, 0, 1), L ? L.seco : 0) * 10) / 10; }
