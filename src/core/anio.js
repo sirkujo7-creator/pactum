@@ -8,6 +8,7 @@ import { society, waterCap, satTargets, calcHap, envTarget } from './sociedad.js
 import { drawEvent } from './dilemas.js';
 import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, interesFondo } from './clima.js';
 import { sueloDelAnio } from './suelo.js';
+import { desgasteDelAnio } from './desgaste.js';
 import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
@@ -67,6 +68,8 @@ export function advance(S) {
   if (climaActivo(S) && S.clima.fenomeno) news.push(...atenderEmergencia(S, S.map.filter((x, i) => x.b && nearRiver(S, i)).length));
   // Fase 1: el suelo vive (bosque que vuelve o se quema, erosión y derrumbes).
   news.push(...sueloDelAnio(S));
+  // Fase 1: las obras se gastan según el mantenimiento que se paga.
+  news.push(...desgasteDelAnio(S));
 
   // Déficit y cesación de pagos.
   S.deficit = F.net < 0 ? S.deficit + 1 : 0;

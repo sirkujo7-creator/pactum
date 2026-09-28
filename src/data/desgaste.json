@@ -1,0 +1,69 @@
+{
+  "leccion": "Depreciación: todo edificio pierde valor con el uso. El mantenimiento es el costo de conservarlo; aplazarlo ahorra hoy, pero reparar después cuesta más.",
+  "desde": {
+    "habitantes": 25
+  },
+  "estados": [
+    {
+      "id": "nueva",
+      "nombre": "En buen estado",
+      "desde": 0,
+      "plural": "en buen estado"
+    },
+    {
+      "id": "gastada",
+      "nombre": "Gastada",
+      "desde": 25,
+      "plural": "gastadas"
+    },
+    {
+      "id": "agrietada",
+      "nombre": "Agrietada",
+      "desde": 50,
+      "plural": "agrietadas"
+    },
+    {
+      "id": "abandonada",
+      "nombre": "Abandonada",
+      "desde": 80,
+      "plural": "abandonadas"
+    }
+  ],
+  "desgasteBase": 1,
+  "desgasteSinMantenimiento": 15,
+  "reparaConMantenimiento": 3,
+  "rindeAgrietada": 0.75,
+  "animoPorAgrietada": 0.5,
+  "animoPorAbandonada": 1.2,
+  "animoMaximo": 10,
+  "costoReparar": 0.9,
+  "textos": {
+    "abre": "Tu aldea ya tiene 25 habitantes: las obras empiezan a gastarse. En Hacienda decides cuánto mantenimiento pagas.",
+    "agrietadas": "Obras que se agrietaron: {n}. Rinden menos y la gente se queja.",
+    "abandonadas": "Obras abandonadas por el deterioro: {n}. Ya no funcionan hasta que las repares.",
+    "gastada": "se nota el uso, pero funciona bien.",
+    "agrietada": "tiene grietas: rinde 25% menos y a los vecinos les molesta.",
+    "abandonada": "está abandonada: no funciona ni cuenta como obra hasta que la repares.",
+    "cerrado": "Se abre con 25 habitantes: desde entonces las obras se gastan con los años.",
+    "titulo": "Mantenimiento de las obras",
+    "ritmo": [
+      {
+        "desde": 100,
+        "texto": "Pagas todo el mantenimiento: las obras se conservan y hasta se arreglan solas los desperfectos pequeños."
+      },
+      {
+        "desde": 70,
+        "texto": "Las obras se gastan despacio: con los años aparecerán grietas."
+      },
+      {
+        "desde": 40,
+        "texto": "Las obras se gastan rápido: en pocos años habrá grietas y quejas."
+      },
+      {
+        "desde": 0,
+        "texto": "Las obras se deterioran muy rápido: pronto habrá casas y talleres abandonados."
+      }
+    ],
+    "repararTodo": "Reparar lo agrietado y abandonado ({g} de oro)"
+  }
+}

@@ -1,10 +1,12 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
+  costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
+// Mantenimiento de las obras en % (se puede cambiar con MANT=0..100).
+const MANT = typeof process !== 'undefined' && process.env.MANT !== undefined ? +process.env.MANT : 100;
 // Porcentaje que la estrategia equilibrada aporta al fondo de emergencias (se puede cambiar con FONDO=0).
 const FONDO = typeof process !== 'undefined' && process.env.FONDO !== undefined ? +process.env.FONDO : 5;
 
@@ -13,6 +15,8 @@ export function botYear(S, strat, eth) {
   if (want) ['c', 'a', 'e'].forEach(k => S.tx[k] = taxLimit(S, k, want[k]));
   // Fase 1: la estrategia equilibrada ahorra en el fondo de emergencias desde Pueblo.
   if (S.clima) S.aporteFondo = strat === 'fair' && S.stage >= 1 ? FONDO : 0;
+  // Mantenimiento de las obras (MANT=0..100 para probar; por defecto 100%). La estrategia equilibrada repara lo agrietado.
+  if (S.clima) { S.mant = MANT; if (strat === 'fair') S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
   for (let n = 0; n < 8; n++) {
     const c2 = counts(S), F2 = finance(S);
     let k = null;

@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  lluvias, climaActivo, estadoSuelo, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -224,7 +224,7 @@ export class Interfaz {
       <div class="macro"><div><strong class="${S.infl > .06 ? 'neg' : ''}">${(S.infl * 100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate * 100)}%</strong><span>Tasa de interés</span></div></div>
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
-        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>
+        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>
         ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
@@ -233,6 +233,7 @@ export class Interfaz {
       ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. ${C.CLIMA.fondo.leccion}</p>` : ''}
+      ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {
       inp.oninput = () => {
@@ -244,6 +245,10 @@ export class Interfaz {
         this.mapa.cambio();
       };
     });
+    const mant = this.cuentas.querySelector('[data-mant]');
+    if (mant) mant.oninput = () => { S.mant = +mant.value; mant.nextElementSibling.textContent = mant.value + '%'; clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 150); this.mapa.cambio(); };
+    const todo = this.cuentas.querySelector('[data-reparar]');
+    if (todo) todo.onclick = () => this.mapa.repararTodo();
     const fondo = this.cuentas.querySelector('[data-fondo]');
     if (fondo) fondo.oninput = () => { S.aporteFondo = +fondo.value; fondo.nextElementSibling.textContent = fondo.value + '%'; clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 150); this.mapa.cambio(); };
     this.cuentas.querySelectorAll('[data-a]').forEach(bt => bt.onclick = () => {
@@ -296,7 +301,9 @@ export class Interfaz {
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price)} de oro al año.` }));
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
-      const g = Math.round(cost(S, x.b) * .3);
+      if (S.desgaste && nivelObra(x) > 0) { const e = estadoObra(x); hijos.push(el('span', { class: 'suelo', text: `${e.nombre}: ${C.DESGASTE.textos[e.id]}` })); }
+      const g = Math.round(cost(S, x.b) * .3), rep = S.desgaste ? costoReparar(S, i) : 0;
+      if (rep) hijos.push(el('button', { class: 'btn', style: 'grid-column:1/-1;margin-top:6px', ...(S.over || S.gold < rep ? { disabled: '' } : {}), on: { click: () => this.mapa.repararObra(i) } }, `Reparar (−${rep} oro)`));
       hijos.push(el('div', { class: 'dos' }, [
         el('button', { class: 'btn', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.mapa.demoler(i) } }, `Demoler (+${g} oro)`),
         el('button', { class: 'btn', on: { click: () => this.cerrarFicha() } }, 'Cerrar')
@@ -326,6 +333,22 @@ export class Interfaz {
       el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: 'Cada figura representa a unas dos personas del pueblo.' })
     );
     this.ficha.hidden = false;
+  }
+  // Fase 1: control de mantenimiento (desde 25 habitantes), estado de las obras y reparación.
+  seccionMantenimiento() {
+    const S = this.S, D = C.DESGASTE, T = D.textos;
+    if (!climaActivo(S)) return '';
+    if (!S.desgaste) return `<h3>${T.titulo}</h3><p class="small">${T.cerrado}</p>`;
+    const m = S.mant ?? 100, n = [0, 0, 0, 0];
+    let g = 0;
+    S.map.forEach((x, i) => { if (!x.b) return; const k = nivelObra(x); n[k]++; if (k >= 2) g += costoReparar(S, i); });
+    const partes = D.estados.map((e, k) => n[k] ? `${n[k]} ${n[k] === 1 ? e.nombre.toLowerCase() : e.plural}` : '').filter(Boolean).join(' · ');
+    const ritmo = T.ritmo.find(r => m >= r.desde).texto;
+    return `<h3>${T.titulo}</h3>
+      <div class="txrow"><span>Se paga</span><input type="range" min="0" max="100" step="10" value="${m}" data-mant aria-label="Mantenimiento de las obras, porcentaje"><strong>${m}%</strong></div>
+      <p class="small">${ritmo} Obras: ${partes || 'ninguna'}.</p>
+      ${g ? `<button class="btn" data-reparar ${S.gold < g || S.over ? 'disabled' : ''}>${T.repararTodo.replace('{g}', g)}</button>` : ''}
+      <p class="small">${D.leccion}</p>`;
   }
   // Fase 1: estado del suelo de la casilla (cenizas, erosión, derrumbe).
   textoSuelo(i) {
