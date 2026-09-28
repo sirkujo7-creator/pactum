@@ -4,8 +4,11 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp
+  taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
+import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
+import { Sonido } from './sonido.js';
+import { partida } from './partida.js';
 import { iconoObra } from '../arte/edificios.js';
 import { retrato, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
@@ -74,7 +77,8 @@ export class Interfaz {
       el('header', { class: 'arriba' }, [el('div', { class: 'fila1' }, [this.bReg, this.era]), this.hud, this.medidores]),
       el('div', { class: 'controles' }, [
         b('?', 'Cómo jugar', () => this.ayuda(false)),
-        b('☰', 'Partida', () => this.menu()),
+        b('☰', 'Partidas y logros', () => this.menu()),
+        this.bSonido = b('🔇', 'Activar sonido', () => this.alternarSonido()),
         b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25)),
         b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25)),
         b('⤢', 'Ver todo el territorio (0)', () => mapa.listo && mapa.encuadrar()),
@@ -136,6 +140,10 @@ export class Interfaz {
     if (!S) return;
     const c = counts(S), F = finance(S), so = F.so, R = rating(S), rg = RG(S);
     document.documentElement.style.setProperty('--regc', rg.col);
+    guardarLuego(S);
+    Sonido.mode(S.reg);
+    this.bSonido.textContent = Sonido.on ? '🔊' : '🔇';
+    this.bSonido.setAttribute('aria-label', Sonido.on ? 'Silenciar' : 'Activar sonido'); this.bSonido.title = this.bSonido.getAttribute('aria-label');
     this.bReg.innerHTML = `${EMB[S.reg]}<b>${rg.n.split(' ')[0]}</b>`;
     this.bReg.setAttribute('aria-label', `Régimen: ${rg.n}. Ver rumbo del gobierno`);
     this.era.textContent = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${D(S).polis}` : ''}`;
@@ -375,13 +383,25 @@ export class Interfaz {
       <button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
   }
+  // Revisa logros nuevos; devuelve la lista (y avisa si no es el final de la partida).
+  logros(end) {
+    const g = logrosGanados(), nu = logrosNuevos(this.S, g, end);
+    if (nu.length) { guardarLogros(g); if (!end) this.toast('Logro: ' + nu.map(a => a.n).join(', ')); }
+    return nu;
+  }
+  alternarSonido() {
+    if (Sonido.on) Sonido.stop(); else Sonido.start();
+    guardarSonido(Sonido.on); this.render();
+  }
   final(end) {
+    const nuevos = this.logros(end);
     const S = this.S, tot = Object.values(S.phil).reduce((a, b) => a + b, 0) || 1, top = topPhil(S);
     const barras = Object.keys(C.PH).map(k => `<div class="pbar"><span>${C.PH[k].a}</span><div class="track"><div class="fill" style="width:${S.phil[k] / tot * 100}%;background:var(--regc)"></div></div><span>${S.phil[k]}</span></div>`).join('');
     this.tarjeta(`<div class="big">${end.win ? '🏛️' : '🕯️'}</div><h3>${end.title}</h3><p>${end.text}</p>
       <p>Gobernaste ${S.year} años. Llegaste a ${C.STAGES[S.stage].n} con ${S.pop} habitantes, ${Math.round(S.gold)} de oro, ${Math.round(totDebt(S))} de deuda y calificación ${rating(S).l}.</p>
       <h2>Tu perfil de gobierno</h2>${S.phil[top] ? `<p><b>${C.PH[top].n} (${C.PH[top].a}).</b> ${C.PROFILE[top]}</p>` : ''}${barras}
       <div class="phil" style="margin-top:12px"><b>Para reflexionar</b><br>¿Tu gobierno fue del pueblo, por el pueblo y para el pueblo, o solo en su nombre? ¿Qué decisión cambiarías y por qué?</div>
+      ${nuevos.length ? `<p><b>Logros nuevos:</b> ${nuevos.map(a => a.n).join(', ')}.</p>` : ''}
       <button class="main" id="nuevaB">Nueva partida</button><button class="btn" id="verB" style="width:100%;margin-top:8px">Ver el territorio</button>`, false);
     this.boton('nuevaB', () => { this.cerrarTarjeta(); this.mapa.scene.start('Arranque', { nueva: true }); });
     this.boton('verB', () => this.cerrarTarjeta());
@@ -402,13 +422,35 @@ export class Interfaz {
       <button class="main" id="okB">${primera ? 'Empezar a gobernar' : 'Entendido'}</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
   }
+  // Partidas (ranuras y código, como en la v9) y logros.
   menu() {
-    this.tarjeta(`<h3>Partida</h3><p class="small">Territorio con código ${this.S.seed}. Dificultad ${D(this.S).n}.</p>
-      <button class="opt" id="nuevaB">Nueva partida<small>Elige dificultad y régimen desde cero.</small></button>
-      <button class="opt" id="portadaB">Volver a la portada<small>Tu partida sigue abierta mientras no recargues la página.</small></button>
+    const S = this.S, g = logrosGanados();
+    this.tarjeta(`<h3>Partidas</h3><p class="small">La partida se guarda sola en este aparato. Código de este territorio: <b>${S.seed}</b>; úsalo al iniciar para repetir el mismo mapa.</p>
+      ${[1, 2, 3].map(n => { const si = infoRanura(n); return `<div class="slot"><span>Ranura ${n}: ${si || 'vacía'}</span><button class="btn" data-sv="${n}">Guardar</button><button class="btn" data-ld="${n}" ${si ? '' : 'disabled'}>Cargar</button></div>`; }).join('')}
+      <div class="dos"><button class="btn" id="expB">Copiar código de partida</button><button class="btn" id="impB">Pegar código</button></div>
+      <textarea id="impT" class="inp" rows="3" placeholder="Pega aquí un código de partida (también sirven los de la versión 9)" hidden style="width:100%;margin-top:6px"></textarea>
+      <h2>Logros (${C.ACH.filter(a => g[a.id]).length} de ${C.ACH.length})</h2>
+      <div class="achs">${C.ACH.map(a => `<div class="ach ${g[a.id] ? 'on' : ''}"><b>${g[a.id] ? '🏅' : '○'} ${a.n}</b><small>${a.d}</small></div>`).join('')}</div>
+      <div class="dos" style="margin-top:12px"><button class="btn" id="nuevaB">Nueva partida</button><button class="btn" id="portadaB">Portada</button></div>
       <button class="main" id="okB">Seguir gobernando</button>`);
-    this.boton('nuevaB', () => { this.cerrarTarjeta(); this.mapa.scene.start('Arranque', { nueva: true }); });
-    this.boton('portadaB', () => { this.cerrarTarjeta(); this.mapa.scene.start('Arranque'); });
+    const cargar = nuevo => { partida.S = nuevo; guardarYa(nuevo); this.cerrarTarjeta(); this.mapa.scene.restart({}); };
+    this.card.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { this.toast(guardarRanura(+b.dataset.sv, S) ? `Partida guardada en la ranura ${b.dataset.sv}.` : 'No se pudo guardar en este aparato.'); this.menu(); });
+    this.card.querySelectorAll('[data-ld]').forEach(b => b.onclick = () => { try { cargar(cargarRanura(+b.dataset.ld)); } catch (e) { this.toast('No se pudo cargar esa ranura.'); } });
+    const area = this.card.querySelector('#impT');
+    this.boton('expB', () => {
+      const codigo = aCodigo(S), mostrar = () => { area.hidden = false; area.value = codigo; area.select(); this.toast('Copia el código del recuadro.'); };
+      if (navigator.clipboard) navigator.clipboard.writeText(codigo).then(() => this.toast('Código copiado. Guárdalo donde quieras.'), mostrar); else mostrar();
+    });
+    this.boton('impB', () => {
+      if (area.hidden || !area.value.trim()) { area.hidden = false; area.value = ''; area.focus(); return; }
+      try { cargar(desdeCodigo(area.value)); this.toast('Partida cargada desde el código.'); } catch (e) { this.toast('Ese código no es válido.'); }
+    });
+    this.boton('nuevaB', () => {
+      this.tarjeta(`<h3>¿Empezar de nuevo?</h3><p>La partida actual se reemplaza. Si quieres conservarla, guárdala antes en una ranura.</p><div class="dos"><button class="btn" id="noB">Seguir aquí</button><button class="btn" id="siB">Nueva partida</button></div>`);
+      this.boton('noB', () => this.cerrarTarjeta());
+      this.boton('siB', () => { this.cerrarTarjeta(); this.mapa.scene.start('Arranque', { nueva: true }); });
+    });
+    this.boton('portadaB', () => { guardarYa(S); this.cerrarTarjeta(); this.mapa.scene.start('Arranque'); });
     this.boton('okB', () => this.cerrarTarjeta());
   }
 
