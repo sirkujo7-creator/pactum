@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { genTerreno, build, undoBuild, demolish, whyNot, freeTiles, C } from '../core/index.js';
+import { genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -11,6 +11,7 @@ import { DPR, tam, reducirMovimiento } from './pantalla.js';
 import { partida, nuevaPartida } from './partida.js';
 import { Interfaz } from './Interfaz.js';
 import { Pobladores } from './Pobladores.js';
+import { Efectos } from './Efectos.js';
 
 const ZOOM_MAX = 3.6;
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
@@ -18,7 +19,7 @@ const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLE
 export class Mapa extends Phaser.Scene {
   constructor() { super('Mapa'); }
 
-  init(datos) { this.semilla = datos && datos.semilla; this.nueva = !!(datos && datos.nueva); }
+  init(datos) { this.semilla = datos && datos.semilla; this.nueva = !!(datos && datos.nueva); this.opciones = (datos && datos.opciones) || {}; }
 
   async create() {
     const cam = this.cameras.main;
@@ -31,10 +32,11 @@ export class Mapa extends Phaser.Scene {
     });
     this.ui.avisar('Pintando el territorio…');
 
-    if (!partida.S || this.nueva) await nuevaPartida(this.semilla);
+    if (!partida.S || this.nueva) await nuevaPartida(this.semilla, this.opciones);
     this.S = partida.S;
     this.T = genTerreno(this.S.seed, this.S.n);
     this.escalaSector = DPR > 1.5 ? 1.6 : 1.4;
+    this.dry = sequedad(this.S);
     this.vistaInicial();
 
     // Fondo lejano y sombra del diorama.
@@ -66,12 +68,17 @@ export class Mapa extends Phaser.Scene {
     for (let i = 0; i < N * N; i++) { this.ponerPlantas(i); this.ponerObra(i); }
     this.ponerVida();
     this.pob = new Pobladores(this);
+    this.efectos = new Efectos(this);
+    this.efectos.actualizar();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.marcaG = this.add.graphics().setDepth(PROF_MARCA);
     this.activarControles();
     this.ui.avisar('');
     this.ui.render();
     this.listo = true;
+    // Al empezar: la bienvenida en una partida nueva, o el dilema pendiente si lo hay.
+    if (this.nueva && this.opciones.bienvenida) this.ui.ayuda(true);
+    else if (this.S.pend) this.ui.suceso(() => this.ui.render());
     this.etapaVista = this.S.stage; this.regVisto = this.S.reg;
     console.info(`Territorio ${N}×${N} pintado en ${this.tiempoPintura} ms`);
   }
@@ -79,7 +86,7 @@ export class Mapa extends Phaser.Scene {
   // ---------- Terreno ----------
   pintarSector(sr, sc) {
     const clave = `sector-${sr}-${sc}`, previo = this.sectores[clave];
-    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map });
+    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, dry: this.dry });
     if (previo) { previo.destroy(); this.textures.remove(clave); }
     this.textures.addCanvas(clave, s.canvas);
     this.sectores[clave] = this.add.image(s.x, s.y, clave).setOrigin(0).setScale(1 / s.escala).setDepth(PROF_TERRENO + (sr + sc) * .01);
@@ -87,7 +94,7 @@ export class Mapa extends Phaser.Scene {
 
   // ---------- Figuras: naturaleza y edificios ----------
   prepararHojas() {
-    const nat = hornearNaturaleza(0), edi = hornearEdificios();
+    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios();
     for (const [clave, h] of [['naturaleza', nat], ['edificios', edi]]) {
       if (!this.textures.exists(clave)) {
         const tx = this.textures.addCanvas(clave, h.canvas);
@@ -165,7 +172,8 @@ export class Mapa extends Phaser.Scene {
     const antes = this.S.map[i].b, r = build(this.S, k, i);
     if (this.S.map[i].b !== k || antes === k) { this.ui.toast(typeof r === 'string' ? r : 'No se puede construir ahí.'); return; }
     this.refrescarCasilla(i);
-    if (typeof r === 'string') this.ui.toast(r);
+    const guia = checkGuide(this.S);
+    if (typeof r === 'string' || guia) this.ui.toast([typeof r === 'string' ? r : '', guia || ''].join(' ').trim());
     this.marcarPosibles(this.ui.herramienta);
     this.ui.render();
   }
@@ -184,6 +192,53 @@ export class Mapa extends Phaser.Scene {
     this.ui.toast(`Demoliste ${C.B[k].a}: recuperaste ${g} de oro.`);
   }
   otroTerritorio() { this.scene.restart({ nueva: true, semilla: Math.floor(Math.random() * 899999) + 100000 }); }
+
+  // ---------- Fin de año (como en la v9) ----------
+  terminarAnio() {
+    const S = this.S;
+    if (!this.listo || S.pend || S.over || this.ui.hayTarjeta() || this.cerrandoAnio) return;
+    this.ui.cerrarHojas(); this.ui.cerrarFicha();
+    const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr;
+    const r = advance(S);
+    const dg = Math.round(S.gold - g0), dp = S.pop - p0, hunger = !!(S.log[0] && S.log[0].t.includes('hambre'));
+    const sg = v => (v >= 0 ? '+' : '−') + Math.abs(v);
+    this.ui.pasoDelAnio('Año ' + S.year, `Oro ${sg(dg)}   ·   Habitantes ${sg(dp)}`);
+    this.efectos.cierre({ dg, dp, df: S.food - f0, hunger, bad: dg < 0 || hunger || S.tr < t0 - 5 || !!S.regChange });
+    this.cerrandoAnio = true;
+    this.ui.bFin.disabled = true;
+    const guia = r.end ? null : checkGuide(S);
+    if (guia) this.ui.toast(guia);
+    // Reloj del navegador (no el de Phaser, que se atrasa si el aparato va lento).
+    setTimeout(() => {
+      if (!this.sys.isActive()) return;
+      this.cerrandoAnio = false;
+      this.cambio(true);
+      if (r.end) { S.over = true; this.ui.render(); this.ui.final(r.end); return; }
+      const fin = () => this.ui.render();
+      const sigue = () => { if (r.stageUp) this.ui.etapa(() => this.ui.suceso(fin)); else this.ui.suceso(fin); };
+      if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();
+    }, reducirMovimiento() ? 900 : 1900);
+  }
+  elegirOpcion(i) { const o = choose(this.S, i); this.cambio(true); return o; }
+  // Tras cualquier cambio: interfaz, figuras que dependen de etapa y régimen, pobladores, huellas y sequía.
+  cambio(completo) {
+    this.ui.render();
+    if (!completo) return;
+    this.revisarCambiosGenerales();
+    this.pob.planear();
+    this.efectos.actualizar();
+    const d = sequedad(this.S);
+    if (Math.abs(d - this.dry) >= .15) this.repintarTodo(d);
+  }
+  // El paisaje se seca o reverdece según el ambiente: se repinta poco a poco, un sector por cuadro.
+  repintarTodo(d) {
+    this.dry = d;
+    const nat = hornearNaturaleza(d), tx = this.textures.get('naturaleza'), cv = tx.getSourceImage(), g = cv.getContext('2d');
+    g.clearRect(0, 0, cv.width, cv.height); g.drawImage(nat.canvas, 0, 0); tx.refresh();
+    const cola = Object.keys(this.sectores).map(k => k.split('-').slice(1).map(Number));
+    const paso = () => { if (!this.sys.isActive()) return; const x = cola.shift(); if (x) { this.pintarSector(...x); requestAnimationFrame(paso); } };
+    paso();
+  }
 
   // ---------- Vida: brillo del río, niebla y sombras de nubes ----------
   ponerVida() {
@@ -216,6 +271,7 @@ export class Mapa extends Phaser.Scene {
   update(tiempo, delta) {
     if (!this.listo) return;
     this.pob.update(Math.min(.05, delta / 1000));
+    this.efectos.update(Math.min(.05, delta / 1000));
     const s = tiempo / 1000, quieto = reducirMovimiento();
     const g = this.brillo; g.clear();
     const total = this.largoRio[this.largoRio.length - 1];
@@ -320,15 +376,21 @@ export class Mapa extends Phaser.Scene {
     this.input.on('wheel', (p, objs, dx, dy) => this.zoomEn(dy < 0 ? 1.12 : 1 / 1.12, ...pos(p)));
 
     const teclas = e => {
-      if (e.target && /INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName) && e.key !== 'Escape') return;
+      // En campos de texto no hay atajos. En botones, la barra espaciadora solo termina el año si el
+      // botón es de la barra inferior (así no se roba la tecla a quien navega con el teclado por las tarjetas).
+      if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && e.key !== 'Escape') return;
+      if (e.target && e.target.tagName === 'BUTTON' && e.key !== 'Escape' && !(e.key === ' ' && e.target.closest('.dock'))) return;
       const paso = 60;
       const acciones = {
         ArrowLeft: () => this.mover(paso, 0), ArrowRight: () => this.mover(-paso, 0), ArrowUp: () => this.mover(0, paso), ArrowDown: () => this.mover(0, -paso),
         a: () => this.mover(paso, 0), d: () => this.mover(-paso, 0), w: () => this.mover(0, paso), s: () => this.mover(0, -paso),
         '+': () => this.zoomCentro(1.25), '=': () => this.zoomCentro(1.25), '-': () => this.zoomCentro(1 / 1.25),
-        '0': () => this.encuadrar(), b: () => this.ui.alternarHoja(),
-        Escape: () => { if (this.ui.herramienta) this.ui.elegir(null); else if (!this.ui.hoja.hidden) this.ui.cerrarHoja(); else this.ui.cerrarFicha(); }
+        '0': () => this.encuadrar(), b: () => this.ui.alternarHoja('construir'),
+        '1': () => this.ui.alternarHoja('construir'), '2': () => this.ui.alternarHoja('hacienda'), '3': () => this.ui.alternarHoja('sociedad'),
+        '4': () => this.ui.alternarHoja('leyes'), '5': () => this.ui.alternarHoja('cronica'), ' ': () => this.terminarAnio(),
+        Escape: () => { if (this.ui.herramienta) this.ui.elegir(null); else if (this.ui.hojaAbierta()) this.ui.cerrarHojas(); else this.ui.cerrarFicha(); }
       };
+      if (this.ui.hayTarjeta()) { if (e.key === 'Escape' && this.ui.tarjetaCerrable) this.ui.cerrarTarjeta(); return; }
       const f = acciones[e.key];
       if (f) { f(); e.preventDefault(); }
     };
@@ -343,8 +405,8 @@ export class Mapa extends Phaser.Scene {
     const cam = this.cameras.main, t = casillaEn(this.T, cam.scrollX + px / this.escala, cam.scrollY + py / this.escala);
     if (!t) { this.ui.cerrarFicha(); return; }
     const i = t.r * this.T.N + t.c, k = this.ui.herramienta;
-    if (k) { this.construir(k, i); return; }
-    if (!this.ui.hoja.hidden) { this.ui.cerrarHoja(); return; }
+    if (k && !this.S.over) { this.construir(k, i); return; }
+    if (this.ui.hojaAbierta()) { this.ui.cerrarHojas(); return; }
     const f = this.pob.cercana(cam.scrollX + px / this.escala, cam.scrollY + py / this.escala);
     if (f) { this.marcar(null); this.ui.abrirPersona(f.p); return; }
     this.marcar(i);
@@ -358,3 +420,6 @@ export class Mapa extends Phaser.Scene {
     this.marcaG.lineStyle(2, 0xF2C94C, .95).fillStyle(0xF2C94C, .18).fillPoints(q, true).strokePoints(q, true);
   }
 }
+
+// Sequedad del paisaje según el ambiente (como en la v9): 0 verde, 1 seco.
+function sequedad(S) { return Math.round(clamp((58 - S.env) / 48, 0, 1) * 10) / 10; }

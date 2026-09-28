@@ -28,7 +28,11 @@ function recetas(dry) {
 }
 
 // Hornea todas las figuras en una sola hoja. Devuelve { canvas, marcos: {clave: {x, y, w, h, ax, ay}}, escala }.
+const HOJAS = {};
 export function hornearNaturaleza(dry = 0) {
+  const clave = Math.round(dry * 10) / 10;
+  if (HOJAS[clave]) return HOJAS[clave];
+  dry = clave;
   const lista = recetas(dry), sep = 4, anchoHoja = 1024;
   const marcos = {};
   let x = sep, y = sep, fila = 0;
@@ -45,7 +49,7 @@ export function hornearNaturaleza(dry = 0) {
     pintar(g, mulberry(k.length * 97 + k.charCodeAt(0) * 13 + (k.charCodeAt(k.length - 1) || 0)));
     g.restore();
   }
-  return { canvas: cv, marcos, escala: ESCALA };
+  return (HOJAS[clave] = { canvas: cv, marcos, escala: ESCALA });
 }
 
 // Qué crece en cada casilla según su entorno. Solo en casillas libres; el bosque lógico
