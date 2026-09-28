@@ -14,6 +14,7 @@ const MIGRACIONES = {
     if (S.kept === undefined) { S.kept = 0; S.hungry = false; }
     if (!S.seed) S.seed = 0;
     if (!S.reg) { S.reg = 'republica'; S.corr = 20; }
+    if (!S.mundo) S.mundo = 'v9';
     if (!S.n) S.n = Math.round(Math.sqrt(S.map.length)) || LADO_V9;
     return S;
   }

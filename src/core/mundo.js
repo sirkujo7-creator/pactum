@@ -1,8 +1,10 @@
 // Mapa lógico del territorio: tipo de terreno (llano, bosque, montaña, río), altura (0 a 2) y edificio.
 // Generador de la versión 9. El terreno continuo en acuarela (paso 3) se pintará encima de estos datos.
 import { mulberry, clamp } from './azar.js';
+import { genTerreno } from './terreno.js';
 
 export const LADO_V9 = 20;
+export const LADO_INICIAL = 32;
 
 export function lado(S) { return S.n || LADO_V9; }
 export function idx(S, r, c) { return r * lado(S) + c; }
@@ -81,4 +83,13 @@ export function genMap(seed, N = LADO_V9) {
     out[idx(r2, c2)] = m[idx(r, c)];
   }
   return out;
+}
+
+// Mapa lógico a partir del terreno continuo en acuarela.
+// Río → río; páramo, roca y nevado → montaña (minas); bosque de niebla → bosque;
+// el resto (valle, arrozales, potreros, laderas) → llano. La altura lógica 1 es ladera (café) y 2 es alta montaña.
+export const LOGICO = { agua: 'rio', nieve: 'montana', roca: 'montana', paramo: 'montana', niebla: 'bosque' };
+export function genMundo(seed, N = LADO_INICIAL) {
+  const T = genTerreno(seed, N);
+  return T.tiles.map(t => ({ t: LOGICO[t.b] || 'llano', b: null, h: t.b === 'agua' ? 0 : t.h > 4.4 ? 2 : t.h > 2 ? 1 : 0 }));
 }

@@ -3,6 +3,7 @@ export * from './azar.js';
 export * from './contenido.js';
 export * from './cargar.js';
 export * from './mundo.js';
+export * from './terreno.js';
 export * from './reglas.js';
 export * from './sociedad.js';
 export * from './hacienda.js';

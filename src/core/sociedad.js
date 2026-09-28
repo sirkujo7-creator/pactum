@@ -23,8 +23,15 @@ export function society(S) {
   return { el, camp, art, un, jc, ja, P };
 }
 
+// Aporte del bosque al ambiente. En la v9 (20×20) cada casilla de bosque daba 0,6: 2,4 por cada 1% del territorio.
+// En el terreno en acuarela el bosque cubre algo menos (12% frente a 15%), así que cada 1% vale 2,9.
+export const AMBIENTE_POR_BOSQUE = 2.9;
+function aporteBosque(S) {
+  if (S.mundo !== 'acuarela') return countT(S, 'bosque') * .6;
+  return countT(S, 'bosque') / S.map.length * 100 * AMBIENTE_POR_BOSQUE;
+}
 export function envTarget(S, c) {
-  return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + countT(S, 'bosque') * .6 - c.taller * 7 - c.mina * 12 - c.cultivo * 1.5 - c.casa * .4;
+  return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + aporteBosque(S) - c.taller * 7 - c.mina * 12 - c.cultivo * 1.5 - c.casa * .4;
 }
 
 // Ánimo al que tiende cada clase este año.

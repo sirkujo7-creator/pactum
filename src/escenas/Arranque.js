@@ -1,17 +1,23 @@
 // Escena de arranque: portada en acuarela y estado de la base técnica.
 import { pintarPortada, pintarNiebla, TINTA } from '../arte/acuarela.js';
 import { VERSION, PASO } from '../version.js';
+import { DPR, tam, capaUI, el } from './pantalla.js';
 import { cargarContenido, freshState, advance, choose } from '../core/index.js';
 
 const SERIF = 'Alegreya, Georgia, serif';
 const SANS = '"Alegreya Sans", system-ui, sans-serif';
-const RES = Math.min(window.devicePixelRatio || 1, 3);
+const RES = DPR;
 const reducirMovimiento = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 export class Arranque extends Phaser.Scene {
   constructor() { super('Arranque'); }
 
   create() {
+    this.cameras.main.setOrigin(0, 0).setZoom(DPR);
+    const entrar = el('button', { class: 'pildora grande', on: { click: () => this.scene.start('Mapa') } }, 'Ver el territorio');
+    this.ui = el('div', { class: 'portada-ui' }, [entrar]);
+    capaUI().append(this.ui);
+    this.events.once('shutdown', () => this.ui.remove());
     // La portada se hornea una sola vez a buena resolución y luego solo se escala.
     if (!this.textures.exists('portada')) this.textures.addCanvas('portada', pintarPortada(1600, 1000));
 
@@ -41,7 +47,7 @@ export class Arranque extends Phaser.Scene {
 
   actualizarEstado() {
     const instalada = window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone;
-    const { width: w, height: h } = this.scale;
+    const { w, h } = tam(this);
     const aparato = w < 700 ? 'celular' : 'computador';
     this.estado.setText([
       PASO,
@@ -69,7 +75,7 @@ export class Arranque extends Phaser.Scene {
   }
 
   maquetar() {
-    const { width: w, height: h } = this.scale;
+    const { w, h } = tam(this);
     const celular = w < 700;
 
     // La portada cubre la pantalla, apoyada en el borde de abajo.
