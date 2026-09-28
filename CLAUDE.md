@@ -62,27 +62,30 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 0, migración
+## Fase actual: Fase 1, territorio vivo
 
-Objetivo: mudar el juego a la nueva base sin agregar sistemas nuevos, hasta que juegue igual o mejor que la versión 9 y se vea como la prueba de estilo.
+La fase 0 (migración) está terminada y Juan la probó en su celular. Su estado queda en `docs/DISENO.md`.
 
-Incluye:
+Objetivo: que el territorio cambie solo y por las decisiones del jugador, sin romper el balance.
 
-- Organizar el repositorio según la arquitectura.
-- Pasar toda la lógica de la v9 a `src/core` y su contenido a `src/data`.
-- Terreno continuo con luz y los 7 entornos de la prueba de estilo; tamaño de mapa configurable (empezar en 32×32, preparado para 64×64).
-- Edificios de la v9 redibujados en el estilo acuarela de la prueba (bahareque, casona, taller, etc.), con sedes de gobierno por régimen.
-- Pobladores de la prueba con rutinas ligadas a sus casas y trabajos reales.
-- La interfaz de la v9 (dock, paneles, efectos de fin de año, fichas, logros, guardado) adaptada.
-- PWA y publicación en GitHub Pages.
+Incluye (en este orden, un paso publicable a la vez):
+
+1. Temporadas: el paisaje alterna lluvias y seca; la calidad de las lluvias de cada año afecta las cosechas (decisión de Juan).
+2. El Niño y La Niña: sequías y crecidas cada pocos años, con pronóstico un año antes y un fondo de emergencias en Hacienda (decisión de Juan). Dilemas nuevos de clima.
+3. Suelo vivo: el bosque crece o se quema; las laderas taladas se erosionan y pueden derrumbarse; la ley ambiental hace volver los árboles.
+4. Vida de los edificios: desgaste visible (nuevo, gastado, agrietado, abandonado), con un control de mantenimiento de 0% a 100% en Hacienda (decisión de Juan). Se abre con 25 habitantes.
+5. Balance: robots que también enfrentan los sistemas nuevos.
+
+Reglas del diseño que aplican: máximo una crisis mayor por año, dos años de respiro después de una crisis, toda crisis tiene preparación posible; El Niño y La Niña empiezan en Pueblo con 60 habitantes; ninguna medida nueva en la barra superior (máximo 4 recursos a la vez).
 
 Terminado cuando:
 
-- Todo lo de la v9 funciona.
-- `node herramientas/balance.js` da resultados parecidos a la v9 (en Normal, estrategia equilibrada, cerca de 70% de victorias en República).
-- No hay errores en la consola.
-- Se ve fluido en celular y en computador.
-- Juan lo prueba en su celular y en su computador, y lo aprueba.
+- Los cuatro sistemas funcionan y se ven en el mapa.
+- `node herramientas/balance.js` sigue entre 55% y 70% de victorias en Normal, estrategia equilibrada, República; los desastres siempre son sobrevivibles con preparación.
+- `node herramientas/prueba-equivalencia.js` sigue en 0 diferencias (los sistemas nuevos se apagan en el modo de comparación con la v9).
+- Las partidas guardadas en la fase 0 se abren sin perderse.
+- No hay errores en la consola; se ve fluido en celular y en computador.
+- Juan lo prueba y lo aprueba.
 
 No adelantes sistemas de fases futuras.
 

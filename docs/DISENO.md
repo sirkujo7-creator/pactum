@@ -44,7 +44,7 @@ El juego ya funciona completo en un solo archivo HTML (`referencia/referencia-po
 
 ## Estado de la fase 0 (migración)
 
-La versión 9 ya vive en la nueva base (Phaser, módulos, datos en JSON, app instalable). Falta la aprobación de Juan en celular y computador.
+La versión 9 ya vive en la nueva base (Phaser, módulos, datos en JSON, app instalable). Juan la probó en su celular y dio paso a la fase 1.
 
 | Parte | Estado |
 | --- | --- |
@@ -343,7 +343,7 @@ La fase 0 no agrega sistemas nuevos: muda el juego a la nueva base hasta que jue
 | Fase | Contenido |
 | --- | --- |
 | 0: Migración | Repositorio y Phaser; lógica separada en módulos; terreno y pobladores con el estilo de la prueba de acuarela; igualar la versión 9 |
-| 1: Territorio vivo | Temporadas, El Niño y La Niña; suelo vivo y erosión; vida de los edificios |
+| 1: Territorio vivo | Temporadas, El Niño y La Niña; suelo vivo y erosión; vida de los edificios. Decisiones de Juan: las temporadas también afectan las cosechas; la preparación ante El Niño y La Niña es un pronóstico un año antes más un fondo de emergencias en Hacienda; el mantenimiento se decide con un control de 0% a 100% en Hacienda |
 | 2: Economía y obra | Economía viva y costo de vida; cobertura por radios; obras por etapas y licitación |
 | 3: Poder | Ejército y legitimidad; movimientos sociales; acta fundacional; corregir balance de regímenes |
 | 4: Sociedad y memoria | Barrios y problemáticas; cultura y deporte; memoria y legado; evolución visual por épocas |
