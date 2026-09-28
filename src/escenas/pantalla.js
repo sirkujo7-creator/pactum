@@ -1,6 +1,6 @@
 // Tamaño de pantalla y nitidez. El lienzo usa la resolución real del aparato (hasta 2×)
 // y cada escena trabaja en píxeles de pantalla normales gracias al zoom de la cámara.
-export const DPR = Math.min(window.devicePixelRatio || 1, 2);
+export const DPR = Math.min(window.devicePixelRatio || 1, 2.5);
 export function tam(scene) { return { w: scene.scale.width / DPR, h: scene.scale.height / DPR }; }
 export const reducirMovimiento = () => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 

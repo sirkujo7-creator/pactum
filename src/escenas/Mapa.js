@@ -12,10 +12,11 @@ import { partida, nuevaPartida } from './partida.js';
 import { Interfaz } from './Interfaz.js';
 import { Pobladores } from './Pobladores.js';
 import { Efectos } from './Efectos.js';
+import { Vida } from './Vida.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
-const ZOOM_MAX = 3.6;
+const ZOOM_MAX = 2.6; // más cerca, el terreno pintado se vería pixelado
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
 
 export class Mapa extends Phaser.Scene {
@@ -37,7 +38,8 @@ export class Mapa extends Phaser.Scene {
     if (!partida.S || this.nueva) await nuevaPartida(this.semilla, this.opciones);
     this.S = partida.S;
     this.T = genTerreno(this.S.seed, this.S.n);
-    this.escalaSector = DPR > 1.5 ? 1.6 : 1.4;
+    // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
+    this.escalaSector = (DPR > 1.5 ? 1.9 : 1.5) * Math.min(1, 32 / this.S.n);
     this.dry = sequedad(this.S);
     this.vistaInicial();
 
@@ -70,6 +72,7 @@ export class Mapa extends Phaser.Scene {
     for (let i = 0; i < N * N; i++) { this.ponerPlantas(i); this.ponerObra(i); }
     this.ponerVida();
     this.pob = new Pobladores(this);
+    this.vida = new Vida(this);
     this.efectos = new Efectos(this);
     this.efectos.actualizar();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
@@ -120,7 +123,8 @@ export class Mapa extends Phaser.Scene {
     (this.plantas[i] || []).forEach(p => p.destroy());
     const x = this.S.map[i], t = this.T.tiles[i];
     const libre = !x.b && !(t.b === 'niebla' && x.t !== 'bosque');
-    this.plantas[i] = libre ? (this.plantasPorCasilla[i] || []).map(o => this.figura('naturaleza', o.k, o.r, o.c, this.T.hf(o.r, o.c), o.s)) : [];
+    // Las vacas y garzas las mueve Vida.js; los árboles guardan cuánto se mecen.
+    this.plantas[i] = libre ? (this.plantasPorCasilla[i] || []).filter(o => !Vida.esAnimal(o.k)).map(o => this.figura('naturaleza', o.k, o.r, o.c, this.T.hf(o.r, o.c), o.s).setData('arbol', Vida.vaiven(o.k))) : [];
   }
   ponerObra(i) {
     (this.obras[i] || []).forEach(p => p.destroy());
@@ -137,6 +141,11 @@ export class Mapa extends Phaser.Scene {
       // El puerto y el molino miran hacia el río: si el agua está al lado derecho, se voltea el dibujo.
       if ((x.b === 'puerto' || x.b === 'molino') && this.rioADerecha(i)) img.setFlipX(true).setOrigin(1 - img.originX, img.originY);
       this.obras[i].push(img);
+      if (x.b === 'casa' && i % 3 === 0 && !f.k.startsWith('bandera') && !reducirMovimiento()) {
+        // Humo del fogón en algunas casas.
+        const alto = this.S.stage >= 2 ? 30 : 22;
+        this.humos[i] = this.add.particles(img.x + 7, img.y - alto, 'edificios', { frame: 'humo', lifespan: 2600, speedX: { min: 1, max: 4 }, speedY: { min: -7, max: -4 }, scale: { start: .06, end: .28 }, alpha: { start: .35, end: 0 }, frequency: 900, quantity: 1 }).setDepth(t.r + t.c + 1.5);
+      }
       if (f.humo && !reducirMovimiento()) {
         this.humos[i] = this.add.particles(img.x + f.humo[0], img.y + f.humo[1], 'edificios', {
           frame: 'humo', lifespan: 3400, speedX: { min: 2, max: 6 }, speedY: { min: -9, max: -6 }, scale: { start: .12, end: .45 },
@@ -155,6 +164,7 @@ export class Mapa extends Phaser.Scene {
     for (const [sr, sc] of sectoresAfectados(this.T, i)) this.pintarSector(sr, sc);
     this.revisarCambiosGenerales();
     if (this.pob) this.pob.planear();
+    if (this.vida) this.vida.poner();
   }
   // Si cambian la etapa o el régimen, cambian las casas, los mercados y la sede.
   revisarCambiosGenerales() {
@@ -177,12 +187,30 @@ export class Mapa extends Phaser.Scene {
     const antes = this.S.map[i].b, r = build(this.S, k, i);
     if (this.S.map[i].b !== k || antes === k) { this.ui.toast(typeof r === 'string' ? r : 'No se puede construir ahí.'); return; }
     this.refrescarCasilla(i);
+    this.animarObra(i);
     Sonido.tap();
     this.ui.logros();
     const guia = checkGuide(this.S);
     if (typeof r === 'string' || guia) this.ui.toast([typeof r === 'string' ? r : '', guia || ''].join(' ').trim());
     this.marcarPosibles(this.ui.herramienta);
     this.ui.render();
+  }
+  // Una obra nueva aparece creciendo desde el suelo, con una nube de polvo.
+  animarObra(i) {
+    this.polvo(i);
+    if (reducirMovimiento()) return;
+    for (const img of this.obras[i] || []) {
+      const sy = img.scaleY, a = img.alpha;
+      img.setScale(img.scaleX, sy * .25).setAlpha(.3);
+      this.tweens.add({ targets: img, scaleY: sy, alpha: a, duration: 480, ease: 'Back.out' });
+    }
+  }
+  polvo(i) {
+    if (reducirMovimiento()) return;
+    const t = this.T.tiles[i], p = P(t.r + .5, t.c + .5, t.h);
+    const e = this.add.particles(p[0], p[1], 'edificios', { frame: 'humo', lifespan: 900, speed: { min: 8, max: 26 }, angle: { min: 180, max: 360 }, scale: { start: .25, end: .6 }, alpha: { start: .5, end: 0 }, tint: 0xB9A27E, emitting: false }).setDepth(t.r + t.c + 2);
+    e.explode(14);
+    this.time.delayedCall(1200, () => e.destroy());
   }
   deshacer() {
     const u = undoBuild(this.S);
@@ -194,6 +222,7 @@ export class Mapa extends Phaser.Scene {
   }
   demoler(i) {
     const k = this.S.map[i].b, g = demolish(this.S, i);
+    this.polvo(i);
     this.refrescarCasilla(i);
     this.ui.cerrarFicha(); this.ui.render();
     this.ui.toast(`Demoliste ${C.B[k].a}: recuperaste ${g} de oro.`);
@@ -283,6 +312,7 @@ export class Mapa extends Phaser.Scene {
   update(tiempo, delta) {
     if (!this.listo) return;
     this.pob.update(Math.min(.05, delta / 1000));
+    this.vida.update(Math.min(.05, delta / 1000), tiempo / 1000);
     this.efectos.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).
     const m = this.pob.manana(), a = .2 + .3 * m;

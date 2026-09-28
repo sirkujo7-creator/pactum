@@ -61,7 +61,7 @@ function persona(g, type, vi, front, frame) {
 let HOJA = null;
 export function hornearPersonas() {
   if (HOJA) return HOJA;
-  const E = 3, w = 18, h = 32, W = w * E, H = h * E, marcos = {}, claves = [];
+  const E = 4, w = 18, h = 32, W = w * E, H = h * E, marcos = {}, claves = [];
   for (const tipo in TIPOS) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 4; f++) claves.push([`${tipo}_${vi}_${fr}_${f}`, tipo, vi, fr, f]);
   const cols = 24, cv = lienzo(cols * W, Math.ceil(claves.length / cols) * H + H), g = cv.getContext('2d');
   claves.forEach(([k, tipo, vi, fr, f], n) => {

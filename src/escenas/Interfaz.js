@@ -147,7 +147,7 @@ export class Interfaz {
     this.bReg.innerHTML = `${EMB[S.reg]}<b>${rg.n.split(' ')[0]}</b>`;
     this.bReg.setAttribute('aria-label', `Régimen: ${rg.n}. Ver rumbo del gobierno`);
     const L = lluvias(S), temp = this.mapa.pob ? this.mapa.pob.temporada() : null;
-    this.era.textContent = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${D(S).polis}` : ''}${L ? ` · ${L.icono} ${L.nombre.toLowerCase()}` : ''}`;
+    this.era.innerHTML = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${D(S).polis}` : ''}${L ? ` · ${L.icono}<span class="lluv-nom"> ${L.nombre.toLowerCase()}</span>` : ''}`;
     this.era.title = L ? `${L.texto} ${C.CLIMA.leccion}${temp ? ` Ahora es temporada ${temp === 'lluvias' ? 'de lluvias' : 'seca'}.` : ''}` : '';
     const dfood = F.fprod - F.cons;
     this.hud.innerHTML =
