@@ -1,0 +1,65 @@
+{
+  "efectos": {
+    "oro": "oro",
+    "alimento": "alimento",
+    "habitantes": "habitantes",
+    "animo": "ánimo general",
+    "igualdad": "igualdad",
+    "confianza": "confianza",
+    "ambiente": "ambiente",
+    "deuda": "deuda",
+    "campesinos": "campesinos",
+    "artesanos": "artesanos",
+    "elite": "élite",
+    "inflacion": "% inflación",
+    "impuestoElite": "% impuesto élite"
+  },
+  "peticion": {
+    "icono": "✍️",
+    "titulo": "El pueblo pide {edificio}",
+    "texto": "Una asamblea de vecinos te entrega una petición firmada. Si lo prometes, tendrás 3 años para cumplir.",
+    "edificios": [
+      "escuela",
+      "hospital",
+      "parque",
+      "mercado",
+      "agora",
+      "universidad"
+    ],
+    "plazo": 3,
+    "probabilidad": 0.2,
+    "opciones": [
+      {
+        "texto": "Prometerlo",
+        "efectos": {
+          "confianza": 6
+        },
+        "filosofia": "deon",
+        "porque": "Una promesa pública obliga. Cumplirla construye confianza; romperla la destruye.",
+        "promesa": true,
+        "vista": "crowd"
+      },
+      {
+        "texto": "Explicar que ahora no hay recursos",
+        "efectos": {
+          "confianza": -5,
+          "campesinos": -2,
+          "artesanos": -2
+        },
+        "filosofia": "virt",
+        "porque": "La franqueza cuesta un poco hoy, pero no hipoteca tu palabra."
+      },
+      {
+        "texto": "Ignorar la petición",
+        "efectos": {
+          "confianza": -8,
+          "campesinos": -3,
+          "artesanos": -3
+        },
+        "filosofia": "real",
+        "porque": "Gobernar sin escuchar es gobernar en nombre del pueblo, no para él.",
+        "vista": "crowd"
+      }
+    ]
+  }
+}

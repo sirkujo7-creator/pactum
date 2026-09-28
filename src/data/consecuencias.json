@@ -1,0 +1,214 @@
+{
+  "crecida_mal": {
+    "icono": "🌊",
+    "titulo": "El río vuelve a crecer",
+    "texto": "Esta vez los daños son mayores: nadie reforzó la orilla.",
+    "efectos": {
+      "habitantes": -5,
+      "alimento": -15,
+      "confianza": -8
+    },
+    "porque": "Ahorrar en prevención suele salir más caro después.",
+    "vista": "flood"
+  },
+  "diques": {
+    "icono": "🧱",
+    "titulo": "Los diques resisten",
+    "texto": "Llega una creciente fuerte, y los diques que construiste salvan las cosechas, aunque alteraron el cauce.",
+    "efectos": {
+      "alimento": 20,
+      "confianza": 6,
+      "ambiente": -4
+    },
+    "porque": "La inversión pública bien hecha paga dividendos que no siempre se ven."
+  },
+  "evasion2": {
+    "icono": "📜",
+    "titulo": "Otros también dejan de pagar",
+    "texto": "Tras tu perdón, más terratenientes evaden impuestos.",
+    "efectos": {
+      "oro": -60,
+      "confianza": -6,
+      "igualdad": -4
+    },
+    "porque": "Una excepción se vuelve regla cuando la ley no se aplica."
+  },
+  "migra_bien": {
+    "icono": "🧵",
+    "titulo": "Las familias acogidas prosperan",
+    "texto": "Abrieron talleres y hoy pagan impuestos.",
+    "efectos": {
+      "oro": 40,
+      "artesanos": 6
+    },
+    "porque": "Acoger también es invertir."
+  },
+  "migra_mal": {
+    "icono": "🚫",
+    "titulo": "Te pagan con la misma moneda",
+    "texto": "Otra región cierra su comercio con la tuya.",
+    "efectos": {
+      "oro": -30,
+      "artesanos": -5
+    },
+    "porque": "El trato que das define el trato que recibes."
+  },
+  "oro_mal": {
+    "icono": "☠️",
+    "titulo": "El río baja envenenado",
+    "texto": "El mercurio de la mina llegó al agua.",
+    "efectos": {
+      "ambiente": -15,
+      "habitantes": -4,
+      "campesinos": -8
+    },
+    "porque": "La riqueza extractiva cobra su factura años después.",
+    "vista": "poison"
+  },
+  "corrup_mal": {
+    "icono": "🏃",
+    "titulo": "El tesorero huye",
+    "texto": "Se fue con parte del tesoro.",
+    "efectos": {
+      "oro": -100,
+      "confianza": -10
+    },
+    "porque": "La impunidad crece si nadie la enfrenta."
+  },
+  "corrup_bien": {
+    "icono": "🤝",
+    "titulo": "La honestidad atrae inversión",
+    "texto": "Comerciantes de fuera confían en tu gobierno.",
+    "efectos": {
+      "oro": 50,
+      "elite": 5
+    },
+    "porque": "La confianza institucional es un activo económico."
+  },
+  "maestros_bien": {
+    "icono": "🎓",
+    "titulo": "Los primeros bachilleres",
+    "texto": "Una generación mejor formada entra a trabajar.",
+    "efectos": {
+      "igualdad": 6,
+      "artesanos": 6,
+      "campesinos": 4
+    },
+    "porque": "La educación es la inversión de más largo plazo."
+  },
+  "humo_mal": {
+    "icono": "🤒",
+    "titulo": "Enferman los pescadores",
+    "texto": "El agua contaminada pasó factura.",
+    "efectos": {
+      "habitantes": -4,
+      "confianza": -8,
+      "campesinos": -6
+    },
+    "porque": "Las externalidades no desaparecen: se trasladan a otros.",
+    "vista": "smog"
+  },
+  "sal_mal": {
+    "icono": "🧂",
+    "titulo": "El precio de la sal se dispara",
+    "texto": "El monopolista abusa de su posición.",
+    "efectos": {
+      "inflacion": 3,
+      "campesinos": -6,
+      "artesanos": -6
+    },
+    "porque": "Sin competencia, el precio lo decide el más fuerte."
+  },
+  "protesta_mal": {
+    "icono": "✊",
+    "titulo": "La oposición crece",
+    "texto": "Los jóvenes que reprimiste hoy lideran la oposición.",
+    "efectos": {
+      "confianza": -12
+    },
+    "porque": "La represión aplaza los conflictos, no los resuelve.",
+    "vista": "crowd"
+  },
+  "epidemia_mal": {
+    "icono": "🦠",
+    "titulo": "Rebrote en los barrios pobres",
+    "texto": "Quienes no pudieron pagar atención contagiaron a otros.",
+    "efectos": {
+      "habitantes": -5,
+      "igualdad": -4,
+      "campesinos": -5
+    },
+    "porque": "La salud de todos depende de la salud de los más pobres."
+  },
+  "donante_mal": {
+    "icono": "🎩",
+    "titulo": "La familia donante exige favores",
+    "texto": "Quieren contratos públicos sin licitación.",
+    "efectos": {
+      "confianza": -6,
+      "igualdad": -3,
+      "elite": 5
+    },
+    "porque": "En política, nada es gratis."
+  },
+  "tierras_mal": {
+    "icono": "🔥",
+    "titulo": "Invasiones de tierra",
+    "texto": "Los campesinos sin tierra ocupan haciendas.",
+    "efectos": {
+      "campesinos": -5,
+      "elite": -10,
+      "confianza": -8
+    },
+    "porque": "Las demandas ignoradas buscan otros caminos.",
+    "vista": "crowd"
+  },
+  "evasion_venganza": {
+    "icono": "🗞️",
+    "titulo": "El terrateniente financia a tu oposición",
+    "texto": "No perdonó la multa: ahora paga periódicos contra tu gobierno.",
+    "efectos": {
+      "confianza": -7
+    },
+    "porque": "Aplicar la ley tiene costos políticos; aplicarla igual es lo que la hace ley."
+  },
+  "reforma_fuga": {
+    "icono": "💼",
+    "titulo": "Los hacendados sacan su capital",
+    "texto": "Tras la reforma agraria, parte de la élite invierte en otra región.",
+    "efectos": {
+      "elite": -6,
+      "oro": -40
+    },
+    "porque": "Toda redistribución tiene perdedores que reaccionan."
+  },
+  "corrup_filtra": {
+    "icono": "📰",
+    "titulo": "Se filtra el encubrimiento",
+    "texto": "Un periodista revela que despediste al tesorero sin investigarlo.",
+    "efectos": {
+      "confianza": -9
+    },
+    "porque": "Lo que se oculta suele salir a la luz, y peor."
+  },
+  "alianza_rota": {
+    "icono": "💔",
+    "titulo": "El vecino rompe la alianza",
+    "texto": "Cansado de condiciones abusivas, cierra el comercio.",
+    "efectos": {
+      "oro": -50,
+      "artesanos": -5
+    },
+    "porque": "Los acuerdos injustos son frágiles."
+  },
+  "huelga_mal": {
+    "icono": "🔧",
+    "titulo": "Sabotaje en los talleres",
+    "texto": "El resentimiento tras la huelga rota se hace sentir.",
+    "efectos": {
+      "oro": -40,
+      "artesanos": -6
+    },
+    "porque": "Ganar por la fuerza deja cuentas pendientes."
+  }
+}

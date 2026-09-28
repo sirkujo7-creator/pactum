@@ -1,6 +1,7 @@
 // Escena de arranque: portada en acuarela y estado de la base técnica.
 import { pintarPortada, pintarNiebla, TINTA } from '../arte/acuarela.js';
 import { VERSION, PASO } from '../version.js';
+import { cargarContenido, freshState, advance, choose } from '../core/index.js';
 
 const SERIF = 'Alegreya, Georgia, serif';
 const SANS = '"Alegreya Sans", system-ui, sans-serif';
@@ -24,6 +25,8 @@ export class Arranque extends Phaser.Scene {
     this.pie = this.add.text(0, 0, `Versión ${VERSION}`, { fontFamily: SANS, color: '#6A675C', resolution: RES }).setOrigin(.5, 1);
 
     this.offline = 'preparando…';
+    this.logica = 'cargando…';
+    this.probarLogica();
     this.actualizarEstado();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then(() => { this.offline = 'listo'; this.actualizarEstado(); });
@@ -44,9 +47,25 @@ export class Arranque extends Phaser.Scene {
       PASO,
       `Motor Phaser ${Phaser.VERSION} ✓`,
       `Sin internet: ${this.offline}`,
+      `Lógica del juego: ${this.logica}`,
       instalada ? 'Abierta como app ✓' : 'Se puede instalar como app',
       `Pantalla ${Math.round(w)}×${Math.round(h)} (${aparato})`
     ]);
+  }
+
+  // Carga el contenido y juega 10 años de prueba con la lógica real (sin dibujar nada todavía).
+  async probarLogica() {
+    try {
+      const C = await cargarContenido();
+      const S = freshState('normal', false, null, 'republica');
+      for (let y = 0; y < 10; y++) { const r = advance(S); if (r.end) break; if (S.pend) choose(S, 0); }
+      this.logica = `${C.EV.length} dilemas, ${Object.keys(C.LATER).length} consecuencias, ${Object.keys(C.B).length} obras, ${C.LAWS.length} leyes ✓\n` +
+        `Partida de prueba: año ${S.year}, ${S.pop} habitantes, ${Math.round(S.gold)} de oro`;
+    } catch (e) {
+      console.error(e);
+      this.logica = 'error al cargar';
+    }
+    this.actualizarEstado();
   }
 
   maquetar() {

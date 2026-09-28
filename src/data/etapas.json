@@ -1,0 +1,20 @@
+[
+  {
+    "nombre": "Aldea"
+  },
+  {
+    "nombre": "Pueblo",
+    "requisito": "40 habitantes",
+    "leccion": "Con más gente llegan más exigencias: ahora el pueblo espera escuelas y hospitales. Se abren préstamos, bonos y la emisión de moneda. Cuidado: tu calificación de riesgo decide cuánto te cobran."
+  },
+  {
+    "nombre": "Ciudad",
+    "requisito": "80 habitantes, una escuela y un hospital",
+    "leccion": "La ciudad produce riqueza y también desigualdad entre clases. Se abren el ágora, la mina y el banco. Decide qué modelo de desarrollo quieres."
+  },
+  {
+    "nombre": "Polis",
+    "requisito": "150 habitantes, un ágora y confianza de 55",
+    "leccion": "Ahora el poder se renueva en elecciones cada 4 años: si la confianza está por debajo de 50, pierdes el mandato. Sostén la Polis el tiempo que exige tu nivel de dificultad. Y ojo: cada año el pueblo espera más calidad de vida."
+  }
+]

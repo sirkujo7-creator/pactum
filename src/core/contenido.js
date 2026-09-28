@@ -1,0 +1,77 @@
+// Contenido del juego (edificios, dilemas, leyes...). Se lee de src/data en español
+// y se traduce a la forma interna compacta que usa la lógica (la misma de la versión 9).
+
+export const C = {
+  B: {}, STAGES: [], EV: [], LATER: {}, DIFFS: {}, GUIDE: [], REG: {}, CYCLE: [],
+  LAWS: [], ACH: [], ADV: {}, PH: {}, PROFILE: {}, FXL: {}, PET: null, cargado: false
+};
+
+// Nombres de los efectos en los archivos de datos → claves internas.
+export const EFECTOS = {
+  oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
+  deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe'
+};
+export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos'];
+
+function efectos(obj, donde) {
+  const fx = {};
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (!EFECTOS[k]) throw new Error(`Efecto desconocido "${k}" en ${donde}`);
+    fx[EFECTOS[k]] = v;
+  }
+  return fx;
+}
+const sinVacios = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
+
+function opcion(o, donde) {
+  return sinVacios({
+    l: o.texto, fx: efectos(o.efectos, donde), f: o.filosofia || null, why: o.porque,
+    later: o.despues ? (o.despues.probabilidad === undefined ? [o.despues.anios, o.despues.id] : [o.despues.anios, o.despues.id, o.despues.probabilidad]) : undefined,
+    vista: o.vista, promesa: o.promesa
+  });
+}
+
+// Recibe un objeto { edificios, etapas, dilemas, ... } con el contenido de cada archivo JSON.
+export function usarContenido(d) {
+  C.B = Object.fromEntries(Object.entries(d.edificios).map(([k, b]) => [k, sinVacios({
+    e: b.icono, n: b.nombre, a: b.articulo, cost: b.costo, up: b.mantenimiento, st: b.etapa, ok: b.terrenos,
+    hmin: b.alturaMinima, river: b.juntoAlRio, jc: b.empleosCampesinos, ja: b.empleosArtesanos, fee: b.tasas,
+    water: b.agua, energy: b.energia, d: b.descripcion
+  })]));
+  C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
+  C.EV = d.dilemas.map(e => sinVacios({
+    id: e.id, st: e.etapa, e: e.icono, title: e.titulo, text: e.texto, cond: e.condicion,
+    opts: e.opciones.map((o, i) => opcion(o, `dilema ${e.id}, opción ${i + 1}`))
+  }));
+  C.LATER = Object.fromEntries(Object.entries(d.consecuencias).map(([k, l]) => [k, sinVacios({
+    e: l.icono, title: l.titulo, text: l.texto, fx: efectos(l.efectos, `consecuencia ${k}`), why: l.porque, vista: l.vista
+  })]));
+  C.DIFFS = Object.fromEntries(Object.entries(d.dificultades).map(([k, x]) => [k, {
+    n: x.nombre, d: x.descripcion, gold: x.oroInicial, good: x.multiplicadorBueno, bad: x.multiplicadorMalo, sat: x.animoBase,
+    polis: x.aniosPolis, elec: x.confianzaElecciones, evp: x.probabilidadDilema, exp: x.exigenciaAnual, reward: x.recompensaGuia
+  }]));
+  C.GUIDE = d.guia.map(g => ({ t: g.texto, cond: g.condicion }));
+  C.CYCLE = d.regimenes.ciclo;
+  C.REG = Object.fromEntries(Object.entries(d.regimenes.formas).map(([k, r]) => [k, {
+    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores
+  }]));
+  C.LAWS = d.leyes.map(l => sinVacios({ id: l.id, n: l.nombre, d: l.descripcion, st: l.etapa, no: l.prohibidaEn }));
+  C.ACH = d.logros.map(a => ({ id: a.id, n: a.nombre, d: a.descripcion }));
+  C.ADV = Object.fromEntries(Object.entries(d.personajes).map(([k, a]) => [k, {
+    n: a.nombre, r: a.rol, k: EFECTOS[a.efecto], sat: a.clase, pro: a.aFavor, con: a.enContra, mood: a.animo
+  }]));
+  C.PH = Object.fromEntries(Object.entries(d.filosofias).map(([k, p]) => [k, { n: p.nombre, a: p.autor }]));
+  C.PROFILE = Object.fromEntries(Object.entries(d.filosofias).map(([k, p]) => [k, p.perfil]));
+  C.FXL = Object.fromEntries(Object.entries(d.textos.efectos).map(([k, v]) => [EFECTOS[k], v]));
+  const p = d.textos.peticion;
+  C.PET = { e: p.icono, title: p.titulo, text: p.texto, ks: p.edificios, plazo: p.plazo, prob: p.probabilidad,
+    opts: p.opciones.map((o, i) => opcion(o, `petición, opción ${i + 1}`)) };
+  // Revisión: toda consecuencia anunciada debe existir y toda filosofía debe ser conocida.
+  for (const e of [...C.EV, C.PET]) for (const o of e.opts) {
+    if (o.later && !C.LATER[o.later[1]]) throw new Error(`La consecuencia "${o.later[1]}" no existe en consecuencias.json`);
+    if (o.f && !C.PH[o.f]) throw new Error(`Filosofía desconocida "${o.f}" en "${e.title}"`);
+  }
+  C.cargado = true;
+  return C;
+}

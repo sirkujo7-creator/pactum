@@ -1,0 +1,57 @@
+[
+  {
+    "id": "educacion",
+    "nombre": "Educación pública gratuita",
+    "descripcion": "Sube igualdad y el ánimo de campesinos y artesanos. Cuesta oro por cada habitante.",
+    "etapa": 0
+  },
+  {
+    "id": "subsidio",
+    "nombre": "Subsidio al campo",
+    "descripcion": "Los campesinos ganan mucho ánimo. Cuesta oro por cada campesino.",
+    "etapa": 0
+  },
+  {
+    "id": "jornada",
+    "nombre": "Jornada de 8 horas",
+    "descripcion": "Artesanos más contentos; la élite protesta y la productividad baja 5%.",
+    "etapa": 1
+  },
+  {
+    "id": "ambiente",
+    "nombre": "Protección ambiental",
+    "descripcion": "El ambiente mejora mucho, pero tasas y regalías bajan 25% y la élite se molesta.",
+    "etapa": 1
+  },
+  {
+    "id": "arancel",
+    "nombre": "Aranceles al comercio",
+    "descripcion": "Tasas y comercio rinden 20% más y protegen al artesano; la élite comercial se molesta y los precios suben un poco.",
+    "etapa": 1
+  },
+  {
+    "id": "prensa",
+    "nombre": "Libertad de prensa",
+    "descripcion": "La prensa vigila: el rumbo mejora cada año, aunque las críticas bajan algo la confianza.",
+    "etapa": 1,
+    "prohibidaEn": [
+      "tirania"
+    ]
+  },
+  {
+    "id": "censura",
+    "nombre": "Censura",
+    "descripcion": "Silencia las críticas: sube la confianza aparente, pero el rumbo se tuerce cada año.",
+    "etapa": 1,
+    "prohibidaEn": [
+      "republica",
+      "demagogia"
+    ]
+  },
+  {
+    "id": "bancoCentral",
+    "nombre": "Banco central independiente",
+    "descripcion": "La inflación baja 1,5 puntos, pero ya no puedes imprimir moneda.",
+    "etapa": 2
+  }
+]

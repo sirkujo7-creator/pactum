@@ -1,0 +1,41 @@
+{
+  "facil": {
+    "nombre": "Fácil",
+    "descripcion": "Más oro al inicio y dilemas menos duros. Sostén la Polis 5 años.",
+    "oroInicial": 200,
+    "multiplicadorBueno": 1.15,
+    "multiplicadorMalo": 0.8,
+    "animoBase": 4,
+    "aniosPolis": 5,
+    "confianzaElecciones": 45,
+    "probabilidadDilema": 0.6,
+    "exigenciaAnual": 0.2,
+    "recompensaGuia": 30
+  },
+  "normal": {
+    "nombre": "Normal",
+    "descripcion": "Exigente: los errores se pagan. Sostén la Polis 6 años; las elecciones piden confianza de 52.",
+    "oroInicial": 150,
+    "multiplicadorBueno": 1,
+    "multiplicadorMalo": 1.2,
+    "animoBase": -3,
+    "aniosPolis": 6,
+    "confianzaElecciones": 52,
+    "probabilidadDilema": 0.75,
+    "exigenciaAnual": 0.45,
+    "recompensaGuia": 20
+  },
+  "dificil": {
+    "nombre": "Difícil",
+    "descripcion": "Poco oro, dilemas duros y un pueblo muy exigente. Sostén la Polis 8 años; las elecciones piden confianza de 55. La guía no da recompensas.",
+    "oroInicial": 110,
+    "multiplicadorBueno": 0.9,
+    "multiplicadorMalo": 1.35,
+    "animoBase": -5,
+    "aniosPolis": 8,
+    "confianzaElecciones": 55,
+    "probabilidadDilema": 0.85,
+    "exigenciaAnual": 0.5,
+    "recompensaGuia": 0
+  }
+}

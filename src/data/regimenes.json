@@ -1,0 +1,118 @@
+{
+  "ciclo": [
+    "monarquia",
+    "tirania",
+    "aristocracia",
+    "oligarquia",
+    "republica",
+    "demagogia"
+  ],
+  "formas": {
+    "monarquia": {
+      "nombre": "Monarquía",
+      "cargo": "Monarca",
+      "sede": "Palacio real",
+      "recta": true,
+      "seCorrompeEn": "tirania",
+      "revolucionHacia": "tirania",
+      "color": "#5B3A7A",
+      "descripcion": "Gobierna uno, para el bien de todos. La corona da estabilidad y la nobleza la respalda, pero el poder sin contrapesos tiende a corromperse, no hay elecciones y la sucesión es una lotería.",
+      "modificadores": {
+        "tr": 2,
+        "se": 5,
+        "admin": 1,
+        "drift": 1.6
+      }
+    },
+    "aristocracia": {
+      "nombre": "Aristocracia",
+      "cargo": "Príncipe del Senado",
+      "sede": "Senado",
+      "recta": true,
+      "seCorrompeEn": "oligarquia",
+      "revolucionHacia": "oligarquia",
+      "color": "#2F5B45",
+      "descripcion": "Gobiernan los mejores. Administración eficiente y experta, pero el Senado solo permite mover cada impuesto 5 puntos por año.",
+      "modificadores": {
+        "se": 6,
+        "sa": 2,
+        "admin": 0.8,
+        "taxStep": 5,
+        "drift": 0.8
+      }
+    },
+    "republica": {
+      "nombre": "República democrática",
+      "cargo": "Presidente",
+      "sede": "Ágora",
+      "recta": true,
+      "seCorrompeEn": "demagogia",
+      "revolucionHacia": "demagogia",
+      "color": "#2D5D72",
+      "descripcion": "Gobiernan muchos, con leyes y libertades. Máxima legitimidad, pero hay elecciones cada 4 años desde que eres Pueblo y la administración es más costosa.",
+      "modificadores": {
+        "tr": 4,
+        "sc": 2,
+        "sa": 3,
+        "admin": 1.05,
+        "elect": true
+      }
+    },
+    "tirania": {
+      "nombre": "Dictadura",
+      "cargo": "Dictador",
+      "sede": "Palacio de gobierno",
+      "recta": false,
+      "seCorrompeEn": "tirania",
+      "revolucionHacia": "aristocracia",
+      "color": "#9E2B25",
+      "descripcion": "Tiranía: uno gobierna para sí. Las protestas se silencian y el Estado es barato, pero la confianza cae y el descontento oculto termina en revolución.",
+      "modificadores": {
+        "tr": -10,
+        "sc": -4,
+        "sa": -4,
+        "eq": -5,
+        "admin": 0.9,
+        "silence": true,
+        "drift": 1
+      }
+    },
+    "oligarquia": {
+      "nombre": "Plutocracia",
+      "cargo": "Canciller",
+      "sede": "Bolsa",
+      "recta": false,
+      "seCorrompeEn": "oligarquia",
+      "revolucionHacia": "republica",
+      "color": "#6B5420",
+      "descripcion": "Oligarquía: gobiernan los ricos para los ricos. La élite paga máximo 10% y está feliz; el pueblo se empobrece y la desigualdad crece.",
+      "modificadores": {
+        "tr": -4,
+        "se": 10,
+        "sc": -8,
+        "sa": -6,
+        "eq": -10,
+        "admin": 1,
+        "eliteCap": 10
+      }
+    },
+    "demagogia": {
+      "nombre": "Populismo",
+      "cargo": "Caudillo",
+      "sede": "Balcón del pueblo",
+      "recta": false,
+      "seCorrompeEn": "demagogia",
+      "revolucionHacia": "monarquia",
+      "color": "#C0602A",
+      "descripcion": "Demagogia: se gobierna para el aplauso. El ánimo popular sube, pero el gasto dispara la inflación y la élite desconfía. Hay elecciones.",
+      "modificadores": {
+        "sc": 6,
+        "sa": 6,
+        "se": -6,
+        "admin": 1.2,
+        "infl": 0.02,
+        "elect": true
+      }
+    }
+  }
+}

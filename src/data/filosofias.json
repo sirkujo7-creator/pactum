@@ -1,0 +1,27 @@
+{
+  "util": {
+    "nombre": "Utilitarismo",
+    "autor": "Mill",
+    "perfil": "Buscaste el mayor bien para el mayor número, aunque algunos pagaran el costo."
+  },
+  "deon": {
+    "nombre": "Ética del deber",
+    "autor": "Kant",
+    "perfil": "Gobernaste por principios: cumpliste deberes aunque salieran caros."
+  },
+  "contr": {
+    "nombre": "Justicia como equidad",
+    "autor": "Rawls",
+    "perfil": "Pusiste primero a los menos favorecidos: reglas que aceptarías sin saber qué lugar te tocaría."
+  },
+  "real": {
+    "nombre": "Realismo político",
+    "autor": "Maquiavelo",
+    "perfil": "Priorizaste conservar el poder y la estabilidad por encima de los ideales."
+  },
+  "virt": {
+    "nombre": "Ética de la virtud",
+    "autor": "Aristóteles",
+    "perfil": "Buscaste el término medio y el florecimiento de la comunidad."
+  }
+}

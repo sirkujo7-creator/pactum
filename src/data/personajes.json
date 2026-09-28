@@ -1,0 +1,59 @@
+{
+  "rosa": {
+    "nombre": "Doña Rosa",
+    "rol": "Lideresa campesina",
+    "efecto": "campesinos",
+    "clase": "c",
+    "aFavor": [
+      "Por fin alguien mira hacia el campo.",
+      "Así sí. La tierra se lo va a agradecer."
+    ],
+    "enContra": [
+      "Otra vez el campo paga los platos rotos.",
+      "Los campesinos no olvidamos, gobernante."
+    ],
+    "animo": [
+      "El campo está cansado de promesas.",
+      "Vamos bien, pero cuide la cosecha.",
+      "El campo está contento con usted."
+    ]
+  },
+  "julian": {
+    "nombre": "Julián",
+    "rol": "Maestro artesano",
+    "efecto": "artesanos",
+    "clase": "a",
+    "aFavor": [
+      "Los talleres respiran con esta decisión.",
+      "Eso es respeto por el trabajo."
+    ],
+    "enContra": [
+      "Los artesanos no vamos a aguantar esto callados.",
+      "Con esto no alcanza para el pan."
+    ],
+    "animo": [
+      "En los talleres se habla de huelga.",
+      "Hay trabajo, pero la plata no rinde.",
+      "Da gusto trabajar en este pueblo."
+    ]
+  },
+  "aurelio": {
+    "nombre": "Don Aurelio",
+    "rol": "Hacendado",
+    "efecto": "elite",
+    "clase": "e",
+    "aFavor": [
+      "Una decisión sensata. El capital sabrá corresponder.",
+      "Así se gobierna, con cabeza fría."
+    ],
+    "enContra": [
+      "Mi dinero puede irse a otra región, no lo olvide.",
+      "Esto espanta la inversión, gobernante."
+    ],
+    "animo": [
+      "Estoy pensando seriamente en irme.",
+      "Los negocios van, sin más.",
+      "Excelente clima para invertir."
+    ]
+  }
+}
