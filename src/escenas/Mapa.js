@@ -10,6 +10,7 @@ import { P, TW, casillaEn } from '../arte/iso.js';
 import { DPR, tam, reducirMovimiento } from './pantalla.js';
 import { partida, nuevaPartida } from './partida.js';
 import { Interfaz } from './Interfaz.js';
+import { Pobladores } from './Pobladores.js';
 
 const ZOOM_MAX = 3.6;
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
@@ -64,6 +65,7 @@ export class Mapa extends Phaser.Scene {
     this.plantas = {}; this.obras = {}; this.humos = {};
     for (let i = 0; i < N * N; i++) { this.ponerPlantas(i); this.ponerObra(i); }
     this.ponerVida();
+    this.pob = new Pobladores(this);
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.marcaG = this.add.graphics().setDepth(PROF_MARCA);
     this.activarControles();
@@ -140,6 +142,7 @@ export class Mapa extends Phaser.Scene {
     this.ponerPlantas(i); this.ponerObra(i);
     for (const [sr, sc] of sectoresAfectados(this.T, i)) this.pintarSector(sr, sc);
     this.revisarCambiosGenerales();
+    if (this.pob) this.pob.planear();
   }
   // Si cambian la etapa o el régimen, cambian las casas, los mercados y la sede.
   revisarCambiosGenerales() {
@@ -210,8 +213,9 @@ export class Mapa extends Phaser.Scene {
       .setDisplaySize(360, 100).setAlpha(.07).setDepth(PROF_NIEBLA + 1).setData({ izq, ancho, fase: k * 560 }));
   }
 
-  update(tiempo) {
+  update(tiempo, delta) {
     if (!this.listo) return;
+    this.pob.update(Math.min(.05, delta / 1000));
     const s = tiempo / 1000, quieto = reducirMovimiento();
     const g = this.brillo; g.clear();
     const total = this.largoRio[this.largoRio.length - 1];
@@ -341,6 +345,8 @@ export class Mapa extends Phaser.Scene {
     const i = t.r * this.T.N + t.c, k = this.ui.herramienta;
     if (k) { this.construir(k, i); return; }
     if (!this.ui.hoja.hidden) { this.ui.cerrarHoja(); return; }
+    const f = this.pob.cercana(cam.scrollX + px / this.escala, cam.scrollY + py / this.escala);
+    if (f) { this.marcar(null); this.ui.abrirPersona(f.p); return; }
     this.marcar(i);
     this.ui.abrirFicha(i);
   }

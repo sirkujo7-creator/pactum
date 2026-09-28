@@ -1,6 +1,6 @@
 // Interfaz en HTML sobre el mapa (adaptada de la versión 9): barra superior con recursos,
 // barra inferior, panel de construir, ficha de cada casilla y avisos cortos.
-import { C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, BIOMA, metros, nearRiver } from '../core/index.js';
+import { pensamiento, C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, BIOMA, metros, nearRiver } from '../core/index.js';
 import { iconoObra } from '../arte/edificios.js';
 import { capaUI, el } from './pantalla.js';
 
@@ -143,6 +143,17 @@ export class Interfaz {
       hijos.push(el('b', { text: B.n, style: 'grid-column:1/-1' }), el('span', { style: 'grid-column:1/-1', text: `Piso térmico: ${B.p}. Unos ${metros(t.h).toLocaleString('es-CO')} m de altura.` }), el('span', { style: 'grid-column:1/-1', text: uso }));
     }
     this.ficha.replaceChildren(...hijos);
+    this.ficha.hidden = false;
+  }
+  abrirPersona(p) {
+    const S = this.mapa.S, cl = { c: 'Campesinos', a: 'Artesanos', e: 'Élite', u: 'Sin empleo', n: 'Niños' }[p.clase];
+    const trabajo = p.trabajo !== null && p.trabajo !== undefined ? ` en ${C.B[S.map[p.trabajo].b].a}` : '';
+    this.ficha.replaceChildren(
+      el('b', { style: 'grid-column:1/-1', text: `${p.nombre}, ${p.edad} años` }),
+      el('span', { style: 'grid-column:1/-1', text: `${p.oficio}${p.clase === 'u' || p.clase === 'n' ? '' : trabajo}. Clase: ${cl.toLowerCase()}.` }),
+      el('em', { style: 'grid-column:1/-1', text: `“${pensamiento(S, p)}”` }),
+      el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: 'Cada figura representa a unas dos personas del pueblo.' })
+    );
     this.ficha.hidden = false;
   }
   cerrarFicha() { this.ficha.hidden = true; this.mapa.marcar(null); }
