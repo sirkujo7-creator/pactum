@@ -59,6 +59,16 @@ La versión 9 ya vive en la nueva base (Phaser, módulos, datos en JSON, app ins
 | Logros y sonido | Los 14 logros y la música de la v9 por régimen |
 | Balance (Normal, estrategia equilibrada) | República 69%, Monarquía 86%, Aristocracia 83%, Dictadura 79%, Plutocracia 52%, Populismo 51%. Igual que la v9; la diferencia entre regímenes se corrige en la fase 3 |
 
+## Estado de la fase 1 (territorio vivo)
+
+| Paso | Estado |
+| --- | --- |
+| 1. Temporadas | Publicado (0.8.0). Lluvias abundantes, normales o escasas cada año; cambian la cosecha y el color del paisaje |
+| 2. El Niño y La Niña | Publicado (0.9.0). Desde Pueblo con 60 habitantes; pronóstico un año antes; fondo de emergencias en Hacienda (0–20% de los ingresos, 3% de interés); seis dilemas de clima |
+| 3. Suelo vivo | Publicado (0.10.0). El bosque vuelve a las laderas junto a otros bosques (más rápido con la ley ambiental); El Niño trae incendios; las laderas taladas se erosionan y con La Niña pueden derrumbarse y llevarse obras. Se ve en el mapa (bosque joven, cenizas y troncos, cárcavas, derrumbes) y en la ficha de cada casilla |
+| 4. Vida de los edificios | Pendiente |
+| 5. Balance | Pendiente. Hoy (Normal, equilibrada, República): 62% con fondo y sin construir en laderas taladas. Partidas de unos 50 años en promedio |
+
 ## Ideas propuestas (primera ronda)
 
 | # | Idea | Concepto que enseña | Cómo se ve |

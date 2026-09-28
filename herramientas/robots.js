@@ -35,6 +35,8 @@ export function botYear(S, strat, eth) {
     const pref = k === 'cultivo' ? (i => nearRiver(S, i)) : ['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'parque'].includes(k) ? (i => !nearRiver(S, i)) : null;
     let t = freeTiles(S, k);
     if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));
+    // Fase 1: la estrategia equilibrada se prepara: no tala bosque ni construye en laderas erosionadas si hay otro sitio.
+    if (strat === 'fair' && S.clima) { const riesgo = i => S.map[i].t === 'bosque' || S.map[i].er > 0 || S.map[i].dr > 0; t = t.filter(i => !riesgo(i)).concat(t.filter(riesgo)); }
     if (!t.length) break;
     build(S, k, t[0]);
   }

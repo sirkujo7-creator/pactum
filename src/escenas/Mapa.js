@@ -3,7 +3,7 @@
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
 import { lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
-import { hornearNaturaleza, colocarNaturaleza } from '../arte/naturaleza.js';
+import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
 import { pintarNiebla, lienzo } from '../arte/acuarela.js';
 import { P, TW, casillaEn } from '../arte/iso.js';
@@ -74,7 +74,7 @@ export class Mapa extends Phaser.Scene {
     this.pob = new Pobladores(this);
     this.vida = new Vida(this);
     this.efectos = new Efectos(this);
-    this.efectos.actualizar();
+    this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.marcaG = this.add.graphics().setDepth(PROF_MARCA);
     this.activarControles();
@@ -122,9 +122,15 @@ export class Mapa extends Phaser.Scene {
   ponerPlantas(i) {
     (this.plantas[i] || []).forEach(p => p.destroy());
     const x = this.S.map[i], t = this.T.tiles[i];
-    const libre = !x.b && !(t.b === 'niebla' && x.t !== 'bosque');
+    let lista = [];
+    if (x.b || x.dr > 0 || x.er >= 2) lista = [];                           // obra, derrumbe o ladera muy erosionada
+    else if (x.q > 0) lista = toconesDe(this.T, i);                       // cenizas de un incendio
+    else if (x.t === 'bosque' && t.b !== 'niebla') lista = arbolesDeBosque(this.T, i); // bosque que volvió
+    else if (!(t.b === 'niebla' && x.t !== 'bosque')) lista = (this.plantasPorCasilla[i] || []).filter(o => !Vida.esAnimal(o.k));
+    // El bosque joven crece poco a poco durante sus primeros años.
+    const edad = x.t === 'bosque' && x.nb ? this.S.year - x.nb : 9, crece = edad <= 1 ? .55 : edad === 2 ? .8 : 1;
     // Las vacas y garzas las mueve Vida.js; los árboles guardan cuánto se mecen.
-    this.plantas[i] = libre ? (this.plantasPorCasilla[i] || []).filter(o => !Vida.esAnimal(o.k)).map(o => this.figura('naturaleza', o.k, o.r, o.c, this.T.hf(o.r, o.c), o.s).setData('arbol', Vida.vaiven(o.k))) : [];
+    this.plantas[i] = lista.map(o => this.figura('naturaleza', o.k, o.r, o.c, this.T.hf(o.r, o.c), o.s * crece).setData('arbol', Vida.vaiven(o.k)));
   }
   ponerObra(i) {
     (this.obras[i] || []).forEach(p => p.destroy());
@@ -163,6 +169,23 @@ export class Mapa extends Phaser.Scene {
     this.ponerPlantas(i); this.ponerObra(i);
     for (const [sr, sc] of sectoresAfectados(this.T, i)) this.pintarSector(sr, sc);
     this.revisarCambiosGenerales();
+    if (this.pob) this.pob.planear();
+    if (this.vida) this.vida.poner();
+  }
+  // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
+  huella(x) { return `${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}`; }
+  refrescarCambios(antes) {
+    const S = this.S, sectores = new Set(), cambiadas = [];
+    S.map.forEach((x, i) => { if (this.huella(x) !== antes[i]) cambiadas.push(i); });
+    if (!cambiadas.length) return;
+    for (const i of cambiadas) {
+      this.ponerPlantas(i); this.ponerObra(i);
+      for (const [sr, sc] of sectoresAfectados(this.T, i)) sectores.add(sr + '-' + sc);
+    }
+    // Un sector por cuadro, para no congelar la pantalla.
+    const cola = [...sectores].map(k => k.split('-').map(Number));
+    const paso = () => { if (!this.sys.isActive()) return; const x = cola.shift(); if (x) { this.pintarSector(...x); requestAnimationFrame(paso); } };
+    paso();
     if (this.pob) this.pob.planear();
     if (this.vida) this.vida.poner();
   }
@@ -234,8 +257,9 @@ export class Mapa extends Phaser.Scene {
     const S = this.S;
     if (!this.listo || S.pend || S.over || this.ui.hayTarjeta() || this.cerrandoAnio) return;
     this.ui.cerrarHojas(); this.ui.cerrarFicha();
-    const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr;
+    const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr, antes = S.map.map(x => this.huella(x));
     const r = advance(S);
+    this.refrescarCambios(antes);
     const dg = Math.round(S.gold - g0), dp = S.pop - p0, hunger = !!(S.log[0] && S.log[0].t.includes('hambre'));
     const sg = v => (v >= 0 ? '+' : '−') + Math.abs(v);
     this.ui.pasoDelAnio('Año ' + S.year, `Oro ${sg(dg)}   ·   Habitantes ${sg(dp)}`);
@@ -267,7 +291,7 @@ export class Mapa extends Phaser.Scene {
     if (!completo) return;
     this.revisarCambiosGenerales();
     this.pob.planear();
-    this.efectos.actualizar();
+    this.efectos.actualizar(); this.efectos.humoIncendio();
     const d = sequedad(this.S);
     if (Math.abs(d - this.dry) >= .15) this.repintarTodo(d);
   }

@@ -3,6 +3,7 @@ import { clamp } from './azar.js';
 import { C } from './contenido.js';
 import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
+import { marcarTala } from './suelo.js';
 
 // Devuelve el motivo por el que no se puede construir k en la casilla i, o '' si se puede.
 export function whyNot(S, k, i) {
@@ -23,8 +24,9 @@ export function build(S, k, i) {
   const x = S.map[i];
   S.gold -= cost(S, k);
   let msg = '';
-  if (x.t === 'bosque') { x.t = 'llano'; S.env = clamp(S.env - 3, 0, 100); msg = 'Talaste bosque: el ambiente baja.'; }
-  S.undo.push({ i, k, paid: cost(S, k), forest: x.t === 'llano' && !!msg });
+  const tl = x.tl;
+  if (x.t === 'bosque') { x.t = 'llano'; S.env = clamp(S.env - 3, 0, 100); msg = 'Talaste bosque: el ambiente baja.'; marcarTala(S, i); }
+  S.undo.push({ i, k, paid: cost(S, k), forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
   x.b = k;
   return msg || true;
 }
@@ -34,7 +36,7 @@ export function undoBuild(S) {
   if (!u) return null;
   const x = S.map[u.i];
   x.b = null; S.gold += u.paid;
-  if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); }
+  if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;
 }

@@ -7,6 +7,7 @@ import { finance, totDebt } from './hacienda.js';
 import { society, waterCap, satTargets, calcHap, envTarget } from './sociedad.js';
 import { drawEvent } from './dilemas.js';
 import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, interesFondo } from './clima.js';
+import { sueloDelAnio } from './suelo.js';
 import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
@@ -64,6 +65,8 @@ export function advance(S) {
 
   // Fase 1: emergencia del año de El Niño o La Niña (la paga el fondo; lo que falte, el tesoro).
   if (climaActivo(S) && S.clima.fenomeno) news.push(...atenderEmergencia(S, S.map.filter((x, i) => x.b && nearRiver(S, i)).length));
+  // Fase 1: el suelo vive (bosque que vuelve o se quema, erosión y derrumbes).
+  news.push(...sueloDelAnio(S));
 
   // Déficit y cesación de pagos.
   S.deficit = F.net < 0 ? S.deficit + 1 : 0;

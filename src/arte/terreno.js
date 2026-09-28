@@ -153,6 +153,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   // Obras en el suelo: explanadas, cultivos, cafetales, parques, minas, caminos y puentes.
   if (opciones.mapa) {
     g.save(); recortar();
+    pintarSuelo(g, T, opciones.mapa, k, dry);
     pintarObras(g, T, opciones.mapa, k, dry);
     g.restore();
   }
@@ -262,6 +263,56 @@ function pintarObras(g, T, mapa, k, dry) {
     wash(g, top, b === 'parque' ? mix('#9CC57D', DRYC, dry * .5) : '#CDBB93', rng, .95, .6);
     if (b === 'parque') { const c = P(t.r + .5, t.c + .5, h); g.globalAlpha = .7; g.fillStyle = '#E7DDC4'; g.beginPath(); g.ellipse(c[0], c[1], 17, 7, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
     else { g.globalAlpha = .18; g.strokeStyle = '#8C7250'; g.lineWidth = .6; for (let s = 0; s < 5; s++) { const c = P(t.r + .2 + rng() * .6, t.c + .2 + rng() * .6, h); g.beginPath(); g.moveTo(c[0] - 3, c[1]); g.lineTo(c[0] + 3, c[1] + .5); g.stroke(); } g.globalAlpha = 1; }
+  }
+}
+
+// Suelo vivo (fase 1): bosque que volvió, cenizas de un incendio, laderas erosionadas y derrumbes.
+function pintarSuelo(g, T, mapa, k, dry) {
+  const N = T.N;
+  for (const t of T.tiles) {
+    if (t.r < k.r0 - 1 || t.r >= k.r1 + 1 || t.c < k.c0 - 1 || t.c >= k.c1 + 1) continue;
+    const x = mapa[t.r * N + t.c];
+    if (!x || !(x.q > 0 || x.er > 0 || x.dr > 0 || (x.t === 'bosque' && t.b !== 'niebla'))) continue;
+    const rng = mulberry(t.r * 577 + t.c * 29 + T.seed);
+    const punto = (u, v) => P(t.r + v, t.c + u, T.hf(t.r + v, t.c + u));
+    // Manchas suaves e irregulares (acuarela), en lugar de rellenar el rombo entero.
+    const manchas = (col, n, al, tam = 1) => { for (let j = 0; j < n; j++) { const p = punto(.18 + rng() * .64, .18 + rng() * .64), rx = (8 + rng() * 7) * tam; blob(g, p[0], p[1], rx, rx * .5, col, rng, al); } };
+    if (x.dr > 0) {
+      // Derrumbe: lengua de tierra removida que baja por la ladera, con piedras sueltas.
+      const L = Math.hypot(t.sx, t.sy) || 1, bv = t.sy / L, bu = t.sx / L; // dirección cuesta arriba
+      // De arriba hacia abajo: la cicatriz oscura en lo alto y la tierra que se abre al caer.
+      for (let j = 0; j <= 7; j++) {
+        const f = j / 7, u = .5 + bu * (.4 - f * .75), v = .5 + bv * (.4 - f * .75), p = punto(clamp(u, .05, .95), clamp(v, .05, .95)), rx = 5 + f * 11;
+        blob(g, p[0], p[1], rx, rx * .5, j < 2 ? '#7A5436' : mix('#A5774C', '#B8946A', dry * .5), rng, .55);
+      }
+      for (let j = 0; j < 8; j++) { const f = .5 + rng() * .5, p = punto(clamp(.5 - bu * (f * .5 - .1) + (rng() - .5) * .4, .05, .95), clamp(.5 - bv * (f * .5 - .1) + (rng() - .5) * .4, .05, .95)); blob(g, p[0], p[1], 1.4 + rng() * 1.8, .9 + rng() * .8, rng() < .5 ? '#9A938A' : '#7F776C', rng, .9); }
+      continue;
+    }
+    if (x.t === 'bosque') { manchas(mix('#5A8650', DRYC, dry * .3), 7, .3, 1.2); continue; }
+    if (x.q > 0) {
+      // Cenizas: suelo oscuro que se aclara con los años.
+      const f = Math.min(1, .35 + x.q / 5);
+      manchas('#554A40', 8, .38 * f); manchas('#3E352E', 4, .3 * f, .6);
+      g.globalAlpha = .4 * f; g.fillStyle = '#8C8680';
+      for (let j = 0; j < 6; j++) { const p = punto(.1 + rng() * .8, .1 + rng() * .8); g.beginPath(); g.ellipse(p[0], p[1], 1.4 + rng() * 1.6, .6, 0, 0, 7); g.fill(); }
+      g.globalAlpha = 1;
+    }
+    if (x.er > 0) {
+      // Erosión: tierra desnuda y cárcavas que bajan por la pendiente.
+      manchas(mix('#B88A5C', '#C9A57A', dry * .4), 3 + x.er * 2, .12 + .08 * x.er);
+      const L = Math.hypot(t.sx, t.sy) || 1, du = -t.sx / L, dv = -t.sy / L;
+      g.strokeStyle = '#80583A'; g.lineCap = 'round';
+      for (let j = 0; j < x.er * 3; j++) {
+        let u = .15 + rng() * .7, v = .15 + rng() * .7;
+        g.globalAlpha = .3 + .12 * x.er; g.lineWidth = .6 + rng() * .5; g.beginPath();
+        for (let s = 0; s <= 5; s++) {
+          const p = punto(clamp(u, .02, .98), clamp(v, .02, .98)); s ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]);
+          u += du * .07 + (rng() - .5) * .05; v += dv * .07 + (rng() - .5) * .05;
+        }
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+    }
   }
 }
 

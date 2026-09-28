@@ -31,6 +31,8 @@ function recetas(dry) {
     ...[0, 1].map(f => ['pajaro' + f, 12, 8, 6, 4, g => { g.strokeStyle = '#3A3530'; g.lineWidth = 1; g.lineCap = 'round'; g.beginPath(); if (f) { g.moveTo(-5, 1); g.quadraticCurveTo(-2.5, -1.5, 0, 0); g.quadraticCurveTo(2.5, -1.5, 5, 1); } else { g.moveTo(-5, -2.5); g.quadraticCurveTo(-2.5, 1, 0, 0); g.quadraticCurveTo(2.5, 1, 5, -2.5); } g.stroke(); }]),
     ...[0, 1].map(f => ['loro' + f, 14, 10, 7, 5, g => { g.fillStyle = '#3E9A4A'; g.beginPath(); g.ellipse(0, 0, 3.2, 1.6, 0, 0, 7); g.fill(); g.fillStyle = '#E0A030'; g.beginPath(); g.arc(3, -.3, 1.1, 0, 7); g.fill(); g.fillStyle = '#C8302A'; g.fillRect(-4.8, -.4, 2, .9); g.fillStyle = '#2E7A3A'; g.beginPath(); if (f) { g.moveTo(-1.5, 0); g.lineTo(1, -4); g.lineTo(1.8, 0); } else { g.moveTo(-1.5, 0); g.lineTo(1, 3.5); g.lineTo(1.8, 0); } g.fill(); }]),
     ['garzaVuela', 20, 12, 10, 6, g => { g.fillStyle = '#FBFBF8'; g.beginPath(); g.ellipse(0, 0, 3.2, 1.5, 0, 0, 7); g.fill(); g.beginPath(); g.moveTo(-1, 0); g.quadraticCurveTo(-5, -5, -9, -3); g.quadraticCurveTo(-5, -1, -1, 1); g.fill(); g.beginPath(); g.moveTo(1, 0); g.quadraticCurveTo(5, -5, 9, -3); g.quadraticCurveTo(5, -1, 1, 1); g.fill(); g.fillStyle = '#E0B040'; g.fillRect(3, -.5, 2.5, .7); }],
+    // Suelo vivo (fase 1): troncos quemados que deja un incendio.
+    ['tocon', 18, 22, 9, 18, (g, r) => { g.globalAlpha = .25; g.fillStyle = '#26221E'; g.beginPath(); g.ellipse(2, 1, 6, 2, 0, 0, 7); g.fill(); g.globalAlpha = 1; g.fillStyle = '#3A302A'; g.beginPath(); g.moveTo(-2.4, 0); g.lineTo(-1.8, -11); g.lineTo(-.6, -13); g.lineTo(.4, -10.5); g.lineTo(1.6, -12); g.lineTo(2.4, 0); g.closePath(); g.fill(); g.strokeStyle = '#2A2420'; g.lineWidth = 1; g.beginPath(); g.moveTo(1, -7); g.lineTo(4.5, -10); g.stroke(); g.fillStyle = '#6A5E54'; g.globalAlpha = .6; g.fillRect(-1.6, -9, .8, 7); g.globalAlpha = 1; }],
     ['garza', 14, 20, 7, 17, (g, r) => { g.strokeStyle = '#E8D8A0'; g.lineWidth = .7; g.beginPath(); g.moveTo(-1, 0); g.lineTo(-1, -5); g.moveTo(1, 0); g.lineTo(1, -5); g.stroke(); g.fillStyle = '#FBFBF8'; g.beginPath(); g.ellipse(0, -7.5, 2.4, 3, .2, 0, 7); g.fill(); g.strokeStyle = '#FBFBF8'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(1, -10); g.quadraticCurveTo(3, -12, 2, -14); g.stroke(); g.fillStyle = '#E0B040'; g.fillRect(2, -14.5, 2.5, .8); }]
   ];
 }
@@ -81,5 +83,20 @@ export function colocarNaturaleza(T, mapa) {
       case 'roca': if (p < .35) add('piedra', 1); break;
     }
   }
+  return objs;
+}
+
+// Bosque que vuelve a crecer (fase 1) en casillas que no eran bosque de niebla: árboles de su piso térmico.
+export function arbolesDeBosque(T, i) {
+  const t = T.tiles[i], R = mulberry(T.seed * 11 + i * 173 + 5), alto = t.h > 4.4, objs = [];
+  const add = (k, sc = 1) => objs.push({ k, i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: sc * (.85 + R() * .3) });
+  for (let j = 0, n = R() < .6 ? 3 : 2; j < n; j++) add(alto ? 'arbolNiebla' : 'arbol', alto ? 1 : .95);
+  if (!alto && R() < .4) add('guadua');
+  return objs;
+}
+// Troncos quemados de una casilla tras un incendio.
+export function toconesDe(T, i) {
+  const t = T.tiles[i], R = mulberry(T.seed * 5 + i * 97 + 3), objs = [];
+  for (let j = 0, n = 2 + Math.floor(R() * 3); j < n; j++) objs.push({ k: 'tocon', i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: .8 + R() * .4 });
   return objs;
 }
