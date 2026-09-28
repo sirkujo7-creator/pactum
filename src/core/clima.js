@@ -2,6 +2,7 @@
 // Solo actúa en el terreno en acuarela; en el modo de comparación con la v9 queda apagado.
 import { azar, clamp } from './azar.js';
 import { C } from './contenido.js';
+import { nearRiver } from './mundo.js';
 
 export function climaActivo(S) { return !!(S && S.clima && S.mundo === 'acuarela'); }
 export function climaInicial() { return { lluvias: 'normales', fenomeno: null, pronostico: null, ultimaCrisis: -99, fertil: 0, evento: null }; }
@@ -31,11 +32,20 @@ export function aporteFondo(S, ingresos) { return climaActivo(S) && S.stage >= 1
 
 // Emergencia del año de El Niño o La Niña: cuánto cuesta atenderla, cuánto cubre el fondo y qué pasa si falta.
 // Devuelve las noticias para la crónica.
-export function atenderEmergencia(S, obrasRiberenas) {
-  const f = S.clima.fenomeno, F = C.CLIMA.fenomenos[f], noticias = [];
+// Lo que costaría hoy atender El Niño o La Niña.
+export function costoEmergencia(S, f, obrasRiberenas) {
+  const F = C.CLIMA.fenomenos[f];
+  if (obrasRiberenas === undefined) obrasRiberenas = S.map.filter((x, i) => x.b && nearRiver(S, i)).length;
   let costo = S.pop * F.costoPorHabitante;
   if (f === 'nina') costo += obrasRiberenas * F.danoPorObraRibereña;
-  costo = Math.round(costo * S.price);
+  return Math.round(costo * S.price);
+}
+// Fondo que alcanzaría para la peor de las dos emergencias con el pueblo de hoy.
+export function fondoSugerido(S) { return climaActivo(S) ? Math.max(costoEmergencia(S, 'nino'), costoEmergencia(S, 'nina')) : 0; }
+
+export function atenderEmergencia(S, obrasRiberenas) {
+  const f = S.clima.fenomeno, F = C.CLIMA.fenomenos[f], noticias = [];
+  const costo = costoEmergencia(S, f, obrasRiberenas);
   const cubierto = Math.min(S.fondo || 0, costo), resto = costo - cubierto, falta = costo ? resto / costo : 0;
   S.fondo = (S.fondo || 0) - cubierto;
   S.gold -= resto;

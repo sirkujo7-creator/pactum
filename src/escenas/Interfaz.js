@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -232,7 +232,7 @@ export class Interfaz {
       <p class="small">${S.stage < 1 ? 'El crédito y la emisión se abren al llegar a Pueblo.' : R.l === 'CCC' ? 'Calificación CCC: nadie te presta. Reduce deuda y déficit.' : 'Préstamo: 150, se paga 15% por año. Bono: 200 a 5 años, interés más bajo, pagas todo al vencer.'}</p>
       ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
-        <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. ${C.CLIMA.fondo.leccion}</p>` : ''}
+        <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {

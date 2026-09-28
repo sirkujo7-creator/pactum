@@ -16,7 +16,6 @@ function jugar(opciones = {}) {
     const S = freshState(DIF, false, 500000 + g, REG, opciones.v9 ? { mundo: 'v9' } : {});
     let fin, ultimoDesastre = -99;
     for (let y = 0; y < 120; y++) {
-      if (opciones.sinPrep && S.clima) { S.aporteFondo = 0; }
       fin = botYear(S, 'fair', null, opciones.sinPrep ? { sinPrep: true } : undefined).end;
       if (S.clima && S.clima.evento && S.clima.evento.anio === S.year - 1 && ultimoDesastre !== S.year - 1) { ultimoDesastre = S.year - 1; r.crisis++; }
       if (fin) break;
