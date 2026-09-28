@@ -127,11 +127,12 @@ export class Pobladores {
 
   // Figura más cercana a un punto del mundo (para la ficha).
   cercana(wx, wy) {
-    let mejor = null, d0 = 12;
+    // Solo cuenta si el toque cae sobre la silueta (unos 12 × 26 del mundo); gana la figura de más adelante.
+    let mejor = null;
     for (const f of this.figuras) {
       if (f.oculto) continue;
-      const d = Math.hypot(wx - f.img.x, wy - (f.img.y - 9));
-      if (d < d0) { d0 = d; mejor = f; }
+      const dx = Math.abs(wx - f.img.x), dy = wy - f.img.y, alto = f.p.tipo === 'nino' ? 20 : 27;
+      if (dx < 6.5 && dy > -alto && dy < 3 && (!mejor || f.img.depth > mejor.img.depth)) mejor = f;
     }
     return mejor;
   }
