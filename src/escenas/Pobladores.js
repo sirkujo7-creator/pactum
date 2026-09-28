@@ -8,6 +8,7 @@ import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
 
 const DURACION_DIA = 180; // segundos que dura un día completo
+const TAMANO = .62;       // tamaño de las figuras frente a las casas
 const smooth = t => t * t * (3 - 2 * t);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -32,7 +33,7 @@ export class Pobladores {
   // Vuelve a repartir casas y trabajos (tras construir, demoler o terminar el año).
   planear() {
     const { S, T } = this.scene, plan = planearPobladores(S);
-    this.puentes = caminos(T, S.map).puentes.map(([, j]) => { const t = T.tiles[j]; return { r: t.r + .5, c: t.c + .5 }; });
+    this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     while (this.figuras.length > plan.length) this.figuras.pop().img.destroy();
     plan.forEach((p, k) => {
       let f = this.figuras[k];
@@ -41,10 +42,10 @@ export class Pobladores {
         f = { r: casa.r, c: casa.c, ruta: [], espera: Math.random() * 3, fase: Math.random() * 4, frente: 1, voltear: false, oculto: false };
         f.img = this.scene.add.image(0, 0, 'personas', `${p.tipo}_${p.vi}_1_0`);
         const m = this.H.marcos[`${p.tipo}_${p.vi}_1_0`];
-        f.img.setOrigin(m.ax / m.w, m.ay / m.h).setScale(1 / this.H.escala);
+        f.img.setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAMANO / this.H.escala);
         this.figuras.push(f);
       }
-      f.p = p; f.vel = (p.tipo === 'nino' ? .55 : .34) * (.85 + p.semilla * .3);
+      f.p = p; f.vel = (p.tipo === 'nino' ? .4 : .28) * (.85 + p.semilla * .3); f.carril = (p.semilla - .5) * .3;
       if (reducirMovimiento()) { const d = this.destinoDeDia(f); f.r = d.r; f.c = d.c; f.ruta = []; }
       this.dibujar(f);
     });
@@ -70,27 +71,49 @@ export class Pobladores {
   // A dónde va ahora según la hora del día (como en la prueba de estilo).
   siguiente(f) {
     const d = this.reloj, p = f.p;
+    const a = (q, lugar) => ({ ...q, lugar });
     if (d > .8 || d < .08) return { ...this.centro(p.casa, .2), casa: true };
-    if (d > .55 && Math.random() < .6 && p.plaza >= 0) return this.centro(p.plaza, 1.3);
-    if (p.trabajo !== null && Math.random() < .75) return this.centro(p.trabajo, .7);
-    if (p.clase === 'n' || p.clase === 'e') return Math.random() < .6 && p.plaza >= 0 ? this.centro(p.plaza, 1.3) : this.centro(p.casa, 1.4);
-    return p.plaza >= 0 ? this.centro(p.plaza, 1.3) : this.centro(p.casa, 1.2);
+    if (d > .55 && Math.random() < .6 && p.plaza >= 0) return a(this.centro(p.plaza, 1.3), 'plaza');
+    if (p.trabajo !== null && Math.random() < .8) return a(this.centro(p.trabajo, .7), 'trabajo');
+    if (p.clase === 'n' || p.clase === 'e') return Math.random() < .6 && p.plaza >= 0 ? a(this.centro(p.plaza, 1.3), 'plaza') : this.centro(p.casa, 1.4);
+    return p.plaza >= 0 ? a(this.centro(p.plaza, 1.3), 'plaza') : this.centro(p.casa, 1.2);
   }
-  // ¿El tramo cruza el río? Entonces busca un puente; si no hay, no va.
-  mojado(a, b) {
-    const { S, T } = this.scene, N = T.N, pasos = Math.ceil(Math.hypot(b.r - a.r, b.c - a.c) * 4);
-    for (let s = 1; s < pasos; s++) {
-      const r = Math.floor(a.r + (b.r - a.r) * s / pasos), c = Math.floor(a.c + (b.c - a.c) * s / pasos);
-      if (r >= 0 && c >= 0 && r < N && c < N && S.map[r * N + c].t === 'rio' && !this.puentes.some(q => Math.floor(q.r) === r && Math.floor(q.c) === c)) return true;
-    }
-    return false;
-  }
+  // Camino por las casillas: rodea los edificios y el río (que solo se cruza por un puente).
+  // Devuelve una lista de puntos, o null si no hay manera de llegar.
   ruta(f, d) {
-    if (!this.mojado(f, d)) return [d];
-    for (const q of this.puentes.slice().sort((x, y) => Math.hypot(x.r - f.r, x.c - f.c) - Math.hypot(y.r - f.r, y.c - f.c))) {
-      if (!this.mojado(f, q) && !this.mojado(q, d)) return [q, d];
+    const { S, T } = this.scene, N = T.N;
+    const casilla = q => Math.max(0, Math.min(N - 1, Math.floor(q.r))) * N + Math.max(0, Math.min(N - 1, Math.floor(q.c)));
+    const ini = casilla(f), fin = casilla(d);
+    if (ini === fin) return [d];
+    const libre = i => {
+      if (i === fin || i === ini) return true;
+      const x = S.map[i];
+      if (x.t === 'rio') return this.puentes.has(i);
+      return !x.b || ['cultivo', 'cafetal', 'parque'].includes(x.b);
+    };
+    // A* sobre la cuadrícula (4 vecinos). Los campos cuestan un poco más que el camino libre.
+    const g = new Map([[ini, 0]]), de = new Map(), abiertos = [[0, ini]];
+    const h = i => Math.abs(Math.floor(i / N) - Math.floor(fin / N)) + Math.abs(i % N - fin % N);
+    let pasos = 0;
+    while (abiertos.length && pasos++ < 2500) {
+      let m = 0; for (let k = 1; k < abiertos.length; k++) if (abiertos[k][0] < abiertos[m][0]) m = k;
+      const [, i] = abiertos.splice(m, 1)[0];
+      if (i === fin) break;
+      const r = Math.floor(i / N), c = i % N;
+      for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const R = r + dr, C2 = c + dc;
+        if (R < 0 || C2 < 0 || R >= N || C2 >= N) continue;
+        const j = R * N + C2;
+        if (!libre(j)) continue;
+        const costo = g.get(i) + (S.map[j].b ? 1.6 : 1);
+        if (costo < (g.has(j) ? g.get(j) : 1e9)) { g.set(j, costo); de.set(j, i); abiertos.push([costo + h(j), j]); }
+      }
     }
-    return null;
+    if (!de.has(fin)) return null;
+    const puntos = [];
+    for (let i = de.get(fin); i !== ini && i !== undefined; i = de.get(i)) puntos.unshift({ r: Math.floor(i / N) + .5 + f.carril, c: i % N + .5 - f.carril });
+    puntos.push(d);
+    return puntos;
   }
 
   update(dt) {
@@ -101,18 +124,19 @@ export class Pobladores {
       if (f.espera > 0) { f.espera -= dt; this.dibujar(f, false); continue; }
       if (!f.ruta.length) {
         const d = this.siguiente(f), r = this.ruta(f, d);
-        if (!r) { f.espera = 2 + Math.random() * 3; continue; }
-        f.ruta = r; f.aCasa = !!d.casa; f.oculto = false;
+        if (!r) { f.espera = 3 + Math.random() * 4; continue; }
+        f.ruta = r; f.aCasa = !!d.casa; f.destino = d.lugar; f.oculto = false;
       }
       const d = f.ruta[0], dr = d.r - f.r, dc = d.c - f.c, dist = Math.hypot(dr, dc);
       if (dist < .04) {
         f.ruta.shift();
-        if (!f.ruta.length) { f.espera = 1.5 + Math.random() * 4; if (f.aCasa) f.oculto = true; }
+        // Al llegar se queda un rato: más en el trabajo, menos de paso.
+        if (!f.ruta.length) { f.espera = f.destino === 'trabajo' ? 9 + Math.random() * 12 : f.destino === 'plaza' ? 5 + Math.random() * 8 : 2 + Math.random() * 4; if (f.aCasa) f.oculto = true; }
         this.dibujar(f, false);
         continue;
       }
       const v = Math.min(dist, f.vel * dt);
-      f.r += dr / dist * v; f.c += dc / dist * v; f.fase += dt * 6.5;
+      f.r += dr / dist * v; f.c += dc / dist * v; f.fase += dt * 5;
       f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0;
       this.dibujar(f, true);
     }
@@ -131,8 +155,8 @@ export class Pobladores {
     let mejor = null;
     for (const f of this.figuras) {
       if (f.oculto) continue;
-      const dx = Math.abs(wx - f.img.x), dy = wy - f.img.y, alto = f.p.tipo === 'nino' ? 20 : 27;
-      if (dx < 6.5 && dy > -alto && dy < 3 && (!mejor || f.img.depth > mejor.img.depth)) mejor = f;
+      const dx = Math.abs(wx - f.img.x), dy = wy - f.img.y, alto = (f.p.tipo === 'nino' ? 20 : 27) * TAMANO;
+      if (dx < 5 && dy > -alto && dy < 3 && (!mejor || f.img.depth > mejor.img.depth)) mejor = f;
     }
     return mejor;
   }
