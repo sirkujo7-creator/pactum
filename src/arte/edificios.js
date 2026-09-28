@@ -1,0 +1,287 @@
+// Edificios en acuarela, con el lenguaje de la prueba de estilo (bahareque, casona, taller)
+// y las obras de la versión 9 redibujadas. Se hornean una vez en una hoja; el mapa solo pone copias.
+import { mulberry, shade, mix, wash, blob, poly, lienzo } from './acuarela.js';
+import { TW, TH } from './iso.js';
+
+const ESCALA = 2.5;
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// ---------- Pinceles de construcción ----------
+function V2(u, v, z) { return [(u - v) * TW / 2, (u + v) * TH / 2 - (z || 0)]; }
+function borde(g, pts, col, al, w) { g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w || .8; g.lineJoin = 'round'; poly(g, pts); g.stroke(); g.globalAlpha = 1; }
+// Caja isométrica: ancho w (a lo largo de las columnas), fondo d, desde la altura z0 con alto h.
+function iso(g, w, d, z0, h, cl, cr, ct, rng, ou = 0, ov = 0) {
+  const A = V2(ou - w / 2, ov - d / 2), B = V2(ou + w / 2, ov - d / 2), C = V2(ou + w / 2, ov + d / 2), D = V2(ou - w / 2, ov + d / 2), up = (p, z) => [p[0], p[1] - z];
+  wash(g, [up(D, z0), up(C, z0), up(C, z0 + h), up(D, z0 + h)], cl, rng, .97, .5);
+  wash(g, [up(C, z0), up(B, z0), up(B, z0 + h), up(C, z0 + h)], cr, rng, .97, .5);
+  if (ct) wash(g, [up(A, z0 + h), up(B, z0 + h), up(C, z0 + h), up(D, z0 + h)], ct, rng, .97, .5);
+  borde(g, [up(D, z0), up(C, z0), up(C, z0 + h), up(D, z0 + h)], shade(cl, -.45), .25, .6);
+  borde(g, [up(C, z0), up(B, z0), up(B, z0 + h), up(C, z0 + h)], shade(cr, -.45), .25, .6);
+  return { A, B, C, D, z: z0 + h, up };
+}
+// Techo a dos aguas sobre una caja.
+function techo(g, b, over, rh, col, wall, rng) {
+  const o = over, z = b.z, A = [b.A[0], b.A[1] - o * .2], Bq = [b.B[0] + o, b.B[1]], C = [b.C[0], b.C[1] + o * .6], D = [b.D[0] - o, b.D[1]];
+  const up = p => [p[0], p[1] - z], m1 = [(A[0] + D[0]) / 2, (A[1] + D[1]) / 2 - z - rh], m2 = [(Bq[0] + C[0]) / 2, (Bq[1] + C[1]) / 2 - z - rh];
+  wash(g, [up(A), up(Bq), m2, m1], shade(col, -.22), rng, .98, .4);
+  wash(g, [[b.C[0], b.C[1] - z], [b.B[0], b.B[1] - z], [(b.B[0] + b.C[0]) / 2, (b.B[1] + b.C[1]) / 2 - z - rh + 1]], wall, rng, .98, .3);
+  wash(g, [up(D), up(C), m2, m1], col, rng, .98, .4);
+  g.globalAlpha = .35; g.strokeStyle = shade(col, -.35); g.lineWidth = .5;
+  for (let k = 1; k < 7; k++) { const f = k / 7, p = [up(D)[0] + (up(C)[0] - up(D)[0]) * f, lerp(up(D)[1], up(C)[1], f)], q = [lerp(m1[0], m2[0], f), lerp(m1[1], m2[1], f)]; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]); g.stroke(); }
+  g.globalAlpha = .22; g.fillStyle = '#2A2018'; poly(g, [[b.D[0], b.D[1] - z], [b.C[0], b.C[1] - z], [b.C[0], b.C[1] - z + 3], [b.D[0], b.D[1] - z + 3]]); g.fill(); g.globalAlpha = 1;
+}
+// Tramos de las caras visibles: izquierda (D→C) y derecha (C→B). s: inicio 0..1, w: ancho, z: altura, h: alto.
+function caraI(b, s, w, z, h) { const p = [lerp(b.D[0], b.C[0], s), lerp(b.D[1], b.C[1], s)], q = [lerp(b.D[0], b.C[0], s + w), lerp(b.D[1], b.C[1], s + w)]; return [[p[0], p[1] - z], [q[0], q[1] - z], [q[0], q[1] - z - h], [p[0], p[1] - z - h]]; }
+function caraD(b, s, w, z, h) { const p = [lerp(b.C[0], b.B[0], s), lerp(b.C[1], b.B[1], s)], q = [lerp(b.C[0], b.B[0], s + w), lerp(b.C[1], b.B[1], s + w)]; return [[p[0], p[1] - z], [q[0], q[1] - z], [q[0], q[1] - z - h], [p[0], p[1] - z - h]]; }
+function sombra(g, rx, ry, dx) { g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(dx || 4, 2, rx, ry, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
+function cono(g, p, r, h, col, rng) { wash(g, [[p[0] - r, p[1]], [p[0], p[1] - h], [p[0] + r, p[1]]], col, rng, .95, .3); wash(g, [[p[0], p[1] - h], [p[0] + r, p[1]], [p[0], p[1] + r * .35]], shade(col, -.2), rng, .95, .3); }
+function bandera(g, x, y, h, col) {
+  g.strokeStyle = '#5A4A3A'; g.lineWidth = .9; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - h); g.stroke();
+  g.fillStyle = col; g.globalAlpha = .95; g.beginPath(); g.moveTo(x, y - h); g.quadraticCurveTo(x + 5, y - h - 1.5, x + 9, y - h + 1); g.lineTo(x + 9, y - h + 6); g.quadraticCurveTo(x + 5, y - h + 4, x, y - h + 5); g.fill(); g.globalAlpha = 1;
+}
+function banderines(g, a, b, rng) {
+  g.strokeStyle = '#6B4F3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 5, ...b); g.stroke();
+  const cols = ['#C0602A', '#E7C76B', '#2D6E5E', '#C4513B', '#F4ECDB'];
+  for (let k = 1; k < 8; k++) { const f = k / 8, x = lerp(a[0], b[0], f), y = lerp(a[1], b[1], f) + Math.sin(f * Math.PI) * 4.5; g.fillStyle = cols[k % 5]; g.beginPath(); g.moveTo(x - 1.6, y); g.lineTo(x + 1.6, y); g.lineTo(x, y + 3.2); g.fill(); }
+}
+function columnas(g, b, n, z, h, col) { for (let k = 0; k < n; k++) wash(g, caraI(b, .06 + k * (.88 / (n - 1)) - .025, .05, z, h), col, mulberry(k * 7 + 1), .97, .15); }
+function ventanas(g, b, lado, n, z, h, col, rng, a = .1, w = .12) {
+  for (let k = 0; k < n; k++) { const s = a + k * ((1 - 2 * a) / Math.max(1, n - 1)) - w / 2; wash(g, (lado === 'I' ? caraI : caraD)(b, n === 1 ? .5 - w / 2 : s, w, z, h), col, rng, .95, .2); }
+}
+function monedas(g, x, y) { for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#E2B24F' : '#C9962E'; g.beginPath(); g.ellipse(x, y - k * 2.2, 4.5, 1.8, 0, 0, 7); g.fill(); } }
+
+// ---------- Recetas: [clave, ancho, alto, anclaX, anclaY, pintura] ----------
+const ZOC = ['#2F6E8E', '#B23A2E', '#3E7D4F', '#C08A2A'];
+function recetas() {
+  const L = [];
+  // Casas de bahareque (Aldea y Pueblo), con zócalo de color.
+  ZOC.forEach((z, v) => L.push(['casa0-' + v, 70, 64, 35, 50, (g, r) => {
+    sombra(g, 20, 6, 8); const b = iso(g, .5, .4, 0, 15, '#F1EADB', '#DCD2BE', null, r);
+    wash(g, caraI(b, 0, 1, 0, 3.2), z, r, .95, .3); wash(g, caraD(b, 0, 1, 0, 3.2), shade(z, -.15), r, .95, .3);
+    wash(g, caraI(b, .38, .17, 0, 9), '#6B4A33', r, .97, .2); wash(g, caraI(b, .08, .2, 5, 5), shade(z, .15), r, .95, .2); wash(g, caraI(b, .7, .2, 5, 5), shade(z, .15), r, .95, .2); wash(g, caraD(b, .35, .3, 5, 5), shade(z, -.05), r, .95, .2);
+    techo(g, b, 4, 11, '#B5563A', '#DCD2BE', r); blob(g, -18, -2, 2.4, 2, '#C44A3A', r, .9); blob(g, -15, -1, 2, 1.6, '#5E8F4E', r, .9);
+  }]));
+  // Casas de dos pisos con balcón (desde Ciudad).
+  ZOC.forEach((z, v) => L.push(['casa2-' + v, 76, 80, 38, 60, (g, r) => {
+    sombra(g, 22, 6, 8); const b = iso(g, .54, .44, 0, 25, '#F4EEE2', '#DDD3C0', null, r);
+    wash(g, caraI(b, 0, 1, 0, 3.4), z, r, .95, .3); wash(g, caraD(b, 0, 1, 0, 3.4), shade(z, -.15), r, .95, .3);
+    wash(g, caraI(b, .4, .16, 0, 9.5), '#6B4A33', r, .97, .2);
+    ventanas(g, b, 'I', 3, 14, 6, shade(z, .1), r, .16, .14); ventanas(g, b, 'D', 2, 14, 6, shade(z, -.05), r, .25, .18);
+    wash(g, caraI(b, .02, .96, 12, 1.3), '#6B4A33', r, .97, .2);
+    for (let k = 0; k < 8; k++) borde(g, caraI(b, .04 + k * .125, .01, 12, 3.6), '#6B4A33', .9, .6);
+    for (let k = 0; k < 3; k++) blob(g, ...caraI(b, .14 + k * .32, .05, 13.5, 1)[3], 1.6, 1.2, '#C44A3A', r, .9);
+    techo(g, b, 4.5, 12, '#A94B32', '#DDD3C0', r);
+  }]));
+  // Mercado de toldos (Aldea y Pueblo) y galería de mercado (desde Ciudad).
+  L.push(['mercado0', 78, 58, 39, 40, (g, r) => {
+    sombra(g, 24, 6, 6);
+    const puesto = (ou, ov, col) => {
+      const b = iso(g, .24, .2, 0, 7, '#9C7447', '#7E5C37', '#B58B58', r, ou, ov);
+      for (let k = 0; k < 4; k++) wash(g, caraI(b, k * .25, .25, 7, 4), k % 2 ? '#F4ECDB' : col, r, .97, .2);
+      for (let k = 0; k < 3; k++) wash(g, caraD(b, k * .33, .33, 7, 4), k % 2 ? '#F4ECDB' : col, r, .97, .2);
+      const c = V2(ou, ov + .14); blob(g, c[0] - 3, c[1] - 1, 1.6, 1.2, '#E0A030', r, .9); blob(g, c[0], c[1] - .5, 1.6, 1.2, '#7FA04A', r, .9); blob(g, c[0] + 3, c[1] - 1, 1.5, 1.1, '#C44A3A', r, .9);
+    };
+    puesto(-.2, -.18, '#C4513B'); puesto(.22, -.12, '#2D6E5E'); puesto(-.02, .2, '#C08A2A');
+    const s = V2(.3, .3); wash(g, [[s[0] - 3, s[1]], [s[0] + 3, s[1]], [s[0] + 3, s[1] - 4], [s[0] - 3, s[1] - 4]], '#B09060', r, .95, .2);
+  }]);
+  L.push(['mercado2', 90, 64, 45, 44, (g, r) => {
+    sombra(g, 28, 7, 8); const b = iso(g, .8, .66, 0, 13, '#E9DBBB', '#CDBB96', null, r);
+    for (let k = 0; k < 5; k++) { const p = caraI(b, .06 + k * .19, .13, 0, 9); wash(g, p, '#5E4632', r, .97, .15); blob(g, (p[0][0] + p[1][0]) / 2, (p[0][1] + p[1][1]) / 2 - 3, 2, 1.3, k % 2 ? '#E0A030' : '#7FA04A', r, .9); }
+    for (let k = 0; k < 3; k++) wash(g, caraD(b, .12 + k * .3, .16, 0, 9), '#4E3A2A', r, .97, .15);
+    for (let k = 0; k < 6; k++) wash(g, caraI(b, k / 6, 1 / 6, 10, 3), k % 2 ? '#F4ECDB' : '#2D6E5E', r, .97, .2);
+    techo(g, b, 4, 9, '#B4553A', '#CDBB96', r);
+  }]);
+  L.push(['escuela', 84, 88, 42, 58, (g, r) => {
+    sombra(g, 26, 7, 8); const b = iso(g, .74, .48, 0, 16, '#E7C76B', '#CBAA50', null, r);
+    wash(g, caraI(b, 0, 1, 0, 3), '#8B6B3A', r, .95, .3); wash(g, caraD(b, 0, 1, 0, 3), '#6E5530', r, .95, .3);
+    ventanas(g, b, 'I', 4, 6, 6, '#6E93A8', r, .1, .11); wash(g, caraD(b, .38, .24, 0, 10), '#6B4A33', r, .97, .2);
+    techo(g, b, 4, 10, '#A94B32', '#CBAA50', r);
+    const t = iso(g, .15, .15, 0, 31, '#F0E7D3', '#D7C8AC', null, r, -.02, -.02);
+    wash(g, caraI(t, .25, .5, 24, 4), '#4A3A2C', r, .95, .2); blob(g, ...caraI(t, .45, .1, 24.5, 1)[3], 1.3, 1.3, '#C9A13E', r, .95);
+    techo(g, t, 1.5, 7, '#A94B32', '#D7C8AC', r);
+  }]);
+  L.push(['hospital', 84, 72, 42, 52, (g, r) => {
+    sombra(g, 26, 7, 8); const b = iso(g, .72, .58, 0, 20, '#F4F3EE', '#D9D8D0', '#E6E5DD', r);
+    ventanas(g, b, 'I', 4, 11, 5, '#8FB3C4', r, .1, .1); ventanas(g, b, 'I', 3, 2, 5, '#8FB3C4', r, .15, .1);
+    wash(g, caraD(b, .6, .22, 0, 9), '#5E6E78', r, .97, .2);
+    const m = caraD(b, .2, .3, 9, 9), cx = (m[0][0] + m[2][0]) / 2, cy = (m[0][1] + m[2][1]) / 2;
+    g.fillStyle = '#C0392B'; g.globalAlpha = .92; g.fillRect(cx - 1.4, cy - 4.5, 2.8, 9); g.beginPath(); g.moveTo(cx - 4.5, cy - 1.2); g.lineTo(cx + 4.5, cy - 3.2); g.lineTo(cx + 4.5, cy - .4); g.lineTo(cx - 4.5, cy + 1.6); g.fill(); g.globalAlpha = 1;
+    wash(g, [b.up(b.A, 20), b.up(b.B, 20), b.up(b.C, 20), b.up(b.D, 20)].map((p, i) => [p[0], p[1] - (i ? 0 : 0)]), '#E0DED5', r, .5, .3);
+  }]);
+  L.push(['taller', 76, 78, 38, 58, (g, r) => {
+    sombra(g, 22, 6, 8); iso(g, .1, .1, 0, 34, '#A8664C', '#8B4F3A', '#5A3A2C', r, .2, -.18);
+    const b = iso(g, .54, .44, 0, 14, '#B06C50', '#8E5440', null, r, -.04, .06);
+    wash(g, caraI(b, .3, .3, 0, 10), '#3E2E25', r, .97, .2); ventanas(g, b, 'D', 2, 5, 5, '#E0B070', r, .25, .16);
+    techo(g, b, 3, 8, '#5E4A40', '#8E5440', r);
+    const s = V2(.35, .42); for (let k = 0; k < 3; k++) wash(g, [[s[0] - 3 + k * 2, s[1]], [s[0] + 1 + k * 2, s[1]], [s[0] + 1 + k * 2, s[1] - 4], [s[0] - 3 + k * 2, s[1] - 4]], '#9C7447', r, .95, .2);
+  }]);
+  L.push(['banco', 80, 76, 40, 54, (g, r) => {
+    sombra(g, 24, 7, 8); const base = iso(g, .7, .62, 0, 3, '#CFC8B6', '#B3AB97', '#DDD6C5', r);
+    const b = iso(g, .62, .54, 3, 17, '#E6E0D2', '#C9C1AE', '#DAD3C2', r);
+    columnas(g, b, 5, 3, 13, '#F6F3EA'); wash(g, caraI(b, 0, 1, 16, 4), '#D2CAB6', r, .97, .2); wash(g, caraD(b, 0, 1, 16, 4), '#B8AF9A', r, .97, .2);
+    wash(g, caraD(b, .35, .3, 3, 8), '#5E4A3A', r, .97, .2);
+    const tp = b.up(V2(0, 0), 20); blob(g, tp[0], tp[1] - 3, 8, 6, '#D9A93E', r, .92); blob(g, tp[0] - 2.5, tp[1] - 5.5, 2.5, 2, '#F4D67A', r, .8); blob(g, tp[0], tp[1] - 10, 1.4, 1.4, '#8C6A1E', r, .95);
+  }]);
+  L.push(['universidad', 96, 96, 48, 64, (g, r) => {
+    sombra(g, 30, 8, 8); const b = iso(g, .86, .6, 0, 17, '#C98160', '#A8623F', null, r);
+    for (let k = 0; k < 4; k++) wash(g, caraI(b, .07 + k * .24, .1, 5, 7), '#F0E7D3', r, .95, .2);
+    ventanas(g, b, 'D', 2, 6, 6, '#F0E7D3', r, .2, .16); techo(g, b, 4, 8, '#6D4A39', '#A8623F', r);
+    const t = iso(g, .24, .24, 0, 31, '#F0E7D3', '#D7C8AC', '#E4D8C0', r);
+    columnas(g, t, 3, 19, 10, '#FFFFFF'); wash(g, caraI(t, .3, .4, 5, 9), '#6B4A33', r, .97, .2);
+    const tp = t.up(V2(0, 0), 31); blob(g, tp[0], tp[1] - 4, 7, 6, '#5F8C8A', r, .92); blob(g, tp[0], tp[1] - 10.5, 1.3, 1.3, '#C9A13E', r, .95);
+  }]);
+  L.push(['acueducto', 84, 60, 42, 38, (g, r) => {
+    sombra(g, 26, 6, 6);
+    const A = V2(-.46, -.05), Bq = V2(.46, -.05), h = 14;
+    for (let k = 0; k < 4; k++) { const p = [lerp(A[0], Bq[0], k / 3), lerp(A[1], Bq[1], k / 3)]; wash(g, [[p[0] - 2.4, p[1]], [p[0] + 2.4, p[1]], [p[0] + 2.4, p[1] - h], [p[0] - 2.4, p[1] - h]], '#CFC3AA', r, .97, .3); }
+    g.strokeStyle = '#A89B80'; g.globalAlpha = .85; g.lineWidth = 1.2;
+    for (let k = 0; k < 3; k++) { const f = k / 3 + 1 / 6, p = [lerp(A[0], Bq[0], f), lerp(A[1], Bq[1], f)]; g.beginPath(); g.arc(p[0], p[1] - h + 7.5, 7, Math.PI * 1.05, Math.PI * 1.95); g.stroke(); }
+    g.globalAlpha = 1;
+    wash(g, [[A[0], A[1] - h], [Bq[0], Bq[1] - h], [Bq[0], Bq[1] - h - 4], [A[0], A[1] - h - 4]], '#D8CDB6', r, .97, .3);
+    wash(g, [[A[0], A[1] - h - 4], [Bq[0], Bq[1] - h - 4], [Bq[0], Bq[1] - h - 5.6], [A[0], A[1] - h - 5.6]], '#7FB3CF', r, .95, .2);
+    iso(g, .22, .22, 0, 9, '#D8CDB6', '#BDB09A', '#7FB3CF', r, .3, .3);
+  }]);
+  L.push(['molino', 76, 64, 38, 46, (g, r) => {
+    sombra(g, 22, 6, 8); const b = iso(g, .44, .42, 0, 15, '#A9825A', '#8B6844', null, r, .1, -.05);
+    wash(g, caraI(b, .55, .2, 0, 8), '#3E2E25', r, .97, .2); techo(g, b, 3, 8, '#6B4A35', '#8B6844', r);
+    const w = V2(-.26, .2), R = 10;
+    g.strokeStyle = '#5E4330'; g.lineWidth = 1.8; g.globalAlpha = .95; g.beginPath(); g.ellipse(w[0], w[1] - 8, R * .55, R, 0, 0, 7); g.stroke();
+    g.lineWidth = 1; for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; g.beginPath(); g.moveTo(w[0], w[1] - 8); g.lineTo(w[0] + Math.cos(a) * R * .55, w[1] - 8 + Math.sin(a) * R); g.stroke(); }
+    g.globalAlpha = 1; blob(g, w[0], w[1] + 2, 4, 2, '#CFE5F0', r, .7);
+  }]);
+  L.push(['puerto', 84, 64, 42, 44, (g, r) => {
+    sombra(g, 24, 6, 8);
+    const d = [V2(-.58, .02), V2(-.06, .02), V2(-.06, .34), V2(-.58, .34)].map(p => [p[0], p[1] - 2]);
+    wash(g, d, '#9B7650', r, .97, .2); g.strokeStyle = '#5E4330'; g.lineWidth = .6; g.globalAlpha = .6;
+    for (let k = 1; k < 6; k++) { const f = k / 6; g.beginPath(); g.moveTo(lerp(d[0][0], d[1][0], f), lerp(d[0][1], d[1][1], f)); g.lineTo(lerp(d[3][0], d[2][0], f), lerp(d[3][1], d[2][1], f)); g.stroke(); }
+    g.globalAlpha = 1;
+    const b = iso(g, .48, .4, 0, 13, '#C9A874', '#A8864F', null, r, .16, -.16); wash(g, caraI(b, .3, .35, 0, 9), '#4E3A2A', r, .97, .2); techo(g, b, 3, 7, '#7A5536', '#A8864F', r);
+    iso(g, .1, .1, 0, 4, '#8C6A1E', '#6E5217', '#A87F2A', r, -.22, .2);
+    const bt = V2(-.66, .52);
+    wash(g, [[bt[0] - 11, bt[1] - 2], [bt[0] + 9, bt[1] - 4], [bt[0] + 6, bt[1] + 1], [bt[0] - 8, bt[1] + 3]], '#6B4A35', r, .95, .2);
+    g.strokeStyle = '#4A3A2C'; g.lineWidth = 1; g.beginPath(); g.moveTo(bt[0] - 1, bt[1] - 2); g.lineTo(bt[0] - 1, bt[1] - 19); g.stroke();
+    wash(g, [[bt[0] - 1, bt[1] - 19], [bt[0] + 9, bt[1] - 6], [bt[0] - 1, bt[1] - 5]], '#F2ECDD', r, .95, .2);
+    monedas(g, ...V2(.38, .38));
+  }]);
+  L.push(['mina', 64, 50, 32, 36, (g, r) => {
+    sombra(g, 16, 5, 4);
+    wash(g, [[-12, 4], [-9, -9], [0, -13], [9, -9], [12, 4]], '#6E6358', r, .95, .4);
+    g.fillStyle = '#231C17'; g.globalAlpha = .92; g.beginPath(); g.ellipse(-1, 2, 6.5, 8, 0, Math.PI, 0); g.lineTo(5.5, 4); g.lineTo(-7.5, 4); g.fill(); g.globalAlpha = 1;
+    g.strokeStyle = '#7A5A3A'; g.lineWidth = 2; g.beginPath(); g.moveTo(-9, 5); g.lineTo(-9, -8); g.lineTo(7, -8); g.lineTo(7, 5); g.stroke();
+    iso(g, .16, .11, 1.5, 4, '#6B6B6B', '#555555', '#7A7A7A', r, .34, .3);
+    for (let k = 0; k < 4; k++) blob(g, 14 + k * 2.5, 6 - k * 1.2, 2.6, 1.8, k % 2 ? '#8E8478' : '#A39C92', r, .9);
+    g.strokeStyle = '#5A4A3A'; g.lineWidth = .8; g.beginPath(); g.moveTo(-2, 5); g.lineTo(16, 14); g.moveTo(2, 4); g.lineTo(20, 13); g.stroke();
+  }]);
+  L.push(['fuente', 44, 34, 22, 24, (g, r) => {
+    sombra(g, 12, 3.5, 3); g.fillStyle = '#D8CCB2'; g.beginPath(); g.ellipse(0, -2, 12, 5, 0, 0, 7); g.fill(); g.fillStyle = '#BFB296'; g.fillRect(-12, -2, 24, 3); g.beginPath(); g.ellipse(0, 1, 12, 5, 0, 0, Math.PI); g.fill();
+    g.fillStyle = '#86BDD2'; g.beginPath(); g.ellipse(0, -2.5, 9.5, 3.6, 0, 0, 7); g.fill(); g.fillStyle = '#D8CCB2'; g.fillRect(-1.5, -12, 3, 10); g.fillStyle = '#B9E0EC'; g.beginPath(); g.ellipse(0, -12, 3, 1.4, 0, 0, 7); g.fill();
+  }]);
+  // ---------- Sedes de gobierno, una por régimen ----------
+  L.push(['sede-republica', 90, 96, 45, 62, (g, r) => {
+    sombra(g, 28, 8, 8); iso(g, .86, .78, 0, 4, '#DCD5C6', '#BDB5A3', '#E9E3D6', r);
+    const b = iso(g, .74, .62, 4, 20, '#EDE7DA', '#CFC7B5', null, r);
+    columnas(g, b, 6, 4, 18, '#FAF8F2'); wash(g, caraD(b, .35, .3, 4, 11), '#5E4A3A', r, .97, .2);
+    techo(g, b, 4, 11, '#D9D1BF', '#C9C0AC', r);
+    const tp = b.up(V2(.1, -.1), 32); bandera(g, tp[0], tp[1], 13, '#2D5D72');
+  }]);
+  L.push(['sede-monarquia', 96, 110, 48, 72, (g, r) => {
+    sombra(g, 30, 8, 8); const b = iso(g, .66, .48, 0, 18, '#EDE4D0', '#D2C4A6', null, r, 0, .05);
+    ventanas(g, b, 'I', 4, 7, 7, '#6E93A8', r, .12, .1); wash(g, caraD(b, .38, .24, 0, 11), '#5A3E2A', r, .97, .2);
+    techo(g, b, 4, 9, '#6A4A8A', '#D2C4A6', r);
+    for (const [u, v] of [[-.36, -.28], [.36, -.28], [-.36, .34], [.36, .34]]) {
+      const t = iso(g, .17, .17, 0, 30, '#E6DCC5', '#C9BA9A', null, r, u, v);
+      cono(g, t.up(V2(u, v), 30), 7, 15, '#5B3A7A', r);
+    }
+    const p = V2(.36, .34); bandera(g, p[0], p[1] - 45, 12, '#D9A93E');
+  }]);
+  L.push(['sede-aristocracia', 100, 90, 50, 58, (g, r) => {
+    sombra(g, 32, 8, 8); iso(g, .92, .72, 0, 3, '#CFC8B6', '#B3AB97', '#DDD6C5', r);
+    const b = iso(g, .84, .6, 3, 16, '#E4DECF', '#C4BCA8', null, r);
+    columnas(g, b, 7, 3, 14, '#F4F0E6'); wash(g, caraD(b, .38, .24, 3, 10), '#4E3E30', r, .97, .2);
+    techo(g, b, 4, 9, '#2F5B45', '#C4BCA8', r);
+    const tp = b.up(V2(0, 0), 29); blob(g, tp[0], tp[1], 6, 5, '#A07A3E', r, .92); bandera(g, tp[0], tp[1] - 4, 10, '#2F5B45');
+  }]);
+  L.push(['sede-tirania', 90, 90, 45, 58, (g, r) => {
+    sombra(g, 28, 8, 8); const b = iso(g, .76, .62, 0, 23, '#A7A5A0', '#85837E', '#9A9893', r);
+    for (let k = 0; k < 5; k++) wash(g, caraI(b, .06 + k * .19, .08, 11, 4), '#3E3E42', r, .95, .2);
+    wash(g, caraI(b, .4, .2, 3, 17), '#9E2B25', r, .95, .2); wash(g, caraD(b, .35, .3, 6, 13), '#9E2B25', r, .95, .2);
+    const tp = b.up(V2(.25, -.2), 23); bandera(g, tp[0], tp[1], 16, '#9E2B25');
+    const st = V2(-.08, .62); iso(g, .12, .12, 0, 6, '#8E8C88', '#6F6D69', '#A09E99', r, -.08, .62);
+    g.fillStyle = '#5A5854'; g.fillRect(st[0] - 1.5, st[1] - 13, 3, 6); blob(g, st[0], st[1] - 14.5, 2.2, 2.2, '#5A5854', r, .95);
+  }]);
+  L.push(['sede-oligarquia', 90, 88, 45, 56, (g, r) => {
+    sombra(g, 28, 8, 8); const b = iso(g, .72, .62, 0, 19, '#E6DFCF', '#C9BFA9', '#DAD2BF', r);
+    columnas(g, b, 5, 0, 17, '#F6F2E8'); wash(g, caraI(b, 0, 1, 17, 2.2), '#C9962E', r, .97, .2); wash(g, caraD(b, 0, 1, 17, 2.2), '#A87A20', r, .97, .2);
+    wash(g, caraD(b, .35, .3, 0, 10), '#5E4A3A', r, .97, .2);
+    const tp = b.up(V2(0, 0), 19); blob(g, tp[0], tp[1] - 5, 10, 8, '#D9A93E', r, .95); blob(g, tp[0] - 3, tp[1] - 8, 3, 2.5, '#F4D67A', r, .8); blob(g, tp[0], tp[1] - 14, 1.8, 1.8, '#8C6A1E', r, .95);
+    monedas(g, ...V2(.34, .58));
+  }]);
+  L.push(['sede-demagogia', 88, 84, 44, 56, (g, r) => {
+    sombra(g, 26, 7, 8); const b = iso(g, .66, .52, 0, 21, '#EFB98A', '#D69A68', null, r);
+    for (let k = 0; k < 4; k++) wash(g, caraI(b, .1 + k * .22, .14, 0, 9), k % 2 ? '#E7C76B' : '#C0602A', r, .95, .2);
+    wash(g, caraI(b, .25, .5, 10, 2.2), '#6B4F3A', r, .97, .2); wash(g, caraI(b, .3, .12, 12, 7), '#3E2E25', r, .97, .2); wash(g, caraI(b, .58, .12, 12, 7), '#3E2E25', r, .97, .2);
+    techo(g, b, 4, 9, '#B4553A', '#D69A68', r);
+    banderines(g, [b.D[0] - 2, b.D[1] - 19], [b.C[0], b.C[1] - 19], r); banderines(g, [b.C[0], b.C[1] - 19], [b.B[0] + 2, b.B[1] - 19], r);
+  }]);
+  // ---------- Detalles del régimen en algunas casas ----------
+  for (const [reg, col] of [['monarquia', '#5B3A7A'], ['aristocracia', '#2F5B45'], ['republica', '#2D5D72'], ['oligarquia', '#6B5420']]) L.push(['bandera-' + reg, 16, 22, 3, 20, g => bandera(g, 0, 0, 16, col)]);
+  L.push(['bandera-tirania', 14, 16, 7, 14, g => { g.fillStyle = '#9E2B25'; g.globalAlpha = .9; g.fillRect(-3.5, -12, 7, 8); g.fillStyle = '#EFE3C2'; g.fillRect(-2, -11, 4, 2); g.globalAlpha = 1; }]);
+  L.push(['bandera-demagogia', 40, 20, 20, 12, (g, r) => banderines(g, [-17, -2], [17, 1], r)]);
+  // Humo para chimeneas.
+  L.push(['humo', 16, 16, 8, 8, g => { const gr = g.createRadialGradient(0, 0, 0, 0, 0, 7); gr.addColorStop(0, 'rgba(142,138,134,.9)'); gr.addColorStop(1, 'rgba(142,138,134,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); }]);
+  return L;
+}
+
+// Hornea todo en una sola hoja. Devuelve { canvas, marcos, escala }.
+let HOJA = null;
+export function hornearEdificios() {
+  if (HOJA) return HOJA;
+  const lista = recetas(), sep = 4, anchoHoja = 1400, marcos = {};
+  let x = sep, y = sep, fila = 0;
+  for (const [k, w, h, ax, ay] of lista) {
+    const W = Math.ceil(w * ESCALA), H = Math.ceil(h * ESCALA);
+    if (x + W > anchoHoja) { x = sep; y += fila + sep; fila = 0; }
+    marcos[k] = { x, y, w: W, h: H, ax: ax * ESCALA, ay: ay * ESCALA };
+    x += W + sep; fila = Math.max(fila, H);
+  }
+  const cv = lienzo(anchoHoja, y + fila + sep), g = cv.getContext('2d');
+  for (const [k, , , , , pintar] of lista) {
+    const m = marcos[k];
+    g.save(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(ESCALA, ESCALA);
+    pintar(g, mulberry(k.length * 97 + k.charCodeAt(0) * 13 + (k.charCodeAt(k.length - 1) || 0)));
+    g.restore();
+  }
+  return (HOJA = { canvas: cv, marcos, escala: ESCALA });
+}
+
+// Qué figuras lleva cada obra en una casilla: [{ k (figura), du, dv (desplazamiento en la casilla), s (escala), humo }].
+// Cultivos, cafetales, parques y minas se pintan además en el suelo (ver terreno.js).
+export function figurasDeObra(k, i, etapa, reg) {
+  const v = (i * 7 + 3) % 4;
+  switch (k) {
+    case 'casa': {
+      const f = [{ k: (etapa >= 2 ? 'casa2-' : 'casa0-') + v }];
+      if ((i * 7) % 5 === 0) f.push(reg === 'tirania' ? { k: 'bandera-tirania', du: -.18, dv: .3 } : reg === 'demagogia' ? { k: 'bandera-demagogia', du: 0, dv: .36 } : { k: 'bandera-' + reg, du: .22, dv: -.18, z: etapa >= 2 ? 30 : 22 });
+      return f;
+    }
+    case 'mercado': return [{ k: etapa >= 2 ? 'mercado2' : 'mercado0' }];
+    case 'agora': return [{ k: 'sede-' + reg }];
+    case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.1, s: .95, n: true }, { k: 'arbol', du: .25, dv: -.3, s: .85, n: true }, { k: 'arbol', du: .05, dv: .32, s: .8, n: true }];
+    case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
+    case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];
+    case 'taller': return [{ k: 'taller', humo: [11, -36] }];
+    case 'mina': return [{ k: 'mina', du: .05, dv: .05, humo: [-1, -6], polvo: true }];
+    default: return [{ k }];
+  }
+}
+
+// Pequeño icono (imagen) de una obra para el panel de construir.
+export function iconoObra(k, etapa, reg) {
+  const H = hornearEdificios(), f = figurasDeObra(k, 0, etapa, reg).find(x => !x.n);
+  const m = f && H.marcos[f.k], c = lienzo(96, 80), g = c.getContext('2d'), R = mulberry(k.length * 31);
+  const cx = 48, cy = 56, s = m ? Math.min(1, 70 / (m.w / H.escala), 64 / (m.h / H.escala)) : 1;
+  wash(g, [[cx, cy - 16 * s * 1.2], [cx + 32 * s * 1.2, cy], [cx, cy + 16 * s * 1.2], [cx - 32 * s * 1.2, cy]], k === 'mina' ? '#A39C8E' : k === 'cafetal' ? '#7E9A5A' : k === 'cultivo' ? '#B9C67E' : '#C6D293', R, .8, 1);
+  if (k === 'cultivo' || k === 'cafetal') for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) blob(g, cx + (a - b) * 7 * s, cy + (a + b - 3) * 3.5 * s, 3 * s, 2.2 * s, k === 'cafetal' ? '#2F5E36' : '#4F8A43', R, .9);
+  if (m) g.drawImage(H.canvas, m.x, m.y, m.w, m.h, cx - m.ax / H.escala * s, cy - m.ay / H.escala * s, m.w / H.escala * s, m.h / H.escala * s);
+  return c.toDataURL();
+}

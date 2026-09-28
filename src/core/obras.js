@@ -50,3 +50,23 @@ export function demolish(S, i) {
 }
 
 export function freeTiles(S, k) { return S.map.map((x, i) => i).filter(i => !whyNot(S, k, i)); }
+
+// Vista previa de una obra (como en la v9): qué cambia si se construye en el primer lugar posible.
+// Devuelve { motivo } si no se puede, o { i, costo, dn, net, dj, df, cupos, de }.
+import { finance } from './hacienda.js';
+import { envTarget } from './sociedad.js';
+import { counts } from './reglas.js';
+export function vistaPrevia(S, k, iElegida) {
+  let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
+  if (!t.length) return { motivo: S.gold < cost(S, k) ? `Te faltan ${cost(S, k) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
+  if (k === 'cultivo' && iElegida === undefined) { const rv = t.filter(i => nearRiver(S, i)); if (rv.length) t = rv; }
+  const i = t[0], x = S.map[i], F0 = finance(S), e0 = envTarget(S, counts(S));
+  const tt = x.t; x.b = k; if (tt === 'bosque') x.t = 'llano';
+  const F1 = finance(S), e1 = envTarget(S, counts(S));
+  x.b = null; x.t = tt;
+  return {
+    i, costo: cost(S, k), dn: F1.net - F0.net, net: F1.net,
+    dj: (F1.so.jc + F1.so.ja) - (F0.so.jc + F0.so.ja), df: F1.fprod - F0.fprod,
+    cupos: k === 'casa' ? 10 : 0, de: e1 - e0 - (tt === 'bosque' ? 3 : 0)
+  };
+}
