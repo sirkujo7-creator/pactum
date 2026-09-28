@@ -6,6 +6,7 @@ import { counts, D, RG, RM, hasLaw, ETAPA_OK } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
 import { society, waterCap, satTargets, calcHap, envTarget } from './sociedad.js';
 import { drawEvent } from './dilemas.js';
+import { sortearLluvias } from './clima.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -140,6 +141,9 @@ export function advance(S) {
   if (S.pop <= 3) return { end: { win: false, title: 'Territorio abandonado', text: 'Las últimas familias se marcharon.' } };
   if (S.polisYears >= D(S).polis) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
   if (S.vis && S.vis.y <= S.year) S.vis = null;
+  // Fase 1: lluvias del año que empieza (solo en el terreno en acuarela).
+  const pron = sortearLluvias(S);
+  if (pron) S.log[0].t += ' ' + pron;
   S.year++;
   if (!stageUp) S.pend = drawEvent(S);
   return { stageUp, end: null };

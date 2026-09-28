@@ -63,6 +63,10 @@ export class Pobladores {
     return { r: r + .5 + (R() - .5) * abrir, c: c + .5 + (R() - .5) * abrir };
   }
   fase() { return this.reloj; }
+  // Temporada dentro del año (fase 1): dos días de lluvias y dos de seca, alternados.
+  temporada() { return Math.floor((this.dias || 0) / 2) % 2 === 0 ? 'lluvias' : 'seca'; }
+  // Qué tanto es de mañana (0 a 1), para la niebla.
+  manana() { const d = this.reloj; return d > .18 && d < .42 ? Math.sin((d - .18) / .24 * Math.PI) : 0; }
   destinoDeDia(f) {
     const p = f.p;
     if (p.trabajo !== null) return this.centro(p.trabajo, .7, () => p.semilla);
@@ -118,7 +122,7 @@ export class Pobladores {
 
   update(dt) {
     const quieto = reducirMovimiento();
-    if (!quieto) this.reloj = (this.reloj + dt / DURACION_DIA) % 1;
+    if (!quieto) { const r = this.reloj + dt / DURACION_DIA; if (r >= 1) this.dias = (this.dias || 0) + 1; this.reloj = r % 1; }
     for (const f of this.figuras) {
       if (quieto) { f.oculto = false; this.dibujar(f, false); continue; }
       if (f.espera > 0) { f.espera -= dt; this.dibujar(f, false); continue; }
