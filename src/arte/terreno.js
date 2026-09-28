@@ -148,10 +148,18 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   }
   g.globalAlpha = 1;
 
+  const recortar = () => { g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip(); };
+
+  // Obras en el suelo: explanadas, cultivos, cafetales, parques, minas, caminos y puentes.
+  if (opciones.mapa) {
+    g.save(); recortar();
+    pintarObras(g, T, opciones.mapa, k, dry);
+    g.restore();
+  }
+
   // Grano del papel, solo sobre lo pintado y alineado con el mundo para que no se noten las uniones.
   g.save();
-  g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); });
-  g.clip();
+  recortar();
   g.globalCompositeOperation = 'multiply'; g.globalAlpha = .2;
   g.fillStyle = g.createPattern(grano(), 'repeat');
   g.fillRect(k.x, k.y, k.w, k.h);
@@ -177,4 +185,125 @@ export function pintarFondo(T, escala = 1) {
   far([[nx - 280, OY + 60], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 300, OY + 60]], 'rgba(150,170,186,.9)', .85);
   wash(g, [[nx - 92, nt + 50], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 98, nt + 47], [nx + 52, nt + 40], [nx + 16, nt + 54], [nx - 24, nt + 42], [nx - 54, nt + 56]], '#FBFBF8', R, .92, 1);
   return { canvas: cv, x: izq, y: arriba, w: W, h: H, escala };
+}
+
+// ---------- Obras pintadas en el suelo ----------
+const DE_PIE = new Set(['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'acueducto', 'molino', 'puerto', 'parque']);
+const conCamino = b => !!b && b !== 'mina';
+
+// Caminos entre obras vecinas y puentes cuando las separa una casilla de río (como en la versión 9).
+export function caminos(T, mapa) {
+  const N = T.N, segs = [], puentes = [];
+  for (let i = 0; i < N * N; i++) {
+    if (!conCamino(mapa[i].b)) continue;
+    const r = Math.floor(i / N), c = i % N;
+    for (const [dr, dc] of [[0, 1], [1, 0]]) {
+      const r1 = r + dr, c1 = c + dc;
+      if (r1 >= N || c1 >= N) continue;
+      const j = r1 * N + c1;
+      if (conCamino(mapa[j].b)) segs.push([i, j]);
+      else if (mapa[j].t === 'rio') {
+        const r2 = r1 + dr, c2 = c1 + dc;
+        if (r2 < N && c2 < N && conCamino(mapa[r2 * N + c2].b)) { segs.push([i, r2 * N + c2]); puentes.push([i, j, r2 * N + c2, dr]); }
+      }
+    }
+  }
+  return { segs, puentes };
+}
+
+function pintarObras(g, T, mapa, k, dry) {
+  const N = T.N, cerca = t => t.r >= k.r0 - 2 && t.r < k.r1 + 2 && t.c >= k.c0 - 2 && t.c < k.c1 + 2;
+  const lista = T.tiles.filter(t => mapa[t.r * N + t.c].b && cerca(t)).sort((a, b) => (a.r + a.c) - (b.r + b.c));
+  const { segs, puentes } = caminos(T, mapa);
+  const centro = i => { const t = T.tiles[i]; return { r: t.r + .5, c: t.c + .5, h: mapa[i].b && DE_PIE.has(mapa[i].b) ? t.h : T.hf(t.r + .5, t.c + .5) }; };
+  // Campos y minas (siguen el terreno).
+  for (const t of lista) {
+    const b = mapa[t.r * N + t.c].b, rng = mulberry(t.r * 313 + t.c * 71 + T.seed);
+    const q = [P(t.r, t.c, t.h00), P(t.r, t.c + 1, t.h01), P(t.r + 1, t.c + 1, t.h11), P(t.r + 1, t.c, t.h10)];
+    if (b === 'cultivo') (t.h < 2.2 && t.d < 6 ? pintarArroz : pintarHuerta)(g, T, t, q, rng, dry);
+    else if (b === 'cafetal') pintarCafe(g, T, t, rng, dry);
+    else if (b === 'mina') { const c = P(t.r + .55, t.c + .5, t.h); blob(g, c[0] + 4, c[1] + 3, 22, 8, '#8E857A', rng, .75); blob(g, c[0] - 6, c[1] + 1, 12, 5, '#6E6358', rng, .6); }
+  }
+  // Caminos de tierra.
+  for (const [a, b] of segs) {
+    const A = centro(a), B = centro(b), rng = mulberry(a * 31 + b);
+    g.lineCap = 'round';
+    for (let pass = 0; pass < 2; pass++) {
+      g.globalAlpha = pass ? .35 : .62; g.strokeStyle = pass ? '#9C8058' : '#CDB488'; g.lineWidth = pass ? 1.4 : 4.6; g.beginPath();
+      for (let s = 0; s <= 10; s++) {
+        const f = s / 10, r = lerp(A.r, B.r, f), c = lerp(A.c, B.c, f), h = s === 0 ? A.h : s === 10 ? B.h : Math.max(T.hf(r, c), lerp(A.h, B.h, f) - .3);
+        const p = P(r + (s % 10 ? (rng() - .5) * .04 : 0), c, h); s ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]);
+      }
+      g.stroke();
+    }
+  }
+  g.globalAlpha = 1;
+  // Puentes de madera sobre el río.
+  for (const [a, j, b, dr] of puentes) {
+    const A = centro(a), B = centro(b), t = T.tiles[j], h = Math.max(A.h, B.h, t.h) - .1, rng = mulberry(j * 17);
+    const L = dr ? [[t.r - .1, t.c + .36], [t.r - .1, t.c + .64], [t.r + 1.1, t.c + .64], [t.r + 1.1, t.c + .36]] : [[t.r + .36, t.c - .1], [t.r + .64, t.c - .1], [t.r + .64, t.c + 1.1], [t.r + .36, t.c + 1.1]];
+    const pts = L.map(([r, c]) => P(r, c, h));
+    wash(g, pts, '#9B7650', rng, .97, .2);
+    g.strokeStyle = '#5E4330'; g.lineWidth = .7; g.globalAlpha = .7;
+    for (let s = 1; s < 8; s++) { const f = s / 8, p = [lerp(pts[0][0], pts[3][0], f), lerp(pts[0][1], pts[3][1], f)], q = [lerp(pts[1][0], pts[2][0], f), lerp(pts[1][1], pts[2][1], f)]; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
+    g.lineWidth = 1.1; g.beginPath(); g.moveTo(pts[0][0], pts[0][1] - 4); g.lineTo(pts[3][0], pts[3][1] - 4); g.moveTo(pts[1][0], pts[1][1] - 4); g.lineTo(pts[2][0], pts[2][1] - 4); g.stroke();
+    g.globalAlpha = 1;
+  }
+  // Explanadas niveladas para los edificios (evitan que floten en las laderas).
+  for (const t of lista) {
+    const b = mapa[t.r * N + t.c].b;
+    if (!DE_PIE.has(b)) continue;
+    const rng = mulberry(t.r * 911 + t.c * 37 + T.seed), m = .07, h = t.h;
+    const esq = [[t.r + m, t.c + m], [t.r + m, t.c + 1 - m], [t.r + 1 - m, t.c + 1 - m], [t.r + 1 - m, t.c + m]];
+    const [A, B, C, D] = esq, tierra = ([r, c]) => T.hf(r, c);
+    const lado = (p, q, col) => { const hp = tierra(p), hq = tierra(q); if (hp >= h && hq >= h) return; wash(g, [P(p[0], p[1], h), P(q[0], q[1], h), P(q[0], q[1], Math.min(hq, h)), P(p[0], p[1], Math.min(hp, h))], col, rng, .95, .2); };
+    lado(D, C, '#A88B62'); lado(C, B, '#8C7250');
+    const top = esq.map(([r, c]) => P(r, c, h));
+    wash(g, top, b === 'parque' ? mix('#9CC57D', DRYC, dry * .5) : '#CDBB93', rng, .95, .6);
+    if (b === 'parque') { const c = P(t.r + .5, t.c + .5, h); g.globalAlpha = .7; g.fillStyle = '#E7DDC4'; g.beginPath(); g.ellipse(c[0], c[1], 17, 7, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
+    else { g.globalAlpha = .18; g.strokeStyle = '#8C7250'; g.lineWidth = .6; for (let s = 0; s < 5; s++) { const c = P(t.r + .2 + rng() * .6, t.c + .2 + rng() * .6, h); g.beginPath(); g.moveTo(c[0] - 3, c[1]); g.lineTo(c[0] + 3, c[1] + .5); g.stroke(); } g.globalAlpha = 1; }
+  }
+}
+
+function pintarCafe(g, T, t, rng, dry) {
+  const col = mix('#2E5E36', '#6E7A3A', dry * .4);
+  wash(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, .45, .6);
+  for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
+    const u = .14 + b * .145, v = .18 + a * .21 + Math.sin(b * .9 + a) * .03, r = t.r + v, c = t.c + u, p = P(r, c, T.hf(r, c));
+    g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.2, 1.2, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+    blob(g, p[0], p[1] - 2.4, 3, 2.6, col, rng, .95);
+    if (rng() < .45 && dry < .6) { g.fillStyle = '#B8322A'; g.beginPath(); g.arc(p[0] + (rng() - .5) * 3, p[1] - 2.8, .75, 0, 7); g.fill(); }
+  }
+}
+function pintarArroz(g, T, t, q, rng, dry) {
+  const wet = dry < .5;
+  wash(g, q, wet ? '#9CC7A4' : '#C9C27E', rng, .55, 0);
+  g.globalAlpha = .5; g.strokeStyle = wet ? '#6FA86A' : '#A89A55'; g.lineWidth = .8;
+  for (let k = 1; k < 7; k++) { const f = k / 7, a = [lerp(q[0][0], q[3][0], f), lerp(q[0][1], q[3][1], f)], b = [lerp(q[1][0], q[2][0], f), lerp(q[1][1], q[2][1], f)]; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  g.globalAlpha = 1;
+  if (wet) { g.globalAlpha = .35; g.fillStyle = '#E9F4F2'; g.beginPath(); g.ellipse((q[0][0] + q[2][0]) / 2 - 6, (q[0][1] + q[2][1]) / 2 - 2, 6, 1.2, -.4, 0, 7); g.fill(); g.globalAlpha = 1; }
+  g.globalAlpha = .6; g.strokeStyle = '#8B7A55'; g.lineWidth = 1; poly(g, q); g.stroke(); g.globalAlpha = 1;
+}
+// Huerta de maíz, fríjol y yuca en surcos, para los cultivos lejos de la llanura.
+function pintarHuerta(g, T, t, q, rng, dry) {
+  wash(g, q, mix('#B99A6A', '#C9B07A', dry), rng, .75, .6);
+  const col = mix('#4F8A43', '#C9A94A', dry * .8);
+  for (let a = 0; a < 5; a++) {
+    const v = .12 + a * .19;
+    g.globalAlpha = .45; g.strokeStyle = '#8C6F48'; g.lineWidth = 1; g.beginPath();
+    for (let b = 0; b <= 6; b++) { const r = t.r + v, c = t.c + .06 + b * .147, p = P(r, c, T.hf(r, c)); b ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }
+    g.stroke(); g.globalAlpha = 1;
+    for (let b = 0; b < 6; b++) { const r = t.r + v, c = t.c + .12 + b * .15, p = P(r, c, T.hf(r, c)); blob(g, p[0], p[1] - 2, 2.6, 2.2, col, rng, .85); if (rng() < .2) { g.fillStyle = '#E0B040'; g.beginPath(); g.arc(p[0] + 1, p[1] - 3, .7, 0, 7); g.fill(); } }
+  }
+  g.globalAlpha = .5; g.strokeStyle = '#8B7A55'; g.lineWidth = .9; poly(g, q); g.stroke(); g.globalAlpha = 1;
+}
+
+// Sectores que hay que repintar cuando cambia la casilla i (incluye vecinos por caminos y puentes).
+export function sectoresAfectados(T, i) {
+  const N = T.N, r = Math.floor(i / N), c = i % N, S = new Set();
+  for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) {
+    const R = r + dr, C = c + dc;
+    if (R >= 0 && C >= 0 && R < N && C < N) S.add(`${Math.floor(R / LADO_SECTOR)}-${Math.floor(C / LADO_SECTOR)}`);
+  }
+  return [...S].map(x => x.split('-').map(Number));
 }
