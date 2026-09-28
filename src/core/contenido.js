@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -72,6 +72,7 @@ export function usarContenido(d) {
     if (o.later && !C.LATER[o.later[1]]) throw new Error(`La consecuencia "${o.later[1]}" no existe en consecuencias.json`);
     if (o.f && !C.PH[o.f]) throw new Error(`Filosofía desconocida "${o.f}" en "${e.title}"`);
   }
+  C.POB = d.pobladores;
   C.cargado = true;
   return C;
 }

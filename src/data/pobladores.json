@@ -1,0 +1,46 @@
+{
+  "nombres": {
+    "h": ["Marco", "Luis", "Aurelio", "Julián", "Hernán", "Jairo", "Octavio", "Efraín", "Ramiro", "Gilberto", "Álvaro", "Fabio", "Arnulfo", "Orlando", "Wilson", "Reinaldo"],
+    "m": ["Marta", "Rosa", "Luz Dary", "Carmen", "Aurora", "Ofelia", "Nubia", "Esperanza", "Teresa", "Gloria", "Amparo", "Rubiela", "Yolanda", "Stella", "Doris", "Fanny"],
+    "n": ["Camilo", "Valentina", "Santiago", "Mariana", "Andrés", "Laura", "Sofía", "Mateo", "Daniela", "Juan José"]
+  },
+  "apellidos": ["Rodríguez", "Barreto", "Guzmán", "Olaya", "Castro", "Vargas", "Lozano", "Rojas", "Bonilla", "Gaitán", "Prada", "Tovar"],
+  "piensa": {
+    "campesino": {
+      "mal": ["Otra vez el campo paga los platos rotos.", "Con estos impuestos no queda ni para la semilla.", "Quisiera tierra propia, pero nadie escucha.", "El camino a la vereda está muy malo."],
+      "regular": ["Si llueve bien este año, la cosecha sale buena.", "El precio del café no alcanza, pero vamos.", "Hay trabajo, aunque la plata no rinde."],
+      "bien": ["Este año la cosecha pinta muy bien.", "Por fin alguien mira hacia el campo.", "Mis hijos van a tener mejor vida que yo."]
+    },
+    "campesina": {
+      "mal": ["No hay con qué comprar lo del mercado.", "Mis hijos no tienen escuela cerca.", "Aquí nadie cuida a los más pobres."],
+      "regular": ["El mercado del domingo es lo mejor de la semana.", "El río está bajando mucho.", "Mis hijos tienen que estudiar."],
+      "bien": ["Da gusto vivir en este pueblo.", "Ojalá todos los años fueran como este.", "La escuela les cambió la vida a mis hijos."]
+    },
+    "artesano": {
+      "mal": ["Los impuestos nos tienen ahogados.", "En los talleres se habla de huelga.", "Estamos pensando en organizarnos."],
+      "regular": ["En el taller falta trabajo.", "Si hubiera energía, produciríamos el doble.", "Hay trabajo, pero el sueldo no alcanza."],
+      "bien": ["Da gusto trabajar en este pueblo.", "El taller está lleno de encargos.", "Eso es respeto por el trabajo."]
+    },
+    "elite": {
+      "mal": ["Con estas leyes el capital se va.", "Estoy pensando seriamente en irme.", "Esto espanta la inversión."],
+      "regular": ["Hay que invertir en el puerto.", "El orden es lo primero.", "Los negocios van, sin más."],
+      "bien": ["Este pueblo tiene futuro si hay inversión.", "Excelente clima para invertir.", "Una decisión sensata; el capital sabrá corresponder."]
+    },
+    "desempleado": {
+      "mal": ["Llevo meses buscando trabajo.", "Sin empleo no hay dignidad.", "Si no sale nada, me toca irme del pueblo."],
+      "regular": ["Dicen que van a abrir un taller.", "Cualquier trabajo me sirve.", "Mañana vuelvo a preguntar en el mercado."],
+      "bien": ["Algo va a salir, este pueblo está creciendo.", "Me dijeron que en la obra necesitan gente."]
+    },
+    "nino": {
+      "mal": ["Tengo hambre.", "Mi papá dice que las cosas están difíciles."],
+      "regular": ["¡Quiero una cancha!", "Hoy vi garzas en el río.", "Me gusta la fuente de la plaza."],
+      "bien": ["Cuando grande quiero ser maestra.", "¡En la escuela aprendí a leer!", "Mañana hay fiesta en la plaza."]
+    }
+  },
+  "oficios": {
+    "cultivo": "Agricultor", "cafetal": "Caficultor", "mercado": "Comerciante", "taller": "Artesano del taller",
+    "escuela": "Maestro", "hospital": "Enfermero", "molino": "Molinero", "acueducto": "Fontanero",
+    "puerto": "Barquero", "mina": "Minero", "banco": "Empleado del banco", "universidad": "Profesor",
+    "agora": "Funcionario público", "casa": "Hacendado", "desempleado": "Busca trabajo", "nino": "Estudiante", "ninoSinEscuela": "Todavía sin escuela"
+  }
+}

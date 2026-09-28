@@ -14,3 +14,4 @@ export * from './anio.js';
 export * from './estado.js';
 export * from './logros.js';
 export * from './guardado.js';
+export * from './pobladores.js';
