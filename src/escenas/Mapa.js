@@ -12,6 +12,8 @@ import { partida, nuevaPartida } from './partida.js';
 import { Interfaz } from './Interfaz.js';
 import { Pobladores } from './Pobladores.js';
 import { Efectos } from './Efectos.js';
+import { Sonido } from './sonido.js';
+import { guardarYa, quiereSonido } from './memoria.js';
 
 const ZOOM_MAX = 3.6;
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
@@ -76,6 +78,9 @@ export class Mapa extends Phaser.Scene {
     this.ui.avisar('');
     this.ui.render();
     this.listo = true;
+    guardarYa(this.S);
+    // Si el jugador dejó el sonido encendido, vuelve con el primer toque (los navegadores lo exigen así).
+    if (quiereSonido() && !Sonido.on) document.addEventListener('pointerdown', () => { if (!Sonido.on) { Sonido.start(); this.ui.render(); } }, { once: true });
     // Al empezar: la bienvenida en una partida nueva, o el dilema pendiente si lo hay.
     if (this.nueva && this.opciones.bienvenida) this.ui.ayuda(true);
     else if (this.S.pend) this.ui.suceso(() => this.ui.render());
@@ -172,6 +177,8 @@ export class Mapa extends Phaser.Scene {
     const antes = this.S.map[i].b, r = build(this.S, k, i);
     if (this.S.map[i].b !== k || antes === k) { this.ui.toast(typeof r === 'string' ? r : 'No se puede construir ahí.'); return; }
     this.refrescarCasilla(i);
+    Sonido.tap();
+    this.ui.logros();
     const guia = checkGuide(this.S);
     if (typeof r === 'string' || guia) this.ui.toast([typeof r === 'string' ? r : '', guia || ''].join(' ').trim());
     this.marcarPosibles(this.ui.herramienta);
@@ -203,6 +210,8 @@ export class Mapa extends Phaser.Scene {
     const dg = Math.round(S.gold - g0), dp = S.pop - p0, hunger = !!(S.log[0] && S.log[0].t.includes('hambre'));
     const sg = v => (v >= 0 ? '+' : '−') + Math.abs(v);
     this.ui.pasoDelAnio('Año ' + S.year, `Oro ${sg(dg)}   ·   Habitantes ${sg(dp)}`);
+    Sonido.chime();
+    guardarYa(S);
     this.efectos.cierre({ dg, dp, df: S.food - f0, hunger, bad: dg < 0 || hunger || S.tr < t0 - 5 || !!S.regChange });
     this.cerrandoAnio = true;
     this.ui.bFin.disabled = true;
@@ -213,7 +222,8 @@ export class Mapa extends Phaser.Scene {
       if (!this.sys.isActive()) return;
       this.cerrandoAnio = false;
       this.cambio(true);
-      if (r.end) { S.over = true; this.ui.render(); this.ui.final(r.end); return; }
+      if (r.end) { S.over = true; guardarYa(S); this.ui.render(); this.ui.final(r.end); return; }
+      this.ui.logros();
       const fin = () => this.ui.render();
       const sigue = () => { if (r.stageUp) this.ui.etapa(() => this.ui.suceso(fin)); else this.ui.suceso(fin); };
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();

@@ -202,3 +202,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
   .redondo{width:40px;height:40px;font-size:18px}
   .controles{gap:6px}
 }
+.slot{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;margin:6px 0;font-size:.92rem}
+.slot .btn{min-height:40px;padding:6px 10px}
+.achs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ach{border:1px solid var(--line);border-radius:10px;padding:6px 8px;opacity:.55;font-size:.88rem}
+.ach.on{opacity:1;border-color:var(--gold)}
+.ach small{display:block;color:var(--muted)}

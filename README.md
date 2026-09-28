@@ -4,6 +4,9 @@ Simulador de gobierno en acuarela ambientado en el Tolima. Cada decisión enseñ
 
 - Diseño completo: `docs/DISENO.md`
 - Instrucciones de desarrollo: `CLAUDE.md`
-- Estado: fase 0 (migración de la versión 9 a la nueva base).
+- Estado: fase 0 terminada (la versión 9 en la nueva base), en revisión.
+- Jugar: https://sirkujo7-creator.github.io/pactum/
+- Contenido editable (dilemas, leyes, obras, pobladores): `src/data/` (ver `src/data/LEEME.md`).
+- Pruebas: `node herramientas/prueba-equivalencia.js`, `node herramientas/prueba-guardado.js`, `node herramientas/balance.js`.
 
 Proyecto de Juan, docente en Ibagué, Colombia.

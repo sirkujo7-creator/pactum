@@ -1,0 +1,68 @@
+// Sonido de la versión 9: río, pájaros y tiple, generados en el momento (sin archivos de audio).
+// Cada régimen tiene su escala y su ritmo.
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+export const Sonido = (() => {
+  let ac = null, master = null, on = false, timer = null, next = 0, bar = 0, birdT = 0, deg = 2;
+  const NOTE = n => 440 * Math.pow(2, (n - 69) / 12);
+  const MODES = {
+    republica: { s: [64, 67, 69, 71, 74, 76, 79], b: [[40, 47], [45, 52], [47, 54], [40, 47]], beat: .62 },
+    monarquia: { s: [67, 69, 71, 74, 76, 79, 81], b: [[43, 50], [48, 55], [50, 57], [43, 50]], beat: .72 },
+    aristocracia: { s: [62, 64, 65, 67, 69, 72, 74], b: [[38, 45], [43, 50], [45, 52], [38, 45]], beat: .66 },
+    tirania: { s: [57, 60, 62, 64, 65, 67, 69], b: [[33, 40], [33, 40], [38, 45], [40, 47]], beat: .82 },
+    oligarquia: { s: [65, 67, 69, 71, 72, 74, 77], b: [[41, 48], [43, 50], [41, 48], [36, 43]], beat: .64 },
+    demagogia: { s: [60, 62, 64, 67, 69, 72, 74], b: [[36, 43], [41, 48], [43, 50], [36, 43]], beat: .5 }
+  };
+  let SCALE = MODES.republica.s, BASS = MODES.republica.b, BEAT = .62;
+  function init() {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+    // Río: ruido filtrado que respira.
+    const len = ac.sampleRate * 2, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    let l = 0;
+    for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; l = (l + .02 * w) / 1.02; d[i] = l * 3.2; }
+    const src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
+    const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 650;
+    const rg = ac.createGain(); rg.gain.value = .05;
+    const lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = .08; lg.gain.value = .02; lfo.connect(lg); lg.connect(rg.gain); lfo.start();
+    src.connect(lp); lp.connect(rg); rg.connect(master); src.start();
+  }
+  function pluck(f, t, dur, vol) {
+    const o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain(), g2 = ac.createGain(), lp = ac.createBiquadFilter();
+    o.type = 'triangle'; o.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 2.003; g2.gain.value = .25;
+    lp.type = 'lowpass'; lp.frequency.setValueAtTime(3200, t); lp.frequency.exponentialRampToValueAtTime(700, t + dur);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .006); g.gain.exponentialRampToValueAtTime(.0008, t + dur);
+    o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(master); o.start(t); o2.start(t); o.stop(t + dur + .05); o2.stop(t + dur + .05);
+  }
+  function bird(t) {
+    const base = 2600 + Math.random() * 1400, n = 2 + Math.floor(Math.random() * 3);
+    for (let k = 0; k < n; k++) {
+      const o = ac.createOscillator(), g = ac.createGain(), s = t + k * .13; o.type = 'sine';
+      o.frequency.setValueAtTime(base, s); o.frequency.exponentialRampToValueAtTime(base * 1.35, s + .06); o.frequency.exponentialRampToValueAtTime(base * .9, s + .1);
+      g.gain.setValueAtTime(0, s); g.gain.linearRampToValueAtTime(.018, s + .01); g.gain.exponentialRampToValueAtTime(.0005, s + .11);
+      o.connect(g); g.connect(master); o.start(s); o.stop(s + .13);
+    }
+  }
+  function schedule() {
+    while (next < ac.currentTime + .8) {
+      const ch = BASS[bar % 4];
+      pluck(NOTE(ch[0]), next, 1.6, .09); pluck(NOTE(ch[1]), next + BEAT, 1, .05); pluck(NOTE(ch[1]), next + BEAT * 2, 1, .05);
+      if (Math.random() < .8) {
+        [0, .5, 1, 1.5, 2, 2.5].filter(() => Math.random() < .55).forEach(s => { deg = clamp(deg + Math.floor(Math.random() * 3) - 1, 0, SCALE.length - 1); pluck(NOTE(SCALE[deg]), next + s * BEAT, 1.1, .06); });
+      }
+      next += BEAT * 3; bar++;
+    }
+    if (ac.currentTime > birdT) { bird(ac.currentTime + .1); birdT = ac.currentTime + 4 + Math.random() * 9; }
+  }
+  function start() {
+    try { if (!ac) init(); } catch (e) { console.warn('Sin sonido:', e); return; }
+    ac.resume(); on = true; next = Math.max(next, ac.currentTime + .1);
+    master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(.55, ac.currentTime + 1.2);
+    if (!timer) timer = setInterval(schedule, 200);
+  }
+  function stop() { on = false; if (!ac) return; master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(0, ac.currentTime + .5); clearInterval(timer); timer = null; }
+  function chime() { if (!on) return; const t = ac.currentTime; [76, 83, 88].forEach((n, k) => pluck(NOTE(n), t + k * .12, 1.8, .07)); }
+  function tap() { if (!on) return; pluck(NOTE(59), ac.currentTime, .25, .08); }
+  function mode(r) { const m = MODES[r] || MODES.republica; SCALE = m.s; BASS = m.b; BEAT = m.beat; }
+  return { start, stop, chime, tap, mode, get on() { return on; } };
+})();

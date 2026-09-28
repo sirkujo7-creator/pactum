@@ -42,6 +42,23 @@ El juego ya funciona completo en un solo archivo HTML (`referencia/referencia-po
 | Dilemas | 20 dilemas y 20 consecuencias diferidas, cada opción ligada a un filósofo; perfil ético al final |
 | Presentación | Pantalla de juego con dock, efectos de fin de año, viñetas en acuarela, sonido generado, 3 niveles de dificultad, guía, logros y ranuras de guardado |
 
+## Estado de la fase 0 (migración)
+
+La versión 9 ya vive en la nueva base (Phaser, módulos, datos en JSON, app instalable). Falta la aprobación de Juan en celular y computador.
+
+| Parte | Estado |
+| --- | --- |
+| Lógica | Toda la lógica de la v9 está en `src/core`. `node herramientas/prueba-equivalencia.js` juega miles de partidas con el mismo azar en la v9 y en la versión nueva: 0 diferencias |
+| Contenido | Dilemas (21, los de la v9), consecuencias, leyes, obras, regímenes, logros, personajes y pobladores en `src/data` (JSON editable; guía en `src/data/LEEME.md`) |
+| Territorio | Terreno continuo de la prueba de estilo, 32×32 (probado en 64×64), siete entornos, pintado por sectores |
+| Mapa lógico | Río → río; páramo, roca y nevado → montaña (minas); bosque de niebla → bosque; el resto → llano; ladera → café. El bosque aporta al ambiente según el porcentaje del territorio (2,9 por cada 1%) para conservar el balance |
+| Obras | Las 15 obras de la v9 en acuarela, variantes por etapa y seis sedes por régimen; campos, caminos y puentes pintados en el suelo |
+| Pobladores | Hasta 150 figuras (unas dos personas por figura) con casa y trabajo reales, rutina diaria, luz del día y fichas |
+| Interfaz | La de la v9: medidores, paneles, fin de año, dilemas con viñetas, etapas, régimen, final con perfil ético, ayuda |
+| Guardado | Automático, con número de versión y migraciones; tres ranuras y código de partida; abre partidas de la v9 (reubica sus obras en el nuevo mapa) |
+| Logros y sonido | Los 14 logros y la música de la v9 por régimen |
+| Balance (Normal, estrategia equilibrada) | República 69%, Monarquía 86%, Aristocracia 83%, Dictadura 79%, Plutocracia 52%, Populismo 51%. Igual que la v9; la diferencia entre regímenes se corrige en la fase 3 |
+
 ## Ideas propuestas (primera ronda)
 
 | # | Idea | Concepto que enseña | Cómo se ve |

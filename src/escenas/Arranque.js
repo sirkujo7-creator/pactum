@@ -1,9 +1,10 @@
 // Escena de arranque: portada en acuarela y estado de la base técnica.
 import { pintarPortada, pintarNiebla, TINTA } from '../arte/acuarela.js';
-import { VERSION, PASO } from '../version.js';
+import { VERSION } from '../version.js';
 import { DPR, tam, capaUI, el } from './pantalla.js';
 import { cargarContenido, C } from '../core/index.js';
 import { partida } from './partida.js';
+import { cargarGuardada, partidaV9 } from './memoria.js';
 import { EMB } from '../arte/retratos.js';
 
 const SERIF = 'Alegreya, Georgia, serif';
@@ -18,14 +19,14 @@ export class Arranque extends Phaser.Scene {
 
   create() {
     this.cameras.main.setOrigin(0, 0).setZoom(DPR);
-    // Botones: continuar la partida abierta o empezar una nueva (dificultad → régimen, como en la v9).
-    const hay = partida.S && !partida.S.over;
-    const botones = [el('button', { class: 'pildora grande', on: { click: () => this.elegirDificultad() } }, 'Nueva partida')];
-    if (hay) botones.unshift(el('button', { class: 'pildora grande', on: { click: () => this.scene.start('Mapa') } }, 'Continuar'));
+    // Botones: continuar la partida guardada o empezar una nueva (dificultad → régimen, como en la v9).
+    // Si en este aparato quedó una partida de la versión 9 (Polis), también se puede continuar.
+    this.botones = el('div', { class: 'portada-ui' });
+    this.ponerBotones();
     this.velo = el('div', { class: 'velo' }, [this.card = el('div', { class: 'card', role: 'dialog', 'aria-modal': 'true' })]);
     this.velo.hidden = true;
     this.velo.addEventListener('click', e => { if (e.target === this.velo) this.velo.hidden = true; });
-    this.ui = el('div', { class: 'mapa-ui' }, [el('div', { class: 'portada-ui' }, botones), this.velo]);
+    this.ui = el('div', { class: 'mapa-ui' }, [this.botones, this.velo]);
     capaUI().append(this.ui);
     this.events.once('shutdown', () => this.ui.remove());
     this.teclas = e => { if (e.key === 'Escape') this.velo.hidden = true; };
@@ -41,12 +42,10 @@ export class Arranque extends Phaser.Scene {
 
     this.titulo = this.add.text(0, 0, 'PACTUM', { fontFamily: SERIF, fontStyle: '800', color: TINTA, resolution: RES }).setOrigin(.5, 0);
     this.subtitulo = this.add.text(0, 0, 'la nueva polis', { fontFamily: SERIF, fontStyle: '500', color: '#5A5648', resolution: RES }).setOrigin(.5, 0);
-    this.estado = this.add.text(0, 0, '', { fontFamily: SANS, color: TINTA, align: 'center', lineSpacing: 4, resolution: RES }).setOrigin(.5, 0);
+    this.estado = this.add.text(0, 0, 'Gobierna un territorio del Tolima junto al río.\nDel pueblo, por el pueblo, para el pueblo.', { fontFamily: SERIF, fontStyle: '500', color: TINTA, align: 'center', lineSpacing: 6, resolution: RES }).setOrigin(.5, 0);
     this.pie = this.add.text(0, 0, `Versión ${VERSION}`, { fontFamily: SANS, color: '#6A675C', resolution: RES }).setOrigin(.5, 1);
 
     this.offline = 'preparando…';
-    this.logica = 'cargando…';
-    this.probarLogica();
     this.actualizarEstado();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then(() => { this.offline = 'listo'; this.actualizarEstado(); });
@@ -59,25 +58,31 @@ export class Arranque extends Phaser.Scene {
     this.events.once('shutdown', () => this.scale.off('resize', this.maquetar, this));
   }
 
+  // Pie de página: versión y si ya funciona sin internet.
   actualizarEstado() {
-    const instalada = window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone;
-    const { w, h } = tam(this);
-    this.estado.setText([
-      PASO,
-      `Motor Phaser ${Phaser.VERSION} ✓`,
-      `Sin internet: ${this.offline}`,
-      `Contenido: ${this.logica}`,
-      instalada ? 'Abierta como app ✓' : 'Se puede instalar como app'
-    ]);
+    this.pie.setText(`Versión ${VERSION} · ${this.offline === 'listo' ? 'funciona sin internet' : 'preparando el modo sin internet…'}`);
   }
 
-  // Comprueba que el contenido del juego se cargue bien.
-  async probarLogica() {
-    try {
-      const C2 = await cargarContenido();
-      this.logica = `${C2.EV.length} dilemas, ${Object.keys(C2.LATER).length} consecuencias ✓`;
-    } catch (e) { console.error(e); this.logica = 'error al cargar'; }
-    this.actualizarEstado();
+  async ponerBotones() {
+    await cargarContenido();
+    if (!partida.S) partida.S = cargarGuardada();
+    const S = partida.S, v9 = !S ? partidaV9() : null, b = [];
+    if (S && !S.over) b.push(el('button', { class: 'pildora grande', on: { click: () => this.scene.start('Mapa') } }, `Continuar: ${C.STAGES[S.stage].n}, año ${S.year}`));
+    if (v9) b.push(el('button', { class: 'pildora grande', on: { click: () => { partida.S = v9; this.scene.start('Mapa'); } } }, `Continuar partida de Polis (v9): año ${v9.year}`));
+    b.push(el('button', { class: 'pildora' + (b.length ? '' : ' grande'), on: { click: () => this.elegirDificultad() } }, 'Nueva partida'));
+    b.push(el('button', { class: 'pildora', on: { click: () => this.comoJugar() } }, 'Cómo jugar'));
+    this.botones.replaceChildren(...b);
+  }
+
+  comoJugar() {
+    this.tarjeta(`<div class="big">🏛️</div><h3>Cómo jugar</h3>
+      <p>Gobiernas un territorio del Tolima junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis los años que pida tu dificultad.</p>
+      <p>Construye casas, cultivos y talleres; fija los impuestos de cada clase; promulga leyes y responde los dilemas de cada año. Cada decisión refleja una corriente filosófica y algunas regresan años después.</p>
+      <p>Tu forma de gobernar puede corromper el régimen o desatar una revolución, como en el ciclo de Polibio.</p>
+      <p><b>Celular:</b> arrastra, pellizca y toca. <b>Computador:</b> rueda para acercar, flechas para moverte, 1 a 5 para los paneles y barra espaciadora para terminar el año.</p>
+      <p>La partida se guarda sola en este aparato.</p>
+      <button class="main" id="okB">Entendido</button>`);
+    this.card.querySelector('#okB').onclick = () => { this.velo.hidden = true; };
   }
 
   tarjeta(html) { this.card.innerHTML = html; this.velo.hidden = false; const b = this.card.querySelector('button'); if (b) b.focus(); }
@@ -119,9 +124,9 @@ export class Arranque extends Phaser.Scene {
     this.subtitulo.setFontSize(Math.round(clampN(base * .06, 20, 44))).setPosition(w / 2, this.titulo.y + this.titulo.height * .95);
 
     // Panel de estado sobre un papel semitransparente para que se lea sobre el paisaje.
-    this.estado.setFontSize(Math.round(clampN(base * .04, 15, 20))).setWordWrapWidth(w - 32).setPosition(w / 2, this.subtitulo.y + this.subtitulo.height + h * .04);
+    this.estado.setFontSize(Math.round(clampN(base * .045, 16, 22))).setWordWrapWidth(w - 32).setPosition(w / 2, this.subtitulo.y + this.subtitulo.height + h * .03);
+    this.estado.setBackgroundColor('rgba(236,234,226,.78)').setPadding(16, 10, 16, 10);
     this.actualizarEstado();
-    this.estado.setBackgroundColor('rgba(236,234,226,.82)').setPadding(14, 10, 14, 10);
 
     this.pie.setFontSize(14).setPosition(w / 2, h - 12);
 
