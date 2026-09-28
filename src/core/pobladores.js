@@ -16,7 +16,8 @@ export function plaza(S) {
 export function animo(v) { return v < 35 ? 'mal' : v < 62 ? 'regular' : 'bien'; }
 
 export function planearPobladores(S) {
-  const casas = S.map.map((x, i) => x.b === 'casa' ? i : -1).filter(i => i >= 0);
+  const usable = x => !(x.u >= 80); // las obras abandonadas quedan vacías
+  const casas = S.map.map((x, i) => x.b === 'casa' && usable(x) ? i : -1).filter(i => i >= 0);
   if (!casas.length || S.pop <= 0) return [];
   const so = society(S);
   const total = Math.max(4, Math.min(MAX_FIGURAS, Math.round(S.pop / 2)));
@@ -24,7 +25,7 @@ export function planearPobladores(S) {
   const n = { c: Math.round(adultos * so.camp / P), a: Math.round(adultos * so.art / P), e: Math.round(adultos * so.el / P) };
   n.u = Math.max(0, adultos - n.c - n.a - n.e);
   // Puestos de trabajo reales, por tipo de edificio.
-  const lugares = (filtro) => S.map.map((x, i) => x.b && filtro(x.b) ? i : -1).filter(i => i >= 0);
+  const lugares = (filtro) => S.map.map((x, i) => x.b && usable(x) && filtro(x.b) ? i : -1).filter(i => i >= 0);
   const campo = lugares(b => b === 'cultivo' || b === 'cafetal');
   const oficio = lugares(b => C.B[b].ja && b !== 'agora');
   const negocio = lugares(b => ['mercado', 'banco', 'puerto', 'agora'].includes(b));

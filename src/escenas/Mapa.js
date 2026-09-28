@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -139,14 +139,19 @@ export class Mapa extends Phaser.Scene {
     this.obras[i] = [];
     if (!x.b) return;
     const t = this.T.tiles[i], deSuelo = x.b === 'cultivo' || x.b === 'cafetal';
+    // Fase 1: desgaste visible (0 buen estado, 1 gastada, 2 agrietada, 3 abandonada).
+    const nivel = this.S.desgaste && x.u ? nivelObra(x) : 0;
     for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg)) {
+      if (nivel === 3 && f.k.startsWith('bandera')) continue;
       const r = t.r + .5 + (f.dv || 0), c = t.c + .5 + (f.du || 0), h = f.n || deSuelo ? this.T.hf(r, c) : t.h;
       const img = this.figura(f.n ? 'naturaleza' : 'edificios', f.k, r, c, h, f.s || 1);
       if (f.z) img.y -= f.z;
       img.setDepth(t.r + t.c + 1 + (f.dv || 0) + (f.du || 0));
       // El puerto y el molino miran hacia el río: si el agua está al lado derecho, se voltea el dibujo.
       if ((x.b === 'puerto' || x.b === 'molino') && this.rioADerecha(i)) img.setFlipX(true).setOrigin(1 - img.originX, img.originY);
+      if (nivel) img.setTint(f.n ? [0, 0xF2EEDC, 0xE0D6B4, 0xC8B98A][nivel] : [0, 0xE6DCCB, 0xD2C6B2, 0xA0978B][nivel]);
       this.obras[i].push(img);
+      if (nivel === 3) continue; // sin humo: nadie cocina en una obra abandonada
       if (x.b === 'casa' && i % 3 === 0 && !f.k.startsWith('bandera') && !reducirMovimiento()) {
         // Humo del fogón en algunas casas.
         const alto = this.S.stage >= 2 ? 30 : 22;
@@ -158,6 +163,24 @@ export class Mapa extends Phaser.Scene {
           alpha: { start: .45, end: 0 }, frequency: 420, quantity: 1
         }).setDepth(t.r + t.c + 1.5);
       }
+    }
+    if (nivel >= 2) this.desgasteVisible(i, nivel);
+  }
+  // Grietas en el muro y maleza al pie de una obra descuidada.
+  desgasteVisible(i, nivel) {
+    const t = this.T.tiles[i], H = this.hojas.edificios, base = this.obras[i].find(im => im.texture.key === 'edificios');
+    if (base) for (let k = 0; k < nivel - 1 + (i % 2); k++) {
+      const w = base.displayWidth, h = base.displayHeight, lado = (k % 2 ? 1 : -1) * (.1 + (i * 13 + k * 7) % 10 / 100);
+      // En los muros (la parte baja del dibujo), no en el techo.
+      const img = this.add.image(base.x + (base.flipX ? -lado : lado) * w, base.y - h * (.13 + (k % 2) * .05), 'edificios', 'grieta')
+        .setScale(.5 / H.escala).setDepth(base.depth + .01).setAlpha(nivel === 3 ? .95 : .75);
+      this.obras[i].push(img);
+    }
+    // Maleza en los bordes de la casilla (sin tapar la fachada).
+    const sitios = [[.9, .12], [.12, .9], [.55, .92], [.92, .55], [.1, .3], [.3, .1]];
+    for (let k = 0; k < (nivel === 3 ? 5 : 2); k++) {
+      const [dv, du] = sitios[(k + i) % sitios.length], r = t.r + dv, c = t.c + du, p = P(r, c, this.T.hf(r, c));
+      this.obras[i].push(this.add.image(p[0], p[1], 'edificios', 'maleza').setOrigin(.5, 11 / 14).setScale((.5 + (k * 17 % 5) / 20) / H.escala).setDepth(r + c));
     }
   }
   rioADerecha(i) {
@@ -173,7 +196,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x) { return `${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}`; }
+  huella(x) { return `${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}`; }
   refrescarCambios(antes) {
     const S = this.S, sectores = new Set(), cambiadas = [];
     S.map.forEach((x, i) => { if (this.huella(x) !== antes[i]) cambiadas.push(i); });
@@ -250,6 +273,21 @@ export class Mapa extends Phaser.Scene {
     this.ui.cerrarFicha(); this.ui.render();
     this.ui.toast(`Demoliste ${C.B[k].a}: recuperaste ${g} de oro.`);
   }
+  // Fase 1: reparar una obra gastada (o todas las agrietadas y abandonadas).
+  repararObra(i) {
+    const r = reparar(this.S, i);
+    if (r !== true) { this.ui.toast(r); return; }
+    Sonido.chime(); this.polvo(i); this.ponerObra(i); this.cambio(true);
+    this.ui.cerrarFicha(); this.ui.render(); this.ui.toast('Obra reparada: vuelve a estar en buen estado.');
+    guardarYa(this.S);
+  }
+  repararTodo() {
+    const S = this.S, lista = S.map.map((x, i) => i).filter(i => S.map[i].b && nivelObra(S.map[i]) >= 2);
+    let n = 0;
+    for (const i of lista) if (reparar(S, i) === true) { n++; this.ponerObra(i); }
+    if (n) { Sonido.chime(); this.cambio(true); guardarYa(S); }
+    this.ui.toast(n ? `Reparaste ${n} obras.` : 'No alcanza el oro para reparar.');
+  }
   otroTerritorio() { this.scene.restart({ nueva: true, semilla: Math.floor(Math.random() * 899999) + 100000 }); }
 
   // ---------- Fin de año (como en la v9) ----------
@@ -257,7 +295,7 @@ export class Mapa extends Phaser.Scene {
     const S = this.S;
     if (!this.listo || S.pend || S.over || this.ui.hayTarjeta() || this.cerrandoAnio) return;
     this.ui.cerrarHojas(); this.ui.cerrarFicha();
-    const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr, antes = S.map.map(x => this.huella(x));
+    const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr, antes = S.map.map(x => this.huella(x)), desgaste0 = S.desgaste;
     const r = advance(S);
     this.refrescarCambios(antes);
     const dg = Math.round(S.gold - g0), dp = S.pop - p0, hunger = !!(S.log[0] && S.log[0].t.includes('hambre'));
@@ -279,6 +317,7 @@ export class Mapa extends Phaser.Scene {
       this.ui.logros();
       const L = lluvias(S);
       if (L && L.cosecha !== 1) this.ui.toast(`${L.icono} ${L.texto}`);
+      if (S.desgaste && !desgaste0) this.ui.toast(C.DESGASTE.textos.abre);
       const fin = () => this.ui.render();
       const sigue = () => { const dilema = () => this.ui.clima(() => this.ui.suceso(fin)); if (r.stageUp) this.ui.etapa(dilema); else dilema(); };
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();

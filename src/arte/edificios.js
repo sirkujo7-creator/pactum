@@ -228,6 +228,9 @@ function recetas() {
   L.push(['bandera-tirania', 14, 16, 7, 14, g => { g.fillStyle = '#9E2B25'; g.globalAlpha = .9; g.fillRect(-3.5, -12, 7, 8); g.fillStyle = '#EFE3C2'; g.fillRect(-2, -11, 4, 2); g.globalAlpha = 1; }]);
   L.push(['bandera-demagogia', 40, 20, 20, 12, (g, r) => banderines(g, [-17, -2], [17, 1], r)]);
   // Humo para chimeneas.
+  // Vida de los edificios (fase 1): grietas en los muros y maleza al pie de las obras descuidadas.
+  L.push(['grieta', 14, 18, 7, 9, g => { g.strokeStyle = '#4A3A2E'; g.lineCap = 'round'; g.lineJoin = 'round'; g.globalAlpha = .75; g.lineWidth = .9; g.beginPath(); g.moveTo(-1, -8); g.lineTo(1, -4); g.lineTo(-1.5, -1); g.lineTo(1.5, 3); g.lineTo(0, 7); g.moveTo(1, -4); g.lineTo(4, -2.5); g.moveTo(-1.5, -1); g.lineTo(-4.5, 1); g.moveTo(1.5, 3); g.lineTo(4, 5); g.stroke(); g.globalAlpha = .3; g.lineWidth = 2; g.strokeStyle = '#8A7560'; g.beginPath(); g.moveTo(-1, -8); g.lineTo(1, -4); g.lineTo(-1.5, -1); g.lineTo(1.5, 3); g.stroke(); g.globalAlpha = 1; }]);
+  L.push(['maleza', 20, 14, 10, 11, g => { const cols = ['#7E8F4A', '#93A052', '#6E7E40', '#A8A060']; for (let k = 0; k < 11; k++) { const x = (k - 5) * 1.6 + Math.sin(k * 2.3) * .8, h = 5 + (k * 37 % 6); g.strokeStyle = cols[k % 4]; g.lineWidth = 1; g.beginPath(); g.moveTo(x, 0); g.quadraticCurveTo(x + Math.sin(k) * 1.5, -h * .6, x + Math.sin(k * 1.7) * 2.5, -h); g.stroke(); } g.globalAlpha = .6; g.fillStyle = '#B8A45A'; for (let k = 0; k < 3; k++) { g.beginPath(); g.arc(-4 + k * 4, -6 - k % 2 * 2, .8, 0, 7); g.fill(); } g.globalAlpha = 1; }]);
   L.push(['humo', 16, 16, 8, 8, g => { const gr = g.createRadialGradient(0, 0, 0, 0, 0, 7); gr.addColorStop(0, 'rgba(142,138,134,.9)'); gr.addColorStop(1, 'rgba(142,138,134,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); }]);
   return L;
 }

@@ -4,6 +4,7 @@ import { clamp } from './azar.js';
 import { counts, D, RM, hasLaw } from './reglas.js';
 import { countT } from './mundo.js';
 import { factorAgua, climaActivo } from './clima.js';
+import { animoPorDesgaste } from './desgaste.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3; }
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
@@ -44,11 +45,11 @@ export function satTargets(S, c, hunger) {
   const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5))) : 0;
   const ds = D(S).sat;
   const wc = waterCap(S, c), thirst = S.pop > wc ? Math.min(25, (S.pop - wc) / Math.max(1, wc) * 60) : 0;
-  const L = k => hasLaw(S, k) ? 1 : 0;
+  const L = k => hasLaw(S, k) ? 1 : 0, obras = animoPorDesgaste(S);
   return {
     sc, expc, thirst,
-    c: RM(S, 'sc') + 48 + 0 - (S.tx.c - 10) * 2 + (hunger ? -20 : 5) + cov - ur * 30 - ip * 1.5 + (S.eq - 50) * .2 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('subsidio') * 10 - thirst),
-    a: RM(S, 'sa') + 48 - (S.tx.a - 12) * 1.8 + cov + Math.min(8, c.parque * 2) - ur * 30 - ip * 1.5 + (S.eq - 50) * .1 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3 - thirst),
+    c: RM(S, 'sc') + 48 + 0 - (S.tx.c - 10) * 2 + (hunger ? -20 : 5) + cov - ur * 30 - ip * 1.5 + (S.eq - 50) * .2 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('subsidio') * 10 - thirst) - obras,
+    a: RM(S, 'sa') + 48 - (S.tx.a - 12) * 1.8 + cov + Math.min(8, c.parque * 2) - ur * 30 - ip * 1.5 + (S.eq - 50) * .1 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3 - thirst) - obras,
     e: 58 - (S.tx.e - 15) * 1.4 + c.banco * 4 - (S.eq - 50) * .1 - ip + ds + RM(S, 'se') - (L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)
   };
 }

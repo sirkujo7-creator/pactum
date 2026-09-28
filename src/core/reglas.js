@@ -11,7 +11,9 @@ export function hasLaw(S, k) { return !!(S.laws && S.laws[k]); }
 export function counts(S) {
   const c = {};
   Object.keys(C.B).forEach(k => c[k] = 0);
-  S.map.forEach(x => { if (x.b) c[x.b]++; });
+  // Fase 1: una obra abandonada por el deterioro no cuenta hasta que se repare.
+  const aband = C.DESGASTE ? C.DESGASTE.estados[3].desde : 101;
+  S.map.forEach(x => { if (x.b && !(x.u >= aband)) c[x.b]++; });
   return c;
 }
 export function cap(S) { return counts(S).casa * 10; }

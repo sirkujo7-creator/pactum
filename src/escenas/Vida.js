@@ -39,7 +39,7 @@ export class Vida {
       this.animales.push(a);
     }
     // Gallinas junto a algunas casas y perros por el pueblo.
-    const casas = S.map.map((x, i) => x.b === 'casa' ? i : -1).filter(i => i >= 0);
+    const casas = S.map.map((x, i) => x.b === 'casa' && !(x.u >= 80) ? i : -1).filter(i => i >= 0);
     casas.forEach((i, k) => {
       const r = Math.floor(i / N) + 1.1, c = i % N + .4;
       if (k % 2 === 0) for (let j = 0; j < 2; j++) {
