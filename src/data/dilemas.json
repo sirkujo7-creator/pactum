@@ -913,5 +913,275 @@
         "porque": "Por el pueblo y con el pueblo: la deliberación también educa."
       }
     ]
+  },
+  {
+    "id": "especulacion",
+    "etapa": 1,
+    "icono": "📦",
+    "titulo": "Acaparan el alimento en plena sequía",
+    "texto": "Con El Niño encima, algunos comerciantes guardan maíz y panela para venderlos más caros cuando escaseen.",
+    "condicion": {
+      "clima": "nino"
+    },
+    "opciones": [
+      {
+        "texto": "Fijar precios máximos",
+        "efectos": {
+          "campesinos": 6,
+          "elite": -8,
+          "inflacion": -1
+        },
+        "filosofia": "contr",
+        "porque": "En la escasez, lo básico no puede quedar a merced de quien más paga."
+      },
+      {
+        "texto": "Dejar actuar al mercado",
+        "efectos": {
+          "elite": 6,
+          "campesinos": -8,
+          "igualdad": -5,
+          "inflacion": 2
+        },
+        "filosofia": "util",
+        "porque": "Los precios altos animan a traer comida de afuera, aunque hoy duelan a los más pobres.",
+        "despues": {
+          "anios": 1,
+          "id": "especulacion_mal",
+          "probabilidad": 0.6
+        }
+      },
+      {
+        "texto": "Comprar reservas públicas y venderlas a costo",
+        "efectos": {
+          "oro": -50,
+          "campesinos": 5,
+          "confianza": 4
+        },
+        "filosofia": "virt",
+        "porque": "Ni prohibir ni abandonar: el Estado equilibra el mercado cuando falla."
+      }
+    ]
+  },
+  {
+    "id": "culpar",
+    "etapa": 1,
+    "icono": "🗣️",
+    "titulo": "¿De quién es la culpa?",
+    "texto": "La emergencia climática dejó ver obras mal hechas y reservas vacías. La gente pregunta quién responde.",
+    "condicion": {
+      "clima": "crisis"
+    },
+    "opciones": [
+      {
+        "texto": "Reconocer los errores y presentar un plan",
+        "efectos": {
+          "confianza": 6,
+          "elite": -3
+        },
+        "filosofia": "deon",
+        "porque": "Rendir cuentas es un deber, aunque exponga al gobernante."
+      },
+      {
+        "texto": "Culpar al clima",
+        "efectos": {
+          "confianza": -4,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "El clima no vota ni protesta, pero el pueblo sabe distinguir entre desgracia y descuido.",
+        "despues": {
+          "anios": 2,
+          "id": "culpar_mal",
+          "probabilidad": 0.5
+        }
+      },
+      {
+        "texto": "Culpar al gobierno anterior",
+        "efectos": {
+          "confianza": -2,
+          "artesanos": 2
+        },
+        "filosofia": "real",
+        "porque": "Funciona un tiempo; luego el pueblo pregunta qué hiciste tú."
+      }
+    ]
+  },
+  {
+    "id": "ayuda",
+    "etapa": 1,
+    "icono": "🤝",
+    "titulo": "Ayuda externa con condiciones",
+    "texto": "Un organismo de fuera ofrece 120 de oro para atender la emergencia, a cambio de que abras el comercio a sus empresas.",
+    "condicion": {
+      "clima": "crisis"
+    },
+    "opciones": [
+      {
+        "texto": "Aceptar con sus condiciones",
+        "efectos": {
+          "oro": 120,
+          "artesanos": -6,
+          "elite": 4
+        },
+        "filosofia": "util",
+        "porque": "La ayuda llega hoy; el costo de las condiciones se paga después.",
+        "despues": {
+          "anios": 3,
+          "id": "ayuda_condiciones"
+        }
+      },
+      {
+        "texto": "Negociar menos condiciones",
+        "efectos": {
+          "oro": 60,
+          "confianza": 2
+        },
+        "filosofia": "virt",
+        "porque": "Aceptar ayuda sin entregar la autonomía: el punto medio."
+      },
+      {
+        "texto": "Rechazarla",
+        "efectos": {
+          "confianza": 3,
+          "campesinos": -5
+        },
+        "filosofia": "deon",
+        "porque": "La soberanía no se vende, aunque la emergencia apriete."
+      }
+    ]
+  },
+  {
+    "id": "reubicar",
+    "etapa": 1,
+    "icono": "🏚️",
+    "titulo": "Reubicar o reconstruir",
+    "texto": "La crecida arrasó las casas de la orilla. Las familias quieren volver a su lugar; los técnicos dicen que es zona de riesgo.",
+    "condicion": {
+      "clima": "nina"
+    },
+    "opciones": [
+      {
+        "texto": "Reubicar a las familias en zona segura",
+        "efectos": {
+          "oro": -60,
+          "campesinos": -4,
+          "confianza": 3
+        },
+        "filosofia": "util",
+        "porque": "Duele dejar el lugar de siempre, pero evita la próxima tragedia."
+      },
+      {
+        "texto": "Reconstruir en el mismo lugar",
+        "efectos": {
+          "oro": -30,
+          "campesinos": 5
+        },
+        "filosofia": "real",
+        "porque": "Es lo que la gente pide hoy; el río volverá a cobrar.",
+        "despues": {
+          "anios": 4,
+          "id": "crecida_mal",
+          "probabilidad": 0.5
+        }
+      },
+      {
+        "texto": "Reconstruir con diques y casas elevadas",
+        "efectos": {
+          "oro": -90,
+          "campesinos": 3,
+          "confianza": 4
+        },
+        "filosofia": "deon",
+        "porque": "Proteger la vida de cada familia sin arrancarla de su tierra, aunque cueste más."
+      }
+    ]
+  },
+  {
+    "id": "semillas",
+    "etapa": 1,
+    "icono": "🌱",
+    "titulo": "Semillas resistentes o productivas",
+    "texto": "Con la sequía, los campesinos discuten qué sembrar: semillas mejoradas que rinden mucho con buen clima, o criollas que aguantan la sequía.",
+    "condicion": {
+      "clima": "nino"
+    },
+    "opciones": [
+      {
+        "texto": "Semillas productivas",
+        "efectos": {
+          "oro": -30,
+          "alimento": 15,
+          "ambiente": -3
+        },
+        "filosofia": "util",
+        "porque": "Más comida para más gente, siempre que el clima acompañe."
+      },
+      {
+        "texto": "Semillas criollas resistentes",
+        "efectos": {
+          "alimento": 5,
+          "campesinos": 4,
+          "ambiente": 2
+        },
+        "filosofia": "virt",
+        "porque": "Rinden menos, pero no fallan: la prudencia frente al riesgo."
+      },
+      {
+        "texto": "Recuperar los saberes tradicionales de siembra",
+        "efectos": {
+          "campesinos": 6,
+          "igualdad": 2,
+          "alimento": 3
+        },
+        "filosofia": "contr",
+        "porque": "El conocimiento de los mayores es de todos y protege a los más pobres."
+      }
+    ]
+  },
+  {
+    "id": "aguaabajo",
+    "etapa": 1,
+    "icono": "💧",
+    "titulo": "Agua compartida río abajo",
+    "texto": "El pueblo vecino, río abajo, se queda sin agua por la sequía y te pide abrir las compuertas.",
+    "condicion": {
+      "clima": "nino"
+    },
+    "opciones": [
+      {
+        "texto": "Compartir el agua",
+        "efectos": {
+          "confianza": 3,
+          "campesinos": -4,
+          "alimento": -8
+        },
+        "filosofia": "deon",
+        "porque": "El río no es propiedad de quien vive más arriba."
+      },
+      {
+        "texto": "Vendérsela",
+        "efectos": {
+          "oro": 40,
+          "elite": 3,
+          "confianza": -2
+        },
+        "filosofia": "util",
+        "porque": "Todos ganan algo, aunque el vecino pague por lo que antes era común."
+      },
+      {
+        "texto": "Negarla",
+        "efectos": {
+          "campesinos": 4,
+          "confianza": -3
+        },
+        "filosofia": "real",
+        "porque": "Primero los tuyos; el vecino recordará.",
+        "despues": {
+          "anios": 3,
+          "id": "migra_mal",
+          "probabilidad": 0.5
+        }
+      }
+    ]
   }
 ]

@@ -5,10 +5,14 @@ import {
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
+// Porcentaje que la estrategia equilibrada aporta al fondo de emergencias (se puede cambiar con FONDO=0).
+const FONDO = typeof process !== 'undefined' && process.env.FONDO !== undefined ? +process.env.FONDO : 5;
 
 export function botYear(S, strat, eth) {
   const want = strat === 'pop' ? { c: 5, a: 6, e: 12 } : strat === 'rich' ? { c: 18, a: 20, e: 10 } : strat === 'fair' ? { c: 8, a: 10, e: 25 } : null;
   if (want) ['c', 'a', 'e'].forEach(k => S.tx[k] = taxLimit(S, k, want[k]));
+  // Fase 1: la estrategia equilibrada ahorra en el fondo de emergencias desde Pueblo.
+  if (S.clima) S.aporteFondo = strat === 'fair' && S.stage >= 1 ? FONDO : 0;
   for (let n = 0; n < 8; n++) {
     const c2 = counts(S), F2 = finance(S);
     let k = null;

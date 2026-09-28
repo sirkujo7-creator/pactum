@@ -210,5 +210,36 @@
       "artesanos": -6
     },
     "porque": "Ganar por la fuerza deja cuentas pendientes."
+  },
+  "especulacion_mal": {
+    "icono": "📈",
+    "titulo": "El hambre de la especulación",
+    "texto": "Mientras los precios subían, las familias pobres del campo pasaron hambre.",
+    "efectos": {
+      "habitantes": -3,
+      "campesinos": -6,
+      "confianza": -4
+    },
+    "porque": "El mercado reparte según el dinero, no según la necesidad."
+  },
+  "culpar_mal": {
+    "icono": "📰",
+    "titulo": "La prensa revisa las cuentas",
+    "texto": "Un periódico muestra que el fondo de emergencias estaba vacío mucho antes de la sequía.",
+    "efectos": {
+      "confianza": -6
+    },
+    "porque": "Culpar a la naturaleza no reemplaza la previsión."
+  },
+  "ayuda_condiciones": {
+    "icono": "🏭",
+    "titulo": "Llegan las condiciones de la ayuda",
+    "texto": "Las empresas de fuera compiten con los talleres del pueblo con precios que nadie puede igualar.",
+    "efectos": {
+      "artesanos": -6,
+      "elite": 3,
+      "oro": 20
+    },
+    "porque": "La ayuda condicionada también es un negocio: alguien cobra la factura."
   }
 }

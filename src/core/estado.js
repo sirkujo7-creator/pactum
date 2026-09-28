@@ -39,7 +39,7 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
       q.push(j);
     }
   }
-  if (mundo !== 'v9') S.clima = climaInicial();
+  if (mundo !== 'v9') { S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; }
   S.log.unshift({ y: 1, t: 'Quince personas fundan una aldea junto al río. Te eligen para gobernar.' });
   return S;
 }

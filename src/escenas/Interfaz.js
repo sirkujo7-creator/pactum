@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  lluvias, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  lluvias, climaActivo, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -165,8 +165,10 @@ export class Interfaz {
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;
     const meta = nx ? `Meta: ${nx.n} (${nx.req}).` : `Meta: sostener la Polis ${D(S).polis} años.`;
     const pr = S.promises.map(p => `Promesa: ${C.B[p.k].a} antes del año ${p.dl}.`).join(' ');
-    this.meta.innerHTML = `<div class="gl1">${g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : meta}</div>` +
-      `<div class="gmore">${g ? meta + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
+    const pron = climaActivo(S) && S.clima.pronostico, FEN = C.CLIMA && C.CLIMA.fenomenos;
+    const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
+    this.meta.innerHTML = `<div class="gl1">${avisoClima || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : meta)}</div>` +
+      `<div class="gmore">${avisoClima && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : ''}${g || avisoClima ? meta + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
     const oc = this.meta.querySelector('[data-ocultar]');
     if (oc) oc.onclick = e => { e.stopPropagation(); S.guide = false; this.render(); };
     this.meta.hidden = !!this.hojaAbierta() || S.over;
@@ -223,11 +225,14 @@ export class Interfaz {
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
         <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>
-        ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}
+        ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
       <div class="cuatro"><button class="btn" data-a="prestamo" ${cb ? '' : 'disabled'}>Pedir préstamo</button><button class="btn" data-a="bono" ${cb ? '' : 'disabled'}>Emitir bono</button><button class="btn" data-a="imprimir" ${S.stage < 1 || S.over ? 'disabled' : ''}>Imprimir moneda</button><button class="btn" data-a="abonar" ${S.debt <= 0 || S.gold < 1 || S.over ? 'disabled' : ''}>Abonar 50</button></div>
       <p class="small">${S.stage < 1 ? 'El crédito y la emisión se abren al llegar a Pueblo.' : R.l === 'CCC' ? 'Calificación CCC: nadie te presta. Reduce deuda y déficit.' : 'Préstamo: 150, se paga 15% por año. Bono: 200 a 5 años, interés más bajo, pagas todo al vencer.'}</p>
+      ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
+        <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
+        <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {
       inp.oninput = () => {
@@ -239,6 +244,8 @@ export class Interfaz {
         this.mapa.cambio();
       };
     });
+    const fondo = this.cuentas.querySelector('[data-fondo]');
+    if (fondo) fondo.oninput = () => { S.aporteFondo = +fondo.value; fondo.nextElementSibling.textContent = fondo.value + '%'; clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 150); this.mapa.cambio(); };
     this.cuentas.querySelectorAll('[data-a]').forEach(bt => bt.onclick = () => {
       const a = bt.dataset.a;
       if (a === 'prestamo' && takeLoan(S)) { S.log.unshift({ y: S.year, t: `Préstamo de 150 al ${Math.round(loanRate(S) * 100)}%.` }); this.toast('Recibiste 150 de oro.'); }
@@ -355,6 +362,31 @@ export class Interfaz {
       this.alCerrar = alTerminar;
       this.boton('okB', () => this.cerrarTarjeta());
     });
+  }
+  // Fase 1: tarjeta del pronóstico (enseña el fenómeno y cómo prepararse) o balance de la emergencia.
+  clima(alTerminar) {
+    const S = this.S;
+    if (!climaActivo(S)) { alTerminar(); return; }
+    const K = S.clima, FEN = C.CLIMA.fenomenos, e = K.evento;
+    if (e && e.anio === S.year - 1 && !e.mostrado) {
+      e.mostrado = true;
+      const F = FEN[e.tipo];
+      this.tarjeta(`<div class="big">${F.icono}</div><h3>${F.nombre}: balance de la emergencia</h3>
+        <p>${e.resto ? F.noAtendida : F.atendida}</p>
+        <div class="ledger"><table class="budget"><tr><td>Costo de atender la emergencia</td><td>${e.costo}</td></tr><tr><td>Pagado con el fondo</td><td>${e.cubierto}</td></tr><tr class="tot"><td>Pagado por el tesoro a última hora</td><td class="${e.resto ? 'neg' : ''}">${e.resto}</td></tr></table></div>
+        ${e.tipo === 'nina' ? `<p class="small">Obras dañadas junto al río: ${e.obrasRiberenas}. Después de La Niña, las llanuras quedan más fértiles: el próximo año la cosecha rinde 15% más.</p>` : '<p class="small">Durante El Niño el río bajó y los acueductos entregaron menos agua.</p>'}
+        <div class="phil"><b>Lo que enseña</b><br>${F.concepto}</div><button class="main" id="okB">Continuar</button>`);
+      this.alCerrar = () => this.clima(alTerminar); this.boton('okB', () => this.cerrarTarjeta()); return;
+    }
+    if (K.pronostico && K.pronostico.nuevo) {
+      K.pronostico.nuevo = false;
+      const F = FEN[K.pronostico.tipo];
+      this.tarjeta(`<div class="big">${F.icono}</div><h3>Pronóstico: ${F.nombre}</h3><p>${F.pronostico.replace('{anio}', K.pronostico.anio)}</p>
+        <p><b>Tienes un año para prepararte.</b> ${F.preparar}</p><p class="small">Fondo de emergencias hoy: ${Math.round(S.fondo || 0)} de oro, con un aporte de ${S.aporteFondo || 0}% de los ingresos.</p>
+        <div class="phil"><b>Lo que enseña</b><br>${F.concepto}</div><button class="main" id="okB">Entendido</button>`);
+      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
+    }
+    alTerminar();
   }
   etapa(alTerminar) {
     const S = this.S, st = C.STAGES[S.stage];

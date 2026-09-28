@@ -43,7 +43,9 @@ export function drawEvent(S) {
   const c = counts(S);
   const pool = C.EV.filter(e => S.stage >= e.st && cumple(S, e.cond, c) && !S.recent.includes(e.id));
   if (!pool.length) return null;
-  const e = pool[rnd(pool.length)];
+  // Fase 1: en un año de El Niño o La Niña, casi siempre sale un dilema del clima.
+  const delClima = pool.filter(e => e.cond && e.cond.clima);
+  const e = delClima.length && azar() < .8 ? delClima[rnd(delClima.length)] : pool[rnd(pool.length)];
   S.recent.push(e.id);
   if (S.recent.length > 7) S.recent.shift();
   return { id: e.id, e: e.e, title: e.title, text: e.text, opts: e.opts };
