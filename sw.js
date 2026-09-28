@@ -1,6 +1,6 @@
 // Pactum: trabajador de servicio. Guarda el juego en el aparato para que funcione sin internet.
 // Al publicar una versión nueva, cambia CACHE: así los aparatos descargan los archivos nuevos.
-const CACHE = 'pactum-0.5.1';
+const CACHE = 'pactum-0.6.0';
 const ARCHIVOS = [
   './',
   'index.html',
@@ -10,7 +10,9 @@ const ARCHIVOS = [
   'src/arte/iso.js',
   'src/arte/naturaleza.js',
   'src/arte/personas.js',
+  'src/arte/retratos.js',
   'src/arte/terreno.js',
+  'src/arte/vinetas.js',
   'src/core/anio.js',
   'src/core/azar.js',
   'src/core/cargar.js',
@@ -42,6 +44,7 @@ const ARCHIVOS = [
   'src/data/regimenes.json',
   'src/data/textos.json',
   'src/escenas/Arranque.js',
+  'src/escenas/Efectos.js',
   'src/escenas/Interfaz.js',
   'src/escenas/Mapa.js',
   'src/escenas/Pobladores.js',
@@ -56,6 +59,7 @@ const ARCHIVOS = [
   'vendor/fuentes/alegreya-sans-latin-400-normal.woff2',
   'vendor/fuentes/alegreya-sans-latin-500-normal.woff2',
   'vendor/fuentes/alegreya-sans-latin-700-normal.woff2',
+  'vendor/fuentes/caveat-latin-700-normal.woff2',
   'vendor/phaser.min.js',
   'iconos/icono-180.png',
   'iconos/icono-192.png',

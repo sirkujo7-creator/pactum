@@ -2,7 +2,9 @@
 import { pintarPortada, pintarNiebla, TINTA } from '../arte/acuarela.js';
 import { VERSION, PASO } from '../version.js';
 import { DPR, tam, capaUI, el } from './pantalla.js';
-import { cargarContenido, freshState, advance, choose } from '../core/index.js';
+import { cargarContenido, C } from '../core/index.js';
+import { partida } from './partida.js';
+import { EMB } from '../arte/retratos.js';
 
 const SERIF = 'Alegreya, Georgia, serif';
 const SANS = '"Alegreya Sans", system-ui, sans-serif';
@@ -12,12 +14,24 @@ const reducirMovimiento = () => window.matchMedia?.('(prefers-reduced-motion: re
 export class Arranque extends Phaser.Scene {
   constructor() { super('Arranque'); }
 
+  init(datos) { this.pedirNueva = !!(datos && datos.nueva); }
+
   create() {
     this.cameras.main.setOrigin(0, 0).setZoom(DPR);
-    const entrar = el('button', { class: 'pildora grande', on: { click: () => this.scene.start('Mapa') } }, 'Ver el territorio');
-    this.ui = el('div', { class: 'portada-ui' }, [entrar]);
+    // Botones: continuar la partida abierta o empezar una nueva (dificultad → régimen, como en la v9).
+    const hay = partida.S && !partida.S.over;
+    const botones = [el('button', { class: 'pildora grande', on: { click: () => this.elegirDificultad() } }, 'Nueva partida')];
+    if (hay) botones.unshift(el('button', { class: 'pildora grande', on: { click: () => this.scene.start('Mapa') } }, 'Continuar'));
+    this.velo = el('div', { class: 'velo' }, [this.card = el('div', { class: 'card', role: 'dialog', 'aria-modal': 'true' })]);
+    this.velo.hidden = true;
+    this.velo.addEventListener('click', e => { if (e.target === this.velo) this.velo.hidden = true; });
+    this.ui = el('div', { class: 'mapa-ui' }, [el('div', { class: 'portada-ui' }, botones), this.velo]);
     capaUI().append(this.ui);
     this.events.once('shutdown', () => this.ui.remove());
+    this.teclas = e => { if (e.key === 'Escape') this.velo.hidden = true; };
+    window.addEventListener('keydown', this.teclas);
+    this.events.once('shutdown', () => window.removeEventListener('keydown', this.teclas));
+    if (this.pedirNueva) this.elegirDificultad();
     // La portada se hornea una sola vez a buena resolución y luego solo se escala.
     if (!this.textures.exists('portada')) this.textures.addCanvas('portada', pintarPortada(1600, 1000));
 
@@ -48,30 +62,45 @@ export class Arranque extends Phaser.Scene {
   actualizarEstado() {
     const instalada = window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone;
     const { w, h } = tam(this);
-    const aparato = w < 700 ? 'celular' : 'computador';
     this.estado.setText([
       PASO,
       `Motor Phaser ${Phaser.VERSION} ✓`,
       `Sin internet: ${this.offline}`,
-      `Lógica del juego: ${this.logica}`,
-      instalada ? 'Abierta como app ✓' : 'Se puede instalar como app',
-      `Pantalla ${Math.round(w)}×${Math.round(h)} (${aparato})`
+      `Contenido: ${this.logica}`,
+      instalada ? 'Abierta como app ✓' : 'Se puede instalar como app'
     ]);
   }
 
-  // Carga el contenido y juega 10 años de prueba con la lógica real (sin dibujar nada todavía).
+  // Comprueba que el contenido del juego se cargue bien.
   async probarLogica() {
     try {
-      const C = await cargarContenido();
-      const S = freshState('normal', false, null, 'republica');
-      for (let y = 0; y < 10; y++) { const r = advance(S); if (r.end) break; if (S.pend) choose(S, 0); }
-      this.logica = `${C.EV.length} dilemas, ${Object.keys(C.LATER).length} consecuencias, ${Object.keys(C.B).length} obras, ${C.LAWS.length} leyes ✓\n` +
-        `Partida de prueba: año ${S.year}, ${S.pop} habitantes, ${Math.round(S.gold)} de oro`;
-    } catch (e) {
-      console.error(e);
-      this.logica = 'error al cargar';
-    }
+      const C2 = await cargarContenido();
+      this.logica = `${C2.EV.length} dilemas, ${Object.keys(C2.LATER).length} consecuencias ✓`;
+    } catch (e) { console.error(e); this.logica = 'error al cargar'; }
     this.actualizarEstado();
+  }
+
+  tarjeta(html) { this.card.innerHTML = html; this.velo.hidden = false; const b = this.card.querySelector('button'); if (b) b.focus(); }
+  async elegirDificultad() {
+    await cargarContenido();
+    this.tarjeta(`<div class="big">🏛️</div><h3>Elige la dificultad</h3>
+      ${Object.entries(C.DIFFS).map(([k, v]) => `<button class="opt" data-d="${k}">${v.n}<small>${v.d}</small></button>`).join('')}
+      <label class="chk"><input type="checkbox" id="gChk" checked> Mostrar la guía de los primeros años</label>
+      <label class="chk">Código de territorio (opcional) <input type="text" inputmode="numeric" id="seedIn" placeholder="al azar" maxlength="7" class="inp"></label>`);
+    this.card.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
+      const semilla = this.card.querySelector('#seedIn').value.replace(/\D/g, ''), guia = this.card.querySelector('#gChk').checked;
+      this.elegirRegimen(b.dataset.d, guia, semilla ? +semilla : null);
+    });
+  }
+  elegirRegimen(diff, guide, semilla) {
+    const fila = k => `<button class="opt reg" data-r="${k}" style="--rc:${C.REG[k].col}">${EMB[k]}<span><b>${C.REG[k].n}</b><small>${C.REG[k].d}</small></span></button>`;
+    this.tarjeta(`<h3>Elige cómo se gobierna</h3><p class="small">Aristóteles distinguía tres formas rectas, que gobiernan para el bien común, y sus desviaciones, que gobiernan para sí. Tu forma de gobernar puede transformar el régimen.</p>
+      <h2>Formas rectas</h2>${['monarquia', 'aristocracia', 'republica'].map(fila).join('')}
+      <h2>Formas corruptas (más difíciles)</h2>${['tirania', 'oligarquia', 'demagogia'].map(fila).join('')}`);
+    this.card.querySelectorAll('[data-r]').forEach(b => b.onclick = () => {
+      this.velo.hidden = true;
+      this.scene.start('Mapa', { nueva: true, semilla, opciones: { diff, guide, reg: b.dataset.r, bienvenida: true } });
+    });
   }
 
   maquetar() {
