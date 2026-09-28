@@ -1,0 +1,917 @@
+[
+  {
+    "id": "crecida",
+    "etapa": 0,
+    "icono": "🌊",
+    "titulo": "El río se desborda",
+    "texto": "Tras semanas de lluvia, el río inunda las casas de la orilla. Las familias esperan tu decisión.",
+    "opciones": [
+      {
+        "texto": "Construir diques",
+        "efectos": {
+          "oro": -80,
+          "confianza": 8
+        },
+        "filosofia": "deon",
+        "porque": "Proteger a cada ciudadano es un deber, no un cálculo de costos.",
+        "despues": {
+          "anios": 6,
+          "id": "diques"
+        },
+        "vista": "flood"
+      },
+      {
+        "texto": "Reubicar a las familias ribereñas",
+        "efectos": {
+          "oro": -15,
+          "campesinos": -6,
+          "igualdad": -4,
+          "ambiente": 4
+        },
+        "filosofia": "util",
+        "porque": "Sale más barato para la mayoría, aunque algunas familias pierden su hogar.",
+        "vista": "flood"
+      },
+      {
+        "texto": "Esperar a que baje el agua",
+        "efectos": {
+          "confianza": -10,
+          "habitantes": -3,
+          "alimento": -10,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "Ahorras hoy, pero el pueblo recuerda quién lo dejó solo.",
+        "despues": {
+          "anios": 3,
+          "id": "crecida_mal"
+        },
+        "vista": "flood"
+      }
+    ]
+  },
+  {
+    "id": "festival",
+    "etapa": 0,
+    "icono": "🎺",
+    "titulo": "Llega el festival folclórico",
+    "texto": "Músicos y danzantes quieren celebrar en la plaza. Alguien tiene que pagar.",
+    "opciones": [
+      {
+        "texto": "Financiar el festival",
+        "efectos": {
+          "oro": -45,
+          "animo": 8,
+          "confianza": 3
+        },
+        "filosofia": "virt",
+        "porque": "La vida buena también se construye celebrando en comunidad.",
+        "vista": "festival"
+      },
+      {
+        "texto": "Cobrar entrada",
+        "efectos": {
+          "oro": 30,
+          "elite": 3,
+          "campesinos": -4,
+          "igualdad": -5
+        },
+        "filosofia": "util",
+        "porque": "Hay fiesta y el tesoro gana, pero los más pobres miran desde afuera.",
+        "vista": "festival"
+      },
+      {
+        "texto": "Cancelarlo",
+        "efectos": {
+          "animo": -6
+        },
+        "filosofia": "real",
+        "porque": "Austeridad: el tesoro se protege, el ánimo no."
+      }
+    ]
+  },
+  {
+    "id": "sal",
+    "etapa": 0,
+    "icono": "🧂",
+    "titulo": "Un mercader quiere el monopolio",
+    "texto": "Ofrece 80 de oro a cambio de ser el único que venda sal en el territorio.",
+    "opciones": [
+      {
+        "texto": "Aceptar el trato",
+        "efectos": {
+          "oro": 80,
+          "igualdad": -8,
+          "confianza": -5,
+          "elite": 6
+        },
+        "filosofia": "real",
+        "porque": "Ganas recursos y un aliado poderoso, a costa del precio que pagará todo el pueblo.",
+        "despues": {
+          "anios": 4,
+          "id": "sal_mal"
+        }
+      },
+      {
+        "texto": "Rechazarlo",
+        "efectos": {
+          "confianza": 4,
+          "artesanos": -3,
+          "elite": -3
+        },
+        "filosofia": "contr",
+        "porque": "Ninguna ventaja privada es justa si empeora la situación de los más débiles."
+      }
+    ]
+  },
+  {
+    "id": "sequia",
+    "etapa": 0,
+    "icono": "☀️",
+    "titulo": "Sequía",
+    "texto": "No llueve. Las cosechas de este año serán escasas.",
+    "condicion": {
+      "edificios": {
+        "cultivo": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Racionar por igual",
+        "efectos": {
+          "alimento": -15,
+          "animo": -5,
+          "igualdad": 5
+        },
+        "filosofia": "contr",
+        "porque": "Si la escasez es de todos, el sacrificio también.",
+        "vista": "drought"
+      },
+      {
+        "texto": "Comprar alimento afuera",
+        "efectos": {
+          "oro": -50,
+          "inflacion": 2,
+          "alimento": 5
+        },
+        "filosofia": "util",
+        "porque": "El dinero resuelve hoy el problema de todos, aunque los precios suben.",
+        "vista": "drought"
+      },
+      {
+        "texto": "Dar prioridad a quienes trabajan la tierra",
+        "efectos": {
+          "alimento": -15,
+          "igualdad": -6,
+          "artesanos": -6,
+          "campesinos": 4
+        },
+        "filosofia": "real",
+        "porque": "Mantienes la producción, pero dejas atrás a quienes no producen.",
+        "vista": "drought"
+      }
+    ]
+  },
+  {
+    "id": "migra",
+    "etapa": 0,
+    "icono": "🧳",
+    "titulo": "Familias desplazadas piden refugio",
+    "texto": "Llegan huyendo de la violencia en otra región. No traen nada.",
+    "opciones": [
+      {
+        "texto": "Acogerlas",
+        "efectos": {
+          "habitantes": 8,
+          "alimento": -8,
+          "artesanos": -3,
+          "confianza": 3,
+          "igualdad": 2
+        },
+        "filosofia": "deon",
+        "porque": "Toda persona es un fin en sí misma, nunca un simple costo.",
+        "despues": {
+          "anios": 5,
+          "id": "migra_bien"
+        }
+      },
+      {
+        "texto": "Acogerlas a cambio de trabajo",
+        "efectos": {
+          "habitantes": 6,
+          "oro": 10,
+          "igualdad": -3
+        },
+        "filosofia": "util",
+        "porque": "Todos ganan algo, aunque la dignidad quede condicionada."
+      },
+      {
+        "texto": "Cerrar el paso",
+        "efectos": {
+          "confianza": -4,
+          "artesanos": 3,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "Proteges los recursos propios; la historia juzgará.",
+        "despues": {
+          "anios": 5,
+          "id": "migra_mal"
+        }
+      }
+    ]
+  },
+  {
+    "id": "donante",
+    "etapa": 0,
+    "icono": "💰",
+    "titulo": "Una familia rica ofrece una donación",
+    "texto": "Darán 100 de oro si la plaza principal lleva su apellido.",
+    "opciones": [
+      {
+        "texto": "Aceptar",
+        "efectos": {
+          "oro": 100,
+          "igualdad": -2,
+          "elite": 4
+        },
+        "filosofia": "util",
+        "porque": "El beneficio es concreto; el costo parece simbólico.",
+        "despues": {
+          "anios": 5,
+          "id": "donante_mal"
+        }
+      },
+      {
+        "texto": "Rechazar",
+        "efectos": {
+          "confianza": 3,
+          "elite": -3
+        },
+        "filosofia": "deon",
+        "porque": "Lo público no se vende, aunque la oferta sea generosa."
+      }
+    ]
+  },
+  {
+    "id": "plaga",
+    "etapa": 0,
+    "icono": "🐛",
+    "titulo": "Plaga en los cultivos",
+    "texto": "Un insecto avanza sobre las cosechas.",
+    "condicion": {
+      "edificios": {
+        "cultivo": 2
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Fumigar con químicos",
+        "efectos": {
+          "oro": -20,
+          "ambiente": -8,
+          "campesinos": 3
+        },
+        "filosofia": "util",
+        "porque": "Rápido y barato; el costo lo paga la tierra.",
+        "vista": "pests"
+      },
+      {
+        "texto": "Control biológico",
+        "efectos": {
+          "oro": -35,
+          "ambiente": 2,
+          "alimento": -8
+        },
+        "filosofia": "virt",
+        "porque": "Más lento y caro: el término medio entre producir y cuidar."
+      },
+      {
+        "texto": "Dejar que pase",
+        "efectos": {
+          "alimento": -20,
+          "campesinos": -6
+        },
+        "filosofia": "real",
+        "porque": "Ahorras oro y pierdes comida.",
+        "vista": "pests"
+      }
+    ]
+  },
+  {
+    "id": "evasion",
+    "etapa": 1,
+    "icono": "📜",
+    "titulo": "Un terrateniente evade impuestos",
+    "texto": "Todos lo saben. Todos miran qué harás.",
+    "opciones": [
+      {
+        "texto": "Cobrarle y multarlo",
+        "efectos": {
+          "oro": 50,
+          "confianza": 7,
+          "elite": -5,
+          "campesinos": 3
+        },
+        "filosofia": "deon",
+        "porque": "La ley vale igual para todos o no vale.",
+        "despues": {
+          "anios": 4,
+          "id": "evasion_venganza",
+          "probabilidad": 0.5
+        }
+      },
+      {
+        "texto": "Negociar un pago parcial",
+        "efectos": {
+          "oro": 20,
+          "confianza": -2
+        },
+        "filosofia": "util",
+        "porque": "Algo es mejor que nada, aunque el mensaje sea ambiguo."
+      },
+      {
+        "texto": "Perdonarlo a cambio de su apoyo",
+        "efectos": {
+          "confianza": -9,
+          "igualdad": -5,
+          "elite": 6
+        },
+        "filosofia": "real",
+        "porque": "Ganas un aliado; pierdes autoridad moral.",
+        "despues": {
+          "anios": 4,
+          "id": "evasion2"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tierras",
+    "etapa": 1,
+    "icono": "🌱",
+    "titulo": "Los campesinos piden tierras",
+    "texto": "Trabajan haciendas ajenas y quieren parcelas propias.",
+    "opciones": [
+      {
+        "texto": "Hacer una reforma agraria",
+        "efectos": {
+          "oro": -30,
+          "campesinos": 15,
+          "elite": -15,
+          "igualdad": 8
+        },
+        "filosofia": "contr",
+        "porque": "La distribución inicial de la riqueza también es un asunto de justicia.",
+        "despues": {
+          "anios": 3,
+          "id": "reforma_fuga",
+          "probabilidad": 0.6
+        }
+      },
+      {
+        "texto": "Ofrecer créditos para comprar tierra",
+        "efectos": {
+          "deuda": 60,
+          "campesinos": 7,
+          "elite": -2
+        },
+        "filosofia": "util",
+        "porque": "Una solución de mercado: lenta, pero sin choques."
+      },
+      {
+        "texto": "Rechazar la petición",
+        "efectos": {
+          "campesinos": -10,
+          "elite": 5
+        },
+        "filosofia": "real",
+        "porque": "Proteges a los propietarios y a tus aliados.",
+        "despues": {
+          "anios": 5,
+          "id": "tierras_mal"
+        }
+      }
+    ]
+  },
+  {
+    "id": "maestros",
+    "etapa": 1,
+    "icono": "🧑‍🏫",
+    "titulo": "Los maestros piden mejor salario",
+    "texto": "Dicen que sin maestros bien pagados no hay futuro.",
+    "condicion": {
+      "edificios": {
+        "escuela": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Subir el salario",
+        "efectos": {
+          "oro": -40,
+          "artesanos": 5,
+          "igualdad": 4
+        },
+        "filosofia": "contr",
+        "porque": "La educación es la vía para que los menos favorecidos mejoren su lugar.",
+        "despues": {
+          "anios": 6,
+          "id": "maestros_bien"
+        }
+      },
+      {
+        "texto": "Pagar con deuda",
+        "efectos": {
+          "deuda": 50,
+          "artesanos": 4
+        },
+        "filosofia": "util",
+        "porque": "Resuelves hoy y trasladas el costo a los gobiernos de mañana."
+      },
+      {
+        "texto": "Negarse",
+        "efectos": {
+          "artesanos": -8,
+          "confianza": -4,
+          "elite": 3
+        },
+        "filosofia": "real",
+        "porque": "Cuidas el tesoro; pierdes a quienes forman ciudadanos."
+      }
+    ]
+  },
+  {
+    "id": "huelga",
+    "etapa": 1,
+    "icono": "✊",
+    "titulo": "Huelga en los talleres",
+    "texto": "Los artesanos paran: exigen salarios que alcancen.",
+    "condicion": {
+      "edificios": {
+        "taller": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Mediar por un salario justo",
+        "efectos": {
+          "artesanos": 12,
+          "elite": -8,
+          "igualdad": 4
+        },
+        "filosofia": "contr",
+        "porque": "El trabajo digno no es un favor del patrón.",
+        "vista": "crowd"
+      },
+      {
+        "texto": "Subsidiar el aumento con el tesoro",
+        "efectos": {
+          "oro": -50,
+          "artesanos": 8
+        },
+        "filosofia": "util",
+        "porque": "Todos contentos, pero lo paga el erario.",
+        "vista": "crowd"
+      },
+      {
+        "texto": "Romper la huelga",
+        "efectos": {
+          "artesanos": -15,
+          "confianza": -8,
+          "elite": 6
+        },
+        "filosofia": "real",
+        "porque": "El orden vuelve; el resentimiento queda.",
+        "despues": {
+          "anios": 4,
+          "id": "huelga_mal"
+        },
+        "vista": "crowd"
+      }
+    ]
+  },
+  {
+    "id": "humo",
+    "etapa": 1,
+    "icono": "🌫️",
+    "titulo": "Los talleres contaminan el río",
+    "texto": "Los pescadores denuncian peces muertos río abajo.",
+    "condicion": {
+      "edificios": {
+        "taller": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Obligar a poner filtros",
+        "efectos": {
+          "oro": -40,
+          "ambiente": 12,
+          "elite": -3
+        },
+        "filosofia": "deon",
+        "porque": "Nadie tiene derecho a dañar lo que es de todos."
+      },
+      {
+        "texto": "Multar a los dueños",
+        "efectos": {
+          "oro": 30,
+          "ambiente": 3,
+          "elite": -4
+        },
+        "filosofia": "util",
+        "porque": "El tesoro gana y el daño se reduce un poco."
+      },
+      {
+        "texto": "Ignorar la denuncia",
+        "efectos": {
+          "ambiente": -10,
+          "confianza": -5,
+          "elite": 5
+        },
+        "filosofia": "real",
+        "porque": "La producción sigue; el río no vota.",
+        "despues": {
+          "anios": 4,
+          "id": "humo_mal"
+        },
+        "vista": "smog"
+      }
+    ]
+  },
+  {
+    "id": "corrup",
+    "etapa": 1,
+    "icono": "🕵️",
+    "titulo": "Rumores de corrupción",
+    "texto": "Dicen que tu tesorero desvía fondos públicos.",
+    "opciones": [
+      {
+        "texto": "Investigar públicamente",
+        "efectos": {
+          "oro": -20,
+          "confianza": 10
+        },
+        "filosofia": "deon",
+        "porque": "La transparencia duele, pero sostiene la confianza.",
+        "despues": {
+          "anios": 4,
+          "id": "corrup_bien"
+        }
+      },
+      {
+        "texto": "Destituirlo en silencio",
+        "efectos": {
+          "oro": -10,
+          "confianza": 3
+        },
+        "filosofia": "util",
+        "porque": "Resuelves el problema sin escándalo, pero nadie aprende nada.",
+        "despues": {
+          "anios": 4,
+          "id": "corrup_filtra",
+          "probabilidad": 0.5
+        }
+      },
+      {
+        "texto": "No hacer nada",
+        "efectos": {
+          "confianza": -3,
+          "elite": 3
+        },
+        "filosofia": "real",
+        "porque": "El silencio también es una decisión, y cuesta.",
+        "despues": {
+          "anios": 3,
+          "id": "corrup_mal"
+        }
+      }
+    ]
+  },
+  {
+    "id": "epidemia",
+    "etapa": 1,
+    "icono": "🦠",
+    "titulo": "Brota una epidemia",
+    "texto": "La fiebre se extiende por los barrios más pobres.",
+    "opciones": [
+      {
+        "texto": "Atención gratuita para todos",
+        "efectos": {
+          "oro": -60,
+          "habitantes": -2,
+          "confianza": 6
+        },
+        "filosofia": "deon",
+        "porque": "La vida no tiene precio de mercado."
+      },
+      {
+        "texto": "Atender a quien pueda pagar",
+        "efectos": {
+          "oro": 20,
+          "habitantes": -6,
+          "igualdad": -8,
+          "campesinos": -8
+        },
+        "filosofia": "real",
+        "porque": "El tesoro se salva; la desigualdad decide quién vive.",
+        "despues": {
+          "anios": 3,
+          "id": "epidemia_mal"
+        }
+      },
+      {
+        "texto": "Vacunar primero a los trabajadores",
+        "efectos": {
+          "oro": -30,
+          "habitantes": -3,
+          "igualdad": -2,
+          "artesanos": 4
+        },
+        "filosofia": "util",
+        "porque": "Proteges la economía de todos, aunque no a todos por igual."
+      }
+    ]
+  },
+  {
+    "id": "elite",
+    "etapa": 1,
+    "icono": "🧳",
+    "titulo": "La élite amenaza con irse",
+    "texto": "Dicen que tus impuestos los ahogan y que se llevarán su capital.",
+    "condicion": {
+      "impuestoElite": 28
+    },
+    "opciones": [
+      {
+        "texto": "Bajarles el impuesto",
+        "efectos": {
+          "impuestoElite": -10,
+          "elite": 12,
+          "igualdad": -5
+        },
+        "filosofia": "util",
+        "porque": "Retienes la inversión, pero el esfuerzo fiscal recae en otros."
+      },
+      {
+        "texto": "Mantener la tasa",
+        "efectos": {
+          "elite": -10,
+          "confianza": 4,
+          "campesinos": 3
+        },
+        "filosofia": "deon",
+        "porque": "Las reglas no se negocian bajo amenaza."
+      },
+      {
+        "texto": "Pactar inversión social a cambio",
+        "efectos": {
+          "elite": -6,
+          "oro": 25,
+          "campesinos": 4
+        },
+        "filosofia": "virt",
+        "porque": "Un punto medio: el capital se queda y devuelve algo."
+      }
+    ]
+  },
+  {
+    "id": "precios",
+    "etapa": 1,
+    "icono": "📈",
+    "titulo": "Los precios suben sin control",
+    "texto": "El pan cuesta cada semana más. La gente culpa al gobierno.",
+    "condicion": {
+      "inflacionMayorQue": 0.08
+    },
+    "opciones": [
+      {
+        "texto": "Congelar precios por decreto",
+        "efectos": {
+          "inflacion": -3,
+          "elite": -6,
+          "campesinos": 5,
+          "artesanos": -3
+        },
+        "filosofia": "real",
+        "porque": "Alivio inmediato, pero ocultas el síntoma sin curar la causa.",
+        "vista": "crowd"
+      },
+      {
+        "texto": "Recortar el gasto público",
+        "efectos": {
+          "inflacion": -5,
+          "campesinos": -6,
+          "artesanos": -6,
+          "oro": 30
+        },
+        "filosofia": "util",
+        "porque": "Enfrías la economía: duele hoy, estabiliza mañana."
+      },
+      {
+        "texto": "Explicar la situación y esperar",
+        "efectos": {
+          "confianza": 3,
+          "campesinos": -6,
+          "artesanos": -6
+        },
+        "filosofia": "virt",
+        "porque": "La honestidad no baja los precios.",
+        "vista": "crowd"
+      }
+    ]
+  },
+  {
+    "id": "oro",
+    "etapa": 2,
+    "icono": "✨",
+    "titulo": "Hallan oro en la montaña",
+    "texto": "Llegan compradores de fuera ofreciendo inversión.",
+    "condicion": {
+      "terreno": "montana"
+    },
+    "opciones": [
+      {
+        "texto": "Explotar a gran escala",
+        "efectos": {
+          "oro": 150,
+          "ambiente": -18,
+          "igualdad": -5,
+          "elite": 8
+        },
+        "filosofia": "util",
+        "porque": "Mucha riqueza hoy; mucho daño para mañana.",
+        "despues": {
+          "anios": 4,
+          "id": "oro_mal"
+        }
+      },
+      {
+        "texto": "Explotar con control ambiental",
+        "efectos": {
+          "oro": 45,
+          "ambiente": -5
+        },
+        "filosofia": "virt",
+        "porque": "Ni todo ni nada: prudencia."
+      },
+      {
+        "texto": "Declarar reserva natural",
+        "efectos": {
+          "ambiente": 8,
+          "confianza": 3,
+          "elite": -4
+        },
+        "filosofia": "deon",
+        "porque": "Hay bienes que no deberían tener precio."
+      }
+    ]
+  },
+  {
+    "id": "protesta",
+    "etapa": 2,
+    "icono": "📣",
+    "titulo": "Protesta estudiantil",
+    "texto": "Los jóvenes exigen educación superior accesible.",
+    "opciones": [
+      {
+        "texto": "Dialogar y subsidiar",
+        "efectos": {
+          "oro": -50,
+          "confianza": 8,
+          "igualdad": 5
+        },
+        "filosofia": "contr",
+        "porque": "Abrir oportunidades a quien no las tiene es justicia.",
+        "vista": "crowd"
+      },
+      {
+        "texto": "Mesa de diálogo sin dinero",
+        "efectos": {
+          "confianza": 1,
+          "artesanos": -4
+        },
+        "filosofia": "virt",
+        "porque": "Escuchar es necesario, pero no siempre suficiente.",
+        "vista": "crowd"
+      },
+      {
+        "texto": "Dispersarla con la guardia",
+        "efectos": {
+          "confianza": -15,
+          "artesanos": -6,
+          "campesinos": -4,
+          "elite": 5
+        },
+        "filosofia": "real",
+        "porque": "El orden se impone, la legitimidad se pierde.",
+        "despues": {
+          "anios": 5,
+          "id": "protesta_mal"
+        },
+        "vista": "crowd"
+      }
+    ]
+  },
+  {
+    "id": "prestamo",
+    "etapa": 2,
+    "icono": "🌐",
+    "titulo": "Un banco extranjero ofrece crédito",
+    "texto": "Te entregan 250 de oro, pero deberás 300 (incluye comisión) más intereses.",
+    "opciones": [
+      {
+        "texto": "Aceptar",
+        "efectos": {
+          "oro": 250,
+          "deuda": 300
+        },
+        "filosofia": "util",
+        "porque": "Liquidez inmediata. Revisa si tu flujo de caja soporta la cuota."
+      },
+      {
+        "texto": "Rechazar",
+        "efectos": {},
+        "filosofia": "virt",
+        "porque": "Crecer con lo propio es más lento y más seguro."
+      }
+    ]
+  },
+  {
+    "id": "alianza",
+    "etapa": 2,
+    "icono": "🤝",
+    "titulo": "El pueblo vecino propone una alianza",
+    "texto": "Quieren comerciar sin aranceles durante años.",
+    "opciones": [
+      {
+        "texto": "Aceptar en igualdad",
+        "efectos": {
+          "oro": 40,
+          "confianza": 3,
+          "artesanos": 4,
+          "campesinos": -5
+        },
+        "filosofia": "contr",
+        "porque": "Un acuerdo justo es el que ambas partes aceptarían."
+      },
+      {
+        "texto": "Exigir ventajas",
+        "efectos": {
+          "oro": 90,
+          "confianza": -4,
+          "elite": 4,
+          "campesinos": -5
+        },
+        "filosofia": "real",
+        "porque": "Sacas provecho de tu posición de fuerza.",
+        "despues": {
+          "anios": 4,
+          "id": "alianza_rota",
+          "probabilidad": 0.5
+        }
+      }
+    ]
+  },
+  {
+    "id": "progresivo",
+    "etapa": 3,
+    "icono": "⚖️",
+    "titulo": "Proponen un impuesto de solidaridad",
+    "texto": "Un aporte único de quienes más tienen para obras sociales.",
+    "opciones": [
+      {
+        "texto": "Aprobarlo por decreto",
+        "efectos": {
+          "igualdad": 10,
+          "elite": -12,
+          "oro": 60
+        },
+        "filosofia": "contr",
+        "porque": "Las desigualdades solo se justifican si benefician a los peores situados."
+      },
+      {
+        "texto": "Rechazarlo",
+        "efectos": {
+          "igualdad": -4,
+          "confianza": -3,
+          "elite": 5
+        },
+        "filosofia": "real",
+        "porque": "Mantienes contentas a las élites."
+      },
+      {
+        "texto": "Convocar consulta popular",
+        "efectos": {
+          "confianza": 8,
+          "igualdad": 5,
+          "elite": -5,
+          "oro": -20
+        },
+        "filosofia": "virt",
+        "porque": "Por el pueblo y con el pueblo: la deliberación también educa."
+      }
+    ]
+  }
+]

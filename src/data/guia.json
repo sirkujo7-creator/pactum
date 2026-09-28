@@ -1,0 +1,46 @@
+[
+  {
+    "texto": "Construye un mercado: da empleo a artesanos y cobra tasas.",
+    "condicion": {
+      "edificios": {
+        "mercado": 1
+      }
+    }
+  },
+  {
+    "texto": "Construye más casas para que llegue gente (4 en total).",
+    "condicion": {
+      "edificios": {
+        "casa": 4
+      }
+    }
+  },
+  {
+    "texto": "Pon un tercer cultivo, mejor junto al río.",
+    "condicion": {
+      "edificios": {
+        "cultivo": 3
+      }
+    }
+  },
+  {
+    "texto": "Revisa la Hacienda y termina tu tercer año de gobierno.",
+    "condicion": {
+      "anio": 4
+    }
+  },
+  {
+    "texto": "Llega a 40 habitantes para convertirte en Pueblo.",
+    "condicion": {
+      "etapa": 1
+    }
+  },
+  {
+    "texto": "Construye una escuela: el pueblo ya la espera.",
+    "condicion": {
+      "edificios": {
+        "escuela": 1
+      }
+    }
+  }
+]

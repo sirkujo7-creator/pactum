@@ -1,0 +1,72 @@
+[
+  {
+    "id": "pueblo",
+    "nombre": "Primeros pasos",
+    "descripcion": "Convierte la aldea en Pueblo."
+  },
+  {
+    "id": "ciudad",
+    "nombre": "La ciudad crece",
+    "descripcion": "Llega a Ciudad."
+  },
+  {
+    "id": "polis",
+    "nombre": "Nace la Polis",
+    "descripcion": "Llega a Polis."
+  },
+  {
+    "id": "sindeuda",
+    "nombre": "Cuentas claras",
+    "descripcion": "Llega a Polis sin deuda."
+  },
+  {
+    "id": "igualdad",
+    "nombre": "Tierra de iguales",
+    "descripcion": "Igualdad de 80 o más siendo Ciudad."
+  },
+  {
+    "id": "verde",
+    "nombre": "Territorio verde",
+    "descripcion": "Ambiente de 80 o más siendo Ciudad."
+  },
+  {
+    "id": "aaa",
+    "nombre": "Triple A",
+    "descripcion": "Calificación AAA siendo Ciudad."
+  },
+  {
+    "id": "palabra",
+    "nombre": "Hombre de palabra",
+    "descripcion": "Cumple 3 promesas al pueblo."
+  },
+  {
+    "id": "sinhambre",
+    "nombre": "Nadie pasa hambre",
+    "descripcion": "Gobierna 30 años sin una sola hambruna."
+  },
+  {
+    "id": "kant",
+    "nombre": "Gobierno kantiano",
+    "descripcion": "Gana con la ética del deber como perfil."
+  },
+  {
+    "id": "rawls",
+    "nombre": "Velo de ignorancia",
+    "descripcion": "Gana con la justicia como equidad como perfil."
+  },
+  {
+    "id": "maquiavelo",
+    "nombre": "El príncipe",
+    "descripcion": "Gana con el realismo político como perfil."
+  },
+  {
+    "id": "fenix",
+    "nombre": "Ave fénix",
+    "descripcion": "Gana después de una cesación de pagos."
+  },
+  {
+    "id": "dificil",
+    "nombre": "Estadista",
+    "descripcion": "Gana en Difícil."
+  }
+]

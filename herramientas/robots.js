@@ -1,0 +1,41 @@
+// Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
+// pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
+import {
+  counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
+} from '../src/core/index.js';
+
+export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
+
+export function botYear(S, strat, eth) {
+  const want = strat === 'pop' ? { c: 5, a: 6, e: 12 } : strat === 'rich' ? { c: 18, a: 20, e: 10 } : strat === 'fair' ? { c: 8, a: 10, e: 25 } : null;
+  if (want) ['c', 'a', 'e'].forEach(k => S.tx[k] = taxLimit(S, k, want[k]));
+  for (let n = 0; n < 8; n++) {
+    const c2 = counts(S), F2 = finance(S);
+    let k = null;
+    if (F2.fprod - F2.cons < 4 && S.food < 40) k = 'cultivo';
+    else if (F2.so.un > 2 && F2.so.camp >= F2.so.jc && F2.fprod - F2.cons < 10) k = 'cultivo';
+    else if (F2.so.un > 3) k = (S.stage >= 1 && strat !== 'fair' && c2.taller < 3) ? 'taller' : 'mercado';
+    else if (S.stage >= 1 && S.pop > waterCap(S, c2) - 15) k = 'acueducto';
+    else if (S.stage >= 1 && c2.taller > energy(S, c2)) k = 'molino';
+    else if (S.pop >= c2.casa * 10 - 6) k = 'casa';
+    else if (S.stage >= 2 && c2.agora < 1) k = 'agora';
+    else if (S.stage >= 1 && c2.hospital < 1) k = 'hospital';
+    else if (S.stage >= 1 && c2.escuela * 50 < S.pop) k = 'escuela';
+    else if (S.stage >= 1 && c2.hospital * 60 < S.pop) k = 'hospital';
+    else if (F2.so.un > 2) k = (S.stage >= 1 && strat !== 'fair') ? 'taller' : 'mercado';
+    else if (S.stage >= 2 && c2.agora < 1) k = 'agora';
+    else if (S.env < 40 || (S.expc > 4 && c2.parque < 5)) k = 'parque';
+    else if (S.stage >= 3 && S.expc > 4 && c2.universidad < 2 && S.gold > 300) k = 'universidad';
+    else if (S.stage >= 3 && c2.universidad < 1) k = 'universidad';
+    if (!k) break;
+    const pref = k === 'cultivo' ? (i => nearRiver(S, i)) : ['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'parque'].includes(k) ? (i => !nearRiver(S, i)) : null;
+    let t = freeTiles(S, k);
+    if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));
+    if (!t.length) break;
+    build(S, k, t[0]);
+  }
+  if (strat === 'debt' && S.gold < 30 && canBorrow(S)) takeLoan(S);
+  const r = advance(S);
+  if (S.pend) { const o = S.pend.opts; let k = eth ? o.findIndex(x => x.f === eth) : -1; if (k < 0) k = rnd(o.length); choose(S, k); }
+  return r;
+}

@@ -1,0 +1,208 @@
+{
+  "casa": {
+    "icono": "🏠",
+    "nombre": "Casas",
+    "articulo": "unas casas",
+    "descripcion": "Alojan 10 personas.",
+    "costo": 30,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ]
+  },
+  "cultivo": {
+    "icono": "🌾",
+    "nombre": "Cultivo",
+    "articulo": "un cultivo",
+    "descripcion": "Emplea 7 campesinos. Da 12 de alimento (16 junto al río) si tiene todos sus trabajadores.",
+    "costo": 25,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosCampesinos": 7
+  },
+  "mercado": {
+    "icono": "🏪",
+    "nombre": "Mercado",
+    "articulo": "un mercado",
+    "descripcion": "Emplea 5 artesanos, cobra 8 de tasas y atrae élite comerciante.",
+    "costo": 60,
+    "mantenimiento": 3,
+    "etapa": 0,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 5,
+    "tasas": 8
+  },
+  "parque": {
+    "icono": "🌳",
+    "nombre": "Parque",
+    "articulo": "un parque",
+    "descripcion": "Mejora el ánimo de los artesanos y el ambiente.",
+    "costo": 30,
+    "mantenimiento": 2,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ]
+  },
+  "escuela": {
+    "icono": "🏫",
+    "nombre": "Escuela",
+    "articulo": "una escuela",
+    "descripcion": "Cubre a 50 personas. Emplea 3. Sube igualdad.",
+    "costo": 80,
+    "mantenimiento": 8,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 3
+  },
+  "hospital": {
+    "icono": "🏥",
+    "nombre": "Hospital",
+    "articulo": "un hospital",
+    "descripcion": "Cubre a 60 personas. Emplea 3.",
+    "costo": 100,
+    "mantenimiento": 10,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 3
+  },
+  "taller": {
+    "icono": "🏭",
+    "nombre": "Taller",
+    "articulo": "un taller",
+    "descripcion": "Emplea 9 artesanos y enriquece a la élite. Contamina.",
+    "costo": 90,
+    "mantenimiento": 4,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 9
+  },
+  "agora": {
+    "icono": "🏛️",
+    "nombre": "Ágora",
+    "articulo": "un ágora",
+    "descripcion": "Lugar de deliberación. Sube la confianza. Necesaria para la Polis.",
+    "costo": 150,
+    "mantenimiento": 6,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 1
+  },
+  "mina": {
+    "icono": "⛏️",
+    "nombre": "Mina",
+    "articulo": "una mina",
+    "descripcion": "Solo en montaña. Emplea 10 y paga 25 de regalías. Daña mucho el ambiente.",
+    "costo": 120,
+    "mantenimiento": 5,
+    "etapa": 2,
+    "terrenos": [
+      "montana"
+    ],
+    "empleosArtesanos": 10,
+    "tasas": 25
+  },
+  "banco": {
+    "icono": "🏦",
+    "nombre": "Banco",
+    "articulo": "un banco",
+    "descripcion": "Baja 2 puntos tu tasa, frena la inflación y atrae élite.",
+    "costo": 200,
+    "mantenimiento": 6,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 2
+  },
+  "cafetal": {
+    "icono": "☕",
+    "nombre": "Cafetal",
+    "articulo": "un cafetal",
+    "descripcion": "Solo en ladera (terreno alto). Emplea 6 campesinos y exporta café: 10 de oro al año.",
+    "costo": 45,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ],
+    "alturaMinima": 1,
+    "empleosCampesinos": 6,
+    "tasas": 10
+  },
+  "acueducto": {
+    "icono": "💧",
+    "nombre": "Acueducto",
+    "articulo": "un acueducto",
+    "descripcion": "Junto al río. Da agua a 70 personas más. Sin agua, el pueblo no crece y se enoja.",
+    "costo": 70,
+    "mantenimiento": 4,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "juntoAlRio": true,
+    "empleosArtesanos": 2,
+    "agua": 70
+  },
+  "molino": {
+    "icono": "⚙️",
+    "nombre": "Molino de agua",
+    "articulo": "un molino",
+    "descripcion": "Junto al río. Da energía a 3 talleres. Un taller sin energía no da empleo.",
+    "costo": 80,
+    "mantenimiento": 3,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "juntoAlRio": true,
+    "empleosArtesanos": 2,
+    "energia": 3
+  },
+  "puerto": {
+    "icono": "⛵",
+    "nombre": "Puerto fluvial",
+    "articulo": "un puerto",
+    "descripcion": "Junto al río. Emplea 5 y cobra 18 de comercio. Atrae élite comerciante.",
+    "costo": 110,
+    "mantenimiento": 4,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "juntoAlRio": true,
+    "empleosArtesanos": 5,
+    "tasas": 18
+  },
+  "universidad": {
+    "icono": "🎓",
+    "nombre": "Universidad",
+    "articulo": "una universidad",
+    "descripcion": "10% más productividad. Sube igualdad.",
+    "costo": 250,
+    "mantenimiento": 15,
+    "etapa": 3,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 5
+  }
+}
