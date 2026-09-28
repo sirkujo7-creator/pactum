@@ -53,7 +53,7 @@
       "nombre": "El Niño",
       "icono": "☀️",
       "pronostico": "Los pronósticos anuncian El Niño para el año {anio}: el océano Pacífico se calienta y en los Andes llueve mucho menos. Vendrán sequía, cosechas pobres y un río bajo.",
-      "preparar": "Para prepararte: aporta al fondo de emergencias en Hacienda, guarda alimento y asegura agua con acueductos.",
+      "preparar": "Para prepararte: aporta al fondo de emergencias en Hacienda, guarda alimento y asegura agua con acueductos. La sequía también trae incendios forestales; la ley de protección ambiental ayuda a prevenirlos.",
       "concepto": "Ciclos naturales y gestión del riesgo: una sequía anunciada no es una sorpresa, es una prueba de previsión.",
       "costoPorHabitante": 0.25,
       "aguaMenos": 0.25,
@@ -68,7 +68,7 @@
       "nombre": "La Niña",
       "icono": "🌊",
       "pronostico": "Los pronósticos anuncian La Niña para el año {anio}: el Pacífico se enfría y en los Andes llueve mucho más. Vendrán crecidas e inundaciones en las orillas.",
-      "preparar": "Para prepararte: aporta al fondo de emergencias en Hacienda y evita construir junto al río.",
+      "preparar": "Para prepararte: aporta al fondo de emergencias en Hacienda, evita construir junto al río y no dejes obras en laderas taladas: con tanta lluvia pueden derrumbarse.",
       "concepto": "Gestión del riesgo: exponerse al río sale barato hasta el día de la crecida.",
       "costoPorHabitante": 0.1,
       "danoPorObraRibereña": 8,
@@ -88,5 +88,46 @@
     "maximo": 20,
     "leccion": "Ahorro precautorio: guardar hoy tiene un costo de oportunidad (ese oro no se usa en obras), pero protege cuando llega la crisis. El fondo rinde 3% al año y solo se gasta en emergencias del clima.",
     "interes": 0.03
+  },
+  "suelo": {
+    "leccion": "El suelo es un bien común: el bosque lo sujeta, retiene el agua y tarda años en volver. Talar es rápido; recuperar, lento.",
+    "crece": {
+      "probabilidad": 0.04,
+      "conLey": 0.14,
+      "maximo": 3,
+      "maximoConLey": 7,
+      "vecinos": 2,
+      "quemadoPor": 2,
+      "texto": "El bosque volvió a {n} de ladera.",
+      "textoLey": "Gracias a la protección ambiental, el bosque volvió a {n} de ladera."
+    },
+    "incendio": {
+      "probabilidad": 0.5,
+      "conLey": 0.2,
+      "casillas": [
+        3,
+        6
+      ],
+      "anios": 4,
+      "texto": "🔥 Con la sequía se quemaron {n} de bosque. Quedan cenizas: el suelo desnudo se erosiona."
+    },
+    "erosion": {
+      "maximo": 3,
+      "probabilidad": 0.5,
+      "aviso": "Suelo erosionado: la ladera perdió su bosque y se lava con cada lluvia.",
+      "riesgo": "Erosión grave: con lluvias fuertes, esta ladera puede derrumbarse."
+    },
+    "derrumbe": {
+      "probabilidad": 0.5,
+      "maximo": 3,
+      "habitantesPorCasa": 2,
+      "confianzaPorObra": 2,
+      "anios": 5,
+      "texto": "⛰️ Derrumbes en laderas taladas: {n}.",
+      "textoObras": " Se perdió: {o}.",
+      "aviso": "Aquí hubo un derrumbe: la tierra quedó removida y el bosque tardará en volver."
+    },
+    "quemado": "Bosque quemado: quedan cenizas y troncos. Si nadie construye aquí, el bosque volverá.",
+    "joven": "Bosque joven: está creciendo de nuevo."
   }
 }

@@ -66,6 +66,22 @@ export class Efectos {
     this.inundacion = vk === 'flood';
   }
 
+  // Fase 1: humo sobre el bosque recién quemado (el primer año de cenizas).
+  humoIncendio() {
+    const { S, T } = this.scene;
+    (this.humos || []).forEach(h => h.destroy()); this.humos = [];
+    if (!S.clima || reducirMovimiento()) return;
+    const anios = C.CLIMA.suelo.incendio.anios;
+    S.map.forEach((x, i) => {
+      if (!(x.q >= anios) || this.humos.length >= 6 || i % 2) return;
+      const t = T.tiles[i], p = P(t.r + .5, t.c + .5, t.h);
+      this.humos.push(this.scene.add.particles(p[0], p[1] - 4, 'edificios', {
+        frame: 'humo', lifespan: 4200, speedX: { min: 2, max: 7 }, speedY: { min: -10, max: -6 }, scale: { start: .15, end: .6 },
+        alpha: { start: .35, end: 0 }, tint: 0x6A625A, frequency: 650, quantity: 1
+      }).setDepth(t.r + t.c + 2));
+    });
+  }
+
   // Cada cuadro: lluvia, tintes del régimen, esmog y sequía.
   update(dt) {
     const S = this.scene.S, v = this.vista(), vk = this.visto;

@@ -32,7 +32,8 @@ export class Vida {
     const { S, T } = this.scene, N = T.N;
     // Vacas y garzas donde las puso la naturaleza, si la casilla sigue libre.
     for (const o of this.scene.plantasMundo) {
-      if (!ANIMALES.has(o.k) || S.map[o.i].b) continue;
+      const x = S.map[o.i];
+      if (!ANIMALES.has(o.k) || x.b || x.t === 'bosque' || x.q > 0 || x.dr > 0) continue;
       const a = { k: o.k, casa: { r: o.r, c: o.c }, r: o.r, c: o.c, s: o.s, espera: azar(0, 6), ruta: null };
       a.img = this.figura(o.k, o.r, o.c, o.s);
       this.animales.push(a);
@@ -51,7 +52,7 @@ export class Vida {
       }
     });
     // Loros: parejas entre las palmas de cera.
-    this.palmas = this.scene.plantasMundo.filter(o => o.k === 'palma' && !S.map[o.i].b);
+    this.palmas = this.scene.plantasMundo.filter(o => o.k === 'palma' && !S.map[o.i].b && !S.map[o.i].q && !S.map[o.i].dr && !(T.tiles[o.i].b === 'niebla' && S.map[o.i].t !== 'bosque'));
     for (let k = 0; k < Math.min(3, Math.floor(this.palmas.length / 4)); k++) {
       const pa = this.palmas[(k * 7) % this.palmas.length];
       for (let j = 0; j < 2; j++) {

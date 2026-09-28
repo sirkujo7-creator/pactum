@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  lluvias, climaActivo, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  lluvias, climaActivo, estadoSuelo, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -294,6 +294,8 @@ export class Interfaz {
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price)} de oro al año.` }));
+      const suelo = this.textoSuelo(i);
+      if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
       const g = Math.round(cost(S, x.b) * .3);
       hijos.push(el('div', { class: 'dos' }, [
         el('button', { class: 'btn', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.mapa.demoler(i) } }, `Demoler (+${g} oro)`),
@@ -303,10 +305,13 @@ export class Interfaz {
       const B = BIOMA[t.b];
       const uso = x.t === 'rio' ? 'No se puede construir sobre el río. En sus orillas van acueductos, molinos y puertos.'
         : x.t === 'montana' ? 'Montaña: solo admite minas (desde Ciudad).'
+        : x.t === 'bosque' && estadoSuelo(S, i) === 'joven' ? `${C.CLIMA.suelo.joven} Construir aquí lo talaría y bajaría el ambiente.`
         : x.t === 'bosque' ? 'Bosque: construir aquí tala el bosque y baja el ambiente.'
         : nearRiver(S, i) ? 'Tierra fértil junto al río: un cultivo aquí rinde más.'
         : x.h >= 1 ? 'Ladera: aquí crece el café.' : 'Terreno libre para construir.';
       hijos.push(el('b', { text: B.n, style: 'grid-column:1/-1' }), el('span', { style: 'grid-column:1/-1', text: `Piso térmico: ${B.p}. Unos ${metros(t.h).toLocaleString('es-CO')} m de altura.` }), el('span', { style: 'grid-column:1/-1', text: uso }));
+      const suelo = this.textoSuelo(i);
+      if (suelo) hijos.push(el('span', { class: 'suelo', style: 'grid-column:1/-1', text: suelo }));
     }
     this.ficha.replaceChildren(...hijos);
     this.ficha.hidden = false;
@@ -321,6 +326,12 @@ export class Interfaz {
       el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: 'Cada figura representa a unas dos personas del pueblo.' })
     );
     this.ficha.hidden = false;
+  }
+  // Fase 1: estado del suelo de la casilla (cenizas, erosión, derrumbe).
+  textoSuelo(i) {
+    const e = estadoSuelo(this.S, i), K = climaActivo(this.S) && C.CLIMA.suelo;
+    return !K ? '' : e === 'derrumbe' ? '⛰️ ' + K.derrumbe.aviso : e === 'quemado' ? '🔥 ' + K.quemado
+      : e === 'riesgo' ? '⚠️ ' + K.erosion.riesgo : e === 'erosion' ? '🟫 ' + K.erosion.aviso : '';
   }
   cerrarFicha() { this.ficha.hidden = true; this.mapa.marcar(null); }
   motivo(k, i) { return whyNot(this.S, k, i); }
@@ -374,6 +385,8 @@ export class Interfaz {
       this.tarjeta(`<div class="big">${F.icono}</div><h3>${F.nombre}: balance de la emergencia</h3>
         <p>${e.resto ? F.noAtendida : F.atendida}</p>
         <div class="ledger"><table class="budget"><tr><td>Costo de atender la emergencia</td><td>${e.costo}</td></tr><tr><td>Pagado con el fondo</td><td>${e.cubierto}</td></tr><tr class="tot"><td>Pagado por el tesoro a última hora</td><td class="${e.resto ? 'neg' : ''}">${e.resto}</td></tr></table></div>
+        ${e.quemadas ? `<p class="small">🔥 La sequía quemó ${e.quemadas === 1 ? 'una casilla' : e.quemadas + ' casillas'} de bosque. El suelo desnudo se erosionará hasta que el bosque vuelva.</p>` : ''}
+        ${e.derrumbes ? `<p class="small">⛰️ ${e.derrumbes === 1 ? 'Hubo un derrumbe' : `Hubo ${e.derrumbes} derrumbes`} en laderas taladas${e.perdidas && e.perdidas.length ? `. Se perdió: ${e.perdidas.join(', ')}` : ''}.</p>` : ''}
         ${e.tipo === 'nina' ? `<p class="small">Obras dañadas junto al río: ${e.obrasRiberenas}. Después de La Niña, las llanuras quedan más fértiles: el próximo año la cosecha rinde 15% más.</p>` : '<p class="small">Durante El Niño el río bajó y los acueductos entregaron menos agua.</p>'}
         <div class="phil"><b>Lo que enseña</b><br>${F.concepto}</div><button class="main" id="okB">Continuar</button>`);
       this.alCerrar = () => this.clima(alTerminar); this.boton('okB', () => this.cerrarTarjeta()); return;
