@@ -3,7 +3,7 @@
 import { mulberry, shade, mix, wash, blob, poly, lienzo } from './acuarela.js';
 import { TW, TH } from './iso.js';
 
-const ESCALA = 2.5;
+const ESCALA = 4; // resolución del horneado (alta, para que se vea nítido de cerca)
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // ---------- Pinceles de construcción ----------
@@ -236,7 +236,7 @@ function recetas() {
 let HOJA = null;
 export function hornearEdificios() {
   if (HOJA) return HOJA;
-  const lista = recetas(), sep = 4, anchoHoja = 1400, marcos = {};
+  const lista = recetas(), sep = 4, anchoHoja = 2048, marcos = {};
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
     const W = Math.ceil(w * ESCALA), H = Math.ceil(h * ESCALA);

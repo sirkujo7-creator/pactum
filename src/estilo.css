@@ -198,6 +198,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .medidor .ico{display:none}
 @media (max-width:520px){
   .medidor .ico{display:inline}
+  .lluv-nom{display:none}
   .medidor .nom{display:none}
   .redondo{width:40px;height:40px;font-size:18px}
   .controles{gap:6px}

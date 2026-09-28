@@ -45,7 +45,7 @@ export class Pobladores {
         f.img.setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAMANO / this.H.escala);
         this.figuras.push(f);
       }
-      f.p = p; f.vel = (p.tipo === 'nino' ? .4 : .28) * (.85 + p.semilla * .3); f.carril = (p.semilla - .5) * .3;
+      f.p = p; f.vel = (p.tipo === 'nino' ? .5 : .42) * (.85 + p.semilla * .3); f.carril = (p.semilla - .5) * .3;
       if (reducirMovimiento()) { const d = this.destinoDeDia(f); f.r = d.r; f.c = d.c; f.ruta = []; }
       this.dibujar(f);
     });
@@ -125,7 +125,14 @@ export class Pobladores {
     if (!quieto) { const r = this.reloj + dt / DURACION_DIA; if (r >= 1) this.dias = (this.dias || 0) + 1; this.reloj = r % 1; }
     for (const f of this.figuras) {
       if (quieto) { f.oculto = false; this.dibujar(f, false); continue; }
-      if (f.espera > 0) { f.espera -= dt; this.dibujar(f, false); continue; }
+      if (f.espera > 0) {
+        f.espera -= dt;
+        // En el campo, los campesinos trabajan la tierra mientras esperan (se agachan y se levantan).
+        const b = f.destino === 'trabajo' && f.p.trabajo !== null ? this.scene.S.map[f.p.trabajo].b : null;
+        if (b === 'cultivo' || b === 'cafetal') { f.fase += dt * 2.4; this.dibujar(f, false, (Math.floor(f.fase) % 2) * 2); }
+        else this.dibujar(f, false);
+        continue;
+      }
       if (!f.ruta.length) {
         const d = this.siguiente(f), r = this.ruta(f, d);
         if (!r) { f.espera = 3 + Math.random() * 4; continue; }
@@ -140,15 +147,16 @@ export class Pobladores {
         continue;
       }
       const v = Math.min(dist, f.vel * dt);
-      f.r += dr / dist * v; f.c += dc / dist * v; f.fase += dt * 5;
+      // El paso va con la distancia recorrida: un ciclo de 4 posturas cada 0,3 casillas (así los pies no resbalan).
+      f.r += dr / dist * v; f.c += dc / dist * v; f.fase += v * 13;
       f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0;
       this.dibujar(f, true);
     }
     this.luzDelDia();
   }
 
-  dibujar(f, andando) {
-    const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? Math.floor(f.fase) % 4 : 0;
+  dibujar(f, andando, postura) {
+    const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? Math.floor(f.fase) % 4 : (postura || 0);
     f.img.setFrame(`${f.p.tipo}_${f.p.vi}_${f.frente}_${paso}`).setPosition(p[0], p[1]).setFlipX(f.voltear)
       .setDepth(f.r + f.c + .01).setVisible(!f.oculto);
   }

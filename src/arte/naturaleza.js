@@ -2,7 +2,7 @@
 // (atlas) y el mapa solo coloca copias. Dibujos tomados de la prueba de estilo aprobada.
 import { mulberry, shade, mix, wash, blob, lienzo } from './acuarela.js';
 
-const ESCALA = 2.5; // resolución del horneado
+const ESCALA = 4; // resolución del horneado (alta, para que se vea nítido de cerca)
 
 function sombra(g, rx, ry, dx) { g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(dx || 4, 2, rx, ry, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
 
@@ -23,6 +23,14 @@ function recetas(dry) {
     ['frailejon', 22, 30, 11, 26, (g, r) => { sombra(g, 5, 2, 2); g.fillStyle = '#7B6E58'; g.fillRect(-2, -11, 4, 11); g.fillStyle = '#9A8D72'; g.fillRect(-2, -11, 1.5, 11); for (let k = 0; k < 11; k++) { const a = k / 11 * Math.PI * 2; g.save(); g.translate(0, -13); g.rotate(a); g.fillStyle = k % 2 ? '#C4CCA8' : '#AEB98E'; g.beginPath(); g.ellipse(0, -4, 1.6, 4.6, 0, 0, 7); g.fill(); g.restore(); } blob(g, 0, -13, 2.2, 1.6, '#E3E6CF', r, .9); }],
     ['piedra', 28, 18, 14, 14, (g, r) => { sombra(g, 8, 2.5, 3); wash(g, [[-9, 0], [-6, -7], [2, -9], [8, -4], [9, 0]], '#A39C92', r, .97, .4); wash(g, [[2, -9], [8, -4], [9, 0], [3, 0]], '#857E74', r, .97, .3); }],
     ['vaca', 26, 20, 13, 16, (g, r) => { sombra(g, 7, 2, 2); g.fillStyle = '#F1EDE4'; g.beginPath(); g.ellipse(0, -6, 6, 3.4, 0, 0, 7); g.fill(); g.fillStyle = '#3B3530'; g.beginPath(); g.ellipse(-2, -6.5, 2.2, 1.6, 0, 0, 7); g.fill(); g.fillStyle = '#F1EDE4'; g.beginPath(); g.ellipse(6, -7.5, 2.4, 2, 0, 0, 7); g.fill(); g.strokeStyle = '#5B524A'; g.lineWidth = 1; [-4, -1, 2, 4].forEach(x => { g.beginPath(); g.moveTo(x, -3.5); g.lineTo(x, 0); g.stroke(); }); }],
+    // Animales con vida (fase 1): pastan, picotean, caminan y vuelan.
+    ['vacaPasta', 26, 20, 13, 16, (g, r) => { sombra(g, 7, 2, 2); g.fillStyle = '#F1EDE4'; g.beginPath(); g.ellipse(0, -6, 6, 3.4, 0, 0, 7); g.fill(); g.fillStyle = '#3B3530'; g.beginPath(); g.ellipse(-2, -6.5, 2.2, 1.6, 0, 0, 7); g.fill(); g.fillStyle = '#F1EDE4'; g.beginPath(); g.ellipse(6.5, -3.2, 2.2, 1.8, .4, 0, 7); g.fill(); g.strokeStyle = '#5B524A'; g.lineWidth = 1; [-4, -1, 2, 4].forEach(x => { g.beginPath(); g.moveTo(x, -3.5); g.lineTo(x, 0); g.stroke(); }); }],
+    ['gallina0', 10, 10, 5, 8, g => { g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(1, 0, 3, 1, 0, 0, 7); g.fill(); g.globalAlpha = 1; g.fillStyle = '#F4EFE6'; g.beginPath(); g.ellipse(0, -3, 2.6, 2, 0, 0, 7); g.fill(); g.beginPath(); g.arc(2.2, -4.8, 1.3, 0, 7); g.fill(); g.fillStyle = '#C8302A'; g.fillRect(2, -6.6, 1, 1); g.fillStyle = '#E0A030'; g.fillRect(3.3, -4.9, 1.1, .6); g.strokeStyle = '#D09A40'; g.lineWidth = .5; g.beginPath(); g.moveTo(-.6, -1); g.lineTo(-.6, 0); g.moveTo(.8, -1); g.lineTo(.8, 0); g.stroke(); }],
+    ['gallina1', 10, 10, 5, 8, g => { g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(1, 0, 3, 1, 0, 0, 7); g.fill(); g.globalAlpha = 1; g.fillStyle = '#A0522D'; g.beginPath(); g.ellipse(0, -3, 2.6, 2, 0, 0, 7); g.fill(); g.beginPath(); g.arc(2.8, -2.2, 1.2, 0, 7); g.fill(); g.fillStyle = '#C8302A'; g.fillRect(2.6, -3.8, 1, .9); g.fillStyle = '#E0A030'; g.fillRect(3.8, -2.2, 1, .5); g.strokeStyle = '#D09A40'; g.lineWidth = .5; g.beginPath(); g.moveTo(-.6, -1); g.lineTo(-.6, 0); g.moveTo(.8, -1); g.lineTo(.8, 0); g.stroke(); }],
+    ...[0, 1].map(f => ['perro' + f, 18, 14, 9, 11, g => { sombra(g, 5, 1.6, 1); g.fillStyle = '#8A6A48'; g.beginPath(); g.ellipse(0, -4.5, 4.5, 2.2, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(4.8, -6.4, 1.8, 1.6, 0, 0, 7); g.fill(); g.fillStyle = '#5E4632'; g.beginPath(); g.ellipse(4.2, -7.6, .9, 1.3, -.4, 0, 7); g.fill(); g.strokeStyle = '#8A6A48'; g.lineWidth = 1.1; g.lineCap = 'round'; const s = f ? 1.2 : -1.2; [[-3, s], [-1.5, -s], [2, -s], [3.4, s]].forEach(([x, d]) => { g.beginPath(); g.moveTo(x, -3); g.lineTo(x + d * .6, 0); g.stroke(); }); g.beginPath(); g.moveTo(-4.3, -5); g.quadraticCurveTo(-6.5, -7.5 + f, -6.8, -8.5 + f); g.stroke(); }]),
+    ...[0, 1].map(f => ['pajaro' + f, 12, 8, 6, 4, g => { g.strokeStyle = '#3A3530'; g.lineWidth = 1; g.lineCap = 'round'; g.beginPath(); if (f) { g.moveTo(-5, 1); g.quadraticCurveTo(-2.5, -1.5, 0, 0); g.quadraticCurveTo(2.5, -1.5, 5, 1); } else { g.moveTo(-5, -2.5); g.quadraticCurveTo(-2.5, 1, 0, 0); g.quadraticCurveTo(2.5, 1, 5, -2.5); } g.stroke(); }]),
+    ...[0, 1].map(f => ['loro' + f, 14, 10, 7, 5, g => { g.fillStyle = '#3E9A4A'; g.beginPath(); g.ellipse(0, 0, 3.2, 1.6, 0, 0, 7); g.fill(); g.fillStyle = '#E0A030'; g.beginPath(); g.arc(3, -.3, 1.1, 0, 7); g.fill(); g.fillStyle = '#C8302A'; g.fillRect(-4.8, -.4, 2, .9); g.fillStyle = '#2E7A3A'; g.beginPath(); if (f) { g.moveTo(-1.5, 0); g.lineTo(1, -4); g.lineTo(1.8, 0); } else { g.moveTo(-1.5, 0); g.lineTo(1, 3.5); g.lineTo(1.8, 0); } g.fill(); }]),
+    ['garzaVuela', 20, 12, 10, 6, g => { g.fillStyle = '#FBFBF8'; g.beginPath(); g.ellipse(0, 0, 3.2, 1.5, 0, 0, 7); g.fill(); g.beginPath(); g.moveTo(-1, 0); g.quadraticCurveTo(-5, -5, -9, -3); g.quadraticCurveTo(-5, -1, -1, 1); g.fill(); g.beginPath(); g.moveTo(1, 0); g.quadraticCurveTo(5, -5, 9, -3); g.quadraticCurveTo(5, -1, 1, 1); g.fill(); g.fillStyle = '#E0B040'; g.fillRect(3, -.5, 2.5, .7); }],
     ['garza', 14, 20, 7, 17, (g, r) => { g.strokeStyle = '#E8D8A0'; g.lineWidth = .7; g.beginPath(); g.moveTo(-1, 0); g.lineTo(-1, -5); g.moveTo(1, 0); g.lineTo(1, -5); g.stroke(); g.fillStyle = '#FBFBF8'; g.beginPath(); g.ellipse(0, -7.5, 2.4, 3, .2, 0, 7); g.fill(); g.strokeStyle = '#FBFBF8'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(1, -10); g.quadraticCurveTo(3, -12, 2, -14); g.stroke(); g.fillStyle = '#E0B040'; g.fillRect(2, -14.5, 2.5, .8); }]
   ];
 }
@@ -33,7 +41,7 @@ export function hornearNaturaleza(dry = 0) {
   const clave = Math.round(dry * 10) / 10;
   if (HOJAS[clave]) return HOJAS[clave];
   dry = clave;
-  const lista = recetas(dry), sep = 4, anchoHoja = 1024;
+  const lista = recetas(dry), sep = 4, anchoHoja = 2048;
   const marcos = {};
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
