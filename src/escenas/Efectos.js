@@ -29,7 +29,9 @@ export class Efectos {
 
   // Redibuja las huellas del dilema vigente (S.vis) y los tintes.
   actualizar() {
-    const { S, T } = this.scene, g = this.capa, vk = S.vis && S.vis.k;
+    const { S, T } = this.scene, g = this.capa, fen = S.clima && S.clima.fenomeno;
+    // Fase 1: La Niña inunda las orillas; El Niño deja la luz de sequía.
+    const vk = fen === 'nina' ? 'flood' : fen === 'nino' ? 'drought' : S.vis && S.vis.k;
     if (vk === this.visto && this._reg === S.reg) return;
     this.visto = vk; this._reg = S.reg;
     g.clear(); this.encima.removeAll(true); this.lluvia = [];
@@ -66,7 +68,7 @@ export class Efectos {
 
   // Cada cuadro: lluvia, tintes del régimen, esmog y sequía.
   update(dt) {
-    const S = this.scene.S, v = this.vista(), vk = S.vis && S.vis.k;
+    const S = this.scene.S, v = this.vista(), vk = this.visto;
     // Aguaceros: siempre durante una crecida; en la temporada de lluvias, a ratos (más si el año es lluvioso).
     const L = lluvias(S), pob = this.scene.pob, temp = pob ? pob.temporada() : 'lluvias';
     if (!reducirMovimiento()) {

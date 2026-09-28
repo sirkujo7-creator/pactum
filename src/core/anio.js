@@ -6,7 +6,8 @@ import { counts, D, RG, RM, hasLaw, ETAPA_OK } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
 import { society, waterCap, satTargets, calcHap, envTarget } from './sociedad.js';
 import { drawEvent } from './dilemas.js';
-import { sortearLluvias } from './clima.js';
+import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, interesFondo } from './clima.js';
+import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -17,6 +18,7 @@ export function advance(S) {
   if (F.mat) news.push(`Venció un bono: pagaste ${F.mat} de capital.`);
   S.bonds = S.bonds.filter(b => b.due > S.year);
   S.gold += F.net; S.rev = F.rev;
+  if (climaActivo(S)) S.fondo = (S.fondo || 0) + F.fondo + interesFondo(S);
   S.food += F.fprod - F.cons;
   let hunger = false;
   if (S.stage >= 1 && S.pop > waterCap(S, c)) news.push(`Falta agua: ${S.pop} habitantes y acueductos para ${waterCap(S, c)}.`);
@@ -60,6 +62,9 @@ export function advance(S) {
   const tA = envTarget(S, c);
   S.env = clamp(S.env + (tA - S.env) * .3, 0, 100);
 
+  // Fase 1: emergencia del año de El Niño o La Niña (la paga el fondo; lo que falte, el tesoro).
+  if (climaActivo(S) && S.clima.fenomeno) news.push(...atenderEmergencia(S, S.map.filter((x, i) => x.b && nearRiver(S, i)).length));
+
   // Déficit y cesación de pagos.
   S.deficit = F.net < 0 ? S.deficit + 1 : 0;
   if (F.net < 0) news.push(`El presupuesto cerró con déficit de ${-F.net} de oro.`);
@@ -68,6 +73,7 @@ export function advance(S) {
     S.defaults++;
     if (S.defaults >= 2) { S.log.unshift({ y: S.year, t: news.join(' ') }); return { end: { win: false, title: 'Bancarrota', text: 'Segunda cesación de pagos. Nadie vuelve a prestarle al territorio.' } }; }
     S.debt = Math.round(S.debt / 2); S.bonds.forEach(b => b.amt = Math.round(b.amt / 2)); S.gold = 0; S.tr = clamp(S.tr - 20, 0, 100);
+    marcarCrisis(S);
     S.sat.c -= 10; S.sat.a -= 10; S.sat.e -= 15;
     news.push('Cesación de pagos: reestructuraste la deuda a la mitad. Tu calificación se desploma.');
   }
@@ -121,6 +127,7 @@ export function advance(S) {
       if (S.stage === 3) S.polisYears = 0;
       ['c', 'a', 'e'].forEach(k => S.sat[k] = clamp(S.sat[k] + 8, 0, 100));
       S.regChange = { type: 'rev', from, to: S.reg };
+      marcarCrisis(S);
       news.push(`¡Revolución! Cae ${REG[from].n} y nace ${REG[S.reg].n}.`);
     }
   }
@@ -141,9 +148,9 @@ export function advance(S) {
   if (S.pop <= 3) return { end: { win: false, title: 'Territorio abandonado', text: 'Las últimas familias se marcharon.' } };
   if (S.polisYears >= D(S).polis) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
   if (S.vis && S.vis.y <= S.year) S.vis = null;
-  // Fase 1: lluvias del año que empieza (solo en el terreno en acuarela).
-  const pron = sortearLluvias(S);
-  if (pron) S.log[0].t += ' ' + pron;
+  // Fase 1: lluvias del año que empieza, El Niño o La Niña y sus pronósticos (solo en el terreno en acuarela).
+  const pron = climaDelAnioSiguiente(S);
+  if (pron.length) S.log[0].t += ' ' + pron.join(' ');
   S.year++;
   if (!stageUp) S.pend = drawEvent(S);
   return { stageUp, end: null };

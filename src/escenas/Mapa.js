@@ -256,7 +256,7 @@ export class Mapa extends Phaser.Scene {
       const L = lluvias(S);
       if (L && L.cosecha !== 1) this.ui.toast(`${L.icono} ${L.texto}`);
       const fin = () => this.ui.render();
-      const sigue = () => { if (r.stageUp) this.ui.etapa(() => this.ui.suceso(fin)); else this.ui.suceso(fin); };
+      const sigue = () => { const dilema = () => this.ui.clima(() => this.ui.suceso(fin)); if (r.stageUp) this.ui.etapa(dilema); else dilema(); };
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();
     }, reducirMovimiento() ? 900 : 1900);
   }

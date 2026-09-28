@@ -1,8 +1,92 @@
 {
   "lluvias": {
-    "abundantes": { "nombre": "Lluvias abundantes", "icono": "🌧️", "probabilidad": 0.25, "cosecha": 1.1, "seco": 0, "texto": "Las lluvias llegaron completas: las cosechas rinden 10% más." },
-    "normales": { "nombre": "Lluvias normales", "icono": "⛅", "probabilidad": 0.55, "cosecha": 1.0, "seco": 0.1, "texto": "Un año de lluvias normales." },
-    "escasas": { "nombre": "Lluvias escasas", "icono": "🌤️", "probabilidad": 0.2, "cosecha": 0.85, "seco": 0.5, "texto": "Las lluvias se quedaron cortas: las cosechas rinden 15% menos. Guardar alimento ayuda." }
+    "abundantes": {
+      "nombre": "Lluvias abundantes",
+      "icono": "🌧️",
+      "probabilidad": 0.25,
+      "cosecha": 1.1,
+      "seco": 0,
+      "texto": "Las lluvias llegaron completas: las cosechas rinden 10% más."
+    },
+    "normales": {
+      "nombre": "Lluvias normales",
+      "icono": "⛅",
+      "probabilidad": 0.55,
+      "cosecha": 1.0,
+      "seco": 0.1,
+      "texto": "Un año de lluvias normales."
+    },
+    "escasas": {
+      "nombre": "Lluvias escasas",
+      "icono": "🌤️",
+      "probabilidad": 0.2,
+      "cosecha": 0.85,
+      "seco": 0.5,
+      "texto": "Las lluvias se quedaron cortas: las cosechas rinden 15% menos. Guardar alimento ayuda."
+    },
+    "nino": {
+      "nombre": "El Niño: sequía",
+      "icono": "☀️",
+      "probabilidad": 0,
+      "cosecha": 0.65,
+      "seco": 0.9,
+      "texto": "El Niño trajo sequía: las cosechas rinden 35% menos y el río baja."
+    },
+    "nina": {
+      "nombre": "La Niña: lluvias torrenciales",
+      "icono": "🌊",
+      "probabilidad": 0,
+      "cosecha": 0.9,
+      "seco": 0,
+      "texto": "La Niña trajo lluvias torrenciales: el río se desborda y las orillas se inundan."
+    }
   },
-  "leccion": "El campo depende de las temporadas de lluvia. Cuando llueve poco, la cosecha baja aunque el trabajo sea el mismo: por eso los pueblos guardan reservas."
+  "leccion": "El campo depende de las temporadas de lluvia. Cuando llueve poco, la cosecha baja aunque el trabajo sea el mismo: por eso los pueblos guardan reservas.",
+  "fenomenos": {
+    "desde": {
+      "etapa": 1,
+      "habitantes": 60
+    },
+    "probabilidadAnual": 0.22,
+    "respiro": 2,
+    "nino": {
+      "nombre": "El Niño",
+      "icono": "☀️",
+      "pronostico": "Los pronósticos anuncian El Niño para el año {anio}: el océano Pacífico se calienta y en los Andes llueve mucho menos. Vendrán sequía, cosechas pobres y un río bajo.",
+      "preparar": "Para prepararte: aporta al fondo de emergencias en Hacienda, guarda alimento y asegura agua con acueductos.",
+      "concepto": "Ciclos naturales y gestión del riesgo: una sequía anunciada no es una sorpresa, es una prueba de previsión.",
+      "costoPorHabitante": 0.25,
+      "aguaMenos": 0.25,
+      "animoSinAtender": {
+        "c": -6,
+        "a": -3
+      },
+      "atendida": "El fondo de emergencias cubrió la atención de la sequía: carrotanques de agua y alimento para las familias del campo.",
+      "noAtendida": "No había fondo suficiente: el tesoro tuvo que pagar la emergencia a última hora y muchas familias quedaron sin ayuda."
+    },
+    "nina": {
+      "nombre": "La Niña",
+      "icono": "🌊",
+      "pronostico": "Los pronósticos anuncian La Niña para el año {anio}: el Pacífico se enfría y en los Andes llueve mucho más. Vendrán crecidas e inundaciones en las orillas.",
+      "preparar": "Para prepararte: aporta al fondo de emergencias en Hacienda y evita construir junto al río.",
+      "concepto": "Gestión del riesgo: exponerse al río sale barato hasta el día de la crecida.",
+      "costoPorHabitante": 0.1,
+      "danoPorObraRibereña": 8,
+      "animoSinAtender": {
+        "c": -4,
+        "a": -4
+      },
+      "fertilidadDespues": 1.15,
+      "atendida": "El fondo de emergencias cubrió la reconstrucción de las orillas y el albergue de las familias damnificadas.",
+      "noAtendida": "No había fondo suficiente: el tesoro pagó tarde la reconstrucción y las familias damnificadas esperaron semanas."
+    },
+    "confianzaSinAtender": -4,
+    "confianzaAtendida": 3
+  },
+  "fondo": {
+    "nombre": "Fondo de emergencias",
+    "maximo": 20,
+    "leccion": "Ahorro precautorio: guardar hoy tiene un costo de oportunidad (ese oro no se usa en obras), pero protege cuando llega la crisis. El fondo rinde 3% al año y solo se gasta en emergencias del clima.",
+    "interes": 0.03
+  }
 }

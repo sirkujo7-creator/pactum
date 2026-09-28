@@ -3,10 +3,12 @@ import { C } from './contenido.js';
 import { clamp } from './azar.js';
 import { counts, D, RM, hasLaw } from './reglas.js';
 import { countT } from './mundo.js';
+import { factorAgua, climaActivo } from './clima.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3; }
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
-export function waterCap(S, c) { return S.stage >= 1 ? 40 + c.acueducto * 70 : 9999; }
+// En El Niño (fase 1) el río baja y los acueductos entregan menos.
+export function waterCap(S, c) { if (S.stage < 1) return 9999; const w = 40 + c.acueducto * 70; return climaActivo(S) ? Math.round(w * factorAgua(S)) : w; }
 
 // Reparte la población en élite, campesinos, artesanos y desempleados.
 export function society(S) {

@@ -5,7 +5,7 @@ import { LADO_V9, LADO_INICIAL, genMundo } from './mundo.js';
 import { whyNot } from './obras.js';
 import { climaInicial } from './clima.js';
 
-export const VERSION_GUARDADO = 3;
+export const VERSION_GUARDADO = 4;
 
 // Cada migración lleva el estado de la versión k a la k+1.
 const MIGRACIONES = {
@@ -23,7 +23,9 @@ const MIGRACIONES = {
   // 1 → 2: el mapa de la v9 (20×20) pasa al terreno en acuarela; las obras se reubican cerca de su lugar.
   1: S => (S.mundo === 'v9' ? convertirMapaV9(S) : S),
   // 2 → 3 (fase 1): se agrega el clima.
-  2: S => { if (S.mundo === 'acuarela' && !S.clima) S.clima = climaInicial(); return S; }
+  2: S => { if (S.mundo === 'acuarela' && !S.clima) S.clima = climaInicial(); return S; },
+  // 3 → 4 (fase 1, paso 2): El Niño, La Niña y el fondo de emergencias.
+  3: S => { if (S.clima) { S.clima = { ...climaInicial(), ...S.clima }; S.fondo = S.fondo || 0; S.aporteFondo = S.aporteFondo || 0; } return S; }
 };
 
 // Reubica las obras de un mapa de la v9 en un terreno en acuarela del mismo código.

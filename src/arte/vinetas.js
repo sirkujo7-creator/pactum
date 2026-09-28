@@ -17,12 +17,15 @@ const ESCENAS = {
   precios: { b: { 1: 'mercado' }, fx: ['arrow'] }, oro: { g: 'MMLLLL', b: { 1: 'mina' }, fx: ['coins'] }, protesta: { b: { 1: 'agora' }, fx: ['crowd'] },
   prestamo: { b: { 1: 'banco' }, fx: ['scroll', 'coins'] }, alianza: { g: 'LRLLRL', b: { 0: 'mercado', 2: 'mercado' }, fx: ['bridge'] },
   progresivo: { b: { 1: 'agora' }, fx: ['scroll', 'coins'] }, pet: { b: { 1: 'agora' }, fx: ['crowd', 'scroll'] },
+  especulacion: { b: { 1: 'mercado' }, fx: ['dry', 'coins', 'arrow'] }, culpar: { b: { 1: 'agora' }, fx: ['crowd', 'scroll'] },
+  ayuda: { b: { 1: 'banco' }, fx: ['scroll', 'coins'] }, reubicar: { g: 'LRLLRL', b: { 0: 'casa', 3: 'casa' }, fx: ['flood', 'walk'] },
+  semillas: { b: { 0: 'cultivo', 1: 'cultivo', 4: 'cultivo' }, fx: ['dry', 'sun'] }, aguaabajo: { g: 'LRLLRL', b: { 0: 'cultivo', 2: 'casa' }, fx: ['dry', 'sun'] },
   default: { b: { 1: 'casa' }, fx: [] }
 };
 const ALIAS = {
   crecida_mal: 'crecida', diques: 'alianza', evasion2: 'evasion', evasion_venganza: 'evasion', migra_bien: 'migra', migra_mal: 'migra', oro_mal: 'humo',
   corrup_mal: 'corrup', corrup_bien: 'corrup', corrup_filtra: 'corrup', maestros_bien: 'maestros', humo_mal: 'humo', sal_mal: 'precios', protesta_mal: 'protesta',
-  epidemia_mal: 'epidemia', donante_mal: 'donante', tierras_mal: 'tierras', huelga_mal: 'huelga', reforma_fuga: 'elite', alianza_rota: 'alianza'
+  epidemia_mal: 'epidemia', donante_mal: 'donante', especulacion_mal: 'especulacion', culpar_mal: 'culpar', ayuda_condiciones: 'ayuda', tierras_mal: 'tierras', huelga_mal: 'huelga', reforma_fuga: 'elite', alianza_rota: 'alianza'
 };
 
 function figura(g, H, k, x, y, s = 1, voltear = false) {
