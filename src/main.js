@@ -1,5 +1,7 @@
 // Punto de entrada: espera las fuentes, arranca Phaser y registra el modo sin internet.
 import { Arranque } from './escenas/Arranque.js';
+import { Mapa } from './escenas/Mapa.js';
+import { DPR } from './escenas/pantalla.js';
 
 async function fuentesListas() {
   if (!document.fonts) return;
@@ -13,14 +15,23 @@ async function fuentesListas() {
 
 await fuentesListas();
 
-new Phaser.Game({
+// El lienzo se crea con la resolución real de la pantalla y se muestra a tamaño normal (zoom 1/DPR).
+const juego = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'juego',
   backgroundColor: '#ECEAE2',
-  scale: { mode: Phaser.Scale.RESIZE, width: window.innerWidth, height: window.innerHeight },
-  render: { antialias: true, roundPixels: false },
+  scale: { mode: Phaser.Scale.NONE, width: Math.round(window.innerWidth * DPR), height: Math.round(window.innerHeight * DPR), zoom: 1 / DPR },
+  render: { antialias: true, roundPixels: false, powerPreference: 'high-performance' },
+  input: { activePointers: 3 },
   banner: false,
-  scene: [Arranque]
+  scene: [Arranque, Mapa]
+});
+// Acceso para pruebas automáticas.
+window.__pactum = juego;
+let espera = null;
+window.addEventListener('resize', () => {
+  clearTimeout(espera);
+  espera = setTimeout(() => juego.scale.resize(Math.round(window.innerWidth * DPR), Math.round(window.innerHeight * DPR)), 80);
 });
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
