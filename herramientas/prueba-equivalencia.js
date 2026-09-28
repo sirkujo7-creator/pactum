@@ -14,7 +14,7 @@ vm.runInContext(fuente + '\n;this.freshState=freshState;this.botYear=botYear;thi
 // Estado comparable: sin el lado del mapa (nuevo) y con el suceso pendiente resumido.
 function comparable(S) {
   const x = JSON.parse(JSON.stringify(S));
-  delete x.n;
+  delete x.n; delete x.mundo;
   if (x.pend) x.pend = { id: x.pend.id, title: x.pend.title, text: x.pend.text, n: x.pend.opts.length, opts: x.pend.opts.map(o => [o.l, o.fx, o.f, o.later, o.promise]) };
   return JSON.stringify(x);
 }
@@ -32,7 +32,7 @@ for (const dif of ['facil', 'normal', 'dificil'])
           fijarAzar(b);
           v9.setEth(eth);
           v9.freshState(dif, false, null, reg);
-          const S = freshState(dif, false, null, reg);
+          const S = freshState(dif, false, null, reg, { mundo: 'v9' });
           partidas++;
           for (let y = 0; y < 120; y++) {
             const r1 = v9.botYear(strat), r2 = botYear(S, strat, eth);
