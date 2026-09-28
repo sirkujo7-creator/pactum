@@ -10,13 +10,15 @@ const MANT = typeof process !== 'undefined' && process.env.MANT !== undefined ? 
 // Porcentaje que la estrategia equilibrada aporta al fondo de emergencias (se puede cambiar con FONDO=0).
 const FONDO = typeof process !== 'undefined' && process.env.FONDO !== undefined ? +process.env.FONDO : 5;
 
-export function botYear(S, strat, eth) {
+// op.sinPrep: la estrategia equilibrada no se prepara (sin fondo, construye en cualquier parte, no repara).
+export function botYear(S, strat, eth, op = {}) {
+  const prep = strat === 'fair' && !op.sinPrep;
   const want = strat === 'pop' ? { c: 5, a: 6, e: 12 } : strat === 'rich' ? { c: 18, a: 20, e: 10 } : strat === 'fair' ? { c: 8, a: 10, e: 25 } : null;
   if (want) ['c', 'a', 'e'].forEach(k => S.tx[k] = taxLimit(S, k, want[k]));
   // Fase 1: la estrategia equilibrada ahorra en el fondo de emergencias desde Pueblo.
-  if (S.clima) S.aporteFondo = strat === 'fair' && S.stage >= 1 ? FONDO : 0;
+  if (S.clima) S.aporteFondo = prep && S.stage >= 1 ? FONDO : 0;
   // Mantenimiento de las obras (MANT=0..100 para probar; por defecto 100%). La estrategia equilibrada repara lo agrietado.
-  if (S.clima) { S.mant = MANT; if (strat === 'fair') S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
+  if (S.clima) { S.mant = MANT; if (prep) S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
   for (let n = 0; n < 8; n++) {
     const c2 = counts(S), F2 = finance(S);
     let k = null;
@@ -40,7 +42,7 @@ export function botYear(S, strat, eth) {
     let t = freeTiles(S, k);
     if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));
     // Fase 1: la estrategia equilibrada se prepara: no tala bosque ni construye en laderas erosionadas si hay otro sitio.
-    if (strat === 'fair' && S.clima) { const riesgo = i => S.map[i].t === 'bosque' || S.map[i].er > 0 || S.map[i].dr > 0; t = t.filter(i => !riesgo(i)).concat(t.filter(riesgo)); }
+    if (prep && S.clima) { const riesgo = i => S.map[i].t === 'bosque' || S.map[i].er > 0 || S.map[i].dr > 0; t = t.filter(i => !riesgo(i)).concat(t.filter(riesgo)); }
     if (!t.length) break;
     build(S, k, t[0]);
   }
