@@ -18,3 +18,4 @@ export * from './pobladores.js';
 export * from './clima.js';
 export * from './suelo.js';
 export * from './desgaste.js';
+export * from './construccion.js';

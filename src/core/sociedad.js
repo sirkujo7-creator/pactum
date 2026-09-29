@@ -5,6 +5,7 @@ import { counts, D, RM, hasLaw } from './reglas.js';
 import { countT } from './mundo.js';
 import { factorAgua, climaActivo } from './clima.js';
 import { animoPorDesgaste } from './desgaste.js';
+import { empleosDeObra } from './construccion.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3; }
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
@@ -20,6 +21,7 @@ export function society(S) {
   let ja = 0;
   Object.keys(C.B).forEach(k => { if (k !== 'taller') ja += (C.B[k].ja || 0) * c[k]; });
   ja += poweredT(S, c) * 9;
+  ja += empleosDeObra(S); // fase 2: las obras en construcción emplean gente (Keynes)
   let camp, art, un;
   if (W >= jc + ja) { camp = jc; art = ja; un = W - jc - ja; }
   else { const t = jc + ja; camp = t ? Math.round(W * jc / t) : 0; art = W - camp; un = 0; }

@@ -64,7 +64,7 @@ export function desgasteDelAnio(S) {
   const paso = K().desgasteBase + K().desgasteSinMantenimiento * (1 - m) - K().reparaConMantenimiento * m;
   let agr = 0, aba = 0;
   for (const x of S.map) {
-    if (!x.b) continue;
+    if (!x.b || x.ob) continue;
     const antes = nivelObra(x);
     x.u = clamp(Math.round(((x.u || 0) + paso * (.7 + azar() * .6)) * 10) / 10, 0, 100);
     if (!x.u) delete x.u;

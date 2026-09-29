@@ -6,6 +6,7 @@ import { nearRiver } from './mundo.js';
 import { society } from './sociedad.js';
 import { factorCosecha, climaActivo, aporteFondo } from './clima.js';
 import { rindeObra, mantenimiento } from './desgaste.js';
+import { cuotasPendientes } from './construccion.js';
 
 export const RAT = [[85, 'AAA', 0], [75, 'AA', .01], [65, 'A', .02], [55, 'BBB', .04], [45, 'BB', .07], [35, 'B', .11], [-999, 'CCC', .16]];
 
@@ -25,7 +26,7 @@ export function finance(S) {
   const taxC = Math.round(inc.c * S.tx.c / 100), taxA = Math.round(inc.a * S.tx.a / 100), taxE = Math.round(inc.e * S.tx.e / 100);
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
-  S.map.forEach(x => { if (x.b) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r; if (r) up += C.B[x.b].up; } });
+  S.map.forEach(x => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r; if (r) up += C.B[x.b].up; } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100);
   const lawCost = Math.round(((hasLaw(S, 'educacion') ? S.pop * .15 : 0) + (hasLaw(S, 'subsidio') ? so.camp * .8 : 0)) * S.price);
@@ -34,13 +35,13 @@ export function finance(S) {
   const pay = Math.min(S.debt + interest, Math.ceil((S.debt + interest) * .15));
   let cpn = 0, mat = 0;
   S.bonds.forEach(b => { cpn += Math.round(b.amt * b.cpn); if (b.due <= S.year) mat += b.amt; });
-  const rev = taxC + taxA + taxE + fee, fondo = aporteFondo(S, rev), net = rev - up - admin - lawCost - pay - cpn - mat - fondo;
+  const rev = taxC + taxA + taxE + fee, fondo = aporteFondo(S, rev), obras = cuotasPendientes(S), net = rev - up - admin - lawCost - pay - cpn - mat - fondo - obras;
   let fcap = 0;
   S.map.forEach((x, i) => { if (x.b === 'cultivo') fcap += (nearRiver(S, i) ? 16 : 12) * rindeObra(S, x); });
   if (climaActivo(S)) fcap *= factorCosecha(S); // fase 1: las lluvias del año
   const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.ceil(S.pop * .5);
   const post = { c: inc.c * (1 - S.tx.c / 100), a: inc.a * (1 - S.tx.a / 100), e: inc.e * (1 - S.tx.e / 100), u: inc.u };
-  return { so, taxC, taxA, taxE, fee, up, admin, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo };
+  return { so, taxC, taxA, taxE, fee, up, admin, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras };
 }
 
 // Acciones financieras.

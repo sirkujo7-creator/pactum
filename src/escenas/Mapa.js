@@ -141,6 +141,29 @@ export class Mapa extends Phaser.Scene {
     const t = this.T.tiles[i], deSuelo = x.b === 'cultivo' || x.b === 'cafetal';
     // Fase 1: desgaste visible (0 buen estado, 1 gastada, 2 agrietada, 3 abandonada).
     const nivel = this.S.desgaste && x.u ? nivelObra(x) : 0;
+    // Fase 2: obra en construcción: cimientos, muros que suben con andamio y material; gris si está detenida.
+    const ob = x.ob, sube = ob ? (ob.n === 3 ? [0, .55, 1][ob.p - 1] : ob.n === 2 ? [.5, 1][ob.p - 1] : .6) : 1;
+    if (ob) {
+      const H = this.hojas.edificios, c0 = P(t.r + .5, t.c + .5, t.h), gris = ob.det >= C.OBRAS.aniosElefante ? 0x9A9288 : ob.det ? 0xC4BDB2 : 0;
+      const pone = (k, dx, dy, dz = 0) => { const img = this.add.image(c0[0] + dx, c0[1] + dy, 'edificios', k).setOrigin(H.marcos[k].ax / H.marcos[k].w, H.marcos[k].ay / H.marcos[k].h).setScale(1 / H.escala).setDepth(t.r + t.c + 1 + dz); if (gris) img.setTint(gris); this.obras[i].push(img); return img; };
+      pone('cimientos', 0, 0, -.2);
+      pone('material', 20, 8, .4);
+      if (sube > 0) {
+        for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg)) {
+          if (f.n || f.k.startsWith('bandera')) continue;
+          const img = this.figura('edificios', f.k, t.r + .5 + (f.dv || 0), t.c + .5 + (f.du || 0), t.h, f.s || 1).setDepth(t.r + t.c + 1);
+          const m = H.marcos[f.k], y0 = Math.round(m.ay * (1 - sube));
+          if (sube < 1) img.setCrop(0, y0, m.w, m.h - y0);
+          img.setTint(gris || 0xF4EEE2);
+          this.obras[i].push(img);
+          // El andamio cubre el ancho del edificio y la altura que ya tienen los muros.
+          const a = pone('andamio', 0, 2, .05), alto = Math.max(14, (m.ay / H.escala) * sube + 6);
+          a.setScale(Math.min(1.2, img.displayWidth * .8 / 52) / H.escala, Math.min(1.3, alto / 50) / H.escala).setAlpha(.9);
+        }
+      }
+      if (gris && ob.det >= C.OBRAS.aniosElefante) this.desgasteVisible(i, 3);
+      return;
+    }
     for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg)) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
       const r = t.r + .5 + (f.dv || 0), c = t.c + .5 + (f.du || 0), h = f.n || deSuelo ? this.T.hf(r, c) : t.h;
@@ -196,7 +219,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x) { return `${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}`; }
+  huella(x) { return `${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}`; }
   refrescarCambios(antes) {
     const S = this.S, sectores = new Set(), cambiadas = [];
     S.map.forEach((x, i) => { if (this.huella(x) !== antes[i]) cambiadas.push(i); });
@@ -237,7 +260,8 @@ export class Mapa extends Phaser.Scene {
     Sonido.tap();
     this.ui.logros();
     const guia = checkGuide(this.S);
-    if (typeof r === 'string' || guia) this.ui.toast([typeof r === 'string' ? r : '', guia || ''].join(' ').trim());
+    const ob = this.S.map[i].ob, empieza = ob ? C.OBRAS.textos.empieza.replace('{obra}', C.B[k].a).replace('{n}', ob.n === 1 ? 'un año' : ob.n + ' años') : '';
+    if (typeof r === 'string' || guia || empieza) this.ui.toast([empieza, typeof r === 'string' ? r : '', guia || ''].join(' ').trim());
     this.marcarPosibles(this.ui.herramienta);
     this.ui.render();
   }

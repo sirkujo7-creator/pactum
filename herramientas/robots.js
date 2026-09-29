@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
+  obrasEnCurso, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -21,7 +21,9 @@ export function botYear(S, strat, eth, op = {}) {
   // Mantenimiento de las obras (MANT=0..100 para probar; por defecto 100%). La estrategia equilibrada repara lo agrietado.
   if (S.clima) { S.mant = MANT; if (prep) S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
   for (let n = 0; n < 8; n++) {
-    const c2 = counts(S), F2 = finance(S);
+    // Fase 2: las obras en construcción cuentan como ya encargadas (no se empieza otra igual).
+    const c2 = counts(S), F2 = finance(S), eo = obrasEnCurso(S);
+    for (const k in eo) c2[k] += eo[k];
     let k = null;
     if (F2.fprod - F2.cons < 4 && S.food < 40) k = 'cultivo';
     else if (F2.so.un > 2 && F2.so.camp >= F2.so.jc && F2.fprod - F2.cons < 10) k = 'cultivo';

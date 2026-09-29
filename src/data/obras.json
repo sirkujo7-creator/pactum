@@ -1,0 +1,32 @@
+{
+  "leccion": "Flujo de caja: una obra grande se paga por etapas, año tras año. Empezarla sin tener con qué terminarla deja elefantes blancos: plata gastada que no presta ningún servicio.",
+  "etapas": {
+    "1": [
+      "Construcción"
+    ],
+    "2": [
+      "Cimientos y estructura",
+      "Acabados"
+    ],
+    "3": [
+      "Cimientos",
+      "Estructura",
+      "Acabados"
+    ]
+  },
+  "empleosPorObra": 6,
+  "aniosElefante": 2,
+  "devolucionAlDemoler": 0.3,
+  "textos": {
+    "empieza": "Empezó la obra: {obra}. Estará lista en {n}.",
+    "termina": "Terminaste {obra}: ya presta servicio.",
+    "detenida": "La obra de {obra} se detuvo: no alcanzó el oro para pagar la siguiente etapa ({c} de oro).",
+    "elefante": "La obra de {obra} lleva {n} años detenida: ya es un elefante blanco.",
+    "reanuda": "Se reanudó la obra de {obra}.",
+    "enCurso": "En construcción: etapa {p} de {n} ({etapa}).",
+    "proximoPago": "Siguiente pago: {c} de oro al cerrar el año.",
+    "ultimoAnio": "Se termina al cerrar este año.",
+    "parada": "Obra detenida por falta de oro. Se reanuda sola cuando el tesoro tenga {c} de oro al cerrar el año.",
+    "fichaElefante": "Elefante blanco: una obra a medias que no presta servicio. Aún se puede terminar."
+  }
+}

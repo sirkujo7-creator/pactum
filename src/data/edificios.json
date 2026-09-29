@@ -63,7 +63,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 3
+    "empleosArtesanos": 3,
+    "aniosDeObra": 1
   },
   "hospital": {
     "icono": "🏥",
@@ -76,7 +77,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 3
+    "empleosArtesanos": 3,
+    "aniosDeObra": 2
   },
   "taller": {
     "icono": "🏭",
@@ -89,7 +91,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 9
+    "empleosArtesanos": 9,
+    "aniosDeObra": 1
   },
   "agora": {
     "icono": "🏛️",
@@ -102,7 +105,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 1
+    "empleosArtesanos": 1,
+    "aniosDeObra": 2
   },
   "mina": {
     "icono": "⛏️",
@@ -116,7 +120,8 @@
       "montana"
     ],
     "empleosArtesanos": 10,
-    "tasas": 25
+    "tasas": 25,
+    "aniosDeObra": 2
   },
   "banco": {
     "icono": "🏦",
@@ -129,7 +134,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 2
+    "empleosArtesanos": 2,
+    "aniosDeObra": 2
   },
   "cafetal": {
     "icono": "☕",
@@ -160,7 +166,8 @@
     ],
     "juntoAlRio": true,
     "empleosArtesanos": 2,
-    "agua": 70
+    "agua": 70,
+    "aniosDeObra": 1
   },
   "molino": {
     "icono": "⚙️",
@@ -175,7 +182,8 @@
     ],
     "juntoAlRio": true,
     "empleosArtesanos": 2,
-    "energia": 3
+    "energia": 3,
+    "aniosDeObra": 1
   },
   "puerto": {
     "icono": "⛵",
@@ -190,7 +198,8 @@
     ],
     "juntoAlRio": true,
     "empleosArtesanos": 5,
-    "tasas": 18
+    "tasas": 18,
+    "aniosDeObra": 2
   },
   "universidad": {
     "icono": "🎓",
@@ -203,6 +212,7 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 5
+    "empleosArtesanos": 5,
+    "aniosDeObra": 3
   }
 }

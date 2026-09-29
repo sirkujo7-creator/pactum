@@ -13,7 +13,7 @@ export function counts(S) {
   Object.keys(C.B).forEach(k => c[k] = 0);
   // Fase 1: una obra abandonada por el deterioro no cuenta hasta que se repare.
   const aband = C.DESGASTE ? C.DESGASTE.estados[3].desde : 101;
-  S.map.forEach(x => { if (x.b && !(x.u >= aband)) c[x.b]++; });
+  S.map.forEach(x => { if (x.b && !(x.u >= aband) && !x.ob) c[x.b]++; }); // fase 2: una obra en construcción aún no presta servicio
   return c;
 }
 export function cap(S) { return counts(S).casa * 10; }

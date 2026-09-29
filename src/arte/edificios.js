@@ -231,6 +231,29 @@ function recetas() {
   // Vida de los edificios (fase 1): grietas en los muros y maleza al pie de las obras descuidadas.
   L.push(['grieta', 14, 18, 7, 9, g => { g.strokeStyle = '#4A3A2E'; g.lineCap = 'round'; g.lineJoin = 'round'; g.globalAlpha = .75; g.lineWidth = .9; g.beginPath(); g.moveTo(-1, -8); g.lineTo(1, -4); g.lineTo(-1.5, -1); g.lineTo(1.5, 3); g.lineTo(0, 7); g.moveTo(1, -4); g.lineTo(4, -2.5); g.moveTo(-1.5, -1); g.lineTo(-4.5, 1); g.moveTo(1.5, 3); g.lineTo(4, 5); g.stroke(); g.globalAlpha = .3; g.lineWidth = 2; g.strokeStyle = '#8A7560'; g.beginPath(); g.moveTo(-1, -8); g.lineTo(1, -4); g.lineTo(-1.5, -1); g.lineTo(1.5, 3); g.stroke(); g.globalAlpha = 1; }]);
   L.push(['maleza', 20, 14, 10, 11, g => { const cols = ['#7E8F4A', '#93A052', '#6E7E40', '#A8A060']; for (let k = 0; k < 11; k++) { const x = (k - 5) * 1.6 + Math.sin(k * 2.3) * .8, h = 5 + (k * 37 % 6); g.strokeStyle = cols[k % 4]; g.lineWidth = 1; g.beginPath(); g.moveTo(x, 0); g.quadraticCurveTo(x + Math.sin(k) * 1.5, -h * .6, x + Math.sin(k * 1.7) * 2.5, -h); g.stroke(); } g.globalAlpha = .6; g.fillStyle = '#B8A45A'; for (let k = 0; k < 3; k++) { g.beginPath(); g.arc(-4 + k * 4, -6 - k % 2 * 2, .8, 0, 7); g.fill(); } g.globalAlpha = 1; }]);
+  // Obras por etapas (fase 2): cimientos con estacas, andamio de guadua y material apilado.
+  L.push(['cimientos', 68, 36, 34, 19, (g, r) => {
+    iso(g, .82, .82, 0, 3, '#A8A094', '#8E877D', '#C2B9A8', r);
+    g.strokeStyle = '#6B5140'; g.lineWidth = 1.2; g.lineCap = 'round';
+    for (const [u, v] of [[-.41, -.41], [.41, -.41], [.41, .41], [-.41, .41]]) { const p = V2(u, v, 3); g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0], p[1] - 7); g.stroke(); }
+    g.globalAlpha = .6; g.strokeStyle = '#E8DCC0'; g.lineWidth = .5; g.beginPath(); const s = [[-.41, -.41], [.41, -.41], [.41, .41], [-.41, .41], [-.41, -.41]].map(([u, v]) => V2(u, v, 9)); s.forEach((p, k) => k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); g.globalAlpha = 1;
+    g.globalAlpha = .35; g.strokeStyle = '#6E665C'; g.lineWidth = .6; for (let k = -2; k <= 2; k++) { const a = V2(-.35, k * .15, 3), b = V2(.35, k * .15, 3); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); } g.globalAlpha = 1;
+  }]);
+  L.push(['andamio', 60, 64, 30, 56, g => {
+    g.lineCap = 'round';
+    const poste = (x, y0, y1) => { g.strokeStyle = '#8A6A44'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(x, y0); g.lineTo(x, y1); g.stroke(); g.strokeStyle = '#B99A6A'; g.lineWidth = .5; g.beginPath(); g.moveTo(x - .4, y0); g.lineTo(x - .4, y1); g.stroke(); };
+    [-26, -12, 0, 13, 26].forEach((x, k) => poste(x, k === 2 ? 2 : 6 - Math.abs(x) * .45, -48));
+    for (const y of [-10, -24, -38]) {
+      g.strokeStyle = '#9B7650'; g.lineWidth = 2.2; g.beginPath(); g.moveTo(-26, y - 6 + 12 * .45 * 1); g.lineTo(0, y + 6); g.lineTo(26, y - 6 + 12 * .45 * 1); g.stroke();
+      g.strokeStyle = '#5E4330'; g.lineWidth = .5; g.beginPath(); g.moveTo(-26, y - .5 + 5.4 - 6); g.lineTo(0, y + 5.5); g.lineTo(26, y - .6); g.stroke();
+    }
+    g.strokeStyle = '#7A5C3A'; g.lineWidth = .8; g.globalAlpha = .8; g.beginPath(); g.moveTo(-26, -8); g.lineTo(-12, -30); g.moveTo(13, -8); g.lineTo(26, -30); g.moveTo(-12, -22); g.lineTo(0, -44); g.stroke(); g.globalAlpha = 1;
+  }]);
+  L.push(['material', 26, 18, 13, 13, (g, r) => {
+    g.globalAlpha = .22; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(2, 1, 11, 3, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+    for (let k = 0; k < 3; k++) for (let j = 0; j < 3 - k; j++) { g.fillStyle = (j + k) % 2 ? '#B5654A' : '#A9573F'; g.fillRect(-9 + j * 5 + k * 2.5, -2 - k * 2.6, 4.6, 2.4); }
+    g.strokeStyle = '#8A6A44'; g.lineWidth = 1.6; g.lineCap = 'round'; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(3 + k * 1.2, -1 - k * 1.8); g.lineTo(11 + k * 1.2, -3 - k * 1.8); g.stroke(); }
+  }]);
   L.push(['humo', 16, 16, 8, 8, g => { const gr = g.createRadialGradient(0, 0, 0, 0, 0, 7); gr.addColorStop(0, 'rgba(142,138,134,.9)'); gr.addColorStop(1, 'rgba(142,138,134,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); }]);
   return L;
 }
