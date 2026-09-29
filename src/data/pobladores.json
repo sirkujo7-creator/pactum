@@ -39,7 +39,7 @@
   },
   "oficios": {
     "cultivo": "Agricultor", "cafetal": "Caficultor", "mercado": "Comerciante", "taller": "Artesano del taller",
-    "escuela": "Maestro", "hospital": "Enfermero", "molino": "Molinero", "acueducto": "Fontanero",
+    "escuela": "Maestro", "hospital": "Enfermero", "molino": "Molinero", "acueducto": "Fontanero", "recaudo": "Recaudador",
     "puerto": "Barquero", "mina": "Minero", "banco": "Empleado del banco", "universidad": "Profesor",
     "agora": "Funcionario público", "casa": "Hacendado", "desempleado": "Busca trabajo", "nino": "Estudiante", "ninoSinEscuela": "Todavía sin escuela"
   }

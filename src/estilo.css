@@ -43,6 +43,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .pill small{font-family:"Alegreya Sans",sans-serif;font-size:.78rem;color:var(--muted)}
 .ic{width:20px;height:20px;display:block}
 .controles{position:absolute;right:calc(10px + env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:8px}
+.controles button.on{background:var(--accent);color:#fff}
 /* Barra inferior (dock) */
 .dock{pointer-events:auto;position:absolute;left:0;right:0;bottom:0;display:flex;align-items:stretch;gap:2px;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line)}
 .dk{flex:1 0 54px;background:none;border:0;border-radius:10px;font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 2px;min-height:48px}

@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -76,6 +76,8 @@ export class Mapa extends Phaser.Scene {
     this.efectos = new Efectos(this);
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
+    this.capaCob = this.add.graphics().setDepth(PROF_POSIBLES - .5); // fase 2: capa de cobertura
+    this.verCobertura = false;
     this.marcaG = this.add.graphics().setDepth(PROF_MARCA);
     this.activarControles();
     this.ui.avisar('');
@@ -215,6 +217,7 @@ export class Mapa extends Phaser.Scene {
     this.ponerPlantas(i); this.ponerObra(i);
     for (const [sr, sc] of sectoresAfectados(this.T, i)) this.pintarSector(sr, sc);
     this.revisarCambiosGenerales();
+    this.dibujarCobertura();
     if (this.pob) this.pob.planear();
     if (this.vida) this.vida.poner();
   }
@@ -243,8 +246,43 @@ export class Mapa extends Phaser.Scene {
   }
 
   // ---------- Construir ----------
+  // Fase 2: capa de cobertura. Colorea las casas según los servicios que tienen cerca y dibuja el alcance de cada
+  // servicio. Con una obra de servicio elegida en Construir, muestra solo ese servicio.
+  alternarCobertura() {
+    this.verCobertura = !this.verCobertura;
+    this.dibujarCobertura();
+    if (this.verCobertura) this.ui.toast(coberturaActiva(this.S) ? C.COB.textos.capaAyuda : C.STAGES[1].n + ': la cobertura se abre al llegar a Pueblo.');
+    this.ui.render();
+  }
+  dibujarCobertura() {
+    const g = this.capaCob, S = this.S, T = this.T;
+    g.clear();
+    // Quita el color de las casas pintadas antes (vuelven a su tono normal o de desgaste).
+    for (const i of this.casasTenidas || []) this.ponerObra(i);
+    this.casasTenidas = [];
+    const k = this.ui.herramienta, solo = SERVICIOS.includes(k) ? k : null;
+    if (!coberturaActiva(S) || (!this.verCobertura && !solo)) return;
+    const lista = solo ? [solo] : SERVICIOS, COL = { escuela: 0xD9A628, hospital: 0xC0392B, mercado: 0xD2691E, recaudo: 0x6E4B9E };
+    const N = T.N, en = (r, c) => P(Math.max(0, Math.min(N, r)), Math.max(0, Math.min(N, c)), T.hf(Math.max(0, Math.min(N - .01, r)), Math.max(0, Math.min(N - .01, c))));
+    for (const s of lista) for (const p of puntosDe(S, s)) {
+      const t = T.tiles[p.i], pts = [];
+      for (let a = 0; a <= 48; a++) { const q = en(t.r + .5 + Math.cos(a / 48 * Math.PI * 2) * p.r, t.c + .5 + Math.sin(a / 48 * Math.PI * 2) * p.r); pts.push({ x: q[0], y: q[1] }); }
+      g.fillStyle(COL[s], .04).fillPoints(pts, true).lineStyle(1.4, COL[s], .8).strokePoints(pts, true);
+    }
+    S.map.forEach((x, i) => {
+      if (x.b !== 'casa' || x.ob || x.u >= 80) return;
+      const sv = serviciosDeCasa(S, i), n = lista.filter(s => sv[s]).length, t = T.tiles[i];
+      const col = n === lista.length ? 0x3F9A4A : n >= lista.length / 2 ? 0xE0B040 : 0xC0392B;
+      const q = [P(t.r - .05, t.c - .05, t.h00), P(t.r - .05, t.c + 1.05, t.h01), P(t.r + 1.05, t.c + 1.05, t.h11), P(t.r + 1.05, t.c - .05, t.h10)].map(p => ({ x: p[0], y: p[1] }));
+      g.fillStyle(col, .5).fillPoints(q, true);
+      // La casa misma toma el color: verde, amarillo o rojo.
+      for (const img of this.obras[i] || []) if (img.texture.key === 'edificios') img.setTint(col === 0x3F9A4A ? 0xB6E3A8 : col === 0xE0B040 ? 0xF6DE8A : 0xF4A08E);
+      this.casasTenidas.push(i);
+    });
+  }
   marcarPosibles(k) {
     this.posibles.clear();
+    this.dibujarCobertura();
     if (!k) return;
     this.posibles.fillStyle(0xF2C94C, .16).lineStyle(1, 0xF2C94C, .55);
     for (const i of freeTiles(this.S, k)) {
@@ -355,6 +393,7 @@ export class Mapa extends Phaser.Scene {
     this.revisarCambiosGenerales();
     this.pob.planear();
     this.efectos.actualizar(); this.efectos.humoIncendio();
+    this.dibujarCobertura();
     const d = sequedad(this.S);
     if (Math.abs(d - this.dry) >= .15) this.repintarTodo(d);
   }
@@ -517,7 +556,7 @@ export class Mapa extends Phaser.Scene {
         ArrowLeft: () => this.mover(paso, 0), ArrowRight: () => this.mover(-paso, 0), ArrowUp: () => this.mover(0, paso), ArrowDown: () => this.mover(0, -paso),
         a: () => this.mover(paso, 0), d: () => this.mover(-paso, 0), w: () => this.mover(0, paso), s: () => this.mover(0, -paso),
         '+': () => this.zoomCentro(1.25), '=': () => this.zoomCentro(1.25), '-': () => this.zoomCentro(1 / 1.25),
-        '0': () => this.encuadrar(), b: () => this.ui.alternarHoja('construir'),
+        '0': () => this.encuadrar(), c: () => this.alternarCobertura(), b: () => this.ui.alternarHoja('construir'),
         '1': () => this.ui.alternarHoja('construir'), '2': () => this.ui.alternarHoja('hacienda'), '3': () => this.ui.alternarHoja('sociedad'),
         '4': () => this.ui.alternarHoja('leyes'), '5': () => this.ui.alternarHoja('cronica'), ' ': () => this.terminarAnio(),
         Escape: () => { if (this.ui.herramienta) this.ui.elegir(null); else if (this.ui.hojaAbierta()) this.ui.cerrarHojas(); else this.ui.cerrarFicha(); }

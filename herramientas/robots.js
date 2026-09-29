@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  obrasEnCurso, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -31,10 +31,14 @@ export function botYear(S, strat, eth, op = {}) {
     else if (S.stage >= 1 && S.pop > waterCap(S, c2) - 15) k = 'acueducto';
     else if (S.stage >= 1 && c2.taller > energy(S, c2)) k = 'molino';
     else if (S.pop >= c2.casa * 10 - 6) k = 'casa';
+    else if (S.clima && F2.evadido >= 6 && S.gold > 60 && !eo.recaudo) k = 'recaudo'; // solo si la evasión cuesta más que la oficina
     else if (S.stage >= 2 && c2.agora < 1) k = 'agora';
     else if (S.stage >= 1 && c2.hospital < 1) k = 'hospital';
     else if (S.stage >= 1 && c2.escuela * 50 < S.pop) k = 'escuela';
     else if (S.stage >= 1 && c2.hospital * 60 < S.pop) k = 'hospital';
+    else if (S.clima && coberturaActiva(S) && !eo.escuela && cobertura(S).escuela < .75 && S.gold > 100) k = 'escuela';
+    else if (S.clima && coberturaActiva(S) && !eo.hospital && cobertura(S).hospital < .75 && S.gold > 120) k = 'hospital';
+    else if (S.clima && coberturaActiva(S) && cobertura(S).mercado < .6 && S.gold > 70) k = 'mercado';
     else if (F2.so.un > 2) k = (S.stage >= 1 && strat !== 'fair') ? 'taller' : 'mercado';
     else if (S.stage >= 2 && c2.agora < 1) k = 'agora';
     else if (S.env < 40 || (S.expc > 4 && c2.parque < 5)) k = 'parque';
@@ -46,6 +50,11 @@ export function botYear(S, strat, eth, op = {}) {
     if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));
     // Fase 1: la estrategia equilibrada se prepara: no tala bosque ni construye en laderas erosionadas si hay otro sitio.
     if (prep && S.clima) { const riesgo = i => S.map[i].t === 'bosque' || S.map[i].er > 0 || S.map[i].dr > 0; t = t.filter(i => !riesgo(i)).concat(t.filter(riesgo)); }
+    // Fase 2: con cobertura por distancia, todo se construye cerca del centro, y los servicios donde cubren más casas.
+    if (S.clima && t.length) {
+      const dc = medirDesdeCentro(S), cerca = t.filter(i => dc(i) <= 12);
+      t = ordenarSitios(S, k, cerca.length ? cerca : t, i => (pref && !pref(i) ? 3 : 0));
+    }
     if (!t.length) break;
     build(S, k, t[0]);
   }

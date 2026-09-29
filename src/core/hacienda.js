@@ -7,6 +7,7 @@ import { society } from './sociedad.js';
 import { factorCosecha, climaActivo, aporteFondo } from './clima.js';
 import { rindeObra, mantenimiento } from './desgaste.js';
 import { cuotasPendientes } from './construccion.js';
+import { evasion } from './cobertura.js';
 
 export const RAT = [[85, 'AAA', 0], [75, 'AA', .01], [65, 'A', .02], [55, 'BBB', .04], [45, 'BB', .07], [35, 'B', .11], [-999, 'CCC', .16]];
 
@@ -23,7 +24,9 @@ export function canBorrow(S) { return S.stage >= 1 && rating(S).l !== 'CCC'; }
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
   const inc = { c: so.camp * 4 * w, a: so.art * 7 * w, e: so.el * 25 * w, u: so.un * w };
-  const taxC = Math.round(inc.c * S.tx.c / 100), taxA = Math.round(inc.a * S.tx.a / 100), taxE = Math.round(inc.e * S.tx.e / 100);
+  // Fase 2: lejos de una oficina de recaudo parte de la gente evade (ev = fracción que se pierde).
+  const ev = evasion(S), taxC = Math.round(inc.c * S.tx.c / 100 * (1 - ev)), taxA = Math.round(inc.a * S.tx.a / 100 * (1 - ev)), taxE = Math.round(inc.e * S.tx.e / 100 * (1 - ev));
+  const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
   S.map.forEach(x => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r; if (r) up += C.B[x.b].up * (x.mt || 1); } });
@@ -41,7 +44,7 @@ export function finance(S) {
   if (climaActivo(S)) fcap *= factorCosecha(S); // fase 1: las lluvias del año
   const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.ceil(S.pop * .5);
   const post = { c: inc.c * (1 - S.tx.c / 100), a: inc.a * (1 - S.tx.a / 100), e: inc.e * (1 - S.tx.e / 100), u: inc.u };
-  return { so, taxC, taxA, taxE, fee, up, admin, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras };
+  return { so, taxC, taxA, taxE, fee, up, admin, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras, evadido };
 }
 
 // Acciones financieras.

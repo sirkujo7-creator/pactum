@@ -1,0 +1,26 @@
+{
+  "leccion": "Equidad territorial: un servicio atiende a quien vive cerca. Las casas lejanas quedan por fuera, aunque en el papel sobren cupos.",
+  "leccionRecaudo": "Capacidad del Estado: cobrar impuestos exige estar presente. Lejos de una oficina de recaudo, la gente evade.",
+  "radios": {
+    "escuela": 6,
+    "hospital": 8,
+    "mercado": 6,
+    "recaudo": 7,
+    "agora": 7,
+    "centro": 6
+  },
+  "evasion": 0.35,
+  "animoSinMercado": 6,
+  "servicios": {
+    "escuela": "Escuela",
+    "hospital": "Hospital",
+    "mercado": "Mercado",
+    "recaudo": "Recaudo"
+  },
+  "textos": {
+    "capa": "Cobertura",
+    "capaAyuda": "Verde: la casa tiene escuela, hospital, mercado y recaudo cerca. Amarillo: le falta alguno. Rojo: le faltan casi todos. Los círculos muestran el alcance de cada servicio.",
+    "evasion": "Evasión (casas lejos del recaudo)",
+    "fichaCasa": "Servicios cerca de esta casa:"
+  }
+}
