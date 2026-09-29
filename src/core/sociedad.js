@@ -6,6 +6,7 @@ import { countT } from './mundo.js';
 import { factorAgua, climaActivo } from './clima.js';
 import { animoPorDesgaste } from './desgaste.js';
 import { empleosDeObra } from './construccion.js';
+import { cobertura, coberturaActiva } from './cobertura.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3; }
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
@@ -42,7 +43,9 @@ export function envTarget(S, c) {
 // Ánimo al que tiende cada clase este año.
 export function satTargets(S, c, hunger) {
   const P = Math.max(1, S.pop), so = society(S), ur = so.un / Math.max(1, so.P), ip = S.infl * 100;
-  const sc = S.stage >= 1 ? Math.min(1, c.escuela * 50 / P) : .8, hc = S.stage >= 1 ? Math.min(1, c.hospital * 60 / P) : .8;
+  // Fase 2: además de los cupos, cuenta la distancia: solo se atiende a las casas dentro del radio.
+  const cob = cobertura(S), sinMercado = coberturaActiva(S) ? C.COB.animoSinMercado * (1 - cob.mercado) : 0;
+  const sc = S.stage >= 1 ? Math.min(1, c.escuela * 50 / P, cob.escuela) : .8, hc = S.stage >= 1 ? Math.min(1, c.hospital * 60 / P, cob.hospital) : .8;
   const cov = (sc + hc) * 8;
   const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5))) : 0;
   const ds = D(S).sat;
@@ -50,8 +53,8 @@ export function satTargets(S, c, hunger) {
   const L = k => hasLaw(S, k) ? 1 : 0, obras = animoPorDesgaste(S);
   return {
     sc, expc, thirst,
-    c: RM(S, 'sc') + 48 + 0 - (S.tx.c - 10) * 2 + (hunger ? -20 : 5) + cov - ur * 30 - ip * 1.5 + (S.eq - 50) * .2 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('subsidio') * 10 - thirst) - obras,
-    a: RM(S, 'sa') + 48 - (S.tx.a - 12) * 1.8 + cov + Math.min(8, c.parque * 2) - ur * 30 - ip * 1.5 + (S.eq - 50) * .1 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3 - thirst) - obras,
+    c: RM(S, 'sc') + 48 + 0 - (S.tx.c - 10) * 2 + (hunger ? -20 : 5) + cov - ur * 30 - ip * 1.5 + (S.eq - 50) * .2 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('subsidio') * 10 - thirst) - obras - sinMercado,
+    a: RM(S, 'sa') + 48 - (S.tx.a - 12) * 1.8 + cov + Math.min(8, c.parque * 2) - ur * 30 - ip * 1.5 + (S.eq - 50) * .1 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3 - thirst) - obras - sinMercado,
     e: 58 - (S.tx.e - 15) * 1.4 + c.banco * 4 - (S.eq - 50) * .1 - ip + ds + RM(S, 'se') - (L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)
   };
 }

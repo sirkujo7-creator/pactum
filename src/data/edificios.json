@@ -169,6 +169,19 @@
     "agua": 70,
     "aniosDeObra": 1
   },
+  "recaudo": {
+    "icono": "🧾",
+    "nombre": "Oficina de recaudo",
+    "articulo": "una oficina de recaudo",
+    "descripcion": "Cobra los impuestos en su zona. Fuera del alcance de una oficina (o del centro del pueblo), buena parte de la gente evade. Emplea 2.",
+    "costo": 50,
+    "mantenimiento": 3,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 2
+  },
   "molino": {
     "icono": "⚙️",
     "nombre": "Molino de agua",

@@ -115,6 +115,16 @@ function recetas() {
     techo(g, b, 3, 8, '#5E4A40', '#8E5440', r);
     const s = V2(.35, .42); for (let k = 0; k < 3; k++) wash(g, [[s[0] - 3 + k * 2, s[1]], [s[0] + 1 + k * 2, s[1]], [s[0] + 1 + k * 2, s[1] - 4], [s[0] - 3 + k * 2, s[1] - 4]], '#9C7447', r, .95, .2);
   }]);
+  // Oficina de recaudo (fase 2): casita encalada con puerta verde, letrero con moneda y mesa del recaudador.
+  L.push(['recaudo', 70, 66, 35, 50, (g, r) => {
+    sombra(g, 20, 6, 8); const b = iso(g, .5, .42, 0, 15, '#F3EEE3', '#DAD2C2', null, r);
+    wash(g, caraI(b, 0, 1, 0, 3), '#5E7F6A', r, .95, .3); wash(g, caraD(b, 0, 1, 0, 3), '#4C6B58', r, .95, .3);
+    wash(g, caraI(b, .56, .2, 0, 9), '#3F6B52', r, .97, .2); ventanas(g, b, 'I', 1, 5, 5, '#7FA3B4', r, .22, .2); wash(g, caraI(b, .12, .22, 5, 5), '#7FA3B4', r, .95, .2);
+    techo(g, b, 4, 10, '#9E4A32', '#DAD2C2', r);
+    const s = caraI(b, .2, .5, 11, 3.2); wash(g, s, '#6B4A33', r, .97, .2);
+    const c = [(s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2]; g.fillStyle = '#E2B24F'; g.beginPath(); g.ellipse(c[0], c[1], 1.6, 1.2, 0, 0, 7); g.fill();
+    const m = V2(.34, .34); wash(g, [[m[0] - 4, m[1]], [m[0] + 4, m[1]], [m[0] + 4, m[1] - 4], [m[0] - 4, m[1] - 4]], '#8A6A44', r, .95, .2); monedas(g, m[0], m[1] - 5);
+  }]);
   L.push(['banco', 80, 76, 40, 54, (g, r) => {
     sombra(g, 24, 7, 8); const base = iso(g, .7, .62, 0, 3, '#CFC8B6', '#B3AB97', '#DDD6C5', r);
     const b = iso(g, .62, .54, 3, 17, '#E6E0D2', '#C9C1AE', '#DAD3C2', r);

@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -83,7 +83,8 @@ export class Interfaz {
         b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25)),
         b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25)),
         b('⤢', 'Ver todo el territorio (0)', () => mapa.listo && mapa.encuadrar()),
-        b('⌂', 'Ir a la aldea', () => mapa.listo && mapa.enfocarAldea())
+        b('⌂', 'Ir a la aldea', () => mapa.listo && mapa.enfocarAldea()),
+        this.bCob = b('◎', 'Capa de cobertura (c)', () => mapa.listo && mapa.alternarCobertura())
       ]),
       this.meta,
       hoja('construir', 'Construir', [this.tray, this.hint, el('div', { class: 'dos' }, [this.bSoltar, this.bDeshacer])]),
@@ -137,6 +138,7 @@ export class Interfaz {
 
   // ---------- Dibujo de todo ----------
   render() {
+    if (this.bCob) { const on = !!this.mapa.verCobertura; this.bCob.setAttribute('aria-pressed', String(on)); this.bCob.classList.toggle('on', on); }
     const S = this.S;
     if (!S) return;
     const c = counts(S), F = finance(S), so = F.so, R = rating(S), rg = RG(S);
@@ -230,6 +232,7 @@ export class Interfaz {
         ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
+      ${F.evadido ? `<p class="small">La evasión se llevó ${F.evadido} de oro: ${Math.round((1 - cobertura(S).recaudo) * 100)}% de las casas está lejos de una oficina de recaudo. ${C.COB.leccionRecaudo}</p>` : ''}
       <div class="cuatro"><button class="btn" data-a="prestamo" ${cb ? '' : 'disabled'}>Pedir préstamo</button><button class="btn" data-a="bono" ${cb ? '' : 'disabled'}>Emitir bono</button><button class="btn" data-a="imprimir" ${S.stage < 1 || S.over ? 'disabled' : ''}>Imprimir moneda</button><button class="btn" data-a="abonar" ${S.debt <= 0 || S.gold < 1 || S.over ? 'disabled' : ''}>Abonar 50</button></div>
       <p class="small">${S.stage < 1 ? 'El crédito y la emisión se abren al llegar a Pueblo.' : R.l === 'CCC' ? 'Calificación CCC: nadie te presta. Reduce deuda y déficit.' : 'Préstamo: 150, se paga 15% por año. Bono: 200 a 5 años, interés más bajo, pagas todo al vencer.'}</p>
       ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
@@ -303,6 +306,10 @@ export class Interfaz {
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
+      if (x.b === 'casa' && !x.ob && coberturaActiva(S)) {
+        const sv = serviciosDeCasa(S, i), CS = C.COB.servicios;
+        hijos.push(el('span', { text: `${C.COB.textos.fichaCasa} ${Object.keys(CS).map(s => `${sv[s] ? '✓' : '✗'} ${CS[s]}`).join(' · ')}` }));
+      }
       if (S.desgaste && nivelObra(x) > 0) { const e = estadoObra(x); hijos.push(el('span', { class: 'suelo', text: `${e.nombre}: ${C.DESGASTE.textos[e.id]}` })); }
       if (x.ob) {
         const T = C.OBRAS.textos, o = x.ob;
@@ -524,7 +531,7 @@ export class Interfaz {
       <p><b>Agua, energía y ladera.</b> Desde Pueblo necesitas acueductos para crecer y molinos para que los talleres funcionen. El café solo crece en ladera y el puerto va junto al río.</p>
       <p><b>Leyes.</b> Cada etapa te da un cupo más, y cada ley tiene ganadores y perdedores.</p>
       <p><b>Exigencia creciente.</b> Con los años el pueblo espera más calidad de vida. Lo que bastaba al principio no basta al final.</p>
-      <p><b>Controles.</b> En el celular: arrastra, pellizca para acercar y toca casillas o personas. En el computador: arrastra, usa la rueda para acercar, flechas para moverte, 1 a 5 para los paneles y la barra espaciadora para terminar el año.</p>
+      <p><b>Controles.</b> En el celular: arrastra, pellizca para acercar y toca casillas o personas. En el computador: arrastra, usa la rueda para acercar, flechas para moverte, 1 a 5 para los paneles, C para la capa de cobertura y la barra espaciadora para terminar el año. El botón ◎ muestra qué casas tienen escuela, hospital, mercado y recaudo cerca.</p>
       <p>Pierdes si la confianza o el ambiente llegan a cero, si caes dos veces en cesación de pagos o si pierdes unas elecciones.</p>
       <button class="main" id="okB">${primera ? 'Empezar a gobernar' : 'Entendido'}</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
