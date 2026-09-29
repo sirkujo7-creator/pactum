@@ -66,7 +66,8 @@ export function desgasteDelAnio(S) {
   for (const x of S.map) {
     if (!x.b || x.ob) continue;
     const antes = nivelObra(x);
-    x.u = clamp(Math.round(((x.u || 0) + paso * (.7 + azar() * .6)) * 10) / 10, 0, 100);
+    // Un contratista de buena reputación deja la obra con reserva de vida (desgaste negativo).
+    x.u = clamp(Math.round(((x.u || 0) + paso * (.7 + azar() * .6)) * 10) / 10, Math.min(0, x.u || 0), 100);
     if (!x.u) delete x.u;
     const ahora = nivelObra(x);
     if (ahora > antes) { if (ahora === 2) agr++; if (ahora === 3) aba++; }

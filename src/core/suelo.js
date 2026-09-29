@@ -73,7 +73,7 @@ export function sueloDelAnio(S) {
         perdidas.push(x.b === 'casa' ? 'una casa' : C.B[x.b].a);
         if (x.b === 'casa') S.pop = Math.max(1, S.pop - D.habitantesPorCasa);
         S.tr = clamp(S.tr - D.confianzaPorObra, 0, 100);
-        x.b = null;
+        x.b = null; delete x.ob; delete x.mt; delete x.u;
       }
       x.er = 0; x.dr = D.anios;
     }

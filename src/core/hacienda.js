@@ -26,7 +26,7 @@ export function finance(S) {
   const taxC = Math.round(inc.c * S.tx.c / 100), taxA = Math.round(inc.a * S.tx.a / 100), taxE = Math.round(inc.e * S.tx.e / 100);
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
-  S.map.forEach(x => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r; if (r) up += C.B[x.b].up; } });
+  S.map.forEach(x => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r; if (r) up += C.B[x.b].up * (x.mt || 1); } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100);
   const lawCost = Math.round(((hasLaw(S, 'educacion') ? S.pop * .15 : 0) + (hasLaw(S, 'subsidio') ? so.camp * .8 : 0)) * S.price);

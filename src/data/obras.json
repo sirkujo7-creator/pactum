@@ -39,28 +39,42 @@
       "id": "solida",
       "nombre": "Constructora del Combeima",
       "reputacion": 3,
-      "precio": 1.0,
+      "precio": 1.15,
+      "menosAnios": 0,
+      "desgasteInicial": -30,
+      "sobrecosto": 0,
+      "texto": "La más cara, con buenos materiales: su mantenimiento cuesta 30% menos para siempre y tarda mucho en gastarse.",
+      "mantenimiento": 0.7
+    },
+    {
+      "id": "rapida",
+      "nombre": "Obras Veloz del Tolima",
+      "reputacion": 2,
+      "precio": 1.25,
+      "menosAnios": 1,
       "desgasteInicial": 0,
       "sobrecosto": 0,
-      "texto": "Buena reputación: cumple el precio y el plazo."
+      "texto": "Cobra más por trabajar con doble turno: termina un año antes."
     },
     {
       "id": "barata",
       "nombre": "Obras El Ahorro",
       "reputacion": 1,
-      "precio": 0.8,
-      "desgasteInicial": 30,
-      "sobrecosto": 0.6,
-      "texto": "El precio más bajo. En otros pueblos se quejan de materiales pobres y de cuentas que crecen a mitad de obra."
+      "precio": 0.7,
+      "menosAnios": 0,
+      "desgasteInicial": 55,
+      "sobrecosto": 0.5,
+      "texto": "La más barata. Materiales pobres: la obra se entrega agrietada (rinde menos hasta que la repares) y 1 de cada 2 veces pide una etapa más."
     },
     {
       "id": "soborno",
       "nombre": "Consorcio La Palanca",
       "reputacion": 2,
-      "precio": 1.1,
-      "desgasteInicial": 10,
+      "precio": 1.0,
+      "menosAnios": 0,
+      "desgasteInicial": 15,
       "sobrecosto": 0,
-      "soborno": 0.15,
+      "soborno": 0.25,
       "rumbo": 10,
       "escandalo": {
         "probabilidad": 0.6,
@@ -69,7 +83,8 @@
           4
         ]
       },
-      "texto": "Precio algo alto. Su gerente te ofrece {s} de oro «para tu campaña» si lo eliges."
+      "texto": "Precio normal. Su gerente te ofrece {s} de oro «para tu campaña» si lo eliges."
     }
-  ]
+  ],
+  "variacionPrecio": 0.06
 }
