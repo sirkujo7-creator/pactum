@@ -300,7 +300,7 @@ export class Interfaz {
     const hijos = [];
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
-        el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price)} de oro al año.` }));
+        el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
       if (S.desgaste && nivelObra(x) > 0) { const e = estadoObra(x); hijos.push(el('span', { class: 'suelo', text: `${e.nombre}: ${C.DESGASTE.textos[e.id]}` })); }
@@ -388,9 +388,9 @@ export class Interfaz {
     if (e.df) soc.push(`alimento ${signo(e.df)} al año`);
     if (Math.abs(e.de) >= 1) soc.push(`ambiente ${signo(e.de)}`);
     const estrellas = n => '★'.repeat(n) + '☆'.repeat(3 - n);
-    const ofs = ofertas(S, k).map(o => `<button class="opt" data-of="${o.id}" ${S.gold < o.cuota ? 'disabled' : ''}>
+    const ofs = ofertas(S, k, i).map(o => `<button class="opt" data-of="${o.id}" ${S.gold < o.cuota ? 'disabled' : ''}>
         <b>${o.nombre}</b> <span class="small" aria-label="Reputación ${o.reputacion} de 3">${estrellas(o.reputacion)}</span><br>
-        ${o.total} de oro (${o.anios === 1 ? 'un pago' : `${o.anios} pagos de ${o.cuota}`})${S.gold < o.cuota ? ' · no alcanza el oro' : ''}
+        ${o.total} de oro · ${o.anios === 0 ? 'lista al instante' : o.anios === 1 ? '1 año, un pago' : `${o.anios} años, pagos de ${o.cuota}`}${S.gold < o.cuota ? ' · no alcanza el oro' : ''}
         <small>${o.texto.replace('{s}', o.sob)}</small></button>`).join('');
     this.tarjeta(`<div class="big">${C.B[k].e}</div><h3>Proyecto: ${this.nombre(k)}</h3>
       <div class="ledger"><table class="budget">
@@ -399,7 +399,7 @@ export class Interfaz {
         <tr><td>Resultado anual cuando funcione</td><td class="${e.dn < 0 ? 'neg' : ''}">${signo(e.dn)}</td></tr>
         <tr><td>VPN a ${e.horizonte} años (tasa ${Math.round(e.tasa * 100)}%)</td><td class="${e.vpn < 0 ? 'neg' : ''}">${signo(e.vpn)}</td></tr>
         <tr class="tot"><td>Se recupera</td><td>${e.recupera ? `en ${e.recupera} años` : 'no, en dinero'}</td></tr></table></div>
-      <p class="small"><b>Beneficio social:</b> ${soc.length ? soc.join(', ') : 'no cambia empleos ni alimento'}. ${C.B[k].d}</p>
+      <p class="small"><b>Beneficio social:</b> ${soc.length ? soc.join(', ') + '. ' : ''}${C.B[k].d}</p>
       <div class="phil"><b>Lo que enseña</b><br>${O.leccionProyecto}</div>
       <h3>Licitación: elige contratista</h3>${ofs}
       <p class="small">${O.leccionLicitacion}</p>
