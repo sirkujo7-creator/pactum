@@ -61,13 +61,15 @@ La versión 9 ya vive en la nueva base (Phaser, módulos, datos en JSON, app ins
 
 ## Estado de la fase 1 (territorio vivo)
 
+Terminada. Juan la jugó 100 años y la aprobó. Pidió, para después de las fases, más leyes, más dilemas y que cada decisión se vea en el mapa.
+
 | Paso | Estado |
 | --- | --- |
 | 1. Temporadas | Publicado (0.8.0). Lluvias abundantes, normales o escasas cada año; cambian la cosecha y el color del paisaje |
 | 2. El Niño y La Niña | Publicado (0.9.0). Desde Pueblo con 60 habitantes; pronóstico un año antes; fondo de emergencias en Hacienda (0–20% de los ingresos, 3% de interés); seis dilemas de clima |
 | 3. Suelo vivo | Publicado (0.10.0). El bosque vuelve a las laderas junto a otros bosques (más rápido con la ley ambiental); El Niño trae incendios; las laderas taladas se erosionan y con La Niña pueden derrumbarse y llevarse obras. Se ve en el mapa (bosque joven, cenizas y troncos, cárcavas, derrumbes) y en la ficha de cada casilla |
 | 4. Vida de los edificios | Publicado (0.11.0). Desde 25 habitantes las obras se gastan según el mantenimiento que se paga (control de 0% a 100% en Hacienda): en buen estado, gastada, agrietada (rinde 25% menos y baja el ánimo) y abandonada (deja de funcionar). Se ven con tono desteñido, grietas y maleza; se reparan desde la ficha o todas juntas en Hacienda. Robots: 62% con 100% de mantenimiento, 54% con 70%, casi 0% con 40% o menos |
-| 5. Balance | Publicado (0.11.1). `node herramientas/balance-fase1.js` compara las mismas partidas: mapa de la v9 68% (gana hacia el año 45); fase 1 con preparación 66% (año 55); fase 1 sin prepararse 36%. Unas 5 emergencias por partida; con preparación no aumentan las derrotas. Regímenes (Normal, equilibrada): República 62–66%, Monarquía 81%, Dictadura 75%, Aristocracia 73%, Plutocracia 51%, Populismo 47% (v9: 49%). Pendiente de decisión de Juan: las partidas ganadas duran más que la meta de 30 a 40 años (ya en la v9 duraban unos 45) |
+| 5. Balance | Publicado (0.11.1). `node herramientas/balance-fase1.js` compara las mismas partidas: mapa de la v9 68% (gana hacia el año 45); fase 1 con preparación 66% (año 55); fase 1 sin prepararse 36%. Unas 5 emergencias por partida; con preparación no aumentan las derrotas. Regímenes (Normal, equilibrada): República 62–66%, Monarquía 81%, Dictadura 75%, Aristocracia 73%, Plutocracia 51%, Populismo 47% (v9: 49%). Decisión de Juan: no se baja la meta de Polis; la duración (unos 55 años) se mantiene exigente. Juan jugó 100 años y aprobó la fase 1; el contenido nuevo (más leyes, dilemas y decisiones visibles) va después de las fases |
 
 ## Ideas propuestas (primera ronda)
 
@@ -324,7 +326,7 @@ Nunca más de tres sistemas con decisiones al mismo tiempo. Clima y suelo vivo f
 
 | Meta | Valor esperado |
 | --- | --- |
-| Duración de una partida ganada en Normal | 30 a 40 años de juego |
+| Duración de una partida ganada en Normal | Exigente: unos 45 a 55 años (decisión de Juan tras la fase 1; antes 30 a 40) |
 | Victorias de un jugador competente en Normal | 55% a 70% |
 | Diferencia entre regímenes | máximo 15 puntos (hoy Monarquía 93% y República 69%: corregir) |
 | Diferencia entre perfiles éticos | máximo 15 puntos |
