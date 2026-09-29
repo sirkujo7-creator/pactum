@@ -20,3 +20,4 @@ export * from './suelo.js';
 export * from './desgaste.js';
 export * from './construccion.js';
 export * from './cobertura.js';
+export * from './economia.js';

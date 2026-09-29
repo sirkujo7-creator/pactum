@@ -73,20 +73,23 @@ function recetas() {
     techo(g, b, 4.5, 12, '#A94B32', '#DDD3C0', r);
   }]));
   // Mercado de toldos (Aldea y Pueblo) y galería de mercado (desde Ciudad).
-  L.push(['mercado0', 78, 58, 39, 40, (g, r) => {
+  // Fase 2: con la comida cara los puestos quedan vacíos (variante 'v', sin frutas y con cajas vacías).
+  for (const vacio of [false, true]) L.push([vacio ? 'mercado0v' : 'mercado0', 78, 58, 39, 40, (g, r) => {
     sombra(g, 24, 6, 6);
     const puesto = (ou, ov, col) => {
       const b = iso(g, .24, .2, 0, 7, '#9C7447', '#7E5C37', '#B58B58', r, ou, ov);
       for (let k = 0; k < 4; k++) wash(g, caraI(b, k * .25, .25, 7, 4), k % 2 ? '#F4ECDB' : col, r, .97, .2);
       for (let k = 0; k < 3; k++) wash(g, caraD(b, k * .33, .33, 7, 4), k % 2 ? '#F4ECDB' : col, r, .97, .2);
-      const c = V2(ou, ov + .14); blob(g, c[0] - 3, c[1] - 1, 1.6, 1.2, '#E0A030', r, .9); blob(g, c[0], c[1] - .5, 1.6, 1.2, '#7FA04A', r, .9); blob(g, c[0] + 3, c[1] - 1, 1.5, 1.1, '#C44A3A', r, .9);
+      const c = V2(ou, ov + .14);
+      if (vacio) { g.strokeStyle = '#7E5C37'; g.lineWidth = .6; g.strokeRect(c[0] - 3, c[1] - 2.5, 3.2, 2.2); }
+      else { blob(g, c[0] - 3, c[1] - 1, 1.6, 1.2, '#E0A030', r, .9); blob(g, c[0], c[1] - .5, 1.6, 1.2, '#7FA04A', r, .9); blob(g, c[0] + 3, c[1] - 1, 1.5, 1.1, '#C44A3A', r, .9); }
     };
     puesto(-.2, -.18, '#C4513B'); puesto(.22, -.12, '#2D6E5E'); puesto(-.02, .2, '#C08A2A');
-    const s = V2(.3, .3); wash(g, [[s[0] - 3, s[1]], [s[0] + 3, s[1]], [s[0] + 3, s[1] - 4], [s[0] - 3, s[1] - 4]], '#B09060', r, .95, .2);
+    const s = V2(.3, .3); wash(g, [[s[0] - 3, s[1]], [s[0] + 3, s[1]], [s[0] + 3, s[1] - 4], [s[0] - 3, s[1] - 4]], vacio ? '#8E7A5E' : '#B09060', r, .95, .2);
   }]);
-  L.push(['mercado2', 90, 64, 45, 44, (g, r) => {
+  for (const vacio of [false, true]) L.push([vacio ? 'mercado2v' : 'mercado2', 90, 64, 45, 44, (g, r) => {
     sombra(g, 28, 7, 8); const b = iso(g, .8, .66, 0, 13, '#E9DBBB', '#CDBB96', null, r);
-    for (let k = 0; k < 5; k++) { const p = caraI(b, .06 + k * .19, .13, 0, 9); wash(g, p, '#5E4632', r, .97, .15); blob(g, (p[0][0] + p[1][0]) / 2, (p[0][1] + p[1][1]) / 2 - 3, 2, 1.3, k % 2 ? '#E0A030' : '#7FA04A', r, .9); }
+    for (let k = 0; k < 5; k++) { const p = caraI(b, .06 + k * .19, .13, 0, 9); wash(g, p, '#5E4632', r, .97, .15); if (!vacio) blob(g, (p[0][0] + p[1][0]) / 2, (p[0][1] + p[1][1]) / 2 - 3, 2, 1.3, k % 2 ? '#E0A030' : '#7FA04A', r, .9); }
     for (let k = 0; k < 3; k++) wash(g, caraD(b, .12 + k * .3, .16, 0, 9), '#4E3A2A', r, .97, .15);
     for (let k = 0; k < 6; k++) wash(g, caraI(b, k / 6, 1 / 6, 10, 3), k % 2 ? '#F4ECDB' : '#2D6E5E', r, .97, .2);
     techo(g, b, 4, 9, '#B4553A', '#CDBB96', r);

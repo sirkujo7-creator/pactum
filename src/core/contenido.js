@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -77,6 +77,7 @@ export function usarContenido(d) {
   C.DESGASTE = d.desgaste;
   C.OBRAS = d.obras;
   C.COB = d.cobertura;
+  C.ECO = d.economia;
   C.cargado = true;
   return C;
 }

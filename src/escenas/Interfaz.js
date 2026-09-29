@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -150,13 +150,13 @@ export class Interfaz {
     this.bReg.innerHTML = `${EMB[S.reg]}<b>${rg.n.split(' ')[0]}</b>`;
     this.bReg.setAttribute('aria-label', `Régimen: ${rg.n}. Ver rumbo del gobierno`);
     const L = lluvias(S), temp = this.mapa.pob ? this.mapa.pob.temporada() : null;
-    this.era.innerHTML = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${D(S).polis}` : ''}${L ? ` · ${L.icono}<span class="lluv-nom"> ${L.nombre.toLowerCase()}</span>` : ''}`;
+    this.era.innerHTML = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${D(S).polis}` : ''}${L ? ` · ${L.icono}<span class="lluv-nom"> ${L.nombre.toLowerCase()}</span>` : ''}${economiaActiva(S) && S.eco.fase !== 'normal' ? ` · ${C.ECO.fases[S.eco.fase].icono}<span class="lluv-nom"> ${C.ECO.fases[S.eco.fase].nombre.toLowerCase()}</span>` : ''}`;
     this.era.title = L ? `${L.texto} ${C.CLIMA.leccion}${temp ? ` Ahora es temporada ${temp === 'lluvias' ? 'de lluvias' : 'seca'}.` : ''}` : '';
-    const dfood = F.fprod - F.cons;
+    const dfood = F.fprod - F.cons, pa = precioAlimento(S);
     this.hud.innerHTML =
       `<div class="pill" title="Oro">${IC.gold}<b class="${S.gold < 0 ? 'neg' : ''}">${Math.round(S.gold)}</b></div>` +
       `<div class="pill" title="Deuda">${IC.debt}<b>${Math.round(totDebt(S))}</b></div>` +
-      `<div class="pill" title="Alimento">${IC.food}<b>${Math.round(S.food)}</b><small class="${dfood < 0 ? 'neg' : ''}">${dfood >= 0 ? '+' : '−'}${Math.abs(dfood)}</small></div>` +
+      `<div class="pill" title="Alimento${pa !== 1 ? '. ' + C.ECO.textos.pastilla.replace('{p}', pa.toLocaleString('es-CO')) : ''}">${IC.food}<b>${Math.round(S.food)}</b><small class="${dfood < 0 ? 'neg' : ''}">${dfood >= 0 ? '+' : '−'}${Math.abs(dfood)}</small>${pa >= 1.15 ? `<small class="precio neg" aria-label="precio alto">▲${pa.toLocaleString('es-CO')}</small>` : pa <= .85 ? `<small class="precio pos" aria-label="precio bajo">▼${pa.toLocaleString('es-CO')}</small>` : ''}</div>` +
       `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>` +
       (S.stage >= 1 ? `<div class="pill" title="Agua">💧<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">⚡<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '');
     this.medidores.replaceChildren(
@@ -170,8 +170,10 @@ export class Interfaz {
     const pr = S.promises.map(p => `Promesa: ${C.B[p.k].a} antes del año ${p.dl}.`).join(' ');
     const pron = climaActivo(S) && S.clima.pronostico, FEN = C.CLIMA && C.CLIMA.fenomenos;
     const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
-    this.meta.innerHTML = `<div class="gl1">${avisoClima || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : meta)}</div>` +
-      `<div class="gmore">${avisoClima && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : ''}${g || avisoClima ? meta + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
+    const avisoEco = economiaActiva(S) && S.eco.aviso ? `📉 <b>Recesión anunciada para el año ${S.eco.aviso.anio}.</b>` : '';
+    const aviso = avisoClima || avisoEco;
+    this.meta.innerHTML = `<div class="gl1">${aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : meta)}</div>` +
+      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${g || aviso ? meta + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
     const oc = this.meta.querySelector('[data-ocultar]');
     if (oc) oc.onclick = e => { e.stopPropagation(); S.guide = false; this.render(); };
     this.meta.hidden = !!this.hojaAbierta() || S.over;
@@ -238,6 +240,7 @@ export class Interfaz {
       ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
+      ${this.seccionEconomia()}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {
@@ -348,6 +351,15 @@ export class Interfaz {
       el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: 'Cada figura representa a unas dos personas del pueblo.' })
     );
     this.ficha.hidden = false;
+  }
+  // Fase 2: economía viva: fase del ciclo, precio del alimento y del café, aviso de recesión.
+  seccionEconomia() {
+    const S = this.S, E = C.ECO;
+    if (!economiaActiva(S)) return '';
+    const f = E.fases[S.eco.fase], x = v => '×' + v.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `<h3>Economía</h3>
+      <div class="macro"><div><strong>${f.icono}</strong><span>${f.nombre}</span></div><div><strong class="${precioAlimento(S) >= 1.15 ? 'neg' : ''}">${x(precioAlimento(S))}</strong><span>Precio del alimento</span></div><div><strong>${x(precioCafe(S))}</strong><span>Precio del café</span></div></div>
+      <p class="small">${f.texto ? f.texto + ' ' : ''}${S.eco.aviso ? `<b>${E.textos.aviso.replace('{anio}', S.eco.aviso.anio)}</b> ` : ''}${E.leccion}</p>`;
   }
   // Fase 1: control de mantenimiento (desde 25 habitantes), estado de las obras y reparación.
   seccionMantenimiento() {
@@ -464,6 +476,25 @@ export class Interfaz {
       this.tarjeta(`<div class="big">${F.icono}</div><h3>Pronóstico: ${F.nombre}</h3><p>${F.pronostico.replace('{anio}', K.pronostico.anio)}</p>
         <p><b>Tienes un año para prepararte.</b> ${F.preparar}</p><p class="small">Fondo de emergencias hoy: ${Math.round(S.fondo || 0)} de oro, con un aporte de ${S.aporteFondo || 0}% de los ingresos.</p>
         <div class="phil"><b>Lo que enseña</b><br>${F.concepto}</div><button class="main" id="okB">Entendido</button>`);
+      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
+    }
+    this.economia(alTerminar);
+  }
+  // Fase 2: tarjetas del aviso de recesión y del comienzo de la recesión (enseñan el ciclo y cómo prepararse).
+  economia(alTerminar) {
+    const S = this.S, E = S.eco, T = C.ECO.textos;
+    if (!economiaActiva(S)) { alTerminar(); return; }
+    if (E.aviso && E.aviso.nuevo) {
+      E.aviso.nuevo = false;
+      this.tarjeta(`<div class="big">📉</div><h3>Pronóstico económico</h3><p>${T.aviso.replace('{anio}', E.aviso.anio)}</p>
+        <p><b>Tienes un año para prepararte.</b> ${T.preparar}</p><div class="phil"><b>Lo que enseña</b><br>${C.ECO.leccionCiclo}</div><button class="main" id="okB">Entendido</button>`);
+      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
+    }
+    if (E.evento && E.evento.nuevo) {
+      E.evento.nuevo = false;
+      this.tarjeta(`<div class="big">📉</div><h3>Recesión</h3><p>${C.ECO.fases.recesion.texto}</p>
+        <p class="small">Obras en marcha ahora: ${S.map.filter(x => x.ob && !x.ob.det).length}. Cada una emplea el doble mientras dure la recesión.</p>
+        <div class="phil"><b>Lo que enseña</b><br>${C.ECO.leccionCiclo}</div><button class="main" id="okB">Continuar</button>`);
       this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
     }
     alTerminar();

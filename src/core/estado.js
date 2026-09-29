@@ -4,6 +4,7 @@ import { C } from './contenido.js';
 import { genMap, genMundo, neigh, nearRiver, LADO_V9, LADO_INICIAL } from './mundo.js';
 import { genTerreno } from './terreno.js';
 import { climaInicial } from './clima.js';
+import { ecoInicial } from './economia.js';
 
 // opciones.mundo: 'acuarela' (terreno continuo, por defecto) o 'v9' (mapa de la versión 9, para comparar).
 export function freshState(diff, guide, seed, reg, opciones = {}) {
@@ -39,7 +40,7 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
       q.push(j);
     }
   }
-  if (mundo !== 'v9') { S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.centro = start; }
+  if (mundo !== 'v9') { S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.centro = start; S.eco = ecoInicial(); }
   S.log.unshift({ y: 1, t: 'Quince personas fundan una aldea junto al río. Te eligen para gobernar.' });
   return S;
 }

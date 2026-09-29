@@ -10,6 +10,7 @@ import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, in
 import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
 import { avanzarObras } from './construccion.js';
+import { economiaDelAnio } from './economia.js';
 import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
@@ -158,6 +159,9 @@ export function advance(S) {
   if (S.polisYears >= D(S).polis) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
   if (S.vis && S.vis.y <= S.year) S.vis = null;
   // Fase 1: lluvias del año que empieza, El Niño o La Niña y sus pronósticos (solo en el terreno en acuarela).
+  // Fase 2: precio del alimento y del café, y ciclo de auge y recesión.
+  const eco = economiaDelAnio(S, F);
+  if (eco.length) S.log[0].t += ' ' + eco.join(' ');
   const pron = climaDelAnioSiguiente(S);
   if (pron.length) S.log[0].t += ' ' + pron.join(' ');
   S.year++;

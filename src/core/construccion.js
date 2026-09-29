@@ -5,6 +5,7 @@
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { mulberry } from './azar.js';
+import { factorEmpleoObra } from './economia.js';
 import { azar } from './azar.js';
 import { cost } from './reglas.js';
 import { loanRate } from './hacienda.js';
@@ -30,7 +31,7 @@ export function detenida(x) { return enObra(x) && x.ob.det > 0; }
 export function elefante(x) { return enObra(x) && x.ob.det >= K().aniosElefante; }
 // Obras que avanzan este año (dan empleo); las detenidas no.
 export function obrasActivas(S) { return S.map.filter(x => x.b && x.ob && !x.ob.det).length; }
-export function empleosDeObra(S) { return climaActivo(S) ? obrasActivas(S) * K().empleosPorObra : 0; }
+export function empleosDeObra(S) { return climaActivo(S) ? obrasActivas(S) * K().empleosPorObra * factorEmpleoObra(S) : 0; }
 // Lo que se pagará al cerrar el año por las obras que siguen (si alcanza el oro).
 export function cuotasPendientes(S) {
   let t = 0;
