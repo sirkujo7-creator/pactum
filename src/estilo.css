@@ -41,6 +41,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .hud{display:flex;flex-wrap:wrap;gap:4px}
 .pill{display:flex;align-items:center;gap:4px;background:color-mix(in srgb,var(--panel) 86%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:999px;padding:2px 9px 2px 4px;font-family:Alegreya,Georgia,serif;font-size:.98rem;box-shadow:0 2px 6px rgba(40,40,20,.08)}
 .pill small{font-family:"Alegreya Sans",sans-serif;font-size:.78rem;color:var(--muted)}
+.pill small.precio{margin-left:4px;font-weight:700}.pill small.precio.neg{color:var(--bad)}.pill small.precio.pos{color:var(--good)}
 .ic{width:20px;height:20px;display:block}
 .controles{position:absolute;right:calc(10px + env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:8px}
 .controles button.on{background:var(--accent);color:#fff}

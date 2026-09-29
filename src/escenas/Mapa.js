@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -166,8 +166,10 @@ export class Mapa extends Phaser.Scene {
       if (gris && ob.det >= C.OBRAS.aniosElefante) this.desgasteVisible(i, 3);
       return;
     }
+    const vacio = x.b === 'mercado' && precioAlimento(this.S) >= 1.3; // fase 2: comida cara, puestos vacíos
     for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg)) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
+      if (vacio && f.k.startsWith('mercado')) f.k += 'v';
       const r = t.r + .5 + (f.dv || 0), c = t.c + .5 + (f.du || 0), h = f.n || deSuelo ? this.T.hf(r, c) : t.h;
       const img = this.figura(f.n ? 'naturaleza' : 'edificios', f.k, r, c, h, f.s || 1);
       if (f.z) img.y -= f.z;
@@ -240,6 +242,8 @@ export class Mapa extends Phaser.Scene {
   }
   // Si cambian la etapa o el régimen, cambian las casas, los mercados y la sede.
   revisarCambiosGenerales() {
+    const vacio = precioAlimento(this.S) >= 1.3;
+    if (vacio !== this.mercadoVacio) { this.mercadoVacio = vacio; this.S.map.forEach((x, i) => { if (x.b === 'mercado') this.ponerObra(i); }); }
     if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto) return;
     this.etapaVista = this.S.stage; this.regVisto = this.S.reg;
     this.S.map.forEach((x, i) => { if (['casa', 'mercado', 'agora'].includes(x.b)) this.ponerObra(i); });

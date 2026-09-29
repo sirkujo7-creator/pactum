@@ -8,6 +8,7 @@ import { factorCosecha, climaActivo, aporteFondo } from './clima.js';
 import { rindeObra, mantenimiento } from './desgaste.js';
 import { cuotasPendientes } from './construccion.js';
 import { evasion } from './cobertura.js';
+import { factorIngresos, factorCampesinos, precioCafe } from './economia.js';
 
 export const RAT = [[85, 'AAA', 0], [75, 'AA', .01], [65, 'A', .02], [55, 'BBB', .04], [45, 'BB', .07], [35, 'B', .11], [-999, 'CCC', .16]];
 
@@ -23,13 +24,14 @@ export function canBorrow(S) { return S.stage >= 1 && rating(S).l !== 'CCC'; }
 // Cuentas del año: ingresos por clase, tasas, mantenimiento, administración, deuda y alimento.
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
-  const inc = { c: so.camp * 4 * w, a: so.art * 7 * w, e: so.el * 25 * w, u: so.un * w };
+  // Fase 2: el ciclo económico mueve los ingresos, y los campesinos ganan más cuando la comida está cara.
+  const fi = factorIngresos(S), inc = { c: so.camp * 4 * w * fi * factorCampesinos(S), a: so.art * 7 * w * fi, e: so.el * 25 * w * fi, u: so.un * w };
   // Fase 2: lejos de una oficina de recaudo parte de la gente evade (ev = fracción que se pierde).
   const ev = evasion(S), taxC = Math.round(inc.c * S.tx.c / 100 * (1 - ev)), taxA = Math.round(inc.a * S.tx.a / 100 * (1 - ev)), taxE = Math.round(inc.e * S.tx.e / 100 * (1 - ev));
   const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
-  S.map.forEach(x => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r; if (r) up += C.B[x.b].up * (x.mt || 1); } });
+  S.map.forEach(x => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) : 1); if (r) up += C.B[x.b].up * (x.mt || 1); } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100);
   const lawCost = Math.round(((hasLaw(S, 'educacion') ? S.pop * .15 : 0) + (hasLaw(S, 'subsidio') ? so.camp * .8 : 0)) * S.price);
