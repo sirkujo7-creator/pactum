@@ -62,28 +62,28 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 1, territorio vivo
+## Fase actual: Fase 2, economía y obra
 
-La fase 0 (migración) está terminada y Juan la probó en su celular. Su estado queda en `docs/DISENO.md`.
+Las fases 0 (migración) y 1 (territorio vivo) están terminadas y aprobadas por Juan (jugó 100 años). Su estado queda en `docs/DISENO.md`. Juan decidió no bajar la meta de Polis: la duración se mantiene exigente (unos 45 a 55 años). Pidió más leyes, más dilemas y decisiones visibles, pero **después** de terminar las fases.
 
-Objetivo: que el territorio cambie solo y por las decisiones del jugador, sin romper el balance.
+Objetivo: que construir y administrar la economía sean decisiones con tiempo, riesgo y alcance, que se vean en el mapa.
 
 Incluye (en este orden, un paso publicable a la vez):
 
-1. Temporadas: el paisaje alterna lluvias y seca; la calidad de las lluvias de cada año afecta las cosechas (decisión de Juan).
-2. El Niño y La Niña: sequías y crecidas cada pocos años, con pronóstico un año antes y un fondo de emergencias en Hacienda (decisión de Juan). Dilemas nuevos de clima.
-3. Suelo vivo: el bosque crece o se quema; las laderas taladas se erosionan y pueden derrumbarse; la ley ambiental hace volver los árboles.
-4. Vida de los edificios: desgaste visible (nuevo, gastado, agrietado, abandonado), con un control de mantenimiento de 0% a 100% en Hacienda (decisión de Juan). Se abre con 25 habitantes.
+1. Obras por etapas: solo las grandes (escuela, hospital, taller, acueducto, molino, puerto, mina, banco, ágora, universidad) tardan de 1 a 3 años, se pagan por etapa, emplean gente mientras se construyen y, sin dinero, quedan detenidas y luego como elefante blanco (decisión de Juan). Casas, cultivos, cafetales, mercados y parques siguen siendo inmediatos.
+2. Evaluación y licitación: ficha de proyecto (inversión, VPN, recuperación) y tres ofertas de contratistas (precio, plazo, reputación; una con soborno).
+3. Cobertura por distancia: escuelas, hospitales y mercados atienden un radio; oficinas de recaudo con radio, y fuera de él hay evasión (decisión de Juan); capa de cobertura en el mapa.
+4. Economía viva: precio del alimento y costo de vida, que se ven en la pastilla del alimento (sin recurso nuevo en la barra) y en los puestos del mercado (decisión de Juan); café con precio internacional; auge y recesión (la recesión es crisis mayor).
 5. Balance: robots que también enfrentan los sistemas nuevos.
 
-Reglas del diseño que aplican: máximo una crisis mayor por año, dos años de respiro después de una crisis, toda crisis tiene preparación posible; El Niño y La Niña empiezan en Pueblo con 60 habitantes; ninguna medida nueva en la barra superior (máximo 4 recursos a la vez).
+Reglas del diseño que aplican: máximo una crisis mayor por año y dos años de respiro; toda crisis tiene preparación posible; máximo 4 recursos en la barra superior; nunca más de tres sistemas con decisiones al mismo tiempo.
 
 Terminado cuando:
 
-- Los cuatro sistemas funcionan y se ven en el mapa.
-- `node herramientas/balance.js` sigue entre 55% y 70% de victorias en Normal, estrategia equilibrada, República; los desastres siempre son sobrevivibles con preparación.
+- Los sistemas funcionan y se ven en el mapa.
+- `node herramientas/balance.js` sigue entre 55% y 70% de victorias en Normal, estrategia equilibrada, República.
 - `node herramientas/prueba-equivalencia.js` sigue en 0 diferencias (los sistemas nuevos se apagan en el modo de comparación con la v9).
-- Las partidas guardadas en la fase 0 se abren sin perderse.
+- Las partidas guardadas antes se abren sin perderse.
 - No hay errores en la consola; se ve fluido en celular y en computador.
 - Juan lo prueba y lo aprueba.
 
