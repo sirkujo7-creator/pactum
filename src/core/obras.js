@@ -4,7 +4,7 @@ import { C } from './contenido.js';
 import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
 import { marcarTala } from './suelo.js';
-import { cuotaInicial, empezarObra, devolucionObra, porEtapas } from './construccion.js';
+import { cuotaInicial, empezarObra, devolucionObra, porEtapas, oferta, aplicarOferta } from './construccion.js';
 
 // Devuelve el motivo por el que no se puede construir k en la casilla i, o '' si se puede.
 export function whyNot(S, k, i) {
@@ -20,10 +20,12 @@ export function whyNot(S, k, i) {
 }
 
 // Devuelve true, un mensaje (si taló bosque) o el motivo por el que no se pudo.
-export function build(S, k, i) {
+// ofertaElegida (fase 2): contratista de la licitación; sin ella, la oferta de buena reputación.
+export function build(S, k, i, ofertaElegida) {
   const r = whyNot(S, k, i);
   if (r) return r;
-  const x = S.map[i], total = cost(S, k), pago = cuotaInicial(S, k, total);
+  const x = S.map[i], o = porEtapas(S, k) ? oferta(S, k, ofertaElegida) : null, total = o ? o.total : cost(S, k), pago = o ? o.cuota : cuotaInicial(S, k, total);
+  if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
   S.gold -= pago; // fase 2: las obras grandes pagan solo su primera etapa
   let msg = '';
   const tl = x.tl;
@@ -31,6 +33,10 @@ export function build(S, k, i) {
   S.undo.push({ i, k, paid: pago, forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
   x.b = k;
   empezarObra(S, i, k, total);
+  const nLater = S.later.length, aviso = aplicarOferta(S, i, k, o);
+  // Deshacer también devuelve el soborno (y borra el escándalo pendiente).
+  if (o && o.sob) Object.assign(S.undo[S.undo.length - 1], { sob: o.sob, rumbo: o.rumbo || 0, escandalo: S.later.length > nLater });
+  if (aviso.length) msg = [msg, ...aviso].filter(Boolean).join(' ');
   return msg || true;
 }
 
@@ -39,6 +45,7 @@ export function undoBuild(S) {
   if (!u) return null;
   const x = S.map[u.i];
   x.b = null; delete x.ob; S.gold += u.paid;
+  if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;

@@ -76,7 +76,7 @@ Terminada. Juan la jugó 100 años y la aprobó. Pidió, para después de las fa
 | Paso | Estado |
 | --- | --- |
 | 1. Obras por etapas | Publicado (0.12.0). Escuela, taller, acueducto y molino tardan 1 año; hospital, mina, banco, puerto y ágora, 2; universidad, 3. Se paga una cuota por año; mientras avanzan emplean 6 personas; sin oro se detienen y a los 2 años son elefante blanco. Se ven cimientos, muros que suben con andamio y material; grises si están detenidas. Robots: 65% |
-| 2. Evaluación y licitación | Pendiente |
+| 2. Evaluación y licitación | Publicado (0.13.0). Antes de una obra grande sale su ficha: inversión, tiempo, resultado anual, VPN a 15 años con la tasa de interés del momento, recuperación y beneficio social. Tres contratistas: reputación sólida (precio justo), barata (80%, queda gastada y 60% de sobrecosto de una etapa) y con soborno (110%, da oro, tuerce el rumbo 10 puntos y 60% de escándalo en 2 a 4 años). Deshacer devuelve el soborno |
 | 3. Cobertura y recaudo | Pendiente |
 | 4. Economía viva | Pendiente |
 | 5. Balance | Pendiente |

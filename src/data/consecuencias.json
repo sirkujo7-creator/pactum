@@ -241,5 +241,16 @@
       "oro": 20
     },
     "porque": "La ayuda condicionada también es un negocio: alguien cobra la factura."
+  },
+  "soborno_escandalo": {
+    "icono": "📰",
+    "titulo": "Escándalo de contratación",
+    "texto": "La prensa revela que un contratista pagó para ganarse una obra pública. El pueblo exige explicaciones.",
+    "efectos": {
+      "confianza": -12,
+      "campesinos": -4,
+      "artesanos": -4
+    },
+    "porque": "La corrupción en la contratación pública se paga con la confianza del pueblo."
   }
 }

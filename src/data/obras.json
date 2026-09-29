@@ -27,6 +27,49 @@
     "proximoPago": "Siguiente pago: {c} de oro al cerrar el año.",
     "ultimoAnio": "Se termina al cerrar este año.",
     "parada": "Obra detenida por falta de oro. Se reanuda sola cuando el tesoro tenga {c} de oro al cerrar el año.",
-    "fichaElefante": "Elefante blanco: una obra a medias que no presta servicio. Aún se puede terminar."
-  }
+    "fichaElefante": "Elefante blanco: una obra a medias que no presta servicio. Aún se puede terminar.",
+    "sobrecosto": "Sobrecosto: el contratista de {obra} pide una etapa más ({c} de oro) para terminar.",
+    "soborno": "Aceptaste {s} de oro del contratista. Nadie lo sabe… por ahora. El rumbo se tuerce."
+  },
+  "horizonteVPN": 15,
+  "leccionProyecto": "Evaluación de proyectos: el valor presente neto (VPN) trae a hoy la plata que la obra dará o costará en el futuro, descontada con la tasa de interés. Si es negativo, la obra no se paga sola; puede valer la pena igual por su beneficio social.",
+  "leccionLicitacion": "Contratación pública: la oferta más barata no siempre es la mejor, y un soborno compra hoy un problema para mañana.",
+  "ofertas": [
+    {
+      "id": "solida",
+      "nombre": "Constructora del Combeima",
+      "reputacion": 3,
+      "precio": 1.0,
+      "desgasteInicial": 0,
+      "sobrecosto": 0,
+      "texto": "Buena reputación: cumple el precio y el plazo."
+    },
+    {
+      "id": "barata",
+      "nombre": "Obras El Ahorro",
+      "reputacion": 1,
+      "precio": 0.8,
+      "desgasteInicial": 30,
+      "sobrecosto": 0.6,
+      "texto": "El precio más bajo. En otros pueblos se quejan de materiales pobres y de cuentas que crecen a mitad de obra."
+    },
+    {
+      "id": "soborno",
+      "nombre": "Consorcio La Palanca",
+      "reputacion": 2,
+      "precio": 1.1,
+      "desgasteInicial": 10,
+      "sobrecosto": 0,
+      "soborno": 0.15,
+      "rumbo": 10,
+      "escandalo": {
+        "probabilidad": 0.6,
+        "anios": [
+          2,
+          4
+        ]
+      },
+      "texto": "Precio algo alto. Su gerente te ofrece {s} de oro «para tu campaña» si lo eliges."
+    }
+  ]
 }

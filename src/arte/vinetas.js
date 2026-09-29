@@ -25,7 +25,7 @@ const ESCENAS = {
 const ALIAS = {
   crecida_mal: 'crecida', diques: 'alianza', evasion2: 'evasion', evasion_venganza: 'evasion', migra_bien: 'migra', migra_mal: 'migra', oro_mal: 'humo',
   corrup_mal: 'corrup', corrup_bien: 'corrup', corrup_filtra: 'corrup', maestros_bien: 'maestros', humo_mal: 'humo', sal_mal: 'precios', protesta_mal: 'protesta',
-  epidemia_mal: 'epidemia', donante_mal: 'donante', especulacion_mal: 'especulacion', culpar_mal: 'culpar', ayuda_condiciones: 'ayuda', tierras_mal: 'tierras', huelga_mal: 'huelga', reforma_fuga: 'elite', alianza_rota: 'alianza'
+  soborno_escandalo: 'corrup', epidemia_mal: 'epidemia', donante_mal: 'donante', especulacion_mal: 'especulacion', culpar_mal: 'culpar', ayuda_condiciones: 'ayuda', tierras_mal: 'tierras', huelga_mal: 'huelga', reforma_fuga: 'elite', alianza_rota: 'alianza'
 };
 
 function figura(g, H, k, x, y, s = 1, voltear = false) {

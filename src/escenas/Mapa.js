@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -252,8 +252,8 @@ export class Mapa extends Phaser.Scene {
       this.posibles.fillPoints(q, true).strokePoints(q, true);
     }
   }
-  construir(k, i) {
-    const antes = this.S.map[i].b, r = build(this.S, k, i);
+  construir(k, i, ofertaElegida) {
+    const antes = this.S.map[i].b, r = build(this.S, k, i, ofertaElegida);
     if (this.S.map[i].b !== k || antes === k) { this.ui.toast(typeof r === 'string' ? r : 'No se puede construir ahí.'); return; }
     this.refrescarCasilla(i);
     this.animarObra(i);
@@ -537,7 +537,11 @@ export class Mapa extends Phaser.Scene {
     const cam = this.cameras.main, t = casillaEn(this.T, cam.scrollX + px / this.escala, cam.scrollY + py / this.escala);
     if (!t) { this.ui.cerrarFicha(); return; }
     const i = t.r * this.T.N + t.c, k = this.ui.herramienta;
-    if (k && !this.S.over) { this.construir(k, i); return; }
+    if (k && !this.S.over) {
+      // Fase 2: las obras grandes pasan primero por la ficha del proyecto y la licitación.
+      if (porEtapas(this.S, k) && !whyNot(this.S, k, i)) { this.marcar(i); this.ui.licitacion(k, i, id => this.construir(k, i, id)); return; }
+      this.construir(k, i); return;
+    }
     if (this.ui.hojaAbierta()) { this.ui.cerrarHojas(); return; }
     const f = this.pob.cercana(cam.scrollX + px / this.escala, cam.scrollY + py / this.escala);
     if (f) { this.marcar(null); this.ui.abrirPersona(f.p); return; }
