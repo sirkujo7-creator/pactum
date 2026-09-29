@@ -4,6 +4,7 @@ import { C } from './contenido.js';
 import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
 import { marcarTala } from './suelo.js';
+import { cuotaInicial, empezarObra, devolucionObra, porEtapas } from './construccion.js';
 
 // Devuelve el motivo por el que no se puede construir k en la casilla i, o '' si se puede.
 export function whyNot(S, k, i) {
@@ -13,7 +14,8 @@ export function whyNot(S, k, i) {
   if (!b.ok.includes(x.t)) return `${b.n}: ese terreno no sirve.`;
   if (b.hmin && (x.h || 0) < b.hmin) return `${b.n}: necesita ladera (terreno alto).`;
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;
-  if (S.gold < cost(S, k)) return `Te faltan ${cost(S, k) - Math.floor(S.gold)} de oro.`;
+  const pago = cuotaInicial(S, k, cost(S, k));
+  if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
   return '';
 }
 
@@ -21,13 +23,14 @@ export function whyNot(S, k, i) {
 export function build(S, k, i) {
   const r = whyNot(S, k, i);
   if (r) return r;
-  const x = S.map[i];
-  S.gold -= cost(S, k);
+  const x = S.map[i], total = cost(S, k), pago = cuotaInicial(S, k, total);
+  S.gold -= pago; // fase 2: las obras grandes pagan solo su primera etapa
   let msg = '';
   const tl = x.tl;
   if (x.t === 'bosque') { x.t = 'llano'; S.env = clamp(S.env - 3, 0, 100); msg = 'Talaste bosque: el ambiente baja.'; marcarTala(S, i); }
-  S.undo.push({ i, k, paid: cost(S, k), forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
+  S.undo.push({ i, k, paid: pago, forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
   x.b = k;
+  empezarObra(S, i, k, total);
   return msg || true;
 }
 
@@ -35,7 +38,7 @@ export function undoBuild(S) {
   const u = S.undo.pop();
   if (!u) return null;
   const x = S.map[u.i];
-  x.b = null; S.gold += u.paid;
+  x.b = null; delete x.ob; S.gold += u.paid;
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;
@@ -45,8 +48,8 @@ export function undoBuild(S) {
 export function demolish(S, i) {
   const x = S.map[i];
   if (!x.b) return 0;
-  const g = Math.round(cost(S, x.b) * .3);
-  S.gold += g; x.b = null;
+  const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3);
+  S.gold += g; x.b = null; delete x.ob;
   if (S.pop > cap(S)) S.pop = cap(S);
   return g;
 }
@@ -60,14 +63,14 @@ import { envTarget } from './sociedad.js';
 import { counts } from './reglas.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
-  if (!t.length) return { motivo: S.gold < cost(S, k) ? `Te faltan ${cost(S, k) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
+  if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
   if (k === 'cultivo' && iElegida === undefined) { const rv = t.filter(i => nearRiver(S, i)); if (rv.length) t = rv; }
   const i = t[0], x = S.map[i], F0 = finance(S), e0 = envTarget(S, counts(S));
   const tt = x.t; x.b = k; if (tt === 'bosque') x.t = 'llano';
   const F1 = finance(S), e1 = envTarget(S, counts(S));
   x.b = null; x.t = tt;
   return {
-    i, costo: cost(S, k), dn: F1.net - F0.net, net: F1.net,
+    i, costo: cost(S, k), cuota: cuotaInicial(S, k, cost(S, k)), anios: porEtapas(S, k) ? C.B[k].anios : 0, dn: F1.net - F0.net, net: F1.net,
     dj: (F1.so.jc + F1.so.ja) - (F0.so.jc + F0.so.ja), df: F1.fprod - F0.fprod,
     cupos: k === 'casa' ? 10 : 0, de: e1 - e0 - (tt === 'bosque' ? 3 : 0)
   };

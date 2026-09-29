@@ -9,6 +9,7 @@ import { drawEvent } from './dilemas.js';
 import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, interesFondo } from './clima.js';
 import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
+import { avanzarObras } from './construccion.js';
 import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
@@ -19,7 +20,9 @@ export function advance(S) {
   S.debt = Math.max(0, S.debt + F.interest - F.pay);
   if (F.mat) news.push(`Venció un bono: pagaste ${F.mat} de capital.`);
   S.bonds = S.bonds.filter(b => b.due > S.year);
-  S.gold += F.net; S.rev = F.rev;
+  // Fase 2: las cuotas de las obras se pagan una por una, solo si alcanza el oro.
+  S.gold += F.net + F.obras; S.rev = F.rev;
+  news.push(...avanzarObras(S).news);
   if (climaActivo(S)) S.fondo = (S.fondo || 0) + F.fondo + interesFondo(S);
   S.food += F.fprod - F.cons;
   let hunger = false;

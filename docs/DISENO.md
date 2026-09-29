@@ -71,6 +71,16 @@ Terminada. Juan la jugó 100 años y la aprobó. Pidió, para después de las fa
 | 4. Vida de los edificios | Publicado (0.11.0). Desde 25 habitantes las obras se gastan según el mantenimiento que se paga (control de 0% a 100% en Hacienda): en buen estado, gastada, agrietada (rinde 25% menos y baja el ánimo) y abandonada (deja de funcionar). Se ven con tono desteñido, grietas y maleza; se reparan desde la ficha o todas juntas en Hacienda. Robots: 62% con 100% de mantenimiento, 54% con 70%, casi 0% con 40% o menos |
 | 5. Balance | Publicado (0.11.1). `node herramientas/balance-fase1.js` compara las mismas partidas: mapa de la v9 68% (gana hacia el año 45); fase 1 con preparación 66% (año 55); fase 1 sin prepararse 36%. Unas 5 emergencias por partida; con preparación no aumentan las derrotas. Regímenes (Normal, equilibrada): República 62–66%, Monarquía 81%, Dictadura 75%, Aristocracia 73%, Plutocracia 51%, Populismo 47% (v9: 49%). Decisión de Juan: no se baja la meta de Polis; la duración (unos 55 años) se mantiene exigente. Juan jugó 100 años y aprobó la fase 1; el contenido nuevo (más leyes, dilemas y decisiones visibles) va después de las fases |
 
+## Estado de la fase 2 (economía y obra)
+
+| Paso | Estado |
+| --- | --- |
+| 1. Obras por etapas | Publicado (0.12.0). Escuela, taller, acueducto y molino tardan 1 año; hospital, mina, banco, puerto y ágora, 2; universidad, 3. Se paga una cuota por año; mientras avanzan emplean 6 personas; sin oro se detienen y a los 2 años son elefante blanco. Se ven cimientos, muros que suben con andamio y material; grises si están detenidas. Robots: 65% |
+| 2. Evaluación y licitación | Pendiente |
+| 3. Cobertura y recaudo | Pendiente |
+| 4. Economía viva | Pendiente |
+| 5. Balance | Pendiente |
+
 ## Ideas propuestas (primera ronda)
 
 | # | Idea | Concepto que enseña | Cómo se ve |

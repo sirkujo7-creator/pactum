@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -30,6 +30,7 @@ const GRAFICAS = {
   inf: { n: 'Inflación', s: [{ k: 'infl', n: 'Inflación', c: '#B0402C', u: '%' }] }
 };
 
+const anios = n => n === 1 ? '1 año' : `${n} años`;
 export class Interfaz {
   constructor(mapa) {
     this.mapa = mapa;
@@ -193,7 +194,7 @@ export class Interfaz {
       }, [
         bloqueada ? el('span', { class: 'candado', text: '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
         this.nombre(k),
-        el('small', { html: bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}` })
+        el('small', { html: bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}` })
       ]);
     }));
     const k = this.herramienta;
@@ -207,7 +208,8 @@ export class Interfaz {
         if (v.df) out.push(`alimento ${signo(v.df)} al año`);
         if (v.cupos) out.push(`${v.cupos} cupos más`);
         if (Math.abs(v.de) >= 1) out.push(`ambiente ${signo(v.de)}`);
-        prev = `<span class="prev">Si lo construyes: ${out.join(', ')}. Cuesta ${v.costo} de oro. Toca una casilla marcada.</span>`;
+        const paga = v.anios ? `Cuesta ${v.costo} de oro en ${v.anios} pagos de ${v.cuota}, uno por año; presta servicio al terminar` : `Cuesta ${v.costo} de oro`;
+        prev = `<span class="prev">${v.anios ? 'Cuando esté lista' : 'Si lo construyes'}: ${out.join(', ')}. ${paga}. Toca una casilla marcada.</span>`;
       }
       this.hint.innerHTML = `<b>${this.nombre(k)}.</b> ${C.B[k].d} ${prev}`;
     } else this.hint.textContent = 'Elige una obra para construir, o toca una casilla para ver su ficha.';
@@ -224,7 +226,7 @@ export class Interfaz {
       <div class="macro"><div><strong class="${S.infl > .06 ? 'neg' : ''}">${(S.infl * 100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate * 100)}%</strong><span>Tasa de interés</span></div></div>
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
-        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>
+        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}
         ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
@@ -302,7 +304,13 @@ export class Interfaz {
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
       if (S.desgaste && nivelObra(x) > 0) { const e = estadoObra(x); hijos.push(el('span', { class: 'suelo', text: `${e.nombre}: ${C.DESGASTE.textos[e.id]}` })); }
-      const g = Math.round(cost(S, x.b) * .3), rep = S.desgaste ? costoReparar(S, i) : 0;
+      if (x.ob) {
+        const T = C.OBRAS.textos, o = x.ob;
+        hijos.push(el('span', { class: 'suelo', text: o.det >= C.OBRAS.aniosElefante ? T.fichaElefante : T.enCurso.replace('{p}', Math.min(o.p, o.n)).replace('{n}', o.n).replace('{etapa}', etapaDe(x).toLowerCase()) }));
+        hijos.push(el('span', { text: o.det ? T.parada.replace('{c}', o.c) : o.p >= o.n ? T.ultimoAnio : T.proximoPago.replace('{c}', o.c) }));
+        hijos.push(el('span', { class: 'small', text: C.OBRAS.leccion }));
+      }
+      const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3), rep = S.desgaste && !x.ob ? costoReparar(S, i) : 0;
       if (rep) hijos.push(el('button', { class: 'btn', style: 'grid-column:1/-1;margin-top:6px', ...(S.over || S.gold < rep ? { disabled: '' } : {}), on: { click: () => this.mapa.repararObra(i) } }, `Reparar (−${rep} oro)`));
       hijos.push(el('div', { class: 'dos' }, [
         el('button', { class: 'btn', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.mapa.demoler(i) } }, `Demoler (+${g} oro)`),

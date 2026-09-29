@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -37,7 +37,7 @@ export function usarContenido(d) {
   C.B = Object.fromEntries(Object.entries(d.edificios).map(([k, b]) => [k, sinVacios({
     e: b.icono, n: b.nombre, a: b.articulo, cost: b.costo, up: b.mantenimiento, st: b.etapa, ok: b.terrenos,
     hmin: b.alturaMinima, river: b.juntoAlRio, jc: b.empleosCampesinos, ja: b.empleosArtesanos, fee: b.tasas,
-    water: b.agua, energy: b.energia, d: b.descripcion
+    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra
   })]));
   C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
   C.EV = d.dilemas.map(e => sinVacios({
@@ -75,6 +75,7 @@ export function usarContenido(d) {
   C.POB = d.pobladores;
   C.CLIMA = d.clima;
   C.DESGASTE = d.desgaste;
+  C.OBRAS = d.obras;
   C.cargado = true;
   return C;
 }
