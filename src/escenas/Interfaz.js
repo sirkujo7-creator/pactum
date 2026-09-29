@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -379,6 +379,35 @@ export class Interfaz {
   cerrarTarjeta() { this.velo.hidden = true; this.card.innerHTML = ''; if (this.alCerrar) { const f = this.alCerrar; this.alCerrar = null; f(); } }
   boton(id, fn) { const b = this.card.querySelector('#' + id); if (b) b.onclick = fn; }
 
+  // Fase 2: ficha del proyecto (inversión, VPN, recuperación, beneficio social) y licitación con tres ofertas.
+  licitacion(k, i, alElegir) {
+    const S = this.S, e = evaluarProyecto(S, k, i), O = C.OBRAS;
+    if (e.motivo) { this.toast(e.motivo); return; }
+    const soc = [];
+    if (e.cupos) soc.push(`${e.cupos} cupos de vivienda`);
+    if (e.df) soc.push(`alimento ${signo(e.df)} al año`);
+    if (Math.abs(e.de) >= 1) soc.push(`ambiente ${signo(e.de)}`);
+    const estrellas = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+    const ofs = ofertas(S, k).map(o => `<button class="opt" data-of="${o.id}" ${S.gold < o.cuota ? 'disabled' : ''}>
+        <b>${o.nombre}</b> <span class="small" aria-label="Reputación ${o.reputacion} de 3">${estrellas(o.reputacion)}</span><br>
+        ${o.total} de oro (${o.anios === 1 ? 'un pago' : `${o.anios} pagos de ${o.cuota}`})${S.gold < o.cuota ? ' · no alcanza el oro' : ''}
+        <small>${o.texto.replace('{s}', o.sob)}</small></button>`).join('');
+    this.tarjeta(`<div class="big">${C.B[k].e}</div><h3>Proyecto: ${this.nombre(k)}</h3>
+      <div class="ledger"><table class="budget">
+        <tr><td>Inversión</td><td>${e.inversion}</td></tr>
+        <tr><td>Tiempo de obra</td><td>${e.anios === 1 ? '1 año' : e.anios + ' años'}</td></tr>
+        <tr><td>Resultado anual cuando funcione</td><td class="${e.dn < 0 ? 'neg' : ''}">${signo(e.dn)}</td></tr>
+        <tr><td>VPN a ${e.horizonte} años (tasa ${Math.round(e.tasa * 100)}%)</td><td class="${e.vpn < 0 ? 'neg' : ''}">${signo(e.vpn)}</td></tr>
+        <tr class="tot"><td>Se recupera</td><td>${e.recupera ? `en ${e.recupera} años` : 'no, en dinero'}</td></tr></table></div>
+      <p class="small"><b>Beneficio social:</b> ${soc.length ? soc.join(', ') : 'no cambia empleos ni alimento'}. ${C.B[k].d}</p>
+      <div class="phil"><b>Lo que enseña</b><br>${O.leccionProyecto}</div>
+      <h3>Licitación: elige contratista</h3>${ofs}
+      <p class="small">${O.leccionLicitacion}</p>
+      <button class="btn" id="noB">Cancelar</button>`);
+    this.alCerrar = () => this.mapa.marcar(null);
+    this.card.querySelectorAll('[data-of]').forEach(b => b.onclick = () => { const id = b.dataset.of; this.alCerrar = null; this.cerrarTarjeta(); alElegir(id); });
+    this.boton('noB', () => this.cerrarTarjeta());
+  }
   chips(fx) {
     const ks = Object.keys(fx);
     if (!ks.length) return '<span class="chip">Sin efectos inmediatos</span>';

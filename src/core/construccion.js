@@ -4,6 +4,10 @@
 // Solo en el terreno en acuarela (en el modo de comparación con la v9 todo se construye al instante).
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
+import { azar } from './azar.js';
+import { cost } from './reglas.js';
+import { loanRate } from './hacienda.js';
+import { vistaPrevia } from './obras.js';
 
 const K = () => C.OBRAS;
 
@@ -49,7 +53,8 @@ export function avanzarObras(S) {
   S.map.forEach((x, i) => {
     if (!x.b || !x.ob) return;
     const o = x.ob, nombre = C.B[x.b].a;
-    if (o.p >= o.n && !o.det) { delete x.ob; terminadas.push(i); news.push(T.termina.replace('{obra}', nombre)); return; }
+    if (o.p >= o.n && !o.det && o.extra) { delete o.extra; o.n++; news.push(T.sobrecosto.replace('{obra}', nombre).replace('{c}', o.c)); }
+    if (o.p >= o.n && !o.det) { if (o.u0) x.u = o.u0; delete x.ob; terminadas.push(i); news.push(T.termina.replace('{obra}', nombre)); return; }
     if (S.gold >= o.c) {
       S.gold -= o.c; o.p++;
       if (o.det) news.push(T.reanuda.replace('{obra}', nombre));
@@ -64,3 +69,44 @@ export function avanzarObras(S) {
 }
 // Oro que devuelve demoler una obra a medias (una parte de lo pagado).
 export function devolucionObra(x) { return Math.round(x.ob.c * x.ob.p * K().devolucionAlDemoler); }
+
+// ---------- Evaluación del proyecto y licitación (fase 2, paso 2) ----------
+
+// Tres ofertas de contratistas para una obra grande (precio total, cuota por año y soborno si lo hay).
+export function ofertas(S, k) {
+  const base = cost(S, k), n = C.B[k].anios;
+  return K().ofertas.map(o => {
+    const total = Math.round(base * o.precio);
+    return { ...o, total, cuota: Math.round(total / n), anios: n, sob: o.soborno ? Math.round(base * o.soborno) : 0 };
+  });
+}
+export function oferta(S, k, id) { return ofertas(S, k).find(o => o.id === id) || ofertas(S, k)[0]; }
+
+// Ficha del proyecto: inversión, resultado anual cuando funcione, VPN y recuperación, más el beneficio social.
+export function evaluarProyecto(S, k, i) {
+  const v = vistaPrevia(S, k, i);
+  if (v.motivo) return v;
+  const r = loanRate(S), H = K().horizonteVPN, n = C.B[k].anios || 1, inversion = cost(S, k), cuota = Math.round(inversion / n);
+  let vpn = 0;
+  for (let t = 0; t < n; t++) vpn -= cuota / (1 + r) ** t;
+  for (let t = n; t < n + H; t++) vpn += v.dn / (1 + r) ** t;
+  const recupera = v.dn > 0 ? n + Math.ceil(inversion / v.dn) : null;
+  return { ...v, inversion, cuota, anios: n, tasa: r, vpn: Math.round(vpn), recupera, horizonte: H };
+}
+
+// Contratar: aplica el precio de la oferta, la calidad (desgaste inicial y sobrecosto) y el soborno.
+export function aplicarOferta(S, i, k, o) {
+  const x = S.map[i];
+  if (!x.ob || !o) return [];
+  const news = [];
+  x.ob.c = o.cuota; x.ob.of = o.id;
+  if (o.desgasteInicial) x.ob.u0 = o.desgasteInicial;
+  if (o.sobrecosto && azar() < o.sobrecosto) x.ob.extra = 1;
+  if (o.sob) {
+    S.gold += o.sob; S.corr = Math.min(100, S.corr + (o.rumbo || 0));
+    news.push(K().textos.soborno.replace('{s}', o.sob));
+    const e = o.escandalo;
+    if (e && azar() < e.probabilidad) S.later.push({ y: S.year + e.anios[0] + Math.floor(azar() * (e.anios[1] - e.anios[0] + 1)), id: 'soborno_escandalo', from: S.year });
+  }
+  return news;
+}
