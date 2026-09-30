@@ -484,6 +484,14 @@ export class Interfaz {
     if (!ks.length) return '<span class="chip">Sin efectos inmediatos</span>';
     return ks.map(k => { const v = fx[k], bueno = BADUP[k] ? v < 0 : k === 'txe' ? v < 0 : v > 0; return `<span class="chip ${bueno ? 'g' : 'b'}">${v > 0 ? '+' : '−'}${Math.abs(v)} ${C.FXL[k]}</span>`; }).join('');
   }
+  // Claridad: hacia dónde mueve cada grupo una opción (▲ ayuda, ▼ perjudica), sin revelar cuánto.
+  direcciones(fx) {
+    const L = Object.entries(fx).filter(([k, v]) => k !== 't' && v).map(([k, v]) => {
+      const bueno = BADUP[k] ? v < 0 : k === 'txe' ? v < 0 : v > 0;
+      return `<span class="dir ${bueno ? 'pos' : 'neg'}">${C.FXL[k].replace('% ', '')} ${v > 0 ? '▲' : '▼'}</span>`;
+    });
+    return L.length ? `<span class="dirs">${L.join('')}</span>` : '';
+  }
   reacciones(fx) {
     const S = this.S;
     const r = Object.keys(C.ADV).map(a => { const st = stance(a, fx); if (!st) return ''; const L = st > 0 ? C.ADV[a].pro : C.ADV[a].con; return `<div class="say ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt=""><div><b>${C.ADV[a].n}</b><span>“${L[S.year % L.length]}”</span></div></div>`; }).join('');
@@ -495,10 +503,11 @@ export class Interfaz {
     if (!ev) { if (alTerminar) alTerminar(); return; }
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>` + ev.opts.map((o, i) =>
-      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}. Las demás consecuencias se verán después.</small>`}</button>`).join(''), false);
+      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
+        ${o.ex ? `<div class="porque-afecta"><b>¿Por qué afecta así?</b><br>${o.ex}</div>` : ''}
         <div class="phil"><b>${p ? `${p.n} (${p.a})` : 'Lección'}</b><br>${o.why}</div>${this.reacciones(o.fx)}${o.later ? '<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>' : ''}
         <button class="main" id="okB">Continuar</button>`);
       this.alCerrar = alTerminar;

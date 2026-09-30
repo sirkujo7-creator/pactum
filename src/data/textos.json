@@ -37,7 +37,8 @@
         "filosofia": "deon",
         "porque": "Una promesa pública obliga. Cumplirla construye confianza; romperla la destruye.",
         "promesa": true,
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Prometer entusiasma a los vecinos: la confianza sube ya, pero si no cumples a tiempo caerá más fuerte."
       },
       {
         "texto": "Explicar que ahora no hay recursos",
@@ -47,7 +48,8 @@
           "artesanos": -2
         },
         "filosofia": "virt",
-        "porque": "La franqueza cuesta un poco hoy, pero no hipoteca tu palabra."
+        "porque": "La franqueza cuesta un poco hoy, pero no hipoteca tu palabra.",
+        "aQuien": "Los vecinos agradecen la franqueza a medias: campesinos y artesanos se desaniman un poco."
       },
       {
         "texto": "Ignorar la petición",
@@ -58,7 +60,8 @@
         },
         "filosofia": "real",
         "porque": "Gobernar sin escuchar es gobernar en nombre del pueblo, no para él.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Los vecinos se sienten ignorados: bajan la confianza y el ánimo de campesinos y artesanos."
       }
     ]
   }

@@ -28,7 +28,7 @@ function opcion(o, donde) {
   return sinVacios({
     l: o.texto, fx: efectos(o.efectos, donde), f: o.filosofia || null, why: o.porque,
     later: o.despues ? (o.despues.probabilidad === undefined ? [o.despues.anios, o.despues.id] : [o.despues.anios, o.despues.id, o.despues.probabilidad]) : undefined,
-    vista: o.vista, promesa: o.promesa
+    vista: o.vista, promesa: o.promesa, ex: o.aQuien
   });
 }
 

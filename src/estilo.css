@@ -225,3 +225,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .efe{font-size:.8rem;line-height:1.2;padding:3px 7px;border-radius:999px;border:1px solid var(--line);background:var(--bg)}
 .efe.pos{border-color:color-mix(in srgb,var(--good) 55%,var(--line))}.efe.neg{border-color:color-mix(in srgb,var(--bad) 55%,var(--line));color:var(--bad)}
 .ficha .aporte{grid-column:1/-1;font-size:.88rem}
+.dirs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.dir{font-size:.75rem;padding:1px 6px;border-radius:999px;border:1px solid var(--line)}
+.dir.pos{color:var(--good)}.dir.neg{color:var(--bad)}
+.porque-afecta{margin:8px 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:.92rem}
