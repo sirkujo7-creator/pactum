@@ -1,0 +1,43 @@
+{
+  "hap": {
+    "nombre": "Bienestar", "icono": "😊",
+    "que": "Qué tan contenta está la gente: es el promedio del ánimo de campesinos, artesanos y élite, según cuántos hay de cada clase.",
+    "importa": "Con bienestar alto el pueblo crece más rápido; por debajo de 25 las familias se van, y sube la confianza en el gobierno.",
+    "sube": "Empleo, impuestos justos, comida, escuelas y hospitales cerca, parques, leyes sociales.",
+    "baja": "Desempleo, impuestos altos, hambre, inflación, falta de agua, obras deterioradas, recesión."
+  },
+  "eq": {
+    "nombre": "Igualdad", "icono": "⚖️",
+    "que": "Qué tan parejo se reparte la riqueza entre las clases, después de impuestos.",
+    "importa": "La igualdad anima a campesinos y artesanos; a la élite le molesta un poco.",
+    "sube": "Cobrarle más a la élite que a los pobres, escuelas, universidades, educación pública.",
+    "baja": "Cargar los impuestos a los pobres, que la élite gane mucho más que los demás, censura."
+  },
+  "tr": {
+    "nombre": "Confianza", "icono": "🤝",
+    "que": "Cuánto cree el pueblo en tu gobierno (en el diseño se llamará Legitimidad).",
+    "importa": "En regímenes con elecciones, bajo 52 (en Normal) pierdes el mandato; muy baja trae protestas y revolución.",
+    "sube": "Bienestar, sede de gobierno (ágora), cumplir promesas, atender bien las emergencias.",
+    "baja": "Tesoro en rojo, inflación, protestas, promesas incumplidas, escándalos."
+  },
+  "env": {
+    "nombre": "Ambiente", "icono": "🌿",
+    "que": "La salud del río, el aire y la tierra.",
+    "importa": "Con ambiente bajo (menos de 35) todos se molestan; si llega a 5, el territorio colapsa.",
+    "sube": "Bosques, parques, ley de protección ambiental.",
+    "baja": "Talleres, minas, cultivos, talar bosque."
+  },
+  "corr": {
+    "nombre": "Rumbo", "icono": "🧭",
+    "que": "Hacia dónde gobiernas: 0 es el bien común, 100 el interés propio. Es la corrupción del régimen, según Aristóteles.",
+    "importa": "En regímenes rectos, a 70 el gobierno se corrompe en su forma degenerada (ciclo de Polibio).",
+    "sube": "La tendencia del régimen, la censura, el descontento de alguna clase, los sobornos.",
+    "baja": "Buen gobierno (todas las clases contentas y confianza alta), la libertad de prensa."
+  },
+  "tendencia": "Cada año el valor se mueve un 30% hacia su meta ({meta}).",
+  "clases": {
+    "c": "Campesinos: trabajan cultivos y cafetales.",
+    "a": "Artesanos: trabajan en talleres, mercados, escuelas y demás obras; aquí se cuentan también los desempleados.",
+    "e": "Élite: dueños del comercio, la industria y la tierra."
+  }
+}

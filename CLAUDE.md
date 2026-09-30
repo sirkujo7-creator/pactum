@@ -62,7 +62,10 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 2, economía y obra
+## Fase actual: Fase 2, economía y obra (con un paréntesis de claridad)
+
+Tras jugar la fase 2, Juan pidió entender mejor el juego. Decidió (30 de septiembre): primero una **fase corta de claridad** y luego cerrar la fase 2 con el balance. La claridad incluye: recuadro en cada indicador con sus causas; desglose del ánimo de campesinos, artesanos y élite; efectos claros de cada obra antes de construir; dilemas que explican a quién afectan y por qué; sucesos buenos y regla contra rachas (menos rachas, igual exigencia: no se suaviza la dificultad); seguir jugando después de ganar. La ampliación de las clases sociales (dividir las tres y agregar nuevas) queda para la fase 3.
+
 
 Las fases 0 (migración) y 1 (territorio vivo) están terminadas y aprobadas por Juan (jugó 100 años). Su estado queda en `docs/DISENO.md`. Juan decidió no bajar la meta de Polis: la duración se mantiene exigente (unos 45 a 55 años). Pidió más leyes, más dilemas y decisiones visibles, pero **después** de terminar las fases.
 
