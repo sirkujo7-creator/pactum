@@ -156,7 +156,8 @@ export function advance(S) {
   if (S.tr <= 5) return { end: { win: false, title: 'Revuelta popular', text: 'El pueblo perdió toda confianza y tomó la plaza.' } };
   if (S.env <= 5) return { end: { win: false, title: 'Colapso ecológico', text: 'El río y la tierra ya no sostienen la vida.' } };
   if (S.pop <= 3) return { end: { win: false, title: 'Territorio abandonado', text: 'Las últimas familias se marcharon.' } };
-  if (S.polisYears >= D(S).polis) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
+  // Claridad (decisión de Juan): tras ganar se puede seguir gobernando; la victoria no se repite.
+  if (S.polisYears >= D(S).polis && !S.ganado) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
   if (S.vis && S.vis.y <= S.year) S.vis = null;
   // Fase 1: lluvias del año que empieza, El Niño o La Niña y sus pronósticos (solo en el terreno en acuarela).
   // Fase 2: precio del alimento y del café, y ciclo de auge y recesión.
