@@ -106,9 +106,16 @@ export class Mapa extends Phaser.Scene {
   prepararHojas() {
     const nat = hornearNaturaleza(this.dry), edi = hornearEdificios();
     for (const [clave, h] of [['naturaleza', nat], ['edificios', edi]]) {
+      // La textura usa su propio lienzo (una copia): así, al repintar la naturaleza por la sequía,
+      // nunca se borra el lienzo guardado en la memoria de horneados (antes los árboles podían desaparecer).
       if (!this.textures.exists(clave)) {
-        const tx = this.textures.addCanvas(clave, h.canvas);
+        const copia = lienzo(h.canvas.width, h.canvas.height);
+        copia.getContext('2d').drawImage(h.canvas, 0, 0);
+        const tx = this.textures.addCanvas(clave, copia);
         for (const [k, m] of Object.entries(h.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
+      } else if (clave === 'naturaleza') {
+        const tx = this.textures.get(clave), cv = tx.getSourceImage(), g = cv.getContext('2d');
+        if (cv !== h.canvas) { g.clearRect(0, 0, cv.width, cv.height); g.drawImage(h.canvas, 0, 0); tx.refresh(); }
       }
     }
     this.hojas = { naturaleza: nat, edificios: edi };
@@ -405,7 +412,7 @@ export class Mapa extends Phaser.Scene {
   repintarTodo(d) {
     this.dry = d;
     const nat = hornearNaturaleza(d), tx = this.textures.get('naturaleza'), cv = tx.getSourceImage(), g = cv.getContext('2d');
-    g.clearRect(0, 0, cv.width, cv.height); g.drawImage(nat.canvas, 0, 0); tx.refresh();
+    if (cv !== nat.canvas) { g.clearRect(0, 0, cv.width, cv.height); g.drawImage(nat.canvas, 0, 0); tx.refresh(); }
     const cola = Object.keys(this.sectores).map(k => k.split('-').slice(1).map(Number));
     const paso = () => { if (!this.sys.isActive()) return; const x = cola.shift(); if (x) { this.pintarSector(...x); requestAnimationFrame(paso); } };
     paso();

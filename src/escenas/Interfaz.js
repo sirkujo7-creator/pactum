@@ -172,11 +172,14 @@ export class Interfaz {
     const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
     const avisoEco = economiaActiva(S) && S.eco.aviso ? `📉 <b>Recesión anunciada para el año ${S.eco.aviso.anio}.</b>` : '';
     const aviso = avisoClima || avisoEco;
-    this.meta.innerHTML = `<div class="gl1">${aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : meta)}</div>` +
-      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${g || aviso ? meta + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
+    // La meta siempre queda a la vista en la primera línea; avisos y guía van en la segunda.
+    const segunda = aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : '');
+    this.meta.innerHTML = `<div class="gl1"><b>${meta}</b></div>${segunda ? `<div class="gl1 gl2">${segunda}</div>` : ''}` +
+      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
     const oc = this.meta.querySelector('[data-ocultar]');
     if (oc) oc.onclick = e => { e.stopPropagation(); S.guide = false; this.render(); };
-    this.meta.hidden = !!this.hojaAbierta() || S.over;
+    // En computador los paneles van a un lado: la meta sigue visible. En celular la tapa el panel que sube.
+    this.meta.hidden = (!!this.hojaAbierta() && !window.matchMedia('(min-width:760px)').matches) || S.over;
     this.bFin.disabled = !!S.pend || S.over;
     this.bFin.innerHTML = S.over ? 'Fin' : `Año ${S.year}<br><small>terminar ▸</small>`;
     this.bFin.title = 'Terminar el año (barra espaciadora)';
