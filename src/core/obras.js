@@ -1,6 +1,7 @@
 // Construir, deshacer y demoler.
 import { clamp } from './azar.js';
 import { C } from './contenido.js';
+import { climaActivo } from './clima.js';
 import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
 import { marcarTala } from './suelo.js';
@@ -66,19 +67,39 @@ export function freeTiles(S, k) { return S.map.map((x, i) => i).filter(i => !why
 // Vista previa de una obra (como en la v9): qué cambia si se construye en el primer lugar posible.
 // Devuelve { motivo } si no se puede, o { i, costo, dn, net, dj, df, cupos, de }.
 import { finance } from './hacienda.js';
-import { envTarget } from './sociedad.js';
+import { envTarget, satTargets } from './sociedad.js';
 import { counts } from './reglas.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
   if (k === 'cultivo' && iElegida === undefined) { const rv = t.filter(i => nearRiver(S, i)); if (rv.length) t = rv; }
-  const i = t[0], x = S.map[i], F0 = finance(S), e0 = envTarget(S, counts(S));
+  const i = t[0], x = S.map[i], F0 = finance(S), e0 = envTarget(S, counts(S)), a0 = satTargets(S, counts(S), false);
   const tt = x.t; x.b = k; if (tt === 'bosque') x.t = 'llano';
-  const F1 = finance(S), e1 = envTarget(S, counts(S));
+  const F1 = finance(S), e1 = envTarget(S, counts(S)), a1 = satTargets(S, counts(S), false);
   x.b = null; x.t = tt;
   return {
     i, costo: cost(S, k), cuota: cuotaInicial(S, k, cost(S, k)), anios: porEtapas(S, k) ? C.B[k].anios : 0, dn: F1.net - F0.net, net: F1.net,
     dj: (F1.so.jc + F1.so.ja) - (F0.so.jc + F0.so.ja), df: F1.fprod - F0.fprod,
-    cupos: k === 'casa' ? 10 : 0, de: e1 - e0 - (tt === 'bosque' ? 3 : 0)
+    cupos: k === 'casa' ? 10 : 0, de: e1 - e0 - (tt === 'bosque' ? 3 : 0), ...detalle(S, k, F0, F1, a0, a1)
   };
+}
+// Claridad: detalle de lo que cambia (empleos por clase, ánimo de cada clase, agua, energía, alcance, mantenimiento).
+function detalle(S, k, F0, F1, a0, a1) {
+  const B = C.B[k];
+  return {
+    djc: F1.so.jc - F0.so.jc, dja: F1.so.ja - F0.so.ja,
+    dsat: { c: a1.c - a0.c, a: a1.a - a0.a, e: a1.e - a0.e },
+    agua: B.water || 0, energia: B.energy || 0, mant: Math.round(B.up * S.price),
+    radio: C.COB && climaActivo(S) && S.stage >= 1 ? (C.COB.radios[k] || 0) : 0
+  };
+}
+// Lo que aporta hoy una obra ya construida: lo que se perdería si no estuviera.
+export function aporteObra(S, i) {
+  const x = S.map[i], k = x.b;
+  if (!k) return null;
+  const F1 = finance(S), e1 = envTarget(S, counts(S)), a1 = satTargets(S, counts(S), false), ob = x.ob, u = x.u;
+  x.b = null; delete x.ob; delete x.u;
+  const F0 = finance(S), e0 = envTarget(S, counts(S)), a0 = satTargets(S, counts(S), false);
+  x.b = k; if (ob) x.ob = ob; if (u !== undefined) x.u = u;
+  return { dn: F1.net - F0.net, df: F1.fprod - F0.fprod, de: e1 - e0, cupos: k === 'casa' ? 10 : 0, ...detalle(S, k, F0, F1, a0, a1) };
 }

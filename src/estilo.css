@@ -221,3 +221,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .pos{color:var(--good)}
 .cls .porque{margin-top:6px;padding:6px 10px;font-size:.85rem}
 .cls small.neg{display:block;color:var(--bad)}
+.efes{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.efe{font-size:.8rem;line-height:1.2;padding:3px 7px;border-radius:999px;border:1px solid var(--line);background:var(--bg)}
+.efe.pos{border-color:color-mix(in srgb,var(--good) 55%,var(--line))}.efe.neg{border-color:color-mix(in srgb,var(--bad) 55%,var(--line));color:var(--bad)}
+.ficha .aporte{grid-column:1/-1;font-size:.88rem}

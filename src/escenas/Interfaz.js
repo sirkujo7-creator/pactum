@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -210,13 +210,8 @@ export class Interfaz {
       let prev;
       if (v.motivo) prev = `<span class="prev neg">${v.motivo}</span>`;
       else {
-        const out = [`resultado anual ${signo(v.dn)} (queda en ${signo(v.net)})`];
-        if (v.dj) out.push(`${v.dj} empleos`);
-        if (v.df) out.push(`alimento ${signo(v.df)} al año`);
-        if (v.cupos) out.push(`${v.cupos} cupos más`);
-        if (Math.abs(v.de) >= 1) out.push(`ambiente ${signo(v.de)}`);
-        const paga = v.anios ? `Cuesta ${v.costo} de oro en ${v.anios} pagos de ${v.cuota}, uno por año; presta servicio al terminar` : `Cuesta ${v.costo} de oro`;
-        prev = `<span class="prev">${v.anios ? 'Cuando esté lista' : 'Si lo construyes'}: ${out.join(', ')}. ${paga}. Toca una casilla marcada.</span>`;
+        const paga = v.anios > 1 ? `Cuesta ${v.costo} de oro en ${v.anios} pagos de ${v.cuota}, uno por año; presta servicio al terminar.` : v.anios === 1 ? `Cuesta ${v.costo} de oro; tarda un año y presta servicio al terminar.` : `Cuesta ${v.costo} de oro.`;
+        prev = `<span class="prev">${paga} ${v.anios ? 'Cuando esté lista' : 'Si la construyes'}:</span>${this.efectos(v)}<span class="prev small">Toca una casilla marcada.</span>`;
       }
       this.hint.innerHTML = `<b>${this.nombre(k)}.</b> ${C.B[k].d} ${prev}`;
     } else this.hint.textContent = 'Elige una obra para construir, o toca una casilla para ver su ficha.';
@@ -349,6 +344,8 @@ export class Interfaz {
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));
+      const ap = x.ob ? null : aporteObra(S, i);
+      if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
       if (x.b === 'casa' && !x.ob && coberturaActiva(S)) {
@@ -440,14 +437,27 @@ export class Interfaz {
   cerrarTarjeta() { this.velo.hidden = true; this.card.innerHTML = ''; if (this.alCerrar) { const f = this.alCerrar; this.alCerrar = null; f(); } }
   boton(id, fn) { const b = this.card.querySelector('#' + id); if (b) b.onclick = fn; }
 
+  // Claridad: todos los efectos de una obra en fichas pequeñas (verde ayuda, rojo cuesta).
+  efectos(v) {
+    const L = [], ch = (ico, txt, bueno) => L.push(`<span class="efe ${bueno === undefined ? '' : bueno ? 'pos' : 'neg'}">${ico} ${txt}</span>`);
+    ch('💰', `oro al año ${signo(v.dn)}`, v.dn >= 0);
+    if (v.djc) ch('🧑‍🌾', `${signo(v.djc)} empleos campesinos`, v.djc > 0);
+    if (v.dja) ch('🔨', `${signo(v.dja)} empleos artesanos`, v.dja > 0);
+    if (v.cupos) ch('🏠', `${signo(v.cupos)} cupos de vivienda`, v.cupos > 0);
+    if (v.df) ch('🌽', `alimento ${signo(v.df)} al año`, v.df > 0);
+    if (v.agua) ch('💧', `${signo(v.agua)} agua`, v.agua > 0);
+    if (v.energia) ch('⚡', `energía para ${v.energia} talleres`, true);
+    if (Math.abs(v.de) >= 1) ch('🌿', `ambiente ${signo(v.de)}`, v.de > 0);
+    const n = { c: 'campesinos', a: 'artesanos', e: 'élite' };
+    for (const k of ['c', 'a', 'e']) if (v.dsat && Math.abs(v.dsat[k]) >= .5) ch('😊', `ánimo ${n[k]} ${signo(v.dsat[k])}`, v.dsat[k] > 0);
+    if (v.radio) ch('📏', `atiende ${v.radio} casillas a la redonda`);
+    if (v.mant) ch('🔧', `mantenimiento ${v.mant} al año`);
+    return `<div class="efes">${L.join('')}</div>`;
+  }
   // Fase 2: ficha del proyecto (inversión, VPN, recuperación, beneficio social) y licitación con tres ofertas.
   licitacion(k, i, alElegir) {
     const S = this.S, e = evaluarProyecto(S, k, i), O = C.OBRAS;
     if (e.motivo) { this.toast(e.motivo); return; }
-    const soc = [];
-    if (e.cupos) soc.push(`${e.cupos} cupos de vivienda`);
-    if (e.df) soc.push(`alimento ${signo(e.df)} al año`);
-    if (Math.abs(e.de) >= 1) soc.push(`ambiente ${signo(e.de)}`);
     const estrellas = n => '★'.repeat(n) + '☆'.repeat(3 - n);
     const ofs = ofertas(S, k, i).map(o => `<button class="opt" data-of="${o.id}" ${S.gold < o.cuota ? 'disabled' : ''}>
         <b>${o.nombre}</b> <span class="small" aria-label="Reputación ${o.reputacion} de 3">${estrellas(o.reputacion)}</span><br>
@@ -460,7 +470,7 @@ export class Interfaz {
         <tr><td>Resultado anual cuando funcione</td><td class="${e.dn < 0 ? 'neg' : ''}">${signo(e.dn)}</td></tr>
         <tr><td>VPN a ${e.horizonte} años (tasa ${Math.round(e.tasa * 100)}%)</td><td class="${e.vpn < 0 ? 'neg' : ''}">${signo(e.vpn)}</td></tr>
         <tr class="tot"><td>Se recupera</td><td>${e.recupera ? `en ${e.recupera} años` : 'no, en dinero'}</td></tr></table></div>
-      <p class="small"><b>Beneficio social:</b> ${soc.length ? soc.join(', ') + '. ' : ''}${C.B[k].d}</p>
+      <p class="small"><b>Cuando esté lista:</b> ${C.B[k].d}</p>${this.efectos(e)}
       <div class="phil"><b>Lo que enseña</b><br>${O.leccionProyecto}</div>
       <h3>Licitación: elige contratista</h3>${ofs}
       <p class="small">${O.leccionLicitacion}</p>
