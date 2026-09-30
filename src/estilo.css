@@ -103,7 +103,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .track{height:5px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:2px}
 .fill{height:100%;border-radius:4px;transition:width .4s}
 .meta{pointer-events:auto;position:absolute;left:10px;right:10px;bottom:calc(72px + env(safe-area-inset-bottom,0px));font-size:.86rem;line-height:1.35;background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:12px;padding:6px 10px;box-shadow:0 4px 14px rgba(20,25,15,.12);text-align:left}
-.meta .gl1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta .gl1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta .gl2{font-size:.8rem;color:var(--muted)}
 .meta .gmore{display:none;margin-top:4px}
 .meta.abierta .gl1{white-space:normal}
 .meta.abierta .gmore{display:block}
