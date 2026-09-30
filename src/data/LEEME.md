@@ -29,7 +29,8 @@ Copia uno de `dilemas.json` y cambia sus datos:
       "texto": "Reconstruirlo ya",
       "efectos": { "oro": -60, "confianza": 5 },
       "filosofia": "deon",
-      "porque": "Cuidar lo que es de todos es un deber."
+      "porque": "Cuidar lo que es de todos es un deber.",
+      "aQuien": "El tesoro paga, y el pueblo ve un gobierno que cuida lo común: por eso sube la confianza."
     }
   ]
 }
@@ -39,6 +40,7 @@ Copia uno de `dilemas.json` y cambia sus datos:
 - **condicion** (opcional): `edificios` (mínimo de cada obra), `anio`, `etapa`, `impuestoElite` (mínimo en %), `inflacionMayorQue` (por ejemplo 0.08), `terreno` (por ejemplo "montana").
 - **efectos:** `oro`, `alimento`, `habitantes`, `animo`, `igualdad`, `confianza`, `ambiente`, `deuda`, `campesinos`, `artesanos`, `elite`, `inflacion`, `impuestoElite`.
 - **filosofia:** `util` (Mill), `deon` (Kant), `contr` (Rawls), `real` (Maquiavelo), `virt` (Aristóteles).
+- **aQuien:** una frase que explica a quién afecta la opción y por qué (se muestra al elegirla, en «¿Por qué afecta así?»).
 - **despues** (opcional): `{ "anios": 4, "id": "nombre_consecuencia", "probabilidad": 0.5 }`, y esa consecuencia debe existir en `consecuencias.json`.
 
 Después de editar, Claude corre `node herramientas/balance.js` para revisar que el balance siga sano.

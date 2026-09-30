@@ -18,7 +18,8 @@
           "anios": 6,
           "id": "diques"
         },
-        "vista": "flood"
+        "vista": "flood",
+        "aQuien": "Los diques cuestan mucho oro, pero la gente ve que el gobierno la protege: por eso sube la confianza."
       },
       {
         "texto": "Reubicar a las familias ribereñas",
@@ -30,7 +31,8 @@
         },
         "filosofia": "util",
         "porque": "Sale más barato para la mayoría, aunque algunas familias pierden su hogar.",
-        "vista": "flood"
+        "vista": "flood",
+        "aQuien": "Reubicar es barato. Los campesinos de la orilla pierden su tierra y su casa (baja su ánimo y la igualdad), y el río recupera su espacio (sube el ambiente)."
       },
       {
         "texto": "Esperar a que baje el agua",
@@ -46,7 +48,8 @@
           "anios": 3,
           "id": "crecida_mal"
         },
-        "vista": "flood"
+        "vista": "flood",
+        "aQuien": "Sin gastar, el agua se lleva vidas y cosechas, y el pueblo siente que lo dejaron solo. La élite, que vive lejos del río, agradece que no se gaste su plata."
       }
     ]
   },
@@ -66,7 +69,8 @@
         },
         "filosofia": "virt",
         "porque": "La vida buena también se construye celebrando en comunidad.",
-        "vista": "festival"
+        "vista": "festival",
+        "aQuien": "Pagar la fiesta alegra a todos y muestra un gobierno cercano, a costa del tesoro."
       },
       {
         "texto": "Cobrar entrada",
@@ -78,7 +82,8 @@
         },
         "filosofia": "util",
         "porque": "Hay fiesta y el tesoro gana, pero los más pobres miran desde afuera.",
-        "vista": "festival"
+        "vista": "festival",
+        "aQuien": "El cobro llena el tesoro y le gusta a la élite, que puede pagar; los campesinos quedan por fuera y crece la desigualdad."
       },
       {
         "texto": "Cancelarlo",
@@ -86,7 +91,8 @@
           "animo": -6
         },
         "filosofia": "real",
-        "porque": "Austeridad: el tesoro se protege, el ánimo no."
+        "porque": "Austeridad: el tesoro se protege, el ánimo no.",
+        "aQuien": "Nadie paga, pero nadie celebra: el ánimo de todos baja."
       }
     ]
   },
@@ -110,7 +116,8 @@
         "despues": {
           "anios": 4,
           "id": "sal_mal"
-        }
+        },
+        "aQuien": "El mercader paga y la élite gana un negocio seguro; todos pagarán la sal más cara, por eso bajan la igualdad y la confianza."
       },
       {
         "texto": "Rechazarlo",
@@ -120,7 +127,8 @@
           "elite": -3
         },
         "filosofia": "contr",
-        "porque": "Ninguna ventaja privada es justa si empeora la situación de los más débiles."
+        "porque": "Ninguna ventaja privada es justa si empeora la situación de los más débiles.",
+        "aQuien": "La gente valora que no vendas lo común; los artesanos y la élite que esperaban negociar con el mercader pierden esa oportunidad."
       }
     ]
   },
@@ -145,7 +153,8 @@
         },
         "filosofia": "contr",
         "porque": "Si la escasez es de todos, el sacrificio también.",
-        "vista": "drought"
+        "vista": "drought",
+        "aQuien": "Todos comen menos por igual: baja el ánimo, pero el sacrificio compartido sube la igualdad."
       },
       {
         "texto": "Comprar alimento afuera",
@@ -156,7 +165,8 @@
         },
         "filosofia": "util",
         "porque": "El dinero resuelve hoy el problema de todos, aunque los precios suben.",
-        "vista": "drought"
+        "vista": "drought",
+        "aQuien": "El oro compra comida de afuera; tanta plata circulando hace subir un poco los precios."
       },
       {
         "texto": "Dar prioridad a quienes trabajan la tierra",
@@ -168,7 +178,8 @@
         },
         "filosofia": "real",
         "porque": "Mantienes la producción, pero dejas atrás a quienes no producen.",
-        "vista": "drought"
+        "vista": "drought",
+        "aQuien": "Los campesinos, que producen, reciben primero; los artesanos, que compran su comida, quedan atrás y la igualdad baja."
       }
     ]
   },
@@ -193,7 +204,8 @@
         "despues": {
           "anios": 5,
           "id": "migra_bien"
-        }
+        },
+        "aQuien": "Llegan brazos nuevos y el pueblo se siente justo; hay más bocas que alimentar, y los artesanos temen competir por el trabajo."
       },
       {
         "texto": "Acogerlas a cambio de trabajo",
@@ -203,7 +215,8 @@
           "igualdad": -3
         },
         "filosofia": "util",
-        "porque": "Todos ganan algo, aunque la dignidad quede condicionada."
+        "porque": "Todos ganan algo, aunque la dignidad quede condicionada.",
+        "aQuien": "Las familias trabajan a cambio del refugio: el tesoro gana algo, pero quedan en desventaja y la igualdad baja."
       },
       {
         "texto": "Cerrar el paso",
@@ -217,7 +230,8 @@
         "despues": {
           "anios": 5,
           "id": "migra_mal"
-        }
+        },
+        "aQuien": "Los artesanos y la élite no ven competencia nueva; el resto del pueblo desaprueba la falta de solidaridad."
       }
     ]
   },
@@ -240,7 +254,8 @@
         "despues": {
           "anios": 5,
           "id": "donante_mal"
-        }
+        },
+        "aQuien": "El tesoro recibe oro y la élite gana prestigio en la plaza; lo público queda un poco en manos privadas."
       },
       {
         "texto": "Rechazar",
@@ -249,7 +264,8 @@
           "elite": -3
         },
         "filosofia": "deon",
-        "porque": "Lo público no se vende, aunque la oferta sea generosa."
+        "porque": "Lo público no se vende, aunque la oferta sea generosa.",
+        "aQuien": "El pueblo valora que lo público no se venda; la familia rica se ofende."
       }
     ]
   },
@@ -274,7 +290,8 @@
         },
         "filosofia": "util",
         "porque": "Rápido y barato; el costo lo paga la tierra.",
-        "vista": "pests"
+        "vista": "pests",
+        "aQuien": "Los químicos salvan la cosecha de los campesinos, pero envenenan la tierra y el río."
       },
       {
         "texto": "Control biológico",
@@ -284,7 +301,8 @@
           "alimento": -8
         },
         "filosofia": "virt",
-        "porque": "Más lento y caro: el término medio entre producir y cuidar."
+        "porque": "Más lento y caro: el término medio entre producir y cuidar.",
+        "aQuien": "Cuidas la tierra, pero es lento: se pierde parte de la cosecha y cuesta más oro."
       },
       {
         "texto": "Dejar que pase",
@@ -294,7 +312,8 @@
         },
         "filosofia": "real",
         "porque": "Ahorras oro y pierdes comida.",
-        "vista": "pests"
+        "vista": "pests",
+        "aQuien": "No se gasta oro, pero la plaga se come la comida y los campesinos pierden su trabajo."
       }
     ]
   },
@@ -319,7 +338,8 @@
           "anios": 4,
           "id": "evasion_venganza",
           "probabilidad": 0.5
-        }
+        },
+        "aQuien": "La ley se cumple: el tesoro cobra, los campesinos sienten justicia y la élite se molesta porque uno de los suyos fue castigado."
       },
       {
         "texto": "Negociar un pago parcial",
@@ -328,7 +348,8 @@
           "confianza": -2
         },
         "filosofia": "util",
-        "porque": "Algo es mejor que nada, aunque el mensaje sea ambiguo."
+        "porque": "Algo es mejor que nada, aunque el mensaje sea ambiguo.",
+        "aQuien": "Entra algo de oro, pero el pueblo nota que los poderosos negocian lo que otros pagan completo."
       },
       {
         "texto": "Perdonarlo a cambio de su apoyo",
@@ -342,7 +363,8 @@
         "despues": {
           "anios": 4,
           "id": "evasion2"
-        }
+        },
+        "aQuien": "La élite gana un aliado; el pueblo ve impunidad, y bajan la confianza y la igualdad."
       }
     ]
   },
@@ -367,7 +389,8 @@
           "anios": 3,
           "id": "reforma_fuga",
           "probabilidad": 0.6
-        }
+        },
+        "aQuien": "Los campesinos reciben tierra propia (sube mucho su ánimo y la igualdad); los dueños de las haciendas pierden parte de lo suyo."
       },
       {
         "texto": "Ofrecer créditos para comprar tierra",
@@ -377,7 +400,8 @@
           "elite": -2
         },
         "filosofia": "util",
-        "porque": "Una solución de mercado: lenta, pero sin choques."
+        "porque": "Una solución de mercado: lenta, pero sin choques.",
+        "aQuien": "Los campesinos compran tierra a crédito: mejoran más despacio y el tesoro se endeuda; la élite apenas lo siente."
       },
       {
         "texto": "Rechazar la petición",
@@ -390,7 +414,8 @@
         "despues": {
           "anios": 5,
           "id": "tierras_mal"
-        }
+        },
+        "aQuien": "Los hacendados conservan sus tierras y lo agradecen; los campesinos siguen trabajando lo ajeno."
       }
     ]
   },
@@ -418,7 +443,8 @@
         "despues": {
           "anios": 6,
           "id": "maestros_bien"
-        }
+        },
+        "aQuien": "Los maestros cuentan entre los artesanos: mejor salario los anima, y una buena educación reparte oportunidades."
       },
       {
         "texto": "Pagar con deuda",
@@ -427,7 +453,8 @@
           "artesanos": 4
         },
         "filosofia": "util",
-        "porque": "Resuelves hoy y trasladas el costo a los gobiernos de mañana."
+        "porque": "Resuelves hoy y trasladas el costo a los gobiernos de mañana.",
+        "aQuien": "Los maestros quedan contentos hoy, pero la deuda la pagará el tesoro de mañana."
       },
       {
         "texto": "Negarse",
@@ -437,7 +464,8 @@
           "elite": 3
         },
         "filosofia": "real",
-        "porque": "Cuidas el tesoro; pierdes a quienes forman ciudadanos."
+        "porque": "Cuidas el tesoro; pierdes a quienes forman ciudadanos.",
+        "aQuien": "El tesoro se ahorra el aumento; los maestros se desaniman, el pueblo lo desaprueba y la élite celebra el ahorro."
       }
     ]
   },
@@ -462,7 +490,8 @@
         },
         "filosofia": "contr",
         "porque": "El trabajo digno no es un favor del patrón.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Los artesanos ganan un salario justo que pagan los dueños de los talleres (la élite): por eso unos suben y otros bajan."
       },
       {
         "texto": "Subsidiar el aumento con el tesoro",
@@ -472,7 +501,8 @@
         },
         "filosofia": "util",
         "porque": "Todos contentos, pero lo paga el erario.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "El tesoro paga el aumento: los artesanos ganan y nadie más pierde, salvo el oro público."
       },
       {
         "texto": "Romper la huelga",
@@ -487,7 +517,8 @@
           "anios": 4,
           "id": "huelga_mal"
         },
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Los dueños recuperan sus talleres; los artesanos quedan resentidos y el pueblo desconfía de la fuerza."
       }
     ]
   },
@@ -511,7 +542,8 @@
           "elite": -3
         },
         "filosofia": "deon",
-        "porque": "Nadie tiene derecho a dañar lo que es de todos."
+        "porque": "Nadie tiene derecho a dañar lo que es de todos.",
+        "aQuien": "Los dueños de los talleres pagan los filtros y el río se limpia."
       },
       {
         "texto": "Multar a los dueños",
@@ -521,7 +553,8 @@
           "elite": -4
         },
         "filosofia": "util",
-        "porque": "El tesoro gana y el daño se reduce un poco."
+        "porque": "El tesoro gana y el daño se reduce un poco.",
+        "aQuien": "La multa llena un poco el tesoro y reduce el daño; los dueños se molestan."
       },
       {
         "texto": "Ignorar la denuncia",
@@ -536,7 +569,8 @@
           "anios": 4,
           "id": "humo_mal"
         },
-        "vista": "smog"
+        "vista": "smog",
+        "aQuien": "Los talleres siguen igual y los dueños lo agradecen; el río se ensucia y el pueblo pierde confianza."
       }
     ]
   },
@@ -558,7 +592,8 @@
         "despues": {
           "anios": 4,
           "id": "corrup_bien"
-        }
+        },
+        "aQuien": "Investigar cuesta y es incómodo, pero el pueblo ve que nadie está por encima de la ley."
       },
       {
         "texto": "Destituirlo en silencio",
@@ -572,7 +607,8 @@
           "anios": 4,
           "id": "corrup_filtra",
           "probabilidad": 0.5
-        }
+        },
+        "aQuien": "Se corta el robo sin escándalo; el pueblo casi no se entera."
       },
       {
         "texto": "No hacer nada",
@@ -585,7 +621,8 @@
         "despues": {
           "anios": 3,
           "id": "corrup_mal"
-        }
+        },
+        "aQuien": "El robo sigue: la élite cercana al poder se beneficia y el pueblo empieza a sospechar."
       }
     ]
   },
@@ -604,7 +641,8 @@
           "confianza": 6
         },
         "filosofia": "deon",
-        "porque": "La vida no tiene precio de mercado."
+        "porque": "La vida no tiene precio de mercado.",
+        "aQuien": "El tesoro paga, pero se salvan más vidas y el pueblo agradece un gobierno que cuida."
       },
       {
         "texto": "Atender a quien pueda pagar",
@@ -619,7 +657,8 @@
         "despues": {
           "anios": 3,
           "id": "epidemia_mal"
-        }
+        },
+        "aQuien": "Solo se atiende quien paga: los campesinos, los más pobres, mueren más y la desigualdad crece."
       },
       {
         "texto": "Vacunar primero a los trabajadores",
@@ -630,7 +669,8 @@
           "artesanos": 4
         },
         "filosofia": "util",
-        "porque": "Proteges la economía de todos, aunque no a todos por igual."
+        "porque": "Proteges la economía de todos, aunque no a todos por igual.",
+        "aQuien": "Los trabajadores de talleres y mercados (artesanos) se protegen primero; el resto espera."
       }
     ]
   },
@@ -652,7 +692,8 @@
           "igualdad": -5
         },
         "filosofia": "util",
-        "porque": "Retienes la inversión, pero el esfuerzo fiscal recae en otros."
+        "porque": "Retienes la inversión, pero el esfuerzo fiscal recae en otros.",
+        "aQuien": "La élite paga menos y se queda contenta; lo que deja de pagar pesa sobre los demás, y baja la igualdad."
       },
       {
         "texto": "Mantener la tasa",
@@ -662,7 +703,8 @@
           "campesinos": 3
         },
         "filosofia": "deon",
-        "porque": "Las reglas no se negocian bajo amenaza."
+        "porque": "Las reglas no se negocian bajo amenaza.",
+        "aQuien": "La élite se enoja, pero el pueblo ve un gobierno firme y los campesinos sienten que las reglas son iguales."
       },
       {
         "texto": "Pactar inversión social a cambio",
@@ -672,7 +714,8 @@
           "campesinos": 4
         },
         "filosofia": "virt",
-        "porque": "Un punto medio: el capital se queda y devuelve algo."
+        "porque": "Un punto medio: el capital se queda y devuelve algo.",
+        "aQuien": "La élite cede algo y deja inversión social, que llega a los campesinos."
       }
     ]
   },
@@ -696,7 +739,8 @@
         },
         "filosofia": "real",
         "porque": "Alivio inmediato, pero ocultas el síntoma sin curar la causa.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Los vendedores de la élite pierden ganancias; los campesinos respiran con precios fijos, y los artesanos sufren cuando falta mercancía."
       },
       {
         "texto": "Recortar el gasto público",
@@ -707,7 +751,8 @@
           "oro": 30
         },
         "filosofia": "util",
-        "porque": "Enfrías la economía: duele hoy, estabiliza mañana."
+        "porque": "Enfrías la economía: duele hoy, estabiliza mañana.",
+        "aQuien": "Menos gasto público frena la inflación y ahorra oro, pero los trabajadores pierden ingresos y empleos."
       },
       {
         "texto": "Explicar la situación y esperar",
@@ -718,7 +763,8 @@
         },
         "filosofia": "virt",
         "porque": "La honestidad no baja los precios.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Explicar es honesto y suma algo de confianza, pero los precios siguen apretando a los trabajadores."
       }
     ]
   },
@@ -745,7 +791,8 @@
         "despues": {
           "anios": 4,
           "id": "oro_mal"
-        }
+        },
+        "aQuien": "Mucha riqueza para el tesoro y la élite inversora; la montaña queda herida y la riqueza se reparte mal."
       },
       {
         "texto": "Explotar con control ambiental",
@@ -754,7 +801,8 @@
           "ambiente": -5
         },
         "filosofia": "virt",
-        "porque": "Ni todo ni nada: prudencia."
+        "porque": "Ni todo ni nada: prudencia.",
+        "aQuien": "Se gana menos oro, pero se cuida la montaña."
       },
       {
         "texto": "Declarar reserva natural",
@@ -764,7 +812,8 @@
           "elite": -4
         },
         "filosofia": "deon",
-        "porque": "Hay bienes que no deberían tener precio."
+        "porque": "Hay bienes que no deberían tener precio.",
+        "aQuien": "La montaña queda protegida y el pueblo lo valora; la élite pierde un negocio."
       }
     ]
   },
@@ -784,7 +833,8 @@
         },
         "filosofia": "contr",
         "porque": "Abrir oportunidades a quien no las tiene es justicia.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Los estudiantes consiguen apoyo: el tesoro paga, sube la confianza y más jóvenes pobres pueden estudiar."
       },
       {
         "texto": "Mesa de diálogo sin dinero",
@@ -794,7 +844,8 @@
         },
         "filosofia": "virt",
         "porque": "Escuchar es necesario, pero no siempre suficiente.",
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "Se escucha, pero sin recursos los estudiantes (hijos de artesanos) se sienten engañados."
       },
       {
         "texto": "Dispersarla con la guardia",
@@ -810,7 +861,8 @@
           "anios": 5,
           "id": "protesta_mal"
         },
-        "vista": "crowd"
+        "vista": "crowd",
+        "aQuien": "La fuerza calla la protesta: los trabajadores se indignan, la confianza cae y solo la élite se siente más segura."
       }
     ]
   },
@@ -828,13 +880,15 @@
           "deuda": 300
         },
         "filosofia": "util",
-        "porque": "Liquidez inmediata. Revisa si tu flujo de caja soporta la cuota."
+        "porque": "Liquidez inmediata. Revisa si tu flujo de caja soporta la cuota.",
+        "aQuien": "Entra oro hoy, pero la deuda crece más de lo que recibes: la pagarás con intereses."
       },
       {
         "texto": "Rechazar",
         "efectos": {},
         "filosofia": "virt",
-        "porque": "Crecer con lo propio es más lento y más seguro."
+        "porque": "Crecer con lo propio es más lento y más seguro.",
+        "aQuien": "No pasa nada ahora: ni oro ni deuda."
       }
     ]
   },
@@ -854,7 +908,8 @@
           "campesinos": -5
         },
         "filosofia": "contr",
-        "porque": "Un acuerdo justo es el que ambas partes aceptarían."
+        "porque": "Un acuerdo justo es el que ambas partes aceptarían.",
+        "aQuien": "Entra comercio justo: los artesanos venden más; los campesinos compiten con la comida del vecino."
       },
       {
         "texto": "Exigir ventajas",
@@ -870,7 +925,8 @@
           "anios": 4,
           "id": "alianza_rota",
           "probabilidad": 0.5
-        }
+        },
+        "aQuien": "Ganas más oro y la élite comerciante se beneficia; el vecino lo resiente y los campesinos compiten con sus productos."
       }
     ]
   },
@@ -889,7 +945,8 @@
           "oro": 60
         },
         "filosofia": "contr",
-        "porque": "Las desigualdades solo se justifican si benefician a los peores situados."
+        "porque": "Las desigualdades solo se justifican si benefician a los peores situados.",
+        "aQuien": "La élite aporta una parte de lo que tiene: sube la igualdad y el tesoro, y los más ricos se molestan."
       },
       {
         "texto": "Rechazarlo",
@@ -899,7 +956,8 @@
           "elite": 5
         },
         "filosofia": "real",
-        "porque": "Mantienes contentas a las élites."
+        "porque": "Mantienes contentas a las élites.",
+        "aQuien": "La élite queda tranquila; el pueblo ve que los que más tienen no aportan."
       },
       {
         "texto": "Convocar consulta popular",
@@ -910,7 +968,8 @@
           "oro": -20
         },
         "filosofia": "virt",
-        "porque": "Por el pueblo y con el pueblo: la deliberación también educa."
+        "porque": "Por el pueblo y con el pueblo: la deliberación también educa.",
+        "aQuien": "El pueblo decide y se siente escuchado; la consulta cuesta y la élite pierde, pero con más apoyo de todos."
       }
     ]
   },
@@ -932,7 +991,8 @@
           "inflacion": -1
         },
         "filosofia": "contr",
-        "porque": "En la escasez, lo básico no puede quedar a merced de quien más paga."
+        "porque": "En la escasez, lo básico no puede quedar a merced de quien más paga.",
+        "aQuien": "Los acaparadores (élite) pierden su ganancia; los campesinos pueden comprar comida."
       },
       {
         "texto": "Dejar actuar al mercado",
@@ -948,7 +1008,8 @@
           "anios": 1,
           "id": "especulacion_mal",
           "probabilidad": 0.6
-        }
+        },
+        "aQuien": "La élite gana vendiendo caro; los campesinos pagan más por comer y la desigualdad crece."
       },
       {
         "texto": "Comprar reservas públicas y venderlas a costo",
@@ -958,7 +1019,8 @@
           "confianza": 4
         },
         "filosofia": "virt",
-        "porque": "Ni prohibir ni abandonar: el Estado equilibra el mercado cuando falla."
+        "porque": "Ni prohibir ni abandonar: el Estado equilibra el mercado cuando falla.",
+        "aQuien": "El tesoro compra y vende a costo: los campesinos comen y el pueblo ve un Estado que responde."
       }
     ]
   },
@@ -979,7 +1041,8 @@
           "elite": -3
         },
         "filosofia": "deon",
-        "porque": "Rendir cuentas es un deber, aunque exponga al gobernante."
+        "porque": "Rendir cuentas es un deber, aunque exponga al gobernante.",
+        "aQuien": "Asumir errores gana confianza; a la élite no le gusta que se revisen las obras mal hechas."
       },
       {
         "texto": "Culpar al clima",
@@ -993,7 +1056,8 @@
           "anios": 2,
           "id": "culpar_mal",
           "probabilidad": 0.5
-        }
+        },
+        "aQuien": "El pueblo nota la excusa y desconfía; la élite respira porque nadie revisa nada."
       },
       {
         "texto": "Culpar al gobierno anterior",
@@ -1002,7 +1066,8 @@
           "artesanos": 2
         },
         "filosofia": "real",
-        "porque": "Funciona un tiempo; luego el pueblo pregunta qué hiciste tú."
+        "porque": "Funciona un tiempo; luego el pueblo pregunta qué hiciste tú.",
+        "aQuien": "Funciona con algunos artesanos, pero la confianza baja: el pueblo quiere soluciones."
       }
     ]
   },
@@ -1028,7 +1093,8 @@
         "despues": {
           "anios": 3,
           "id": "ayuda_condiciones"
-        }
+        },
+        "aQuien": "Entra mucho oro y la élite hace negocios con las empresas de fuera; los artesanos locales pierden ante esa competencia."
       },
       {
         "texto": "Negociar menos condiciones",
@@ -1037,7 +1103,8 @@
           "confianza": 2
         },
         "filosofia": "virt",
-        "porque": "Aceptar ayuda sin entregar la autonomía: el punto medio."
+        "porque": "Aceptar ayuda sin entregar la autonomía: el punto medio.",
+        "aQuien": "Llega menos oro, pero se conserva la autonomía y el pueblo lo valora."
       },
       {
         "texto": "Rechazarla",
@@ -1046,7 +1113,8 @@
           "campesinos": -5
         },
         "filosofia": "deon",
-        "porque": "La soberanía no se vende, aunque la emergencia apriete."
+        "porque": "La soberanía no se vende, aunque la emergencia apriete.",
+        "aQuien": "Se protege la soberanía, pero los campesinos golpeados por la emergencia se quedan sin ayuda."
       }
     ]
   },
@@ -1068,7 +1136,8 @@
           "confianza": 3
         },
         "filosofia": "util",
-        "porque": "Duele dejar el lugar de siempre, pero evita la próxima tragedia."
+        "porque": "Duele dejar el lugar de siempre, pero evita la próxima tragedia.",
+        "aQuien": "Mudarse duele a los campesinos de la orilla, pero el pueblo ve prudencia y se evitan tragedias futuras."
       },
       {
         "texto": "Reconstruir en el mismo lugar",
@@ -1082,7 +1151,8 @@
           "anios": 4,
           "id": "crecida_mal",
           "probabilidad": 0.5
-        }
+        },
+        "aQuien": "Los campesinos vuelven a su tierra y lo agradecen; el río volverá a crecer."
       },
       {
         "texto": "Reconstruir con diques y casas elevadas",
@@ -1092,7 +1162,8 @@
           "confianza": 4
         },
         "filosofia": "deon",
-        "porque": "Proteger la vida de cada familia sin arrancarla de su tierra, aunque cueste más."
+        "porque": "Proteger la vida de cada familia sin arrancarla de su tierra, aunque cueste más.",
+        "aQuien": "La solución más cara protege a las familias sin sacarlas de su tierra: los campesinos y el pueblo lo valoran."
       }
     ]
   },
@@ -1114,7 +1185,8 @@
           "ambiente": -3
         },
         "filosofia": "util",
-        "porque": "Más comida para más gente, siempre que el clima acompañe."
+        "porque": "Más comida para más gente, siempre que el clima acompañe.",
+        "aQuien": "Más comida si el clima ayuda; el cultivo intensivo cansa un poco la tierra."
       },
       {
         "texto": "Semillas criollas resistentes",
@@ -1124,7 +1196,8 @@
           "ambiente": 2
         },
         "filosofia": "virt",
-        "porque": "Rinden menos, pero no fallan: la prudencia frente al riesgo."
+        "porque": "Rinden menos, pero no fallan: la prudencia frente al riesgo.",
+        "aQuien": "Rinden menos, pero los campesinos no pierden la cosecha y la tierra descansa."
       },
       {
         "texto": "Recuperar los saberes tradicionales de siembra",
@@ -1134,7 +1207,8 @@
           "alimento": 3
         },
         "filosofia": "contr",
-        "porque": "El conocimiento de los mayores es de todos y protege a los más pobres."
+        "porque": "El conocimiento de los mayores es de todos y protege a los más pobres.",
+        "aQuien": "Los saberes de los mayores dan valor a los campesinos más pobres y protegen la comida."
       }
     ]
   },
@@ -1156,7 +1230,8 @@
           "alimento": -8
         },
         "filosofia": "deon",
-        "porque": "El río no es propiedad de quien vive más arriba."
+        "porque": "El río no es propiedad de quien vive más arriba.",
+        "aQuien": "El vecino recibe agua y el pueblo ve generosidad; tus campesinos riegan menos y baja la cosecha."
       },
       {
         "texto": "Vendérsela",
@@ -1166,7 +1241,8 @@
           "confianza": -2
         },
         "filosofia": "util",
-        "porque": "Todos ganan algo, aunque el vecino pague por lo que antes era común."
+        "porque": "Todos ganan algo, aunque el vecino pague por lo que antes era común.",
+        "aQuien": "El tesoro y la élite ganan con la venta; el pueblo siente que se cobró por algo que era de todos."
       },
       {
         "texto": "Negarla",
@@ -1180,7 +1256,8 @@
           "anios": 3,
           "id": "migra_mal",
           "probabilidad": 0.5
-        }
+        },
+        "aQuien": "Tus campesinos conservan el riego; el pueblo desaprueba dejar al vecino sin agua."
       }
     ]
   }
