@@ -1260,5 +1260,396 @@
         "aQuien": "Tus campesinos conservan el riego; el pueblo desaprueba dejar al vecino sin agua."
       }
     ]
+  },
+  {
+    "id": "cosecha",
+    "tipo": "bueno",
+    "etapa": 0,
+    "icono": "🌽",
+    "titulo": "Cosecha abundante",
+    "texto": "El año fue generoso: los graneros no dan abasto y sobra maíz, frijol y plátano.",
+    "condicion": {
+      "edificios": {
+        "cultivo": 2
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Guardar el excedente en el granero",
+        "efectos": {
+          "alimento": 30
+        },
+        "filosofia": "virt",
+        "porque": "La prudencia guarda en la abundancia para los años de escasez.",
+        "aQuien": "La comida de más queda de reserva: protege al pueblo en una sequía o una mala cosecha."
+      },
+      {
+        "texto": "Vender el excedente",
+        "efectos": {
+          "oro": 35,
+          "campesinos": 4
+        },
+        "filosofia": "util",
+        "porque": "Convertir lo que sobra en recursos para todos.",
+        "aQuien": "Los campesinos venden su trabajo a buen precio y el tesoro cobra su parte."
+      },
+      {
+        "texto": "Repartirlo en una fiesta de la cosecha",
+        "efectos": {
+          "alimento": 10,
+          "animo": 6,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "Compartir la abundancia fortalece los lazos de la comunidad.",
+        "aQuien": "Todos comen y celebran: sube el ánimo general y la gente agradece al gobierno."
+      }
+    ]
+  },
+  {
+    "id": "viajeros",
+    "tipo": "bueno",
+    "etapa": 0,
+    "icono": "🐴",
+    "titulo": "Llegan arrieros y viajeros",
+    "texto": "Una recua de mulas trae comerciantes de otros pueblos. Quieren vender, comprar y descansar.",
+    "condicion": {
+      "edificios": {
+        "mercado": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Recibirlos en el mercado",
+        "efectos": {
+          "oro": 25,
+          "artesanos": 4
+        },
+        "filosofia": "util",
+        "porque": "El intercambio beneficia a ambas partes.",
+        "aQuien": "Los artesanos venden más y el mercado cobra tasas."
+      },
+      {
+        "texto": "Cobrarles un peaje",
+        "efectos": {
+          "oro": 40,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "Quien usa el camino ayuda a pagarlo.",
+        "aQuien": "El tesoro gana más de una vez; la élite, dueña de los caminos, lo celebra."
+      },
+      {
+        "texto": "Invitarlos a quedarse a vivir",
+        "efectos": {
+          "habitantes": 4,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "Un pueblo abierto crece con quienes llegan.",
+        "aQuien": "Algunos viajeros se quedan: llegan habitantes nuevos y el pueblo se siente acogedor."
+      }
+    ]
+  },
+  {
+    "id": "minga",
+    "tipo": "bueno",
+    "etapa": 0,
+    "icono": "🤝",
+    "titulo": "Minga comunitaria",
+    "texto": "Los vecinos proponen una minga: un día de trabajo voluntario para el bien común.",
+    "opciones": [
+      {
+        "texto": "Arreglar caminos y casas",
+        "efectos": {
+          "confianza": 4,
+          "campesinos": 3,
+          "artesanos": 3
+        },
+        "filosofia": "virt",
+        "porque": "La virtud cívica se practica trabajando juntos.",
+        "aQuien": "Campesinos y artesanos mejoran su entorno con sus manos y confían más en su gobierno."
+      },
+      {
+        "texto": "Sembrar árboles en las laderas",
+        "efectos": {
+          "ambiente": 8,
+          "campesinos": 2
+        },
+        "filosofia": "deon",
+        "porque": "Cuidar la tierra es un deber con quienes vendrán.",
+        "aQuien": "Las laderas ganan árboles: sube el ambiente y los campesinos protegen sus tierras de la erosión."
+      },
+      {
+        "texto": "Agradecer y dejarlos descansar",
+        "efectos": {
+          "animo": 3
+        },
+        "filosofia": "util",
+        "porque": "A veces el mejor regalo es el descanso.",
+        "aQuien": "La gente valora el gesto: sube un poco el ánimo general."
+      }
+    ]
+  },
+  {
+    "id": "sanpedro",
+    "tipo": "bueno",
+    "etapa": 0,
+    "icono": "🎉",
+    "titulo": "Fiestas de San Juan y San Pedro",
+    "texto": "Llegan las fiestas tolimenses: bambucos, rajaleñas y lechona. El pueblo las organiza con alegría.",
+    "condicion": {
+      "anio": 4
+    },
+    "opciones": [
+      {
+        "texto": "Sumarse con banda y comparsa",
+        "efectos": {
+          "oro": -10,
+          "animo": 8,
+          "confianza": 4
+        },
+        "filosofia": "virt",
+        "porque": "La vida buena también se construye celebrando en comunidad.",
+        "aQuien": "Con poco gasto el gobierno se suma a la fiesta: sube el ánimo y la gente siente que su gobierno es de ellos."
+      },
+      {
+        "texto": "Dejar que el pueblo la organice",
+        "efectos": {
+          "animo": 5
+        },
+        "filosofia": "contr",
+        "porque": "La cultura es del pueblo, no del gobierno.",
+        "aQuien": "La fiesta es de todos y nadie paga de más: sube el ánimo."
+      },
+      {
+        "texto": "Aprovechar para anunciar obras",
+        "efectos": {
+          "confianza": 5,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "El poder también se ejerce en la plaza pública.",
+        "aQuien": "El anuncio gana apoyo y a la élite le gusta la promesa de obras; ojo: el pueblo recordará lo prometido."
+      }
+    ]
+  },
+  {
+    "id": "paisano",
+    "tipo": "bueno",
+    "etapa": 1,
+    "icono": "🎁",
+    "titulo": "Un paisano exitoso regresa",
+    "texto": "Un hijo del pueblo que hizo fortuna en la ciudad vuelve y quiere ayudar, sin pedir nada a cambio.",
+    "opciones": [
+      {
+        "texto": "Que su aporte vaya a la escuela",
+        "efectos": {
+          "oro": 30,
+          "igualdad": 4,
+          "confianza": 3
+        },
+        "filosofia": "contr",
+        "porque": "La educación es la vía para que los menos favorecidos mejoren su lugar.",
+        "aQuien": "Parte del dinero se invierte en educación: sube la igualdad y el pueblo agradece."
+      },
+      {
+        "texto": "Que su aporte vaya al tesoro",
+        "efectos": {
+          "oro": 70
+        },
+        "filosofia": "util",
+        "porque": "Más recursos para decidir lo que más sirva a todos.",
+        "aQuien": "Todo el aporte entra al tesoro, sin condiciones."
+      },
+      {
+        "texto": "Hacerle una fiesta en su honor",
+        "efectos": {
+          "oro": 20,
+          "animo": 6,
+          "elite": 3
+        },
+        "filosofia": "real",
+        "porque": "Reconocer a los benefactores atrae a otros.",
+        "aQuien": "La fiesta alegra al pueblo y la élite se siente reconocida."
+      }
+    ]
+  },
+  {
+    "id": "inventora",
+    "tipo": "bueno",
+    "etapa": 1,
+    "icono": "⚙️",
+    "titulo": "Una inventora del pueblo",
+    "texto": "Una tejedora inventó un telar que trabaja el doble de rápido. Pide apoyo para fabricarlo.",
+    "condicion": {
+      "edificios": {
+        "taller": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Financiar su invento",
+        "efectos": {
+          "oro": -20,
+          "artesanos": 6
+        },
+        "filosofia": "util",
+        "porque": "Invertir en ideas es invertir en el futuro de todos.",
+        "aQuien": "Los artesanos ven que el trabajo creativo se apoya; en unos años el invento puede rendir frutos.",
+        "despues": {
+          "anios": 4,
+          "id": "invento_exito",
+          "probabilidad": 0.8
+        }
+      },
+      {
+        "texto": "Dejar que lo venda a los dueños de talleres",
+        "efectos": {
+          "oro": 15,
+          "elite": 4
+        },
+        "filosofia": "real",
+        "porque": "El mercado sabrá premiar la buena idea.",
+        "aQuien": "La élite compra el invento y lo aprovecha; el tesoro cobra el impuesto de la venta."
+      },
+      {
+        "texto": "Nombrarla maestra de oficios",
+        "efectos": {
+          "igualdad": 3,
+          "artesanos": 4
+        },
+        "filosofia": "contr",
+        "porque": "El saber compartido reduce las brechas.",
+        "aQuien": "Enseña a otros artesanos: se reparte el conocimiento y sube la igualdad."
+      }
+    ]
+  },
+  {
+    "id": "voluntarios",
+    "tipo": "bueno",
+    "etapa": 1,
+    "icono": "🩺",
+    "titulo": "Maestros y médicos voluntarios",
+    "texto": "Una brigada de maestros y médicos ofrece trabajar un año en el territorio.",
+    "opciones": [
+      {
+        "texto": "Enviarlos a los barrios más pobres",
+        "efectos": {
+          "igualdad": 5,
+          "campesinos": 4
+        },
+        "filosofia": "contr",
+        "porque": "Las desigualdades solo se justifican si benefician a los peores situados.",
+        "aQuien": "Atienden a quienes menos tienen: sube la igualdad y el ánimo de los campesinos."
+      },
+      {
+        "texto": "Ubicarlos en el centro, donde vive más gente",
+        "efectos": {
+          "artesanos": 4,
+          "confianza": 2
+        },
+        "filosofia": "util",
+        "porque": "Atender al mayor número posible.",
+        "aQuien": "Atienden a más personas en el centro, donde viven muchos artesanos."
+      }
+    ]
+  },
+  {
+    "id": "cafepremio",
+    "tipo": "bueno",
+    "etapa": 1,
+    "icono": "☕",
+    "titulo": "El café del territorio gana un premio",
+    "texto": "Catadores de afuera eligieron el café de tus laderas como uno de los mejores del país.",
+    "condicion": {
+      "edificios": {
+        "cafetal": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Venderlo a mejor precio",
+        "efectos": {
+          "oro": 50,
+          "elite": 3
+        },
+        "filosofia": "util",
+        "porque": "Aprovechar la oportunidad trae recursos para todos.",
+        "aQuien": "El tesoro y los comerciantes (élite) ganan con el mejor precio."
+      },
+      {
+        "texto": "Crear una cooperativa campesina",
+        "efectos": {
+          "oro": 20,
+          "campesinos": 8,
+          "igualdad": 3
+        },
+        "filosofia": "contr",
+        "porque": "Que el valor llegue a quien siembra.",
+        "aQuien": "Los caficultores se quedan con más de lo que produce su café: sube su ánimo y la igualdad."
+      }
+    ]
+  },
+  {
+    "id": "retorno",
+    "tipo": "bueno",
+    "etapa": 1,
+    "icono": "🏡",
+    "titulo": "Regresan familias que se habían ido",
+    "texto": "Familias que se fueron en tiempos difíciles oyen que el territorio va bien y quieren volver.",
+    "opciones": [
+      {
+        "texto": "Recibirlas con una parcela",
+        "efectos": {
+          "habitantes": 6,
+          "campesinos": 3,
+          "oro": -10
+        },
+        "filosofia": "deon",
+        "porque": "Toda persona merece un lugar donde empezar de nuevo.",
+        "aQuien": "Vuelven con tierra para trabajar: llegan habitantes y los campesinos lo celebran."
+      },
+      {
+        "texto": "Recibirlas sin más",
+        "efectos": {
+          "habitantes": 5
+        },
+        "filosofia": "util",
+        "porque": "Más manos para el trabajo de todos.",
+        "aQuien": "Vuelven habitantes; ojo con tener casas y empleo para ellos."
+      }
+    ]
+  },
+  {
+    "id": "premio",
+    "tipo": "bueno",
+    "etapa": 2,
+    "icono": "🏅",
+    "titulo": "Reconocimiento al buen gobierno",
+    "texto": "El país reconoce al territorio como ejemplo de buena administración y le entrega un premio en dinero.",
+    "opciones": [
+      {
+        "texto": "Invertirlo en obras",
+        "efectos": {
+          "oro": 50,
+          "confianza": 3
+        },
+        "filosofia": "util",
+        "porque": "Que el premio siga trabajando para todos.",
+        "aQuien": "El dinero llega al tesoro y el pueblo se enorgullece."
+      },
+      {
+        "texto": "Destinarlo a becas",
+        "efectos": {
+          "oro": 20,
+          "igualdad": 4,
+          "confianza": 3
+        },
+        "filosofia": "contr",
+        "porque": "La educación abre oportunidades a quien no las tiene.",
+        "aQuien": "Más jóvenes pobres estudian: sube la igualdad."
+      }
+    ]
   }
 ]

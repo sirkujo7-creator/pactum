@@ -41,14 +41,14 @@ export function usarContenido(d) {
   })]));
   C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
   C.EV = d.dilemas.map(e => sinVacios({
-    id: e.id, st: e.etapa, e: e.icono, title: e.titulo, text: e.texto, cond: e.condicion,
+    id: e.id, st: e.etapa, e: e.icono, title: e.titulo, text: e.texto, cond: e.condicion, bueno: e.tipo === 'bueno' || undefined,
     opts: e.opciones.map((o, i) => opcion(o, `dilema ${e.id}, opción ${i + 1}`))
   }));
   C.LATER = Object.fromEntries(Object.entries(d.consecuencias).map(([k, l]) => [k, sinVacios({
-    e: l.icono, title: l.titulo, text: l.texto, fx: efectos(l.efectos, `consecuencia ${k}`), why: l.porque, vista: l.vista
+    e: l.icono, title: l.titulo, text: l.texto, fx: efectos(l.efectos, `consecuencia ${k}`), why: l.porque, vista: l.vista, bueno: l.tipo === 'bueno' || undefined
   })]));
   C.DIFFS = Object.fromEntries(Object.entries(d.dificultades).map(([k, x]) => [k, {
-    n: x.nombre, d: x.descripcion, gold: x.oroInicial, good: x.multiplicadorBueno, bad: x.multiplicadorMalo, sat: x.animoBase,
+    n: x.nombre, d: x.descripcion, gold: x.oroInicial, good: x.multiplicadorBueno, bad: x.multiplicadorMalo, badSR: x.multiplicadorMaloSinRachas, sat: x.animoBase,
     polis: x.aniosPolis, elec: x.confianzaElecciones, evp: x.probabilidadDilema, exp: x.exigenciaAnual, reward: x.recompensaGuia
   }]));
   C.GUIDE = d.guia.map(g => ({ t: g.texto, cond: g.condicion }));

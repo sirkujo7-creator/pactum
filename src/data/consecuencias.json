@@ -20,7 +20,8 @@
       "confianza": 6,
       "ambiente": -4
     },
-    "porque": "La inversión pública bien hecha paga dividendos que no siempre se ven."
+    "porque": "La inversión pública bien hecha paga dividendos que no siempre se ven.",
+    "tipo": "bueno"
   },
   "evasion2": {
     "icono": "📜",
@@ -252,5 +253,16 @@
       "artesanos": -4
     },
     "porque": "La corrupción en la contratación pública se paga con la confianza del pueblo."
+  },
+  "invento_exito": {
+    "icono": "⚙️",
+    "titulo": "El telar se multiplica",
+    "texto": "El invento que financiaste ya funciona en todos los talleres: se produce más y mejor.",
+    "efectos": {
+      "oro": 60,
+      "artesanos": 4
+    },
+    "porque": "La inversión en ideas rinde con el tiempo.",
+    "tipo": "bueno"
   }
 }

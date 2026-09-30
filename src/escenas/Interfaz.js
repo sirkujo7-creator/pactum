@@ -166,7 +166,7 @@ export class Interfaz {
     );
     // Meta, guía, promesas y exigencias (como en la v9).
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;
-    const meta = nx ? `Meta: ${nx.n} (${nx.req}).` : `Meta: sostener la Polis ${D(S).polis} años.`;
+    const meta = S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${nx.req}).` : `Meta: sostener la Polis ${D(S).polis} años.`;
     const pr = S.promises.map(p => `Promesa: ${C.B[p.k].a} antes del año ${p.dl}.`).join(' ');
     const pron = climaActivo(S) && S.clima.pronostico, FEN = C.CLIMA && C.CLIMA.fenomenos;
     const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
@@ -604,11 +604,12 @@ export class Interfaz {
     const S = this.S, tot = Object.values(S.phil).reduce((a, b) => a + b, 0) || 1, top = topPhil(S);
     const barras = Object.keys(C.PH).map(k => `<div class="pbar"><span>${C.PH[k].a}</span><div class="track"><div class="fill" style="width:${S.phil[k] / tot * 100}%;background:var(--regc)"></div></div><span>${S.phil[k]}</span></div>`).join('');
     this.tarjeta(`<div class="big">${end.win ? '🏛️' : '🕯️'}</div><h3>${end.title}</h3><p>${end.text}</p>
-      <p>Gobernaste ${S.year} años. Llegaste a ${C.STAGES[S.stage].n} con ${S.pop} habitantes, ${Math.round(S.gold)} de oro, ${Math.round(totDebt(S))} de deuda y calificación ${rating(S).l}.</p>
+      <p>Gobernaste ${S.year === 1 ? '1 año' : S.year + ' años'}. Llegaste a ${C.STAGES[S.stage].n} con ${S.pop} habitantes, ${Math.round(S.gold)} de oro, ${Math.round(totDebt(S))} de deuda y calificación ${rating(S).l}.</p>
       <h2>Tu perfil de gobierno</h2>${S.phil[top] ? `<p><b>${C.PH[top].n} (${C.PH[top].a}).</b> ${C.PROFILE[top]}</p>` : ''}${barras}
       <div class="phil" style="margin-top:12px"><b>Para reflexionar</b><br>¿Tu gobierno fue del pueblo, por el pueblo y para el pueblo, o solo en su nombre? ¿Qué decisión cambiarías y por qué?</div>
       ${nuevos.length ? `<p><b>Logros nuevos:</b> ${nuevos.map(a => a.n).join(', ')}.</p>` : ''}
-      <button class="main" id="nuevaB">Nueva partida</button><button class="btn" id="verB" style="width:100%;margin-top:8px">Ver el territorio</button>`, false);
+      ${end.win ? '<button class="main" id="seguirB">Seguir gobernando</button>' : ''}<button class="${end.win ? 'btn' : 'main'}" id="nuevaB" ${end.win ? 'style="width:100%;margin-top:8px"' : ''}>Nueva partida</button><button class="btn" id="verB" style="width:100%;margin-top:8px">Ver el territorio</button>`, false);
+    this.boton('seguirB', () => { S.over = false; S.ganado = true; this.cerrarTarjeta(); this.mapa.cambio(true); this.render(); guardarYa(S); this.toast('Sigues gobernando tu Polis. Ya no hay meta: gobierna como quieras y cuida lo logrado.'); });
     this.boton('nuevaB', () => { this.cerrarTarjeta(); this.mapa.scene.start('Arranque', { nueva: true }); });
     this.boton('verB', () => this.cerrarTarjeta());
   }
