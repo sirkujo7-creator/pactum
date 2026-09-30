@@ -212,3 +212,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .ach{border:1px solid var(--line);border-radius:10px;padding:6px 8px;opacity:.55;font-size:.88rem}
 .ach.on{opacity:1;border-color:var(--gold)}
 .ach small{display:block;color:var(--muted)}
+.causas{display:grid;gap:4px;margin:6px 0 10px}
+.causa{display:grid;grid-template-columns:1fr 70px 44px;gap:8px;align-items:center;font-size:.9rem}
+.causa .barra{height:7px;border-radius:4px;background:var(--line);overflow:hidden;display:block}
+.causa .barra i{display:block;height:100%;border-radius:4px}
+.causa .barra i.pos{background:var(--good)}.causa .barra i.neg{background:var(--bad)}
+.causa b{text-align:right}
+.pos{color:var(--good)}
+.cls .porque{margin-top:6px;padding:6px 10px;font-size:.85rem}
+.cls small.neg{display:block;color:var(--bad)}

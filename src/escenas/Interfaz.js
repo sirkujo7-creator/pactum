@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -160,9 +160,9 @@ export class Interfaz {
       `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>` +
       (S.stage >= 1 ? `<div class="pill" title="Agua">💧<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">⚡<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '');
     this.medidores.replaceChildren(
-      ...[['Bienestar', '😊', S.hap], ['Igualdad', '⚖️', S.eq], ['Confianza', '🤝', S.tr], ['Ambiente', '🌿', S.env]].map(([n, ico, v]) =>
-        el('button', { class: 'medidor', title: `${n}: ${Math.round(v)} de 100`, 'aria-label': `${n}: ${Math.round(v)} de 100`, on: { click: () => this.abrirHoja('sociedad') }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">${ico}</span><span class="nom">${n}</span></span><b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div>` })),
-      el('button', { class: 'medidor', title: 'Rumbo del gobierno: de bien común (0) a interés propio (100)', 'aria-label': `Rumbo del gobierno: ${Math.round(S.corr)}`, on: { click: () => this.infoRegimen() }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">🧭</span><span class="nom">Rumbo</span></span><b>${Math.round(S.corr)}</b></div><div class="track"><div class="fill" style="width:${S.corr}%;background:${colorDe(100 - S.corr)}"></div></div>` })
+      ...[['Bienestar', '😊', S.hap, 'hap'], ['Igualdad', '⚖️', S.eq, 'eq'], ['Confianza', '🤝', S.tr, 'tr'], ['Ambiente', '🌿', S.env, 'env']].map(([n, ico, v, k]) =>
+        el('button', { class: 'medidor', title: `${n}: ${Math.round(v)} de 100. ${C.IND[k].que} Toca para ver por qué sube o baja.`, 'aria-label': `${n}: ${Math.round(v)} de 100. Ver por qué`, on: { click: () => this.explicar(k) }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">${ico}</span><span class="nom">${n}</span></span><b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div>` })),
+      el('button', { class: 'medidor', title: `Rumbo del gobierno: de bien común (0) a interés propio (100). ${C.IND.corr.que} Toca para ver por qué cambia.`, 'aria-label': `Rumbo del gobierno: ${Math.round(S.corr)}. Ver por qué`, on: { click: () => this.explicar('corr') }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">🧭</span><span class="nom">Rumbo</span></span><b>${Math.round(S.corr)}</b></div><div class="track"><div class="fill" style="width:${S.corr}%;background:${colorDe(100 - S.corr)}"></div></div>` })
     );
     // Meta, guía, promesas y exigencias (como en la v9).
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;
@@ -278,8 +278,47 @@ export class Interfaz {
     const cls = [['Campesinos', so.camp, S.sat.c, `${so.camp} de ${so.jc} puestos. Ánimo ${tr(S.sat.c, TG.c)}`, 'rosa'], ['Artesanos', so.art, S.sat.a, `${so.art} de ${so.ja} puestos. Ánimo ${tr(S.sat.a, TG.a)}`, 'julian'], ['Élite', so.el, S.sat.e, `Dueños de comercio e industria. Ánimo ${tr(S.sat.e, TG.e)}`, 'aurelio']];
     this.sociedad.innerHTML = cls.map(([n, k, v, sub, a]) => {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
-      return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small><div class="quote">${A.n}: “${md}”</div></div></div>`;
+      const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
+      return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button></div></div>`;
     }).join('') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
+  }
+  // Claridad: recuadro de un indicador con lo que mide, hacia dónde va y cada causa con su número.
+  filasCausas(partes) {
+    const max = Math.max(1, ...partes.map(x => Math.abs(x[1])));
+    return `<div class="causas">${partes.map(([t, v]) => `<div class="causa"><span>${t}</span><span class="barra"><i class="${v < 0 ? 'neg' : 'pos'}" style="width:${Math.round(Math.abs(v) / max * 100)}%"></i></span><b class="${v < 0 ? 'neg' : 'pos'}">${signo(v)}</b></div>`).join('')}</div>`;
+  }
+  tendencia(actual, meta) {
+    const d = Math.round(meta - actual);
+    return Math.abs(d) < 2 ? `Está estable cerca de su meta (${Math.round(meta)}).` : d > 0 ? `<b class="pos">Tiende a subir</b> hacia ${Math.round(meta)}.` : `<b class="neg">Tiende a bajar</b> hacia ${Math.round(meta)}.`;
+  }
+  explicar(k) {
+    const S = this.S, I = C.IND[k], D = desgloseIndicador(S, k);
+    let cuerpo;
+    if (k === 'hap') {
+      const so = society(S), n = [['c', 'Campesinos', so.camp, S.sat.c], ['a', 'Artesanos y desempleados', so.art + so.un, S.sat.a], ['e', 'Élite', so.el, S.sat.e]];
+      cuerpo = `<p>Es el promedio del ánimo de cada clase según cuántas personas tiene. Toca una clase para ver sus causas:</p>
+        ${n.map(([c, t, p, v]) => `<button class="opt" data-clase="${c}"><b>${t}</b> (${p} personas): ánimo ${Math.round(v)} <small>${this.tendencia(v, desgloseClase(S, c).meta).replace(/<[^>]+>/g, '')}</small></button>`).join('')}
+        ${society(S).un ? `<p class="small neg">Hay ${society(S).un} personas sin empleo: restan ${Math.round(society(S).un / Math.max(1, S.pop) * 15)} puntos.</p>` : ''}`;
+    } else if (k === 'corr') {
+      cuerpo = D.partes.length ? `<p>${D.cambio > 0 ? `<b class="neg">Sube ${signo(D.cambio)} por año</b>` : D.cambio < 0 ? `<b class="pos">Baja ${signo(D.cambio)} por año</b>` : 'Este año sus causas se compensan'} por estas causas:</p>${this.filasCausas(D.partes)}<p class="small">${D.extra}</p>` : `<p>Este año no cambia por sí solo. ${D.extra}</p>`;
+    } else {
+      cuerpo = `<p>${this.tendencia(D.actual, D.meta)} ${C.IND.tendencia.replace('{meta}', Math.round(D.meta))} Así se calcula la meta:</p>${this.filasCausas(D.partes)}${D.extra ? `<p class="small">${D.extra}</p>` : ''}`;
+    }
+    this.tarjeta(`<h3>${I.icono} ${I.nombre}: ${Math.round(D.actual)}</h3><p>${I.que}</p>${cuerpo}
+      <p class="small"><b>Lo sube:</b> ${I.sube}<br><b>Lo baja:</b> ${I.baja}<br><b>Por qué importa:</b> ${I.importa}</p>
+      <div class="dos">${k === 'corr' ? '<button class="btn" id="regB">Ver el régimen</button>' : ''}<button class="main" id="okB">Cerrar</button></div>`);
+    this.card.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => { this.cerrarTarjeta(); this.explicarClase(b.dataset.clase); });
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('regB', () => { this.cerrarTarjeta(); this.infoRegimen(); });
+  }
+  explicarClase(k) {
+    const S = this.S, D = desgloseClase(S, k), nombre = { c: 'Campesinos', a: 'Artesanos', e: 'Élite' }[k];
+    this.tarjeta(`<h3>${nombre}: ánimo ${Math.round(D.actual)}</h3><p>${C.IND.clases[k]}</p>
+      <p>${this.tendencia(D.actual, D.meta)} ${C.IND.tendencia.replace('{meta}', Math.round(D.meta))} Así se calcula:</p>${this.filasCausas(D.partes)}
+      <p class="small">Los números en rojo son lo que más le molesta a esta clase: ahí está lo que puedes mejorar.</p>
+      <button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
   }
 
   renderLeyes() {
