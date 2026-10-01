@@ -1,0 +1,267 @@
+{
+  "leccion": "Movimientos sociales: cuando un grupo siente que el gobierno no lo escucha, se organiza. Escuchar a tiempo modera sus demandas; ignorarlo las hace crecer; reprimirlo sin legitimidad las radicaliza.",
+  "umbralDemanda": 40,
+  "umbralMovilizado": 70,
+  "aniosEntreDemandas": 2,
+  "probDemanda": 1,
+  "crecimiento": {
+    "animoTranquilo": 50,
+    "factor": 0.35,
+    "maxSube": 10,
+    "maxBaja": 6,
+    "ignorado": 8,
+    "escuchado": -35,
+    "reprimido": -30,
+    "radicaliza": 15
+  },
+  "presionLegitimidad": 2,
+  "estados": [
+    {
+      "desde": 0,
+      "nombre": "Tranquilo"
+    },
+    {
+      "desde": 20,
+      "nombre": "Organizándose"
+    },
+    {
+      "desde": 40,
+      "nombre": "Con demandas"
+    },
+    {
+      "desde": 70,
+      "nombre": "Movilizado"
+    }
+  ],
+  "movimientos": {
+    "sindicato": {
+      "nombre": "Sindicato de trabajadores",
+      "corto": "Sindicato",
+      "icono": "✊",
+      "lider": "Marta Quintero, tejedora",
+      "base": "obreros",
+      "abre": {
+        "etapa": 1,
+        "edificios": [
+          "taller",
+          "mina"
+        ]
+      },
+      "causa": "Crece cuando los obreros están descontentos: salarios, jornada, despidos, ambiente sucio en el trabajo.",
+      "demanda": {
+        "titulo": "El sindicato pide mejores salarios",
+        "texto": "Marta Quintero, líder del sindicato, llega a la plaza con cientos de obreros: piden salarios dignos y respeto en los talleres."
+      },
+      "movilizado": {
+        "titulo": "Huelga general",
+        "texto": "El sindicato de Marta Quintero paró los talleres: nadie trabaja hasta que el gobierno responda.",
+        "costoIgnorar": {
+          "oro": -35
+        }
+      },
+      "opciones": {
+        "escuchar": {
+          "texto": "Negociar un aumento de salarios",
+          "efectos": {
+            "oro": -60,
+            "artesanos": 5,
+            "elite": -3,
+            "confianza": 1
+          },
+          "filosofia": "contr",
+          "porque": "Negociar reconoce al otro como interlocutor: el conflicto se canaliza.",
+          "aQuien": "Los obreros ganan y se calman. La élite responde como suele hacerlo: no financia huelgas, amenaza con sacar su capital."
+        },
+        "ignorar": {
+          "texto": "No negociar",
+          "efectos": {
+            "artesanos": -3
+          },
+          "porque": "Ignorar no hace desaparecer el conflicto: lo aplaza y lo agranda.",
+          "aQuien": "Los obreros se sienten ignorados y el sindicato crece."
+        },
+        "reprimir": {
+          "texto": "Declarar ilegal la huelga y enviar la guardia",
+          "efectos": {
+            "artesanos": -8,
+            "elite": 4,
+            "confianza": -8
+          },
+          "filosofia": "real",
+          "porque": "La fuerza dispersa la protesta, pero su efecto depende de la legitimidad.",
+          "aQuien": "Los dueños de los talleres agradecen el orden; los obreros quedan resentidos."
+        }
+      }
+    },
+    "estudiantes": {
+      "nombre": "Movimiento estudiantil",
+      "corto": "Estudiantes",
+      "icono": "📚",
+      "lider": "Camilo Ortiz, estudiante",
+      "base": "estudiantes",
+      "abre": {
+        "etapa": 1,
+        "edificios": [
+          "escuela",
+          "universidad"
+        ]
+      },
+      "causa": "Crece cuando los estudiantes están descontentos: educación pública, universidad, libertad de prensa, censura.",
+      "demanda": {
+        "titulo": "Los estudiantes piden educación",
+        "texto": "Camilo Ortiz y cientos de estudiantes marchan con pancartas: piden más cupos, becas y libertad para pensar."
+      },
+      "movilizado": {
+        "titulo": "Toma de las escuelas",
+        "texto": "Los estudiantes de Camilo Ortiz se tomaron las escuelas: no habrá clases hasta que el gobierno los escuche.",
+        "costoIgnorar": {
+          "confianza": -5
+        }
+      },
+      "opciones": {
+        "escuchar": {
+          "texto": "Abrir cupos y becas",
+          "efectos": {
+            "oro": -50,
+            "igualdad": 3,
+            "confianza": 1,
+            "artesanos": 2
+          },
+          "filosofia": "contr",
+          "porque": "La educación es la escalera de la igualdad de oportunidades.",
+          "aQuien": "Más jóvenes pobres pueden estudiar: sube la igualdad y el movimiento se calma."
+        },
+        "ignorar": {
+          "texto": "No responder",
+          "efectos": {
+            "artesanos": -2
+          },
+          "porque": "El silencio del gobierno también es un mensaje.",
+          "aQuien": "Las familias de los estudiantes se molestan y el movimiento crece."
+        },
+        "reprimir": {
+          "texto": "Desalojar a los estudiantes",
+          "efectos": {
+            "confianza": -8,
+            "artesanos": -4,
+            "elite": 3
+          },
+          "filosofia": "real",
+          "porque": "Reprimir a los jóvenes deja una herida larga en la memoria de un pueblo.",
+          "aQuien": "La élite quiere orden; las familias trabajadoras ven a sus hijos golpeados."
+        }
+      }
+    },
+    "campesinos": {
+      "nombre": "Movimiento campesino",
+      "corto": "Campesinos",
+      "icono": "🌾",
+      "lider": "Don Efraín Lozano, jornalero",
+      "base": "jornaleros",
+      "abre": {
+        "etapa": 1
+      },
+      "causa": "Crece cuando los campesinos sin tierra están descontentos: trabajar tierra ajena, precio de la comida, falta de apoyo al campo.",
+      "demanda": {
+        "titulo": "Los campesinos piden tierra",
+        "texto": "Don Efraín Lozano encabeza una marcha de jornaleros: piden tierra para trabajar y apoyo para sus cosechas."
+      },
+      "movilizado": {
+        "titulo": "Paro agrario",
+        "texto": "El movimiento de Don Efraín Lozano bloqueó los caminos: la comida no llega al pueblo.",
+        "costoIgnorar": {
+          "alimento": -40
+        }
+      },
+      "opciones": {
+        "escuchar": {
+          "texto": "Repartir tierras baldías",
+          "efectos": {
+            "oro": -50,
+            "campesinos": 5,
+            "elite": -4,
+            "tierra": 5,
+            "igualdad": 2
+          },
+          "filosofia": "contr",
+          "porque": "Una reforma agraria pactada reparte la tierra sin violencia.",
+          "aQuien": "Más campesinos tienen tierra propia; los terratenientes responden con presión política, nunca financiando el paro."
+        },
+        "ignorar": {
+          "texto": "No atender la marcha",
+          "efectos": {
+            "campesinos": -3
+          },
+          "porque": "El campo olvidado termina cobrando su olvido.",
+          "aQuien": "Los jornaleros se sienten abandonados y el movimiento crece."
+        },
+        "reprimir": {
+          "texto": "Despejar los caminos con la guardia",
+          "efectos": {
+            "campesinos": -8,
+            "elite": 4,
+            "confianza": -8
+          },
+          "filosofia": "real",
+          "porque": "Los caminos se abren, pero la tierra sigue en disputa.",
+          "aQuien": "Los terratenientes celebran; los campesinos no olvidan."
+        }
+      }
+    },
+    "ambientalistas": {
+      "nombre": "Ambientalistas",
+      "corto": "Ambientalistas",
+      "icono": "🌳",
+      "lider": "Luisa Bocanegra, bióloga",
+      "base": "ambiente",
+      "abre": {
+        "etapa": 2
+      },
+      "causa": "Crece cuando el ambiente se deteriora: minas, talleres sin control, bosque talado, río sucio.",
+      "demanda": {
+        "titulo": "Los ambientalistas defienden el páramo",
+        "texto": "Luisa Bocanegra y un grupo de vecinos piden proteger el páramo y el río: sin agua no hay futuro."
+      },
+      "movilizado": {
+        "titulo": "Bloqueo a las obras",
+        "texto": "Los ambientalistas de Luisa Bocanegra bloquean las minas y las obras: nada se mueve hasta que el gobierno cuide el agua.",
+        "costoIgnorar": {
+          "oro": -30
+        }
+      },
+      "opciones": {
+        "escuchar": {
+          "texto": "Proteger el páramo y las cuencas",
+          "efectos": {
+            "oro": -45,
+            "ambiente": 4,
+            "elite": -3,
+            "confianza": 1
+          },
+          "filosofia": "deon",
+          "porque": "Cuidar el agua es un deber con quienes vendrán después.",
+          "aQuien": "El ambiente mejora y el movimiento se calma; los dueños de minas pierden negocio."
+        },
+        "ignorar": {
+          "texto": "Priorizar el crecimiento",
+          "efectos": {
+            "confianza": -2
+          },
+          "porque": "Lo que no se cuida hoy se paga mañana.",
+          "aQuien": "Los vecinos sienten que el gobierno no cuida el agua y el movimiento crece."
+        },
+        "reprimir": {
+          "texto": "Retirar el bloqueo por la fuerza",
+          "efectos": {
+            "confianza": -7,
+            "ambiente": -2,
+            "elite": 3
+          },
+          "filosofia": "real",
+          "porque": "Se retira el bloqueo, no el problema.",
+          "aQuien": "Los dueños de minas siguen trabajando; los vecinos se indignan."
+        }
+      }
+    }
+  }
+}

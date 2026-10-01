@@ -1,6 +1,6 @@
 // Efectos del mapa (de la versión 9): números que flotan al cerrar el año, huellas visibles de los
 // dilemas (crecida, sequía, plaga, río envenenado, multitud, fiesta, humo) y tintes del régimen y del esmog.
-import { C, nearRiver, clamp, lluvias } from '../core/index.js';
+import { C, nearRiver, clamp, lluvias, movilizados } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { DPR, reducirMovimiento } from './pantalla.js';
 
@@ -31,7 +31,8 @@ export class Efectos {
   actualizar() {
     const { S, T } = this.scene, g = this.capa, fen = S.clima && S.clima.fenomeno;
     // Fase 1: La Niña inunda las orillas; El Niño deja la luz de sequía.
-    const vk = fen === 'nina' ? 'flood' : fen === 'nino' ? 'drought' : S.vis && S.vis.k;
+    // Fase 3: si un movimiento social está movilizado, hay una multitud con pancartas en la plaza.
+    const vk = fen === 'nina' ? 'flood' : fen === 'nino' ? 'drought' : (S.vis && S.vis.k) || (movilizados(S).length ? 'crowd' : null);
     if (vk === this.visto && this._reg === S.reg) return;
     this.visto = vk; this._reg = S.reg;
     g.clear(); this.encima.removeAll(true); this.lluvia = [];

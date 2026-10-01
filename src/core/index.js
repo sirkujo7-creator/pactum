@@ -25,3 +25,4 @@ export * from './explicar.js';
 export * from './grupos.js';
 export * from './ejercito.js';
 export * from './fuerza.js';
+export * from './movimientos.js';

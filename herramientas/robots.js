@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, listaMovimientos, costoDialogo, dialogar
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -59,7 +59,11 @@ export function botYear(S, strat, eth, op = {}) {
     build(S, k, t[0]);
   }
   if (strat === 'debt' && S.gold < 30 && canBorrow(S)) takeLoan(S);
+  // Fase 3: la estrategia equilibrada abre diálogo con los movimientos movilizados si le sobra el oro.
+  if (strat === 'fair' && !eth) for (const m of listaMovimientos(S)) if (m.f >= 70 && S.gold - costoDialogo(S, m.id) >= 80) dialogar(S, m.id);
   const r = advance(S);
-  if (S.pend) { const o = S.pend.opts; let k = eth ? o.findIndex(x => x.f === eth) : -1; if (k < 0) k = rnd(o.length); choose(S, k); }
+  // Fase 3: la estrategia equilibrada escucha a los movimientos sociales si le alcanza el oro; si no, no responde.
+  if (S.pend && S.pend.mov && strat === 'fair' && !eth) { const o = S.pend.opts; choose(S, S.gold + (o[0].fx.t || 0) >= 100 ? 0 : 1); }
+  else if (S.pend) { const o = S.pend.opts; let k = eth ? o.findIndex(x => x.f === eth) : -1; if (k < 0) k = rnd(o.length); choose(S, k); }
   return r;
 }
