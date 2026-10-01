@@ -161,7 +161,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .vig{width:100%;height:auto;display:block;border-radius:12px;margin-bottom:6px}
 .opt{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
 .opt small{display:block;color:var(--muted)}
-.opt small.fuerza{margin-top:4px;font-weight:600}.opt small.fuerza.alta{color:var(--good)}.opt small.fuerza.baja{color:var(--bad)}
+.opt small.mov{margin-top:4px}.opt small.fuerza{margin-top:4px;font-weight:600}.opt small.fuerza.alta{color:var(--good)}.opt small.fuerza.baja{color:var(--bad)}
 .opt.reg{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;border-left:4px solid var(--rc)}
 .opt.reg .emb{width:28px;height:28px}
 .main{width:100%;background:var(--regc);color:#fff;border:0;border-radius:12px;padding:12px;font-family:Alegreya,Georgia,serif;font-size:1.15rem;font-weight:700;margin-top:8px;min-height:48px}

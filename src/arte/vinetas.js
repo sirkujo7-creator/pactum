@@ -15,6 +15,7 @@ const ESCENAS = {
   maestros: { b: { 1: 'escuela' }, fx: ['crowd'] }, huelga: { b: { 1: 'taller' }, fx: ['crowd', 'smoke'] }, humo: { g: 'LLLRRR', b: { 1: 'taller' }, fx: ['smoke', 'poison'] },
   corrup: { b: { 1: 'banco' }, fx: ['shadow'] }, epidemia: { b: { 1: 'hospital', 3: 'casa' }, fx: ['crowd'] }, elite: { b: { 1: 'banco' }, fx: ['walk', 'coins'] },
   precios: { b: { 1: 'mercado' }, fx: ['arrow'] }, oro: { g: 'MMLLLL', b: { 1: 'mina' }, fx: ['coins'] }, protesta: { b: { 1: 'agora' }, fx: ['crowd'] },
+  mov_sindicato: { b: { 1: 'taller' }, fx: ['crowd', 'smoke'] }, mov_estudiantes: { b: { 1: 'escuela' }, fx: ['crowd'] }, mov_campesinos: { b: { 0: 'cultivo', 1: 'cultivo', 5: 'casa' }, fx: ['crowd'] }, mov_ambientalistas: { g: 'MMLLLL', b: { 1: 'mina' }, fx: ['crowd'] },
   prestamo: { b: { 1: 'banco' }, fx: ['scroll', 'coins'] }, alianza: { g: 'LRLLRL', b: { 0: 'mercado', 2: 'mercado' }, fx: ['bridge'] },
   progresivo: { b: { 1: 'agora' }, fx: ['scroll', 'coins'] }, pet: { b: { 1: 'agora' }, fx: ['crowd', 'scroll'] },
   especulacion: { b: { 1: 'mercado' }, fx: ['dry', 'coins', 'arrow'] }, culpar: { b: { 1: 'agora' }, fx: ['crowd', 'scroll'] },

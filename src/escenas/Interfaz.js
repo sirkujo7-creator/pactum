@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -280,9 +280,41 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.subgrupos('otros') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.subgrupos('otros') + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
+    this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
+  }
+  // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
+  seccionMovimientos() {
+    const L = listaMovimientos(this.S);
+    if (!L.length) return '';
+    const filas = L.map(m => `<button class="sub" data-mov="${m.id}" aria-label="${m.nombre}: fuerza ${m.f}, ${m.estado}. Ver por qué">
+      <span class="sn">${m.icono} ${m.corto} <small>${m.estado.toLowerCase()}</small></span><span class="track"><span class="fill" style="width:${m.f}%;background:${colorDe(100 - m.f)}"></span></span><b>${m.f}</b></button>`).join('');
+    return `<div class="cls otros"><div><div class="lab"><span>Movimientos sociales</span></div><p class="small">Su fuerza crece si su gente está descontenta o si los ignoras; con 40 presentan demandas y con 70 se movilizan.</p><div class="subs">${filas}</div></div></div>`;
+  }
+  explicarMovimiento(id) {
+    const S = this.S, m = listaMovimientos(S).find(x => x.id === id), K = C.MOV;
+    if (!m) return;
+    const base = m.base === 'ambiente' ? `el ambiente está en <b>${m.animo}</b>` : `el ánimo de ${C.GRUPOS.grupos[m.base].nombre.toLowerCase()} es <b>${m.animo}</b>`;
+    const tend = m.cambio > 0 ? `<b class="neg">Crece ${signo(m.cambio)} por año</b>` : m.cambio < 0 ? `<b class="pos">Se calma ${signo(m.cambio)} por año</b>` : 'Se mantiene';
+    const R = { escuchar: 'lo escuchaste', ignorar: 'lo ignoraste', reprimir: 'lo reprimiste' }, no = puedeDialogar(S, id);
+    this.tarjeta(`<h3>${m.icono} ${m.nombre}: fuerza ${m.f}</h3><p class="small">Líder: ${m.lider}. Estado: ${m.estado}.</p><p>${m.causa}</p>
+      <p>${tend}: ${base} (se calma por encima de ${K.crecimiento.animoTranquilo}).</p>
+      ${m.resp ? `<p class="small">La última vez (año ${m.resp.anio}) ${R[m.resp.accion]}.</p>` : ''}
+      <p class="small">Escucharlo baja su fuerza ${Math.abs(K.crecimiento.escuchado)}; ignorarlo la sube ${K.crecimiento.ignorado}; reprimirlo la baja ${Math.abs(K.crecimiento.reprimido)}, pero con legitimidad baja la sube ${K.crecimiento.radicaliza}. Movilizado, resta ${K.presionLegitimidad} de legitimidad cada año.</p>
+      ${m.base !== 'ambiente' ? `<button class="btn" id="grupoB">Ver causas de su ánimo</button>` : ''}
+      <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div>
+      <p class="small">${no ? no : `Mesa de diálogo: cuesta ${costoDialogo(S, id)} de oro y calma al movimiento (−${Math.abs(K.crecimiento.escuchado)}). ${m.ops.escuchar.l}.`}</p>
+      <div class="dos"><button class="btn" id="dialogoB" ${no ? 'disabled' : ''}>🤝 Abrir una mesa de diálogo</button><button class="main" id="okB">Cerrar</button></div>`);
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('dialogoB', () => {
+      const fx = dialogar(S, id);
+      if (!fx) return;
+      this.cerrarTarjeta(); this.mapa.cambio(true);
+      this.toast(`${m.icono} Diálogo abierto: ${m.ops.escuchar.l.toLowerCase()}. ${m.corto}: fuerza ${Math.round(fuerzaMov(S, id))}.`);
+    });
+    if (m.base !== 'ambiente') this.boton('grupoB', () => { this.cerrarTarjeta(); this.explicarGrupo(m.base); });
   }
   // Fase 3: subgrupos de una clase (o estudiantes e informales), con su ánimo; tocar uno explica sus causas.
   subgrupos(k) {
@@ -548,18 +580,32 @@ export class Interfaz {
     const S = this.S, ev = S.pend;
     if (!ev) { if (alTerminar) alTerminar(); return; }
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
-    this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>` + ev.opts.map((o, i) =>
-      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}${this.avisoFuerza(o)}`}</button>`).join(''), false);
+    this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
+      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}${this.efectoMov(ev, o)}${this.avisoFuerza(o)}`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
         ${o.ex ? `<div class="porque-afecta"><b>¿Por qué afecta así?</b><br>${o.ex}</div>` : ''}
         <div class="phil"><b>${p ? `${p.n} (${p.a})` : 'Lección'}</b><br>${o.why}</div>${this.resultadoFuerza(o)}${this.reacciones(o.fx)}${o.later && !(o.uso && o.uso.cancelada) ? '<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>' : ''}
+        ${ev.mov ? `<p class="small">${C.MOV.movimientos[ev.mov].icono} ${C.MOV.movimientos[ev.mov].nombre}: fuerza ${Math.round(fuerzaMov(S, ev.mov))} (${nombreEstado(fuerzaMov(S, ev.mov)).toLowerCase()}).</p>` : ''}
         ${o.danada ? `<p class="small">🔥 Dañaron ${o.danada}: se ve desgastada en el mapa. Puedes repararla tocándola.</p>` : ''}
         <button class="main" id="okB">Continuar</button>`);
       this.alCerrar = alTerminar;
       this.boton('okB', () => this.cerrarTarjeta());
     });
+  }
+  // Fase 3: demanda de un movimiento social: su fuerza y qué le hace cada respuesta.
+  lineaMovimiento(ev) {
+    if (!ev.mov) return '';
+    const m = C.MOV.movimientos[ev.mov], f = Math.round(fuerzaMov(this.S, ev.mov));
+    return `<p class="small">${m.icono} ${m.nombre} · líder: ${m.lider} · fuerza ${f} (${nombreEstado(f).toLowerCase()})${ev.movilizado ? '. Movilizado: ignorarlo tiene un costo inmediato.' : '.'}</p>`;
+  }
+  efectoMov(ev, o) {
+    if (!ev.mov || !o.accion) return '';
+    const G = C.MOV.crecimiento;
+    const t = o.accion === 'escuchar' ? `el movimiento se calma (−${Math.abs(G.escuchado)})` : o.accion === 'ignorar' ? `el movimiento crece (+${G.ignorado})` :
+      nivelLegitimidad(this.S.tr) === 'baja' ? `con tu legitimidad baja, el movimiento se radicaliza (+${G.radicaliza})` : `el movimiento se dispersa (−${Math.abs(G.reprimido)})`;
+    return `<small class="mov">${t}</small>`;
   }
   // Fase 3 (Weber): las opciones que usan la fuerza avisan con qué legitimidad se dará la orden.
   avisoFuerza(o) {

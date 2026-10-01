@@ -5,6 +5,7 @@ import { D, counts, cap, cumple } from './reglas.js';
 import { calcHap } from './sociedad.js';
 import { climaActivo } from './clima.js';
 import { fuerzaActiva, usarFuerza, sabotear } from './fuerza.js';
+import { demandaDelAnio, responderMovimiento } from './movimientos.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 export function applyFx(S, fx0) {
@@ -51,7 +52,12 @@ export function drawEvent(S) {
   }
   const ev = drawEventV9(S, false); // los sucesos buenos solo llegan para cortar una racha
   if (ev && !ev.pet) S.racha = ev.bueno ? 0 : (S.racha || 0) + 1;
-  else if (!ev) S.racha = 0;
+  else if (!ev) {
+    // Fase 3: en un año sin dilema, un movimiento con demandas puede llegar a la plaza.
+    const d = S.year >= 3 ? demandaDelAnio(S) : null;
+    if (d) { S.racha = (S.racha || 0) + 1; return d; }
+    S.racha = 0;
+  }
   return ev;
 }
 function consecuencia(S, due) {
@@ -114,6 +120,7 @@ export function choose(S, i) {
     if (o.fuerza) extra.uso = usarFuerza(S, leg, o, real);
     if (ev.id === 'sabotaje') extra.danada = sabotear(S);
   }
+  if (ev.mov && o.accion) extra.movCambio = responderMovimiento(S, ev.mov, o.accion, extra.uso);
   return Object.assign({}, o, { fx: real }, extra);
 }
 
