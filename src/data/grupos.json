@@ -1,0 +1,96 @@
+{
+  "leccion": "Una clase social no es un bloque: dentro de ella hay grupos con intereses distintos, y lo que alegra a unos puede molestar a otros.",
+  "tierraInicial": 0.35,
+  "estudiantes": {
+    "porEscuela": 12,
+    "porUniversidad": 25,
+    "fraccionMaxima": 0.15
+  },
+  "clases": {
+    "c": {
+      "nombre": "Campesinos",
+      "grupos": [
+        "propietarios",
+        "jornaleros"
+      ]
+    },
+    "a": {
+      "nombre": "Trabajadores",
+      "grupos": [
+        "obreros",
+        "comerciantes",
+        "funcionarios"
+      ]
+    },
+    "e": {
+      "nombre": "Élite",
+      "grupos": [
+        "terratenientes",
+        "financistas"
+      ]
+    },
+    "otros": {
+      "nombre": "Otros grupos",
+      "grupos": [
+        "estudiantes",
+        "informales"
+      ]
+    }
+  },
+  "grupos": {
+    "propietarios": {
+      "nombre": "Campesinos con tierra",
+      "icono": "🌾",
+      "que": "Siembran su propia parcela y venden lo que les sobra.",
+      "corto": "Con tierra"
+    },
+    "jornaleros": {
+      "nombre": "Jornaleros sin tierra",
+      "icono": "🧺",
+      "que": "Trabajan tierra ajena por un jornal; compran parte de lo que comen.",
+      "corto": "Sin tierra"
+    },
+    "obreros": {
+      "nombre": "Obreros",
+      "icono": "🔨",
+      "que": "Trabajan en talleres, minas, molinos, puertos y en las obras en construcción.",
+      "corto": "Obreros"
+    },
+    "comerciantes": {
+      "nombre": "Comerciantes",
+      "icono": "🧺",
+      "que": "Atienden los mercados y los bancos; viven de que la gente compre.",
+      "corto": "Comerciantes"
+    },
+    "funcionarios": {
+      "nombre": "Funcionarios",
+      "icono": "📋",
+      "que": "Maestros, enfermeros, recaudadores y empleados públicos: su sueldo sale del tesoro.",
+      "corto": "Funcionarios"
+    },
+    "terratenientes": {
+      "nombre": "Terratenientes",
+      "icono": "🏞️",
+      "que": "Dueños de las haciendas y de la tierra que no tienen los campesinos.",
+      "corto": "Terratenientes"
+    },
+    "financistas": {
+      "nombre": "Financistas e industriales",
+      "icono": "🏦",
+      "que": "Dueños de bancos, talleres, minas y del comercio grande.",
+      "corto": "Financistas"
+    },
+    "estudiantes": {
+      "nombre": "Estudiantes",
+      "icono": "🎓",
+      "que": "Jóvenes que estudian en escuelas y universidades; exigen futuro y libertad.",
+      "corto": "Estudiantes"
+    },
+    "informales": {
+      "nombre": "Trabajadores informales",
+      "icono": "🛒",
+      "que": "Quienes no tienen empleo formal: sobreviven con ventas ambulantes y trabajos sueltos.",
+      "corto": "Informales"
+    }
+  }
+}

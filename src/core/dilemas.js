@@ -9,9 +9,9 @@ import { climaActivo } from './clima.js';
 export function applyFx(S, fx0) {
   const fx = {};
   for (const [k, v] of Object.entries(fx0)) {
-    const bad = (k === 'd' || k === 'i') ? v > 0 : k === 'txe' ? false : v < 0;
+    const bad = (k === 'd' || k === 'i') ? v > 0 : k === 'txe' || k === 'ti' ? false : v < 0;
     // Con la regla contra rachas (terreno en acuarela) hay menos golpes seguidos, pero cada golpe pesa un tercio más.
-    fx[k] = k === 'txe' ? v : Math.round(v * (bad ? (climaActivo(S) && D(S).badSR ? D(S).badSR : D(S).bad) : D(S).good));
+    fx[k] = k === 'txe' || k === 'ti' ? v : Math.round(v * (bad ? (climaActivo(S) && D(S).badSR ? D(S).badSR : D(S).bad) : D(S).good));
   }
   if (fx.t) S.gold += fx.t;
   if (fx.f) S.food = Math.max(0, S.food + fx.f);
@@ -26,6 +26,8 @@ export function applyFx(S, fx0) {
   if (fx.d) S.debt = Math.max(0, S.debt + fx.d);
   if (fx.i) S.shock += fx.i / 100;
   if (fx.txe) S.tx.e = clamp(S.tx.e + fx.txe, 0, 50);
+  // Fase 3: parte de los campesinos con tierra propia (en puntos de porcentaje; solo en el terreno en acuarela).
+  if (fx.ti && climaActivo(S) && S.tierra !== undefined) S.tierra = clamp(S.tierra + fx.ti / 100, .05, .95);
   S.hap = calcHap(S);
   return fx;
 }

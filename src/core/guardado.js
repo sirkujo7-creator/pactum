@@ -6,7 +6,7 @@ import { whyNot } from './obras.js';
 import { climaInicial } from './clima.js';
 import { ecoInicial } from './economia.js';
 
-export const VERSION_GUARDADO = 6;
+export const VERSION_GUARDADO = 7;
 
 // Cada migración lleva el estado de la versión k a la k+1.
 const MIGRACIONES = {
@@ -30,7 +30,9 @@ const MIGRACIONES = {
   // 4 → 5 (fase 1, paso 4): mantenimiento de las obras, al 100% como antes.
   4: S => { if (S.clima && S.mant === undefined) S.mant = 100; return S; },
   // 5 → 6 (fase 2): economía viva.
-  5: S => { if (S.clima && !S.eco) S.eco = ecoInicial(); return S; }
+  5: S => { if (S.clima && !S.eco) S.eco = ecoInicial(); return S; },
+  // 6 → 7 (fase 3): parte de los campesinos con tierra propia.
+  6: S => { if (S.clima && S.tierra === undefined) S.tierra = .35; return S; }
 };
 
 // Reubica las obras de un mapa de la v9 en un terreno en acuarela del mismo código.

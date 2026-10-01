@@ -12,7 +12,8 @@
     "artesanos": "artesanos",
     "elite": "élite",
     "inflacion": "% inflación",
-    "impuestoElite": "% impuesto élite"
+    "impuestoElite": "% impuesto élite",
+    "tierra": "% campesinos con tierra"
   },
   "peticion": {
     "icono": "✍️",

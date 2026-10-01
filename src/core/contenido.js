@@ -9,10 +9,10 @@ export const C = {
 // Nombres de los efectos en los archivos de datos → claves internas.
 export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
-  deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe'
+  deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -79,6 +79,7 @@ export function usarContenido(d) {
   C.COB = d.cobertura;
   C.ECO = d.economia;
   C.IND = d.indicadores;
+  C.GRUPOS = d.grupos;
   C.cargado = true;
   return C;
 }

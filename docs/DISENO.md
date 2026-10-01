@@ -84,6 +84,17 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | Claridad (pedida por Juan) | Publicada. 1: recuadro de cada indicador y desglose del ánimo por clase (0.16.0). 2: cada obra muestra todos sus efectos antes de construirla (oro, empleos por clase, cupos, alimento, agua, energía, ambiente, ánimo de cada clase, alcance, mantenimiento) y lo que aporta hoy en su ficha (0.17.0). 3: cada opción de dilema muestra a quién mueve y hacia dónde (▲/▼) y su filosofía; al elegir, «¿Por qué afecta así?» con una frase escrita para cada una de las 80 opciones (0.18.0). 4: diez sucesos buenos (cosecha abundante, arrieros, minga, fiestas de San Juan y San Pedro, paisano, inventora, voluntarios, café premiado, familias que regresan, reconocimiento) y una consecuencia buena; regla contra rachas: tras dos golpes seguidos (dilemas o consecuencias malas, o un año de crisis) llega un suceso bueno y las consecuencias malas esperan un año; para conservar la exigencia, cada golpe pesa un tercio más (Normal ×1,6 en vez de ×1,2); tras ganar se puede seguir gobernando (0.19.0). Robots: Normal 65%, Fácil 100%, Difícil 22%. Terminada; falta que Juan la pruebe. |
 | 5. Balance | Publicado (0.19.1). `node herramientas/balance-fases.js` (mismas semillas): versión 9 67% (gana hacia el año 45); jugador preparado 63% (año 52); sin prepararse 48%. Unas 5 crisis mayores por partida (clima y recesión); las derrotas no se concentran después de ellas. Normal República 65–68%; Fácil 100%; Difícil 22%. Regímenes: Monarquía 90%, Dictadura 80%, Aristocracia 79%, República 68%, Populismo 55%, Plutocracia 49% (se corrige en la fase 3). Perfiles éticos: virtud 82%, deontología 82%, contrato 76%, utilitarismo 74%, realismo 17% (en la v9 el realismo ganaba 10%: rasgo del diseño original, para proponer en la fase 3) |
 
+## Estado de la fase 3 (poder)
+
+| Paso | Estado |
+| --- | --- |
+| 1. Clases ampliadas | Publicado (0.20.0). En Sociedad cada clase muestra sus subgrupos con personas y ánimo: campesinos con tierra y sin tierra; obreros, comerciantes y funcionarios; terratenientes y financistas; y aparte estudiantes e informales. El ánimo de un subgrupo es el de su clase más sus causas propias (tierra, precio de la comida, sueldos del Estado, ciclo económico, leyes...). Nueva medida: parte de los campesinos con tierra (35% al inicio), que mueven la reforma agraria, los créditos, la cooperativa cafetera y las familias que regresan. Robots: 68% |
+| 2. Ejército | Pendiente |
+| 3. Legitimidad y uso de la fuerza | Pendiente |
+| 4. Movimientos sociales | Pendiente |
+| 5. Acta fundacional | Pendiente |
+| 6. Balance | Pendiente |
+
 ## Ideas propuestas (primera ronda)
 
 | # | Idea | Concepto que enseña | Cómo se ve |
@@ -370,6 +381,6 @@ La fase 0 no agrega sistemas nuevos: muda el juego a la nueva base hasta que jue
 | 0: Migración | Repositorio y Phaser; lógica separada en módulos; terreno y pobladores con el estilo de la prueba de acuarela; igualar la versión 9 |
 | 1: Territorio vivo | Temporadas, El Niño y La Niña; suelo vivo y erosión; vida de los edificios. Decisiones de Juan: las temporadas también afectan las cosechas; la preparación ante El Niño y La Niña es un pronóstico un año antes más un fondo de emergencias en Hacienda; el mantenimiento se decide con un control de 0% a 100% en Hacienda |
 | 2: Economía y obra | Economía viva y costo de vida; cobertura por radios; obras por etapas y licitación. Decisiones de Juan: por etapas solo las obras grandes; el costo de vida se ve en la pastilla del alimento y en el mercado; las oficinas de recaudo entran con la cobertura |
-| 3: Poder | Ejército y legitimidad; movimientos sociales; acta fundacional; corregir balance de regímenes |
+| 3: Poder | Ejército y legitimidad; movimientos sociales; acta fundacional; corregir balance de regímenes. Decisiones de Juan: clases ampliadas primero, vistas como tres grandes con subgrupos (con tierra y sin tierra; obreros, comerciantes y funcionarios; terratenientes y financistas; estudiantes e informales); el perfil realista se deja como está, como lección |
 | 4: Sociedad y memoria | Barrios y problemáticas; cultura y deporte; memoria y legado; evolución visual por épocas |
 | 5: Conocimiento | Tecnología por épocas; megaproyectos; río que cambia y volcán; aula y nube en paralelo |
