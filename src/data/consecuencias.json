@@ -84,7 +84,7 @@
       "oro": 50,
       "elite": 5
     },
-    "porque": "La confianza institucional es un activo económico."
+    "porque": "La legitimidad institucional es un activo económico."
   },
   "maestros_bien": {
     "icono": "🎓",
@@ -252,7 +252,7 @@
       "campesinos": -4,
       "artesanos": -4
     },
-    "porque": "La corrupción en la contratación pública se paga con la confianza del pueblo."
+    "porque": "La corrupción en la contratación pública se paga con legitimidad."
   },
   "invento_exito": {
     "icono": "⚙️",
@@ -264,5 +264,17 @@
     },
     "porque": "La inversión en ideas rinde con el tiempo.",
     "tipo": "bueno"
+  },
+  "sabotaje": {
+    "icono": "🔥",
+    "titulo": "Sabotaje",
+    "texto": "De noche, alguien dañó una obra pública: el resentimiento por la represión se cobra en piedra y fuego.",
+    "efectos": {
+      "oro": -25,
+      "artesanos": -3,
+      "campesinos": -3,
+      "confianza": -3
+    },
+    "porque": "Weber: cuando la fuerza no es legítima, el pueblo no obedece, resiste. El sabotaje es la resistencia de quien no tiene otra voz."
   }
 }

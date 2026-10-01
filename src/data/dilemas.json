@@ -19,7 +19,7 @@
           "id": "diques"
         },
         "vista": "flood",
-        "aQuien": "Los diques cuestan mucho oro, pero la gente ve que el gobierno la protege: por eso sube la confianza."
+        "aQuien": "Los diques cuestan mucho oro, pero la gente ve que el gobierno la protege: por eso sube la legitimidad."
       },
       {
         "texto": "Reubicar a las familias ribereñas",
@@ -117,7 +117,7 @@
           "anios": 4,
           "id": "sal_mal"
         },
-        "aQuien": "El mercader paga y la élite gana un negocio seguro; todos pagarán la sal más cara, por eso bajan la igualdad y la confianza."
+        "aQuien": "El mercader paga y la élite gana un negocio seguro; todos pagarán la sal más cara, por eso bajan la igualdad y la legitimidad."
       },
       {
         "texto": "Rechazarlo",
@@ -364,7 +364,7 @@
           "anios": 4,
           "id": "evasion2"
         },
-        "aQuien": "La élite gana un aliado; el pueblo ve impunidad, y bajan la confianza y la igualdad."
+        "aQuien": "La élite gana un aliado; el pueblo ve impunidad, y bajan la legitimidad y la igualdad."
       }
     ]
   },
@@ -521,7 +521,8 @@
           "id": "huelga_mal"
         },
         "vista": "crowd",
-        "aQuien": "Los dueños recuperan sus talleres; los artesanos quedan resentidos y el pueblo desconfía de la fuerza."
+        "aQuien": "Los dueños recuperan sus talleres; los artesanos quedan resentidos y el pueblo desconfía de la fuerza.",
+        "fuerza": true
       }
     ]
   },
@@ -573,7 +574,7 @@
           "id": "humo_mal"
         },
         "vista": "smog",
-        "aQuien": "Los talleres siguen igual y los dueños lo agradecen; el río se ensucia y el pueblo pierde confianza."
+        "aQuien": "Los talleres siguen igual y los dueños lo agradecen; el río se ensucia y el gobierno pierde legitimidad."
       }
     ]
   },
@@ -591,7 +592,7 @@
           "confianza": 10
         },
         "filosofia": "deon",
-        "porque": "La transparencia duele, pero sostiene la confianza.",
+        "porque": "La transparencia duele, pero sostiene la legitimidad.",
         "despues": {
           "anios": 4,
           "id": "corrup_bien"
@@ -767,7 +768,7 @@
         "filosofia": "virt",
         "porque": "La honestidad no baja los precios.",
         "vista": "crowd",
-        "aQuien": "Explicar es honesto y suma algo de confianza, pero los precios siguen apretando a los trabajadores."
+        "aQuien": "Explicar es honesto y suma algo de legitimidad, pero los precios siguen apretando a los trabajadores."
       }
     ]
   },
@@ -837,7 +838,7 @@
         "filosofia": "contr",
         "porque": "Abrir oportunidades a quien no las tiene es justicia.",
         "vista": "crowd",
-        "aQuien": "Los estudiantes consiguen apoyo: el tesoro paga, sube la confianza y más jóvenes pobres pueden estudiar."
+        "aQuien": "Los estudiantes consiguen apoyo: el tesoro paga, sube la legitimidad y más jóvenes pobres pueden estudiar."
       },
       {
         "texto": "Mesa de diálogo sin dinero",
@@ -865,7 +866,8 @@
           "id": "protesta_mal"
         },
         "vista": "crowd",
-        "aQuien": "La fuerza calla la protesta: los trabajadores se indignan, la confianza cae y solo la élite se siente más segura."
+        "aQuien": "La fuerza calla la protesta: los trabajadores se indignan, la legitimidad cae y solo la élite se siente más segura.",
+        "fuerza": true
       }
     ]
   },
@@ -1045,7 +1047,7 @@
         },
         "filosofia": "deon",
         "porque": "Rendir cuentas es un deber, aunque exponga al gobernante.",
-        "aQuien": "Asumir errores gana confianza; a la élite no le gusta que se revisen las obras mal hechas."
+        "aQuien": "Asumir errores gana legitimidad; a la élite no le gusta que se revisen las obras mal hechas."
       },
       {
         "texto": "Culpar al clima",
@@ -1070,7 +1072,7 @@
         },
         "filosofia": "real",
         "porque": "Funciona un tiempo; luego el pueblo pregunta qué hiciste tú.",
-        "aQuien": "Funciona con algunos artesanos, pero la confianza baja: el pueblo quiere soluciones."
+        "aQuien": "Funciona con algunos artesanos, pero la legitimidad baja: el pueblo quiere soluciones."
       }
     ]
   },

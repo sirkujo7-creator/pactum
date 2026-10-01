@@ -5,7 +5,7 @@
     "habitantes": "habitantes",
     "animo": "ánimo general",
     "igualdad": "igualdad",
-    "confianza": "confianza",
+    "confianza": "legitimidad",
     "ambiente": "ambiente",
     "deuda": "deuda",
     "campesinos": "campesinos",
@@ -36,10 +36,10 @@
           "confianza": 6
         },
         "filosofia": "deon",
-        "porque": "Una promesa pública obliga. Cumplirla construye confianza; romperla la destruye.",
+        "porque": "Una promesa pública obliga. Cumplirla construye legitimidad; romperla la destruye.",
         "promesa": true,
         "vista": "crowd",
-        "aQuien": "Prometer entusiasma a los vecinos: la confianza sube ya, pero si no cumples a tiempo caerá más fuerte."
+        "aQuien": "Prometer entusiasma a los vecinos: la legitimidad sube ya, pero si no cumples a tiempo caerá más fuerte."
       },
       {
         "texto": "Explicar que ahora no hay recursos",
@@ -62,7 +62,7 @@
         "filosofia": "real",
         "porque": "Gobernar sin escuchar es gobernar en nombre del pueblo, no para él.",
         "vista": "crowd",
-        "aQuien": "Los vecinos se sienten ignorados: bajan la confianza y el ánimo de campesinos y artesanos."
+        "aQuien": "Los vecinos se sienten ignorados: bajan la legitimidad y el ánimo de campesinos y artesanos."
       }
     ]
   }

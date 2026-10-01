@@ -34,8 +34,8 @@
   "textos": {
     "titulo": "Ejército",
     "gasto": "Gasto militar",
-    "aviso": "Ruido de sables: oficiales descontentos conspiran. Si el año {anio} el Ejército sigue molesto y la confianza baja, darán un golpe de Estado.",
-    "preparar": "Para evitarlo: sube el gasto militar en Hacienda, recupera la confianza del pueblo o mantén el tesoro en orden.",
+    "aviso": "Ruido de sables: oficiales descontentos conspiran. Si el año {anio} el Ejército sigue molesto y la legitimidad baja, darán un golpe de Estado.",
+    "preparar": "Para evitarlo: sube el gasto militar en Hacienda, recupera la legitimidad del pueblo o mantén el tesoro en orden.",
     "calma": "Los rumores de golpe se calman: el Ejército vuelve a sus cuarteles.",
     "golpe": "¡Golpe de Estado! El Ejército toma el poder.",
     "golpeInterno": "Golpe dentro del régimen: un nuevo caudillo militar reemplaza al anterior.",

@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -28,7 +28,7 @@ function opcion(o, donde) {
   return sinVacios({
     l: o.texto, fx: efectos(o.efectos, donde), f: o.filosofia || null, why: o.porque,
     later: o.despues ? (o.despues.probabilidad === undefined ? [o.despues.anios, o.despues.id] : [o.despues.anios, o.despues.id, o.despues.probabilidad]) : undefined,
-    vista: o.vista, promesa: o.promesa, ex: o.aQuien
+    vista: o.vista, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza
   });
 }
 
@@ -81,6 +81,7 @@ export function usarContenido(d) {
   C.IND = d.indicadores;
   C.GRUPOS = d.grupos;
   C.EJERCITO = d.ejercito;
+  C.FUERZA = d.fuerza;
   C.cargado = true;
   return C;
 }

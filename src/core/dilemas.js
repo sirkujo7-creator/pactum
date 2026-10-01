@@ -4,6 +4,7 @@ import { C } from './contenido.js';
 import { D, counts, cap, cumple } from './reglas.js';
 import { calcHap } from './sociedad.js';
 import { climaActivo } from './clima.js';
+import { fuerzaActiva, usarFuerza, sabotear } from './fuerza.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 export function applyFx(S, fx0) {
@@ -99,7 +100,7 @@ export function petition(S) {
 
 // Elige la opción i del suceso pendiente.
 export function choose(S, i) {
-  const ev = S.pend, o = ev.opts[i];
+  const ev = S.pend, o = ev.opts[i], leg = S.tr;
   if (o.vista) S.vis = { k: o.vista, y: S.year };
   const real = applyFx(S, o.fx);
   if (o.f) { S.phil[o.f]++; S.corr = clamp(S.corr + (o.f === 'real' ? 9 : o.f === 'util' ? 1 : -4), 0, 100); }
@@ -107,7 +108,13 @@ export function choose(S, i) {
   if (o.later && (o.later[2] === undefined || azar() < o.later[2])) S.later.push({ y: S.year + o.later[0], id: o.later[1], from: S.year });
   S.log.unshift({ y: S.year, t: ev.followUp ? `${ev.title}.` : `${ev.title}. Decidiste: ${o.l.toLowerCase()}.` });
   S.pend = null;
-  return Object.assign({}, o, { fx: real });
+  // Fase 3 (Weber): la fuerza depende de la legitimidad; el sabotaje daña una obra.
+  const extra = {};
+  if (fuerzaActiva(S)) {
+    if (o.fuerza) extra.uso = usarFuerza(S, leg, o, real);
+    if (ev.id === 'sabotaje') extra.danada = sabotear(S);
+  }
+  return Object.assign({}, o, { fx: real }, extra);
 }
 
 // Postura de un personaje (Doña Rosa, Julián, Don Aurelio) frente a unos efectos: 1 a favor, -1 en contra, 0 neutral.

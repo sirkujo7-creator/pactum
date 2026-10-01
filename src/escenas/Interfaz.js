@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -26,7 +26,7 @@ const colorDe = v => v >= 60 ? 'var(--good)' : v >= 35 ? 'var(--gold)' : 'var(--
 const GRAFICAS = {
   pop: { n: 'Población', s: [{ k: 'pop', n: 'Habitantes', c: '#2D5D72' }] },
   fin: { n: 'Finanzas', s: [{ k: 'gold', n: 'Oro', c: '#B8871F' }, { k: 'debt', n: 'Deuda', c: '#B0402C' }] },
-  soc: { n: 'Sociedad', s: [{ k: 'hap', n: 'Bienestar', c: '#2F7542' }, { k: 'eq', n: 'Igualdad', c: '#7B4F8A' }, { k: 'tr', n: 'Confianza', c: '#2D5D72' }, { k: 'env', n: 'Ambiente', c: '#8A9A3A' }], o: { fijo: [0, 100] } },
+  soc: { n: 'Sociedad', s: [{ k: 'hap', n: 'Bienestar', c: '#2F7542' }, { k: 'eq', n: 'Igualdad', c: '#7B4F8A' }, { k: 'tr', n: 'Legitimidad', c: '#2D5D72' }, { k: 'env', n: 'Ambiente', c: '#8A9A3A' }], o: { fijo: [0, 100] } },
   inf: { n: 'Inflación', s: [{ k: 'infl', n: 'Inflación', c: '#B0402C', u: '%' }] }
 };
 
@@ -160,7 +160,7 @@ export class Interfaz {
       `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>` +
       (S.stage >= 1 ? `<div class="pill" title="Agua">💧<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">⚡<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '');
     this.medidores.replaceChildren(
-      ...[['Bienestar', '😊', S.hap, 'hap'], ['Igualdad', '⚖️', S.eq, 'eq'], ['Confianza', '🤝', S.tr, 'tr'], ['Ambiente', '🌿', S.env, 'env']].map(([n, ico, v, k]) =>
+      ...[['Bienestar', '😊', S.hap, 'hap'], ['Igualdad', '⚖️', S.eq, 'eq'], ['Legitimidad', '🤝', S.tr, 'tr'], ['Ambiente', '🌿', S.env, 'env']].map(([n, ico, v, k]) =>
         el('button', { class: 'medidor', title: `${n}: ${Math.round(v)} de 100. ${C.IND[k].que} Toca para ver por qué sube o baja.`, 'aria-label': `${n}: ${Math.round(v)} de 100. Ver por qué`, on: { click: () => this.explicar(k) }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">${ico}</span><span class="nom">${n}</span></span><b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div>` })),
       el('button', { class: 'medidor', title: `Rumbo del gobierno: de bien común (0) a interés propio (100). ${C.IND.corr.que} Toca para ver por qué cambia.`, 'aria-label': `Rumbo del gobierno: ${Math.round(S.corr)}. Ver por qué`, on: { click: () => this.explicar('corr') }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">🧭</span><span class="nom">Rumbo</span></span><b>${Math.round(S.corr)}</b></div><div class="track"><div class="fill" style="width:${S.corr}%;background:${colorDe(100 - S.corr)}"></div></div>` })
     );
@@ -345,7 +345,7 @@ export class Interfaz {
 
   renderLeyes() {
     const S = this.S, n = Object.keys(S.laws || {}).length;
-    this.leyes.innerHTML = `<p class="small">Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de confianza'}. Cada etapa abre un cupo más.</p>` +
+    this.leyes.innerHTML = `<p class="small">Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</p>` +
       C.LAWS.map(l => {
         const on = hasLaw(S, l.id), bl = lawBlock(S, l);
         return `<div class="law ${on ? 'on' : ''}"><b>${l.n}</b><small>${l.d}</small>${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button></div>`;
@@ -433,7 +433,7 @@ export class Interfaz {
     const S = this.S, K = C.EJERCITO, E = ejercito(S);
     this.tarjeta(`<h3>🎖️ Ejército: ánimo ${Math.round(E.animo)}</h3><p>${C.GRUPOS.grupos.soldados.que}</p>
       <p>${this.tendencia(E.animo, metaEjercito(S))} Así se calcula su meta:</p>${this.filasCausas(partesEjercito(S).filter(x => Math.abs(x[1]) >= .5))}
-      <p class="small">Si su ánimo baja de ${K.golpe.animo} y la confianza de ${K.golpe.legitimidad}, los oficiales conspiran: hay un año de aviso antes del golpe.</p>
+      <p class="small">Si su ánimo baja de ${K.golpe.animo} y la legitimidad de ${K.golpe.legitimidad}, los oficiales conspiran: hay un año de aviso antes del golpe.</p>
       <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
   }
@@ -549,16 +549,30 @@ export class Interfaz {
     if (!ev) { if (alTerminar) alTerminar(); return; }
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>` + ev.opts.map((o, i) =>
-      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}`}</button>`).join(''), false);
+      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}${this.avisoFuerza(o)}`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
         ${o.ex ? `<div class="porque-afecta"><b>¿Por qué afecta así?</b><br>${o.ex}</div>` : ''}
-        <div class="phil"><b>${p ? `${p.n} (${p.a})` : 'Lección'}</b><br>${o.why}</div>${this.reacciones(o.fx)}${o.later ? '<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>' : ''}
+        <div class="phil"><b>${p ? `${p.n} (${p.a})` : 'Lección'}</b><br>${o.why}</div>${this.resultadoFuerza(o)}${this.reacciones(o.fx)}${o.later && !(o.uso && o.uso.cancelada) ? '<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>' : ''}
+        ${o.danada ? `<p class="small">🔥 Dañaron ${o.danada}: se ve desgastada en el mapa. Puedes repararla tocándola.</p>` : ''}
         <button class="main" id="okB">Continuar</button>`);
       this.alCerrar = alTerminar;
       this.boton('okB', () => this.cerrarTarjeta());
     });
+  }
+  // Fase 3 (Weber): las opciones que usan la fuerza avisan con qué legitimidad se dará la orden.
+  avisoFuerza(o) {
+    const S = this.S;
+    if (!o.fuerza || !fuerzaActiva(S)) return '';
+    const nivel = nivelLegitimidad(S.tr);
+    return `<small class="fuerza ${nivel}">⚔️ ${C.FUERZA.aviso.replace('{v}', Math.round(S.tr)).replace('{nivel}', C.FUERZA.niveles[nivel].nombre)}</small>`;
+  }
+  resultadoFuerza(o) {
+    if (!o.uso) return '';
+    const u = o.uso;
+    return `<div class="porque-afecta"><b>⚔️ Uso de la fuerza con legitimidad ${u.nivel} (${u.leg})</b><br>${u.textos.join(' ')}</div>
+      <div class="phil"><b>Legitimidad y fuerza</b><br>${C.FUERZA.leccion}</div>`;
   }
   // Fase 1: tarjeta del pronóstico (enseña el fenómeno y cómo prepararse) o balance de la emergencia.
   clima(alTerminar) {
@@ -628,7 +642,7 @@ export class Interfaz {
       cor: 'Aristóteles distinguía las formas rectas, que gobiernan para el bien común, de sus desviaciones, que gobiernan para el interés propio. Tus decisiones inclinaron el poder hacia una facción.',
       rev: 'Polibio describió un ciclo: cada forma corrupta provoca la reacción que la derriba y da paso a la siguiente forma recta. La revolución costó oro y vidas.',
       ref: 'Un gobierno desviado puede enderezarse cuando vuelve a servir al bien común. Lo lograste sin revolución.',
-      golpe: C.EJERCITO.leccion + ' Un Ejército descontento frente a un gobierno sin confianza tomó el poder por la fuerza.'
+      golpe: C.EJERCITO.leccion + ' Un Ejército descontento frente a un gobierno sin legitimidad tomó el poder por la fuerza.'
     }[ch.type];
     this.tarjeta(`<div class="regh" style="--rc:${REG[ch.to].col}">${EMB[ch.to]}</div><h3>${T}</h3><div class="phil"><b>${ch.type === 'rev' ? 'Polibio' : ch.type === 'golpe' ? 'Relaciones cívico-militares' : 'Aristóteles'}</b><br>${L}</div>
       <p><b>Ahora gobierna: ${REG[ch.to].n}.</b> ${REG[ch.to].d}</p><button class="main" id="okB">Continuar</button>`);
@@ -639,7 +653,7 @@ export class Interfaz {
     this.tarjeta(`<div class="regh" style="--rc:${R0.col}">${EMB[S.reg]}</div><h3>${R0.n}</h3><p>${R0.d}</p>
       <p class="small">Tu cargo: ${R0.t}. Sede: ${seatName(S)}.</p>
       <h2>Rumbo del gobierno</h2><div class="rumbo"><div style="width:${c}%"></div></div><div class="rlab"><span>Bien común</span><span>Interés propio</span></div>
-      <p class="small">${R0.rect ? `Si llega a 70, ${R0.n.toLowerCase()} se corrompe en ${REG[R0.cor].n.toLowerCase()}.` : `Si baja a 20, puedes reformarlo. Si la confianza se hunde, estalla una revolución y llega ${REG[R0.cyc].n.toLowerCase()}.`}
+      <p class="small">${R0.rect ? `Si llega a 70, ${R0.n.toLowerCase()} se corrompe en ${REG[R0.cor].n.toLowerCase()}.` : `Si baja a 20, puedes reformarlo. Si la legitimidad se hunde, estalla una revolución y llega ${REG[R0.cyc].n.toLowerCase()}.`}
       Sube al elegir por conveniencia o represión, al incumplir promesas y al abandonar a una clase. Baja al actuar por deber, justicia o prudencia y al cumplirle al pueblo.</p>
       <p class="small">Ciclo de Polibio: ${C.CYCLE.map(k => k === S.reg ? `<b>${REG[k].n}</b>` : REG[k].n).join(', ')}.</p>
       <button class="main" id="okB">Cerrar</button>`);
@@ -676,12 +690,12 @@ export class Interfaz {
       <p><b>Tres clases sociales.</b> Campesinos, artesanos y élite tienen ingresos y ánimo propios. Las casas traen gente, pero cada persona necesita un empleo: cultivos, mercados, talleres. Sin empleo crece el descontento.</p>
       <p><b>Hacienda.</b> Fija un impuesto para cada clase. Desde Pueblo puedes pedir préstamos, emitir bonos o imprimir moneda. Imprimir genera inflación; endeudarte baja tu calificación y encarece el crédito.</p>
       <p><b>Dilemas.</b> Cada respuesta refleja una corriente filosófica, y algunas regresan años después como consecuencia.</p>
-      <p><b>Régimen.</b> Cada régimen cambia la sede, los colores y las reglas. Si gobiernas para ti o para una facción, el régimen se corrompe; si el pueblo pierde la confianza, estalla una revolución. Toca el emblema para ver tu rumbo.</p>
+      <p><b>Régimen.</b> Cada régimen cambia la sede, los colores y las reglas. Si gobiernas para ti o para una facción, el régimen se corrompe; si el gobierno pierde la legitimidad, estalla una revolución. Toca el emblema para ver tu rumbo.</p>
       <p><b>Agua, energía y ladera.</b> Desde Pueblo necesitas acueductos para crecer y molinos para que los talleres funcionen. El café solo crece en ladera y el puerto va junto al río.</p>
       <p><b>Leyes.</b> Cada etapa te da un cupo más, y cada ley tiene ganadores y perdedores.</p>
       <p><b>Exigencia creciente.</b> Con los años el pueblo espera más calidad de vida. Lo que bastaba al principio no basta al final.</p>
       <p><b>Controles.</b> En el celular: arrastra, pellizca para acercar y toca casillas o personas. En el computador: arrastra, usa la rueda para acercar, flechas para moverte, 1 a 5 para los paneles, C para la capa de cobertura y la barra espaciadora para terminar el año. El botón ◎ muestra qué casas tienen escuela, hospital, mercado y recaudo cerca.</p>
-      <p>Pierdes si la confianza o el ambiente llegan a cero, si caes dos veces en cesación de pagos o si pierdes unas elecciones.</p>
+      <p>Pierdes si la legitimidad o el ambiente llegan a cero, si caes dos veces en cesación de pagos o si pierdes unas elecciones.</p>
       <button class="main" id="okB">${primera ? 'Empezar a gobernar' : 'Entendido'}</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
   }

@@ -15,7 +15,7 @@
   },
   "normal": {
     "nombre": "Normal",
-    "descripcion": "Exigente: los errores se pagan. Sostén la Polis 6 años; las elecciones piden confianza de 52.",
+    "descripcion": "Exigente: los errores se pagan. Sostén la Polis 6 años; las elecciones piden legitimidad de 52.",
     "oroInicial": 150,
     "multiplicadorBueno": 1,
     "multiplicadorMalo": 1.2,
@@ -29,7 +29,7 @@
   },
   "dificil": {
     "nombre": "Difícil",
-    "descripcion": "Poco oro, dilemas duros y un pueblo muy exigente. Sostén la Polis 8 años; las elecciones piden confianza de 55. La guía no da recompensas.",
+    "descripcion": "Poco oro, dilemas duros y un pueblo muy exigente. Sostén la Polis 8 años; las elecciones piden legitimidad de 55. La guía no da recompensas.",
     "oroInicial": 110,
     "multiplicadorBueno": 0.9,
     "multiplicadorMalo": 1.35,
