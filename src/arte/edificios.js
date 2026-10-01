@@ -128,6 +128,17 @@ function recetas() {
     const c = [(s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2]; g.fillStyle = '#E2B24F'; g.beginPath(); g.ellipse(c[0], c[1], 1.6, 1.2, 0, 0, 7); g.fill();
     const m = V2(.34, .34); wash(g, [[m[0] - 4, m[1]], [m[0] + 4, m[1]], [m[0] + 4, m[1] - 4], [m[0] - 4, m[1] - 4]], '#8A6A44', r, .95, .2); monedas(g, m[0], m[1] - 5);
   }]);
+  // Cuartel (fase 3): patio con muro de tapia, garita, edificio de mando y bandera; dos centinelas.
+  L.push(['cuartel', 92, 84, 46, 58, (g, r) => {
+    sombra(g, 28, 7, 8);
+    const m = iso(g, .9, .8, 0, 5, '#C9B08A', '#A88F68', '#B9A07A', r);
+    const b = iso(g, .5, .36, 0, 17, '#D8CDB4', '#B7AA8E', null, r, .12, -.14);
+    ventanas(g, b, 'I', 3, 7, 5, '#5E6E78', r, .15, .13); wash(g, caraD(b, .35, .3, 0, 9), '#4E4234', r, .97, .2);
+    techo(g, b, 3, 7, '#6E5A46', '#B7AA8E', r);
+    const t = iso(g, .14, .14, 0, 27, '#CDBF9F', '#AE9F80', '#C2B391', r, -.32, .26); wash(g, caraI(t, .2, .6, 21, 3), '#3E3428', r, .95, .2);
+    const p = b.up(V2(.36, -.3), 17); bandera(g, p[0], p[1], 16, '#2D5D72');
+    for (const [u, v] of [[.38, .42], [.18, .48]]) { const q = V2(u, v); g.fillStyle = '#3F4A36'; g.fillRect(q[0] - 1.2, q[1] - 7, 2.4, 5); g.fillStyle = '#E0B08A'; g.beginPath(); g.arc(q[0], q[1] - 8.2, 1.3, 0, 7); g.fill(); g.fillStyle = '#2E3A28'; g.fillRect(q[0] - 1.5, q[1] - 10, 3, 1.2); g.strokeStyle = '#4A3A2C'; g.lineWidth = .5; g.beginPath(); g.moveTo(q[0] + 1.6, q[1] - 2); g.lineTo(q[0] + 1.6, q[1] - 10.5); g.stroke(); }
+  }]);
   L.push(['banco', 80, 76, 40, 54, (g, r) => {
     sombra(g, 24, 7, 8); const base = iso(g, .7, .62, 0, 3, '#CFC8B6', '#B3AB97', '#DDD6C5', r);
     const b = iso(g, .62, .54, 3, 17, '#E6E0D2', '#C9C1AE', '#DAD3C2', r);

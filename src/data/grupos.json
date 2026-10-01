@@ -33,7 +33,8 @@
       "nombre": "Otros grupos",
       "grupos": [
         "estudiantes",
-        "informales"
+        "informales",
+        "soldados"
       ]
     }
   },
@@ -91,6 +92,12 @@
       "icono": "🛒",
       "que": "Quienes no tienen empleo formal: sobreviven con ventas ambulantes y trabajos sueltos.",
       "corto": "Informales"
+    },
+    "soldados": {
+      "nombre": "Soldados",
+      "corto": "Soldados",
+      "icono": "🎖️",
+      "que": "El Ejército: su ánimo depende del gasto militar, del régimen y de la legitimidad del gobierno."
     }
   }
 }

@@ -137,6 +137,20 @@
     "empleosArtesanos": 2,
     "aniosDeObra": 2
   },
+  "cuartel": {
+    "icono": "🎖️",
+    "nombre": "Cuartel",
+    "articulo": "un cuartel",
+    "descripcion": "Sede del Ejército. Da orden y seguridad a comerciantes y terratenientes, pero hay que pagarlo: un Ejército descontento puede dar un golpe de Estado. Emplea 4.",
+    "costo": 120,
+    "mantenimiento": 6,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 4,
+    "aniosDeObra": 2
+  },
   "cafetal": {
     "icono": "☕",
     "nombre": "Cafetal",

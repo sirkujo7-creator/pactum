@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -228,7 +228,7 @@ export class Interfaz {
       <div class="macro"><div><strong class="${S.infl > .06 ? 'neg' : ''}">${(S.infl * 100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate * 100)}%</strong><span>Tasa de interés</span></div></div>
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
-        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}
+        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}${F.militar ? `<tr><td>Gasto militar</td><td>−${F.militar}</td></tr>` : ''}
         ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
@@ -239,6 +239,7 @@ export class Interfaz {
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${this.seccionEconomia()}
+      ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {
@@ -251,6 +252,10 @@ export class Interfaz {
         this.mapa.cambio();
       };
     });
+    const mil = this.cuentas.querySelector('[data-militar]');
+    if (mil) mil.oninput = () => { ejercito(S).gasto = +mil.value; mil.nextElementSibling.textContent = mil.value + '%'; clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 150); this.mapa.cambio(); };
+    const ej = this.cuentas.querySelector('[data-ejercito]');
+    if (ej) ej.onclick = () => this.explicarEjercito();
     const mant = this.cuentas.querySelector('[data-mant]');
     if (mant) mant.oninput = () => { S.mant = +mant.value; mant.nextElementSibling.textContent = mant.value + '%'; clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 150); this.mapa.cambio(); };
     const todo = this.cuentas.querySelector('[data-reparar]');
@@ -290,6 +295,7 @@ export class Interfaz {
     return k === 'otros' ? `<div class="cls otros"><div><div class="lab"><span>${P.nombre}</span></div><div class="subs">${filas}</div></div></div>` : `<div class="subs">${filas}</div>`;
   }
   explicarGrupo(g) {
+    if (g === 'soldados') { this.explicarEjercito(); return; }
     const S = this.S, G = C.GRUPOS.grupos[g], A = animoGrupo(S, g), nombre = { c: 'los campesinos', a: 'los artesanos', e: 'la élite' }[A.clase];
     this.tarjeta(`<h3>${G.icono} ${G.nombre}: ánimo ${Math.round(A.valor)}</h3><p>${G.que}</p>
       <p>Parten del ánimo de ${nombre} (<b>${Math.round(A.base)}</b>) y le suman lo que los distingue:</p>
@@ -411,6 +417,25 @@ export class Interfaz {
       el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: 'Cada figura representa a unas dos personas del pueblo.' })
     );
     this.ficha.hidden = false;
+  }
+  // Fase 3: el Ejército en Hacienda: gasto militar, ánimo de los soldados, voz del general y aviso de golpe.
+  seccionEjercito() {
+    const S = this.S, K = C.EJERCITO;
+    if (!ejercitoActivo(S)) return '';
+    const E = ejercito(S), meta = metaEjercito(S), voz = K.general.animo[E.animo < 35 ? 0 : E.animo < 62 ? 1 : 2];
+    return `<h3>${K.textos.titulo}</h3>
+      <div class="txrow"><span>${K.textos.gasto}</span><input type="range" min="0" max="${K.gastoMaximo}" value="${E.gasto}" data-militar aria-label="Gasto militar, porcentaje de los ingresos"><strong>${E.gasto}%</strong></div>
+      <p class="small">Ánimo del Ejército: <b class="${E.animo < 35 ? 'neg' : ''}">${Math.round(E.animo)}</b>. ${this.tendencia(E.animo, meta)} ${K.general.nombre}: “${voz}”</p>
+      ${E.aviso ? `<p class="small neg"><b>${K.textos.aviso.replace('{anio}', E.aviso.anio)}</b> ${K.textos.preparar}</p>` : ''}
+      <button class="btn" data-ejercito>¿Por qué? Ver causas</button>`;
+  }
+  explicarEjercito() {
+    const S = this.S, K = C.EJERCITO, E = ejercito(S);
+    this.tarjeta(`<h3>🎖️ Ejército: ánimo ${Math.round(E.animo)}</h3><p>${C.GRUPOS.grupos.soldados.que}</p>
+      <p>${this.tendencia(E.animo, metaEjercito(S))} Así se calcula su meta:</p>${this.filasCausas(partesEjercito(S).filter(x => Math.abs(x[1]) >= .5))}
+      <p class="small">Si su ánimo baja de ${K.golpe.animo} y la confianza de ${K.golpe.legitimidad}, los oficiales conspiran: hay un año de aviso antes del golpe.</p>
+      <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 2: economía viva: fase del ciclo, precio del alimento y del café, aviso de recesión.
   seccionEconomia() {
@@ -565,7 +590,7 @@ export class Interfaz {
   // Fase 2: tarjetas del aviso de recesión y del comienzo de la recesión (enseñan el ciclo y cómo prepararse).
   economia(alTerminar) {
     const S = this.S, E = S.eco, T = C.ECO.textos;
-    if (!economiaActiva(S)) { alTerminar(); return; }
+    if (!economiaActiva(S)) { this.avisoEjercito(alTerminar); return; }
     if (E.aviso && E.aviso.nuevo) {
       E.aviso.nuevo = false;
       this.tarjeta(`<div class="big">📉</div><h3>Pronóstico económico</h3><p>${T.aviso.replace('{anio}', E.aviso.anio)}</p>
@@ -579,7 +604,16 @@ export class Interfaz {
         <div class="phil"><b>Lo que enseña</b><br>${C.ECO.leccionCiclo}</div><button class="main" id="okB">Continuar</button>`);
       this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
     }
-    alTerminar();
+    this.avisoEjercito(alTerminar);
+  }
+  // Fase 3: aviso de golpe (ruido de sables), con un año para prepararse.
+  avisoEjercito(alTerminar) {
+    const S = this.S, E = S.ejercito, K = C.EJERCITO;
+    if (!E || !E.aviso || !E.aviso.nuevo || !ejercitoActivo(S)) { alTerminar(); return; }
+    E.aviso.nuevo = false;
+    this.tarjeta(`<div class="big">🎖️</div><h3>Ruido de sables</h3><p>${K.textos.aviso.replace('{anio}', E.aviso.anio)}</p>
+      <p><b>Tienes un año para prepararte.</b> ${K.textos.preparar}</p><div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Entendido</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   etapa(alTerminar) {
     const S = this.S, st = C.STAGES[S.stage];
@@ -589,13 +623,14 @@ export class Interfaz {
   }
   cambioRegimen(ch, alTerminar) {
     const REG = C.REG;
-    const T = { cor: `${REG[ch.from].n} se corrompió en ${REG[ch.to].n}`, rev: `Revolución: cae ${REG[ch.from].n}`, ref: `Reforma: vuelve ${REG[ch.to].n}` }[ch.type];
+    const T = { cor: `${REG[ch.from].n} se corrompió en ${REG[ch.to].n}`, rev: `Revolución: cae ${REG[ch.from].n}`, ref: `Reforma: vuelve ${REG[ch.to].n}`, golpe: `Golpe de Estado: el Ejército derroca a ${REG[ch.from].n}` }[ch.type];
     const L = {
       cor: 'Aristóteles distinguía las formas rectas, que gobiernan para el bien común, de sus desviaciones, que gobiernan para el interés propio. Tus decisiones inclinaron el poder hacia una facción.',
       rev: 'Polibio describió un ciclo: cada forma corrupta provoca la reacción que la derriba y da paso a la siguiente forma recta. La revolución costó oro y vidas.',
-      ref: 'Un gobierno desviado puede enderezarse cuando vuelve a servir al bien común. Lo lograste sin revolución.'
+      ref: 'Un gobierno desviado puede enderezarse cuando vuelve a servir al bien común. Lo lograste sin revolución.',
+      golpe: C.EJERCITO.leccion + ' Un Ejército descontento frente a un gobierno sin confianza tomó el poder por la fuerza.'
     }[ch.type];
-    this.tarjeta(`<div class="regh" style="--rc:${REG[ch.to].col}">${EMB[ch.to]}</div><h3>${T}</h3><div class="phil"><b>${ch.type === 'rev' ? 'Polibio' : 'Aristóteles'}</b><br>${L}</div>
+    this.tarjeta(`<div class="regh" style="--rc:${REG[ch.to].col}">${EMB[ch.to]}</div><h3>${T}</h3><div class="phil"><b>${ch.type === 'rev' ? 'Polibio' : ch.type === 'golpe' ? 'Relaciones cívico-militares' : 'Aristóteles'}</b><br>${L}</div>
       <p><b>Ahora gobierna: ${REG[ch.to].n}.</b> ${REG[ch.to].d}</p><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
