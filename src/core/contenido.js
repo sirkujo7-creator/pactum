@@ -54,7 +54,7 @@ export function usarContenido(d) {
   C.GUIDE = d.guia.map(g => ({ t: g.texto, cond: g.condicion }));
   C.CYCLE = d.regimenes.ciclo;
   C.REG = Object.fromEntries(Object.entries(d.regimenes.formas).map(([k, r]) => [k, {
-    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores
+    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores, m3: r.ajustesFase3
   }]));
   C.LAWS = d.leyes.map(l => sinVacios({ id: l.id, n: l.nombre, d: l.descripcion, st: l.etapa, no: l.prohibidaEn }));
   C.ACH = d.logros.map(a => ({ id: a.id, n: a.nombre, d: a.descripcion }));

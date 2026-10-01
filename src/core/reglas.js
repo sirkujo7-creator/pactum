@@ -4,7 +4,11 @@ import { countT } from './mundo.js';
 
 export function D(S) { return C.DIFFS[S.diff || 'normal']; }
 export function RG(S) { return C.REG[S.reg || 'republica']; }
-export function RM(S, k, d) { const v = RG(S).m[k]; return v === undefined ? (d === undefined ? 0 : d) : v; }
+// Fase 3 (balance): cada régimen puede tener ajustes que solo valen en el terreno en acuarela (la v9 queda igual).
+export function RM(S, k, d) {
+  const R = RG(S), a = R.m3 && S && S.clima && S.mundo === 'acuarela' ? R.m3[k] : undefined, v = a !== undefined ? a : R.m[k];
+  return v === undefined ? (d === undefined ? 0 : d) : v;
+}
 export function seatName(S) { return RG(S).sede; }
 export function hasLaw(S, k) { return !!(S.laws && S.laws[k]); }
 
