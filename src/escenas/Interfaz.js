@@ -248,7 +248,7 @@ export class Interfaz {
       inp.oninput = () => {
         const k = inp.dataset.tx, want = +inp.value, v = taxLimit(S, k, want);
         S.tx[k] = v;
-        if (v !== want) { inp.value = v; this.toast(RM(S, 'eliteCap', 0) && k === 'e' && want > RM(S, 'eliteCap', 0) ? 'La plutocracia no permite cobrar más de 10% a la élite.' : 'El Senado solo permite mover cada impuesto 5 puntos por año.'); }
+        if (v !== want) { inp.value = v; this.toast(RM(S, 'eliteCap', 0) && k === 'e' && want > RM(S, 'eliteCap', 0) ? `La plutocracia no permite cobrar más de ${RM(S, 'eliteCap', 0)}% a la élite.` : 'El Senado solo permite mover cada impuesto 5 puntos por año.'); }
         inp.nextElementSibling.textContent = v + '%';
         clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 120);
         this.mapa.cambio();

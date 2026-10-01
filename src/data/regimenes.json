@@ -22,6 +22,10 @@
         "se": 5,
         "admin": 1,
         "drift": 1.6
+      },
+      "ajustesFase3": {
+        "tr": -4,
+        "drift": 3.0
       }
     },
     "aristocracia": {
@@ -39,6 +43,12 @@
         "admin": 0.8,
         "taxStep": 5,
         "drift": 0.8
+      },
+      "ajustesFase3": {
+        "se": 4,
+        "admin": 0.95,
+        "tr": -5,
+        "drift": 2.5
       }
     },
     "republica": {
@@ -56,6 +66,9 @@
         "sa": 3,
         "admin": 1.05,
         "elect": true
+      },
+      "ajustesFase3": {
+        "tr": 3
       }
     },
     "tirania": {
@@ -75,6 +88,10 @@
         "admin": 0.9,
         "silence": true,
         "drift": 1
+      },
+      "ajustesFase3": {
+        "tr": -13,
+        "admin": 1.0
       }
     },
     "oligarquia": {
@@ -85,7 +102,7 @@
       "seCorrompeEn": "oligarquia",
       "revolucionHacia": "republica",
       "color": "#6B5420",
-      "descripcion": "Oligarquía: gobiernan los ricos para los ricos. La élite paga máximo 10% y está feliz; el pueblo se empobrece y la desigualdad crece.",
+      "descripcion": "Oligarquía: gobiernan los ricos para los ricos. La élite paga un impuesto con tope bajo y está feliz; el pueblo se empobrece y la desigualdad crece.",
       "modificadores": {
         "tr": -4,
         "se": 10,
@@ -94,6 +111,14 @@
         "eq": -10,
         "admin": 1,
         "eliteCap": 10
+      },
+      "ajustesFase3": {
+        "tr": -12,
+        "sc": 0,
+        "sa": 0,
+        "eq": -3,
+        "eliteCap": 15,
+        "admin": 0.9
       }
     },
     "demagogia": {
@@ -112,6 +137,11 @@
         "admin": 1.2,
         "infl": 0.02,
         "elect": true
+      },
+      "ajustesFase3": {
+        "infl": 0.008,
+        "admin": 1.0,
+        "tr": 2
       }
     }
   }
