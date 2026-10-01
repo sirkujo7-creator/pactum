@@ -66,7 +66,7 @@
       "seCorrompeEn": "tirania",
       "revolucionHacia": "aristocracia",
       "color": "#9E2B25",
-      "descripcion": "Tiranía: uno gobierna para sí. Las protestas se silencian y el Estado es barato, pero la confianza cae y el descontento oculto termina en revolución.",
+      "descripcion": "Tiranía: uno gobierna para sí. Las protestas se silencian y el Estado es barato, pero la legitimidad cae y el descontento oculto termina en revolución.",
       "modificadores": {
         "tr": -10,
         "sc": -4,

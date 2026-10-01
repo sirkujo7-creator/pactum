@@ -32,7 +32,7 @@
   {
     "id": "prensa",
     "nombre": "Libertad de prensa",
-    "descripcion": "La prensa vigila: el rumbo mejora cada año, aunque las críticas bajan algo la confianza.",
+    "descripcion": "La prensa vigila: el rumbo mejora cada año, aunque las críticas bajan algo la legitimidad.",
     "etapa": 1,
     "prohibidaEn": [
       "tirania"
@@ -41,7 +41,7 @@
   {
     "id": "censura",
     "nombre": "Censura",
-    "descripcion": "Silencia las críticas: sube la confianza aparente, pero el rumbo se tuerce cada año.",
+    "descripcion": "Silencia las críticas: sube la legitimidad aparente, pero el rumbo se tuerce cada año.",
     "etapa": 1,
     "prohibidaEn": [
       "republica",

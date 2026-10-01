@@ -104,7 +104,7 @@ export function advance(S) {
   if (ok && ok(S, counts(S))) { S.stage++; stageUp = true; news.push(`El territorio ahora es ${STAGES[S.stage].n}.`); }
   if (RM(S, 'elect', false) && S.stage >= 1 && S.stage < 3 && S.year % 4 === 0) {
     const th = 34;
-    if (S.tr < th) { S.log.unshift({ y: S.year, t: news.join(' ') }); return { end: { win: false, title: 'Perdiste las elecciones', text: `El pueblo votó por otro proyecto: la confianza estaba en ${Math.round(S.tr)} y necesitabas ${th}.` } }; }
+    if (S.tr < th) { S.log.unshift({ y: S.year, t: news.join(' ') }); return { end: { win: false, title: 'Perdiste las elecciones', text: `El pueblo votó por otro proyecto: la ${climaActivo(S) ? 'legitimidad' : 'confianza'} estaba en ${Math.round(S.tr)} y necesitabas ${th}.` } }; }
     news.push('Hubo elecciones y el pueblo renovó tu mandato.'); S.tr = clamp(S.tr + 3, 0, 100);
   }
   if (S.stage === 3) {
@@ -114,7 +114,7 @@ export function advance(S) {
       news.push(`El pueblo niega su apoyo al ${RG(S).t.toLowerCase()}: sin elecciones, la legitimidad se mide en la calle. La cuenta de años como Polis vuelve a cero.`);
     }
     if (!stageUp && S.polisYears % 4 === 0 && RM(S, 'elect', false)) {
-      if (S.tr < D(S).elec) { S.log.unshift({ y: S.year, t: news.join(' ') }); return { end: { win: false, title: 'Perdiste las elecciones', text: 'El pueblo votó por otro proyecto. La confianza no alcanzó.' } }; }
+      if (S.tr < D(S).elec) { S.log.unshift({ y: S.year, t: news.join(' ') }); return { end: { win: false, title: 'Perdiste las elecciones', text: climaActivo(S) ? 'El pueblo votó por otro proyecto. La legitimidad no alcanzó.' : 'El pueblo votó por otro proyecto. La confianza no alcanzó.' } }; }
       S.tr = clamp(S.tr + 5, 0, 100); news.push('Ganaste las elecciones: el pueblo renueva tu mandato.');
     }
   }
@@ -156,7 +156,7 @@ export function advance(S) {
   if (S.log.length > 60) S.log.pop();
 
   // Fin de la partida.
-  if (S.tr <= 5) return { end: { win: false, title: 'Revuelta popular', text: 'El pueblo perdió toda confianza y tomó la plaza.' } };
+  if (S.tr <= 5) return { end: { win: false, title: 'Revuelta popular', text: climaActivo(S) ? 'El gobierno perdió toda legitimidad y el pueblo tomó la plaza.' : 'El pueblo perdió toda confianza y tomó la plaza.' } };
   if (S.env <= 5) return { end: { win: false, title: 'Colapso ecológico', text: 'El río y la tierra ya no sostienen la vida.' } };
   if (S.pop <= 3) return { end: { win: false, title: 'Territorio abandonado', text: 'Las últimas familias se marcharon.' } };
   // Claridad (decisión de Juan): tras ganar se puede seguir gobernando; la victoria no se repite.

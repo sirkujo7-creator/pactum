@@ -38,9 +38,10 @@ Copia uno de `dilemas.json` y cambia sus datos:
 
 - **etapa:** 0 Aldea, 1 Pueblo, 2 Ciudad, 3 Polis (desde cuándo puede salir).
 - **condicion** (opcional): `edificios` (mínimo de cada obra), `anio`, `etapa`, `impuestoElite` (mínimo en %), `inflacionMayorQue` (por ejemplo 0.08), `terreno` (por ejemplo "montana").
-- **efectos:** `oro`, `alimento`, `habitantes`, `animo`, `igualdad`, `confianza`, `ambiente`, `deuda`, `campesinos`, `artesanos`, `elite`, `inflacion`, `impuestoElite`.
+- **efectos:** `oro`, `alimento`, `habitantes`, `animo`, `igualdad`, `confianza`, `ambiente`, `deuda`, `campesinos`, `artesanos`, `elite`, `inflacion`, `impuestoElite`, `tierra`. En el juego, `confianza` se muestra como **Legitimidad**.
 - **filosofia:** `util` (Mill), `deon` (Kant), `contr` (Rawls), `real` (Maquiavelo), `virt` (Aristóteles).
 - **aQuien:** una frase que explica a quién afecta la opción y por qué (se muestra al elegirla, en «¿Por qué afecta así?»).
+- **fuerza** (opcional): `true` si la opción usa la fuerza (romper una huelga, dispersar una protesta). Su resultado depende de la legitimidad (`fuerza.json`): alta, cuesta la mitad y no deja consecuencias; baja, cuesta más y trae sabotaje.
 - **despues** (opcional): `{ "anios": 4, "id": "nombre_consecuencia", "probabilidad": 0.5 }`, y esa consecuencia debe existir en `consecuencias.json`.
 
 Después de editar, Claude corre `node herramientas/balance.js` para revisar que el balance siga sano.

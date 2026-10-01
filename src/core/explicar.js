@@ -35,7 +35,7 @@ export function desgloseIndicador(S, k) {
   }
   if (k === 'corr') {
     const minSat = Math.min(S.sat.c, S.sat.a, S.sat.e);
-    const p = [['Tendencia del régimen', RM(S, 'drift')], ['Censura', L('censura') ? 1.5 : 0], ['Libertad de prensa', L('prensa') ? -1.5 : 0], ['Alguna clase muy descontenta', minSat < 25 ? 3 : 0], ['Buen gobierno (todos contentos y confianza alta)', minSat > 50 && S.tr > 55 ? -2 : 0]];
+    const p = [['Tendencia del régimen', RM(S, 'drift')], ['Censura', L('censura') ? 1.5 : 0], ['Libertad de prensa', L('prensa') ? -1.5 : 0], ['Alguna clase muy descontenta', minSat < 25 ? 3 : 0], ['Buen gobierno (todos contentos y legitimidad alta)', minSat > 50 && S.tr > 55 ? -2 : 0]];
     return { actual: S.corr, cambio: suma(p), partes: p.filter(x => x[1]).map(([t, v]) => [t, v]), extra: 'Además: sobornos y algunos dilemas lo mueven de golpe.' };
   }
   return null;

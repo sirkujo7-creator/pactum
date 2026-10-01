@@ -1,6 +1,6 @@
 // El Ejército (fase 3): cuarta fuerza del territorio. Existe cuando hay un cuartel terminado. Su ánimo depende del
 // gasto militar, del régimen y de la legitimidad del gobierno. Bien atendido da orden y seguridad; descontento,
-// frente a un gobierno sin confianza, conspira: se anuncia un año antes y puede dar un golpe de Estado (crisis mayor).
+// frente a un gobierno sin legitimidad, conspira: se anuncia un año antes y puede dar un golpe de Estado (crisis mayor).
 import { C } from './contenido.js';
 import { clamp } from './azar.js';
 import { counts } from './reglas.js';
@@ -19,7 +19,7 @@ export function gastoMilitar(S, ingresos) { return ejercitoActivo(S) ? Math.roun
 export function partesEjercito(S) {
   const E = ejercito(S);
   return [['Punto de partida', K().base], ['Gasto militar', E.gasto * K().porPunto], ['Régimen de gobierno', K().regimen[S.reg] || 0],
-    ['Confianza del pueblo en el gobierno', (S.tr - 50) * .3], ['Tesoro en rojo: soldados sin paga', S.gold < 0 ? -12 : 0]];
+    ['Legitimidad del gobierno', (S.tr - 50) * .3], ['Tesoro en rojo: soldados sin paga', S.gold < 0 ? -12 : 0]];
 }
 export function metaEjercito(S) { return clamp(partesEjercito(S).reduce((s, x) => s + x[1], 0), 0, 100); }
 // Orden y seguridad: un Ejército contento tranquiliza a comerciantes y terratenientes.

@@ -1,0 +1,34 @@
+{
+  "umbrales": {
+    "alta": 60,
+    "baja": 40
+  },
+  "niveles": {
+    "alta": {
+      "nombre": "alta",
+      "multiplicador": 0.5,
+      "cancelaConsecuencia": true,
+      "texto": "Tu legitimidad es alta: el pueblo acepta la orden como legítima. La fuerza cuesta la mitad de legitimidad y no deja cuentas pendientes."
+    },
+    "media": {
+      "nombre": "media",
+      "multiplicador": 1,
+      "texto": "Tu legitimidad es media: la fuerza impone el orden, pero deja resentimiento."
+    },
+    "baja": {
+      "nombre": "baja",
+      "multiplicador": 1.25,
+      "sabotaje": [1, 2],
+      "texto": "Tu legitimidad es baja: la fuerza se vive como pura violencia. La legitimidad cae más y vendrá el sabotaje."
+    }
+  },
+  "ejercito": {
+    "costoAnimo": 6,
+    "texto": "Los soldados cumplen la orden, pero reprimir a su propio pueblo les baja el ánimo."
+  },
+  "sabotaje": {
+    "desgaste": 35
+  },
+  "aviso": "Uso de la fuerza · tu legitimidad: {v} ({nivel})",
+  "leccion": "Max Weber: el Estado es quien reclama con éxito el monopolio de la violencia legítima. Sin legitimidad, la fuerza deja de ser autoridad y se vuelve pura violencia: el pueblo resiste con sabotaje y desobediencia."
+}

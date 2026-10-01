@@ -2,6 +2,7 @@
 import { clamp } from './azar.js';
 import { C } from './contenido.js';
 import { RG, RM, hasLaw } from './reglas.js';
+import { climaActivo } from './clima.js';
 
 export function lawSlots(S) { return 1 + S.stage; }
 export function lawCostNow(S) { return Math.round(40 * S.price); }
@@ -14,7 +15,7 @@ export function lawBlock(S, l) {
     if (Object.keys(S.laws).length >= lawSlots(S)) return `Solo caben ${lawSlots(S)} leyes en esta etapa. Deroga una primero.`;
     if (S.gold < lawCostNow(S)) return `Te faltan ${lawCostNow(S) - Math.floor(S.gold)} de oro.`;
     if (S.reg === 'aristocracia' && ['jornada', 'ambiente', 'arancel'].includes(l.id) && S.sat.e < 45) return 'El Senado la rechaza: la élite está descontenta.';
-    if (RM(S, 'elect', false) && S.tr < 40) return 'El Congreso no la aprueba: necesitas confianza de 40.';
+    if (RM(S, 'elect', false) && S.tr < 40) return `El Congreso no la aprueba: necesitas ${climaActivo(S) ? 'legitimidad' : 'confianza'} de 40.`;
   }
   return '';
 }
