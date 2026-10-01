@@ -1,0 +1,44 @@
+{
+  "general": {
+    "nombre": "General Carvajal",
+    "rol": "Comandante del Ejército",
+    "animo": [
+      "Los soldados murmuran en los cuarteles.",
+      "El Ejército cumple, pero espera más de usted.",
+      "El Ejército está con usted, gobernante."
+    ]
+  },
+  "base": 45,
+  "porPunto": 3,
+  "gastoInicial": 5,
+  "gastoMaximo": 15,
+  "regimen": {
+    "tirania": 15,
+    "monarquia": 8,
+    "oligarquia": 5,
+    "aristocracia": 3,
+    "republica": 0,
+    "demagogia": -5
+  },
+  "golpe": {
+    "animo": 30,
+    "legitimidad": 45,
+    "animoConfirma": 35,
+    "legitimidadConfirma": 50
+  },
+  "seguridad": {
+    "animo": 50,
+    "bono": 3
+  },
+  "leccion": "Relaciones cívico-militares: un Ejército bien pagado y subordinado al poder civil protege; uno descontento, frente a un gobierno sin legitimidad, se vuelve una amenaza.",
+  "textos": {
+    "titulo": "Ejército",
+    "gasto": "Gasto militar",
+    "aviso": "Ruido de sables: oficiales descontentos conspiran. Si el año {anio} el Ejército sigue molesto y la confianza baja, darán un golpe de Estado.",
+    "preparar": "Para evitarlo: sube el gasto militar en Hacienda, recupera la confianza del pueblo o mantén el tesoro en orden.",
+    "calma": "Los rumores de golpe se calman: el Ejército vuelve a sus cuarteles.",
+    "golpe": "¡Golpe de Estado! El Ejército toma el poder.",
+    "golpeInterno": "Golpe dentro del régimen: un nuevo caudillo militar reemplaza al anterior.",
+    "sinCuartel": "Sin cuartel no hay Ejército: no hay riesgo de golpe, pero tampoco orden armado."
+  }
+}

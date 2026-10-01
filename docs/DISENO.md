@@ -89,7 +89,7 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | Paso | Estado |
 | --- | --- |
 | 1. Clases ampliadas | Publicado (0.20.0). En Sociedad cada clase muestra sus subgrupos con personas y ánimo: campesinos con tierra y sin tierra; obreros, comerciantes y funcionarios; terratenientes y financistas; y aparte estudiantes e informales. El ánimo de un subgrupo es el de su clase más sus causas propias (tierra, precio de la comida, sueldos del Estado, ciclo económico, leyes...). Nueva medida: parte de los campesinos con tierra (35% al inicio), que mueven la reforma agraria, los créditos, la cooperativa cafetera y las familias que regresan. Robots: 68% |
-| 2. Ejército | Pendiente |
+| 2. Ejército | Publicado (0.21.0). Nuevo edificio: cuartel (Ciudad, 120 de oro, 2 años de obra). Desde que existe, el Ejército cuesta un porcentaje de los ingresos (control en Hacienda, 0 a 15%). Su ánimo tiende a una meta que depende del gasto, del régimen, de la confianza del pueblo y del tesoro; con ánimo alto da orden y seguridad (comerciantes y terratenientes +3). Si su ánimo baja de 30 y la confianza de 45, hay "ruido de sables": un año de aviso y, si nada cambia, golpe de Estado (crisis mayor, el régimen pasa a tiranía). Respeta los años de respiro. Los soldados aparecen como subgrupo en Sociedad. Robots: 63% |
 | 3. Legitimidad y uso de la fuerza | Pendiente |
 | 4. Movimientos sociales | Pendiente |
 | 5. Acta fundacional | Pendiente |
