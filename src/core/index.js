@@ -22,3 +22,4 @@ export * from './construccion.js';
 export * from './cobertura.js';
 export * from './economia.js';
 export * from './explicar.js';
+export * from './grupos.js';

@@ -63,30 +63,28 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 2, economía y obra (con un paréntesis de claridad)
+## Fase actual: Fase 3, poder
 
-Tras jugar la fase 2, Juan pidió entender mejor el juego. Decidió (30 de septiembre): primero una **fase corta de claridad** y luego cerrar la fase 2 con el balance. La claridad incluye: recuadro en cada indicador con sus causas; desglose del ánimo de campesinos, artesanos y élite; efectos claros de cada obra antes de construir; dilemas que explican a quién afectan y por qué; sucesos buenos y regla contra rachas (menos rachas, igual exigencia: no se suaviza la dificultad); seguir jugando después de ganar. La ampliación de las clases sociales (dividir las tres y agregar nuevas) queda para la fase 3.
+Las fases 0, 1 y 2 (con su paréntesis de claridad) están terminadas; su estado queda en `docs/DISENO.md`. La duración se mantiene exigente (unos 45 a 55 años) y la exigencia no se suaviza: hay regla contra rachas y cada golpe pesa un tercio más.
 
+Objetivo: que el poder tenga actores con voz: clases ampliadas, Ejército, legitimidad, movimientos sociales y un acta fundacional.
 
-Las fases 0 (migración) y 1 (territorio vivo) están terminadas y aprobadas por Juan (jugó 100 años). Su estado queda en `docs/DISENO.md`. Juan decidió no bajar la meta de Polis: la duración se mantiene exigente (unos 45 a 55 años). Pidió más leyes, más dilemas y decisiones visibles, pero **después** de terminar las fases.
+Incluye (en este orden, aprobado por Juan el 30 de septiembre; un paso publicable a la vez):
 
-Objetivo: que construir y administrar la economía sean decisiones con tiempo, riesgo y alcance, que se vean en el mapa.
+1. Clases ampliadas: las tres clases se ven como tres grandes con subgrupos (decisión de Juan): campesinos con tierra y sin tierra; obreros, comerciantes y funcionarios; terratenientes y financistas; además estudiantes e informales. Cada subgrupo con su ánimo, sus causas y su voz.
+2. El Ejército como cuarta fuerza: cuartel, costo, apoyo o amenaza de golpe.
+3. Legitimidad y uso de la fuerza (Weber): Confianza pasa a llamarse Legitimidad; reprimir con poca legitimidad trae sabotaje.
+4. Movimientos sociales: sindicato, estudiantes, campesinos y ambientalistas; crecen si se les ignora y se moderan si se les escucha.
+5. Acta fundacional: principios elegidos al inicio; contradecirlos cuesta legitimidad.
+6. Balance: regímenes con máximo 15 puntos de diferencia. El perfil realista (Maquiavelo) se deja como está, como lección (decisión de Juan): no entra en la meta de perfiles éticos.
 
-Incluye (en este orden, un paso publicable a la vez):
-
-1. Obras por etapas: solo las grandes (escuela, hospital, taller, acueducto, molino, puerto, mina, banco, ágora, universidad) tardan de 1 a 3 años, se pagan por etapa, emplean gente mientras se construyen y, sin dinero, quedan detenidas y luego como elefante blanco (decisión de Juan). Casas, cultivos, cafetales, mercados y parques siguen siendo inmediatos.
-2. Evaluación y licitación: ficha de proyecto (inversión, VPN, recuperación) y tres ofertas de contratistas (precio, plazo, reputación; una con soborno).
-3. Cobertura por distancia: escuelas, hospitales y mercados atienden un radio; oficinas de recaudo con radio, y fuera de él hay evasión (decisión de Juan); capa de cobertura en el mapa.
-4. Economía viva: precio del alimento y costo de vida, que se ven en la pastilla del alimento (sin recurso nuevo en la barra) y en los puestos del mercado (decisión de Juan); café con precio internacional; auge y recesión (la recesión es crisis mayor).
-5. Balance: robots que también enfrentan los sistemas nuevos.
-
-Reglas del diseño que aplican: máximo una crisis mayor por año y dos años de respiro; toda crisis tiene preparación posible; máximo 4 recursos en la barra superior; nunca más de tres sistemas con decisiones al mismo tiempo.
+Reglas del diseño que aplican: máximo una crisis mayor por año y dos años de respiro; toda crisis tiene preparación posible; máximo 4 recursos en la barra superior y 5 medidores; nunca más de tres sistemas con decisiones al mismo tiempo; la élite nunca "financia huelgas": responde con cierre patronal, fuga de capitales o financiando a la oposición.
 
 Terminado cuando:
 
-- Los sistemas funcionan y se ven en el mapa.
-- `node herramientas/balance.js` sigue entre 55% y 70% de victorias en Normal, estrategia equilibrada, República.
-- `node herramientas/prueba-equivalencia.js` sigue en 0 diferencias (los sistemas nuevos se apagan en el modo de comparación con la v9).
+- Los sistemas funcionan, se explican (como en la claridad) y se ven en el mapa.
+- `node herramientas/balance.js` sigue entre 55% y 70% en Normal, estrategia equilibrada, República; regímenes con máximo 15 puntos de diferencia.
+- `node herramientas/prueba-equivalencia.js` sigue en 0 diferencias.
 - Las partidas guardadas antes se abren sin perderse.
 - No hay errores en la consola; se ve fluido en celular y en computador.
 - Juan lo prueba y lo aprueba.

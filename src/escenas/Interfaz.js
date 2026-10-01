@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -274,9 +274,30 @@ export class Interfaz {
     this.sociedad.innerHTML = cls.map(([n, k, v, sub, a]) => {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
-      return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button></div></div>`;
-    }).join('') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+      return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
+    }).join('') + this.subgrupos('otros') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
+    this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
+  }
+  // Fase 3: subgrupos de una clase (o estudiantes e informales), con su ánimo; tocar uno explica sus causas.
+  subgrupos(k) {
+    const S = this.S;
+    if (!gruposActivos(S)) return '';
+    const P = panorama(S).find(c => c.clase === k);
+    if (!P) return '';
+    const filas = P.grupos.map(g => `<button class="sub" data-grupo="${g.id}" aria-label="${g.nombre}: ${g.n} personas, ánimo ${Math.round(g.valor)}. Ver por qué">
+      <span class="sn">${g.icono} ${g.corto} <small>${g.n}</small></span><span class="track"><span class="fill" style="width:${g.valor}%;background:${colorDe(g.valor)}"></span></span><b>${Math.round(g.valor)}</b></button>`).join('');
+    return k === 'otros' ? `<div class="cls otros"><div><div class="lab"><span>${P.nombre}</span></div><div class="subs">${filas}</div></div></div>` : `<div class="subs">${filas}</div>`;
+  }
+  explicarGrupo(g) {
+    const S = this.S, G = C.GRUPOS.grupos[g], A = animoGrupo(S, g), nombre = { c: 'los campesinos', a: 'los artesanos', e: 'la élite' }[A.clase];
+    this.tarjeta(`<h3>${G.icono} ${G.nombre}: ánimo ${Math.round(A.valor)}</h3><p>${G.que}</p>
+      <p>Parten del ánimo de ${nombre} (<b>${Math.round(A.base)}</b>) y le suman lo que los distingue:</p>
+      ${A.propias.length ? this.filasCausas(A.propias) : '<p class="small">Este año nada los distingue de su clase.</p>'}
+      <div class="phil"><b>Lo que enseña</b><br>${C.GRUPOS.leccion}</div>
+      <div class="dos"><button class="btn" id="claseB">Ver causas de ${nombre}</button><button class="main" id="okB">Cerrar</button></div>`);
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('claseB', () => { this.cerrarTarjeta(); this.explicarClase(A.clase); });
   }
   // Claridad: recuadro de un indicador con lo que mide, hacia dónde va y cada causa con su número.
   filasCausas(partes) {

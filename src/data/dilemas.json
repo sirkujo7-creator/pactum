@@ -381,7 +381,8 @@
           "oro": -30,
           "campesinos": 15,
           "elite": -15,
-          "igualdad": 8
+          "igualdad": 8,
+          "tierra": 25
         },
         "filosofia": "contr",
         "porque": "La distribución inicial de la riqueza también es un asunto de justicia.",
@@ -397,7 +398,8 @@
         "efectos": {
           "deuda": 60,
           "campesinos": 7,
-          "elite": -2
+          "elite": -2,
+          "tierra": 10
         },
         "filosofia": "util",
         "porque": "Una solución de mercado: lenta, pero sin choques.",
@@ -407,7 +409,8 @@
         "texto": "Rechazar la petición",
         "efectos": {
           "campesinos": -10,
-          "elite": 5
+          "elite": 5,
+          "tierra": -3
         },
         "filosofia": "real",
         "porque": "Proteges a los propietarios y a tus aliados.",
@@ -1583,7 +1586,8 @@
         "efectos": {
           "oro": 20,
           "campesinos": 8,
-          "igualdad": 3
+          "igualdad": 3,
+          "tierra": 5
         },
         "filosofia": "contr",
         "porque": "Que el valor llegue a quien siembra.",
@@ -1604,7 +1608,8 @@
         "efectos": {
           "habitantes": 6,
           "campesinos": 3,
-          "oro": -10
+          "oro": -10,
+          "tierra": 3
         },
         "filosofia": "deon",
         "porque": "Toda persona merece un lugar donde empezar de nuevo.",
