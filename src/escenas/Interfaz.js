@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, motivosDeOpcion, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -101,7 +101,7 @@ export class Interfaz {
   avisar(t) { this.aviso.textContent = t; this.aviso.hidden = !t; }
   toast(t) {
     this.brindis.textContent = t; this.brindis.classList.add('show');
-    clearTimeout(this._t); this._t = setTimeout(() => this.brindis.classList.remove('show'), 2600);
+    clearTimeout(this._t); this._t = setTimeout(() => this.brindis.classList.remove('show'), Math.min(8000, 2600 + t.length * 25));
   }
   get S() { return this.mapa.S; }
   icono(k) {
@@ -143,6 +143,8 @@ export class Interfaz {
     if (!S) return;
     const c = counts(S), F = finance(S), so = F.so, R = rating(S), rg = RG(S);
     document.documentElement.style.setProperty('--regc', rg.col);
+    const faltas = faltasNuevas(S);
+    if (faltas.length) setTimeout(() => this.toast(faltas.join(' ')), 50);
     guardarLuego(S);
     Sonido.mode(S.reg);
     this.bSonido.textContent = Sonido.on ? '🔊' : '🔇';
@@ -380,7 +382,7 @@ export class Interfaz {
     this.leyes.innerHTML = `<p class="small">Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</p>` +
       C.LAWS.map(l => {
         const on = hasLaw(S, l.id), bl = lawBlock(S, l);
-        return `<div class="law ${on ? 'on' : ''}"><b>${l.n}</b><small>${l.d}</small>${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button></div>`;
+        return `<div class="law ${on ? 'on' : ''}"><b>${l.n}</b><small>${l.d}</small>${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}${!on && l.id === 'censura' ? this.avisoActa(['censura']) : ''}<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button></div>`;
       }).join('');
     this.leyes.querySelectorAll('[data-ley]').forEach(bt => bt.onclick = () => {
       const r = toggleLaw(S, bt.dataset.ley);
@@ -540,7 +542,7 @@ export class Interfaz {
     const ofs = ofertas(S, k, i).map(o => `<button class="opt" data-of="${o.id}" ${S.gold < o.cuota ? 'disabled' : ''}>
         <b>${o.nombre}</b> <span class="small" aria-label="Reputación ${o.reputacion} de 3">${estrellas(o.reputacion)}</span><br>
         ${o.total} de oro · ${o.anios === 0 ? 'lista al instante' : o.anios === 1 ? '1 año, un pago' : `${o.anios} años, pagos de ${o.cuota}`}${S.gold < o.cuota ? ' · no alcanza el oro' : ''}
-        <small>${o.texto.replace('{s}', o.sob)}</small></button>`).join('');
+        <small>${o.texto.replace('{s}', o.sob)}</small>${o.sob ? this.avisoActa(['soborno']) : ''}</button>`).join('');
     this.tarjeta(`<div class="big">${C.B[k].e}</div><h3>Proyecto: ${this.nombre(k)}</h3>
       <div class="ledger"><table class="budget">
         <tr><td>Inversión</td><td>${e.inversion}</td></tr>
@@ -581,7 +583,7 @@ export class Interfaz {
     if (!ev) { if (alTerminar) alTerminar(); return; }
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
-      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}${this.efectoMov(ev, o)}${this.avisoFuerza(o)}`}</button>`).join(''), false);
+      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}${this.efectoMov(ev, o)}${this.avisoFuerza(o)}${this.avisoActa(motivosDeOpcion(ev, o))}`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
@@ -593,6 +595,42 @@ export class Interfaz {
       this.alCerrar = alTerminar;
       this.boton('okB', () => this.cerrarTarjeta());
     });
+  }
+  // Fase 3: acta fundacional. Aviso antes de un acto que contradice un principio firmado.
+  avisoActa(motivos) {
+    const P = contradiria(this.S, motivos);
+    return P.length ? `<small class="acta-aviso">📜 Contradice tu acta: ${P.map(x => `«${x.nombre}»`).join(' y ')} (−${C.ACTA.costo} de legitimidad${P.length > 1 ? ' cada uno' : ''})</small>` : '';
+  }
+  // Al empezar una partida nueva: elegir dos principios y firmar.
+  acta(alTerminar) {
+    const S = this.S, A = C.ACTA, elegidos = new Set();
+    this.tarjeta(`<div class="big">📜</div><h3>${A.titulo}</h3><p>${A.texto}</p>
+      <div class="principios">${Object.entries(A.principios).map(([id, p]) => `<button class="opt principio" data-pr="${id}" aria-pressed="false"><b>${p.icono} ${p.nombre}</b><small>${p.texto}</small><small class="contra">Lo contradice: ${Object.values(p.contradice).join('; ')}.</small></button>`).join('')}</div>
+      <div class="phil"><b>Lo que enseña</b><br>${A.leccion}</div>
+      <button class="main" id="firmarB" disabled>Elige ${A.cuantos} principios</button>`, false);
+    const boton = this.card.querySelector('#firmarB');
+    this.card.querySelectorAll('[data-pr]').forEach(b => b.onclick = () => {
+      const id = b.dataset.pr;
+      if (elegidos.has(id)) elegidos.delete(id); else if (elegidos.size < A.cuantos) elegidos.add(id);
+      this.card.querySelectorAll('[data-pr]').forEach(x => { const on = elegidos.has(x.dataset.pr); x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); });
+      const faltan = A.cuantos - elegidos.size;
+      boton.disabled = faltan > 0; boton.textContent = faltan > 0 ? `Elige ${faltan} ${faltan === 1 ? 'principio más' : 'principios'}` : 'Firmar el acta';
+    });
+    boton.onclick = () => {
+      if (elegidos.size !== A.cuantos) return;
+      firmarActa(S, [...elegidos]); guardarYa(S);
+      this.cerrarTarjeta(); this.render();
+      this.toast(`📜 Acta firmada. Legitimidad de origen: +${A.alFirmar}.`);
+      if (alTerminar) alTerminar();
+    };
+  }
+  seccionActa() {
+    const S = this.S;
+    if (!actaActiva(S)) return '';
+    const A = C.ACTA, ok = cumplidos(S);
+    return `<h2>📜 Acta fundacional (año ${S.acta.anio})</h2>${S.acta.p.map(id => { const p = A.principios[id], f = S.acta.faltas.find(x => x.p === id);
+      return `<p class="small"><b>${p.icono} ${p.nombre}</b> (${p.autor}): ${ok.includes(id) ? '<span class="pos">cumplido</span>' : `<span class="neg">contradicho en el año ${f.anio}: ${f.razon}</span>`}.</p>`; }).join('')}
+      <p class="small">Contradecir un principio cuesta ${A.costo} de legitimidad. ${A.leccion}</p>`;
   }
   // Fase 3: demanda de un movimiento social: su fuerza y qué le hace cada respuesta.
   lineaMovimiento(ev) {
@@ -702,6 +740,7 @@ export class Interfaz {
       <p class="small">${R0.rect ? `Si llega a 70, ${R0.n.toLowerCase()} se corrompe en ${REG[R0.cor].n.toLowerCase()}.` : `Si baja a 20, puedes reformarlo. Si la legitimidad se hunde, estalla una revolución y llega ${REG[R0.cyc].n.toLowerCase()}.`}
       Sube al elegir por conveniencia o represión, al incumplir promesas y al abandonar a una clase. Baja al actuar por deber, justicia o prudencia y al cumplirle al pueblo.</p>
       <p class="small">Ciclo de Polibio: ${C.CYCLE.map(k => k === S.reg ? `<b>${REG[k].n}</b>` : REG[k].n).join(', ')}.</p>
+      ${this.seccionActa()}
       <button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
   }
@@ -743,7 +782,7 @@ export class Interfaz {
       <p><b>Controles.</b> En el celular: arrastra, pellizca para acercar y toca casillas o personas. En el computador: arrastra, usa la rueda para acercar, flechas para moverte, 1 a 5 para los paneles, C para la capa de cobertura y la barra espaciadora para terminar el año. El botón ◎ muestra qué casas tienen escuela, hospital, mercado y recaudo cerca.</p>
       <p>Pierdes si la legitimidad o el ambiente llegan a cero, si caes dos veces en cesación de pagos o si pierdes unas elecciones.</p>
       <button class="main" id="okB">${primera ? 'Empezar a gobernar' : 'Entendido'}</button>`);
-    this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('okB', () => { this.cerrarTarjeta(); if (primera && actaDisponible(S) && !S.acta) this.acta(); });
   }
   // Partidas (ranuras y código, como en la v9) y logros.
   menu() {

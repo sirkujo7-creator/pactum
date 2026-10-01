@@ -6,6 +6,7 @@ import { calcHap } from './sociedad.js';
 import { climaActivo } from './clima.js';
 import { fuerzaActiva, usarFuerza, sabotear } from './fuerza.js';
 import { demandaDelAnio, responderMovimiento } from './movimientos.js';
+import { contradecir, contradecirMovimiento } from './acta.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 export function applyFx(S, fx0) {
@@ -121,6 +122,11 @@ export function choose(S, i) {
     if (ev.id === 'sabotaje') extra.danada = sabotear(S);
   }
   if (ev.mov && o.accion) extra.movCambio = responderMovimiento(S, ev.mov, o.accion, extra.uso);
+  // Fase 3: el acta fundacional (usar la fuerza, quitar tierra, desoír a un movimiento).
+  if (fuerzaActiva(S)) {
+    const f = [...(extra.uso ? contradecir(S, 'fuerza') : []), ...(real.ti < 0 ? contradecir(S, 'quitarTierra') : []), ...(ev.mov && o.accion ? contradecirMovimiento(S, ev.mov, o.accion) : [])];
+    if (f.length) extra.acta = f;
+  }
   return Object.assign({}, o, { fx: real }, extra);
 }
 

@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -82,6 +82,7 @@ export function usarContenido(d) {
   C.GRUPOS = d.grupos;
   C.EJERCITO = d.ejercito;
   C.FUERZA = d.fuerza;
+  C.ACTA = d.acta;
   C.MOV = d.movimientos && { ...d.movimientos, movimientos: Object.fromEntries(Object.entries(d.movimientos.movimientos).map(([k, m]) => [k, {
     ...m, ops: Object.fromEntries(Object.entries(m.opciones).map(([a, o]) => [a, opcion(o, `movimiento ${k}, ${a}`)])), costo: efectos(m.movilizado.costoIgnorar, `movimiento ${k}`)
   }])) };

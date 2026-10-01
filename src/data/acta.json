@@ -1,0 +1,72 @@
+{
+  "cuantos": 2,
+  "costo": 5,
+  "bono": 0,
+  "aniosCoherencia": 5,
+  "aniosEntreImpuestos": 4,
+  "titulo": "Acta fundacional",
+  "texto": "Antes de gobernar, el pueblo y su gobierno firman un pacto. Elige dos principios: firmar da legitimidad de origen; contradecirlos la quita.",
+  "leccion": "Contrato social (Rousseau, Locke): el poder es legítimo porque nace de un pacto. Un gobierno que contradice los principios que juró pierde la razón por la que el pueblo le obedece.",
+  "principios": {
+    "libertad": {
+      "nombre": "Libertad de expresión",
+      "icono": "🗣️",
+      "texto": "Nadie será callado por pensar distinto.",
+      "autor": "John Stuart Mill",
+      "contradice": {
+        "censura": "promulgaste la ley de censura",
+        "fuerza": "usaste la fuerza contra el pueblo"
+      }
+    },
+    "dialogo": {
+      "nombre": "Gobernar escuchando",
+      "icono": "🤝",
+      "texto": "Toda voz organizada será escuchada.",
+      "autor": "Jürgen Habermas",
+      "contradice": {
+        "ignorar": "ignoraste a un movimiento social",
+        "fuerza": "usaste la fuerza en vez del diálogo"
+      }
+    },
+    "naturaleza": {
+      "nombre": "Cuidar el agua y la tierra",
+      "icono": "💧",
+      "texto": "El páramo y el río son de todos, también de quienes vendrán.",
+      "autor": "Hans Jonas",
+      "contradice": {
+        "mina": "abriste una mina",
+        "ambientalistas": "desoíste a los ambientalistas"
+      }
+    },
+    "transparencia": {
+      "nombre": "Gobierno limpio",
+      "icono": "🔎",
+      "texto": "Lo público se maneja a la vista de todos.",
+      "autor": "Immanuel Kant",
+      "contradice": {
+        "soborno": "aceptaste un soborno de un contratista",
+        "censura": "promulgaste la ley de censura"
+      }
+    },
+    "igualdad": {
+      "nombre": "Que pague más quien más tiene",
+      "icono": "⚖️",
+      "texto": "Los impuestos serán justos: la élite no pagará menos que los pobres.",
+      "autor": "John Rawls",
+      "contradice": {
+        "regresivo": "cobraste a campesinos o artesanos más impuesto que a la élite"
+      }
+    },
+    "tierra": {
+      "nombre": "Tierra para quien la trabaja",
+      "icono": "🌱",
+      "texto": "Los campesinos tendrán tierra propia.",
+      "autor": "Orlando Fals Borda",
+      "contradice": {
+        "quitarTierra": "quitaste tierra a los campesinos",
+        "campesinos": "desoíste o reprimiste al movimiento campesino"
+      }
+    }
+  },
+  "alFirmar": 5
+}

@@ -26,3 +26,4 @@ export * from './grupos.js';
 export * from './ejercito.js';
 export * from './fuerza.js';
 export * from './movimientos.js';
+export * from './acta.js';
