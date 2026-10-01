@@ -3,6 +3,7 @@ import { clamp } from './azar.js';
 import { C } from './contenido.js';
 import { RG, RM, hasLaw } from './reglas.js';
 import { climaActivo } from './clima.js';
+import { contradecir } from './acta.js';
 
 export function lawSlots(S) { return 1 + S.stage; }
 export function lawCostNow(S) { return Math.round(40 * S.price); }
@@ -32,5 +33,6 @@ export function toggleLaw(S, id) {
   if (S.reg !== 'monarquia' && S.reg !== 'tirania') S.tr = clamp(S.tr - 2, 0, 100);
   S.laws[id] = S.year;
   S.log.unshift({ y: S.year, t: `Promulgaste la ley: ${l.n}.` });
+  if (id === 'censura') contradecir(S, 'censura');
   return true;
 }

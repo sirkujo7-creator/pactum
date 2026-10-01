@@ -162,6 +162,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .opt{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
 .opt small{display:block;color:var(--muted)}
 .opt small.mov{margin-top:4px}.opt small.fuerza{margin-top:4px;font-weight:600}.opt small.fuerza.alta{color:var(--good)}.opt small.fuerza.baja{color:var(--bad)}
+.principios{display:grid;gap:6px;margin:8px 0}.opt.principio{text-align:left}.opt.principio.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--panel));box-shadow:inset 0 0 0 2px var(--accent)}.opt.principio .contra{font-size:.8rem}
+.opt small.acta-aviso,.law small.acta-aviso{margin-top:4px;color:var(--bad);font-weight:600}
 .opt.reg{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;border-left:4px solid var(--rc)}
 .opt.reg .emb{width:28px;height:28px}
 .main{width:100%;background:var(--regc);color:#fff;border:0;border-radius:12px;padding:12px;font-family:Alegreya,Georgia,serif;font-size:1.15rem;font-weight:700;margin-top:8px;min-height:48px}

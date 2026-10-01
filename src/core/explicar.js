@@ -5,6 +5,7 @@ import { counts, RM, hasLaw } from './reglas.js';
 import { society, satTargets, partesAmbiente, calcHap } from './sociedad.js';
 import { finance } from './hacienda.js';
 import { presionMovimientos } from './movimientos.js';
+import { coherencia } from './acta.js';
 
 const suma = L => L.reduce((s, x) => s + x[1], 0);
 const limpio = L => L.filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
@@ -31,7 +32,7 @@ export function desgloseIndicador(S, k) {
   }
   if (k === 'tr') {
     const p = [['Punto de partida', 50], ['Régimen de gobierno', RM(S, 'tr')], ['Bienestar del pueblo', (S.hap - 50) * .4], ['Sede de gobierno (ágora)', c.agora * 10], ['Tesoro en rojo', S.gold < 0 ? -10 : 0],
-      ['Inflación', -Math.max(0, ip - 3) * .8], ['Censura', L('censura') ? 6 : 0], ['Libertad de prensa', L('prensa') ? -3 : 0], ['Movimientos sociales movilizados', -presionMovimientos(S)]];
+      ['Inflación', -Math.max(0, ip - 3) * .8], ['Censura', L('censura') ? 6 : 0], ['Libertad de prensa', L('prensa') ? -3 : 0], ['Movimientos sociales movilizados', -presionMovimientos(S)], ['Coherencia con el acta fundacional', coherencia(S)]];
     return { actual: S.tr, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p), extra: 'Además: protestas (−5), promesas, emergencias, elecciones y dilemas la mueven de golpe.' };
   }
   if (k === 'corr') {

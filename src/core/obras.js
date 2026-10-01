@@ -1,6 +1,7 @@
 // Construir, deshacer y demoler.
 import { clamp } from './azar.js';
 import { C } from './contenido.js';
+import { contradecir, deshacerFaltas } from './acta.js';
 import { climaActivo } from './clima.js';
 import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
@@ -38,6 +39,9 @@ export function build(S, k, i, ofertaElegida) {
   // Deshacer también devuelve el soborno (y borra el escándalo pendiente).
   if (o && o.sob) Object.assign(S.undo[S.undo.length - 1], { sob: o.sob, rumbo: o.rumbo || 0, escandalo: S.later.length > nLater });
   if (aviso.length) msg = [msg, ...aviso].filter(Boolean).join(' ');
+  // Fase 3: abrir una mina o aceptar un soborno puede contradecir el acta fundacional.
+  const faltas = [...(k === 'mina' ? contradecir(S, 'mina') : []), ...(o && o.sob ? contradecir(S, 'soborno') : [])];
+  if (faltas.length) S.undo[S.undo.length - 1].acta = faltas.length;
   return msg || true;
 }
 
@@ -47,6 +51,7 @@ export function undoBuild(S) {
   const x = S.map[u.i];
   x.b = null; delete x.ob; delete x.mt; delete x.u; S.gold += u.paid;
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
+  if (u.acta) deshacerFaltas(S, u.acta);
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;
