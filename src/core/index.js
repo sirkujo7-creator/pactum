@@ -32,3 +32,4 @@ export * from './figuras.js';
 export * from './marcas.js';
 export * from './desastres.js';
 export * from './conflicto.js';
+export * from './vecinos.js';

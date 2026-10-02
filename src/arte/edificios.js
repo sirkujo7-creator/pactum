@@ -175,6 +175,12 @@ function recetas() {
     const f = V2(.32, -.25); blob(g, f[0], f[1], 3, 1.6, '#3A3532', r, .9); g.fillStyle = '#C0602A'; g.beginPath(); g.arc(f[0], f[1] - 1, 1.2, 0, 7); g.fill();
     const q = V2(-.02, .3); persona(g, q[0], q[1], '#3E4A30', '#2A2A22');
   }]);
+  L.push(['m_tratado', 44, 50, 22, 40, (g, r) => {
+    sombra(g, 10, 3, 2); const p = V2(0, 0); g.fillStyle = '#6B4F3A'; g.fillRect(p[0] - .8, p[1] - 26, 1.8, 26);
+    wash(g, [[p[0], p[1] - 24], [p[0] + 14, p[1] - 24], [p[0] + 18, p[1] - 21], [p[0] + 14, p[1] - 18], [p[0], p[1] - 18]], '#D9B98A', r, .97, .2);
+    wash(g, [[p[0], p[1] - 16], [p[0] - 14, p[1] - 16], [p[0] - 18, p[1] - 13], [p[0] - 14, p[1] - 10], [p[0], p[1] - 10]], '#C9A473', r, .97, .2);
+    g.fillStyle = '#5A4632'; g.fillRect(p[0] + 3, p[1] - 21.6, 9, 1); g.fillRect(p[0] - 12, p[1] - 13.6, 9, 1);
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);

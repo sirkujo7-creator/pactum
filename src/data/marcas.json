@@ -55,6 +55,12 @@
       "icono": "⛺",
       "anios": 999,
       "texto": "Un campamento armado en las veredas lejanas, donde el Estado no llega."
+    },
+    "tratado": {
+      "nombre": "Camino del tratado",
+      "icono": "🪧",
+      "anios": 20,
+      "texto": "Un letrero de camino señala la ruta de comercio abierta con una polis vecina."
     }
   },
   "porFilosofia": {
