@@ -1,0 +1,81 @@
+{
+  "desde": {
+    "etapa": 1,
+    "anio": 8
+  },
+  "grupo": "el Frente del Páramo",
+  "aparece": 36,
+  "seVa": 15,
+  "ajuste": 0.25,
+  "causas": {
+    "base": 4,
+    "sinPolicia": 10,
+    "sinEscuela": 7,
+    "pobrezaRural": 0.5,
+    "pocaTierra": 40,
+    "legitimidad": 0.25,
+    "inseguridad": 0.2,
+    "mina": 4
+  },
+  "efectos": {
+    "cosecha": 0.003,
+    "extorsion": 0.15,
+    "legitimidad": 0.5,
+    "desplazados": 18,
+    "inflacion": 0.3
+  },
+  "toma": {
+    "nivel": 70,
+    "prob": 0.3,
+    "dano": 50,
+    "obras": [
+      "policia",
+      "cuartel",
+      "agora",
+      "recaudo"
+    ],
+    "perdida": 3,
+    "legitimidad": -6
+  },
+  "estrategias": {
+    "ninguna": {
+      "nombre": "Sin estrategia",
+      "icono": "⏸️",
+      "texto": "El conflicto sigue sus causas."
+    },
+    "ofensiva": {
+      "nombre": "Ofensiva militar",
+      "icono": "🎖️",
+      "texto": "El Ejército ataca los campamentos: el conflicto baja rápido, pero hay más desplazados y, sin legitimidad, el pueblo lo vive como violencia.",
+      "baja": 8,
+      "oro": 15,
+      "desplazados": 1.5,
+      "requiere": "cuartel"
+    },
+    "dialogo": {
+      "nombre": "Diálogo de paz",
+      "icono": "🕊️",
+      "texto": "Mesa de negociación con el grupo armado: cuesta cada año y avanza despacio, pero puede terminar en un acuerdo de paz.",
+      "baja": 5,
+      "oro": 12
+    },
+    "inversion": {
+      "nombre": "Inversión social en las veredas",
+      "icono": "🌱",
+      "texto": "Vías, escuelas y crédito para las veredas: avanza lento, pero quita al conflicto sus causas y da tierra a los campesinos.",
+      "baja": 4,
+      "oro": 20,
+      "tierra": 1,
+      "campesinos": 1
+    }
+  },
+  "textos": {
+    "aparece": "Un grupo armado, {grupo}, se asentó en las veredas lejanas: cobra «vacunas», recluta jóvenes y obliga a familias a huir.",
+    "paz": "¡Acuerdo de paz! {grupo} entrega las armas. Las veredas vuelven a respirar.",
+    "repliega": "{grupo} se repliega: ya no encuentra apoyo en las veredas.",
+    "toma": "Toma armada: {grupo} atacó {obra} durante la noche.",
+    "desplazados": "Llegan {n} personas desplazadas por la violencia.",
+    "extorsion": "La extorsión del grupo armado se llevó {oro} de oro."
+  },
+  "leccion": "Conflicto armado y desplazamiento: en Colombia, millones de personas han sido desplazadas por la violencia. Los grupos armados crecen donde el Estado no llega: sin escuelas, sin justicia, sin tierra y sin vías. La fuerza puede contenerlos; la paz duradera exige atender sus causas."
+}

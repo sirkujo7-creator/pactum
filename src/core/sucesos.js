@@ -24,7 +24,7 @@ export function partesInseguridad(S) {
     ['Poca legitimidad', Math.max(0, 50 - S.tr) * I.legitimidad], ['Pobreza (clases descontentas)', pobres * I.pobreza],
     ['Corrupción', Math.max(0, S.corr - 40) * I.corrupcion], ['Movimientos movilizados', movilizados(S).length * I.movilizados],
     ['Policía cerca de las casas', -cob.policia * I.policia * (c.policia > 0 ? 1 : 0)], ['Escuelas cerca de las casas', -cob.escuela * I.escuela * (c.escuela > 0 ? 1 : 0)],
-    ['Parques', -Math.min(I.parqueMaximo, c.parque * I.parque)], ['Relación con la policía', efectoFig(S, 'inseguridad')], ['Ejército que da orden', seguridad(S) ? -I.ejercito : 0]];
+    ['Parques', -Math.min(I.parqueMaximo, c.parque * I.parque)], ['Relación con la policía', efectoFig(S, 'inseguridad')], ['Ejército que da orden', seguridad(S) ? -I.ejercito : 0], ['Grupo armado en las veredas', S.conf && S.conf.grupo ? 6 : 0]];
 }
 export function inseguridad(S) { return sucesosActivos(S) ? clamp(partesInseguridad(S).reduce((s, x) => s + x[1], 0), 0, 100) : 0; }
 

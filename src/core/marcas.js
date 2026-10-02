@@ -26,7 +26,7 @@ export function dejarMarca(S, tipo, d) {
     .filter(([, dd]) => dd >= 1.4).sort((a, b) => a[1] - b[1]);
   if (!libres.length) return -1;
   const con = S.map.map((x, i) => x.mk ? i : -1).filter(i => i >= 0);
-  if (con.length >= K().maximo) { const viejo = con.filter(i => S.map[i].mk.t !== 'acta').sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
+  if (con.length >= K().maximo) { const viejo = con.filter(i => S.map[i].mk.t !== 'acta' && S.map[i].mk.t !== 'campamento').sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
   const i = libres[0][0];
   S.map[i].mk = { t: tipo, y: S.year, d };
   return i;
