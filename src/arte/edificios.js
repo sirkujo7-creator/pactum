@@ -169,6 +169,12 @@ function recetas() {
     for (let k = 0; k < 9; k++) { const q = b.up(V2(-.22 + (k % 3) * .22, -.14 + Math.floor(k / 3) * .14), 2); blob(g, q[0], q[1] - 2, 2.2, 2.6, k % 2 ? '#5E8A4D' : '#7FA35C', r, .95); }
     const q = V2(.3, .25); persona(g, q[0], q[1], '#2D6E5E', '#E7C76B');
   }]);
+  L.push(['m_campamento', 60, 46, 30, 36, (g, r) => {
+    sombra(g, 20, 5, 4);
+    for (const [u, v, col] of [[-.25, -.05, '#4E5A3A'], [.18, .12, '#5E6A44']]) { const q = V2(u, v); wash(g, [[q[0] - 9, q[1]], [q[0] + 9, q[1]], [q[0], q[1] - 12]], col, r, .97, .3); wash(g, [[q[0] - 2, q[1]], [q[0] + 2, q[1]], [q[0], q[1] - 5]], '#2A2A22', r, .95, .2); }
+    const f = V2(.32, -.25); blob(g, f[0], f[1], 3, 1.6, '#3A3532', r, .9); g.fillStyle = '#C0602A'; g.beginPath(); g.arc(f[0], f[1] - 1, 1.2, 0, 7); g.fill();
+    const q = V2(-.02, .3); persona(g, q[0], q[1], '#3E4A30', '#2A2A22');
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);

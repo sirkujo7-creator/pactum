@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -31,6 +31,7 @@ const GRAFICAS = {
 };
 
 const anios = n => n === 1 ? '1 año' : `${n} años`;
+const mayus = t => t.charAt(0).toUpperCase() + t.slice(1);
 export class Interfaz {
   constructor(mapa) {
     this.mapa = mapa;
@@ -285,11 +286,12 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionConflicto() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
     const seg = this.sociedad.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
+    const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
@@ -739,8 +741,8 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 4: desastres reales (alerta del volcán, erupción, terremoto).
-  desastreAnio(alTerminar) {
-    const S = this.S, d = S.desastre;
+  desastreAnio(alTerminar0) {
+    const S = this.S, d = S.desastre, alTerminar = () => this.conflictoAnio(alTerminar0);
     if (!d || !d.nuevo || !desastresActivos(S)) { alTerminar(); return; }
     d.nuevo = false;
     const VD = C.DESASTRES.volcan, Q = C.DESASTRES.terremoto;
@@ -765,6 +767,38 @@ export class Interfaz {
         <div class="phil"><b>Lo que enseña</b><br>${Q.leccion}</div><button class="main" id="okB">Continuar</button>`);
     }
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 4: conflicto armado (aparece el grupo, toma armada, acuerdo de paz o repliegue).
+  conflictoAnio(alTerminar) {
+    const S = this.S, e = S.confEv;
+    if (!e || !e.nuevo || !conflictoActivo(S)) { alTerminar(); return; }
+    e.nuevo = false;
+    const K = C.CONF, g = K.grupo, T = K.textos;
+    const titulo = { aparece: 'Conflicto armado en las veredas', toma: 'Toma armada', paz: 'Acuerdo de paz', repliega: 'El grupo armado se repliega' }[e.tipo];
+    const texto = mayus(e.tipo === 'toma' ? e.texto : T[e.tipo].replace('{grupo}', g));
+    this.tarjeta(`<div class="big">${{ aparece: '⛺', toma: '💥', paz: '🕊️', repliega: '🏞️' }[e.tipo]}</div><h3>${titulo}</h3><p>${texto}</p>
+      ${e.tipo === 'aparece' ? `<p class="small">Mientras siga: veredas abandonadas (menos cosecha), desplazados que llegan al pueblo, extorsión y pérdida de legitimidad. Elige una estrategia en <b>Sociedad → Conflicto armado</b>.</p>` : ''}
+      <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div>
+      <div class="dos">${e.tipo === 'aparece' ? '<button class="btn" id="estrB">Elegir estrategia</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('estrB', () => { this.cerrarTarjeta(); this.explicarConflicto(); });
+  }
+  seccionConflicto() {
+    const S = this.S;
+    if (!conflictoActivo(S)) return '';
+    const F = conflicto(S), v = Math.round(F.nivel), E = C.CONF.estrategias[F.estrategia];
+    return `<div class="cls otros"><div><div class="lab"><span>⛺ Conflicto armado</span><span>${v}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(100 - v)}"></div></div>
+      <p class="small">${F.grupo ? `<b class="neg">${mayus(C.CONF.grupo)} está en las veredas.</b> Estrategia: ${E.icono} ${E.nombre}.` : `Con ${C.CONF.aparece} aparece un grupo armado. Crece donde el Estado no llega.`}</p><button class="btn porque" data-conflicto>${F.grupo ? 'Estrategia y causas' : '¿Por qué? Ver causas'}</button></div></div>`;
+  }
+  explicarConflicto() {
+    const S = this.S, F = conflicto(S), K = C.CONF;
+    const estr = F.grupo ? `<h2>Estrategia</h2>${Object.entries(K.estrategias).map(([id, E]) => { const no = puedeEstrategia(S, id);
+      return `<button class="opt ${F.estrategia === id ? 'on' : ''}" data-estr="${id}" ${no ? 'disabled' : ''}><b>${E.icono} ${E.nombre}</b><small>${E.texto}${E.oro ? ` Cuesta unos ${Math.round(E.oro * S.price)} de oro al año.` : ''}${no ? ` ${no}` : ''}</small></button>`; }).join('')}` : '';
+    this.tarjeta(`<h3>⛺ Conflicto armado: ${Math.round(F.nivel)}</h3><p>${F.grupo ? `${mayus(K.grupo)} está en las veredas.` : 'Todavía no hay un grupo armado.'} El conflicto tiende a <b>${Math.round(metaConflicto(S))}</b>. Así se calcula:</p>
+      ${this.filasCausas(partesConflicto(S).filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]))}${estr}
+      <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.card.querySelectorAll('[data-estr]').forEach(b => b.onclick = () => { if (elegirEstrategia(S, b.dataset.estr)) { this.toast(`Estrategia: ${K.estrategias[b.dataset.estr].nombre}.`); this.render(); this.explicarConflicto(); } });
   }
   seccionRiesgo() {
     const S = this.S;

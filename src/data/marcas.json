@@ -2,15 +2,71 @@
   "leccion": "La memoria del territorio: cada decisión de gobierno deja rastros en el espacio público. Un mural, un retén o una valla cuentan qué tipo de gobierno hubo.",
   "maximo": 14,
   "tipos": {
-    "mural": { "nombre": "Mural", "icono": "🎨", "anios": 10, "texto": "Un mural pintado por los vecinos recuerda una decisión de justicia social." },
-    "reten": { "nombre": "Retén", "icono": "🚧", "anios": 6, "texto": "Un retén con guardia recuerda que aquí se gobernó con mano dura." },
-    "valla": { "nombre": "Valla de negocio", "icono": "🪧", "anios": 8, "texto": "Una valla anuncia el negocio que se cerró con la élite." },
-    "placa": { "nombre": "Placa conmemorativa", "icono": "🪦", "anios": 15, "texto": "Una placa recuerda un acto de deber y transparencia." },
-    "olla": { "nombre": "Olla comunitaria", "icono": "🍲", "anios": 5, "texto": "Una olla comunitaria recuerda la ayuda directa a quien lo necesitaba." },
-    "pancarta": { "nombre": "Pancartas de protesta", "icono": "📢", "anios": 4, "texto": "Pancartas de una demanda que el gobierno no atendió." },
-    "vivero": { "nombre": "Vivero", "icono": "🌱", "anios": 10, "texto": "Un vivero comunitario recuerda una decisión por el ambiente." },
-    "acta": { "nombre": "Piedra del acta fundacional", "icono": "📜", "anios": 999, "texto": "Una piedra tallada con los principios del acta fundacional." }
+    "mural": {
+      "nombre": "Mural",
+      "icono": "🎨",
+      "anios": 10,
+      "texto": "Un mural pintado por los vecinos recuerda una decisión de justicia social."
+    },
+    "reten": {
+      "nombre": "Retén",
+      "icono": "🚧",
+      "anios": 6,
+      "texto": "Un retén con guardia recuerda que aquí se gobernó con mano dura."
+    },
+    "valla": {
+      "nombre": "Valla de negocio",
+      "icono": "🪧",
+      "anios": 8,
+      "texto": "Una valla anuncia el negocio que se cerró con la élite."
+    },
+    "placa": {
+      "nombre": "Placa conmemorativa",
+      "icono": "🪦",
+      "anios": 15,
+      "texto": "Una placa recuerda un acto de deber y transparencia."
+    },
+    "olla": {
+      "nombre": "Olla comunitaria",
+      "icono": "🍲",
+      "anios": 5,
+      "texto": "Una olla comunitaria recuerda la ayuda directa a quien lo necesitaba."
+    },
+    "pancarta": {
+      "nombre": "Pancartas de protesta",
+      "icono": "📢",
+      "anios": 4,
+      "texto": "Pancartas de una demanda que el gobierno no atendió."
+    },
+    "vivero": {
+      "nombre": "Vivero",
+      "icono": "🌱",
+      "anios": 10,
+      "texto": "Un vivero comunitario recuerda una decisión por el ambiente."
+    },
+    "acta": {
+      "nombre": "Piedra del acta fundacional",
+      "icono": "📜",
+      "anios": 999,
+      "texto": "Una piedra tallada con los principios del acta fundacional."
+    },
+    "campamento": {
+      "nombre": "Campamento del grupo armado",
+      "icono": "⛺",
+      "anios": 999,
+      "texto": "Un campamento armado en las veredas lejanas, donde el Estado no llega."
+    }
   },
-  "porFilosofia": { "contr": "mural", "deon": "placa", "util": "valla", "real": "reten", "virt": "vivero" },
-  "movimientos": { "escuchar": "mural", "ignorar": "pancarta", "reprimir": "reten" }
+  "porFilosofia": {
+    "contr": "mural",
+    "deon": "placa",
+    "util": "valla",
+    "real": "reten",
+    "virt": "vivero"
+  },
+  "movimientos": {
+    "escuchar": "mural",
+    "ignorar": "pancarta",
+    "reprimir": "reten"
+  }
 }
