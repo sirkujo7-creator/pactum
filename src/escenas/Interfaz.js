@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, motivosDeOpcion, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -564,14 +564,7 @@ export class Interfaz {
     if (!ks.length) return '<span class="chip">Sin efectos inmediatos</span>';
     return ks.map(k => { const v = fx[k], bueno = BADUP[k] ? v < 0 : k === 'txe' ? v < 0 : v > 0; return `<span class="chip ${bueno ? 'g' : 'b'}">${v > 0 ? '+' : '−'}${Math.abs(v)} ${C.FXL[k]}</span>`; }).join('');
   }
-  // Claridad: hacia dónde mueve cada grupo una opción (▲ ayuda, ▼ perjudica), sin revelar cuánto.
-  direcciones(fx) {
-    const L = Object.entries(fx).filter(([k, v]) => k !== 't' && v).map(([k, v]) => {
-      const bueno = BADUP[k] ? v < 0 : k === 'txe' ? v < 0 : v > 0;
-      return `<span class="dir ${bueno ? 'pos' : 'neg'}">${C.FXL[k].replace('% ', '')} ${v > 0 ? '▲' : '▼'}</span>`;
-    });
-    return L.length ? `<span class="dirs">${L.join('')}</span>` : '';
-  }
+
   reacciones(fx) {
     const S = this.S;
     const r = Object.keys(C.ADV).map(a => { const st = stance(a, fx); if (!st) return ''; const L = st > 0 ? C.ADV[a].pro : C.ADV[a].con; return `<div class="say ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt=""><div><b>${C.ADV[a].n}</b><span>“${L[S.year % L.length]}”</span></div></div>`; }).join('');
@@ -583,12 +576,13 @@ export class Interfaz {
     if (!ev) { if (alTerminar) alTerminar(); return; }
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
-      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>${this.direcciones(o.fx)}${this.efectoMov(ev, o)}${this.avisoFuerza(o)}${this.avisoActa(motivosDeOpcion(ev, o))}`}</button>`).join(''), false);
+      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
         ${o.ex ? `<div class="porque-afecta"><b>¿Por qué afecta así?</b><br>${o.ex}</div>` : ''}
         <div class="phil"><b>${p ? `${p.n} (${p.a})` : 'Lección'}</b><br>${o.why}</div>${this.resultadoFuerza(o)}${this.reacciones(o.fx)}${o.later && !(o.uso && o.uso.cancelada) ? '<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>' : ''}
+        ${o.acta ? o.acta.map(t => `<p class="small neg">${t}</p>`).join('') : ''}
         ${ev.mov ? `<p class="small">${C.MOV.movimientos[ev.mov].icono} ${C.MOV.movimientos[ev.mov].nombre}: fuerza ${Math.round(fuerzaMov(S, ev.mov))} (${nombreEstado(fuerzaMov(S, ev.mov)).toLowerCase()}).</p>` : ''}
         ${o.danada ? `<p class="small">🔥 Dañaron ${o.danada}: se ve desgastada en el mapa. Puedes repararla tocándola.</p>` : ''}
         <button class="main" id="okB">Continuar</button>`);
@@ -638,20 +632,8 @@ export class Interfaz {
     const m = C.MOV.movimientos[ev.mov], f = Math.round(fuerzaMov(this.S, ev.mov));
     return `<p class="small">${m.icono} ${m.nombre} · líder: ${m.lider} · fuerza ${f} (${nombreEstado(f).toLowerCase()})${ev.movilizado ? '. Movilizado: ignorarlo tiene un costo inmediato.' : '.'}</p>`;
   }
-  efectoMov(ev, o) {
-    if (!ev.mov || !o.accion) return '';
-    const G = C.MOV.crecimiento;
-    const t = o.accion === 'escuchar' ? `el movimiento se calma (−${Math.abs(G.escuchado)})` : o.accion === 'ignorar' ? `el movimiento crece (+${G.ignorado})` :
-      nivelLegitimidad(this.S.tr) === 'baja' ? `con tu legitimidad baja, el movimiento se radicaliza (+${G.radicaliza})` : `el movimiento se dispersa (−${Math.abs(G.reprimido)})`;
-    return `<small class="mov">${t}</small>`;
-  }
-  // Fase 3 (Weber): las opciones que usan la fuerza avisan con qué legitimidad se dará la orden.
-  avisoFuerza(o) {
-    const S = this.S;
-    if (!o.fuerza || !fuerzaActiva(S)) return '';
-    const nivel = nivelLegitimidad(S.tr);
-    return `<small class="fuerza ${nivel}">⚔️ ${C.FUERZA.aviso.replace('{v}', Math.round(S.tr)).replace('{nivel}', C.FUERZA.niveles[nivel].nombre)}</small>`;
-  }
+
+
   resultadoFuerza(o) {
     if (!o.uso) return '';
     const u = o.uso;

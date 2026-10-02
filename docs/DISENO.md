@@ -351,8 +351,8 @@ Nunca más de tres sistemas con decisiones al mismo tiempo. Clima y suelo vivo f
 | Meta | Valor esperado |
 | --- | --- |
 | Duración de una partida ganada en Normal | Exigente: unos 45 a 55 años (decisión de Juan tras la fase 1; antes 30 a 40) |
-| Victorias de un jugador competente en Normal | 55% a 70% |
-| Diferencia entre regímenes | máximo 15 puntos (hoy Monarquía 93% y República 69%: corregir) |
+| Victorias de un jugador competente en Normal | Alrededor de 50% (45% a 55%), decisión de Juan del 2 de octubre tras la fase 3; antes 55% a 70% |
+| Diferencia entre regímenes | máximo 15 puntos (fase 3: 9 puntos) |
 | Diferencia entre perfiles éticos | máximo 15 puntos |
 | Tecnología | ninguna época obligatoria para ganar |
 | Movimientos sociales | ninguno termina la partida por sí solo |
@@ -382,5 +382,6 @@ La fase 0 no agrega sistemas nuevos: muda el juego a la nueva base hasta que jue
 | 1: Territorio vivo | Temporadas, El Niño y La Niña; suelo vivo y erosión; vida de los edificios. Decisiones de Juan: las temporadas también afectan las cosechas; la preparación ante El Niño y La Niña es un pronóstico un año antes más un fondo de emergencias en Hacienda; el mantenimiento se decide con un control de 0% a 100% en Hacienda |
 | 2: Economía y obra | Economía viva y costo de vida; cobertura por radios; obras por etapas y licitación. Decisiones de Juan: por etapas solo las obras grandes; el costo de vida se ve en la pastilla del alimento y en el mercado; las oficinas de recaudo entran con la cobertura |
 | 3: Poder | Ejército y legitimidad; movimientos sociales; acta fundacional; corregir balance de regímenes. Decisiones de Juan: clases ampliadas primero, vistas como tres grandes con subgrupos (con tierra y sin tierra; obreros, comerciantes y funcionarios; terratenientes y financistas; estudiantes e informales); el perfil realista se deja como está, como lección |
-| 4: Sociedad y memoria | Barrios y problemáticas; cultura y deporte; memoria y legado; evolución visual por épocas |
-| 5: Conocimiento | Tecnología por épocas; megaproyectos; río que cambia y volcán; aula y nube en paralelo |
+| 4: Riesgo y mundo | Pedida por Juan tras probar la fase 3. Exigencia (menos eventos buenos, riesgo, ventaja por régimen); sucesos sin decisión y Policía; personajes con papel; decisiones que se ven; desastres reales del Tolima (Nevado del Ruiz); conflicto armado y desplazamiento; relaciones con otras polis; otras formas de ganar y efecto propio por edificio. Sin flechas ni avisos en las opciones de los eventos |
+| 5: Sociedad y memoria | Barrios y problemáticas; cultura y deporte; memoria y legado; evolución visual por épocas |
+| 6: Conocimiento | Tecnología por épocas; megaproyectos; río que cambia (el volcán pasa a la fase 4); aula y nube en paralelo |
