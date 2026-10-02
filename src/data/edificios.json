@@ -10,7 +10,8 @@
     "terrenos": [
       "llano",
       "bosque"
-    ]
+    ],
+    "especial": "Da techo a 10 personas. Las casas lejos de los servicios quedan sin escuela, hospital, mercado, recaudo o policía."
   },
   "cultivo": {
     "icono": "🌾",
@@ -23,7 +24,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosCampesinos": 7
+    "empleosCampesinos": 7,
+    "especial": "Produce alimento; junto al río rinde más. La comida que sobra baja su precio."
   },
   "mercado": {
     "icono": "🏪",
@@ -37,7 +39,8 @@
       "llano"
     ],
     "empleosArtesanos": 5,
-    "tasas": 8
+    "tasas": 8,
+    "especial": "Estabiliza el precio de la comida: cada mercado suaviza las subidas y bajadas (hasta 30%). Da ánimo a los comerciantes cercanos."
   },
   "parque": {
     "icono": "🌳",
@@ -50,7 +53,8 @@
     "terrenos": [
       "llano",
       "bosque"
-    ]
+    ],
+    "especial": "Baja la inseguridad y sube el ambiente; ayuda a mantener contento al pueblo."
   },
   "escuela": {
     "icono": "🏫",
@@ -64,7 +68,8 @@
       "llano"
     ],
     "empleosArtesanos": 3,
-    "aniosDeObra": 1
+    "aniosDeObra": 1,
+    "especial": "Baja la inseguridad y el conflicto armado en su zona; forma estudiantes (que pueden organizarse)."
   },
   "hospital": {
     "icono": "🏥",
@@ -78,7 +83,8 @@
       "llano"
     ],
     "empleosArtesanos": 3,
-    "aniosDeObra": 2
+    "aniosDeObra": 2,
+    "especial": "Previene los brotes de enfermedad en las casas cercanas."
   },
   "taller": {
     "icono": "🏭",
@@ -92,7 +98,8 @@
       "llano"
     ],
     "empleosArtesanos": 9,
-    "aniosDeObra": 1
+    "aniosDeObra": 1,
+    "especial": "Emplea artesanos con energía de los molinos; ensucia el ambiente y el río."
   },
   "agora": {
     "icono": "🏛️",
@@ -106,7 +113,8 @@
       "llano"
     ],
     "empleosArtesanos": 1,
-    "aniosDeObra": 2
+    "aniosDeObra": 2,
+    "especial": "Sede de gobierno: legitimidad +10 y recaudo en su zona. Necesaria para la Polis."
   },
   "mina": {
     "icono": "⛏️",
@@ -121,7 +129,8 @@
     ],
     "empleosArtesanos": 10,
     "tasas": 25,
-    "aniosDeObra": 2
+    "aniosDeObra": 2,
+    "especial": "Mucho oro, pero baja el ambiente, alimenta el conflicto armado (rentas ilegales) y molesta al cabildo pijao y a Villa Lagunilla."
   },
   "banco": {
     "icono": "🏦",
@@ -135,7 +144,8 @@
       "llano"
     ],
     "empleosArtesanos": 2,
-    "aniosDeObra": 2
+    "aniosDeObra": 2,
+    "especial": "Baja 2 puntos el interés de los préstamos; los financistas lo celebran."
   },
   "cuartel": {
     "icono": "🎖️",
@@ -149,7 +159,8 @@
       "llano"
     ],
     "empleosArtesanos": 4,
-    "aniosDeObra": 2
+    "aniosDeObra": 2,
+    "especial": "Crea el Ejército: orden y seguridad si está contento; golpe de Estado si no."
   },
   "cafetal": {
     "icono": "☕",
@@ -165,7 +176,8 @@
     ],
     "alturaMinima": 1,
     "empleosCampesinos": 6,
-    "tasas": 10
+    "tasas": 10,
+    "especial": "Café para exportar: su precio sube y baja con el mercado internacional. Atrae a la empresaria Beatriz Arango."
   },
   "acueducto": {
     "icono": "💧",
@@ -181,7 +193,8 @@
     "juntoAlRio": true,
     "empleosArtesanos": 2,
     "agua": 70,
-    "aniosDeObra": 1
+    "aniosDeObra": 1,
+    "especial": "Da agua para crecer y reduce los brotes de enfermedad (15% menos por acueducto, hasta la mitad)."
   },
   "recaudo": {
     "icono": "🧾",
@@ -194,7 +207,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 2
+    "empleosArtesanos": 2,
+    "especial": "Cobra los impuestos en su zona: sin él, la gente lejana evade."
   },
   "policia": {
     "icono": "🚓",
@@ -207,7 +221,8 @@
     "terrenos": [
       "llano"
     ],
-    "empleosArtesanos": 3
+    "empleosArtesanos": 3,
+    "especial": "Patrulla su zona: baja la inseguridad y previene robos y atentados. Con corrupción alta, puede haber abusos."
   },
   "molino": {
     "icono": "⚙️",
@@ -223,7 +238,8 @@
     "juntoAlRio": true,
     "empleosArtesanos": 2,
     "energia": 3,
-    "aniosDeObra": 1
+    "aniosDeObra": 1,
+    "especial": "Da energía a los talleres."
   },
   "puerto": {
     "icono": "⛵",
@@ -239,7 +255,8 @@
     "juntoAlRio": true,
     "empleosArtesanos": 5,
     "tasas": 18,
-    "aniosDeObra": 2
+    "aniosDeObra": 2,
+    "especial": "Abre el comercio por el río: +2% en los ingresos de artesanos y élite y mejor relación con San Lorenzo del Magdalena."
   },
   "universidad": {
     "icono": "🎓",
@@ -253,6 +270,7 @@
       "llano"
     ],
     "empleosArtesanos": 5,
-    "aniosDeObra": 3
+    "aniosDeObra": 3,
+    "especial": "Sube la igualdad y los salarios; los estudiantes la exigen desde que eres Ciudad."
   }
 }

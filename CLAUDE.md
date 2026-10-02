@@ -65,7 +65,7 @@ Reglas técnicas:
 
 ## Fase actual: Fase 4, riesgo y mundo
 
-Las fases 0 a 3 están terminadas; su estado queda en `docs/DISENO.md`. Juan probó la fase 3 (2 de octubre) y pidió: más riesgo y menos eventos buenos (el juego quedó fácil), regímenes con ventajas propias, sucesos que llegan sin decisión, policía, relaciones con otras polis, conflicto armado y desplazamiento, desastres reales, personajes con papel propio, decisiones que se vean en el mapa, otras formas de ganar y edificios con más peso.
+Los ocho pasos de la fase 4 están publicados (versión 0.33.0, 3 de octubre); falta que Juan los pruebe y los apruebe. Las fases 0 a 3 están terminadas; su estado queda en `docs/DISENO.md`. Juan probó la fase 3 (2 de octubre) y pidió: más riesgo y menos eventos buenos (el juego quedó fácil), regímenes con ventajas propias, sucesos que llegan sin decisión, policía, relaciones con otras polis, conflicto armado y desplazamiento, desastres reales, personajes con papel propio, decisiones que se vean en el mapa, otras formas de ganar y edificios con más peso.
 
 Decisiones de Juan (2 de octubre):
 - Las opciones de los eventos no muestran flechas ni avisos (fuerza, acta, movimientos); los efectos se explican después de elegir.
