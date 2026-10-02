@@ -1,0 +1,44 @@
+{
+  "desde": { "etapa": 2 },
+  "inicial": 50,
+  "minimo": 35,
+  "hostil": 25,
+  "aliado": 70,
+  "regreso": 0.1,
+  "comercio": 0.04,
+  "bloqueo": 0.04,
+  "aislamiento": { "legitimidad": 1, "ingresos": 0.05 },
+  "ayuda": 30,
+  "acciones": {
+    "tratado": { "nombre": "Firmar un tratado de comercio", "costo": 40, "relacion": 15, "texto": "Abre el comercio: mientras la relación sea de 40 o más, los ingresos de artesanos y élite suben 4%." },
+    "visita": { "nombre": "Visita diplomática", "costo": 15, "relacion": 6, "texto": "Una visita con regalos y conversación: mejora la relación." }
+  },
+  "vecinos": {
+    "lagunilla": {
+      "nombre": "Villa Lagunilla", "icono": "🏞️", "alcalde": "Alcaldesa Carmen Varón",
+      "rasgo": "Está río abajo: vive de la pesca y el arroz, y bebe el agua que sale de tu territorio.",
+      "tensiones": { "rioSucio": -4, "conflicto": -2, "autoritario": -1 },
+      "gusta": "un río limpio y la paz"
+    },
+    "sanlorenzo": {
+      "nombre": "San Lorenzo del Magdalena", "icono": "⚓", "alcalde": "Alcalde Hernando Prada",
+      "rasgo": "Puerto comercial sobre el Magdalena: le interesa el comercio libre.",
+      "tensiones": { "aranceles": -4, "conflicto": -2, "autoritario": -2 },
+      "gusta": "el comercio libre y los gobiernos estables"
+    },
+    "altamira": {
+      "nombre": "Altamira de los Nevados", "icono": "⛰️", "alcalde": "Alcalde Rubén Ospina",
+      "rasgo": "Pueblo cafetero de montaña: compite con tu café, pero comparte el volcán.",
+      "tensiones": { "competenciaCafe": -2, "conflicto": -3, "planVolcan": 3 },
+      "gusta": "que se prepare el riesgo del volcán y que haya orden en las veredas"
+    }
+  },
+  "textos": {
+    "abre": "Tu territorio ya es Ciudad: las polis vecinas te miran como a un igual.",
+    "aislamiento": "Aislamiento: las relaciones con los vecinos están rotas. El comercio cae y la legitimidad sufre.",
+    "ayuda": "{vecino} envía {oro} de oro de ayuda tras la emergencia.",
+    "hostil": "{vecino} rompe relaciones y bloquea el comercio.",
+    "aliado": "{vecino} se vuelve tu aliado."
+  },
+  "leccion": "Relaciones entre pueblos: ningún territorio vive aislado. Kant pensaba que el comercio y los tratados acercan a los pueblos y alejan la guerra; los conflictos, el río contaminado o un gobierno autoritario los separan."
+}

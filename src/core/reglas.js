@@ -50,5 +50,6 @@ export const ETAPA_OK = [
   null,
   (S, c) => S.pop >= 40,
   (S, c) => S.pop >= 80 && c.escuela >= 1 && c.hospital >= 1,
-  (S, c) => S.pop >= 150 && c.agora >= 1 && S.tr >= 55
+  // Fase 4: en Ciudad, además, relaciones mínimas con las polis vecinas (solo existen en el terreno en acuarela).
+  (S, c) => S.pop >= 150 && c.agora >= 1 && S.tr >= 55 && (!S.vecinos || !C.VECINOS || Object.values(S.vecinos).reduce((s, v) => s + v.rel, 0) / Object.keys(S.vecinos).length >= C.VECINOS.minimo)
 ];

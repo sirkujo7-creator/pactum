@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -169,7 +169,7 @@ export class Interfaz {
     );
     // Meta, guía, promesas y exigencias (como en la v9).
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;
-    const meta = S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${nx.req}).` : `Meta: sostener la Polis ${D(S).polis} años.`;
+    const meta = S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${nx.req}${S.stage === 2 && vecinosActivos(S) ? `; relaciones de ${C.VECINOS.minimo} con los vecinos` : ''}).` : `Meta: sostener la Polis ${D(S).polis} años.`;
     const pr = S.promises.map(p => `Promesa: ${C.B[p.k].a} antes del año ${p.dl}.`).join(' ');
     const pron = climaActivo(S) && S.clima.pronostico, FEN = C.CLIMA && C.CLIMA.fenomenos;
     const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
@@ -286,12 +286,13 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionConflicto() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
     const seg = this.sociedad.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
     const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
+    this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
@@ -769,8 +770,8 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 4: conflicto armado (aparece el grupo, toma armada, acuerdo de paz o repliegue).
-  conflictoAnio(alTerminar) {
-    const S = this.S, e = S.confEv;
+  conflictoAnio(alTerminar0) {
+    const S = this.S, e = S.confEv, alTerminar = () => this.vecinosAnio(alTerminar0);
     if (!e || !e.nuevo || !conflictoActivo(S)) { alTerminar(); return; }
     e.nuevo = false;
     const K = C.CONF, g = K.grupo, T = K.textos;
@@ -782,6 +783,38 @@ export class Interfaz {
       <div class="dos">${e.tipo === 'aparece' ? '<button class="btn" id="estrB">Elegir estrategia</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
     this.boton('estrB', () => { this.cerrarTarjeta(); this.explicarConflicto(); });
+  }
+  // Fase 4: relaciones con las polis vecinas.
+  vecinosAnio(alTerminar) {
+    const S = this.S, e = S.vecEv;
+    if (!e || !e.nuevo || !vecinosActivos(S)) { alTerminar(); return; }
+    e.nuevo = false;
+    const V = C.VECINOS;
+    this.tarjeta(`<div class="big">🤝</div><h3>Las polis vecinas</h3><p>${V.textos.abre}</p>
+      ${Object.entries(V.vecinos).map(([id, n]) => `<p class="small"><b>${n.icono} ${n.nombre}</b> (${n.alcalde}): ${n.rasgo}</p>`).join('')}
+      <p class="small">Cuida las relaciones en <b>Sociedad → Otras polis</b>. Con un promedio menor que ${V.minimo} hay aislamiento y no llegarás a Polis.</p>
+      <div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Entendido</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  seccionVecinos() {
+    const S = this.S;
+    if (!vecinosActivos(S)) return '';
+    const V = C.VECINOS, prom = Math.round(promedioRel(S));
+    const filas = Object.entries(S.vecinos).map(([id, v]) => { const n = V.vecinos[id];
+      return `<button class="sub" data-vecino="${id}" aria-label="${n.nombre}: relación ${Math.round(v.rel)}. Ver más"><span class="sn">${n.icono} ${n.nombre} <small>${{ aliado: 'aliado', hostil: 'hostil', neutral: v.tratado ? 'con tratado' : '' }[nivelVecino(v.rel)]}</small></span><span class="track"><span class="fill" style="width:${v.rel}%;background:${colorDe(v.rel)}"></span></span><b>${Math.round(v.rel)}</b></button>`; }).join('');
+    return `<div class="cls otros"><div><div class="lab"><span>Otras polis</span><span class="${aislado(S) ? 'neg' : ''}">promedio ${prom}</span></div><p class="small">${aislado(S) ? `<b class="neg">${V.textos.aislamiento}</b>` : `Mínimo para llegar a Polis: ${V.minimo}.`} Comercio con los vecinos: ${Math.round(factorVecinos(S) * 100)}% en los ingresos de artesanos y élite.</p><div class="subs">${filas}</div></div></div>`;
+  }
+  explicarVecino(id) {
+    const S = this.S, V = C.VECINOS, n = V.vecinos[id], v = S.vecinos[id], ten = tensiones(S, id);
+    const boton = a => { const no = puedeAccion(S, id, a); return `<button class="opt" data-acc="${a}" ${no ? 'disabled' : ''}><b>${V.acciones[a].nombre}</b><small>${V.acciones[a].texto} Cuesta ${costoAccion(S, a)} de oro; relación +${V.acciones[a].relacion}.${no ? ` ${no}` : ''}</small></button>`; };
+    this.tarjeta(`<h3>${n.icono} ${n.nombre}: relación ${Math.round(v.rel)}</h3><p class="small">${n.alcalde}. ${n.rasgo}</p>
+      <p class="small"><b>Le agrada:</b> ${n.gusta}.</p>
+      ${ten.length ? `<p>Este año la relación se mueve por:</p>${this.filasCausas(ten)}` : '<p class="small">Este año no hay tensiones: la relación vuelve poco a poco a lo normal.</p>'}
+      <p class="small">Aliados (${V.aliado} o más) envían ayuda en las emergencias; hostiles (${V.hostil} o menos) bloquean el comercio.</p>
+      ${boton('tratado')}${boton('visita')}
+      <div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.card.querySelectorAll('[data-acc]').forEach(b => b.onclick = () => { if (accionVecino(S, id, b.dataset.acc)) { this.toast(`${V.acciones[b.dataset.acc].nombre} con ${n.nombre}.`); this.render(); this.explicarVecino(id); } });
   }
   seccionConflicto() {
     const S = this.S;
