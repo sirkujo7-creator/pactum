@@ -1,0 +1,88 @@
+{
+  "volcan": {
+    "nombre": "Nevado del Ruiz",
+    "desde": {
+      "etapa": 1,
+      "anio": 8
+    },
+    "niveles": [
+      {
+        "nombre": "Verde",
+        "icono": "🟢",
+        "texto": "El volcán está tranquilo."
+      },
+      {
+        "nombre": "Amarilla",
+        "icono": "🟡",
+        "texto": "El volcán despierta: hay sismos y fumarolas. Es momento de preparar un plan."
+      },
+      {
+        "nombre": "Naranja",
+        "icono": "🟠",
+        "texto": "Erupción probable en días o semanas. Los científicos piden preparar la evacuación."
+      },
+      {
+        "nombre": "Roja",
+        "icono": "🔴",
+        "texto": "Erupción inminente: el lahar puede bajar por el río el próximo año."
+      }
+    ],
+    "probSubir": [
+      0.04,
+      0.22,
+      0.35
+    ],
+    "probBajar": [
+      0,
+      0.3,
+      0.2,
+      0
+    ],
+    "probErupcion": 0.6,
+    "plan": {
+      "costo": 50,
+      "nombre": "Plan de evacuación",
+      "texto": "Mapa de riesgo, sirenas, rutas y simulacros con las familias de la ribera."
+    },
+    "erupcion": {
+      "danoRibera": 60,
+      "danoOtros": 15,
+      "perdidaSinPlan": 0.2,
+      "perdidaConPlan": 0.02,
+      "legitimidadSinPlan": -15,
+      "legitimidadConPlan": 4,
+      "ceniza": 0.7
+    },
+    "textos": {
+      "sube": "🌋 El Nevado del Ruiz pasa a alerta {nivel}.",
+      "baja": "🌋 El Nevado del Ruiz se calma: alerta {nivel}.",
+      "erupcion": "🌋 ¡Erupción del Nevado del Ruiz! Un lahar baja por el río.",
+      "conPlan": "Gracias al plan de evacuación, las familias de la ribera salieron a tiempo. Las obras junto al río quedaron destruidas, pero se salvaron las vidas.",
+      "sinPlan": "No había plan de evacuación. El lahar sorprendió a las familias de la ribera: una tragedia anunciada.",
+      "ceniza": "La ceniza cubrió los cultivos: este año la cosecha rinde 30% menos."
+    },
+    "leccion": "Armero, 13 de noviembre de 1985: el lahar del Nevado del Ruiz sepultó la ciudad y murieron más de 20.000 personas. Hubo alertas, mapas de riesgo y advertencias de los científicos, pero no se evacuó a tiempo. La ciencia sin decisión política no salva vidas."
+  },
+  "terremoto": {
+    "nombre": "Terremoto",
+    "desde": {
+      "etapa": 1,
+      "anio": 6
+    },
+    "prob": 0.015,
+    "danoProb": 0.35,
+    "danoProbConLey": 0.12,
+    "dano": 45,
+    "danoExtraViejas": 20,
+    "perdida": 0.05,
+    "perdidaConLey": 0.01,
+    "legitimidad": -4,
+    "costoPorHabitante": 1.2,
+    "textos": {
+      "ocurre": "🏚️ ¡Terremoto! La tierra tembló con fuerza.",
+      "conLey": "El código sismorresistente funcionó: la mayoría de las obras resistieron.",
+      "sinLey": "Sin código sismorresistente, muchas obras se agrietaron o cayeron."
+    },
+    "leccion": "Eje Cafetero, 25 de enero de 1999: un terremoto destruyó buena parte de Armenia y dejó más de mil muertos. Las construcciones que no cumplían la norma sismorresistente fueron las que más cayeron. Los terremotos no se pueden predecir: la preparación es construir bien y tener con qué responder."
+  }
+}

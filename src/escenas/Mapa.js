@@ -502,6 +502,8 @@ export class Mapa extends Phaser.Scene {
     const L = this.limitesMundo(), p = this.aldea();
     this.fijarCamara(Math.min(ZOOM_MAX, w / L.w * 1.8), p[0], p[1] - 40);
   }
+  // Fase 4: la tierra tiembla (terremoto o erupción), salvo con «reducir movimiento».
+  temblor() { if (!reducirMovimiento()) this.cameras.main.shake(700, .006); }
   // Lleva la cámara a una casilla (por ejemplo, la obra de un suceso).
   enfocarCasilla(i) { const t = this.T.tiles[i]; if (!t) return; const p = P(t.r + .5, t.c + .5, t.h); this.fijarCamara(Math.min(ZOOM_MAX, Math.max(this.cameras.main.zoom, 1.8)), p[0], p[1]); }
   enfocarAldea() { const p = this.aldea(), { w } = tam(this); this.fijarCamara(Math.min(ZOOM_MAX, Math.max(w / 520, 1.4)), p[0], p[1]); }

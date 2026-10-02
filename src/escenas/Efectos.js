@@ -1,6 +1,6 @@
 // Efectos del mapa (de la versión 9): números que flotan al cerrar el año, huellas visibles de los
 // dilemas (crecida, sequía, plaga, río envenenado, multitud, fiesta, humo) y tintes del régimen y del esmog.
-import { C, nearRiver, clamp, lluvias, movilizados } from '../core/index.js';
+import { C, nearRiver, clamp, lluvias, movilizados, nivelVolcan } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { DPR, reducirMovimiento } from './pantalla.js';
 
@@ -32,11 +32,13 @@ export class Efectos {
     const { S, T } = this.scene, g = this.capa, fen = S.clima && S.clima.fenomeno;
     // Fase 1: La Niña inunda las orillas; El Niño deja la luz de sequía.
     // Fase 3: si un movimiento social está movilizado, hay una multitud con pancartas en la plaza.
-    const vk = fen === 'nina' ? 'flood' : fen === 'nino' ? 'drought' : (S.vis && S.vis.k) || (movilizados(S).length ? 'crowd' : null);
+    const vk = S.lahar !== undefined && S.year - S.lahar <= 1 ? 'lahar' : fen === 'nina' ? 'flood' : fen === 'nino' ? 'drought' : (S.vis && S.vis.k) || (movilizados(S).length ? 'crowd' : null);
     if (vk === this.visto && this._reg === S.reg) return;
     this.visto = vk; this._reg = S.reg;
     g.clear(); this.encima.removeAll(true); this.lluvia = [];
     const rombo = (i, s = .9) => { const t = T.tiles[i], m = (1 - s) / 2; return [P(t.r + m, t.c + m, t.h00), P(t.r + m, t.c + 1 - m, t.h01), P(t.r + 1 - m, t.c + 1 - m, t.h11), P(t.r + 1 - m, t.c + m, t.h10)].map(p => ({ x: p[0], y: p[1] })); };
+    // Fase 4: el lahar deja lodo gris a lo largo del río y sus orillas.
+    if (vk === 'lahar') { g.fillStyle(0x8A7A66, .55); S.map.forEach((x, i) => { if (x.t === 'rio' || nearRiver(S, i)) g.fillPoints(rombo(i, x.t === 'rio' ? 1 : .95), true); }); }
     if (vk === 'flood') { g.fillStyle(0x5FA0C8, .38); S.map.forEach((x, i) => { if (x.t !== 'rio' && nearRiver(S, i)) g.fillPoints(rombo(i), true); }); }
     if (vk === 'poison') { g.fillStyle(0x78823C, .5); S.map.forEach((x, i) => { if (x.t === 'rio') g.fillPoints(rombo(i, .98), true); }); }
     if (vk === 'pests') {
@@ -72,6 +74,16 @@ export class Efectos {
     const { S, T } = this.scene;
     (this.humos || []).forEach(h => h.destroy()); this.humos = [];
     if (!S.clima || reducirMovimiento()) return;
+    // Fase 4: fumarola del volcán (la cima más alta) según el nivel de alerta.
+    const nv = nivelVolcan(S);
+    if (nv > 0) {
+      let cima = 0; T.tiles.forEach((t, i) => { if (t.h > T.tiles[cima].h) cima = i; });
+      const t = T.tiles[cima], p = P(t.r + .5, t.c + .5, t.h);
+      this.humos.push(this.scene.add.particles(p[0], p[1] - 6, 'edificios', {
+        frame: 'humo', lifespan: 6000 + nv * 800, speedX: { min: 6, max: 16 }, speedY: { min: -9 - nv * 2, max: -5 }, scale: { start: .25 + nv * .08, end: 1.1 + nv * .3 },
+        alpha: { start: .22 + nv * .06, end: 0 }, tint: nv >= 3 ? 0x8A827A : 0xB8B2AA, frequency: 900 - nv * 150, quantity: 1
+      }).setDepth(t.r + t.c + 5));
+    }
     const anios = C.CLIMA.suelo.incendio.anios;
     // Fase 4: humo oscuro sobre las obras golpeadas por un atentado o un incendio (ese año y el siguiente).
     S.map.forEach((x, i) => {

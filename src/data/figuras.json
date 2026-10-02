@@ -273,6 +273,45 @@
           }
         }
       ]
+    },
+    "vulcanologa": {
+      "nombre": "Dra. Inés Calderón",
+      "rol": "Vulcanóloga del observatorio",
+      "icono": "🌋",
+      "aparece": {
+        "etapa": 1,
+        "volcan": 1
+      },
+      "presentacion": "Soy la doctora Calderón, del observatorio vulcanológico. El volcán habla y nosotros lo escuchamos. Le pido que escuche también a la ciencia.",
+      "retrato": {
+        "fondo": "#E8E1D8",
+        "piel": "#E0B08A",
+        "ropa": "#C0602A",
+        "detalle": "gafas",
+        "pelo": "#3A2A20"
+      },
+      "reacciones": {
+        "planVolcan": 20,
+        "ignorarVolcan": -15
+      },
+      "alta": {
+        "texto": "El observatorio coopera: el plan de evacuación cuesta la mitad.",
+        "planDescuento": 0.5
+      },
+      "baja": {
+        "texto": "El observatorio desconfía del gobierno: el plan de evacuación cuesta 50% más.",
+        "planDescuento": -0.5
+      },
+      "misiones": [
+        {
+          "tipo": "planVolcan",
+          "plazo": 4,
+          "texto": "Prepare un plan de evacuación para las familias de la ribera.",
+          "premio": {
+            "confianza": 3
+          }
+        }
+      ]
     }
   },
   "motivos": {
@@ -289,6 +328,8 @@
     "campesinos": "que se desoiga al movimiento campesino",
     "ambientalistas": "que se desoiga a los ambientalistas",
     "escucharAmbiente": "que se escuche a los ambientalistas",
-    "escucharCampesinos": "que se escuche a los campesinos"
+    "escucharCampesinos": "que se escuche a los campesinos",
+    "planVolcan": "que se prepare un plan de evacuación",
+    "ignorarVolcan": "que se ignoren las alertas del volcán"
   }
 }

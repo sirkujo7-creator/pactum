@@ -17,7 +17,7 @@ export function estadoFig(S, id) { const D = datos(S); if (!D[id]) D[id] = { rel
 export function presente(S, id) {
   if (!figurasActivas(S)) return false;
   const A = K().figuras[id].aparece;
-  return S.stage >= (A.etapa || 0) && S.year >= (A.anio || 0) && (!A.edificio || counts(S)[A.edificio] > 0 || (S.fig && S.fig[id] && S.fig[id].visto));
+  return S.stage >= (A.etapa || 0) && S.year >= (A.anio || 0) && (!A.volcan || (S.volcan && S.volcan.nivel >= A.volcan) || (S.fig && S.fig[id] && S.fig[id].visto)) && (!A.edificio || counts(S)[A.edificio] > 0 || (S.fig && S.fig[id] && S.fig[id].visto));
 }
 export function presentes(S) { return figurasActivas(S) ? Object.keys(K().figuras).filter(id => presente(S, id)) : []; }
 export function nivelRel(rel) { return rel >= K().alta ? 'alta' : rel <= K().baja ? 'baja' : 'media'; }
@@ -62,6 +62,7 @@ export function cumpleMision(S, m) {
     case 'ambienteMin': return S.env >= m.valor;
     case 'tierraMin': return tierra(S) >= m.valor;
     case 'impEliteMax': return S.tx.e <= m.valor;
+    case 'planVolcan': return !!(S.volcan && S.volcan.plan);
   }
   return false;
 }

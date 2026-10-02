@@ -53,5 +53,11 @@
     "nombre": "Banco central independiente",
     "descripcion": "La inflación baja 1,5 puntos, pero ya no puedes imprimir moneda.",
     "etapa": 2
+  },
+  {
+    "id": "sismo",
+    "nombre": "Código sismorresistente",
+    "descripcion": "Las obras nuevas cuestan 10% más, pero un terremoto daña muchas menos y hay menos víctimas.",
+    "etapa": 1
   }
 ]
