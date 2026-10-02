@@ -21,6 +21,7 @@ import { marcasDelAnio } from './marcas.js';
 import { desastresDelAnio } from './desastres.js';
 import { conflictoDelAnio } from './conflicto.js';
 import { vecinosDelAnio } from './vecinos.js';
+import { victoriasDelAnio } from './victorias.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -177,6 +178,9 @@ export function advance(S) {
   if (S.pop <= 3) return { end: { win: false, title: 'Territorio abandonado', text: 'Las últimas familias se marcharon.' } };
   // Claridad (decisión de Juan): tras ganar se puede seguir gobernando; la victoria no se repite.
   if (S.polisYears >= D(S).polis && !S.ganado) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
+  // Fase 4: otras formas de ganar (próspera, justa, verde, en paz).
+  const otra = victoriasDelAnio(S);
+  if (otra) return { end: otra };
   if (S.vis && S.vis.y <= S.year) S.vis = null;
   // Fase 1: lluvias del año que empieza, El Niño o La Niña y sus pronósticos (solo en el terreno en acuarela).
   // Fase 2: precio del alimento y del café, y ciclo de auge y recesión.

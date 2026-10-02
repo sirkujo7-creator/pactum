@@ -34,7 +34,7 @@ export function riesgos(S) {
   const a = Q.atentado; r.atentado = ins >= a.minInseguridad && S.tr <= a.maxLegitimidad ? a.prob * (ins - a.minInseguridad + 10) / 50 : 0;
   const b = Q.robo; r.robo = ins >= b.minInseguridad && (c.mercado + c.banco + c.recaudo + c.taller) > 0 ? b.prob * ins / 100 : 0;
   const f = Q.incendio; r.incendio = f.prob + (S.clima.fenomeno === 'nino' ? f.probNino : 0) + (mantenimiento(S) < 60 ? f.probSinMantenimiento : 0);
-  const e = Q.brote; r.brote = cob.hospital < e.maxHospital ? e.prob * (1 - cob.hospital) + (S.env < 45 ? e.probAmbiente : 0) : 0;
+  const e = Q.brote; r.brote = cob.hospital < e.maxHospital ? (e.prob * (1 - cob.hospital) + (S.env < 45 ? e.probAmbiente : 0)) * (1 - Math.min(.5, .15 * c.acueducto)) : 0; // fase 4: el acueducto reduce los brotes
   const p = Q.abuso; r.abuso = c.policia > 0 && S.corr >= p.minCorrupcion ? p.prob : 0;
   return r;
 }

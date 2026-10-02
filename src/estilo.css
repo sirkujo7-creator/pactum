@@ -244,3 +244,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .fig-r img{width:44px;height:44px;border-radius:50%}
 .fig-cab{display:flex;gap:12px;align-items:center}.fig-cab img{width:64px;height:64px;border-radius:50%}.fig-cab h3{margin:0}
 .opt.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.camino{margin:8px 0;padding:8px 10px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}.camino p{margin:4px 0}
+.conds{margin:4px 0 0;padding-left:0;list-style:none;font-size:.85rem}.conds li.pos{color:var(--good)}.conds li.neg{color:var(--bad)}
+.ficha .especial{grid-column:1/-1;font-size:.9rem;color:var(--accent);font-weight:600}

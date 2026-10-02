@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -178,7 +178,9 @@ export class Interfaz {
     // La meta siempre queda a la vista en la primera línea; avisos y guía van en la segunda.
     const segunda = aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : '');
     this.meta.innerHTML = `<div class="gl1"><b>${meta}</b></div>${segunda ? `<div class="gl1 gl2">${segunda}</div>` : ''}` +
-      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
+      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${climaActivo(S) && C.VICTORIAS ? '<span class="lnk" role="button" tabindex="0" data-caminos>Caminos a la victoria</span> ' : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
+    const cv = this.meta.querySelector('[data-caminos]');
+    if (cv) cv.onclick = e => { e.stopPropagation(); this.caminosVictoria(); };
     const oc = this.meta.querySelector('[data-ocultar]');
     if (oc) oc.onclick = e => { e.stopPropagation(); S.guide = false; this.render(); };
     // En computador los paneles van a un lado: la meta sigue visible. En celular la tapa el panel que sube.
@@ -419,6 +421,7 @@ export class Interfaz {
     }
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
+        ...(C.B[x.b].es && climaActivo(S) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));
       const ap = x.ob ? null : aporteObra(S, i);
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
@@ -783,6 +786,16 @@ export class Interfaz {
       <div class="dos">${e.tipo === 'aparece' ? '<button class="btn" id="estrB">Elegir estrategia</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
     this.boton('estrB', () => { this.cerrarTarjeta(); this.explicarConflicto(); });
+  }
+  // Fase 4: caminos a la victoria (la Polis y cuatro caminos más desde Ciudad).
+  caminosVictoria() {
+    const S = this.S, V = C.VICTORIAS, abiertas = victoriasActivas(S);
+    const polis = `<div class="camino"><b>🏛️ Polis</b> <small>${S.stage >= 3 ? `${S.polisYears} de ${D(S).polis} años` : `llega a Polis: ${C.STAGES[3].req}`}</small><p class="small">Sostener la Polis ${D(S).polis} años: un pueblo grande, con ágora y legítimo.</p></div>`;
+    const otros = caminos(S).map(c => `<div class="camino"><b>${c.icono} ${c.nombre}</b> <small>${abiertas ? `${c.llevados} de ${c.anios} años seguidos` : 'desde Ciudad'}</small><p class="small">${c.texto}</p>
+      <ul class="conds">${c.estado.map(q => `<li class="${q.ok ? 'pos' : 'neg'}">${q.ok ? '✓' : '✗'} ${q.texto}</li>`).join('')}</ul></div>`).join('');
+    this.tarjeta(`<div class="big">🏆</div><h3>Caminos a la victoria</h3><p class="small">${abiertas ? `Gana el primero que sostengas ${D(S).polis} años seguidos, cumpliendo todas sus condiciones a la vez.` : 'Los cuatro caminos nuevos se abren cuando tu territorio sea Ciudad.'}</p>
+      ${polis}${otros}<div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 4: relaciones con las polis vecinas.
   vecinosAnio(alTerminar) {

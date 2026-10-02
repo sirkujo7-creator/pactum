@@ -4,6 +4,7 @@
 import { azar, clamp } from './azar.js';
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
+import { counts } from './reglas.js';
 
 const K = () => C.ECO;
 export function ecoInicial() { return { fase: 'normal', anios: 0, aviso: null, cafe: 1, pa: 1, abierta: false, evento: null }; }
@@ -38,6 +39,8 @@ export function economiaDelAnio(S, F) {
   const A = K().alimento, oferta = Math.max(1, F.fprod + Math.min(Math.max(0, S.food), F.cons) * A.reserva);
   const nuevo = clamp(Math.pow(F.cons * A.colchon / oferta, A.elasticidad), A.minimo, A.maximo), antes = E.pa;
   E.pa = Math.round((nuevo * (1 - A.memoria) + antes * A.memoria) * 100) / 100;
+  // Fase 4: los mercados estabilizan el precio de la comida.
+  E.pa = Math.round((1 + (E.pa - 1) * (1 - Math.min(.3, .06 * counts(S).mercado))) * 100) / 100;
   if (E.pa >= 1.3 && antes < 1.3) news.push(T.precioAlto); else if (E.pa <= .8 && antes > .8) news.push(T.precioBajo);
   // Café: tiende al valor de la fase, con sorpresas del mercado internacional.
   const Cf = K().cafe, meta = Cf[E.fase] || 1;

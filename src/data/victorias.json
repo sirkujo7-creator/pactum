@@ -1,0 +1,103 @@
+{
+  "desde": {
+    "etapa": 2
+  },
+  "leccion": "No hay una sola forma de gobernar bien. Aristóteles pensaba que el fin de la polis es la vida buena: unos pueblos la buscan en la prosperidad, otros en la justicia, en la naturaleza o en la paz. Cada camino exige renunciar a algo.",
+  "caminos": {
+    "prospera": {
+      "nombre": "Polis próspera",
+      "icono": "💰",
+      "texto": "Un territorio rico, sin deudas y con su gente viviendo bien.",
+      "condiciones": [
+        {
+          "tipo": "hapMin",
+          "valor": 60,
+          "texto": "Bienestar de 60 o más"
+        },
+        {
+          "tipo": "calificacion",
+          "valor": "AAA",
+          "texto": "Calificación de crédito AAA"
+        },
+        {
+          "tipo": "deudaMax",
+          "valor": 0,
+          "texto": "Sin deuda"
+        },
+        {
+          "tipo": "oroMin",
+          "valor": 250,
+          "texto": "Tesoro de 250 de oro o más (a precios de hoy)"
+        }
+      ]
+    },
+    "justa": {
+      "nombre": "Polis justa",
+      "icono": "⚖️",
+      "texto": "Un territorio donde nadie se queda atrás y el gobierno es legítimo.",
+      "condiciones": [
+        {
+          "tipo": "eqMin",
+          "valor": 70,
+          "texto": "Igualdad de 70 o más"
+        },
+        {
+          "tipo": "trMin",
+          "valor": 62,
+          "texto": "Legitimidad de 62 o más"
+        },
+        {
+          "tipo": "claseMin",
+          "valor": 45,
+          "texto": "Ninguna clase con ánimo menor que 45"
+        }
+      ]
+    },
+    "verde": {
+      "nombre": "Polis verde",
+      "icono": "🌳",
+      "texto": "Un territorio que vive en armonía con el páramo, el bosque y el río.",
+      "condiciones": [
+        {
+          "tipo": "envMin",
+          "valor": 82,
+          "texto": "Ambiente de 82 o más"
+        },
+        {
+          "tipo": "sinMinas",
+          "texto": "Ninguna mina"
+        },
+        {
+          "tipo": "bosqueMin",
+          "valor": 0.26,
+          "texto": "Bosque en 26% del territorio o más"
+        }
+      ]
+    },
+    "paz": {
+      "nombre": "Polis en paz",
+      "icono": "🕊️",
+      "texto": "Un territorio sin violencia, con su gente escuchada y en buenos términos con sus vecinos.",
+      "condiciones": [
+        {
+          "tipo": "sinGrupo",
+          "texto": "Sin grupo armado (conflicto menor que 15)"
+        },
+        {
+          "tipo": "insegMax",
+          "valor": 10,
+          "texto": "Inseguridad menor que 10"
+        },
+        {
+          "tipo": "sinMovilizados",
+          "texto": "Ningún movimiento social movilizado"
+        },
+        {
+          "tipo": "vecinosMin",
+          "valor": 70,
+          "texto": "Relación promedio con los vecinos de 70 o más"
+        }
+      ]
+    }
+  }
+}
