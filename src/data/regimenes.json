@@ -49,7 +49,7 @@
       "ajustesFase3": {
         "se": 4,
         "admin": 0.95,
-        "tr": -8,
+        "tr": -9,
         "drift": 3.0,
         "obrasDescuento": 0.1
       },
@@ -72,7 +72,7 @@
         "elect": true
       },
       "ajustesFase3": {
-        "tr": 4,
+        "tr": 4.3,
         "movCrece": 0.6
       },
       "ventaja": "Participación: los movimientos sociales crecen 40% más lento, porque hay canales para hacerse oír."
@@ -122,14 +122,14 @@
       },
       "ajustesFase3": {
         "tr": -12,
-        "sc": 0,
-        "sa": 0,
+        "sc": 2,
+        "sa": 2,
         "eq": 0,
-        "eliteCap": 15,
+        "eliteCap": 20,
         "admin": 0.9,
-        "tasaMenos": 0.04
+        "tasaMenos": 0.05
       },
-      "ventaja": "Amigos en la banca: los préstamos cuestan 4 puntos menos de interés."
+      "ventaja": "Amigos en la banca: los préstamos cuestan 5 puntos menos de interés."
     },
     "demagogia": {
       "nombre": "Populismo",
@@ -149,9 +149,9 @@
         "elect": true
       },
       "ajustesFase3": {
-        "infl": 0.008,
+        "infl": 0.005,
         "admin": 1.0,
-        "tr": 3,
+        "tr": 5,
         "movEscucha": 1.5
       },
       "ventaja": "Carisma: escuchar a un movimiento social lo calma 50% más."

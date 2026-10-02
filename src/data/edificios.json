@@ -196,6 +196,19 @@
     ],
     "empleosArtesanos": 2
   },
+  "policia": {
+    "icono": "🚓",
+    "nombre": "Estación de policía",
+    "articulo": "una estación de policía",
+    "descripcion": "Patrulla su zona: baja la inseguridad y previene robos y atentados. Si el gobierno es muy corrupto, puede haber abusos. Emplea 3.",
+    "costo": 60,
+    "mantenimiento": 4,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 3
+  },
   "molino": {
     "icono": "⚙️",
     "nombre": "Molino de agua",

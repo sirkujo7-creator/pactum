@@ -14,6 +14,7 @@ import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
 import { movimientosDelAnio, presionMovimientos } from './movimientos.js';
 import { actaDelAnio, coherencia } from './acta.js';
+import { sucesosDelAnio } from './sucesos.js';
 import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
@@ -148,6 +149,7 @@ export function advance(S) {
   news.push(...ejercitoDelAnio(S));
   news.push(...movimientosDelAnio(S));
   news.push(...actaDelAnio(S));
+  news.push(...sucesosDelAnio(S));
   if (S.reg === 'monarquia' && S.year % 15 === 0) {
     if (azar() < .5) { S.corr = clamp(S.corr - 10, 0, 100); S.tr = clamp(S.tr + 5, 0, 100); news.push('Sucesión en la corona: el heredero es prudente y querido.'); }
     else { S.corr = clamp(S.corr + 15, 0, 100); S.tr = clamp(S.tr - 5, 0, 100); news.push('Sucesión en la corona: el heredero es caprichoso y la corte murmura.'); }

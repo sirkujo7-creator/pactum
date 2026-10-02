@@ -29,7 +29,7 @@
     "recompensaGuia": 20,
     "multiplicadorMaloSinRachas": 1.6,
     "rachaParaBueno": 3,
-    "probBueno": 0.3
+    "probBueno": 0.4
   },
   "dificil": {
     "nombre": "Difícil",

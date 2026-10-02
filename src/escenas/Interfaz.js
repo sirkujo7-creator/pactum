@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -282,10 +282,11 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.subgrupos('otros') + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
+    const seg = this.sociedad.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
   seccionMovimientos() {
@@ -688,13 +689,43 @@ export class Interfaz {
     this.avisoEjercito(alTerminar);
   }
   // Fase 3: aviso de golpe (ruido de sables), con un año para prepararse.
-  avisoEjercito(alTerminar) {
-    const S = this.S, E = S.ejercito, K = C.EJERCITO;
+  avisoEjercito(alTerminar0) {
+    const S = this.S, E = S.ejercito, K = C.EJERCITO, alTerminar = () => this.sucesoAnio(alTerminar0);
     if (!E || !E.aviso || !E.aviso.nuevo || !ejercitoActivo(S)) { alTerminar(); return; }
     E.aviso.nuevo = false;
     this.tarjeta(`<div class="big">🎖️</div><h3>Ruido de sables</h3><p>${K.textos.aviso.replace('{anio}', E.aviso.anio)}</p>
       <p><b>Tienes un año para prepararte.</b> ${K.textos.preparar}</p><div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Entendido</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 4: suceso que llegó sin decisión (robo, atentado, incendio, brote, abuso): qué pasó, por qué y cómo prevenirlo.
+  sucesoAnio(alTerminar) {
+    const S = this.S, ev = S.suceso;
+    if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
+    ev.nuevo = false;
+    const q = C.SUCESOS.sucesos[ev.id];
+    this.tarjeta(`<div class="big">${q.icono}</div><h3>${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>
+      <div class="porque-afecta"><b>¿Por qué pasó?</b><br>${q.causa} Inseguridad de este año: <b>${ev.ins}</b>.</div>
+      <p class="small"><b>Cómo prevenirlo:</b> ${q.prevenir}</p>
+      <div class="phil"><b>Lo que enseña</b><br>${C.SUCESOS.leccion}</div>
+      <div class="dos">${ev.obra !== undefined ? '<button class="btn" id="verObraB">Ver dónde fue</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('verObraB', () => { this.cerrarTarjeta(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(ev.obra); });
+  }
+  // Fase 4: seguridad en Sociedad: inseguridad, sus causas y los riesgos de sucesos de este año.
+  seccionSeguridad() {
+    const S = this.S;
+    if (!sucesosActivos(S)) return '';
+    const v = Math.round(inseguridad(S));
+    return `<div class="cls otros"><div><div class="lab"><span>🚓 Inseguridad</span><span>${v}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(100 - v)}"></div></div>
+      <p class="small">Sube con desempleo, desigualdad, pobreza y poca legitimidad; baja con policía, escuelas y parques.</p><button class="btn porque" data-seguridad>¿Por qué? Ver causas</button></div></div>`;
+  }
+  explicarSeguridad() {
+    const S = this.S, R = riesgos(S), Q = C.SUCESOS.sucesos, nivel = p => p >= .2 ? 'alto' : p >= .08 ? 'medio' : p > 0 ? 'bajo' : 'ninguno';
+    this.tarjeta(`<h3>🚓 Inseguridad: ${Math.round(inseguridad(S))}</h3><p>Mide qué tan expuesto está el territorio a robos y atentados. Así se calcula:</p>
+      ${this.filasCausas(partesInseguridad(S).filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]))}
+      <h2>Riesgo de sucesos este año</h2>${Object.entries(R).map(([k, p]) => `<p class="small">${Q[k].icono} <b>${Q[k].titulo}</b>: riesgo ${nivel(p)}. ${Q[k].prevenir}</p>`).join('')}
+      <div class="phil"><b>Lo que enseña</b><br>${C.SUCESOS.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
   }
   etapa(alTerminar) {
     const S = this.S, st = C.STAGES[S.stage];
