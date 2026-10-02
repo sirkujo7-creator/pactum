@@ -6,7 +6,7 @@ import { climaActivo } from './clima.js';
 import { contradecir } from './acta.js';
 
 export function lawSlots(S) { return 1 + S.stage; }
-export function lawCostNow(S) { return Math.round(40 * S.price); }
+export function lawCostNow(S) { return Math.round(40 * S.price * (1 - RM(S, 'leyesDescuento'))); }
 
 // Devuelve el motivo por el que no se puede promulgar o derogar, o '' si se puede.
 export function lawBlock(S, l) {

@@ -28,7 +28,8 @@ function opcion(o, donde) {
   return sinVacios({
     l: o.texto, fx: efectos(o.efectos, donde), f: o.filosofia || null, why: o.porque,
     later: o.despues ? (o.despues.probabilidad === undefined ? [o.despues.anios, o.despues.id] : [o.despues.anios, o.despues.id, o.despues.probabilidad]) : undefined,
-    vista: o.vista, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza
+    vista: o.vista, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza,
+    riesgo: o.riesgo ? { p: o.riesgo.probabilidad, t: o.riesgo.texto, fx: efectos(o.riesgo.efectos, `${donde} (riesgo)`) } : undefined
   });
 }
 
@@ -48,13 +49,13 @@ export function usarContenido(d) {
     e: l.icono, title: l.titulo, text: l.texto, fx: efectos(l.efectos, `consecuencia ${k}`), why: l.porque, vista: l.vista, bueno: l.tipo === 'bueno' || undefined
   })]));
   C.DIFFS = Object.fromEntries(Object.entries(d.dificultades).map(([k, x]) => [k, {
-    n: x.nombre, d: x.descripcion, gold: x.oroInicial, good: x.multiplicadorBueno, bad: x.multiplicadorMalo, badSR: x.multiplicadorMaloSinRachas, sat: x.animoBase,
+    n: x.nombre, d: x.descripcion, gold: x.oroInicial, good: x.multiplicadorBueno, bad: x.multiplicadorMalo, badSR: x.multiplicadorMaloSinRachas, rachaB: x.rachaParaBueno, probB: x.probBueno, sat: x.animoBase,
     polis: x.aniosPolis, elec: x.confianzaElecciones, evp: x.probabilidadDilema, exp: x.exigenciaAnual, reward: x.recompensaGuia
   }]));
   C.GUIDE = d.guia.map(g => ({ t: g.texto, cond: g.condicion }));
   C.CYCLE = d.regimenes.ciclo;
   C.REG = Object.fromEntries(Object.entries(d.regimenes.formas).map(([k, r]) => [k, {
-    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores, m3: r.ajustesFase3
+    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores, m3: r.ajustesFase3, v: r.ventaja
   }]));
   C.LAWS = d.leyes.map(l => sinVacios({ id: l.id, n: l.nombre, d: l.descripcion, st: l.etapa, no: l.prohibidaEn }));
   C.ACH = d.logros.map(a => ({ id: a.id, n: a.nombre, d: a.descripcion }));

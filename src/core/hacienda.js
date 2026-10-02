@@ -19,7 +19,7 @@ export function rating(S) {
   const r = RAT.find(x => score >= x[0]);
   return { score, l: r[1], sp: r[2] };
 }
-export function loanRate(S) { return clamp(.05 + rating(S).sp - counts(S).banco * .02, .03, .3); }
+export function loanRate(S) { return clamp(.05 + rating(S).sp - counts(S).banco * .02 - RM(S, 'tasaMenos'), .03 - RM(S, 'tasaMenos'), .3); }
 export function canBorrow(S) { return S.stage >= 1 && rating(S).l !== 'CCC'; }
 
 // Cuentas del año: ingresos por clase, tasas, mantenimiento, administración, deuda y alimento.

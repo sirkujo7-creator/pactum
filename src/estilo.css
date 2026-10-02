@@ -232,9 +232,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .dir{font-size:.75rem;padding:1px 6px;border-radius:999px;border:1px solid var(--line)}
 .dir.pos{color:var(--good)}.dir.neg{color:var(--bad)}
 .porque-afecta{margin:8px 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:.92rem}
+.salio-mal{margin:8px 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--bad) 14%,transparent);font-size:.92rem}
 .subs{display:grid;gap:4px;margin-top:8px}
 .sub{display:grid;grid-template-columns:minmax(0,1.4fr) 1fr 28px;gap:8px;align-items:center;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:5px 8px;font-size:.85rem}
 .sub .sn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sub small{color:var(--muted)}
 .sub .track{height:6px;border-radius:4px;background:var(--line);overflow:hidden;display:block}.sub .fill{display:block;height:100%}
 .sub b{text-align:right}
 .cls.otros{grid-template-columns:1fr}
+.opt.reg small.ventaja{color:var(--good);font-weight:600;margin-top:4px}

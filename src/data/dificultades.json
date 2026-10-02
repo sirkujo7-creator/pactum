@@ -11,7 +11,9 @@
     "probabilidadDilema": 0.6,
     "exigenciaAnual": 0.2,
     "recompensaGuia": 30,
-    "multiplicadorMaloSinRachas": 1.07
+    "multiplicadorMaloSinRachas": 1.07,
+    "rachaParaBueno": 2,
+    "probBueno": 0.8
   },
   "normal": {
     "nombre": "Normal",
@@ -25,7 +27,9 @@
     "probabilidadDilema": 0.75,
     "exigenciaAnual": 0.45,
     "recompensaGuia": 20,
-    "multiplicadorMaloSinRachas": 1.6
+    "multiplicadorMaloSinRachas": 1.6,
+    "rachaParaBueno": 3,
+    "probBueno": 0.3
   },
   "dificil": {
     "nombre": "Difícil",
@@ -39,6 +43,8 @@
     "probabilidadDilema": 0.85,
     "exigenciaAnual": 0.5,
     "recompensaGuia": 0,
-    "multiplicadorMaloSinRachas": 1.8
+    "multiplicadorMaloSinRachas": 1.8,
+    "rachaParaBueno": 3,
+    "probBueno": 0.2
   }
 }

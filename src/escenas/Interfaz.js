@@ -304,10 +304,10 @@ export class Interfaz {
     this.tarjeta(`<h3>${m.icono} ${m.nombre}: fuerza ${m.f}</h3><p class="small">Líder: ${m.lider}. Estado: ${m.estado}.</p><p>${m.causa}</p>
       <p>${tend}: ${base} (se calma por encima de ${K.crecimiento.animoTranquilo}).</p>
       ${m.resp ? `<p class="small">La última vez (año ${m.resp.anio}) ${R[m.resp.accion]}.</p>` : ''}
-      <p class="small">Escucharlo baja su fuerza ${Math.abs(K.crecimiento.escuchado)}; ignorarlo la sube ${K.crecimiento.ignorado}; reprimirlo la baja ${Math.abs(K.crecimiento.reprimido)}, pero con legitimidad baja la sube ${K.crecimiento.radicaliza}. Movilizado, resta ${K.presionLegitimidad} de legitimidad cada año.</p>
+      <p class="small">Escucharlo baja su fuerza ${Math.round(Math.abs(K.crecimiento.escuchado * RM(S, 'movEscucha', 1)))}; ignorarlo la sube ${K.crecimiento.ignorado}; reprimirlo la baja ${Math.abs(K.crecimiento.reprimido)}, pero con legitimidad baja la sube ${K.crecimiento.radicaliza}. Movilizado, resta ${K.presionLegitimidad} de legitimidad cada año.</p>
       ${m.base !== 'ambiente' ? `<button class="btn" id="grupoB">Ver causas de su ánimo</button>` : ''}
       <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div>
-      <p class="small">${no ? no : `Mesa de diálogo: cuesta ${costoDialogo(S, id)} de oro y calma al movimiento (−${Math.abs(K.crecimiento.escuchado)}). ${m.ops.escuchar.l}.`}</p>
+      <p class="small">${no ? no : `Mesa de diálogo: cuesta ${costoDialogo(S, id)} de oro y calma al movimiento (−${Math.round(Math.abs(K.crecimiento.escuchado * RM(S, 'movEscucha', 1)))}). ${m.ops.escuchar.l}.`}</p>
       <div class="dos"><button class="btn" id="dialogoB" ${no ? 'disabled' : ''}>🤝 Abrir una mesa de diálogo</button><button class="main" id="okB">Cerrar</button></div>`);
     this.boton('okB', () => this.cerrarTarjeta());
     this.boton('dialogoB', () => {
@@ -580,6 +580,7 @@ export class Interfaz {
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
+        ${o.salioMal ? `<div class="salio-mal"><b>⚠️ Salió mal</b><br>${o.salioMal}</div>` : ''}
         ${o.ex ? `<div class="porque-afecta"><b>¿Por qué afecta así?</b><br>${o.ex}</div>` : ''}
         <div class="phil"><b>${p ? `${p.n} (${p.a})` : 'Lección'}</b><br>${o.why}</div>${this.resultadoFuerza(o)}${this.reacciones(o.fx)}${o.later && !(o.uso && o.uso.cancelada) ? '<p class="small">Esta decisión puede tener consecuencias en los próximos años.</p>' : ''}
         ${o.acta ? o.acta.map(t => `<p class="small neg">${t}</p>`).join('') : ''}
@@ -718,6 +719,7 @@ export class Interfaz {
     const S = this.S, R0 = RG(S), c = Math.round(S.corr), REG = C.REG;
     this.tarjeta(`<div class="regh" style="--rc:${R0.col}">${EMB[S.reg]}</div><h3>${R0.n}</h3><p>${R0.d}</p>
       <p class="small">Tu cargo: ${R0.t}. Sede: ${seatName(S)}.</p>
+      ${R0.v && climaActivo(S) ? `<p><b>Ventaja:</b> ${R0.v}</p>` : ''}
       <h2>Rumbo del gobierno</h2><div class="rumbo"><div style="width:${c}%"></div></div><div class="rlab"><span>Bien común</span><span>Interés propio</span></div>
       <p class="small">${R0.rect ? `Si llega a 70, ${R0.n.toLowerCase()} se corrompe en ${REG[R0.cor].n.toLowerCase()}.` : `Si baja a 20, puedes reformarlo. Si la legitimidad se hunde, estalla una revolución y llega ${REG[R0.cyc].n.toLowerCase()}.`}
       Sube al elegir por conveniencia o represión, al incumplir promesas y al abandonar a una clase. Baja al actuar por deber, justicia o prudencia y al cumplirle al pueblo.</p>

@@ -25,8 +25,10 @@
       },
       "ajustesFase3": {
         "tr": -4,
-        "drift": 3.0
-      }
+        "drift": 4.0,
+        "leyesDescuento": 0.4
+      },
+      "ventaja": "Decreto real: promulgar leyes cuesta 40% menos oro."
     },
     "aristocracia": {
       "nombre": "Aristocracia",
@@ -47,9 +49,11 @@
       "ajustesFase3": {
         "se": 4,
         "admin": 0.95,
-        "tr": -5,
-        "drift": 2.5
-      }
+        "tr": -8,
+        "drift": 3.0,
+        "obrasDescuento": 0.1
+      },
+      "ventaja": "Gobierno de los mejores: las obras cuestan 10% menos."
     },
     "republica": {
       "nombre": "República democrática",
@@ -68,8 +72,10 @@
         "elect": true
       },
       "ajustesFase3": {
-        "tr": 3
-      }
+        "tr": 4,
+        "movCrece": 0.6
+      },
+      "ventaja": "Participación: los movimientos sociales crecen 40% más lento, porque hay canales para hacerse oír."
     },
     "tirania": {
       "nombre": "Dictadura",
@@ -91,8 +97,10 @@
       },
       "ajustesFase3": {
         "tr": -13,
-        "admin": 1.0
-      }
+        "admin": 1.0,
+        "menosAnios": 1
+      },
+      "ventaja": "Mano dura: las obras grandes tardan un año menos."
     },
     "oligarquia": {
       "nombre": "Plutocracia",
@@ -116,10 +124,12 @@
         "tr": -12,
         "sc": 0,
         "sa": 0,
-        "eq": -3,
+        "eq": 0,
         "eliteCap": 15,
-        "admin": 0.9
-      }
+        "admin": 0.9,
+        "tasaMenos": 0.04
+      },
+      "ventaja": "Amigos en la banca: los préstamos cuestan 4 puntos menos de interés."
     },
     "demagogia": {
       "nombre": "Populismo",
@@ -141,8 +151,10 @@
       "ajustesFase3": {
         "infl": 0.008,
         "admin": 1.0,
-        "tr": 2
-      }
+        "tr": 3,
+        "movEscucha": 1.5
+      },
+      "ventaja": "Carisma: escuchar a un movimiento social lo calma 50% más."
     }
   }
 }
