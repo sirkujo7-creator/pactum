@@ -63,33 +63,34 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 3, poder
+## Fase actual: Fase 4, riesgo y mundo
 
-Las fases 0, 1 y 2 (con su paréntesis de claridad) están terminadas; su estado queda en `docs/DISENO.md`. La duración se mantiene exigente (unos 45 a 55 años) y la exigencia no se suaviza: hay regla contra rachas y cada golpe pesa un tercio más.
+Las fases 0 a 3 están terminadas; su estado queda en `docs/DISENO.md`. Juan probó la fase 3 (2 de octubre) y pidió: más riesgo y menos eventos buenos (el juego quedó fácil), regímenes con ventajas propias, sucesos que llegan sin decisión, policía, relaciones con otras polis, conflicto armado y desplazamiento, desastres reales, personajes con papel propio, decisiones que se vean en el mapa, otras formas de ganar y edificios con más peso.
 
-Objetivo: que el poder tenga actores con voz: clases ampliadas, Ejército, legitimidad, movimientos sociales y un acta fundacional.
+Decisiones de Juan (2 de octubre):
+- Las opciones de los eventos no muestran flechas ni avisos (fuerza, acta, movimientos); los efectos se explican después de elegir.
+- Normal debe quedar alrededor de **50%** de victorias para un jugador sensato (estrategia equilibrada, República), con regímenes a máximo 15 puntos de diferencia.
+- Orden aprobado (un paso publicable a la vez):
 
-Incluye (en este orden, aprobado por Juan el 30 de septiembre; un paso publicable a la vez):
+1. Exigencia: menos eventos buenos, decisiones con riesgo (resultados inciertos) y una ventaja propia y clara para cada régimen.
+2. Sucesos sin decisión y Policía: robos, atentados, incendios, epidemias según indicadores bajos; estación de policía que los previene (y abuso policial con corrupción alta). Se ven en el mapa.
+3. Personajes con papel propio (comandante, vulcanóloga, periodista, párroco, líder pijao, alcaldes vecinos...): piden, aconsejan y reaccionan.
+4. Decisiones que se ven: huellas duraderas en el mapa según el tipo de decisión.
+5. Desastres reales del Tolima: Nevado del Ruiz (lección de Armero, 1985) con alertas, terremoto, avalancha, incendio forestal. Siempre sobrevivibles con preparación.
+6. Conflicto armado y desplazamiento: grupos armados donde el Estado no llega; desplazados, alza de precios, relaciones difíciles.
+7. Relaciones con otras polis (desde Ciudad): vecinos con nombre, comercio, tratados y tensiones; nivel mínimo obligatorio.
+8. Otras formas de ganar (próspera, justa, verde, en paz) y un efecto propio para cada edificio.
 
-1. Clases ampliadas: las tres clases se ven como tres grandes con subgrupos (decisión de Juan): campesinos con tierra y sin tierra; obreros, comerciantes y funcionarios; terratenientes y financistas; además estudiantes e informales. Cada subgrupo con su ánimo, sus causas y su voz.
-2. El Ejército como cuarta fuerza: cuartel, costo, apoyo o amenaza de golpe.
-3. Legitimidad y uso de la fuerza (Weber): Confianza pasa a llamarse Legitimidad; reprimir con poca legitimidad trae sabotaje.
-4. Movimientos sociales: sindicato, estudiantes, campesinos y ambientalistas; crecen si se les ignora y se moderan si se les escucha.
-5. Acta fundacional: principios elegidos al inicio; contradecirlos cuesta legitimidad.
-6. Balance: regímenes con máximo 15 puntos de diferencia. El perfil realista (Maquiavelo) se deja como está, como lección (decisión de Juan): no entra en la meta de perfiles éticos.
-
-Reglas del diseño que aplican: máximo una crisis mayor por año y dos años de respiro; toda crisis tiene preparación posible; máximo 4 recursos en la barra superior y 5 medidores; nunca más de tres sistemas con decisiones al mismo tiempo; la élite nunca "financia huelgas": responde con cierre patronal, fuga de capitales o financiando a la oposición.
+Reglas del diseño que siguen: máximo una crisis mayor por año y dos años de respiro; toda crisis tiene preparación posible; máximo 4 recursos en la barra superior y 5 medidores; nunca más de tres sistemas con decisiones al mismo tiempo; la élite nunca "financia huelgas".
 
 Terminado cuando:
 
-- Los sistemas funcionan, se explican (como en la claridad) y se ven en el mapa.
-- `node herramientas/balance.js` sigue entre 55% y 70% en Normal, estrategia equilibrada, República; regímenes con máximo 15 puntos de diferencia.
+- Los sistemas funcionan, se explican y se ven en el mapa.
+- `node herramientas/balance.js` da alrededor de 50% (entre 45% y 55%) en Normal, estrategia equilibrada, República; regímenes con máximo 15 puntos de diferencia.
 - `node herramientas/prueba-equivalencia.js` sigue en 0 diferencias.
 - Las partidas guardadas antes se abren sin perderse.
 - No hay errores en la consola; se ve fluido en celular y en computador.
 - Juan lo prueba y lo aprueba.
-
-No adelantes sistemas de fases futuras.
 
 ## Forma de trabajar en cada fase
 
