@@ -6,7 +6,7 @@ import { lado } from './mundo.js';
 import { climaActivo } from './clima.js';
 
 const K = () => C.COB;
-export const SERVICIOS = ['escuela', 'hospital', 'mercado', 'recaudo'];
+export const SERVICIOS = ['escuela', 'hospital', 'mercado', 'recaudo', 'policia'];
 
 export function coberturaActiva(S) { return climaActivo(S) && S.stage >= 1; }
 // Una obra presta servicio si está terminada y no abandonada.
@@ -35,10 +35,10 @@ export function cubre(S, servicio, i) { return puntosDe(S, servicio).some(p => d
 
 // Fracción de las casas que tienen cada servicio a su alcance (1 si la cobertura aún no se abre).
 export function cobertura(S) {
-  const out = { escuela: 1, hospital: 1, mercado: 1, recaudo: 1 };
+  const out = { escuela: 1, hospital: 1, mercado: 1, recaudo: 1, policia: 1 };
   if (!coberturaActiva(S)) return out;
   // Una sola pasada por el mapa: casas y puntos de servicio (esta función se llama muy seguido).
-  const R = K().radios, N = lado(S), casas = [], P = { escuela: [], hospital: [], mercado: [], recaudo: [] };
+  const R = K().radios, N = lado(S), casas = [], P = { escuela: [], hospital: [], mercado: [], recaudo: [], policia: [] };
   let ag = -1;
   S.map.forEach((x, i) => {
     if (!sirve(x)) return;

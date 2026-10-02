@@ -1,0 +1,121 @@
+{
+  "desde": {
+    "etapa": 1,
+    "anio": 4
+  },
+  "leccion": "Seguridad ciudadana: el delito crece donde faltan empleo, igualdad y presencia del Estado. La policía lo contiene, pero no cura sus causas.",
+  "inseguridad": {
+    "base": 15,
+    "desempleo": 70,
+    "desigualdad": 0.5,
+    "legitimidad": 0.5,
+    "pobreza": 0.3,
+    "corrupcion": 0.25,
+    "movilizados": 4,
+    "policia": 30,
+    "escuela": 8,
+    "parque": 2,
+    "parqueMaximo": 8,
+    "ejercito": 5
+  },
+  "sucesos": {
+    "atentado": {
+      "icono": "💥",
+      "titulo": "Atentado contra una obra pública",
+      "texto": "Una explosión de madrugada dañó {obra}. Nadie reivindica el ataque, pero el miedo se siente en las calles.",
+      "minInseguridad": 55,
+      "maxLegitimidad": 45,
+      "prob": 0.25,
+      "efectos": {
+        "habitantes": -2,
+        "confianza": -4,
+        "artesanos": -3
+      },
+      "dano": 45,
+      "obras": [
+        "agora",
+        "recaudo",
+        "cuartel",
+        "policia",
+        "mercado",
+        "banco"
+      ],
+      "causa": "Inseguridad alta y un gobierno con poca legitimidad: quien no cree en las instituciones las ataca.",
+      "prevenir": "Recupera la legitimidad, reduce el desempleo y la desigualdad, y extiende la cobertura de la policía."
+    },
+    "robo": {
+      "icono": "🕵️",
+      "titulo": "Robo",
+      "texto": "Asaltaron {obra} durante la noche y se llevaron {oro} de oro.",
+      "minInseguridad": 25,
+      "prob": 0.4,
+      "efectos": {
+        "artesanos": -2
+      },
+      "oroFraccion": 0.1,
+      "oroMinimo": 15,
+      "oroMaximo": 60,
+      "obras": [
+        "mercado",
+        "banco",
+        "recaudo",
+        "taller"
+      ],
+      "causa": "Desempleo, pobreza y calles sin presencia policial.",
+      "prevenir": "Empleo, igualdad y una estación de policía cerca de los comercios."
+    },
+    "incendio": {
+      "icono": "🔥",
+      "titulo": "Incendio",
+      "texto": "Un incendio consumió parte de {obra}.",
+      "prob": 0.03,
+      "probNino": 0.1,
+      "probSinMantenimiento": 0.05,
+      "efectos": {
+        "habitantes": -1,
+        "animo": -2
+      },
+      "dano": 40,
+      "obras": [
+        "taller",
+        "casa",
+        "mercado",
+        "molino",
+        "cafetal"
+      ],
+      "causa": "Obras viejas o sin mantenimiento, y sequía.",
+      "prevenir": "Mantén las obras en buen estado (Hacienda) y prepárate para El Niño."
+    },
+    "brote": {
+      "icono": "🦠",
+      "titulo": "Brote de enfermedad",
+      "texto": "Un brote de enfermedad se extiende por los barrios sin hospital cerca.",
+      "maxHospital": 0.6,
+      "prob": 0.08,
+      "probAmbiente": 0.05,
+      "efectos": {
+        "habitantes": -3,
+        "animo": -2
+      },
+      "causa": "Casas lejos de un hospital y ambiente deteriorado.",
+      "prevenir": "Construye hospitales que cubran todas las casas y cuida el río y el aire."
+    },
+    "abuso": {
+      "icono": "🚔",
+      "titulo": "Abuso policial",
+      "texto": "Agentes de la policía golpearon a un joven en un retén. El video circula por todo el pueblo.",
+      "minCorrupcion": 65,
+      "prob": 0.2,
+      "efectos": {
+        "confianza": -6,
+        "artesanos": -3
+      },
+      "movimiento": "estudiantes",
+      "fuerzaMovimiento": 12,
+      "causa": "Una policía en un gobierno corrupto, sin control ciudadano.",
+      "prevenir": "Baja la corrupción: actúa por el bien común, aprueba la libertad de prensa.",
+      "aniosEntre": 8
+    }
+  },
+  "aniosEntreIguales": 4
+}

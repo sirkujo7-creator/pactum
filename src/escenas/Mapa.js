@@ -273,7 +273,7 @@ export class Mapa extends Phaser.Scene {
     this.casasTenidas = [];
     const k = this.ui.herramienta, solo = SERVICIOS.includes(k) ? k : null;
     if (!coberturaActiva(S) || (!this.verCobertura && !solo)) return;
-    const lista = solo ? [solo] : SERVICIOS, COL = { escuela: 0xD9A628, hospital: 0xC0392B, mercado: 0xD2691E, recaudo: 0x6E4B9E };
+    const lista = solo ? [solo] : SERVICIOS, COL = { escuela: 0xD9A628, hospital: 0xC0392B, mercado: 0xD2691E, recaudo: 0x6E4B9E, policia: 0x2D5D72 };
     const N = T.N, en = (r, c) => P(Math.max(0, Math.min(N, r)), Math.max(0, Math.min(N, c)), T.hf(Math.max(0, Math.min(N - .01, r)), Math.max(0, Math.min(N - .01, c))));
     for (const s of lista) for (const p of puntosDe(S, s)) {
       const t = T.tiles[p.i], pts = [];
@@ -500,6 +500,8 @@ export class Mapa extends Phaser.Scene {
     const L = this.limitesMundo(), p = this.aldea();
     this.fijarCamara(Math.min(ZOOM_MAX, w / L.w * 1.8), p[0], p[1] - 40);
   }
+  // Lleva la cámara a una casilla (por ejemplo, la obra de un suceso).
+  enfocarCasilla(i) { const t = this.T.tiles[i]; if (!t) return; const p = P(t.r + .5, t.c + .5, t.h); this.fijarCamara(Math.min(ZOOM_MAX, Math.max(this.cameras.main.zoom, 1.8)), p[0], p[1]); }
   enfocarAldea() { const p = this.aldea(), { w } = tam(this); this.fijarCamara(Math.min(ZOOM_MAX, Math.max(w / 520, 1.4)), p[0], p[1]); }
   fijarCamara(s, x, y) {
     const cam = this.cameras.main, { w, h } = tam(this);

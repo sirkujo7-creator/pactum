@@ -128,6 +128,17 @@ function recetas() {
     const c = [(s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2]; g.fillStyle = '#E2B24F'; g.beginPath(); g.ellipse(c[0], c[1], 1.6, 1.2, 0, 0, 7); g.fill();
     const m = V2(.34, .34); wash(g, [[m[0] - 4, m[1]], [m[0] + 4, m[1]], [m[0] + 4, m[1] - 4], [m[0] - 4, m[1] - 4]], '#8A6A44', r, .95, .2); monedas(g, m[0], m[1] - 5);
   }]);
+  // Estación de policía (fase 4): casa blanca con zócalo verde oliva, puerta y letrero azules, farol y un agente en la puerta.
+  L.push(['policia', 74, 70, 37, 52, (g, r) => {
+    sombra(g, 22, 6, 8); const b = iso(g, .56, .44, 0, 15, '#F1EEE6', '#D6D1C4', null, r);
+    wash(g, caraI(b, 0, 1, 0, 4), '#5B6B3E', r, .95, .3); wash(g, caraD(b, 0, 1, 0, 4), '#4A5933', r, .95, .3);
+    wash(g, caraI(b, .58, .18, 0, 9), '#2D4F66', r, .97, .2); ventanas(g, b, 'I', 1, 5, 5, '#7FA3B4', r, .2, .2); ventanas(g, b, 'D', 2, 5, 5, '#7FA3B4', r, .25, .16);
+    techo(g, b, 3, 8, '#4E5A62', '#D6D1C4', r);
+    const s = caraI(b, .14, .5, 11, 3.4); wash(g, s, '#24425A', r, .97, .2);
+    const c = [(s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2]; g.fillStyle = '#F2D36B'; g.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, d = k % 2 ? .7 : 1.7; g.lineTo(c[0] + Math.cos(a) * d, c[1] + Math.sin(a) * d); } g.fill();
+    const f = V2(.42, .22); g.strokeStyle = '#3A3A3A'; g.lineWidth = .6; g.beginPath(); g.moveTo(f[0], f[1]); g.lineTo(f[0], f[1] - 13); g.stroke(); g.fillStyle = '#F6E3A0'; g.beginPath(); g.arc(f[0], f[1] - 13.5, 1.4, 0, 7); g.fill();
+    const q = V2(.4, .36); g.fillStyle = '#4A5A3A'; g.fillRect(q[0] - 1.2, q[1] - 7, 2.4, 5); g.fillStyle = '#E0B08A'; g.beginPath(); g.arc(q[0], q[1] - 8.2, 1.3, 0, 7); g.fill(); g.fillStyle = '#2E3A28'; g.fillRect(q[0] - 1.6, q[1] - 10, 3.2, 1.3);
+  }]);
   // Cuartel (fase 3): patio con muro de tapia, garita, edificio de mando y bandera; dos centinelas.
   L.push(['cuartel', 92, 84, 46, 58, (g, r) => {
     sombra(g, 28, 7, 8);

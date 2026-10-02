@@ -73,6 +73,15 @@ export class Efectos {
     (this.humos || []).forEach(h => h.destroy()); this.humos = [];
     if (!S.clima || reducirMovimiento()) return;
     const anios = C.CLIMA.suelo.incendio.anios;
+    // Fase 4: humo oscuro sobre las obras golpeadas por un atentado o un incendio (ese año y el siguiente).
+    S.map.forEach((x, i) => {
+      if (x.sin === undefined || S.year - x.sin > 1 || !x.b || this.humos.length >= 6) return;
+      const t = T.tiles[i], p = P(t.r + .5, t.c + .5, t.h);
+      this.humos.push(this.scene.add.particles(p[0], p[1] - 14, 'edificios', {
+        frame: 'humo', lifespan: 3800, speedX: { min: 1, max: 6 }, speedY: { min: -12, max: -7 }, scale: { start: .2, end: .7 },
+        alpha: { start: .5, end: 0 }, tint: 0x3A3532, frequency: 420, quantity: 1
+      }).setDepth(t.r + t.c + 3));
+    });
     S.map.forEach((x, i) => {
       if (!(x.q >= anios) || this.humos.length >= 6 || i % 2) return;
       const t = T.tiles[i], p = P(t.r + .5, t.c + .5, t.h);

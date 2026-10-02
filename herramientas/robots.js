@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, listaMovimientos, costoDialogo, dialogar
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, listaMovimientos, costoDialogo, dialogar
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -33,6 +33,8 @@ export function botYear(S, strat, eth, op = {}) {
     else if (S.pop >= c2.casa * 10 - 6) k = 'casa';
     else if (S.clima && F2.evadido >= 6 && S.gold > 60 && !eo.recaudo) k = 'recaudo'; // solo si la evasión cuesta más que la oficina
     else if (S.stage >= 2 && c2.agora < 1) k = 'agora';
+    // Fase 4: policía donde la inseguridad sube y no hay cobertura.
+    else if (prep && S.clima && inseguridad(S) >= 25 && !eo.policia && cobertura(S).policia < .7 && S.gold > 90) k = 'policia';
     else if (S.stage >= 1 && c2.hospital < 1) k = 'hospital';
     else if (S.stage >= 1 && c2.escuela * 50 < S.pop) k = 'escuela';
     else if (S.stage >= 1 && c2.hospital * 60 < S.pop) k = 'hospital';
@@ -45,7 +47,7 @@ export function botYear(S, strat, eth, op = {}) {
     else if (S.stage >= 3 && S.expc > 4 && c2.universidad < 2 && S.gold > 300) k = 'universidad';
     else if (S.stage >= 3 && c2.universidad < 1) k = 'universidad';
     if (!k) break;
-    const pref = k === 'cultivo' ? (i => nearRiver(S, i)) : ['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'parque'].includes(k) ? (i => !nearRiver(S, i)) : null;
+    const pref = k === 'cultivo' ? (i => nearRiver(S, i)) : ['casa', 'mercado', 'escuela', 'hospital', 'policia', 'taller', 'agora', 'banco', 'universidad', 'parque'].includes(k) ? (i => !nearRiver(S, i)) : null;
     let t = freeTiles(S, k);
     if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));
     // Fase 1: la estrategia equilibrada se prepara: no tala bosque ni construye en laderas erosionadas si hay otro sitio.

@@ -7,7 +7,8 @@
     "mercado": 6,
     "recaudo": 7,
     "agora": 7,
-    "centro": 6
+    "centro": 6,
+    "policia": 7
   },
   "evasion": 0.35,
   "animoSinMercado": 6,
@@ -15,11 +16,12 @@
     "escuela": "Escuela",
     "hospital": "Hospital",
     "mercado": "Mercado",
-    "recaudo": "Recaudo"
+    "recaudo": "Recaudo",
+    "policia": "Policía"
   },
   "textos": {
     "capa": "Cobertura",
-    "capaAyuda": "Verde: la casa tiene escuela, hospital, mercado y recaudo cerca. Amarillo: le falta alguno. Rojo: le faltan casi todos. Los círculos muestran el alcance de cada servicio.",
+    "capaAyuda": "Verde: la casa tiene escuela, hospital, mercado, recaudo y policía cerca. Amarillo: le falta alguno. Rojo: le faltan casi todos. Los círculos muestran el alcance de cada servicio.",
     "evasion": "Evasión (casas lejos del recaudo)",
     "fichaCasa": "Servicios cerca de esta casa:"
   }

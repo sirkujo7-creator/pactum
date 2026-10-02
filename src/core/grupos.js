@@ -17,7 +17,7 @@ export function tierra(S) { return S.tierra ?? K().tierraInicial; }
 
 // Qué subgrupo de trabajadores ocupa los empleos de cada obra.
 const DE_TRABAJO = { mercado: 'comerciantes', banco: 'comerciantes', escuela: 'funcionarios', hospital: 'funcionarios', agora: 'funcionarios',
-  recaudo: 'funcionarios', acueducto: 'funcionarios', universidad: 'funcionarios' };
+  recaudo: 'funcionarios', policia: 'funcionarios', acueducto: 'funcionarios', universidad: 'funcionarios' };
 
 // Cuántas personas hay en cada subgrupo.
 export function tamanos(S) {
