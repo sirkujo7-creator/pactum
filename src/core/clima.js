@@ -14,7 +14,8 @@ export function lluvias(S) { return climaActivo(S) ? C.CLIMA.lluvias[S.clima.llu
 export function factorCosecha(S) {
   const L = lluvias(S);
   if (!L) return 1;
-  return L.cosecha * (S.clima.fertil > 0 ? C.CLIMA.fenomenos.nina.fertilidadDespues : 1);
+  // Fase 4: la ceniza de una erupción reduce la cosecha del año siguiente.
+  return L.cosecha * (S.clima.fertil > 0 ? C.CLIMA.fenomenos.nina.fertilidadDespues : 1) * (S.ceniza === S.year && C.DESASTRES ? C.DESASTRES.volcan.erupcion.ceniza : 1);
 }
 // En El Niño el río baja y los acueductos entregan menos agua.
 export function factorAgua(S) { return climaActivo(S) && S.clima.fenomeno === 'nino' ? 1 - C.CLIMA.fenomenos.nino.aguaMenos : 1; }

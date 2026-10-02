@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, presentes, misionDe, cost, C, listaMovimientos, costoDialogo, dialogar
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, costoDialogo, dialogar
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -20,6 +20,8 @@ export function botYear(S, strat, eth, op = {}) {
   if (S.clima) S.aporteFondo = prep && S.stage >= 1 && (S.fondo < fondoSugerido(S) * 1.2 || S.clima.pronostico) ? FONDO : 0;
   // Mantenimiento de las obras (MANT=0..100 para probar; por defecto 100%). La estrategia equilibrada repara lo agrietado.
   if (S.clima) { S.mant = MANT; if (prep) S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
+  // Fase 4: la estrategia equilibrada prepara la evacuación cuando el volcán pasa a alerta naranja.
+  if (prep && S.clima && nivelVolcan(S) >= 2 && !puedePlan(S)) comprarPlan(S);
   // Fase 4: la estrategia equilibrada atiende las misiones de obra de los personajes si le sobra el oro.
   if (prep && S.clima) for (const id of presentes(S)) {
     const m = misionDe(S, id);

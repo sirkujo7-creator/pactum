@@ -21,7 +21,7 @@ export function counts(S) {
   return c;
 }
 export function cap(S) { return counts(S).casa * 10; }
-export function cost(S, k) { return Math.round(C.B[k].cost * S.price * (1 - RM(S, 'obrasDescuento'))); }
+export function cost(S, k) { return Math.round(C.B[k].cost * S.price * (1 - RM(S, 'obrasDescuento')) * (hasLaw(S, 'sismo') ? 1.1 : 1)); } // fase 4: el código sismorresistente encarece las obras
 
 // Condiciones de los archivos de datos (dilemas y guía). Todas deben cumplirse.
 //   edificios: {cultivo: 2}      al menos 2 cultivos

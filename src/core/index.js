@@ -30,3 +30,4 @@ export * from './acta.js';
 export * from './sucesos.js';
 export * from './figuras.js';
 export * from './marcas.js';
+export * from './desastres.js';

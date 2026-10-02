@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -240,6 +240,7 @@ export class Interfaz {
       ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
+      ${this.seccionRiesgo()}
       ${this.seccionEconomia()}
       ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
@@ -254,6 +255,8 @@ export class Interfaz {
         this.mapa.cambio();
       };
     });
+    const pl = this.cuentas.querySelector('[data-plan]');
+    if (pl) pl.onclick = () => { if (comprarPlan(S)) { this.toast('Plan de evacuación listo: sirenas, rutas y simulacros.'); this.mapa.cambio(true); this.render(); } };
     const mil = this.cuentas.querySelector('[data-militar]');
     if (mil) mil.oninput = () => { ejercito(S).gasto = +mil.value; mil.nextElementSibling.textContent = mil.value + '%'; clearTimeout(this._tx); this._tx = setTimeout(() => this.render(), 150); this.mapa.cambio(); };
     const ej = this.cuentas.querySelector('[data-ejercito]');
@@ -721,8 +724,8 @@ export class Interfaz {
     this.boton('verObraB', () => { this.cerrarTarjeta(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(ev.obra); });
   }
   // Fase 4: personajes con papel propio. Llegadas y misiones del año, en una sola tarjeta.
-  figurasAnio(alTerminar) {
-    const S = this.S, L = S.figEv;
+  figurasAnio(alTerminar0) {
+    const S = this.S, L = S.figEv, alTerminar = () => this.desastreAnio(alTerminar0);
     if (!L || !L.length) { alTerminar(); return; }
     S.figEv = null;
     const F = C.FIG.figuras, filas = L.map(e => {
@@ -734,6 +737,42 @@ export class Interfaz {
     this.tarjeta(`<div class="big">🤝</div><h3>Personajes del territorio</h3><div class="says">${filas}</div>
       <div class="phil"><b>Lo que enseña</b><br>${C.FIG.leccion}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 4: desastres reales (alerta del volcán, erupción, terremoto).
+  desastreAnio(alTerminar) {
+    const S = this.S, d = S.desastre;
+    if (!d || !d.nuevo || !desastresActivos(S)) { alTerminar(); return; }
+    d.nuevo = false;
+    const VD = C.DESASTRES.volcan, Q = C.DESASTRES.terremoto;
+    const voz = () => { const f = C.FIG.figuras.vulcanologa; return S.fig && S.fig.vulcanologa && S.fig.vulcanologa.visto ? `<div class="say pro"><div class="fig-r"><img src="${retratoFig('vulcanologa', f.retrato)}" alt=""></div><div><b>${f.nombre}</b><span>“Alerta ${VD.niveles[d.nivel].nombre.toLowerCase()}. ${VD.niveles[d.nivel].texto}”</span></div></div>` : ''; };
+    if (d.tipo === 'alerta') {
+      const no = puedePlan(S), N = VD.niveles[d.nivel];
+      this.tarjeta(`<div class="big">🌋</div><h3>${VD.nombre}: alerta ${N.nombre.toLowerCase()} ${N.icono}</h3><p>${N.texto}</p>${voz()}
+        <p class="small"><b>${VD.plan.nombre}:</b> ${VD.plan.texto} ${volcan(S).plan ? '<b>Ya lo tienes.</b>' : `Cuesta ${costoPlan(S)} de oro.`} Si hay erupción, salva las vidas de la ribera; las obras junto al río se pierden igual.</p>
+        <div class="phil"><b>Lo que enseña</b><br>${VD.leccion}</div>
+        <div class="dos"><button class="btn" id="planB" ${no ? 'disabled' : ''}>${volcan(S).plan ? 'Plan listo' : `Preparar el plan (${costoPlan(S)} de oro)`}</button><button class="main" id="okB">Entendido</button></div>`);
+      this.boton('planB', () => { if (comprarPlan(S)) { this.toast('Plan de evacuación listo: sirenas, rutas y simulacros.'); this.mapa.cambio(true); this.render(); const b = this.card.querySelector('#planB'); if (b) { b.disabled = true; b.textContent = 'Plan listo'; } } });
+    } else if (d.tipo === 'erupcion') {
+      this.mapa.temblor && this.mapa.temblor();
+      this.tarjeta(`<div class="big">🌋</div><h3>Erupción del ${VD.nombre}</h3><p>${d.plan ? VD.textos.conPlan : VD.textos.sinPlan}</p>
+        <div class="ledger"><table class="budget"><tr><td>Personas perdidas</td><td class="${d.plan ? '' : 'neg'}">${d.perdidos}</td></tr><tr><td>Obras dañadas por el lahar y la ceniza</td><td>${d.danadas}</td></tr></table></div>
+        <p class="small">${VD.textos.ceniza}</p><div class="phil"><b>Lo que enseña</b><br>${VD.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    } else {
+      this.mapa.temblor && this.mapa.temblor();
+      this.tarjeta(`<div class="big">🏚️</div><h3>${Q.nombre}</h3><p>${d.ley ? Q.textos.conLey : Q.textos.sinLey}</p>
+        <div class="ledger"><table class="budget"><tr><td>Personas perdidas</td><td class="${d.ley ? '' : 'neg'}">${d.perdidos}</td></tr><tr><td>Obras dañadas</td><td>${d.danadas}</td></tr><tr><td>Costo de la emergencia</td><td>${d.costo}</td></tr><tr><td>Pagado con el fondo</td><td>${d.cubierto}</td></tr></table></div>
+        <p class="small">Repara las obras agrietadas tocándolas. ${d.ley ? '' : 'El código sismorresistente (Leyes) reduce el daño del próximo terremoto.'}</p>
+        <div class="phil"><b>Lo que enseña</b><br>${Q.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    }
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  seccionRiesgo() {
+    const S = this.S;
+    if (!desastresActivos(S) || S.stage < 1) return '';
+    const VD = C.DESASTRES.volcan, n = nivelVolcan(S), N = VD.niveles[n], no = puedePlan(S);
+    return `<h3>Riesgo de desastres</h3><p class="small">🌋 ${VD.nombre}: alerta <b>${N.nombre.toLowerCase()}</b> ${N.icono}. ${N.texto} ${volcan(S).plan ? 'Plan de evacuación: <b>listo</b>.' : n ? `Plan de evacuación: <b>sin preparar</b> (${costoPlan(S)} de oro).` : ''}</p>
+      ${n && !volcan(S).plan ? `<button class="btn" data-plan ${no ? 'disabled' : ''}>Preparar el plan de evacuación</button>` : ''}
+      <p class="small">🏚️ Terremotos: no se pueden predecir. ${hasLaw(S, 'sismo') ? 'El código sismorresistente está vigente.' : 'Prepárate con el código sismorresistente (Leyes), el mantenimiento de las obras y el fondo de emergencias.'}</p>`;
   }
   seccionFiguras() {
     const S = this.S, P = presentes(S).filter(id => estadoFig(S, id).visto);
