@@ -5,6 +5,7 @@ import { counts, RM, hasLaw } from './reglas.js';
 import { society, satTargets, partesAmbiente, calcHap } from './sociedad.js';
 import { finance } from './hacienda.js';
 import { presionMovimientos } from './movimientos.js';
+import { efectoFig } from './figuras.js';
 import { coherencia } from './acta.js';
 
 const suma = L => L.reduce((s, x) => s + x[1], 0);
@@ -24,7 +25,7 @@ export function desgloseIndicador(S, k) {
     const partes = [['Ánimo de los campesinos', so.camp * S.sat.c / P], ['Ánimo de artesanos y desempleados', (so.art + so.un) * S.sat.a / P], ['Ánimo de la élite', so.el * S.sat.e / P], ['Desempleo', -so.un / P * 15]];
     return { actual: S.hap, meta: calcHap(S, so), partes: limpio(partes), clases: true };
   }
-  if (k === 'env') { const p = partesAmbiente(S, c); return { actual: S.env, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p) }; }
+  if (k === 'env') { const p = [...partesAmbiente(S, c), ['Relación con el cabildo pijao', efectoFig(S, 'ambiente')]]; return { actual: S.env, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p) }; }
   if (k === 'eq') {
     const F = finance(S), so = F.so, tot = (F.post.c + F.post.a + F.post.e + F.post.u) || 1, es = F.post.e / tot, ps = so.el / Math.max(1, so.P), sc = satTargets(S, c, false).sc;
     const p = [['Punto de partida', 85], ['Riqueza de la élite frente a su tamaño', -(es - ps) * 120], ['Escuelas', sc * 10], ['Universidades', c.universidad * 5], ['Régimen de gobierno', RM(S, 'eq')], ['Educación pública', L('educacion') ? 8 : 0], ['Censura', L('censura') ? -3 : 0]];
@@ -32,7 +33,7 @@ export function desgloseIndicador(S, k) {
   }
   if (k === 'tr') {
     const p = [['Punto de partida', 50], ['Régimen de gobierno', RM(S, 'tr')], ['Bienestar del pueblo', (S.hap - 50) * .4], ['Sede de gobierno (ágora)', c.agora * 10], ['Tesoro en rojo', S.gold < 0 ? -10 : 0],
-      ['Inflación', -Math.max(0, ip - 3) * .8], ['Censura', L('censura') ? 6 : 0], ['Libertad de prensa', L('prensa') ? -3 : 0], ['Movimientos sociales movilizados', -presionMovimientos(S)], ['Coherencia con el acta fundacional', coherencia(S)]];
+      ['Inflación', -Math.max(0, ip - 3) * .8], ['Censura', L('censura') ? 6 : 0], ['Libertad de prensa', L('prensa') ? -3 : 0], ['Movimientos sociales movilizados', -presionMovimientos(S)], ['Coherencia con el acta fundacional', coherencia(S)], ['Relación con la prensa', efectoFig(S, 'legitimidad')]];
     return { actual: S.tr, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p), extra: 'Además: protestas (−5), promesas, emergencias, elecciones y dilemas la mueven de golpe.' };
   }
   if (k === 'corr') {

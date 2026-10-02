@@ -7,6 +7,7 @@ import { climaActivo } from './clima.js';
 import { fuerzaActiva, usarFuerza, sabotear } from './fuerza.js';
 import { demandaDelAnio, responderMovimiento } from './movimientos.js';
 import { contradecir, contradecirMovimiento } from './acta.js';
+import { reaccionar, reaccionarMovimiento } from './figuras.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 export function applyFx(S, fx0) {
@@ -135,6 +136,10 @@ export function choose(S, i) {
   if (fuerzaActiva(S)) {
     const f = [...(extra.uso ? contradecir(S, 'fuerza') : []), ...(real.ti < 0 ? contradecir(S, 'quitarTierra') : []), ...(ev.mov && o.accion ? contradecirMovimiento(S, ev.mov, o.accion) : [])];
     if (f.length) extra.acta = f;
+    // Fase 4: los personajes reaccionan.
+    if (extra.uso) reaccionar(S, 'fuerza');
+    if (real.ti < 0) reaccionar(S, 'quitarTierra');
+    if (ev.mov && o.accion) reaccionarMovimiento(S, ev.mov, o.accion);
   }
   return Object.assign({}, o, { fx: real }, extra);
 }

@@ -149,10 +149,11 @@
         "elect": true
       },
       "ajustesFase3": {
-        "infl": 0.005,
+        "infl": 0,
         "admin": 1.0,
-        "tr": 5,
-        "movEscucha": 1.5
+        "tr": 8,
+        "movEscucha": 1.5,
+        "se": -3
       },
       "ventaja": "Carisma: escuchar a un movimiento social lo calma 50% más."
     }

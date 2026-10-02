@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, listaMovimientos, costoDialogo, dialogar
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, presentes, misionDe, cost, C, listaMovimientos, costoDialogo, dialogar
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -20,6 +20,12 @@ export function botYear(S, strat, eth, op = {}) {
   if (S.clima) S.aporteFondo = prep && S.stage >= 1 && (S.fondo < fondoSugerido(S) * 1.2 || S.clima.pronostico) ? FONDO : 0;
   // Mantenimiento de las obras (MANT=0..100 para probar; por defecto 100%). La estrategia equilibrada repara lo agrietado.
   if (S.clima) { S.mant = MANT; if (prep) S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
+  // Fase 4: la estrategia equilibrada atiende las misiones de obra de los personajes si le sobra el oro.
+  if (prep && S.clima) for (const id of presentes(S)) {
+    const m = misionDe(S, id);
+    if (!m) continue;
+    if (m.tipo === 'edificio' && counts(S)[m.edificio] < m.n && S.gold > cost(S, m.edificio) + 150 && C.B[m.edificio].st <= S.stage && !obrasEnCurso(S)[m.edificio]) { const t = ordenarSitios(S, m.edificio, freeTiles(S, m.edificio)); if (t.length) build(S, m.edificio, t[0]); }
+  }
   for (let n = 0; n < 8; n++) {
     // Fase 2: las obras en construcción cuentan como ya encargadas (no se empieza otra igual).
     const c2 = counts(S), F2 = finance(S), eo = obrasEnCurso(S);

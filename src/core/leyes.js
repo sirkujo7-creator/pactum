@@ -4,6 +4,7 @@ import { C } from './contenido.js';
 import { RG, RM, hasLaw } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { contradecir } from './acta.js';
+import { reaccionar } from './figuras.js';
 
 export function lawSlots(S) { return 1 + S.stage; }
 export function lawCostNow(S) { return Math.round(40 * S.price * (1 - RM(S, 'leyesDescuento'))); }
@@ -34,5 +35,6 @@ export function toggleLaw(S, id) {
   S.laws[id] = S.year;
   S.log.unshift({ y: S.year, t: `Promulgaste la ley: ${l.n}.` });
   if (id === 'censura') contradecir(S, 'censura');
+  if (id === 'censura' || id === 'prensa') reaccionar(S, id);
   return true;
 }

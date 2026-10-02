@@ -4,13 +4,13 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
 import { partida } from './partida.js';
 import { iconoObra } from '../arte/edificios.js';
-import { retrato, EMB } from '../arte/retratos.js';
+import { retrato, retratoFig, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 
@@ -143,7 +143,7 @@ export class Interfaz {
     if (!S) return;
     const c = counts(S), F = finance(S), so = F.so, R = rating(S), rg = RG(S);
     document.documentElement.style.setProperty('--regc', rg.col);
-    const faltas = faltasNuevas(S);
+    const faltas = [...faltasNuevas(S), ...avisosFiguras(S)];
     if (faltas.length) setTimeout(() => this.toast(faltas.join(' ')), 50);
     guardarLuego(S);
     Sonido.mode(S.reg);
@@ -282,11 +282,12 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
     const seg = this.sociedad.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
+    this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
   seccionMovimientos() {
@@ -699,7 +700,8 @@ export class Interfaz {
   }
   // Fase 4: suceso que llegó sin decisión (robo, atentado, incendio, brote, abuso): qué pasó, por qué y cómo prevenirlo.
   sucesoAnio(alTerminar) {
-    const S = this.S, ev = S.suceso;
+    const S = this.S, ev = S.suceso, alTerminar0 = alTerminar;
+    alTerminar = () => this.figurasAnio(alTerminar0);
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
     const q = C.SUCESOS.sucesos[ev.id];
@@ -710,6 +712,40 @@ export class Interfaz {
       <div class="dos">${ev.obra !== undefined ? '<button class="btn" id="verObraB">Ver dónde fue</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
     this.boton('verObraB', () => { this.cerrarTarjeta(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(ev.obra); });
+  }
+  // Fase 4: personajes con papel propio. Llegadas y misiones del año, en una sola tarjeta.
+  figurasAnio(alTerminar) {
+    const S = this.S, L = S.figEv;
+    if (!L || !L.length) { alTerminar(); return; }
+    S.figEv = null;
+    const F = C.FIG.figuras, filas = L.map(e => {
+      const f = F[e.id], img = `<img src="${retratoFig(e.id, f.retrato)}" alt="">`;
+      if (e.tipo === 'llega') { const m = misionDe(S, e.id); return `<div class="say pro"><div class="fig-r">${img}</div><div><b>${f.icono} Llega ${f.nombre}</b> <small>(${f.rol})</small><span>“${f.presentacion}”</span>${m ? `<small><b>Su misión:</b> ${m.texto} Plazo: año ${m.limite}.</small>` : ''}</div></div>`; }
+      if (e.tipo === 'cumple') return `<div class="say pro"><div class="fig-r">${img}</div><div><b>✅ Cumpliste la misión de ${f.nombre}</b><span>${e.texto}</span><div class="chips">${this.chips(e.fx)}</div><small>Relación +${C.FIG.premioMision}.</small></div></div>`;
+      return `<div class="say con"><div class="fig-r">${img}</div><div><b>❌ No cumpliste la misión de ${f.nombre}</b><span>${e.texto}</span><small>Relación −${C.FIG.castigoMision}.</small></div></div>`;
+    }).join('');
+    this.tarjeta(`<div class="big">🤝</div><h3>Personajes del territorio</h3><div class="says">${filas}</div>
+      <div class="phil"><b>Lo que enseña</b><br>${C.FIG.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  seccionFiguras() {
+    const S = this.S, P = presentes(S).filter(id => estadoFig(S, id).visto);
+    if (!P.length) return '';
+    const filas = P.map(id => { const f = C.FIG.figuras[id], e = estadoFig(S, id), m = misionDe(S, id);
+      return `<button class="sub fig" data-fig="${id}" aria-label="${f.nombre}: relación ${Math.round(e.rel)}. Ver más">
+        <span class="sn"><img src="${retratoFig(id, f.retrato)}" alt=""> ${f.nombre} <small>${m ? `misión hasta el año ${m.limite}` : f.rol}</small></span><span class="track"><span class="fill" style="width:${e.rel}%;background:${colorDe(e.rel)}"></span></span><b>${Math.round(e.rel)}</b></button>`; }).join('');
+    return `<div class="cls otros"><div><div class="lab"><span>Personajes</span></div><p class="small">Su relación contigo sube o baja según lo que haces. Con relación alta te ayudan; con relación baja, te complican.</p><div class="subs">${filas}</div></div></div>`;
+  }
+  explicarFigura(id) {
+    const S = this.S, f = C.FIG.figuras[id], e = estadoFig(S, id), n = nivelRel(e.rel), m = misionDe(S, id), M = C.FIG.motivos;
+    const gusta = Object.entries(f.reacciones).filter(([, v]) => v > 0).map(([k]) => M[k]), molesta = Object.entries(f.reacciones).filter(([, v]) => v < 0).map(([k]) => M[k]);
+    this.tarjeta(`<div class="fig-cab"><img src="${retratoFig(id, f.retrato)}" alt=""><div><h3>${f.nombre}</h3><p class="small">${f.rol} · relación ${Math.round(e.rel)} (${n})</p></div></div>
+      <p>“${f.presentacion}”</p>
+      ${m ? `<div class="porque-afecta"><b>Misión:</b> ${m.texto} Plazo: año ${m.limite}. Cumplirla sube la relación ${C.FIG.premioMision}; fallarla la baja ${C.FIG.castigoMision}.</div>` : '<p class="small">Por ahora no tiene encargos para ti.</p>'}
+      ${gusta.length ? `<p class="small"><b>Le agrada:</b> ${gusta.join('; ')}.</p>` : ''}${molesta.length ? `<p class="small"><b>Le molesta:</b> ${molesta.join('; ')}.</p>` : ''}
+      <p class="small"><b>Con relación alta (${C.FIG.alta} o más):</b> ${f.alta.texto}<br><b>Con relación baja (${C.FIG.baja} o menos):</b> ${f.baja.texto}</p>
+      <div class="phil"><b>Lo que enseña</b><br>${C.FIG.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 4: seguridad en Sociedad: inseguridad, sus causas y los riesgos de sucesos de este año.
   seccionSeguridad() {
