@@ -35,6 +35,7 @@ export function build(S, k, i, ofertaElegida) {
   if (x.t === 'bosque') { x.t = 'llano'; S.env = clamp(S.env - 3, 0, 100); msg = 'Talaste bosque: el ambiente baja.'; marcarTala(S, i); }
   S.undo.push({ i, k, paid: pago, forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
   x.b = k;
+  if (x.mk) { S.undo[S.undo.length - 1].mk = x.mk; delete x.mk; } // fase 4: construir encima borra la huella
   empezarObra(S, i, k, total, o ? o.anios : undefined);
   const nLater = S.later.length, aviso = aplicarOferta(S, i, k, o);
   // Deshacer también devuelve el soborno (y borra el escándalo pendiente).
@@ -60,6 +61,7 @@ export function undoBuild(S) {
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
   if (u.rel) restaurarRelaciones(S, u.rel);
+  if (u.mk) x.mk = u.mk;
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;

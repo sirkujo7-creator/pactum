@@ -10,6 +10,7 @@ import { climaActivo } from './clima.js';
 import { animoGrupo } from './grupos.js';
 import { efectoFig, reaccionarMovimiento } from './figuras.js';
 import { applyFx } from './dilemas.js';
+import { dejarMarca } from './marcas.js';
 
 const K = () => C.MOV;
 export function movimientosActivos(S) { return climaActivo(S) && !!C.MOV && !!C.GRUPOS; }
@@ -97,6 +98,7 @@ export function dialogar(S, id) {
   if (puedeDialogar(S, id)) return null;
   const fx = applyFx(S, K().movimientos[id].ops.escuchar.fx);
   responderMovimiento(S, id, 'escuchar'); reaccionarMovimiento(S, id, 'escuchar');
+  dejarMarca(S, 'mural', `Año ${S.year}: mesa de diálogo con ${K().movimientos[id].nombre.toLowerCase()}.`);
   S.log.unshift({ y: S.year, t: `Abriste una mesa de diálogo con ${K().movimientos[id].nombre.toLowerCase()}.` });
   return fx;
 }

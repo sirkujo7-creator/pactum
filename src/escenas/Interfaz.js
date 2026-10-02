@@ -404,6 +404,13 @@ export class Interfaz {
   abrirFicha(i) {
     const S = this.S, T = this.mapa.T, t = T.tiles[i], x = S.map[i];
     const hijos = [];
+    // Fase 4: huella de una decisión.
+    if (!x.b && x.mk && C.MARCAS) {
+      const M = C.MARCAS.tipos[x.mk.t];
+      const G = 'grid-column:1/-1';
+      hijos.push(el('b', { style: G, text: `${M.icono} ${M.nombre}` }), el('span', { style: G, text: M.texto }), el('span', { class: 'aporte', style: G, text: x.mk.d }),
+        el('span', { class: 'small', style: G, text: `${x.mk.t === 'acta' ? 'Permanece mientras gobiernes.' : `Se borrará hacia el año ${x.mk.y + M.anios}.`} Si construyes aquí, la huella desaparece. ${C.MARCAS.leccion}` }));
+    }
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));

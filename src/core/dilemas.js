@@ -8,6 +8,7 @@ import { fuerzaActiva, usarFuerza, sabotear } from './fuerza.js';
 import { demandaDelAnio, responderMovimiento } from './movimientos.js';
 import { contradecir, contradecirMovimiento } from './acta.js';
 import { reaccionar, reaccionarMovimiento } from './figuras.js';
+import { marcaDeOpcion, dejarMarca } from './marcas.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 export function applyFx(S, fx0) {
@@ -141,6 +142,8 @@ export function choose(S, i) {
     if (real.ti < 0) reaccionar(S, 'quitarTierra');
     if (ev.mov && o.accion) reaccionarMovimiento(S, ev.mov, o.accion);
   }
+  // Fase 4: la decisión deja una huella en el mapa.
+  if (!ev.followUp) { const t = marcaDeOpcion(ev, o); if (t) extra.marca = dejarMarca(S, t, `Año ${S.year}: ${ev.title}. Decidiste: ${o.l.toLowerCase()}.`); }
   return Object.assign({}, o, { fx: real }, extra);
 }
 
