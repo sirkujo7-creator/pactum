@@ -128,6 +128,53 @@ function recetas() {
     const c = [(s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2]; g.fillStyle = '#E2B24F'; g.beginPath(); g.ellipse(c[0], c[1], 1.6, 1.2, 0, 0, 7); g.fill();
     const m = V2(.34, .34); wash(g, [[m[0] - 4, m[1]], [m[0] + 4, m[1]], [m[0] + 4, m[1] - 4], [m[0] - 4, m[1] - 4]], '#8A6A44', r, .95, .2); monedas(g, m[0], m[1] - 5);
   }]);
+  // Huellas de las decisiones (fase 4): figuras pequeñas que quedan unos años en el espacio público.
+  const persona = (g, x, y, ropa, gorro) => { g.fillStyle = ropa; g.fillRect(x - 1.2, y - 7, 2.4, 5); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(x, y - 8.2, 1.3, 0, 7); g.fill(); if (gorro) { g.fillStyle = gorro; g.fillRect(x - 1.6, y - 10, 3.2, 1.3); } };
+  L.push(['m_mural', 56, 44, 28, 34, (g, r) => {
+    sombra(g, 18, 4, 4); const b = iso(g, .62, .1, 0, 13, '#E8DFCC', '#CFC4AE', '#D8CDB6', r);
+    const cols = ['#C0602A', '#2D6E5E', '#E7C76B', '#C4513B', '#5E8FB0', '#7A4E8A'];
+    for (let k = 0; k < 6; k++) wash(g, caraI(b, .04 + k * .155, .15, 2 + (k % 2) * 3, 6 + (k % 3) * 2), cols[k], r, .9, .3);
+    const s = caraI(b, .3, .4, 4, 4); blob(g, (s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2, 3, 2.4, '#F4EFE2', r, .9);
+  }]);
+  L.push(['m_reten', 56, 46, 28, 36, (g, r) => {
+    sombra(g, 20, 5, 4);
+    for (const [u, v] of [[-.3, .1], [.05, .25], [.32, -.05]]) { const q = V2(u, v); for (let k = 0; k < 3; k++) wash(g, [[q[0] - 6, q[1] - k * 2.2], [q[0] + 6, q[1] - k * 2.2], [q[0] + 6, q[1] - k * 2.2 - 2], [q[0] - 6, q[1] - k * 2.2 - 2]], '#B7A27A', r, .95, .2); }
+    const v = V2(-.05, -.25); for (let k = 0; k < 5; k++) { g.fillStyle = k % 2 ? '#F4F1E6' : '#C0392B'; g.fillRect(v[0] - 10 + k * 4, v[1] - 9, 4, 2.4); } g.fillStyle = '#4A3A2C'; g.fillRect(v[0] - 10, v[1] - 6.6, 1, 6.6); g.fillRect(v[0] + 9, v[1] - 6.6, 1, 6.6);
+    const q = V2(.25, .2); persona(g, q[0], q[1], '#3F4A36', '#2E3A28');
+  }]);
+  L.push(['m_valla', 50, 56, 25, 46, (g, r) => {
+    sombra(g, 12, 3, 2); const p = V2(0, 0); g.fillStyle = '#5A4632'; g.fillRect(p[0] - 9, p[1] - 22, 1.6, 22); g.fillRect(p[0] + 8, p[1] - 22, 1.6, 22);
+    wash(g, [[p[0] - 14, p[1] - 21], [p[0] + 15, p[1] - 23], [p[0] + 15, p[1] - 38], [p[0] - 14, p[1] - 36]], '#F2E6C4', r, .97, .3);
+    wash(g, [[p[0] - 12, p[1] - 25], [p[0] + 3, p[1] - 26], [p[0] + 3, p[1] - 34], [p[0] - 12, p[1] - 33]], '#C9962E', r, .95, .2); monedas(g, p[0] + 9, p[1] - 27);
+  }]);
+  L.push(['m_placa', 40, 44, 20, 36, (g, r) => {
+    sombra(g, 10, 3, 2); const b = iso(g, .3, .3, 0, 4, '#A9A39A', '#8E887F', '#BEB8AE', r);
+    const o = iso(g, .1, .1, 4, 16, '#C9C3B8', '#AAA49A', '#D6D0C6', r); const t = o.up(V2(0, 0), 20); blob(g, t[0], t[1] - 1, 2.2, 1.6, '#D9A93E', r, .9);
+    wash(g, caraI(b, .2, .6, 1, 2.4), '#6B6258', r, .95, .2);
+  }]);
+  L.push(['m_olla', 52, 44, 26, 34, (g, r) => {
+    sombra(g, 16, 4, 4); const p = V2(0, 0);
+    wash(g, [[p[0] - 14, p[1] - 12], [p[0] + 14, p[1] - 12], [p[0] + 9, p[1] - 22], [p[0] - 9, p[1] - 22]], '#E7C76B', r, .95, .3);
+    g.fillStyle = '#5A4632'; g.fillRect(p[0] - 12, p[1] - 12, 1.2, 12); g.fillRect(p[0] + 11, p[1] - 12, 1.2, 12);
+    blob(g, p[0] - 2, p[1] - 3, 5, 3, '#3A3532', r, .95); g.fillStyle = '#C0602A'; g.beginPath(); g.arc(p[0] - 2, p[1] + .5, 2, 0, 7); g.fill();
+    persona(g, p[0] + 6, p[1] + 2, '#B4553A', '#F4F1E6'); persona(g, p[0] - 9, p[1] + 3, '#5A6F7E');
+  }]);
+  L.push(['m_pancarta', 56, 46, 28, 36, (g, r) => {
+    sombra(g, 18, 4, 4); const p = V2(0, 0);
+    for (const [dx, col] of [[-12, '#F4F1E6'], [0, '#E7C76B'], [12, '#F4F1E6']]) { g.fillStyle = '#5A4632'; g.fillRect(p[0] + dx, p[1] - 22, 1, 20); wash(g, [[p[0] + dx - 5, p[1] - 22], [p[0] + dx + 6, p[1] - 22], [p[0] + dx + 6, p[1] - 15], [p[0] + dx - 5, p[1] - 15]], col, r, .95, .2); g.fillStyle = '#B03A2E'; g.fillRect(p[0] + dx - 3, p[1] - 19.5, 7, 1.2); g.fillRect(p[0] + dx - 3, p[1] - 17.5, 5, 1); }
+    persona(g, p[0] - 6, p[1] + 1, '#5A6F7E'); persona(g, p[0] + 6, p[1] + 2, '#B4553A');
+  }]);
+  L.push(['m_vivero', 54, 40, 27, 30, (g, r) => {
+    sombra(g, 18, 4, 4); const b = iso(g, .62, .42, 0, 2, '#7A5A3A', '#6A4C30', '#8C6A44', r);
+    for (let k = 0; k < 9; k++) { const q = b.up(V2(-.22 + (k % 3) * .22, -.14 + Math.floor(k / 3) * .14), 2); blob(g, q[0], q[1] - 2, 2.2, 2.6, k % 2 ? '#5E8A4D' : '#7FA35C', r, .95); }
+    const q = V2(.3, .25); persona(g, q[0], q[1], '#2D6E5E', '#E7C76B');
+  }]);
+  L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
+    sombra(g, 14, 4, 3); const p = V2(0, 0);
+    blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);
+    g.strokeStyle = '#6B6258'; g.lineWidth = .7; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(p[0] - 6, p[1] - 14 + k * 2.6); g.lineTo(p[0] + 6, p[1] - 14 + k * 2.6); g.stroke(); }
+    blob(g, p[0] + 8, p[1] - 1, 3, 2.5, '#5E8A4D', r, .9);
+  }]);
   // Estación de policía (fase 4): casa blanca con zócalo verde oliva, puerta y letrero azules, farol y un agente en la puerta.
   L.push(['policia', 74, 70, 37, 52, (g, r) => {
     sombra(g, 22, 6, 8); const b = iso(g, .56, .44, 0, 15, '#F1EEE6', '#D6D1C4', null, r);

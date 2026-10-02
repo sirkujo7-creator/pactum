@@ -146,6 +146,8 @@ export class Mapa extends Phaser.Scene {
     if (this.humos[i]) { this.humos[i].destroy(); delete this.humos[i]; }
     const x = this.S.map[i];
     this.obras[i] = [];
+    // Fase 4: huella de una decisión en una casilla libre.
+    if (!x.b && x.mk) { const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + x.mk.t, t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1)); return; }
     if (!x.b) return;
     const t = this.T.tiles[i], deSuelo = x.b === 'cultivo' || x.b === 'cafetal';
     // Fase 1: desgaste visible (0 buen estado, 1 gastada, 2 agrietada, 3 abandonada).
@@ -231,7 +233,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x) { return `${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}`; }
+  huella(x) { return `${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}`; }
   refrescarCambios(antes) {
     const S = this.S, sectores = new Set(), cambiadas = [];
     S.map.forEach((x, i) => { if (this.huella(x) !== antes[i]) cambiadas.push(i); });

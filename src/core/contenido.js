@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -28,7 +28,7 @@ function opcion(o, donde) {
   return sinVacios({
     l: o.texto, fx: efectos(o.efectos, donde), f: o.filosofia || null, why: o.porque,
     later: o.despues ? (o.despues.probabilidad === undefined ? [o.despues.anios, o.despues.id] : [o.despues.anios, o.despues.id, o.despues.probabilidad]) : undefined,
-    vista: o.vista, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza,
+    vista: o.vista, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza, huella: o.huella,
     riesgo: o.riesgo ? { p: o.riesgo.probabilidad, t: o.riesgo.texto, fx: efectos(o.riesgo.efectos, `${donde} (riesgo)`) } : undefined
   });
 }
@@ -84,6 +84,7 @@ export function usarContenido(d) {
   C.EJERCITO = d.ejercito;
   C.FUERZA = d.fuerza;
   C.ACTA = d.acta;
+  C.MARCAS = d.marcas;
   C.FIG = d.figuras;
   C.FIG_FX = d.figuras ? Object.fromEntries(Object.entries(d.figuras.figuras).map(([k, f]) => [k, f.misiones.map((m, i) => efectos(m.premio, `misión ${i + 1} de ${k}`))])) : {};
   C.SUCESOS = d.sucesos && { ...d.sucesos, sucesos: Object.fromEntries(Object.entries(d.sucesos.sucesos).map(([k, q]) => [k, { ...q, fx: efectos(q.efectos, `suceso ${k}`) }])) };

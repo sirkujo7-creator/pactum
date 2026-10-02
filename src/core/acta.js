@@ -4,6 +4,7 @@
 import { C } from './contenido.js';
 import { clamp } from './azar.js';
 import { climaActivo } from './clima.js';
+import { dejarMarca } from './marcas.js';
 
 const K = () => C.ACTA;
 export function actaDisponible(S) { return climaActivo(S) && !!C.ACTA; }
@@ -11,6 +12,7 @@ export function actaActiva(S) { return actaDisponible(S) && !!S.acta && S.acta.p
 export function firmarActa(S, ids) {
   S.acta = { p: ids.filter(id => K().principios[id]).slice(0, K().cuantos), anio: S.year, faltas: [], nuevas: [] };
   S.tr = clamp(S.tr + (K().alFirmar || 0), 0, 100); // legitimidad de origen: el pacto funda el poder
+  dejarMarca(S, 'acta', `Año ${S.year}: firma del acta fundacional (${S.acta.p.map(id => K().principios[id].nombre.toLowerCase()).join(' y ')}).`);
   S.log.unshift({ y: S.year, t: `Firmaste el acta fundacional: ${S.acta.p.map(id => K().principios[id].nombre.toLowerCase()).join(' y ')}.` });
 }
 
