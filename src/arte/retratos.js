@@ -34,3 +34,25 @@ export const EMB = {
   oligarquia: '<svg viewBox="0 0 24 24" class="emb" aria-hidden="true"><ellipse cx="12" cy="17" rx="8" ry="3" fill="#C9962E"/><ellipse cx="12" cy="13" rx="8" ry="3" fill="#D9A93E"/><ellipse cx="12" cy="9" rx="8" ry="3" fill="#E6BC55" stroke="#8C6A1E"/></svg>',
   demagogia: '<svg viewBox="0 0 24 24" class="emb" aria-hidden="true"><path d="M4 10h4l9-5v14l-9-5H4z" fill="#C0602A"/><path d="M8 14l1.5 5h2.5l-1.5-5" fill="#8A4420"/></svg>'
 };
+
+// Fase 4: retratos de los personajes con papel propio, a partir de sus datos (fondo, piel, ropa, pelo y un detalle).
+export function retratoFig(id, R) {
+  const kind = 'fig-' + id;
+  if (CACHE[kind]) return CACHE[kind];
+  const c = lienzo(128, 128), g = c.getContext('2d'); g.scale(2, 2);
+  const rng = mulberry(id.length * 47 + 11), W = (pts, col) => wash(g, pts, col, rng, .95, 0);
+  blob(g, 32, 32, 30, 30, R.fondo, rng, .9);
+  W([[14, 64], [16, 46], [24, 40], [40, 40], [48, 46], [50, 64]], R.ropa);
+  if (R.detalle === 'cuello') W([[29, 40], [35, 40], [35, 44], [29, 44]], '#F4F1E6');
+  if (R.detalle === 'collar') { g.strokeStyle = '#E9D9A0'; g.lineWidth = 1.4; g.beginPath(); g.arc(32, 41, 6, .3, Math.PI - .3); g.stroke(); }
+  if (R.detalle === 'gorra') { W([[22, 44], [42, 44], [42, 47], [22, 47]], '#2E3A28'); g.fillStyle = '#E2B24F'; g.fillRect(36, 48, 3, 3); }
+  blob(g, 32, 31, 10, 10.5, R.piel, rng, .95);
+  // Pelo (detrás y encima de la cabeza).
+  g.fillStyle = R.pelo; g.beginPath(); g.ellipse(32, 25, 10.5, 6, 0, Math.PI, 0); g.fill();
+  g.fillStyle = '#2A2018'; g.beginPath(); g.arc(28.5, 31, 1.1, 0, 7); g.arc(35.5, 31, 1.1, 0, 7); g.fill();
+  g.strokeStyle = '#7A4A34'; g.lineWidth = 1; g.beginPath(); g.arc(32, 34.5, 3, .2, Math.PI - .2); g.stroke();
+  if (R.detalle === 'gafas') { g.strokeStyle = '#2A2A2A'; g.lineWidth = .9; g.beginPath(); g.arc(28.5, 31, 2.6, 0, 7); g.moveTo(38.1, 31); g.arc(35.5, 31, 2.6, 0, 7); g.moveTo(31.1, 31); g.lineTo(32.9, 31); g.stroke(); }
+  if (R.detalle === 'gorra') { W([[20, 22], [44, 22], [42, 15], [22, 15]], '#2E3A28'); W([[18, 24], [34, 24], [32, 21], [20, 21]], '#1F281B'); g.fillStyle = '#E2B24F'; g.beginPath(); g.arc(32, 18.5, 1.6, 0, 7); g.fill(); }
+  if (R.detalle === 'corona') { W([[21, 22], [43, 22], [43, 18], [21, 18]], '#C0392B'); for (let k = 0; k < 5; k++) W([[23 + k * 4.5, 18], [25 + k * 4.5, 18], [24 + k * 4.5 + (k % 2 ? 1 : -1), 6 + (k % 2) * 3]], ['#2D6E5E', '#E7C76B', '#F4F1E6', '#E7C76B', '#2D6E5E'][k]); }
+  return (CACHE[kind] = c.toDataURL());
+}

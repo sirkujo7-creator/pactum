@@ -10,6 +10,7 @@ import { cobertura } from './cobertura.js';
 import { mantenimiento } from './desgaste.js';
 import { movilizados } from './movimientos.js';
 import { seguridad } from './ejercito.js';
+import { efectoFig, reaccionar } from './figuras.js';
 import { applyFx } from './dilemas.js';
 
 const K = () => C.SUCESOS;
@@ -23,7 +24,7 @@ export function partesInseguridad(S) {
     ['Poca legitimidad', Math.max(0, 50 - S.tr) * I.legitimidad], ['Pobreza (clases descontentas)', pobres * I.pobreza],
     ['Corrupción', Math.max(0, S.corr - 40) * I.corrupcion], ['Movimientos movilizados', movilizados(S).length * I.movilizados],
     ['Policía cerca de las casas', -cob.policia * I.policia * (c.policia > 0 ? 1 : 0)], ['Escuelas cerca de las casas', -cob.escuela * I.escuela * (c.escuela > 0 ? 1 : 0)],
-    ['Parques', -Math.min(I.parqueMaximo, c.parque * I.parque)], ['Ejército que da orden', seguridad(S) ? -I.ejercito : 0]];
+    ['Parques', -Math.min(I.parqueMaximo, c.parque * I.parque)], ['Relación con la policía', efectoFig(S, 'inseguridad')], ['Ejército que da orden', seguridad(S) ? -I.ejercito : 0]];
 }
 export function inseguridad(S) { return sucesosActivos(S) ? clamp(partesInseguridad(S).reduce((s, x) => s + x[1], 0), 0, 100) : 0; }
 
@@ -60,6 +61,7 @@ export function sucesosDelAnio(S) {
     ev.fx = applyFx(S, fx);
     if (q.movimiento && S.mov && S.mov[q.movimiento]) S.mov[q.movimiento].f = clamp(S.mov[q.movimiento].f + q.fuerzaMovimiento, 0, 100);
     ev.texto = texto; S.suceso = ev; ult[id] = S.year;
+    if (id === 'abuso') reaccionar(S, 'abuso');
     return [`${q.icono} ${q.titulo}: ${texto}`];
   }
   return [];

@@ -28,3 +28,4 @@ export * from './fuerza.js';
 export * from './movimientos.js';
 export * from './acta.js';
 export * from './sucesos.js';
+export * from './figuras.js';

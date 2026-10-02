@@ -14,7 +14,8 @@ import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
 import { movimientosDelAnio, presionMovimientos } from './movimientos.js';
 import { actaDelAnio, coherencia } from './acta.js';
-import { sucesosDelAnio } from './sucesos.js';
+import { efectoFig, figurasDelAnio } from './figuras.js';
+import { sucesosDelAnio, inseguridad } from './sucesos.js';
 import { nearRiver } from './mundo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
@@ -61,7 +62,7 @@ export function advance(S) {
   S.eq = clamp(S.eq + (tE - S.eq) * .3, 0, 100);
 
   // Confianza.
-  const tT = 50 + RM(S, 'tr') + (hasLaw(S, 'censura') ? 6 : 0) + (hasLaw(S, 'prensa') ? -3 : 0) + (S.hap - 50) * .4 + c.agora * 10 + (S.gold < 0 ? -10 : 0) - Math.max(0, ip - 3) * .8 - presionMovimientos(S) + coherencia(S);
+  const tT = 50 + RM(S, 'tr') + (hasLaw(S, 'censura') ? 6 : 0) + (hasLaw(S, 'prensa') ? -3 : 0) + (S.hap - 50) * .4 + c.agora * 10 + (S.gold < 0 ? -10 : 0) - Math.max(0, ip - 3) * .8 - presionMovimientos(S) + coherencia(S) + efectoFig(S, 'legitimidad');
   S.tr = clamp(S.tr + (tT - S.tr) * .3, 0, 100);
   if (S.sat.c < 25 || S.sat.a < 25) {
     if (RM(S, 'silence', false)) { S.corr = clamp(S.corr + 4, 0, 100); news.push('La guardia disolvió protestas. Nadie habla, pero el descontento crece.'); }
@@ -69,7 +70,7 @@ export function advance(S) {
   }
 
   // Ambiente.
-  const tA = envTarget(S, c);
+  const tA = envTarget(S, c) + efectoFig(S, 'ambiente');
   S.env = clamp(S.env + (tA - S.env) * .3, 0, 100);
 
   // Fase 1: emergencia del año de El Niño o La Niña (la paga el fondo; lo que falte, el tesoro).
@@ -150,6 +151,7 @@ export function advance(S) {
   news.push(...movimientosDelAnio(S));
   news.push(...actaDelAnio(S));
   news.push(...sucesosDelAnio(S));
+  news.push(...figurasDelAnio(S, inseguridad(S)));
   if (S.reg === 'monarquia' && S.year % 15 === 0) {
     if (azar() < .5) { S.corr = clamp(S.corr - 10, 0, 100); S.tr = clamp(S.tr + 5, 0, 100); news.push('Sucesión en la corona: el heredero es prudente y querido.'); }
     else { S.corr = clamp(S.corr + 15, 0, 100); S.tr = clamp(S.tr - 5, 0, 100); news.push('Sucesión en la corona: el heredero es caprichoso y la corte murmura.'); }

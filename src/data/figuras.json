@@ -1,0 +1,294 @@
+{
+  "leccion": "Actores sociales: gobernar es negociar con personas que tienen intereses distintos. Lo que agrada a unos molesta a otros; la relación con cada actor abre o cierra puertas.",
+  "relacionInicial": 50,
+  "alta": 70,
+  "baja": 30,
+  "premioMision": 20,
+  "castigoMision": 10,
+  "figuras": {
+    "comandante": {
+      "nombre": "Comandante Rocío Méndez",
+      "rol": "Policía",
+      "icono": "🚓",
+      "aparece": {
+        "etapa": 1,
+        "edificio": "policia"
+      },
+      "presentacion": "Soy la comandante Méndez. Con su apoyo, mis agentes cuidarán las calles; sin él, poco podremos hacer.",
+      "retrato": {
+        "fondo": "#D5DEE6",
+        "piel": "#C98E62",
+        "ropa": "#3E4F36",
+        "detalle": "gorra",
+        "pelo": "#2A2018"
+      },
+      "reacciones": {
+        "policia": 12,
+        "fuerza": 4,
+        "abuso": -10
+      },
+      "alta": {
+        "texto": "La policía coopera: la inseguridad baja 5.",
+        "inseguridad": -5
+      },
+      "baja": {
+        "texto": "La policía trabaja a desgana: la inseguridad sube 6.",
+        "inseguridad": 6
+      },
+      "misiones": [
+        {
+          "tipo": "inseguridadMax",
+          "valor": 20,
+          "plazo": 6,
+          "texto": "Baje la inseguridad a menos de 20.",
+          "premio": {
+            "confianza": 3
+          }
+        },
+        {
+          "tipo": "cobertura",
+          "servicio": "policia",
+          "valor": 0.8,
+          "plazo": 8,
+          "texto": "Que la policía cubra 8 de cada 10 casas.",
+          "premio": {
+            "artesanos": 4
+          }
+        }
+      ]
+    },
+    "periodista": {
+      "nombre": "Ernesto Lozada",
+      "rol": "Periodista de La Voz del Combeima",
+      "icono": "📰",
+      "aparece": {
+        "etapa": 1
+      },
+      "presentacion": "Ernesto Lozada, periodista. Contaré lo que haga su gobierno, lo bueno y lo malo. La gente tiene derecho a saber.",
+      "retrato": {
+        "fondo": "#E6E0D2",
+        "piel": "#E0B08A",
+        "ropa": "#6B5A4A",
+        "detalle": "gafas",
+        "pelo": "#4A3A2C"
+      },
+      "reacciones": {
+        "censura": -30,
+        "prensa": 20,
+        "soborno": -15,
+        "fuerza": -8,
+        "escuchar": 3
+      },
+      "alta": {
+        "texto": "La prensa reconoce su gestión: la legitimidad tiende a subir 2.",
+        "legitimidad": 2
+      },
+      "baja": {
+        "texto": "La prensa lo vigila con lupa: si hay corrupción, publica escándalos.",
+        "escandalo": 4
+      },
+      "misiones": [
+        {
+          "tipo": "ley",
+          "ley": "prensa",
+          "plazo": 8,
+          "texto": "Promulgue la ley de libertad de prensa.",
+          "premio": {
+            "confianza": 3
+          }
+        },
+        {
+          "tipo": "corrMax",
+          "valor": 35,
+          "plazo": 8,
+          "texto": "Baje el rumbo (corrupción) por debajo de 35.",
+          "premio": {
+            "confianza": 4
+          }
+        }
+      ]
+    },
+    "padre": {
+      "nombre": "Padre Anselmo",
+      "rol": "Párroco",
+      "icono": "⛪",
+      "aparece": {
+        "etapa": 1,
+        "anio": 6
+      },
+      "presentacion": "Soy el padre Anselmo. Mi parroquia conoce las penas de cada familia. Cuente conmigo para la paz, nunca para la violencia.",
+      "retrato": {
+        "fondo": "#E3DCEB",
+        "piel": "#EBC7A6",
+        "ropa": "#22222A",
+        "detalle": "cuello",
+        "pelo": "#BDB6AA"
+      },
+      "reacciones": {
+        "fuerza": -15,
+        "escuchar": 8,
+        "ignorar": -6
+      },
+      "alta": {
+        "texto": "El párroco media en los conflictos: los movimientos crecen 30% más lento.",
+        "movimientos": 0.7
+      },
+      "baja": {
+        "texto": "El párroco critica al gobierno desde el púlpito: los movimientos crecen 30% más rápido.",
+        "movimientos": 1.3
+      },
+      "misiones": [
+        {
+          "tipo": "edificio",
+          "edificio": "escuela",
+          "n": 2,
+          "plazo": 8,
+          "texto": "Que haya al menos dos escuelas.",
+          "premio": {
+            "igualdad": 3
+          }
+        },
+        {
+          "tipo": "movMax",
+          "valor": 40,
+          "plazo": 6,
+          "texto": "Que ningún movimiento social tenga demandas pendientes (fuerza menor a 40).",
+          "premio": {
+            "animo": 3
+          }
+        }
+      ]
+    },
+    "lider": {
+      "nombre": "Saúl Tique",
+      "rol": "Gobernador del cabildo pijao",
+      "icono": "🪶",
+      "aparece": {
+        "etapa": 1,
+        "anio": 4
+      },
+      "presentacion": "Soy Saúl Tique, gobernador del cabildo pijao. El agua y la tierra no son mercancía: son la vida de nuestros hijos.",
+      "retrato": {
+        "fondo": "#DCE7C9",
+        "piel": "#B9845A",
+        "ropa": "#8A3B2A",
+        "detalle": "corona",
+        "pelo": "#1E1A16"
+      },
+      "reacciones": {
+        "mina": -20,
+        "quitarTierra": -15,
+        "campesinos": -8,
+        "ambientalistas": -10,
+        "escucharAmbiente": 12,
+        "escucharCampesinos": 8
+      },
+      "alta": {
+        "texto": "El cabildo cuida el bosque con el gobierno: el ambiente tiende a subir 3.",
+        "ambiente": 3
+      },
+      "baja": {
+        "texto": "El cabildo bloquea las minas: cada mina rinde menos.",
+        "bloqueo": 12
+      },
+      "misiones": [
+        {
+          "tipo": "ambienteMin",
+          "valor": 75,
+          "plazo": 6,
+          "texto": "Lleve el ambiente a 75 o más.",
+          "premio": {
+            "campesinos": 4
+          }
+        },
+        {
+          "tipo": "tierraMin",
+          "valor": 0.45,
+          "plazo": 10,
+          "texto": "Que 45 de cada 100 campesinos tengan tierra propia.",
+          "premio": {
+            "igualdad": 3
+          }
+        }
+      ]
+    },
+    "empresaria": {
+      "nombre": "Beatriz Arango",
+      "rol": "Empresaria cafetera",
+      "icono": "☕",
+      "aparece": {
+        "etapa": 1,
+        "edificio": "cafetal"
+      },
+      "presentacion": "Beatriz Arango, exportadora de café. Si el gobierno da confianza a la inversión, aquí habrá empleo. Si no, me llevo mi capital.",
+      "retrato": {
+        "fondo": "#EFE3CC",
+        "piel": "#E6BC98",
+        "ropa": "#7A2E3A",
+        "detalle": "collar",
+        "pelo": "#5A3A24"
+      },
+      "reacciones": {
+        "mina": 6,
+        "fuerza": 4,
+        "escuchar": -3,
+        "soborno": 3
+      },
+      "alta": {
+        "texto": "La empresaria invierte: los cafetales y el comercio rinden 10% más.",
+        "ingresos": 0.1
+      },
+      "baja": {
+        "texto": "La empresaria saca su capital: los ingresos de la élite bajan 10%.",
+        "ingresos": -0.1
+      },
+      "misiones": [
+        {
+          "tipo": "edificio",
+          "edificio": "cafetal",
+          "n": 3,
+          "plazo": 8,
+          "texto": "Que haya al menos tres cafetales.",
+          "premio": {
+            "oro": 50
+          }
+        },
+        {
+          "tipo": "impEliteMax",
+          "valor": 20,
+          "plazo": 6,
+          "texto": "Que el impuesto a la élite no pase de 20%.",
+          "premio": {
+            "elite": 5
+          }
+        },
+        {
+          "tipo": "edificio",
+          "edificio": "banco",
+          "n": 1,
+          "plazo": 10,
+          "texto": "Construya un banco.",
+          "premio": {
+            "oro": 60
+          }
+        }
+      ]
+    }
+  },
+  "motivos": {
+    "policia": "que se construyan estaciones de policía",
+    "fuerza": "la mano dura",
+    "abuso": "los abusos policiales",
+    "censura": "la censura",
+    "prensa": "la libertad de prensa",
+    "soborno": "los sobornos",
+    "escuchar": "que se escuche a los movimientos sociales",
+    "ignorar": "que se ignore a los movimientos sociales",
+    "mina": "las minas",
+    "quitarTierra": "que se quite tierra a los campesinos",
+    "campesinos": "que se desoiga al movimiento campesino",
+    "ambientalistas": "que se desoiga a los ambientalistas",
+    "escucharAmbiente": "que se escuche a los ambientalistas",
+    "escucharCampesinos": "que se escuche a los campesinos"
+  }
+}

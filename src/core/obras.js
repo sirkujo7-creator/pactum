@@ -2,6 +2,7 @@
 import { clamp } from './azar.js';
 import { C } from './contenido.js';
 import { contradecir, deshacerFaltas } from './acta.js';
+import { reaccionar, copiaRelaciones, restaurarRelaciones } from './figuras.js';
 import { climaActivo } from './clima.js';
 import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
@@ -42,6 +43,12 @@ export function build(S, k, i, ofertaElegida) {
   // Fase 3: abrir una mina o aceptar un soborno puede contradecir el acta fundacional.
   const faltas = [...(k === 'mina' ? contradecir(S, 'mina') : []), ...(o && o.sob ? contradecir(S, 'soborno') : [])];
   if (faltas.length) S.undo[S.undo.length - 1].acta = faltas.length;
+  // Fase 4: los personajes reaccionan (deshacer la obra deshace también su reacción).
+  if (k === 'policia' || k === 'mina' || (o && o.sob)) {
+    S.undo[S.undo.length - 1].rel = copiaRelaciones(S);
+    if (k === 'policia' || k === 'mina') reaccionar(S, k);
+    if (o && o.sob) reaccionar(S, 'soborno');
+  }
   return msg || true;
 }
 
@@ -52,6 +59,7 @@ export function undoBuild(S) {
   x.b = null; delete x.ob; delete x.mt; delete x.u; S.gold += u.paid;
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
+  if (u.rel) restaurarRelaciones(S, u.rel);
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;
