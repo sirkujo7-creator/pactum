@@ -98,7 +98,7 @@ export class Arranque extends Phaser.Scene {
     });
   }
   elegirRegimen(diff, guide, semilla) {
-    const fila = k => `<button class="opt reg" data-r="${k}" style="--rc:${C.REG[k].col}">${EMB[k]}<span><b>${C.REG[k].n}</b><small>${C.REG[k].d}</small></span></button>`;
+    const fila = k => `<button class="opt reg" data-r="${k}" style="--rc:${C.REG[k].col}">${EMB[k]}<span><b>${C.REG[k].n}</b><small>${C.REG[k].d}</small>${C.REG[k].v ? `<small class="ventaja">✦ ${C.REG[k].v}</small>` : ''}</span></button>`;
     this.tarjeta(`<h3>Elige cómo se gobierna</h3><p class="small">Aristóteles distinguía tres formas rectas, que gobiernan para el bien común, y sus desviaciones, que gobiernan para sí. Tu forma de gobernar puede transformar el régimen.</p>
       <h2>Formas rectas</h2>${['monarquia', 'aristocracia', 'republica'].map(fila).join('')}
       <h2>Formas corruptas (más difíciles)</h2>${['tirania', 'oligarquia', 'demagogia'].map(fila).join('')}`);

@@ -95,6 +95,20 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 5. Acta fundacional | Publicado (0.24.0). Al empezar una partida nueva se eligen 2 de 6 principios: libertad de expresión, gobernar escuchando, cuidar el agua y la tierra, gobierno limpio, que pague más quien más tiene y tierra para quien la trabaja. Firmar da +5 de legitimidad de origen; contradecir un principio cuesta 5 (usar la fuerza, censura, soborno, abrir una mina, ignorar a un movimiento, quitar tierra, impuestos regresivos). Antes de decidir, las opciones avisan si contradicen el acta. El estado del acta se ve en la ficha del régimen. Las partidas guardadas antes siguen sin acta. Robots: 64% sin acta, 67% con acta |
 | 6. Balance | Publicado (0.25.0). Ajustes de régimen que solo valen en el terreno en acuarela (`ajustesFase3` en `regimenes.json`; la v9 queda igual). Hallazgo: por el ciclo de Polibio casi todas las partidas cambian de régimen, y el destino pesa más que el inicio (Monarquía terminaba en Aristocracia, sin elecciones; Plutocracia caía pronto en República). Monarquía y Aristocracia se corrompen más rápido; Dictadura con menos legitimidad; Plutocracia con tope de 15% a la élite y caída más pronta; Populismo con menos inflación. Robots (Normal, equilibrada, 800 partidas por régimen): República 62%, Plutocracia 57%, Aristocracia 65%, Dictadura 65%, Populismo 66%, Monarquía 65%: 9 puntos de diferencia (antes 42). Normal República con balance.js: 63%. Fácil 99%, Difícil 15% |
 
+## Estado de la fase 4 (riesgo y mundo)
+
+| Paso | Estado |
+| --- | --- |
+| 0. Opciones sin pistas | Publicado (0.25.1). Las opciones de los eventos ya no muestran flechas ni avisos; todo se explica al elegir |
+| 1. Exigencia | Publicado (0.26.0). 25 opciones tienen riesgo: con cierta probabilidad salen mal (tarjeta «Salió mal»). Los sucesos buenos llegan solo tras 3 golpes seguidos (2 en Fácil) y solo a veces (Normal 30%, Difícil 20%, Fácil 80%); si no, es un año tranquilo. Cada régimen tiene una ventaja propia: Monarquía, leyes 40% más baratas; Aristocracia, obras 10% más baratas; República, movimientos crecen 40% más lento; Dictadura, obras grandes un año más rápidas; Plutocracia, préstamos 4 puntos más baratos; Populismo, escuchar a un movimiento calma 50% más. Robots: República 52% (balance.js 54%); regímenes entre 47% y 61% (14 puntos). Fácil 99%, Difícil 10% |
+| 2. Sucesos sin decisión y Policía | Pendiente |
+| 3. Personajes con papel propio | Pendiente |
+| 4. Decisiones que se ven | Pendiente |
+| 5. Desastres reales del Tolima | Pendiente |
+| 6. Conflicto armado y desplazamiento | Pendiente |
+| 7. Relaciones con otras polis | Pendiente |
+| 8. Otras formas de ganar y efecto por edificio | Pendiente |
+
 ## Ideas propuestas (primera ronda)
 
 | # | Idea | Concepto que enseña | Cómo se ve |

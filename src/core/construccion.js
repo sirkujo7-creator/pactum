@@ -7,7 +7,7 @@ import { climaActivo } from './clima.js';
 import { mulberry } from './azar.js';
 import { factorEmpleoObra } from './economia.js';
 import { azar } from './azar.js';
-import { cost } from './reglas.js';
+import { cost, RM } from './reglas.js';
 import { loanRate } from './hacienda.js';
 import { vistaPrevia } from './obras.js';
 
@@ -84,7 +84,7 @@ export function ofertas(S, k, i = 0) {
   const quita = Math.floor(R() * honestas.length), lista = [...honestas.filter((o, j) => j !== quita), sob];
   for (let j = lista.length - 1; j > 0; j--) { const q = Math.floor(R() * (j + 1)); [lista[j], lista[q]] = [lista[q], lista[j]]; }
   return lista.map(o => {
-    const total = Math.round(base * o.precio * (1 + (R() * 2 - 1) * K().variacionPrecio)), anios = Math.max(0, n - (o.menosAnios || 0));
+    const total = Math.round(base * o.precio * (1 + (R() * 2 - 1) * K().variacionPrecio)), anios = Math.max(0, n - (o.menosAnios || 0) - RM(S, 'menosAnios'));
     return { ...o, total, anios, cuota: anios ? Math.round(total / anios) : total, sob: o.soborno ? Math.round(base * o.soborno) : 0 };
   });
 }

@@ -5,7 +5,7 @@
 // política o amenaza de fuga de capitales, nunca financiando huelgas. Solo en el terreno en acuarela.
 import { C } from './contenido.js';
 import { azar, clamp } from './azar.js';
-import { counts, D } from './reglas.js';
+import { counts, D, RM } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { animoGrupo } from './grupos.js';
 import { applyFx } from './dilemas.js';
@@ -24,7 +24,8 @@ export function animoBase(S, id) { const b = K().movimientos[id].base; return b 
 // Cuánto crece (o baja) la fuerza este año por el ánimo de su gente.
 export function cambioAnual(S, id) {
   const G = K().crecimiento;
-  return clamp((G.animoTranquilo - animoBase(S, id)) * G.factor, -G.maxBaja, G.maxSube);
+  const d = clamp((G.animoTranquilo - animoBase(S, id)) * G.factor, -G.maxBaja, G.maxSube);
+  return d > 0 ? d * RM(S, 'movCrece', 1) : d; // fase 4: en República hay canales y crecen más lento
 }
 export function nombreEstado(f) { let n = ''; for (const e of K().estados) if (f >= e.desde) n = e.nombre; return n; }
 export function fuerzaMov(S, id) { return movimientosActivos(S) && S.mov && S.mov[id] ? S.mov[id].f : 0; }
@@ -74,7 +75,7 @@ export function demandaDelAnio(S) {
 // Respuesta del gobierno: escuchar modera, ignorar hace crecer, reprimir dispersa (o radicaliza sin legitimidad).
 export function responderMovimiento(S, id, accion, uso) {
   const e = estado(S, id), G = K().crecimiento;
-  const d = accion === 'escuchar' ? G.escuchado : accion === 'ignorar' ? G.ignorado : uso && uso.nivel === 'baja' ? G.radicaliza : G.reprimido;
+  const d = accion === 'escuchar' ? G.escuchado * RM(S, 'movEscucha', 1) : accion === 'ignorar' ? G.ignorado : uso && uso.nivel === 'baja' ? G.radicaliza : G.reprimido;
   e.f = clamp(e.f + d, 0, 100);
   e.resp = { anio: S.year, accion };
   return d;

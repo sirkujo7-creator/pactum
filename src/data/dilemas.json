@@ -49,7 +49,15 @@
           "id": "crecida_mal"
         },
         "vista": "flood",
-        "aQuien": "Sin gastar, el agua se lleva vidas y cosechas, y el pueblo siente que lo dejaron solo. La élite, que vive lejos del río, agradece que no se gaste su plata."
+        "aQuien": "Sin gastar, el agua se lleva vidas y cosechas, y el pueblo siente que lo dejaron solo. La élite, que vive lejos del río, agradece que no se gaste su plata.",
+        "riesgo": {
+          "probabilidad": 0.4,
+          "texto": "El agua tardó semanas en bajar: se perdieron casas y cosechas.",
+          "efectos": {
+            "habitantes": -3,
+            "alimento": -15
+          }
+        }
       }
     ]
   },
@@ -70,7 +78,14 @@
         "filosofia": "virt",
         "porque": "La vida buena también se construye celebrando en comunidad.",
         "vista": "festival",
-        "aQuien": "Pagar la fiesta alegra a todos y muestra un gobierno cercano, a costa del tesoro."
+        "aQuien": "Pagar la fiesta alegra a todos y muestra un gobierno cercano, a costa del tesoro.",
+        "riesgo": {
+          "probabilidad": 0.2,
+          "texto": "Llovió toda la semana: el festival fue un fracaso.",
+          "efectos": {
+            "animo": -6
+          }
+        }
       },
       {
         "texto": "Cobrar entrada",
@@ -128,7 +143,15 @@
         },
         "filosofia": "contr",
         "porque": "Ninguna ventaja privada es justa si empeora la situación de los más débiles.",
-        "aQuien": "La gente valora que no vendas lo común; los artesanos y la élite que esperaban negociar con el mercader pierden esa oportunidad."
+        "aQuien": "La gente valora que no vendas lo común; los artesanos y la élite que esperaban negociar con el mercader pierden esa oportunidad.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El mercader se fue a otro pueblo y la sal escasea.",
+          "efectos": {
+            "artesanos": -4,
+            "inflacion": 1
+          }
+        }
       }
     ]
   },
@@ -166,7 +189,14 @@
         "filosofia": "util",
         "porque": "El dinero resuelve hoy el problema de todos, aunque los precios suben.",
         "vista": "drought",
-        "aQuien": "El oro compra comida de afuera; tanta plata circulando hace subir un poco los precios."
+        "aQuien": "El oro compra comida de afuera; tanta plata circulando hace subir un poco los precios.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El cargamento se perdió en el camino: hubo que pagar otro.",
+          "efectos": {
+            "oro": -30
+          }
+        }
       },
       {
         "texto": "Dar prioridad a quienes trabajan la tierra",
@@ -205,7 +235,15 @@
           "anios": 5,
           "id": "migra_bien"
         },
-        "aQuien": "Llegan brazos nuevos y el pueblo se siente justo; hay más bocas que alimentar, y los artesanos temen competir por el trabajo."
+        "aQuien": "Llegan brazos nuevos y el pueblo se siente justo; hay más bocas que alimentar, y los artesanos temen competir por el trabajo.",
+        "riesgo": {
+          "probabilidad": 0.25,
+          "texto": "No alcanzaron las casas: se formó un asentamiento en la orilla.",
+          "efectos": {
+            "igualdad": -4,
+            "confianza": -3
+          }
+        }
       },
       {
         "texto": "Acogerlas a cambio de trabajo",
@@ -291,7 +329,15 @@
         "filosofia": "util",
         "porque": "Rápido y barato; el costo lo paga la tierra.",
         "vista": "pests",
-        "aQuien": "Los químicos salvan la cosecha de los campesinos, pero envenenan la tierra y el río."
+        "aQuien": "Los químicos salvan la cosecha de los campesinos, pero envenenan la tierra y el río.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Los químicos enfermaron a varias familias.",
+          "efectos": {
+            "habitantes": -2,
+            "confianza": -4
+          }
+        }
       },
       {
         "texto": "Control biológico",
@@ -302,7 +348,14 @@
         },
         "filosofia": "virt",
         "porque": "Más lento y caro: el término medio entre producir y cuidar.",
-        "aQuien": "Cuidas la tierra, pero es lento: se pierde parte de la cosecha y cuesta más oro."
+        "aQuien": "Cuidas la tierra, pero es lento: se pierde parte de la cosecha y cuesta más oro.",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "El control natural tardó: se perdió más cosecha.",
+          "efectos": {
+            "alimento": -12
+          }
+        }
       },
       {
         "texto": "Dejar que pase",
@@ -339,7 +392,15 @@
           "id": "evasion_venganza",
           "probabilidad": 0.5
         },
-        "aQuien": "La ley se cumple: el tesoro cobra, los campesinos sienten justicia y la élite se molesta porque uno de los suyos fue castigado."
+        "aQuien": "La ley se cumple: el tesoro cobra, los campesinos sienten justicia y la élite se molesta porque uno de los suyos fue castigado.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El terrateniente sacó su capital del territorio.",
+          "efectos": {
+            "oro": -40,
+            "elite": -4
+          }
+        }
       },
       {
         "texto": "Negociar un pago parcial",
@@ -403,7 +464,15 @@
         },
         "filosofia": "util",
         "porque": "Una solución de mercado: lenta, pero sin choques.",
-        "aQuien": "Los campesinos compran tierra a crédito: mejoran más despacio y el tesoro se endeuda; la élite apenas lo siente."
+        "aQuien": "Los campesinos compran tierra a crédito: mejoran más despacio y el tesoro se endeuda; la élite apenas lo siente.",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "Las cosechas no alcanzaron para pagar los créditos.",
+          "efectos": {
+            "campesinos": -6,
+            "deuda": 20
+          }
+        }
       },
       {
         "texto": "Rechazar la petición",
@@ -457,7 +526,14 @@
         },
         "filosofia": "util",
         "porque": "Resuelves hoy y trasladas el costo a los gobiernos de mañana.",
-        "aQuien": "Los maestros quedan contentos hoy, pero la deuda la pagará el tesoro de mañana."
+        "aQuien": "Los maestros quedan contentos hoy, pero la deuda la pagará el tesoro de mañana.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Los intereses resultaron más altos de lo previsto.",
+          "efectos": {
+            "deuda": 30
+          }
+        }
       },
       {
         "texto": "Negarse",
@@ -494,7 +570,15 @@
         "filosofia": "contr",
         "porque": "El trabajo digno no es un favor del patrón.",
         "vista": "crowd",
-        "aQuien": "Los artesanos ganan un salario justo que pagan los dueños de los talleres (la élite): por eso unos suben y otros bajan."
+        "aQuien": "Los artesanos ganan un salario justo que pagan los dueños de los talleres (la élite): por eso unos suben y otros bajan.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Los dueños respondieron con un cierre patronal.",
+          "efectos": {
+            "artesanos": -6,
+            "oro": -20
+          }
+        }
       },
       {
         "texto": "Subsidiar el aumento con el tesoro",
@@ -558,7 +642,14 @@
         },
         "filosofia": "util",
         "porque": "El tesoro gana y el daño se reduce un poco.",
-        "aQuien": "La multa llena un poco el tesoro y reduce el daño; los dueños se molestan."
+        "aQuien": "La multa llena un poco el tesoro y reduce el daño; los dueños se molestan.",
+        "riesgo": {
+          "probabilidad": 0.4,
+          "texto": "Les sale más barato pagar la multa: siguen contaminando.",
+          "efectos": {
+            "ambiente": -6
+          }
+        }
       },
       {
         "texto": "Ignorar la denuncia",
@@ -612,7 +703,14 @@
           "id": "corrup_filtra",
           "probabilidad": 0.5
         },
-        "aQuien": "Se corta el robo sin escándalo; el pueblo casi no se entera."
+        "aQuien": "Se corta el robo sin escándalo; el pueblo casi no se entera.",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "El caso se filtró a la prensa: parece encubrimiento.",
+          "efectos": {
+            "confianza": -8
+          }
+        }
       },
       {
         "texto": "No hacer nada",
@@ -674,7 +772,15 @@
         },
         "filosofia": "util",
         "porque": "Proteges la economía de todos, aunque no a todos por igual.",
-        "aQuien": "Los trabajadores de talleres y mercados (artesanos) se protegen primero; el resto espera."
+        "aQuien": "Los trabajadores de talleres y mercados (artesanos) se protegen primero; el resto espera.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El contagio siguió en los barrios pobres.",
+          "efectos": {
+            "habitantes": -3,
+            "igualdad": -3
+          }
+        }
       }
     ]
   },
@@ -708,7 +814,15 @@
         },
         "filosofia": "deon",
         "porque": "Las reglas no se negocian bajo amenaza.",
-        "aQuien": "La élite se enoja, pero el pueblo ve un gobierno firme y los campesinos sienten que las reglas son iguales."
+        "aQuien": "La élite se enoja, pero el pueblo ve un gobierno firme y los campesinos sienten que las reglas son iguales.",
+        "riesgo": {
+          "probabilidad": 0.4,
+          "texto": "Una familia rica se fue con su capital: fuga de capitales.",
+          "efectos": {
+            "oro": -40,
+            "elite": -4
+          }
+        }
       },
       {
         "texto": "Pactar inversión social a cambio",
@@ -744,7 +858,15 @@
         "filosofia": "real",
         "porque": "Alivio inmediato, pero ocultas el síntoma sin curar la causa.",
         "vista": "crowd",
-        "aQuien": "Los vendedores de la élite pierden ganancias; los campesinos respiran con precios fijos, y los artesanos sufren cuando falta mercancía."
+        "aQuien": "Los vendedores de la élite pierden ganancias; los campesinos respiran con precios fijos, y los artesanos sufren cuando falta mercancía.",
+        "riesgo": {
+          "probabilidad": 0.4,
+          "texto": "Desabastecimiento: los comerciantes esconden la mercancía.",
+          "efectos": {
+            "alimento": -15,
+            "artesanos": -4
+          }
+        }
       },
       {
         "texto": "Recortar el gasto público",
@@ -806,7 +928,14 @@
         },
         "filosofia": "virt",
         "porque": "Ni todo ni nada: prudencia.",
-        "aQuien": "Se gana menos oro, pero se cuida la montaña."
+        "aQuien": "Se gana menos oro, pero se cuida la montaña.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "La veta era más pequeña de lo prometido.",
+          "efectos": {
+            "oro": -25
+          }
+        }
       },
       {
         "texto": "Declarar reserva natural",
@@ -849,7 +978,14 @@
         "filosofia": "virt",
         "porque": "Escuchar es necesario, pero no siempre suficiente.",
         "vista": "crowd",
-        "aQuien": "Se escucha, pero sin recursos los estudiantes (hijos de artesanos) se sienten engañados."
+        "aQuien": "Se escucha, pero sin recursos los estudiantes (hijos de artesanos) se sienten engañados.",
+        "riesgo": {
+          "probabilidad": 0.4,
+          "texto": "Los estudiantes se sienten engañados y vuelven a la calle.",
+          "efectos": {
+            "confianza": -6
+          }
+        }
       },
       {
         "texto": "Dispersarla con la guardia",
@@ -914,7 +1050,14 @@
         },
         "filosofia": "contr",
         "porque": "Un acuerdo justo es el que ambas partes aceptarían.",
-        "aQuien": "Entra comercio justo: los artesanos venden más; los campesinos compiten con la comida del vecino."
+        "aQuien": "Entra comercio justo: los artesanos venden más; los campesinos compiten con la comida del vecino.",
+        "riesgo": {
+          "probabilidad": 0.25,
+          "texto": "El pueblo vecino incumplió su parte.",
+          "efectos": {
+            "oro": -30
+          }
+        }
       },
       {
         "texto": "Exigir ventajas",
@@ -951,7 +1094,14 @@
         },
         "filosofia": "contr",
         "porque": "Las desigualdades solo se justifican si benefician a los peores situados.",
-        "aQuien": "La élite aporta una parte de lo que tiene: sube la igualdad y el tesoro, y los más ricos se molestan."
+        "aQuien": "La élite aporta una parte de lo que tiene: sube la igualdad y el tesoro, y los más ricos se molestan.",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "La élite sacó su dinero del territorio.",
+          "efectos": {
+            "oro": -40
+          }
+        }
       },
       {
         "texto": "Rechazarlo",
@@ -997,7 +1147,15 @@
         },
         "filosofia": "contr",
         "porque": "En la escasez, lo básico no puede quedar a merced de quien más paga.",
-        "aQuien": "Los acaparadores (élite) pierden su ganancia; los campesinos pueden comprar comida."
+        "aQuien": "Los acaparadores (élite) pierden su ganancia; los campesinos pueden comprar comida.",
+        "riesgo": {
+          "probabilidad": 0.4,
+          "texto": "Apareció el mercado negro: la comida se vende a escondidas.",
+          "efectos": {
+            "alimento": -12,
+            "confianza": -3
+          }
+        }
       },
       {
         "texto": "Dejar actuar al mercado",
@@ -1072,7 +1230,14 @@
         },
         "filosofia": "real",
         "porque": "Funciona un tiempo; luego el pueblo pregunta qué hiciste tú.",
-        "aQuien": "Funciona con algunos artesanos, pero la legitimidad baja: el pueblo quiere soluciones."
+        "aQuien": "Funciona con algunos artesanos, pero la legitimidad baja: el pueblo quiere soluciones.",
+        "riesgo": {
+          "probabilidad": 0.5,
+          "texto": "La prensa lo desmintió con documentos.",
+          "efectos": {
+            "confianza": -6
+          }
+        }
       }
     ]
   },
@@ -1109,7 +1274,14 @@
         },
         "filosofia": "virt",
         "porque": "Aceptar ayuda sin entregar la autonomía: el punto medio.",
-        "aQuien": "Llega menos oro, pero se conserva la autonomía y el pueblo lo valora."
+        "aQuien": "Llega menos oro, pero se conserva la autonomía y el pueblo lo valora.",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "El donante retiró la oferta.",
+          "efectos": {
+            "oro": -60
+          }
+        }
       },
       {
         "texto": "Rechazarla",
@@ -1191,7 +1363,14 @@
         },
         "filosofia": "util",
         "porque": "Más comida para más gente, siempre que el clima acompañe.",
-        "aQuien": "Más comida si el clima ayuda; el cultivo intensivo cansa un poco la tierra."
+        "aQuien": "Más comida si el clima ayuda; el cultivo intensivo cansa un poco la tierra.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Las semillas no resistieron el clima de este año.",
+          "efectos": {
+            "alimento": -20
+          }
+        }
       },
       {
         "texto": "Semillas criollas resistentes",
@@ -1247,7 +1426,14 @@
         },
         "filosofia": "util",
         "porque": "Todos ganan algo, aunque el vecino pague por lo que antes era común.",
-        "aQuien": "El tesoro y la élite ganan con la venta; el pueblo siente que se cobró por algo que era de todos."
+        "aQuien": "El tesoro y la élite ganan con la venta; el pueblo siente que se cobró por algo que era de todos.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Los pueblos de río abajo se quejaron ante el gobierno nacional.",
+          "efectos": {
+            "confianza": -5
+          }
+        }
       },
       {
         "texto": "Negarla",

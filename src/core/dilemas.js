@@ -42,13 +42,15 @@ export function applyFx(S, fx0) {
 export function drawEvent(S) {
   if (!climaActivo(S)) return drawEventV9(S);
   const crisis = !!(S.clima.fenomeno || (S.eco && S.eco.fase === 'recesion')), racha = (S.racha || 0) + (crisis ? 1 : 0);
-  if (racha >= 2) {
+  // Fase 4 (más exigencia): la racha que corta depende de la dificultad, y el corte es un suceso bueno solo a veces;
+  // si no, es un año tranquilo.
+  if (racha >= (D(S).rachaB || 2)) {
     S.later.forEach(l => { if (l.y <= S.year && !(C.LATER[l.id] && C.LATER[l.id].bueno)) l.y = S.year + 1; });
     const due = S.later.findIndex(l => l.y <= S.year);
     if (due >= 0) { S.racha = 0; return consecuencia(S, due); }
     const c = counts(S), buenos = C.EV.filter(e => e.bueno && S.stage >= e.st && cumple(S, e.cond, c) && !S.recent.includes(e.id));
     S.racha = 0;
-    if (!buenos.length) return null; // sin sucesos buenos disponibles: año tranquilo
+    if (!buenos.length || azar() >= (D(S).probB ?? 1)) return null; // año tranquilo
     return elegido(S, buenos[rnd(buenos.length)]);
   }
   const ev = drawEventV9(S, false); // los sucesos buenos solo llegan para cortar una racha
@@ -115,8 +117,15 @@ export function choose(S, i) {
   if (o.later && (o.later[2] === undefined || azar() < o.later[2])) S.later.push({ y: S.year + o.later[0], id: o.later[1], from: S.year });
   S.log.unshift({ y: S.year, t: ev.followUp ? `${ev.title}.` : `${ev.title}. Decidiste: ${o.l.toLowerCase()}.` });
   S.pend = null;
-  // Fase 3 (Weber): la fuerza depende de la legitimidad; el sabotaje daña una obra.
   const extra = {};
+  // Fase 4: algunas decisiones tienen riesgo: con cierta probabilidad salen mal (solo en el terreno en acuarela).
+  if (o.riesgo && climaActivo(S) && azar() < o.riesgo.p) {
+    const mal = applyFx(S, o.riesgo.fx);
+    for (const [k, v] of Object.entries(mal)) real[k] = (real[k] || 0) + v;
+    extra.salioMal = o.riesgo.t;
+    S.log[0].t += ` Salió mal: ${o.riesgo.t.charAt(0).toLowerCase() + o.riesgo.t.slice(1)}`;
+  }
+  // Fase 3 (Weber): la fuerza depende de la legitimidad; el sabotaje daña una obra.
   if (fuerzaActiva(S)) {
     if (o.fuerza) extra.uso = usarFuerza(S, leg, o, real);
     if (ev.id === 'sabotaje') extra.danada = sabotear(S);
