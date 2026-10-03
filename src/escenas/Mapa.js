@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -13,6 +13,7 @@ import { Interfaz } from './Interfaz.js';
 import { Pobladores } from './Pobladores.js';
 import { Efectos } from './Efectos.js';
 import { Vida } from './Vida.js';
+import { Trafico } from './Trafico.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
@@ -39,6 +40,8 @@ export class Mapa extends Phaser.Scene {
 
     if (!partida.S || this.nueva) await nuevaPartida(this.semilla, this.opciones);
     this.S = partida.S;
+    iniciarCalles(this.S); // fase 9: las partidas sin calles reciben una plaza alrededor del centro
+    this.dibCalles = dibujoCalles(this.S);
     this.T = genTerreno(this.S.seed, this.S.n, desvios(this.S)); // fase 6: con los cambios de curso del río
     this.desviosVistos = desvios(this.S).length;
     // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
@@ -78,11 +81,13 @@ export class Mapa extends Phaser.Scene {
     this.pob = new Pobladores(this);
     this.vida = new Vida(this);
     this.efectos = new Efectos(this);
+    this.trafico = new Trafico(this);
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.capaCob = this.add.graphics().setDepth(PROF_POSIBLES - .5); // fase 2: capa de cobertura
     this.verCobertura = false;
     this.marcaG = this.add.graphics().setDepth(PROF_MARCA);
+    this.rutaG = this.add.graphics().setDepth(PROF_MARCA + 1); // fase 9: la calle que se está trazando
     this.activarControles();
     this.ui.avisar('');
     this.ui.render();
@@ -100,7 +105,7 @@ export class Mapa extends Phaser.Scene {
   // ---------- Terreno ----------
   pintarSector(sr, sc) {
     const clave = `sector-${sr}-${sc}`, previo = this.sectores[clave];
-    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, dry: this.dry });
+    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, dry: this.dry, calles: this.dibCalles });
     if (previo) { previo.destroy(); this.textures.remove(clave); }
     this.textures.addCanvas(clave, s.canvas);
     this.sectores[clave] = this.add.image(s.x, s.y, clave).setOrigin(0).setScale(1 / s.escala).setDepth(PROF_TERRENO + (sr + sc) * .01);
@@ -251,6 +256,7 @@ export class Mapa extends Phaser.Scene {
   }
   refrescarCambios(antes) {
     const S = this.S, sectores = new Set(), cambiadas = [], rio = this.revisarRio();
+    if (rio) this.dibCalles = dibujoCalles(S); // los puentes dependen del cauce
     S.map.forEach((x, i) => { if (rio || this.huella(x) !== antes[i]) cambiadas.push(i); });
     this.huellasVistas = S.map.map(x => this.huella(x));
     if (!cambiadas.length) return;
@@ -321,7 +327,9 @@ export class Mapa extends Phaser.Scene {
   marcarPosibles(k) {
     this.posibles.clear();
     this.dibujarCobertura();
+    if (k !== 'calle' && this.trazoCalle) { this.trazoCalle = null; this.dibujarTrazo(); }
     if (!k) return;
+    if (k === 'calle' || k === 'quitarCalle') return this.marcarEsquinas();
     this.posibles.fillStyle(0xF2C94C, .16).lineStyle(1, 0xF2C94C, .55);
     for (const i of freeTiles(this.S, k)) {
       const t = this.T.tiles[i], q = [P(t.r + .08, t.c + .08, t.h00), P(t.r + .08, t.c + .92, t.h01), P(t.r + .92, t.c + .92, t.h11), P(t.r + .92, t.c + .08, t.h10)].map(p => ({ x: p[0], y: p[1] }));
@@ -433,6 +441,7 @@ export class Mapa extends Phaser.Scene {
     // Fase 6: lo que cambió por una decisión (huellas, megaproyectos, asentamientos) se ve al instante.
     if (this.huellasVistas) this.refrescarCambios(this.huellasVistas);
     this.revisarCambiosGenerales();
+    this.refrescarCalles();
     this.pob.planear();
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.dibujarCobertura();
@@ -482,6 +491,7 @@ export class Mapa extends Phaser.Scene {
     this.pob.update(Math.min(.05, delta / 1000));
     this.vida.update(Math.min(.05, delta / 1000), tiempo / 1000);
     this.efectos.update(Math.min(.05, delta / 1000));
+    this.trafico.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).
     const m = this.pob.manana(), a = .2 + .3 * m;
     if (Math.abs(a - (this._nieblaA || 0)) > .01) { this._nieblaA = a; for (const n of this.nieblas) n.setAlpha(a); }
@@ -622,6 +632,7 @@ export class Mapa extends Phaser.Scene {
     const cam = this.cameras.main, t = casillaEn(this.T, cam.scrollX + px / this.escala, cam.scrollY + py / this.escala);
     if (!t) { this.ui.cerrarFicha(); return; }
     const i = t.r * this.T.N + t.c, k = this.ui.herramienta;
+    if ((k === 'calle' || k === 'quitarCalle') && !this.S.over) { this.tocarEsquina(cam.scrollX + px / this.escala, cam.scrollY + py / this.escala, k); return; }
     if (k && !this.S.over) {
       // Fase 2: las obras grandes pasan primero por la ficha del proyecto y la licitación.
       if (porEtapas(this.S, k) && !whyNot(this.S, k, i)) { this.marcar(i); this.ui.licitacion(k, i, id => this.construir(k, i, id)); return; }
@@ -632,6 +643,98 @@ export class Mapa extends Phaser.Scene {
     if (f) { this.marcar(null); this.ui.abrirPersona(f.p); return; }
     this.marcar(i);
     this.ui.abrirFicha(i);
+  }
+  // ---------- Calles (fase 9) ----------
+  // Puntos en las esquinas donde se puede empezar o terminar una calle.
+  marcarEsquinas() {
+    const T = this.T, N = T.N, g = this.posibles;
+    g.fillStyle(0x5B3423, .35);
+    for (let r = 0; r <= N; r++) for (let c = 0; c <= N; c++) {
+      const e = esquina(N, r, c), libre = [[r, c + 1], [r + 1, c], [r, c - 1], [r - 1, c]].some(([R, Cc]) => R >= 0 && Cc >= 0 && R <= N && Cc <= N && !bordeBloqueado(this.S, e, esquina(N, R, Cc)));
+      if (!libre) continue;
+      const p = P(r, c, T.hv(r, c)); g.fillCircle(p[0], p[1], 1.8);
+    }
+  }
+  // Esquina más cercana a un punto del mundo (busca alrededor de la casilla tocada).
+  esquinaEn(wx, wy) {
+    const T = this.T, N = T.N, t = casillaEn(T, wx, wy);
+    if (!t) return null;
+    let mejor = null, d0 = 1e9;
+    for (let r = t.r - 1; r <= t.r + 2; r++) for (let c = t.c - 1; c <= t.c + 2; c++) {
+      if (r < 0 || c < 0 || r > N || c > N) continue;
+      const p = P(r, c, T.hv(r, c)), d = Math.hypot(wx - p[0], (wy - p[1]) * 1.6);
+      if (d < d0) { d0 = d; mejor = esquina(N, r, c); }
+    }
+    return mejor;
+  }
+  tocarEsquina(wx, wy, k) {
+    const e = this.esquinaEn(wx, wy), T = C.CALLES.textos;
+    if (e === null) return;
+    if (k === 'quitarCalle') {
+      const fuera = quitarCalles(this.S, e);
+      if (fuera.length) { this.refrescarCalles(); Sonido.tap(); this.ui.render(); } else this.ui.toast('No hay calles en esa esquina.');
+      return;
+    }
+    if (!this.trazoCalle || this.trazoCalle.ruta) this.trazoCalle = { inicio: e, ruta: null };
+    else if (e !== this.trazoCalle.inicio) {
+      const ruta = trazarCalle(this.S, this.trazoCalle.inicio, e);
+      if (!ruta) { this.ui.toast(T.sinRuta); return; }
+      this.trazoCalle.ruta = ruta;
+    }
+    this.dibujarTrazo();
+    this.ui.render();
+  }
+  presupuestoCalle() { return this.trazoCalle && this.trazoCalle.ruta ? costoCalle(this.S, this.trazoCalle.ruta) : null; }
+  confirmarCalle() {
+    if (!this.trazoCalle || !this.trazoCalle.ruta) return;
+    const r = construirCalle(this.S, this.trazoCalle.ruta);
+    if (!r.ok) { this.ui.toast(r.motivo === 'ya' ? 'Esa calle ya existe.' : r.motivo); return; }
+    this.trazoCalle = null; this.dibujarTrazo();
+    this.refrescarCalles();
+    Sonido.tap();
+    this.ui.toast(C.CALLES.textos.nueva.replace('{n}', `${r.tramos} tramo${r.tramos === 1 ? '' : 's'}`) + (r.puentes ? ` Con ${r.puentes} puente${r.puentes > 1 ? 's' : ''}.` : ''));
+    this.ui.render();
+  }
+  cancelarCalle() { this.trazoCalle = null; this.dibujarTrazo(); this.ui.render(); }
+  dibujarTrazo() {
+    const g = this.rutaG, T = this.T, N = T.N, M = N + 1;
+    if (!g) return;
+    g.clear();
+    if (!this.trazoCalle) return;
+    const pt = e => { const r = Math.floor(e / M), c = e % M; return P(r, c, T.hv(r, c)); };
+    const p0 = pt(this.trazoCalle.inicio);
+    g.lineStyle(2.4, 0x9C2F25, 1).strokeCircle(p0[0], p0[1], 6);
+    const R = this.trazoCalle.ruta;
+    if (!R) return;
+    g.lineStyle(3, 0x9C2F25, .95);
+    for (let k = 1; k < R.length; k++) {
+      const a = pt(R[k - 1]), b = pt(R[k]), L = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.round(L / 9));
+      for (let j = 0; j < n; j++) { const f0 = j / n, f1 = (j + .55) / n; g.lineBetween(a[0] + (b[0] - a[0]) * f0, a[1] + (b[1] - a[1]) * f0, a[0] + (b[0] - a[0]) * f1, a[1] + (b[1] - a[1]) * f1); }
+    }
+    const pf = pt(R[R.length - 1]); g.fillStyle(0x9C2F25, 1).fillCircle(pf[0], pf[1], 4);
+  }
+  // Repinta solo los sectores con tramos nuevos o quitados (todo, si cambió la época de las calles).
+  refrescarCalles() {
+    const antes = this.dibCalles, ahora = dibujoCalles(this.S);
+    if (!ahora) return;
+    this.dibCalles = ahora;
+    const N = this.T.N, M = N + 1, L = Math.ceil(N / LADO_SECTOR), sectores = new Set();
+    if (!antes || antes.era !== ahora.era) { for (let a = 0; a < L; a++) for (let b = 0; b < L; b++) sectores.add(a + '-' + b); }
+    else {
+      const clave = t => t[0] + '|' + t[1], A = new Set(antes.tramos.map(clave)), B = new Set(ahora.tramos.map(clave));
+      const cambiados = [...antes.tramos.filter(t => !B.has(clave(t))), ...ahora.tramos.filter(t => !A.has(clave(t)))];
+      for (const t of cambiados) for (const e of [t[0], t[1]]) {
+        const r = Math.floor(e / M), c = e % M;
+        for (let R = r - 2; R <= r + 1; R++) for (let Cc = c - 2; Cc <= c + 1; Cc++) if (R >= 0 && Cc >= 0 && R < N && Cc < N) sectores.add(Math.floor(R / LADO_SECTOR) + '-' + Math.floor(Cc / LADO_SECTOR));
+      }
+    }
+    if (sectores.size) {
+      const cola = [...sectores].map(k => k.split('-').map(Number));
+      const paso = () => { if (!this.sys.isActive()) return; const x = cola.shift(); if (x) { this.pintarSector(...x); requestAnimationFrame(paso); } };
+      paso();
+    }
+    if (this.trafico) this.trafico.revisar();
+    this.dibujarCobertura();
   }
   marcar(i) {
     if (!this.marcaG) return;

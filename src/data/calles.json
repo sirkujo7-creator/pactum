@@ -1,0 +1,32 @@
+{
+  "leccion": "Los caminos son la primera obra de un Estado: unen los mercados, llevan la escuela y el médico más lejos y dejan que el recaudador llegue a todas las casas. El trazado en damero (calles rectas que se cruzan) viene de las ciudades romanas y de las Leyes de Indias que fundaron los pueblos del Tolima.",
+  "eras": {
+    "herradura": { "nombre": "Camino de herradura", "plural": "caminos de herradura", "costo": 4, "mantenimiento": 0.15, "vehiculo": "Arrieros con mulas" },
+    "empedrado": { "nombre": "Calle empedrada", "plural": "calles empedradas", "costo": 8, "mantenimiento": 0.25, "vehiculo": "Chivas" },
+    "carretera": { "nombre": "Carretera", "plural": "carreteras", "costo": 14, "mantenimiento": 0.4, "vehiculo": "Camiones" }
+  },
+  "eraPorEpoca": { "fundacion": "herradura", "cafe": "herradura", "violencia": "empedrado", "modernizacion": "carretera", "paz": "carretera", "digital": "carretera" },
+  "eraPorEtapa": ["herradura", "herradura", "empedrado", "carretera"],
+  "puente": 20,
+  "comercio": 0.15,
+  "conComercio": ["mercado", "cafetal", "mina", "taller", "puerto"],
+  "radioExtra": 1,
+  "menosEvasion": 0.5,
+  "talaAmbiente": 0.3,
+  "salida": { "comercio": 0.03, "relacion": 1 },
+  "textos": {
+    "herramienta": "Calle",
+    "quitar": "Quitar calles",
+    "ayuda": "Las calles van por los bordes de las casillas. Toca una esquina (los puntos) y luego otra: la ruta se traza sola, esquiva la montaña y pone puente donde cruza el río.",
+    "efectos": "Las obras junto a una calle rinden más: mercados, cafetales, minas y talleres venden 15% más; escuelas, hospitales, mercados, policía y recaudo llegan una casilla más lejos; y las casas sobre una calle evaden menos impuestos. Si una calle llega al borde del mapa, sale el comercio hacia los vecinos. Abrirla por el bosque baja el ambiente.",
+    "inicio": "Toca la esquina donde empieza la calle.",
+    "destino": "Ahora toca la esquina de destino.",
+    "quitarAyuda": "Toca una esquina para quitar las calles que llegan a ella (no se devuelve el oro).",
+    "sinRuta": "No hay ruta posible: la montaña la bloquea.",
+    "sinOro": "No alcanza el oro para esta calle.",
+    "nueva": "Calle nueva: {n}.",
+    "salida": "Una calle llega al borde del territorio: el comercio sale hacia los vecinos.",
+    "mejora": "Nueva época: los caminos se vuelven {era}.",
+    "ficha": "Junto a una calle"
+  }
+}

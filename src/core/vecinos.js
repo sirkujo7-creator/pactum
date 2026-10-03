@@ -6,6 +6,7 @@ import { clamp } from './azar.js';
 import { counts, hasLaw } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { dejarMarca } from './marcas.js';
+import { comercioSalida, salidaAlBorde } from './calles.js';
 
 const K = () => C.VECINOS;
 export function vecinosActivos(S) { return climaActivo(S) && !!C.VECINOS && !!S.vecinos; }
@@ -18,7 +19,7 @@ export function factorVecinos(S) {
   if (!vecinosActivos(S)) return 0;
   let f = 0;
   for (const v of Object.values(S.vecinos)) { if (v.tratado && v.rel >= 40) f += K().comercio; if (v.rel <= K().hostil) f -= K().bloqueo; }
-  return f + Math.min(2, counts(S).puerto) * .02 - (aislado(S) ? K().aislamiento.ingresos : 0); // fase 4: el puerto abre comercio
+  return f + comercioSalida(S) + Math.min(2, counts(S).puerto) * .02 - (aislado(S) ? K().aislamiento.ingresos : 0); // fase 4: el puerto abre comercio
 }
 export function costoAccion(S, a) { return Math.round(K().acciones[a].costo * S.price); }
 export function puedeAccion(S, id, a) {
@@ -63,7 +64,7 @@ export function vecinosDelAnio(S) {
   const ayudaHoy = S.desastre && S.desastre.anio === S.year && S.desastre.tipo !== 'alerta' || (S.clima.fenomeno && S.clima.evento && S.clima.evento.anio === S.year);
   for (const [id, v] of Object.entries(S.vecinos)) {
     const antes = nivelVecino(v.rel), N = P.vecinos[id];
-    v.rel = clamp(v.rel + (P.inicial - v.rel) * P.regreso + tensiones(S, id).reduce((s, x) => s + x[1], 0) + (v.tratado ? 1 : 0) + (id === 'sanlorenzo' ? Math.min(2, counts(S).puerto) : 0), 0, 100);
+    v.rel = clamp(v.rel + (P.inicial - v.rel) * P.regreso + tensiones(S, id).reduce((s, x) => s + x[1], 0) + (v.tratado ? 1 : 0) + (salidaAlBorde(S) ? C.CALLES.salida.relacion : 0) + (id === 'sanlorenzo' ? Math.min(2, counts(S).puerto) : 0), 0, 100);
     const ahora = nivelVecino(v.rel);
     if (ahora !== antes && ahora !== 'neutral') news.push(T[ahora].replace('{vecino}', N.nombre));
     if (ayudaHoy && ahora === 'aliado') { const o = Math.round(P.ayuda * S.price); S.gold += o; news.push(T.ayuda.replace('{vecino}', N.nombre).replace('{oro}', o)); }
