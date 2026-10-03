@@ -425,7 +425,7 @@ export class Mapa extends Phaser.Scene {
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();
     }, reducirMovimiento() || tranquilo ? 800 : 1900);
   }
-  elegirOpcion(i) { const o = choose(this.S, i); this.cambio(true); return o; }
+  elegirOpcion(i) { if (!this.S.pend) return null; const o = choose(this.S, i); this.cambio(true); return o; } // sin dilema pendiente, nada que elegir
   // Tras cualquier cambio: interfaz, figuras que dependen de etapa y régimen, pobladores, huellas y sequía.
   cambio(completo) {
     this.ui.render();
