@@ -1,0 +1,45 @@
+{
+  "epidemia": {
+    "desdeEtapa": 1,
+    "prob": 0.03,
+    "enfriar": 22,
+    "perdida": 0.1,
+    "minimo": 0.02,
+    "porHospital": 0.02,
+    "porAcueducto": 0.015,
+    "porVigilancia": 0.035,
+    "animo": 6,
+    "costoPorHabitante": 1.5,
+    "vigilancia": { "costo": 70, "nombre": "Vigilancia epidemiológica", "texto": "Laboratorio, vacunas guardadas y personal que detecta los brotes a tiempo." },
+    "tipos": [
+      { "id": "fiebre", "hasta": 40, "icono": "🦟", "nombre": "Fiebre amarilla", "texto": "Los mosquitos de tierra caliente trajeron la fiebre amarilla. Las familias de las orillas enferman primero.", "leccion": "La fiebre amarilla azotó el valle del Magdalena hasta el siglo XX. Se venció con saneamiento, control del mosquito y la vacuna (1937). La salud pública es una de las primeras tareas del Estado." },
+      { "id": "gripe", "hasta": 85, "icono": "🤧", "nombre": "La gran gripe", "texto": "Una gripe muy contagiosa llegó con los viajeros del tren y de la carretera. Los hospitales se llenan.", "leccion": "La gripe de 1918 mató a millones en el mundo y llegó a Bogotá en pocas semanas. Las ciudades conectadas se contagian más rápido: por eso la vigilancia y los hospitales importan." },
+      { "id": "pandemia", "hasta": 999, "icono": "🦠", "nombre": "Pandemia", "texto": "Un virus nuevo recorre el mundo. Hay que cerrar escuelas y mercados por un tiempo: la economía se resiente.", "leccion": "La pandemia de 2020 mostró que la salud y la economía dependen una de la otra. Los países con sistemas de salud fuertes, vigilancia y confianza en las instituciones la enfrentaron mejor." }
+    ],
+    "riesgo": "Epidemias: no se pueden predecir; se preparan con hospitales, acueductos y vigilancia epidemiológica."
+  },
+  "sequiaLarga": {
+    "desde": 50,
+    "prob": 0.25,
+    "texto": "El Niño no se va: la sequía se alarga un año más.",
+    "leccion": "Con el cambio climático, las sequías duran más. Los acueductos, los reservorios y el fondo de emergencias ayudan a resistirlas."
+  },
+  "avenida": {
+    "desde": 25,
+    "prob": 0.035,
+    "enfriar": 18,
+    "porLaderaPelada": 2.5,
+    "dano": 55,
+    "perdida": 0.03,
+    "icono": "🌊",
+    "nombre": "Avenida torrencial",
+    "texto": "Después de un aguacero, la quebrada bajó de la montaña con lodo, piedras y troncos. Arrasó lo que encontró en las laderas y la orilla.",
+    "leccion": "Una avenida torrencial es una creciente súbita de una quebrada de montaña, como la de Mocoa en 2017. Es más grave donde talaron las laderas: sin raíces, el agua arrastra la tierra. Se previene con bosque en las laderas y sin construir en los cauces.",
+    "riesgo": "Avenidas torrenciales: el riesgo crece con las laderas taladas o erosionadas"
+  },
+  "clima": {
+    "desde": 50,
+    "aumento": 0.8,
+    "texto": "Cambio climático: El Niño y La Niña llegan más seguido."
+  }
+}
