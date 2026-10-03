@@ -65,7 +65,7 @@ Reglas técnicas:
 
 ## Fase actual: Fase 5, sociedad y memoria
 
-Las fases 0 a 4 están terminadas o publicadas; su estado queda en `docs/DISENO.md`. La fase 4 (riesgo y mundo, versión 0.33) espera la prueba de Juan. Decisiones de Juan del 3 de octubre: Difícil cerca de 30% de victorias; fase 5 aprobada en este orden (un paso publicable a la vez):
+Los cinco pasos de la fase 5 están publicados (versión 0.37.0, 3 de octubre); falta que Juan pruebe las fases 4 y 5 y las apruebe. Las fases 0 a 3 están terminadas; su estado queda en `docs/DISENO.md`. Decisiones de Juan del 3 de octubre: Difícil cerca de 30% de victorias; fase 5 aprobada en este orden (un paso publicable a la vez):
 
 1. Barrios y problemáticas: desde Ciudad, las casas forman barrios con nombre; cada barrio con su mezcla de clases y sus problemas (deserción escolar, trabajo infantil, violencia, brecha de género); asentamientos informales (desalojar, ignorar o legalizar y mejorar). Se ven en el mapa.
 2. Cultura y deporte: cancha, biblioteca, teatro, estadio, fiestas; reemplazan la "exigencia creciente" de la v9 (el absurdo, la identidad); dilema de "pan y circo".
