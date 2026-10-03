@@ -2,7 +2,7 @@
 // Rutina: en la mañana va al trabajo (los niños a la escuela), en la tarde pasa por la plaza,
 // en la noche vuelve a casa y se encienden las ventanas. Con "reducir movimiento" todo queda quieto de día.
 import { planearPobladores, ropaModerna } from '../core/index.js';
-import { hornearPersonas } from '../arte/personas.js';
+import { hornearGente } from '../arte/gente.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
@@ -15,7 +15,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 export class Pobladores {
   constructor(scene) {
     this.scene = scene;
-    this.H = hornearPersonas();
+    this.H = hornearGente(); // fase 8: pobladores al fresco
     if (!scene.textures.exists('personas')) {
       const tx = scene.textures.addCanvas('personas', this.H.canvas);
       for (const [k, m] of Object.entries(this.H.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
