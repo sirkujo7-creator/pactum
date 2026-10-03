@@ -15,6 +15,9 @@ export function urlDe(c, tipo = 'image/png', calidad) {
   } catch (e) { return d; }
 }
 
+// Resolución de las hojas de figuras: 4 en computador; 3 en celulares y tabletas (cuida la memoria del iPhone).
+export const RES_HOJA = typeof navigator !== 'undefined' && typeof screen !== 'undefined' && navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 900 ? 3 : 4;
+
 // Paleta de pigmentos.
 export const FR = {
   yeso: '#EFE5CF', yesoOsc: '#E2D3B4', cal: '#F7F1E3', rojo: '#9C2F25', bermellon: '#B9442F', ocre: '#D4A24C',

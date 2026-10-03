@@ -30,6 +30,8 @@ export class Arranque extends Phaser.Scene {
     this.ui = el('div', { class: 'mapa-ui' }, [this.botones, this.velo]);
     capaUI().append(this.ui);
     this.events.once('shutdown', () => this.ui.remove());
+    // Fase 8: al pasar al mapa se libera la portada (memoria del iPhone); si se vuelve, se pinta otra vez.
+    this.events.once('shutdown', () => { for (const k of ['portada', 'niebla']) if (this.textures.exists(k)) this.textures.remove(k); });
     this.teclas = e => { if (e.key === 'Escape') this.velo.hidden = true; };
     window.addEventListener('keydown', this.teclas);
     this.events.once('shutdown', () => window.removeEventListener('keydown', this.teclas));

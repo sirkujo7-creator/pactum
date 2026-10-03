@@ -2,7 +2,7 @@
 // con pliegues, contorno siena y sin caras de caricatura. Conservan su identidad del Tolima: aguadeño y ruana del
 // campesino, pañoleta de la campesina, gorro del artesano y manto de la élite. Cuatro pasos al caminar, de frente y
 // de espaldas, tres variantes de color y ropa moderna para las épocas del ladrillo y el concreto.
-import { FR, mulberry, shade, lienzo, pintar, contorno, ovalo } from './fresco.js';
+import { FR, mulberry, shade, lienzo, pintar, contorno, ovalo, RES_HOJA } from './fresco.js';
 
 export const TIPOS_GENTE = {
   campesino: [[FR.bermellon, FR.ocre], [FR.azul, FR.ocreClaro], [FR.sienaClara, FR.rojo]],
@@ -87,7 +87,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false) {
 let HOJA = null;
 export function hornearGente() {
   if (HOJA) return HOJA;
-  const E = 4, w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
+  const E = RES_HOJA, w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
   for (const mod of ['', 'M']) for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 4; f++) claves.push([`${tipo}${mod}_${vi}_${fr}_${f}`, tipo, vi, fr, f, !!mod]);
   const cols = 24, cv = lienzo(cols * W, Math.ceil(claves.length / cols) * H + H), g = cv.getContext('2d');
   claves.forEach(([k, tipo, vi, fr, f, mod], n) => {
