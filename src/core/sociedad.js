@@ -9,6 +9,7 @@ import { empleosDeObra } from './construccion.js';
 import { cobertura, coberturaActiva } from './cobertura.js';
 import { animoEconomia } from './economia.js';
 import { obrasActivas } from './construccion.js';
+import { culturaTotal, culturaActiva } from './cultura.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3; }
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
@@ -55,7 +56,8 @@ export function satTargets(S, c, hunger) {
   const cob = cobertura(S), sinMercado = coberturaActiva(S) ? C.COB.animoSinMercado * (1 - cob.mercado) : 0;
   const sc = S.stage >= 1 ? Math.min(1, c.escuela * 50 / P, cob.escuela) : .8, hc = S.stage >= 1 ? Math.min(1, c.hospital * 60 / P, cob.hospital) : .8;
   const cov = (sc + hc) * 8;
-  const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5))) : 0;
+  // Fase 5: en el terreno en acuarela, la cultura, el deporte y las fiestas también calman la exigencia.
+  const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5)) - culturaTotal(S)) : 0;
   const ds = D(S).sat;
   const wc = waterCap(S, c), thirst = S.pop > wc ? Math.min(25, (S.pop - wc) / Math.max(1, wc) * 60) : 0;
   const L = k => hasLaw(S, k) ? 1 : 0, obras = animoPorDesgaste(S), eco = animoEconomia(S, obrasActivas(S));
@@ -63,10 +65,10 @@ export function satTargets(S, c, hunger) {
   const partes = () => ({
     c: [['Régimen de gobierno', RM(S, 'sc')], ['Punto de partida', 48], ['Impuesto a campesinos', -(S.tx.c - 10) * 2], [hunger ? 'Hambre' : 'Comida suficiente', hunger ? -20 : 5],
       ['Escuelas y hospitales', cov], ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .2], ['Ambiente dañado', S.env < 35 ? -8 : 0],
-      ['Exigencia de calidad de vida', -expc], ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('subsidio') * 10], ['Falta de agua', -thirst],
+      [culturaActiva(S) ? C.CULTURA.etiqueta : 'Exigencia de calidad de vida', -expc], ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('subsidio') * 10], ['Falta de agua', -thirst],
       ['Obras deterioradas', -obras], ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.c]],
     a: [['Régimen de gobierno', RM(S, 'sa')], ['Punto de partida', 48], ['Impuesto a artesanos', -(S.tx.a - 12) * 1.8], ['Escuelas y hospitales', cov], ['Parques', Math.min(8, c.parque * 2)],
-      ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .1], ['Ambiente dañado', S.env < 35 ? -8 : 0], ['Exigencia de calidad de vida', -expc],
+      ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .1], ['Ambiente dañado', S.env < 35 ? -8 : 0], [culturaActiva(S) ? C.CULTURA.etiqueta : 'Exigencia de calidad de vida', -expc],
       ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3], ['Falta de agua', -thirst], ['Obras deterioradas', -obras],
       ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.a]],
     e: [['Punto de partida', 58], ['Impuesto a la élite', -(S.tx.e - 15) * 1.4], ['Bancos', c.banco * 4], ['Igualdad (a la élite le molesta)', -(S.eq - 50) * .1], ['Inflación', -ip],

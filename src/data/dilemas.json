@@ -1903,5 +1903,67 @@
         "aQuien": "Más jóvenes pobres estudian: sube la igualdad."
       }
     ]
+  },
+  {
+    "id": "panycirco",
+    "etapa": 2,
+    "icono": "🏟️",
+    "titulo": "Pan y circo",
+    "texto": "Hay malestar en la ciudad. Tu asesor propone un gran torneo con conciertos gratis en el estadio para que la gente olvide sus problemas.",
+    "condicion": {
+      "edificios": {
+        "estadio": 1
+      },
+      "nuevo": true
+    },
+    "opciones": [
+      {
+        "texto": "Montar el gran espectáculo",
+        "efectos": {
+          "oro": -50,
+          "animo": 8
+        },
+        "filosofia": "real",
+        "porque": "Juvenal: el pueblo que solo recibe pan y circo deja de exigir lo importante.",
+        "despues": {
+          "anios": 3,
+          "id": "circo_resaca"
+        },
+        "aQuien": "Todos se divierten unos días; los problemas siguen ahí y el tesoro paga la fiesta.",
+        "huella": "valla"
+      },
+      {
+        "texto": "Invertir ese dinero en las escuelas",
+        "efectos": {
+          "oro": -50,
+          "igualdad": 4,
+          "campesinos": -2,
+          "artesanos": -2,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "La justicia mira a largo plazo, aunque hoy no la aplaudan.",
+        "aQuien": "Hoy nadie celebra, pero los niños de los barrios pobres ganan escuela; la legitimidad sube poco a poco.",
+        "huella": "mural"
+      },
+      {
+        "texto": "Abrir un cabildo abierto sobre el malestar",
+        "efectos": {
+          "confianza": 4,
+          "elite": -2
+        },
+        "filosofia": "virt",
+        "porque": "Escuchar en público el malestar es la virtud del buen gobernante.",
+        "aQuien": "La gente siente que la escuchan; a la élite no le gusta que se discutan sus privilegios.",
+        "huella": "placa",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "El cabildo terminó en gritos y nadie quedó contento.",
+          "efectos": {
+            "confianza": -6
+          }
+        }
+      }
+    ]
   }
 ]

@@ -56,6 +56,20 @@
     ],
     "especial": "Baja la inseguridad y sube el ambiente; ayuda a mantener contento al pueblo."
   },
+  "cancha": {
+    "icono": "⚽",
+    "nombre": "Cancha de fútbol",
+    "articulo": "una cancha de fútbol",
+    "descripcion": "Lugar de encuentro y deporte para el barrio.",
+    "costo": 25,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano"
+    ],
+    "cultura": 1.5,
+    "especial": "El deporte une al barrio: baja la exigencia de cultura y sentido, y la violencia de su barrio."
+  },
   "escuela": {
     "icono": "🏫",
     "nombre": "Escuela",
@@ -70,6 +84,21 @@
     "empleosArtesanos": 3,
     "aniosDeObra": 1,
     "especial": "Baja la inseguridad y el conflicto armado en su zona; forma estudiantes (que pueden organizarse)."
+  },
+  "biblioteca": {
+    "icono": "📚",
+    "nombre": "Biblioteca pública",
+    "articulo": "una biblioteca pública",
+    "descripcion": "Libros, internet y talleres para todas las edades. Emplea 2.",
+    "costo": 55,
+    "mantenimiento": 3,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 2,
+    "cultura": 2,
+    "especial": "Baja la exigencia de cultura y sentido y la deserción escolar de su barrio."
   },
   "hospital": {
     "icono": "🏥",
@@ -272,5 +301,36 @@
     "empleosArtesanos": 5,
     "aniosDeObra": 3,
     "especial": "Sube la igualdad y los salarios; los estudiantes la exigen desde que eres Ciudad."
+  },
+  "teatro": {
+    "icono": "🎭",
+    "nombre": "Teatro municipal",
+    "articulo": "un teatro municipal",
+    "descripcion": "Música, teatro y la voz crítica de los artistas. Emplea 3.",
+    "costo": 90,
+    "mantenimiento": 4,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 3,
+    "cultura": 3,
+    "especial": "Baja mucho la exigencia de cultura y sentido, y la brecha de género de su barrio."
+  },
+  "estadio": {
+    "icono": "🏟️",
+    "nombre": "Estadio",
+    "articulo": "un estadio",
+    "descripcion": "Torneos y conciertos para toda la ciudad. Emplea 4.",
+    "costo": 170,
+    "mantenimiento": 8,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 4,
+    "aniosDeObra": 2,
+    "cultura": 5,
+    "especial": "El que más baja la exigencia de cultura y sentido, pero los días de partido sube un poco la inseguridad. Abre el dilema de «pan y circo»."
   }
 }

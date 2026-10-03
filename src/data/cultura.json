@@ -1,0 +1,7 @@
+{
+  "fiesta": { "nombre": "Fiestas del pueblo", "costo": 30, "bono": 4, "anios": 2, "texto": "Música, comparsas y comida en la plaza: el pueblo celebra lo que es." },
+  "etiqueta": "Exigencia de cultura y sentido",
+  "barrio": { "biblioteca": { "desercion": 12 }, "teatro": { "genero": 10 }, "cancha": { "violencia": 8 } },
+  "estadioInseguridad": 2,
+  "leccion": "No solo de pan vive el pueblo: la cultura, el deporte y las fiestas dan sentido e identidad. Camus hablaba del absurdo de una vida sin sentido; Juvenal advertía que «pan y circo» también sirve para distraer al pueblo de lo importante."
+}

@@ -39,6 +39,7 @@ export function cumple(S, cond, c) {
     else if (k === 'impuestoElite') { if (!(S.tx.e >= v)) return false; }
     else if (k === 'inflacionMayorQue') { if (!(S.infl > v)) return false; }
     else if (k === 'terreno') { if (!(countT(S, v) > 0)) return false; }
+    else if (k === 'nuevo') { if (!(S.clima && S.mundo === 'acuarela')) return false; } // solo en el terreno en acuarela
     else if (k === 'clima') { const f = S.clima && S.clima.fenomeno; if (v === 'crisis' ? !f : f !== v) return false; }
     else throw new Error(`Condición desconocida: ${k}`);
   }

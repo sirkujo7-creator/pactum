@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -38,7 +38,7 @@ export function usarContenido(d) {
   C.B = Object.fromEntries(Object.entries(d.edificios).map(([k, b]) => [k, sinVacios({
     e: b.icono, n: b.nombre, a: b.articulo, cost: b.costo, up: b.mantenimiento, st: b.etapa, ok: b.terrenos,
     hmin: b.alturaMinima, river: b.juntoAlRio, jc: b.empleosCampesinos, ja: b.empleosArtesanos, fee: b.tasas,
-    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra, es: b.especial
+    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra, es: b.especial, cul: b.cultura
   })]));
   C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
   C.EV = d.dilemas.map(e => sinVacios({
@@ -90,6 +90,7 @@ export function usarContenido(d) {
   C.VECINOS = d.vecinos;
   C.VICTORIAS = d.victorias;
   C.BARRIOS = d.barrios;
+  C.CULTURA = d.cultura;
   C.FIG = d.figuras;
   C.FIG_FX = d.figuras ? Object.fromEntries(Object.entries(d.figuras.figuras).map(([k, f]) => [k, f.misiones.map((m, i) => efectos(m.premio, `misión ${i + 1} de ${k}`))])) : {};
   C.SUCESOS = d.sucesos && { ...d.sucesos, sucesos: Object.fromEntries(Object.entries(d.sucesos.sucesos).map(([k, q]) => [k, { ...q, fx: efectos(q.efectos, `suceso ${k}`) }])) };

@@ -276,5 +276,15 @@
       "confianza": -3
     },
     "porque": "Weber: cuando la fuerza no es legítima, el pueblo no obedece, resiste. El sabotaje es la resistencia de quien no tiene otra voz."
+  },
+  "circo_resaca": {
+    "icono": "🎪",
+    "titulo": "Después de la fiesta",
+    "texto": "El malestar volvió, ahora sin soluciones y con el tesoro más pobre.",
+    "efectos": {
+      "animo": -6,
+      "confianza": -4
+    },
+    "porque": "La distracción no resuelve los problemas: solo los aplaza."
   }
 }

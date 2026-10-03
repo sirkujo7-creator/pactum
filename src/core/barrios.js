@@ -32,7 +32,7 @@ export function nombreBarrio(id) { return id === 'centro' ? K().nombres.centro :
 let _cache = null;
 export function barrios(S) {
   if (!barriosActivos(S)) return [];
-  const clave = S.year + '|' + S.map.map(x => x.b === 'casa' ? 1 : 0).join('') + '|' + (S.asent || []).length + '|' + JSON.stringify(S.prog || {});
+  const clave = S.year + '|' + S.map.map(x => x.b === 'casa' ? 1 : 0).join('') + '|' + (S.asent || []).length + '|' + JSON.stringify(S.prog || {}) + '|' + S.map.filter(x => x.b === 'biblioteca' || x.b === 'teatro' || x.b === 'cancha').length;
   if (_cache && _cache.S === S && _cache.clave === clave) return _cache.lista;
   const N = lado(S), c = centroPueblo(S), B = {};
   S.map.forEach((x, i) => {
@@ -44,10 +44,13 @@ export function barrios(S) {
   });
   const so = society(S), totalCasas = Object.values(B).reduce((s, b) => s + b.casas.length, 0) || 1;
   const pobreza = Math.max(0, 50 - Math.min(S.sat.c, S.sat.a)), rural = Math.max(0, 45 - animoGrupo(S, 'jornaleros').valor), ins = S.insegura ?? 20;
+  // Fase 5: biblioteca, teatro y cancha mejoran el barrio donde están.
+  const cultBarrio = {}, CB = C.CULTURA ? C.CULTURA.barrio : {};
+  S.map.forEach((x, i) => { if (x.b && !x.ob && CB[x.b]) { const o = cultBarrio[barrioDe(S, i)] || (cultBarrio[barrioDe(S, i)] = {}); for (const [k, v] of Object.entries(CB[x.b])) o[k] = (o[k] || 0) + v; } });
   const A = K().asentamiento, lista = Object.values(B).map(b => {
     const n = b.casas.length, f = k => b[k] / n, periferia = b.dist / n > 6 ? 1 : 0;
     const asent = (S.asent || []).filter(a => barrioDe(S, a.i) === b.id).length;
-    const prog = (S.prog && S.prog[b.id]) || {}, red = k => Object.entries(prog).filter(([, hasta]) => hasta >= S.year).reduce((s, [t]) => s + (K().programas[t].reduce[k] || 0), 0);
+    const prog = (S.prog && S.prog[b.id]) || {}, cul = cultBarrio[b.id] || {}, red = k => Object.entries(prog).filter(([, hasta]) => hasta >= S.year).reduce((s, [t]) => s + (K().programas[t].reduce[k] || 0), 0) + (cul[k] || 0);
     const p = {
       desercion: 20 + (1 - f('esc')) * 45 + pobreza * .6 - (hasLaw(S, 'educacion') ? 10 : 0) - red('desercion'),
       infantil: 8 + (1 - f('esc')) * 30 + rural * .8 + f('ribera') * 8 - (hasLaw(S, 'educacion') ? 8 : 0) - red('infantil'),

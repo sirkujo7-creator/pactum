@@ -197,6 +197,38 @@ function recetas() {
     g.strokeStyle = '#6B6258'; g.lineWidth = .7; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(p[0] - 6, p[1] - 14 + k * 2.6); g.lineTo(p[0] + 6, p[1] - 14 + k * 2.6); g.stroke(); }
     blob(g, p[0] + 8, p[1] - 1, 3, 2.5, '#5E8A4D', r, .9);
   }]);
+  // Cultura y deporte (fase 5): cancha, biblioteca, teatro y estadio.
+  L.push(['cancha', 92, 56, 46, 32, (g, r) => {
+    const b = iso(g, .92, .7, 0, 1.5, '#7FA35C', '#6A8C4A', '#8CB466', r);
+    g.strokeStyle = '#F4F1E6'; g.lineWidth = .8; const L1 = [V2(-.4, -.3, 1.5), V2(.4, -.3, 1.5), V2(.4, .3, 1.5), V2(-.4, .3, 1.5)];
+    g.beginPath(); g.moveTo(...L1[0]); for (const q of L1.slice(1)) g.lineTo(...q); g.closePath(); g.stroke();
+    const m1 = V2(0, -.3, 1.5), m2 = V2(0, .3, 1.5); g.beginPath(); g.moveTo(...m1); g.lineTo(...m2); g.stroke(); const cc = V2(0, 0, 1.5); g.beginPath(); g.ellipse(cc[0], cc[1], 6, 3, 0, 0, 7); g.stroke();
+    for (const u of [-.4, .4]) { const q = V2(u, 0, 1.5); g.strokeStyle = '#E8E4DA'; g.lineWidth = .9; g.beginPath(); g.moveTo(q[0] - 3, q[1] + 1.5); g.lineTo(q[0] - 3, q[1] - 6); g.lineTo(q[0] + 3, q[1] - 7.5); g.lineTo(q[0] + 3, q[1]); g.stroke(); }
+    for (const [u, v, col] of [[-.15, -.1, '#C0392B'], [.12, .08, '#2D5D72'], [.22, -.15, '#C0392B']]) { const q = V2(u, v, 1.5); g.fillStyle = col; g.fillRect(q[0] - 1, q[1] - 5, 2, 3.4); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(q[0], q[1] - 6, 1.1, 0, 7); g.fill(); }
+    const pel = V2(.02, -.02, 1.5); g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(pel[0], pel[1] - 1, .9, 0, 7); g.fill();
+  }]);
+  L.push(['biblioteca', 76, 72, 38, 54, (g, r) => {
+    sombra(g, 24, 6, 8); const b = iso(g, .6, .46, 0, 16, '#E9E1CF', '#CDC3AD', null, r);
+    for (let k = 0; k < 3; k++) wash(g, caraI(b, .12 + k * .28, .16, 3, 9), '#6E8FA6', r, .95, .2);
+    wash(g, caraD(b, .35, .3, 0, 9), '#5A4632', r, .97, .2); techo(g, b, 3, 7, '#7A4E3A', '#CDC3AD', r);
+    const s = caraI(b, .2, .6, 13, 2.6); wash(g, s, '#2D5D72', r, .97, .2);
+    const q = V2(.38, .32); for (let k = 0; k < 3; k++) wash(g, [[q[0] - 3 + k * 2.2, q[1]], [q[0] - 1.4 + k * 2.2, q[1]], [q[0] - 1.4 + k * 2.2, q[1] - 5], [q[0] - 3 + k * 2.2, q[1] - 5]], ['#C0602A', '#2D6E5E', '#E7C76B'][k], r, .95, .2);
+  }]);
+  L.push(['teatro', 88, 84, 44, 62, (g, r) => {
+    sombra(g, 28, 7, 8); const b = iso(g, .7, .56, 0, 20, '#D9B98A', '#BE9C6C', null, r);
+    columnas(g, b, 4, 2, 15, '#F4EFE2'); wash(g, caraI(b, 0, 1, 18, 4), '#C9A473', r, .97, .2);
+    const t = b.up(V2(-.05, 0), 20); wash(g, [[t[0] - 22, t[1] + 6], [t[0] + 22, t[1] + 6], [t[0], t[1] - 10]], '#8E3B2E', r, .95, .3);
+    const m = V2(-.12, .32); blob(g, m[0], m[1] - 12, 3, 3, '#F4EFE2', r, .95); blob(g, m[0] + 6, m[1] - 12, 3, 3, '#E7C76B', r, .95);
+    const p2 = b.up(V2(.25, -.2), 20); bandera(g, p2[0], p2[1], 12, '#8E3B2E');
+  }]);
+  L.push(['estadio', 112, 84, 56, 58, (g, r) => {
+    sombra(g, 36, 8, 8);
+    const b = iso(g, .96, .8, 0, 12, '#CFC8B6', '#B3AB97', null, r);
+    const c0 = V2(0, 0, 12); g.fillStyle = '#7FA35C'; g.beginPath(); g.ellipse(c0[0], c0[1], 26, 13, 0, 0, 7); g.fill();
+    g.strokeStyle = '#F4F1E6'; g.lineWidth = .7; g.beginPath(); g.ellipse(c0[0], c0[1], 10, 5, 0, 0, 7); g.stroke();
+    for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; g.fillStyle = ['#C0392B', '#E7C76B', '#2D5D72', '#F4F1E6'][k % 4]; g.beginPath(); g.arc(c0[0] + Math.cos(a) * 31, c0[1] + Math.sin(a) * 15.5, 1.3, 0, 7); g.fill(); }
+    for (const u of [-.46, .46]) { const q = V2(u, -.38, 12); g.fillStyle = '#6B6258'; g.fillRect(q[0] - .6, q[1] - 22, 1.2, 22); g.fillStyle = '#F6E3A0'; g.fillRect(q[0] - 3, q[1] - 24, 6, 2.6); }
+  }]);
   // Estación de policía (fase 4): casa blanca con zócalo verde oliva, puerta y letrero azules, farol y un agente en la puerta.
   L.push(['policia', 74, 70, 37, 52, (g, r) => {
     sombra(g, 22, 6, 8); const b = iso(g, .56, .44, 0, 15, '#F1EEE6', '#D6D1C4', null, r);
