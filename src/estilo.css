@@ -323,3 +323,14 @@ html,body{background:#E6DABF}
   .arriba{padding-right:54px;padding-left:8px}
 }
 @media (min-width:760px){.meta{bottom:98px}}
+
+/* Fase 9: eventos de cine (franjas negras con el texto de la escena) */
+.cine{position:absolute;inset:0;z-index:6;cursor:pointer}
+.cine-franja{position:absolute;left:0;right:0;height:12vh;min-height:56px;background:#1E1612;transition:transform .35s ease}
+.cine-franja.arriba{top:0;transform:translateY(-100%)}
+.cine-franja.abajo{bottom:0;transform:translateY(100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 16px;text-align:center}
+.cine.on .cine-franja{transform:none}
+.cine-franja p{margin:0;color:#F7F1E3;font:italic 600 clamp(15px,2.2vw,22px)/1.3 Alegreya,Georgia,serif;max-width:46em}
+.cine-franja small{color:#C9B48E;font-size:12px;margin-top:2px}
+@media (prefers-reduced-motion:reduce){.cine-franja{transition:none}}
+#ui.en-cine > *:not(.cine){visibility:hidden}

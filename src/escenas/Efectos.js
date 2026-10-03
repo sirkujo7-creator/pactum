@@ -50,7 +50,7 @@ export class Efectos {
       const [hx, hy] = this.centroCasilla(hub), tipos = ['campesino', 'campesina', 'artesano', 'elite', 'nino'];
       for (let k = 0; k < 16; k++) {
         const x = hx + ((k * 29) % 46) - 23, y = hy + 22 + ((k * 7) % 12);
-        const img = this.scene.add.image(x, y, 'personas', `${tipos[k % 5]}_${k % 3}_${k % 2}_0`).setScale(.62 / 4).setOrigin(.5, 29 / 32);
+        const H = this.scene.pob.H, fk = `${tipos[k % 5]}_${k % 3}_${k % 2}_0`, m = H.marcos[fk], img = this.scene.add.image(x, y, 'personas', fk).setScale(.62 / H.escala).setOrigin(m.ax / m.w, m.ay / m.h); // fase 9: a la escala real de la hoja
         if (!reducirMovimiento() && vk === 'crowd') this.scene.tweens.add({ targets: img, y: y - 1.6, duration: 260 + k * 17, yoyo: true, repeat: -1 });
         this.encima.add(img);
       }

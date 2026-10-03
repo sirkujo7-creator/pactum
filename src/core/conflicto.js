@@ -73,7 +73,7 @@ export function conflictoDelAnio(S) {
   }
   // Efectos del año con el grupo armado.
   const X = P.efectos, n = Math.round(F.nivel / X.desplazados * (F.estrategia === 'ofensiva' ? E.desplazados : 1));
-  if (n > 0) { S.pop = Math.min(cap(S) + 6, S.pop + n); news.push(T.desplazados.replace('{n}', n)); }
+  if (n > 0) { S.pop = Math.min(cap(S) + 6, S.pop + n); news.push(T.desplazados.replace('{n}', n)); if (!S.desplEv || S.year - S.desplEv.anio >= 6) S.desplEv = { anio: S.year, n, nuevo: true }; } // fase 9: la caravana se ve cada 6 años como mucho
   const oro = Math.round(F.nivel * X.extorsion * S.price); S.gold -= oro; news.push(T.extorsion.replace('{oro}', oro));
   S.tr = clamp(S.tr - X.legitimidad, 0, 100); S.shock += X.inflacion / 100;
   // Toma armada.

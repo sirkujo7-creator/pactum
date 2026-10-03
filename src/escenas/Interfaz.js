@@ -566,6 +566,7 @@ export class Interfaz {
   // Fase 7: epidemias, avenidas torrenciales y sequías largas.
   amenazaAnio(alTerminar) {
     const S = this.S, e = S.amenEv, K = C.AMENAZAS;
+    if (e && e.tipo === 'avenida' && amenazasActivas(S) && this.escena('avenida', e, () => this.amenazaAnio(alTerminar))) return;
     S.amenEv = null;
     if (!e || !amenazasActivas(S)) { alTerminar(); return; }
     let html;
@@ -811,9 +812,21 @@ export class Interfaz {
     return r ? `<div class="says">${r}</div>` : '';
   }
   // Dilema o consecuencia del año.
+  // Fase 9: antes de la tarjeta, una escena de cine (una vez por suceso); al terminar se vuelve a llamar.
+  escena(tipo, clave, seguir, datos = {}) {
+    if (!tipo || !this.mapa.cine || this._escenaVista === clave) return false;
+    this._escenaVista = clave;
+    this.mapa.cine.jugar(tipo, datos, seguir);
+    return true;
+  }
   suceso(alTerminar) {
     const S = this.S, ev = S.pend;
     if (!ev) { if (alTerminar) alTerminar(); return; }
+    if (ev.mov && ev.movilizado) {
+      const lid = ev.mov === 'campesinos' && S.fig && S.fig.lider && S.fig.lider.visto, M = C.MOV.movimientos[ev.mov];
+      if (this.escena(lid ? 'marchaLider' : 'marcha', ev, () => this.suceso(alTerminar), { movimiento: M.nombre, lider: C.FIG.figuras.lider.nombre })) return;
+    }
+    if (/escandalo/.test(ev.id || '') && this.escena('escandalo', ev, () => this.suceso(alTerminar))) return;
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
       `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
@@ -956,6 +969,8 @@ export class Interfaz {
   // Fase 4: personajes con papel propio. Llegadas y misiones del año, en una sola tarjeta.
   figurasAnio(alTerminar0) {
     const S = this.S, L = S.figEv, alTerminar = () => this.desastreAnio(alTerminar0);
+    if (S.escandaloEv && S.escandaloEv.nuevo) { const e = S.escandaloEv; e.nuevo = false; if (this.escena('escandalo', e, () => this.figurasAnio(alTerminar0))) return; }
+    if (L && L.some(e => e.tipo === 'llega' && e.id === 'padre') && this.escena('procesion', L, () => this.figurasAnio(alTerminar0))) return;
     if (!L || !L.length) { alTerminar(); return; }
     S.figEv = null;
     const F = C.FIG.figuras, filas = L.map(e => {
@@ -973,6 +988,7 @@ export class Interfaz {
   desastreAnio(alTerminar0) {
     const S = this.S, d = S.desastre, alTerminar = () => this.conflictoAnio(alTerminar0);
     if (!d || !d.nuevo || !desastresActivos(S)) { alTerminar(); return; }
+    if (d.tipo !== 'alerta' && this.escena(d.tipo === 'erupcion' ? 'lahar' : 'terremoto', d, () => this.desastreAnio(alTerminar0))) return;
     d.nuevo = false;
     const VD = C.DESASTRES.volcan, Q = C.DESASTRES.terremoto;
     const voz = () => { const f = C.FIG.figuras.vulcanologa; return S.fig && S.fig.vulcanologa && S.fig.vulcanologa.visto ? `<div class="say pro"><div class="fig-r"><img src="${retratoFig('vulcanologa', f.retrato)}" alt=""></div><div><b>${f.nombre}</b><span>“Alerta ${VD.niveles[d.nivel].nombre.toLowerCase()}. ${VD.niveles[d.nivel].texto}”</span></div></div>` : ''; };
@@ -1000,7 +1016,9 @@ export class Interfaz {
   // Fase 4: conflicto armado (aparece el grupo, toma armada, acuerdo de paz o repliegue).
   conflictoAnio(alTerminar0) {
     const S = this.S, e = S.confEv, alTerminar = () => this.vecinosAnio(alTerminar0);
+    if (S.desplEv && S.desplEv.nuevo) { const x = S.desplEv; x.nuevo = false; if (this.escena('desplazados', x, () => this.conflictoAnio(alTerminar0))) return; }
     if (!e || !e.nuevo || !conflictoActivo(S)) { alTerminar(); return; }
+    if (e.tipo === 'toma' && this.escena('toma', e, () => this.conflictoAnio(alTerminar0))) return;
     e.nuevo = false;
     const K = C.CONF, g = K.grupo, T = K.textos;
     const titulo = { aparece: 'Conflicto armado en las veredas', toma: 'Toma armada', paz: 'Acuerdo de paz', repliega: 'El grupo armado se repliega' }[e.tipo];
