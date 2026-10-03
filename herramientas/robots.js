@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, costoDialogo, dialogar
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, costoDialogo, dialogar
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -14,6 +14,13 @@ const FONDO = typeof process !== 'undefined' && process.env.FONDO !== undefined 
 export function botYear(S, strat, eth, op = {}) {
   const prep = strat === 'fair' && !op.sinPrep;
   const want = strat === 'pop' ? { c: 5, a: 6, e: 12 } : strat === 'rich' ? { c: 18, a: 20, e: 10 } : strat === 'fair' ? { c: 8, a: 10, e: 25 } : null;
+  // Fase 7: en el terreno en acuarela, la estrategia equilibrada sube los impuestos poco a poco si hay déficit y le
+  // falta oro, y los baja si le sobra (como haría un jugador sensato ante los costos que suben con cada época).
+  if (prep && S.clima && S.year > 0) {
+    const F = finance(S), a = S.ajusteImp || 0;
+    S.ajusteImp = F.net < 0 && S.gold < 200 ? Math.min(12, a + 2) : F.net > 0 && S.gold > 400 ? Math.max(0, a - 2) : a;
+    if (S.ajusteImp) { want.e += S.ajusteImp; want.a += Math.round(S.ajusteImp / 3); want.c += Math.round(S.ajusteImp / 4); }
+  }
   if (want) ['c', 'a', 'e'].forEach(k => S.tx[k] = taxLimit(S, k, want[k]));
   // Fase 1: la estrategia equilibrada ahorra en el fondo de emergencias desde Pueblo, hasta tener lo que costaría
   // una emergencia hoy (o mientras haya un fenómeno anunciado).
@@ -26,6 +33,14 @@ export function botYear(S, strat, eth, op = {}) {
   if (prep && S.asent) for (const a of [...S.asent]) { if (S.gold > costoLegalizar(S) + 100) decidirAsentamiento(S, a.i, 'legalizar'); else if (a.nuevo) decidirAsentamiento(S, a.i, 'ignorar'); }
   // Fase 6: inventos: regulados si sobra oro; si no, libres.
   if (prep && S.tec && S.tec.pendiente) { const id = S.tec.pendiente; decidirInvento(S, id, S.gold > 200 ? 'regulada' : 'libre'); }
+  // Fase 7: ciclos de la economía: ahorrar la bonanza, subsidiar la crisis si alcanza, pensiones mixtas y renovar los
+  // cafetales cuando sobra el oro.
+  if (prep && S.ciclo) {
+    const Ci = S.ciclo;
+    if (Ci.cafe && !Ci.cafe.decidido) Ci.cafe.tipo === 'bonanza' ? decidirBonanza(S, 'ahorrar') : decidirCrisis(S, S.gold > costoSubsidio(S) + 60 ? 'subsidiar' : 'no');
+    if (Ci.pensionPend) elegirPension(S, 'mixto');
+    if (S.year >= 25 && !puedeRenovar(S) && S.gold > costoRenovar(S) + 150) renovarCafetales(S);
+  }
   // Fase 4: ante un grupo armado, la estrategia equilibrada invierte en las veredas si tiene oro; si no, dialoga.
   if (prep && hayGrupo(S)) elegirEstrategia(S, S.gold > 150 ? 'inversion' : 'dialogo');
   // Fase 4: la estrategia equilibrada prepara la evacuación cuando el volcán pasa a alerta naranja.

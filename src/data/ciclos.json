@@ -1,0 +1,103 @@
+{
+  "costosEpoca": {
+    "fundacion": 1,
+    "cafe": 1.01,
+    "violencia": 1.02,
+    "modernizacion": 1.03,
+    "paz": 1.04,
+    "digital": 1.05
+  },
+  "textoCostos": "Cada época encarece el gobierno: salarios, materiales y servicios cuestan más.",
+  "cafe": {
+    "desde": 20,
+    "prob": 0.08,
+    "enfriar": 12,
+    "bonanza": {
+      "anios": 3,
+      "precio": 1.8,
+      "bono": 30,
+      "interes": 1.25
+    },
+    "crisis": {
+      "anios": 4,
+      "precio": 0.55,
+      "subsidio": 8,
+      "animo": 9,
+      "legitimidad": 3
+    },
+    "textos": {
+      "bonanza": "¡Bonanza cafetera! Una helada en Brasil disparó el precio internacional del café. Durante unos años entrará mucho dinero.",
+      "crisis": "Crisis del café: se rompió el pacto internacional de cuotas y el precio se desplomó. Los caficultores no cubren sus costos.",
+      "conFondo": "El fondo de estabilización que ahorraste en la bonanza paga el apoyo a los caficultores.",
+      "fin": "El precio del café vuelve a la normalidad."
+    },
+    "leccion": "El precio del café sube y baja con el mercado mundial. El Fondo Nacional del Café (1940) ahorraba en las bonanzas para sostener a los caficultores en las crisis. Gastar toda una bonanza es tentador, pero deja al territorio desprotegido cuando llega la caída."
+  },
+  "roya": {
+    "desde": 30,
+    "prob": 0.05,
+    "enfriar": 20,
+    "anios": 3,
+    "rinde": 0.4,
+    "animo": 6,
+    "renovar": 12,
+    "textos": {
+      "llega": "La roya, un hongo que seca las hojas del café, se extendió por los cafetales. La cosecha cae a menos de la mitad durante unos años.",
+      "resiste": "Llegó la roya, pero tus cafetales renovados con variedad resistente aguantaron.",
+      "fin": "Los cafetales se recuperaron de la roya.",
+      "riesgo": "La roya puede llegar a los cafetales"
+    },
+    "leccion": "Entre 2008 y 2011 la roya redujo la cosecha de café de Colombia a la mitad. Los caficultores que renovaron con variedades resistentes, como la Castillo, creada por Cenicafé, resistieron mejor. La investigación agrícola es una forma de prevención."
+  },
+  "pensiones": {
+    "desde": 50,
+    "vejezAnios": 40,
+    "sistemas": {
+      "reparto": {
+        "nombre": "Reparto (prima media)",
+        "icono": "🤝",
+        "texto": "Los que trabajan hoy pagan las pensiones de los mayores. Protege a todos, pero cuesta más a medida que la población envejece.",
+        "costo": 0.1,
+        "efectos": {
+          "animo": 4,
+          "igualdad": 3
+        }
+      },
+      "individual": {
+        "nombre": "Ahorro individual",
+        "icono": "🏦",
+        "texto": "Cada persona ahorra para su propia vejez en un fondo privado. Cuesta poco al tesoro, pero muchos campesinos e informales quedan sin pensión.",
+        "costo": 0.03,
+        "efectos": {
+          "igualdad": -6,
+          "campesinos": -5,
+          "elite": 4
+        }
+      },
+      "mixto": {
+        "nombre": "Mixto con pilar solidario",
+        "icono": "⚖️",
+        "texto": "Una pensión básica para todos pagada por el tesoro, y ahorro propio por encima. Un punto medio.",
+        "costo": 0.06,
+        "efectos": {
+          "igualdad": 1,
+          "animo": 1
+        }
+      }
+    },
+    "textos": {
+      "llega": "La población envejece: cada vez más personas llegan a la vejez sin poder trabajar. Hay que decidir cómo se pagan las pensiones.",
+      "cambiar": "Cambiar de sistema cuesta legitimidad: 4 puntos."
+    },
+    "leccion": "En Colombia conviven dos sistemas desde la Ley 100 de 1993: el de reparto (Colpensiones) y el de ahorro individual (fondos privados). Con menos jóvenes y más viejos, pagar las pensiones es uno de los grandes retos de las finanzas públicas."
+  },
+  "migracion": {
+    "desde": 50,
+    "tasa": 0.008,
+    "universidad": 0.004,
+    "biblioteca": 0.002,
+    "internet": 0.003,
+    "texto": "{n} jóvenes se fueron a estudiar o a trabajar en la ciudad.",
+    "leccion": "Los jóvenes se van del campo cuando no encuentran estudio ni trabajo. Una universidad, una biblioteca o internet les dan razones para quedarse."
+  }
+}

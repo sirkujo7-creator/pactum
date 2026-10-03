@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -235,7 +235,7 @@ export class Interfaz {
       <div class="macro"><div><strong class="${S.infl > .06 ? 'neg' : ''}">${(S.infl * 100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate * 100)}%</strong><span>Tasa de interés</span></div></div>
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
-        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}${F.militar ? `<tr><td>Gasto militar</td><td>−${F.militar}</td></tr>` : ''}
+        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.pensiones ? `<tr><td>Pensiones</td><td>−${F.pensiones}</td></tr>` : ''}${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}${F.militar ? `<tr><td>Gasto militar</td><td>−${F.militar}</td></tr>` : ''}
         ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
@@ -246,7 +246,7 @@ export class Interfaz {
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${this.seccionRiesgo()}${this.seccionMega()}
-      ${this.seccionEconomia()}
+      ${this.seccionEconomia()}${this.seccionCiclos()}
       ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
@@ -261,6 +261,9 @@ export class Interfaz {
       };
     });
     this.cuentas.querySelectorAll('[data-mega]').forEach(b => b.onclick = () => this.explicarMega(b.dataset.mega));
+    this.cuentas.querySelectorAll('[data-pension]').forEach(b => b.onclick = () => { if (elegirPension(S, b.dataset.pension)) { this.toast(`Pensiones: ${C.CICLOS.pensiones.sistemas[b.dataset.pension].nombre.toLowerCase()}.`); this.mapa.cambio(); this.render(); } });
+    const ren = this.cuentas.querySelector('[data-renovar]');
+    if (ren) ren.onclick = () => { if (renovarCafetales(S)) { this.toast('Cafetales renovados con variedad resistente a la roya.'); this.mapa.cambio(); this.render(); } };
     const pl = this.cuentas.querySelector('[data-plan]');
     if (pl) pl.onclick = () => { if (comprarPlan(S)) { this.toast('Plan de evacuación listo: sirenas, rutas y simulacros.'); this.mapa.cambio(true); this.render(); } };
     const mil = this.cuentas.querySelector('[data-militar]');
@@ -485,8 +488,8 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 7: empieza una época de la historia.
-  eraAnio(alTerminar) {
-    const S = this.S, e = S.eraEv;
+  eraAnio(alTerminar0) {
+    const S = this.S, e = S.eraEv, alTerminar = () => this.cicloAnio(alTerminar0);
     if (!e || !e.nuevo || !historiaActiva(S)) { alTerminar(); return; }
     e.nuevo = false;
     const E = datosEpoca(e.id), sig = proximaEpoca(S);
@@ -494,6 +497,38 @@ export class Interfaz {
       <p class="small">Esta época trae sus propios dilemas${sig ? ` hasta el año ${sig.desde}` : ''}.</p>
       <div class="phil"><b>Lo que enseña</b><br>${E.leccion}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 7: ciclos de la economía (bonanza, crisis del café, roya, pensiones). Las decisiones no se pueden saltar.
+  cicloAnio(alTerminar) {
+    const S = this.S, L = S.cicloEv;
+    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; alTerminar(); return; }
+    const e = L.shift(), K = C.CICLOS, sigue = () => this.cicloAnio(alTerminar);
+    const fin = (msg) => { if (msg) this.toast(msg); this.mapa.cambio(); this.render(); this.alCerrar = sigue; this.cerrarTarjeta(); };
+    if (e.tipo === 'bonanza') {
+      const b = bonoBonanza(S);
+      this.tarjeta(`<div class="big">📈</div><h3>Bonanza cafetera</h3><p>${K.cafe.textos.bonanza}</p>
+        <button class="opt" data-c="ahorrar"><b>Ahorrar en un fondo de estabilización</b><small>Guardas ${Math.round(b * K.cafe.bonanza.interes)} de oro (con intereses) para sostener a los caficultores en la próxima crisis.</small></button>
+        <button class="opt" data-c="gastar"><b>Gastar la bonanza ya</b><small>Entran ${b} de oro al tesoro hoy.</small></button>
+        <div class="phil"><b>Lo que enseña</b><br>${K.cafe.leccion}</div>`, false);
+      this.card.querySelectorAll('[data-c]').forEach(x => x.onclick = () => { decidirBonanza(S, x.dataset.c); fin(x.dataset.c === 'ahorrar' ? 'Bonanza ahorrada en el fondo del café.' : 'La bonanza entra al tesoro.'); });
+    } else if (e.tipo === 'crisis') {
+      const d = S.ciclo.cafe && S.ciclo.cafe.decidido === 'fondo';
+      this.tarjeta(`<div class="big">📉</div><h3>Crisis del café</h3><p>${K.cafe.textos.crisis}</p>${d ? `<p><b>${K.cafe.textos.conFondo}</b></p><button class="main" id="okB">Continuar</button>` : `
+        <button class="opt" data-c="subsidiar"><b>Subsidiar a los caficultores</b><small>Cuesta ${costoSubsidio(S)} de oro.</small></button>
+        <button class="opt" data-c="no"><b>No subsidiar</b><small>Los campesinos lo sentirán y la legitimidad baja.</small></button>`}
+        <div class="phil"><b>Lo que enseña</b><br>${K.cafe.leccion}</div>`, d);
+      if (d) this.boton('okB', () => fin()); else this.card.querySelectorAll('[data-c]').forEach(x => x.onclick = () => { decidirCrisis(S, x.dataset.c); fin(x.dataset.c === 'subsidiar' ? 'Subsidio a los caficultores.' : 'Sin subsidio: el campo lo resiente.'); });
+    } else if (e.tipo === 'roya' || e.tipo === 'royaResiste') {
+      this.tarjeta(`<div class="big">🍂</div><h3>La roya del café</h3><p>${e.tipo === 'roya' ? K.roya.textos.llega : K.roya.textos.resiste}</p>${e.tipo === 'roya' ? '<p class="small">Para la próxima: renueva los cafetales en Hacienda → Ciclos de la economía.</p>' : ''}
+        <div class="phil"><b>Lo que enseña</b><br>${K.roya.leccion}</div><button class="main" id="okB">Continuar</button>`);
+      this.boton('okB', () => fin());
+    } else if (e.tipo === 'pensiones') {
+      const P = K.pensiones;
+      this.tarjeta(`<div class="big">👵</div><h3>Las pensiones</h3><p>${P.textos.llega}</p>
+        ${Object.entries(P.sistemas).map(([k, x]) => `<button class="opt" data-c="${k}"><b>${x.icono} ${x.nombre}</b><small>${x.texto}</small></button>`).join('')}
+        <div class="phil"><b>Lo que enseña</b><br>${P.leccion}</div>`, false);
+      this.card.querySelectorAll('[data-c]').forEach(x => x.onclick = () => { elegirPension(S, x.dataset.c); fin(`Pensiones: ${P.sistemas[x.dataset.c].nombre.toLowerCase()}.`); });
+    } else sigue();
   }
   tarjetaInvento(id, alTerminar) {
     const S = this.S, I = C.TEC.inventos[id];
@@ -611,6 +646,22 @@ export class Interfaz {
     return `<h3>Economía</h3>
       <div class="macro"><div><strong>${f.icono}</strong><span>${f.nombre}</span></div><div><strong class="${precioAlimento(S) >= 1.15 ? 'neg' : ''}">${x(precioAlimento(S))}</strong><span>Precio del alimento</span></div><div><strong>${x(precioCafe(S))}</strong><span>Precio del café</span></div></div>
       <p class="small">${f.texto ? f.texto + ' ' : ''}${S.eco.aviso ? `<b>${E.textos.aviso.replace('{anio}', S.eco.aviso.anio)}</b> ` : ''}${E.leccion}</p>`;
+  }
+  // Fase 7: economía con ciclos (costos por época, café, roya, pensiones y migración).
+  seccionCiclos() {
+    const S = this.S;
+    if (!ciclosActivos(S) || S.stage < 1) return '';
+    const K = C.CICLOS, Ci = S.ciclo || {}, caf = counts(S).cafetal, f = factorCostos(S), filas = [];
+    if (f > 1) filas.push(`<p class="small">💸 ${K.textoCostos} Hoy los costos del gobierno están en <b>×${f.toLocaleString('es-CO')}</b>.</p>`);
+    if (Ci.cafe) filas.push(`<p class="small">${Ci.cafe.tipo === 'bonanza' ? '📈 <b>Bonanza cafetera</b>' : '📉 <b>Crisis del café</b>'} hasta el año ${Ci.cafe.hasta}.</p>`);
+    if (Ci.fondoCafe) filas.push(`<p class="small">☕ Fondo de estabilización del café: <b>${Math.round(Ci.fondoCafe)} de oro</b> guardados para la próxima crisis.</p>`);
+    if (caf && S.year >= K.roya.desde - 5) filas.push(`<p class="small">🍂 ${Ci.roya ? `<b>La roya ataca los cafetales</b> hasta el año ${Ci.roya.hasta + 1}: rinden ${Math.round(factorRoya(S) * 100)}%.` : Ci.resistente ? 'Tus cafetales son resistentes a la roya.' : `${K.roya.textos.riesgo}. Renovarlos con variedad resistente cuesta ${costoRenovar(S)} de oro.`}</p>
+      ${!Ci.resistente ? `<button class="btn" data-renovar ${puedeRenovar(S) ? 'disabled' : ''}>Renovar los cafetales</button>` : ''}`);
+    if (Ci.pension) { const P = K.pensiones; filas.push(`<p class="small">👵 Pensiones: <b>${P.sistemas[Ci.pension].nombre}</b>, ${costoPensiones(S)} de oro por año (crece con el envejecimiento: ${Math.round(vejez(S) * 100)}%). ${P.textos.cambiar}</p>
+      <div class="dos">${Object.entries(P.sistemas).filter(([k]) => k !== Ci.pension).map(([k, x]) => `<button class="btn" data-pension="${k}">${x.icono} ${x.nombre}</button>`).join('')}</div>`); }
+    const m = tasaMigracion(S);
+    if (S.year >= K.migracion.desde) filas.push(`<p class="small">🧳 Cada año se va a la ciudad el <b>${(m * 100).toLocaleString('es-CO', { maximumFractionDigits: 1 })}%</b> de la población. ${K.migracion.leccion}</p>`);
+    return filas.length ? `<h3>Ciclos de la economía</h3>${filas.join('')}` : '';
   }
   // Fase 1: control de mantenimiento (desde 25 habitantes), estado de las obras y reparación.
   seccionMantenimiento() {

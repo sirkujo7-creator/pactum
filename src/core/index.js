@@ -42,3 +42,4 @@ export * from './tecnologia.js';
 export * from './megaproyectos.js';
 export * from './rio.js';
 export * from './historia.js';
+export * from './ciclos.js';

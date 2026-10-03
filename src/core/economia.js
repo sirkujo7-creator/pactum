@@ -5,6 +5,7 @@ import { azar, clamp } from './azar.js';
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { counts } from './reglas.js';
+import { metaCafe } from './ciclos.js';
 
 const K = () => C.ECO;
 export function ecoInicial() { return { fase: 'normal', anios: 0, aviso: null, cafe: 1, pa: 1, abierta: false, evento: null }; }
@@ -43,7 +44,7 @@ export function economiaDelAnio(S, F) {
   E.pa = Math.round((1 + (E.pa - 1) * (1 - Math.min(.3, .06 * counts(S).mercado))) * 100) / 100;
   if (E.pa >= 1.3 && antes < 1.3) news.push(T.precioAlto); else if (E.pa <= .8 && antes > .8) news.push(T.precioBajo);
   // Café: tiende al valor de la fase, con sorpresas del mercado internacional.
-  const Cf = K().cafe, meta = Cf[E.fase] || 1;
+  const Cf = K().cafe, meta = (Cf[E.fase] || 1) * metaCafe(S); // fase 7: bonanzas y crisis del café
   E.cafe = Math.round(clamp(E.cafe + (meta - E.cafe) * Cf.ajuste + (azar() - .5) * Cf.ruido, Cf.minimo, Cf.maximo) * 100) / 100;
   // Ciclo económico.
   const siguiente = S.year + 1, respiro = C.CLIMA.fenomenos.respiro, K2 = S.clima;
