@@ -40,3 +40,4 @@ export * from './memoria.js';
 export * from './epocas.js';
 export * from './tecnologia.js';
 export * from './megaproyectos.js';
+export * from './rio.js';

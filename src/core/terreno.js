@@ -30,10 +30,12 @@ export const BIOMA = {
 };
 export function metros(h) { return Math.round((300 + h * 450) / 50) * 50; }
 
-export function genTerreno(seed, N) {
-  const n1 = makeNoise(seed), n2 = makeNoise(seed + 17), n3 = makeNoise(seed + 99);
+// desvios (fase 6): cambios de curso del río por la erosión y las crecidas; cada uno empuja el cauce en un tramo.
+export function genTerreno(seed, N, desvios) {
+  const n1 = makeNoise(seed), n2 = makeNoise(seed + 17), n3 = makeNoise(seed + 99), dv = desvios || [];
   // El río cruza en diagonal; su curva depende de la semilla.
-  const riverMid = s => N * 1.08 + 2.6 * Math.sin(s * Math.PI * 1.6 + seed % 7) + 1.2 * Math.sin(s * Math.PI * 4.1 + seed % 3);
+  const riverMid = s => N * 1.08 + 2.6 * Math.sin(s * Math.PI * 1.6 + seed % 7) + 1.2 * Math.sin(s * Math.PI * 4.1 + seed % 3)
+    + dv.reduce((t, d) => t + d.a * Math.exp(-(((s - d.s) / d.w) ** 2)), 0);
   const riverD = (r, c) => { const s = (c - r) / N; return Math.abs((r + c) - riverMid(s)) / Math.SQRT2; };
   const side = (r, c) => { const s = (c - r) / N; return Math.sign((r + c) - riverMid(s)); };
   // Altura: cordillera al fondo, colinas, cauce del río y un cerro aislado al frente.
