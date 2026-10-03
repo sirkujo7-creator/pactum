@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -41,6 +41,18 @@ export function botYear(S, strat, eth, op = {}) {
     if (Ci.pensionPend) elegirPension(S, 'mixto');
     if (S.year >= 25 && !puedeRenovar(S) && S.gold > costoRenovar(S) + 150) renovarCafetales(S);
     if (!puedeVigilancia(S) && S.gold > costoVigilancia(S) + 150) comprarVigilancia(S);
+  }
+  // Fase 9: la estrategia equilibrada abre calles desde el centro hasta la obra más cercana que aún no tiene una.
+  if (prep && callesActivas(S) && S.year >= 4 && S.year % 3 === 0 && S.gold > 150) {
+    const N = lado(S), c0 = centroPueblo(S);
+    if (c0 >= 0) {
+      const dc = i => Math.hypot(Math.floor(i / N) - Math.floor(c0 / N), i % N - c0 % N);
+      const cand = S.map.map((x, i) => i).filter(i => i !== c0 && S.map[i].b && S.map[i].b !== 'cultivo' && !S.map[i].ob && !conectada(S, i)).sort((a, b) => dc(a) - dc(b));
+      for (const i of cand.slice(0, 2)) {
+        const ruta = trazarCalle(S, esquina(N, Math.floor(c0 / N), c0 % N), esquina(N, Math.floor(i / N), i % N));
+        if (ruta && costoCalle(S, ruta).oro <= S.gold - 120) construirCalle(S, ruta);
+      }
+    }
   }
   // Fase 4: ante un grupo armado, la estrategia equilibrada invierte en las veredas si tiene oro; si no, dialoga.
   if (prep && hayGrupo(S)) elegirEstrategia(S, S.gold > 150 ? 'inversion' : 'dialogo');

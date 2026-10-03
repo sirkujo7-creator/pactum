@@ -4,6 +4,7 @@
 import { C } from './contenido.js';
 import { lado } from './mundo.js';
 import { climaActivo } from './clima.js';
+import { radioCalle, menosEvasion } from './calles.js';
 
 const K = () => C.COB;
 export const SERVICIOS = ['escuela', 'hospital', 'mercado', 'recaudo', 'policia'];
@@ -24,7 +25,7 @@ export function centroPueblo(S) {
 // Puntos que prestan un servicio, con su radio.
 export function puntosDe(S, servicio) {
   const R = K().radios, p = [];
-  S.map.forEach((x, i) => { if (sirve(x) && x.b === servicio) p.push({ i, r: R[servicio] }); });
+  S.map.forEach((x, i) => { if (sirve(x) && x.b === servicio) p.push({ i, r: R[servicio] + radioCalle(S, i) }); }); // fase 9: con calle llega más lejos
   if (servicio === 'recaudo') {
     const c = centroPueblo(S);
     if (c >= 0) p.push({ i: c, r: S.map[c].b === 'agora' ? R.agora : R.centro, centro: true });
@@ -43,7 +44,7 @@ export function cobertura(S) {
   S.map.forEach((x, i) => {
     if (!sirve(x)) return;
     if (x.b === 'casa') casas.push(i);
-    else if (P[x.b]) P[x.b].push({ i, r: R[x.b] });
+    else if (P[x.b]) P[x.b].push({ i, r: R[x.b] + radioCalle(S, i) });
     else if (x.b === 'agora' && ag < 0) ag = i;
   });
   if (!casas.length) return out;
@@ -72,7 +73,7 @@ export function ordenarSitios(S, servicio, candidatas, extra = () => 0) {
   return candidatas.map(i => [i, nota(i)]).sort((a, b) => a[1] - b[1]).map(x => x[0]);
 }
 // Parte de los impuestos que se pierde por evasión.
-export function evasion(S) { return coberturaActiva(S) ? K().evasion * (1 - cobertura(S).recaudo) : 0; }
+export function evasion(S) { return coberturaActiva(S) ? K().evasion * (1 - cobertura(S).recaudo) * menosEvasion(S) : 0; } // fase 9: las casas sobre una calle evaden menos
 export function distanciaCentro(S, i) { const c = centroPueblo(S); return c < 0 ? 0 : dist(S, c, i); }
 // Función de distancia al centro (busca el centro una sola vez).
 export function medirDesdeCentro(S) { const c = centroPueblo(S); return i => c < 0 ? 0 : dist(S, c, i); }

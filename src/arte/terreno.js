@@ -2,7 +2,7 @@
 // Cada sector es un lienzo con un bloque de casillas; si algo cambia, solo se repinta su sector.
 import { mulberry, clamp, shade, mix, poly, wash, blob, grano, lienzo } from './acuarela.js';
 import { P, TW, TH, EL, alturaEn } from './iso.js';
-import { yeso } from './fresco.js';
+import { yeso, FR } from './fresco.js';
 
 export const LADO_SECTOR = 8;
 const BASE = -2.2; // profundidad de los costados del diorama
@@ -156,7 +156,8 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   if (opciones.mapa) {
     g.save(); recortar();
     pintarSuelo(g, T, opciones.mapa, k, dry);
-    pintarObras(g, T, opciones.mapa, k, dry);
+    pintarObras(g, T, opciones.mapa, k, dry, !!opciones.calles);
+    if (opciones.calles) pintarCalles(g, T, opciones.calles, k);
     g.restore();
   }
 
@@ -215,10 +216,10 @@ export function caminos(T, mapa) {
   return { segs, puentes };
 }
 
-function pintarObras(g, T, mapa, k, dry) {
+function pintarObras(g, T, mapa, k, dry, conCalles) {
   const N = T.N, cerca = t => t.r >= k.r0 - 2 && t.r < k.r1 + 2 && t.c >= k.c0 - 2 && t.c < k.c1 + 2;
   const lista = T.tiles.filter(t => mapa[t.r * N + t.c].b && cerca(t)).sort((a, b) => (a.r + a.c) - (b.r + b.c));
-  const { segs, puentes } = caminos(T, mapa);
+  const { segs, puentes } = conCalles ? { segs: [], puentes: [] } : caminos(T, mapa); // fase 9: con calles, el jugador traza los caminos
   const centro = i => { const t = T.tiles[i]; return { r: t.r + .5, c: t.c + .5, h: mapa[i].b && DE_PIE.has(mapa[i].b) ? t.h : T.hf(t.r + .5, t.c + .5) }; };
   // Campos y minas (siguen el terreno).
   for (const t of lista) {
@@ -266,6 +267,49 @@ function pintarObras(g, T, mapa, k, dry) {
     wash(g, top, b === 'parque' ? mix('#9CC57D', DRYC, dry * .5) : '#CDBB93', rng, .95, .6);
     if (b === 'parque') { const c = P(t.r + .5, t.c + .5, h); g.globalAlpha = .7; g.fillStyle = '#E7DDC4'; g.beginPath(); g.ellipse(c[0], c[1], 17, 7, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
     else { g.globalAlpha = .18; g.strokeStyle = '#8C7250'; g.lineWidth = .6; for (let s = 0; s < 5; s++) { const c = P(t.r + .2 + rng() * .6, t.c + .2 + rng() * .6, h); g.beginPath(); g.moveTo(c[0] - 3, c[1]); g.lineTo(c[0] + 3, c[1] + .5); g.stroke(); } g.globalAlpha = 1; }
+  }
+}
+
+// ---------- Calles en damero (fase 9) ----------
+// dib: { era, tramos: [[a, b, agua]], esquinas: [[e, v1, v2]] }, con esquinas e = r * (N + 1) + c.
+export const ESTILO_CALLE = {
+  herradura: { ancho: 5, borde: FR.siena, color: mix(FR.ocre, FR.ocreClaro, .45) },
+  empedrado: { ancho: 7, borde: FR.siena, color: mix(FR.cal, '#B9AE9A', .55) },
+  carretera: { ancho: 9, borde: FR.carbon, color: '#5E5852' }
+};
+function pintarCalles(g, T, dib, k) {
+  const N = T.N, M = N + 1, E = ESTILO_CALLE[dib.era] || ESTILO_CALLE.herradura;
+  const rc = e => [Math.floor(e / M), e % M], dentro = e => { const [r, c] = rc(e); return r >= k.r0 - 1 && r <= k.r1 + 1 && c >= k.c0 - 1 && c <= k.c1 + 1; };
+  const tramos = dib.tramos.filter(([a, b]) => dentro(a) || dentro(b));
+  if (!tramos.length) return;
+  // Puntos del tramo siguiendo el relieve (los puentes van rectos, a la altura de las orillas).
+  const pts = (a, b, agua) => {
+    const [r1, c1] = rc(a), [r2, c2] = rc(b), L = [];
+    if (agua) return [P(r1, c1, T.hv(r1, c1)), P(r2, c2, T.hv(r2, c2))];
+    for (let s2 = 0; s2 <= 4; s2++) { const f = s2 / 4, r = lerp(r1, r2, f), c = lerp(c1, c2, f); L.push(P(r, c, T.hf(Math.min(N, r), Math.min(N, c)))); }
+    return L;
+  };
+  const geo = tramos.map(([a, b, agua]) => ({ a, b, agua, L: pts(a, b, agua) }));
+  const linea = L => { g.beginPath(); L.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); };
+  const capa = (ancho, col, al, dash) => { g.save(); g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = ancho; g.lineCap = 'round'; g.lineJoin = 'round'; if (dash) g.setLineDash(dash); for (const t of geo) linea(t.L); g.restore(); };
+  capa(E.ancho + 2.2, E.borde, .5); capa(E.ancho, E.color, 1);
+  const enLinea = (L, t) => { const n = L.length - 1, x = Math.min(n - 1e-6, t * n), i = Math.floor(x), f = x - i; return [lerp(L[i][0], L[i + 1][0], f), lerp(L[i][1], L[i + 1][1], f)]; };
+  if (dib.era === 'empedrado') { g.save(); g.fillStyle = shade(E.color, -.25); g.globalAlpha = .55; for (const t of geo) { const R = mulberry(t.a * 31 + t.b); for (let j = 0; j < 16; j++) { const p = enLinea(t.L, R()); g.beginPath(); g.ellipse(p[0] + (R() - .5) * 4, p[1] + (R() - .5) * 2.4, 1, .65, 0, 0, 7); g.fill(); } } g.restore(); }
+  if (dib.era === 'carretera') capa(.8, FR.ocre, .9, [4, 4]);
+  if (dib.era === 'herradura') { g.save(); g.fillStyle = FR.siena; g.globalAlpha = .3; for (const t of geo) for (let j = 1; j < 6; j++) { const p = enLinea(t.L, j / 6); g.beginPath(); g.arc(p[0], p[1], .6, 0, 7); g.fill(); } g.restore(); }
+  // Puentes: tramos sobre el agua y esquinas por donde pasa el río.
+  const puente = (p, q) => {
+    g.save(); g.lineCap = 'butt';
+    g.strokeStyle = FR.siena; g.globalAlpha = .55; g.lineWidth = E.ancho + 6; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke();
+    g.globalAlpha = 1; g.strokeStyle = dib.era === 'herradura' ? FR.sienaClara : FR.cal; g.lineWidth = E.ancho + 4; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke();
+    g.strokeStyle = E.color; g.lineWidth = E.ancho - .5; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); g.restore();
+  };
+  const alargar = (p, q, f) => { const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; return [[m[0] + (p[0] - m[0]) * f, m[1] + (p[1] - m[1]) * f], [m[0] + (q[0] - m[0]) * f, m[1] + (q[1] - m[1]) * f]]; };
+  for (const t of geo) if (t.agua) puente(...alargar(t.L[0], t.L[1], 1.1));
+  for (const [e, v1, v2] of dib.esquinas || []) {
+    if (!dentro(e)) continue;
+    const [r, c] = rc(e), h = T.hv(r, c), mitad = v => { const [R, Cc] = rc(v); return P((r + R) / 2, (c + Cc) / 2, Math.max(h, T.hf(Math.min(N, (r + R) / 2), Math.min(N, (c + Cc) / 2)))); };
+    puente(mitad(v1), mitad(v2));
   }
 }
 

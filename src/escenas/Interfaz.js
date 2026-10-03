@@ -4,12 +4,13 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
 import { partida } from './partida.js';
 import { iconoObra } from '../arte/edificios.js';
+import { iconoCalle } from '../arte/calles.js';
 import { retrato, retratoFig, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
@@ -119,7 +120,7 @@ export class Interfaz {
     const S = this.S, clave = `${k}-${S.stage >= 2 ? 2 : 0}-${k === 'agora' ? S.reg : ''}`;
     return this.iconos[clave] || (this.iconos[clave] = iconoObra(k, S.stage, S.reg));
   }
-  nombre(k) { return k === 'agora' ? seatName(this.S) : C.B[k].n; }
+  nombre(k) { return k === 'agora' ? seatName(this.S) : k === 'calle' ? C.CALLES.textos.herramienta : k === 'quitarCalle' ? C.CALLES.textos.quitar : C.B[k].n; }
   hayTarjeta() { return !this.velo.hidden; }
 
   // ---------- Paneles ----------
@@ -221,8 +222,28 @@ export class Interfaz {
         el('small', { html: bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}` })
       ]);
     }));
+    // Fase 9: calles en damero (van por los bordes de las casillas); van primero para que se vean en el celular.
+    if (callesActivas(S)) {
+      const era = eraCalle(S), E = C.CALLES.eras[era], oro = IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"');
+      this.tray.prepend(...[['calle', false], ['quitarCalle', true]].map(([k, quitar]) => el('button', {
+        class: 'tool' + (this.herramienta === k ? ' on' : ''), 'aria-pressed': String(this.herramienta === k), on: { click: () => this.elegir(k) }
+      }, [el('img', { src: iconoCalle(era, quitar), alt: '' }), this.nombre(k), el('small', { html: quitar ? 'sin devolución' : `${oro} ${Math.round(E.costo * S.price)} por tramo` })])));
+    }
     const k = this.herramienta;
-    if (k) {
+    if (k === 'calle' || k === 'quitarCalle') {
+      const T = C.CALLES.textos, E = C.CALLES.eras[eraCalle(S)], tr = this.mapa.trazoCalle, pre = this.mapa.presupuestoCalle();
+      const paso = k === 'quitarCalle' ? T.quitarAyuda : pre ? '' : tr ? T.destino : T.inicio;
+      const partes = [el('div', { html: `<b>${k === 'calle' ? E.nombre : T.quitar}.</b> ${k === 'calle' && !tr ? `${T.ayuda} <span class="prev small">${T.efectos} Mantenimiento: ${C.CALLES.eras[eraCalle(S)].mantenimiento.toLocaleString('es-CO')} de oro por tramo al año.</span>` : ''}` })];
+      if (paso) partes.push(el('div', { class: 'prev', text: paso }));
+      if (pre) {
+        partes.push(el('div', { class: 'prev', html: `${pre.tramos} tramo${pre.tramos === 1 ? '' : 's'} nuevo${pre.tramos === 1 ? '' : 's'}${pre.puentes ? ` y ${pre.puentes} puente${pre.puentes > 1 ? 's' : ''}` : ''}: <b>${pre.oro} de oro</b>.${pre.ambiente ? ` Cruza el bosque: −${pre.ambiente.toLocaleString('es-CO')} de ambiente.` : ''}${pre.oro > S.gold ? ` <span class="neg">${T.sinOro}</span>` : ''}` }));
+        partes.push(el('div', { class: 'dos' }, [
+          el('button', { class: 'btn', ...(pre.oro > S.gold || !pre.tramos ? { disabled: '' } : {}), on: { click: () => this.mapa.confirmarCalle() } }, 'Construir la calle'),
+          el('button', { class: 'btn', on: { click: () => this.mapa.cancelarCalle() } }, 'Cancelar')
+        ]));
+      }
+      this.hint.replaceChildren(...partes);
+    } else if (k) {
       const v = vistaPrevia(S, k);
       let prev;
       if (v.motivo) prev = `<span class="prev neg">${v.motivo}</span>`;
@@ -245,7 +266,7 @@ export class Interfaz {
       <div class="macro"><div><strong class="${S.infl > .06 ? 'neg' : ''}">${(S.infl * 100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate * 100)}%</strong><span>Tasa de interés</span></div></div>
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
-        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.pensiones ? `<tr><td>Pensiones</td><td>−${F.pensiones}</td></tr>` : ''}${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}${F.militar ? `<tr><td>Gasto militar</td><td>−${F.militar}</td></tr>` : ''}
+        <tr><td>Tasas y regalías</td><td>+${F.fee}</td></tr><tr><td>Mantenimiento de obras${S.desgaste && (S.mant ?? 100) < 100 ? ` (${S.mant}%)` : ''}</td><td>−${F.up}</td></tr><tr><td>Administración pública</td><td>−${F.admin}</td></tr>${F.pensiones ? `<tr><td>Pensiones</td><td>−${F.pensiones}</td></tr>` : ''}${F.calles ? `<tr><td>Mantenimiento de calles</td><td>−${F.calles}</td></tr>` : ''}${F.obras ? `<tr><td>Obras en construcción (si alcanza el oro)</td><td>−${F.obras}</td></tr>` : ''}${F.militar ? `<tr><td>Gasto militar</td><td>−${F.militar}</td></tr>` : ''}
         ${F.lawCost ? `<tr><td>Costo de las leyes</td><td>−${F.lawCost}</td></tr>` : ''}${F.fondo ? `<tr><td>Aporte al fondo de emergencias</td><td>−${F.fondo}</td></tr>` : ''}
         ${F.pay ? `<tr><td>Cuota de préstamos (interés ${F.interest})</td><td>−${F.pay}</td></tr>` : ''}${F.cpn ? `<tr><td>Cupones de bonos</td><td>−${F.cpn}</td></tr>` : ''}${F.mat ? `<tr><td>Vencimiento de bonos</td><td>−${F.mat}</td></tr>` : ''}
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
@@ -608,6 +629,7 @@ export class Interfaz {
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
+      if (conectada(S, i)) hijos.push(el('span', { class: 'especial', text: `${C.CALLES.textos.ficha}${factorCalle(S, i) > 1 ? `: vende ${Math.round(C.CALLES.comercio * 100)}% más` : radioCalle(S, i) && C.COB.radios[x.b] ? ': su servicio llega una casilla más lejos' : x.b === 'casa' ? ': evade menos impuestos' : ''}.` }));
       if (x.b === 'casa' && barriosActivos(S)) hijos.push(el('span', { text: `Barrio: ${nombreBarrio(barrioDe(S, i))}.` }));
       if (x.b === 'casa' && !x.ob && coberturaActiva(S)) {
         const sv = serviciosDeCasa(S, i), CS = C.COB.servicios;
