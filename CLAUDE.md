@@ -65,7 +65,7 @@ Reglas técnicas:
 
 ## Fase actual: Fase 7, un siglo de historia
 
-Las fases 0 a 3 están terminadas. Las fases 4 (riesgo y mundo), 5 (sociedad y memoria) y 6 (conocimiento) están publicadas (versión 0.41.0) y esperan la prueba de Juan; su estado queda en `docs/DISENO.md`.
+Las fases 0 a 3 están terminadas. Las fases 4 (riesgo y mundo), 5 (sociedad y memoria), 6 (conocimiento) y 7 (un siglo de historia, versión 0.46.0, 4 de octubre) están publicadas y esperan la prueba de Juan; su estado queda en `docs/DISENO.md`. Lo siguiente es el cambio visual (abajo).
 
 Juan pidió el 3 de octubre que una partida dure **mínimo unos 100 años para ganar**, con los eventos repartidos en el tiempo (hoy todo se amontona entre los años 8 y 16 y se gana hacia el año 57). La dificultad **no baja**: se mantiene ajustando el oro o con más eventos y desastres, pero repartidos. Plan aprobado (un paso publicable a la vez):
 
@@ -83,7 +83,7 @@ Después de la fase 7 (aprobado por Juan): **cambio visual, más pulido y con el
 - Campaña por capítulos: le gusta, pero no es prioridad.
 - Descartado: modo aula. Por decidir: guardado en la nube.
 
-Metas: Normal entre 45% y 55% (República), regímenes a máximo 15 puntos, Difícil cerca de 35% (Juan lo aceptó así); victorias alrededor del año 100; opciones de eventos sin flechas ni avisos; máximo una crisis mayor por año y dos años de respiro; máximo 4 recursos arriba y 5 medidores.
+Metas: Normal entre 45% y 55% (República), regímenes a máximo 15 puntos, Difícil entre 25% y 35% (Juan pidió cerca de 30% y aceptó 35%); victorias alrededor del año 100; opciones de eventos sin flechas ni avisos; máximo una crisis mayor por año y dos años de respiro; máximo 4 recursos arriba y 5 medidores.
 
 Terminado cuando:
 

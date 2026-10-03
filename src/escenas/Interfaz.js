@@ -155,7 +155,7 @@ export class Interfaz {
     this.bReg.innerHTML = `${EMB[S.reg]}<b>${rg.n.split(' ')[0]}</b>`;
     this.bReg.setAttribute('aria-label', `Régimen: ${rg.n}. Ver rumbo del gobierno`);
     const L = lluvias(S), temp = this.mapa.pob ? this.mapa.pob.temporada() : null;
-    this.era.innerHTML = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${D(S).polis}` : ''}${L ? ` · ${L.icono}<span class="lluv-nom"> ${L.nombre.toLowerCase()}</span>` : ''}${economiaActiva(S) && S.eco.fase !== 'normal' ? ` · ${C.ECO.fases[S.eco.fase].icono}<span class="lluv-nom"> ${C.ECO.fases[S.eco.fase].nombre.toLowerCase()}</span>` : ''}`;
+    this.era.innerHTML = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${aniosPolis(S)}` : ''}${L ? ` · ${L.icono}<span class="lluv-nom"> ${L.nombre.toLowerCase()}</span>` : ''}${economiaActiva(S) && S.eco.fase !== 'normal' ? ` · ${C.ECO.fases[S.eco.fase].icono}<span class="lluv-nom"> ${C.ECO.fases[S.eco.fase].nombre.toLowerCase()}</span>` : ''}`;
     this.era.title = L ? `${L.texto} ${C.CLIMA.leccion}${temp ? ` Ahora es temporada ${temp === 'lluvias' ? 'de lluvias' : 'seca'}.` : ''}` : '';
     const dfood = F.fprod - F.cons, pa = precioAlimento(S);
     this.hud.innerHTML =
@@ -786,7 +786,9 @@ export class Interfaz {
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
       `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
-      const o = this.mapa.elegirOpcion(+b.dataset.o), p = o.f ? C.PH[o.f] : null;
+      const o = this.mapa.elegirOpcion(+b.dataset.o);
+      if (!o) { this.cerrarTarjeta(); return; } // el dilema ya se resolvió
+      const p = o.f ? C.PH[o.f] : null;
       this.tarjeta(`${img}<h3>${ev.followUp ? ev.title : o.l}</h3><div class="chips">${this.chips(o.fx)}</div>
         ${o.salioMal ? `<div class="salio-mal"><b>⚠️ Salió mal</b><br>${o.salioMal}</div>` : ''}
         ${o.ex ? `<div class="porque-afecta"><b>¿Por qué afecta así?</b><br>${o.ex}</div>` : ''}
@@ -981,7 +983,7 @@ export class Interfaz {
   // Fase 4: caminos a la victoria (la Polis y cuatro caminos más; fase 7: desde Polis).
   caminosVictoria() {
     const S = this.S, V = C.VICTORIAS, abiertas = victoriasActivas(S);
-    const polis = `<div class="camino"><b>🏛️ Polis</b> <small>${S.stage >= 3 ? `${S.polisYears} de ${D(S).polis} años` : `llega a Polis: ${C.STAGES[3].req}`}</small><p class="small">Sostener la Polis ${D(S).polis} años: un pueblo grande, con ágora y legítimo.</p></div>`;
+    const polis = `<div class="camino"><b>🏛️ Polis</b> <small>${S.stage >= 3 ? `${S.polisYears} de ${aniosPolis(S)} años` : `llega a Polis: ${reqEtapa(S, 3)}`}</small><p class="small">Sostener la Polis ${aniosPolis(S)} años: un pueblo grande, con ágora y legítimo.</p></div>`;
     const otros = caminos(S).map(c => `<div class="camino"><b>${c.icono} ${c.nombre}</b> <small>${abiertas ? `${c.llevados} de ${c.anios} años seguidos` : `desde ${C.STAGES[C.VICTORIAS.desde.etapa].n}`}</small><p class="small">${c.texto}</p>
       <ul class="conds">${c.estado.map(q => `<li class="${q.ok ? 'pos' : 'neg'}">${q.ok ? '✓' : '✗'} ${q.texto}</li>`).join('')}</ul></div>`).join('');
     this.tarjeta(`<div class="big">🏆</div><h3>Caminos a la victoria</h3><p class="small">${abiertas ? `Gana el primero que sostengas ${aniosPolis(S)} años seguidos, cumpliendo todas sus condiciones a la vez.` : `Los cuatro caminos nuevos se abren cuando tu territorio sea ${C.STAGES[C.VICTORIAS.desde.etapa].n}.`}</p>
