@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prueba de caminos</title>
+<title>Prueba de calles</title>
 <style>
 @font-face{font-family:"Alegreya";font-weight:800;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-800-normal.woff2) format("woff2")}
 @font-face{font-family:"Alegreya Sans";font-weight:400;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-400-normal.woff2) format("woff2")}
@@ -27,16 +27,16 @@ button:focus-visible{outline:3px solid #3E7E9C;outline-offset:2px}
 </head>
 <body>
 <main>
-  <h1>Prueba de caminos</h1>
-  <p>El camino <b>pasa por las casillas sin ocuparlas</b>: junto a una casa pasa por el frente, como una calle. Toca la casilla de inicio y luego la de destino; la ruta se traza sola (esquiva la montaña y pone puente sobre el río). Revisa el costo y confirma.</p>
+  <h1>Prueba de calles en damero</h1>
+  <p>Las calles van <b>por los bordes de las casillas</b>, rectas y con cruces en las esquinas, como el trazado colonial: las casas quedan en las manzanas. Toca una <b>esquina</b> (los puntos del mapa) y luego otra; la ruta se traza sola por los bordes (esquiva la montaña y pone puente donde cruza el río). Revisa el costo y confirma.</p>
   <canvas id="mapa" aria-label="Territorio de prueba con caminos"></canvas>
   <div id="info" role="status"></div>
   <div class="barra"><button id="ok" hidden>Construir el camino</button><button id="no" hidden>Cancelar</button></div>
   <div class="barra" aria-label="Época">
     <button class="on" data-era="herradura">Herradura</button><button data-era="empedrado">Empedrado</button><button data-era="carretera">Carretera</button>
-    <button id="quitar">Quitar camino</button>
+    <button id="quitar">Quitar calles</button>
   </div>
-  <p class="nota">En el juego, la época cambiaría sola (herradura en la fundación, empedrado con el café, carretera con la modernización). Dime si te gusta cómo se ve y se pone, y qué efecto quieres que tenga.</p>
+  <p class="nota">Por las calles andan arrieros con mulas (herradura), chivas (empedrado) y camiones (carretera). En el juego, la época cambiaría sola. Dime si te gusta cómo se ve y cómo se pone.</p>
 </main>
 <script type="module" src="caminos.js"></script>
 </body>
