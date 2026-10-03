@@ -243,6 +243,35 @@ function recetas() {
     const c0 = caraI(b, .35, .3, 4, 8), cx = (c0[0][0] + c0[2][0]) / 2, cy = (c0[0][1] + c0[2][1]) / 2;
     g.strokeStyle = '#E7C76B'; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, 3, 0, 7); g.stroke(); for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(cx + Math.cos(a) * 3, cy + Math.sin(a) * 3); g.lineTo(cx + Math.cos(a) * 4.6, cy + Math.sin(a) * 4.6); g.stroke(); }
   }]);
+  // Fase 6: megaproyectos (obra, represa, ferrocarril, aeropuerto).
+  L.push(['m_megaobra', 80, 76, 40, 58, (g, r) => {
+    sombra(g, 26, 6, 6); const b = iso(g, .8, .6, 0, 4, '#B9A27E', '#9C8664', '#C9B38E', r);
+    const p0 = V2(-.2, -.1, 4); g.strokeStyle = '#E2B24F'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(p0[0], p0[1]); g.lineTo(p0[0], p0[1] - 40); g.lineTo(p0[0] + 26, p0[1] - 40); g.stroke();
+    for (let k = 0; k < 8; k++) { g.beginPath(); g.moveTo(p0[0] - 1.5, p0[1] - k * 5); g.lineTo(p0[0] + 1.5, p0[1] - k * 5 - 5); g.stroke(); }
+    g.strokeStyle = '#4A4A4A'; g.lineWidth = .5; g.beginPath(); g.moveTo(p0[0] + 22, p0[1] - 40); g.lineTo(p0[0] + 22, p0[1] - 22); g.stroke(); wash(g, [[p0[0] + 19, p0[1] - 22], [p0[0] + 25, p0[1] - 22], [p0[0] + 25, p0[1] - 18], [p0[0] + 19, p0[1] - 18]], '#8E8A80', r, .95, .2);
+    const q = V2(.2, .15, 4); wash(g, [[q[0] - 9, q[1]], [q[0] + 9, q[1]], [q[0] + 9, q[1] - 10], [q[0] - 9, q[1] - 10]], '#C9C3B8', r, .95, .3);
+  }]);
+  L.push(['m_represa', 96, 66, 48, 44, (g, r) => {
+    sombra(g, 30, 6, 4); const lago = V2(-.15, -.2); g.fillStyle = '#5FA0C8'; g.globalAlpha = .85; g.beginPath(); g.ellipse(lago[0], lago[1], 34, 12, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+    const b = iso(g, .9, .14, 0, 14, '#D2CCC0', '#B5AFA2', '#E0DACD', r, 0, .25);
+    for (let k = 0; k < 3; k++) { const c0 = caraI(b, .25 + k * .25, .08, 0, 12); wash(g, c0, '#8FB8D4', r, .9, .2); }
+    g.strokeStyle = '#6B6258'; g.lineWidth = .6; const t1 = V2(.42, .1); g.beginPath(); g.moveTo(t1[0], t1[1] - 14); g.lineTo(t1[0], t1[1] - 26); g.stroke(); g.beginPath(); g.moveTo(t1[0] - 4, t1[1] - 24); g.lineTo(t1[0] + 4, t1[1] - 24); g.stroke();
+  }]);
+  L.push(['m_ferrocarril', 92, 62, 46, 44, (g, r) => {
+    sombra(g, 30, 5, 4); g.strokeStyle = '#5A4632'; g.lineWidth = 1; const a1 = V2(-.6, .35), a2 = V2(.6, -.1);
+    for (const d of [-2, 2]) { g.beginPath(); g.moveTo(a1[0], a1[1] + d); g.lineTo(a2[0], a2[1] + d); g.stroke(); }
+    for (let k = 0; k <= 10; k++) { const x = a1[0] + (a2[0] - a1[0]) * k / 10, y = a1[1] + (a2[1] - a1[1]) * k / 10; g.fillStyle = '#7A5C3A'; g.fillRect(x - 1, y - 3, 2, 6); }
+    const b = iso(g, .36, .26, 0, 13, '#E7C76B', '#C9A44A', null, r, -.15, -.2); techo(g, b, 3, 7, '#8E3B2E', '#C9A44A', r); wash(g, caraI(b, .35, .3, 0, 7), '#5A4632', r, .97, .2);
+    const t = V2(.3, .02); wash(g, [[t[0] - 9, t[1]], [t[0] + 7, t[1] - 4], [t[0] + 7, t[1] - 12], [t[0] - 9, t[1] - 8]], '#2E3A28', r, .97, .2); g.fillStyle = '#C0392B'; g.fillRect(t[0] - 9, t[1] - 4, 16, 1.6);
+    const ch = [t[0] + 4, t[1] - 12]; g.fillStyle = '#2A2A2A'; g.fillRect(ch[0] - 1, ch[1] - 5, 2.4, 5);
+  }]);
+  L.push(['m_aeropuerto', 100, 64, 50, 42, (g, r) => {
+    sombra(g, 34, 6, 4); const a1 = V2(-.6, .2), a2 = V2(.55, -.35);
+    g.fillStyle = '#6E6A64'; g.beginPath(); g.moveTo(a1[0] - 4, a1[1] + 3); g.lineTo(a2[0] - 4, a2[1] + 3); g.lineTo(a2[0] + 4, a2[1] - 3); g.lineTo(a1[0] + 4, a1[1] - 3); g.closePath(); g.fill();
+    g.strokeStyle = '#F4F1E6'; g.lineWidth = .8; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(a1[0], a1[1]); g.lineTo(a2[0], a2[1]); g.stroke(); g.setLineDash([]);
+    const tw = V2(.3, .3); g.fillStyle = '#E4E1DA'; g.fillRect(tw[0] - 2, tw[1] - 22, 4, 22); wash(g, [[tw[0] - 5, tw[1] - 22], [tw[0] + 5, tw[1] - 22], [tw[0] + 4, tw[1] - 28], [tw[0] - 4, tw[1] - 28]], '#6E8FA6', r, .97, .2);
+    const av = V2(-.2, -.05); g.fillStyle = '#F4F1E6'; g.beginPath(); g.ellipse(av[0], av[1] - 3, 7, 1.6, -.4, 0, 7); g.fill(); g.beginPath(); g.moveTo(av[0] - 2, av[1] - 3); g.lineTo(av[0] + 2, av[1] - 9); g.lineTo(av[0] + 4, av[1] - 3); g.fill();
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);

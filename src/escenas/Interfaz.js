@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  tecActiva, estadoTec, saberAnual, proximoInvento, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -243,7 +243,7 @@ export class Interfaz {
       ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
-      ${this.seccionRiesgo()}
+      ${this.seccionRiesgo()}${this.seccionMega()}
       ${this.seccionEconomia()}
       ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
@@ -258,6 +258,7 @@ export class Interfaz {
         this.mapa.cambio();
       };
     });
+    this.cuentas.querySelectorAll('[data-mega]').forEach(b => b.onclick = () => this.explicarMega(b.dataset.mega));
     const pl = this.cuentas.querySelector('[data-plan]');
     if (pl) pl.onclick = () => { if (comprarPlan(S)) { this.toast('Plan de evacuación listo: sirenas, rutas y simulacros.'); this.mapa.cambio(true); this.render(); } };
     const mil = this.cuentas.querySelector('[data-militar]');
@@ -420,11 +421,54 @@ export class Interfaz {
       ${costoTecAnual(S) ? `<p class="small">La regulación cuesta ${costoTecAnual(S)} de oro por año.</p>` : ''}<p class="small">${K.leccion}</p>`;
   }
   // Fase 6: llega un invento: adoptarlo libre, regulado o rechazarlo.
-  inventoAnio(alTerminar) {
-    const S = this.S, e = S.tecEv;
+  inventoAnio(alTerminar0) {
+    const S = this.S, e = S.tecEv, alTerminar = () => this.megaAnio(alTerminar0);
     if (!e || !e.nuevo || !tecActiva(S)) { alTerminar(); return; }
     e.nuevo = false;
     this.tarjetaInvento(e.id, alTerminar);
+  }
+  // Fase 6: megaproyectos.
+  seccionMega() {
+    const S = this.S;
+    if (!megaActivos(S)) return '';
+    const M = C.MEGA, E = { consulta: 'consulta en curso', aprobado: 'aprobado en consulta', rechazado: 'rechazado en consulta', obra: 'en obra', listo: 'terminado', cancelado: 'cancelado' };
+    return `<h3>Megaproyectos</h3><p class="small">Obras enormes de varios años. Antes de empezar, la consulta previa con las comunidades.</p>
+      ${Object.entries(M.proyectos).map(([id, P]) => { const e = estadoMega(S, id), ev = evaluarMega(S, id);
+        return `<button class="opt" data-mega="${id}"><b>${P.icono} ${P.nombre}</b><small>${e ? E[e.estado] + (e.estado === 'obra' ? ` (${e.pagado} de ${P.anios} años${e.det ? ', detenida' : ''})` : '') : `VPN ${ev.vpn} · TIR ${(ev.tir * 100).toFixed(1)}%`}</small></button>`; }).join('')}`;
+  }
+  explicarMega(id) {
+    const S = this.S, M = C.MEGA, P = M.proyectos[id], e = estadoMega(S, id), ev = evaluarMega(S, id), pct = v => (v * 100).toFixed(1) + '%';
+    const noC = puedeConsultar(S, id), noI = puedeIniciar(S, id), est = e ? e.estado : null;
+    const botones = !est ? `<button class="opt" data-mg="consultar" ${noC ? 'disabled' : ''}><b>Hacer la consulta previa</b><small>Cuesta ${costoConsulta(S)} de oro y dura un año. Probabilidad de que la aprueben hoy: ${Math.round(probConsulta(S, id) * 100)}% (depende del cabildo pijao, del ambiente y del ánimo de los campesinos).${noC ? ' ' + noC : ''}</small></button>
+        <button class="opt" data-mg="iniciar" ${noI ? 'disabled' : ''}><b>Empezar sin consulta</b><small>Más rápido, pero viola el derecho de las comunidades: conflicto +${M.sinConsulta.conflicto}, legitimidad −${Math.abs(M.sinConsulta.legitimidad)}, el cabildo y los movimientos se levantan.${noI ? ' ' + noI : ''}</small></button>`
+      : est === 'aprobado' ? `<button class="opt" data-mg="iniciar" ${noI ? 'disabled' : ''}><b>Empezar la obra</b><small>Con el respaldo de las comunidades. Primera cuota: ${ev.cuota} de oro.${noI ? ' ' + noI : ''}</small></button>`
+      : est === 'rechazado' ? `<button class="opt" data-mg="cancelar"><b>Respetar la decisión y cancelar</b><small>Legitimidad +2; el pueblo lo recordará.</small></button><button class="opt" data-mg="iniciar" ${noI ? 'disabled' : ''}><b>Hacerlo contra su voluntad</b><small>Igual que empezar sin consulta, y peor recordado.${noI ? ' ' + noI : ''}</small></button>`
+      : `<p class="small">Estado: ${{ consulta: 'la consulta está en curso; el resultado llega al cerrar el año', obra: `en obra, ${e.pagado} de ${P.anios} años pagados${e.det ? ' (detenida por falta de oro)' : ''}`, listo: `terminado en el año ${e.listo}: deja ${ev.beneficio} de oro por año`, cancelado: 'cancelado por respeto a la consulta' }[est]}.</p>`;
+    this.tarjeta(`<div class="big">${P.icono}</div><h3>${P.nombre}</h3><p>${P.texto}</p><p class="small"><b>Impactos:</b> ${P.impactos}</p>
+      <div class="ledger"><table class="budget">
+        <tr><td>Inversión</td><td>${ev.inversion}</td></tr><tr><td>Años de obra (cuota por año)</td><td>${ev.anios} (${ev.cuota})</td></tr>
+        <tr><td>Beneficio por año, ya terminado</td><td>+${ev.beneficio}</td></tr><tr><td>Tasa de interés de hoy</td><td>${pct(ev.tasa)}</td></tr>
+        <tr class="tot"><td>VPN a ${ev.horizonte} años</td><td class="${ev.vpn < 0 ? 'neg' : ''}">${ev.vpn}</td></tr><tr><td>TIR</td><td class="${ev.tir < ev.tasa ? 'neg' : ''}">${pct(ev.tir)}</td></tr><tr><td>Se recupera en</td><td>${ev.recupera} años</td></tr>
+      </table></div>
+      <p class="small">${ev.vpn >= 0 ? `Con la tasa de hoy el proyecto crea valor: la TIR (${pct(ev.tir)}) supera el interés (${pct(ev.tasa)}).` : `Con la tasa de hoy el proyecto destruye valor: el interés (${pct(ev.tasa)}) supera la TIR (${pct(ev.tir)}).`}</p>
+      ${botones}
+      <div class="phil"><b>Lo que enseña</b><br>${M.leccionFinanzas}</div><div class="phil"><b>Consulta previa</b><br>${M.leccionConsulta}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.card.querySelectorAll('[data-mg]').forEach(b => b.onclick = () => {
+      const a = b.dataset.mg, ok = a === 'consultar' ? consultar(S, id) : a === 'cancelar' ? cancelarMega(S, id) : iniciarMega(S, id);
+      if (!ok) { this.toast('No se pudo: revisa el oro o el estado del proyecto.'); return; }
+      this.toast({ consultar: 'Consulta previa abierta: el resultado llega al cerrar el año.', cancelar: 'Proyecto cancelado: respetaste la consulta.', iniciar: `Empieza la obra de ${P.nombre.toLowerCase()}.` }[a]);
+      this.mapa.cambio(true); this.render(); this.explicarMega(id);
+    });
+  }
+  megaAnio(alTerminar) {
+    const S = this.S, L = S.megaEv;
+    if (!L || !L.length || !megaActivos(S)) { alTerminar(); return; }
+    S.megaEv = null;
+    const M = C.MEGA, txt = { consultaSi: M.textos.consultaSi, consultaNo: M.textos.consultaNo, termina: '' };
+    this.tarjeta(`<div class="big">🏗️</div><h3>Megaproyectos</h3>${L.map(e => { const P = M.proyectos[e.id]; return `<p><b>${P.icono} ${P.nombre}:</b> ${e.tipo === 'termina' ? `¡terminado! Desde ahora deja ${evaluarMega(S, e.id).beneficio} de oro por año. ${P.impactos}` : txt[e.tipo]}</p>`; }).join('')}
+      <p class="small">Revisa los proyectos en Hacienda → Megaproyectos.</p><div class="phil"><b>Consulta previa</b><br>${M.leccionConsulta}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   tarjetaInvento(id, alTerminar) {
     const S = this.S, I = C.TEC.inventos[id];
