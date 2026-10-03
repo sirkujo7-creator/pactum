@@ -85,6 +85,8 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 6. Terreno y pantalla de inicio al fresco (nevado nítido, arrozales sin cuadrícula, nitidez al acercar).
 7. Revisión en celular y computador, y rendimiento.
 
+**Caminos (idea de Juan, 4 de octubre):** opción elegida para probar: el camino pasa por las casillas sin ocuparlas (junto a una obra pasa por el frente); se toca inicio y destino, la ruta se traza sola (esquiva la montaña, puente en el río) y se confirma con su costo; aspecto según la época (herradura, empedrado, carretera). Prueba en `pruebas/caminos.html`; falta que Juan decida si le gusta y qué efectos tendrá (comercio, alcance de servicios, recaudo, vecinos), para hacerlo después del paso 7 de la fase 8.
+
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
 - **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.
