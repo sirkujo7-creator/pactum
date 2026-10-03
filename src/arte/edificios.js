@@ -521,7 +521,8 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     }
     case 'mercado': return [{ k: etapa >= 2 ? 'mercado2' : 'mercado0' }];
     case 'agora': return [{ k: 'sede-' + reg }];
-    case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.1, s: .95, n: true }, { k: 'arbol', du: .25, dv: -.3, s: .85, n: true }, { k: 'arbol', du: .05, dv: .32, s: .8, n: true }];
+    // Fase 8: parque ordenado: la fuente al centro, dos árboles a los lados y setos.
+    case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.3, s: .9, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
     case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];
     case 'taller': return [{ k: 'taller', humo: [11, -36] }];
