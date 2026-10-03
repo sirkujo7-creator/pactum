@@ -1,6 +1,7 @@
-// Naturaleza en acuarela: árboles, guadua, frailejones, animales. Se hornea una vez en una hoja
-// (atlas) y el mapa solo coloca copias. Dibujos tomados de la prueba de estilo aprobada.
+// Naturaleza: árboles, guadua, frailejones, animales. Se hornea una vez en una hoja (atlas) y el mapa solo coloca
+// copias. Fase 8: las plantas son las del fresco (src/arte/flora.js): menos, más pequeñas y estilizadas.
 import { mulberry, shade, mix, wash, blob, lienzo } from './acuarela.js';
+import { recetasFlora } from './flora.js';
 
 const ESCALA = 4; // resolución del horneado (alta, para que se vea nítido de cerca)
 
@@ -43,7 +44,9 @@ export function hornearNaturaleza(dry = 0) {
   const clave = Math.round(dry * 10) / 10;
   if (HOJAS[clave]) return HOJAS[clave];
   dry = clave;
-  const lista = recetas(dry), sep = 4, anchoHoja = 2048;
+  // Fase 8: las plantas vienen del fresco; los animales, piedras y troncos quemados siguen como estaban.
+  const flora = recetasFlora(dry), deFlora = new Set(flora.map(x => x[0]));
+  const lista = [...flora, ...recetas(dry).filter(x => !deFlora.has(x[0]))], sep = 4, anchoHoja = 2048;
   const marcos = {};
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
@@ -73,13 +76,14 @@ export function colocarNaturaleza(T, mapa) {
     const R = mulberry(T.seed * 7 + i * 131 + 9), p = R();
     const add = (k, n, sc = 1) => { for (let j = 0; j < n; j++) objs.push({ k, i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: sc * (.85 + R() * .3) }); };
     switch (t.b) {
-      case 'galeria': add('arbol', p < .7 ? 2 : 1); if (p < .35) add('guadua', 1); break;
-      case 'seco': if (p < .45) add('saman', 1); else if (p < .6) add('arbusto', 2); break;
-      case 'potrero': if (p < .12) add('arbol', 1); else if (p < .3) add('vaca', 1); break;
+      // Fase 8: menos árboles (Juan los veía exagerados).
+      case 'galeria': if (p < .55) add('arbol', 1); else if (p < .72) add('guadua', 1); break;
+      case 'seco': if (p < .28) add('saman', 1); else if (p < .45) add('arbusto', 1); break;
+      case 'potrero': if (p < .07) add('arbol', 1); else if (p < .25) add('vaca', 1); break;
       case 'arrozal': if (p < .15) add('garza', 1); break;
-      case 'ladera': if (p < .25) add('platano', 1); else if (p < .42) add('guadua', 1); else if (p < .5) add('palma', 1); else if (p < .65) add('arbol', 1, .9); break;
-      case 'niebla': add('arbolNiebla', p < .6 ? 3 : 2); if (p < .18) add('palma', 1, 1.1); break;
-      case 'paramo': if (p < .75) add('frailejon', p < .4 ? 3 : 2); if (p > .9) add('piedra', 1); break;
+      case 'ladera': if (p < .16) add('platano', 1); else if (p < .28) add('guadua', 1); else if (p < .34) add('palma', 1); else if (p < .44) add('arbol', 1, .9); break;
+      case 'niebla': add('arbolNiebla', p < .5 ? 2 : 1); if (p < .12) add('palma', 1, 1.1); break;
+      case 'paramo': if (p < .6) add('frailejon', p < .3 ? 2 : 1); if (p > .9) add('piedra', 1); break;
       case 'roca': if (p < .35) add('piedra', 1); break;
     }
   }
@@ -90,8 +94,8 @@ export function colocarNaturaleza(T, mapa) {
 export function arbolesDeBosque(T, i) {
   const t = T.tiles[i], R = mulberry(T.seed * 11 + i * 173 + 5), alto = t.h > 4.4, objs = [];
   const add = (k, sc = 1) => objs.push({ k, i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: sc * (.85 + R() * .3) });
-  for (let j = 0, n = R() < .6 ? 3 : 2; j < n; j++) add(alto ? 'arbolNiebla' : 'arbol', alto ? 1 : .95);
-  if (!alto && R() < .4) add('guadua');
+  for (let j = 0, n = R() < .5 ? 2 : 1; j < n; j++) add(alto ? 'arbolNiebla' : 'arbol', alto ? 1 : .95);
+  if (!alto && R() < .3) add('guadua');
   return objs;
 }
 // Troncos quemados de una casilla tras un incendio.
