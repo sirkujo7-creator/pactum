@@ -63,18 +63,27 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 6, conocimiento
+## Fase actual: Fase 7, un siglo de historia
 
-Las fases 0 a 3 están terminadas. Las fases 4 (riesgo y mundo), 5 (sociedad y memoria) y 6 (conocimiento) están publicadas (versión 0.41.0, 3 de octubre) y esperan la prueba y la aprobación de Juan; su estado queda en `docs/DISENO.md`. Juan aprobó la fase 6 el 3 de octubre, en este orden (un paso publicable a la vez):
+Las fases 0 a 3 están terminadas. Las fases 4 (riesgo y mundo), 5 (sociedad y memoria) y 6 (conocimiento) están publicadas (versión 0.41.0) y esperan la prueba de Juan; su estado queda en `docs/DISENO.md`.
 
-1. Tecnología por épocas: el saber (universidades, bibliotecas, escuelas) trae inventos (imprenta, telégrafo, electricidad, radio, internet, automatización), cada uno con beneficio y dilema; adoptarlo libre, regulado o rechazarlo. Ninguna época es obligatoria para ganar. Se ve en el mapa.
-2. Megaproyectos (desde Polis): represa, ferrocarril, aeropuerto; años de obra, VPN y TIR, familias desplazadas; consulta previa con las comunidades (saltarla dispara el conflicto).
-3. El río que cambia de curso con la erosión y las crecidas.
-4. Balance.
+Juan pidió el 3 de octubre que una partida dure **mínimo unos 100 años para ganar**, con los eventos repartidos en el tiempo (hoy todo se amontona entre los años 8 y 16 y se gana hacia el año 57). La dificultad **no baja**: se mantiene ajustando el oro o con más eventos y desastres, pero repartidos. Plan aprobado (un paso publicable a la vez):
 
-Quedan por fuera (trabajo aparte, por decidir): modo aula, guardado en la nube y campaña por capítulos.
+1. El ritmo del siglo: etapas más largas (Pueblo hacia el año 15, Ciudad hacia el 45, Polis hacia el 75); ganar exige sostener la Polis unos 25 años; calendario de llegada (personajes de a uno, una misión a la vez, inventos repartidos, volcán, conflicto y vecinos más adelante); los años tranquilos pasan rápido.
+2. Épocas de la historia del Tolima, con eventos y dilemas propios (unos 5 por época): fundación y tierras baldías (0-15), el café y los arrieros (15-35), La Violencia (35-50), modernización y migración a la ciudad (50-70), conflicto y acuerdos de paz (70-90), era digital y cambio climático (90+).
+3. Economía con ciclos: bonanzas y crisis del café, la roya, envejecimiento y pensiones, jóvenes que se van a la ciudad, costos que suben con cada época (el oro nunca sobra).
+4. Más desastres y clima: epidemias (fiebre amarilla al principio, pandemia al final), sequías largas, avenidas torrenciales; con el cambio climático, El Niño y La Niña más seguidos en la segunda mitad. Siempre preparables y con años de respiro.
+5. Balance final.
 
-Se mantienen las metas: Normal entre 45% y 55% (República), regímenes a máximo 15 puntos, Difícil cerca de 30%; opciones de eventos sin flechas ni avisos; máximo una crisis mayor por año y dos años de respiro; máximo 4 recursos arriba y 5 medidores.
+Después de la fase 7 (aprobado por Juan): **cambio visual, más pulido y con el mismo estilo** (acuarela). Pasos: prueba de estilo de la interfaz (Juan la aprueba antes), aplicarla a todo el juego, pantalla de inicio pintada como el mapa, mapa (nevado nítido, arrozales sin cuadrícula, nitidez al acercar), edificios y pobladores más grandes y legibles, revisión en celular y computador.
+
+**Pendientes para después (no olvidar):**
+- **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
+- **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.
+- Campaña por capítulos: le gusta, pero no es prioridad.
+- Descartado: modo aula. Por decidir: guardado en la nube.
+
+Metas: Normal entre 45% y 55% (República), regímenes a máximo 15 puntos, Difícil cerca de 35% (Juan lo aceptó así); victorias alrededor del año 100; opciones de eventos sin flechas ni avisos; máximo una crisis mayor por año y dos años de respiro; máximo 4 recursos arriba y 5 medidores.
 
 Terminado cuando:
 
