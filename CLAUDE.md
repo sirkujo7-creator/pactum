@@ -85,7 +85,13 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 6. Terreno y pantalla de inicio al fresco (nevado nítido, arrozales sin cuadrícula, nitidez al acercar).
 7. Revisión en celular y computador, y rendimiento.
 
-**Caminos (idea de Juan, 4 de octubre):** opción elegida para probar: el camino pasa por las casillas sin ocuparlas (junto a una obra pasa por el frente); se toca inicio y destino, la ruta se traza sola (esquiva la montaña, puente en el río) y se confirma con su costo; aspecto según la época (herradura, empedrado, carretera). Prueba en `pruebas/caminos.html`; falta que Juan decida si le gusta y qué efectos tendrá (comercio, alcance de servicios, recaudo, vecinos), para hacerlo después del paso 7 de la fase 8.
+**Fase 9 (aprobada por Juan el 4 de octubre): vida y escena**, en este orden (un paso publicable a la vez):
+
+1. **Caminos en damero:** calles por los bordes de las casillas (trazado colonial), rectas, con cruces en las esquinas; se ponen tocando dos esquinas y la ruta se traza sola (puente si cruza el río). Aspecto según la época (herradura, empedrado, carretera). Por ellos se mueven pocos vehículos con carga según la época: arrieros con mulas, chivas y camiones (no gente). Efectos (todos aprobados): comercio (mercados, cafetales y minas conectados rinden más), servicios que alcanzan más lejos a lo largo del camino, menos evasión en casas conectadas y mejores relaciones si el camino llega al borde hacia los vecinos; cuestan oro y mantenimiento y talan el bosque que cruzan. Primero se ve en `pruebas/caminos.html`.
+2. **Pulir el movimiento de la gente:** andar más suave, menos gente moviéndose y más quieta con sentido (grupos en la plaza, vendedores, niños jugando), caminar por las calles, rutina visible.
+3. **Eventos de cine:** escena corta (la cámara viaja al lugar, franjas de cine, lo que pasa) y luego la decisión: movimientos y personajes (marcha campesina con la líder pijao, procesión del párroco, escándalo del periodista, caravana de desplazados), conflicto armado visible (toma armada), desastres en escena (lahar, terremoto, avenida torrencial). Respetan una crisis mayor por año y los años de respiro.
+4. **Guerra con otra polis:** nueva; tensión que puede llevar a guerra, tropas en el borde, asedio, daño visible y tratado de paz; con su balance.
+5. Revisión final en celular y computador (incluye el paso 7 de la fase 8).
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
