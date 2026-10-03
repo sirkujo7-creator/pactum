@@ -72,6 +72,22 @@ function recetas() {
     for (let k = 0; k < 3; k++) blob(g, ...caraI(b, .14 + k * .32, .05, 13.5, 1)[3], 1.6, 1.2, '#C44A3A', r, .9);
     techo(g, b, 4.5, 12, '#A94B32', '#DDD3C0', r);
   }]));
+  // Fase 5: casas de ladrillo (época del ladrillo) y de concreto con terraza y tanque (época del concreto).
+  ZOC.forEach((z, v) => L.push(['casa3-' + v, 76, 82, 38, 62, (g, r) => {
+    sombra(g, 22, 6, 8); const b = iso(g, .54, .44, 0, 26, '#B8664A', '#9A5440', null, r);
+    for (let k = 0; k < 5; k++) { g.globalAlpha = .25; g.strokeStyle = '#7A3E2E'; g.lineWidth = .5; const L1 = caraI(b, 0, 1, 3 + k * 4.6, 0); g.beginPath(); g.moveTo(...L1[0]); g.lineTo(...L1[1]); g.stroke(); g.globalAlpha = 1; }
+    wash(g, caraI(b, .4, .16, 0, 9.5), '#5A4632', r, .97, .2);
+    ventanas(g, b, 'I', 3, 15, 6, '#F4F1E6', r, .16, .14); ventanas(g, b, 'D', 2, 15, 6, '#EDE8DC', r, .25, .18);
+    wash(g, caraI(b, .1, .8, 13, 1.2), z, r, .95, .2);
+    techo(g, b, 3.5, 9, '#8E3B2E', '#9A5440', r);
+  }]));
+  ZOC.forEach((z, v) => L.push(['casa4-' + v, 76, 92, 38, 72, (g, r) => {
+    sombra(g, 22, 6, 8); const b = iso(g, .56, .46, 0, 34, '#E4E1DA', '#C9C5BC', '#D6D2CA', r);
+    ventanas(g, b, 'I', 3, 8, 6, '#6E8FA6', r, .14, .13); ventanas(g, b, 'I', 3, 22, 6, '#6E8FA6', r, .14, .13); ventanas(g, b, 'D', 2, 8, 6, '#5E7F96', r, .22, .18); ventanas(g, b, 'D', 2, 22, 6, '#5E7F96', r, .22, .18);
+    wash(g, caraI(b, .4, .18, 0, 7.5), z, r, .97, .2); wash(g, caraI(b, 0, 1, 16, 1.4), z, r, .95, .2);
+    const t = b.up(V2(.12, -.1), 34); wash(g, [[t[0] - 4, t[1]], [t[0] + 4, t[1]], [t[0] + 4, t[1] - 6], [t[0] - 4, t[1] - 6]], '#3A4A5A', r, .97, .2); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(t[0], t[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
+    const an = b.up(V2(-.18, .05), 34); g.strokeStyle = '#4A4A4A'; g.lineWidth = .6; g.beginPath(); g.moveTo(an[0], an[1]); g.lineTo(an[0], an[1] - 9); g.moveTo(an[0] - 3, an[1] - 7); g.lineTo(an[0] + 3, an[1] - 7); g.stroke();
+  }]));
   // Mercado de toldos (Aldea y Pueblo) y galería de mercado (desde Ciudad).
   // Fase 2: con la comida cara los puestos quedan vacíos (variante 'v', sin frutas y con cajas vacías).
   for (const vacio of [false, true]) L.push([vacio ? 'mercado0v' : 'mercado0', 78, 58, 39, 40, (g, r) => {
@@ -418,11 +434,13 @@ export function hornearEdificios() {
 
 // Qué figuras lleva cada obra en una casilla: [{ k (figura), du, dv (desplazamiento en la casilla), s (escala), humo }].
 // Cultivos, cafetales, parques y minas se pintan además en el suelo (ver terreno.js).
-export function figurasDeObra(k, i, etapa, reg) {
+// era (fase 5): 0 bahareque, 1 tapia y balcón, 2 ladrillo, 3 concreto. Sin era, sigue la regla de la etapa.
+export function figurasDeObra(k, i, etapa, reg, era) {
   const v = (i * 7 + 3) % 4;
   switch (k) {
     case 'casa': {
-      const f = [{ k: (etapa >= 2 ? 'casa2-' : 'casa0-') + v }];
+      const e = era === undefined ? (etapa >= 2 ? 1 : 0) : era;
+      const f = [{ k: ['casa0-', 'casa2-', 'casa3-', 'casa4-'][e] + v }];
       if ((i * 7) % 5 === 0) f.push(reg === 'tirania' ? { k: 'bandera-tirania', du: -.18, dv: .3 } : reg === 'demagogia' ? { k: 'bandera-demagogia', du: 0, dv: .36 } : { k: 'bandera-' + reg, du: .22, dv: -.18, z: etapa >= 2 ? 30 : 22 });
       return f;
     }
