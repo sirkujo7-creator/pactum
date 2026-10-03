@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba de caminos</title>
+<style>
+@font-face{font-family:"Alegreya";font-weight:800;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:400;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:500;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-500-normal.woff2) format("woff2")}
+:root{--yeso:#EFE5CF;--cal:#F7F1E3;--rojo:#9C2F25;--ocre:#D4A24C;--siena:#5B3423;--carbon:#2E2723}
+*{box-sizing:border-box}
+body{margin:0;background:#E6DABF;color:var(--carbon);font:16px/1.45 "Alegreya Sans",system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:12px 16px 24px}
+h1{font:800 26px Alegreya,Georgia,serif;font-variant:small-caps;color:var(--siena);margin:4px 0}
+p{margin:.3em 0 .7em}
+#mapa{width:100%;aspect-ratio:4/3;max-height:70vh;display:block;touch-action:manipulation;border-radius:6px;background:var(--yeso);box-shadow:0 0 0 3px var(--cal),0 0 0 5px var(--rojo)}
+.barra{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+button{font:600 15px "Alegreya Sans",sans-serif;padding:8px 12px;border-radius:6px;border:2px solid var(--rojo);background:var(--cal);color:var(--siena);cursor:pointer;min-height:42px}
+button.on{background:var(--rojo);color:var(--cal)}
+button:focus-visible{outline:3px solid #3E7E9C;outline-offset:2px}
+#ok{background:var(--rojo);color:var(--cal)}
+#info{min-height:2.8em;padding:8px 10px;background:var(--cal);border-left:5px solid var(--rojo);border-radius:4px}
+.nota{font-size:14px;color:#6a5440}
+@media (max-width:600px){#mapa{aspect-ratio:1/1;max-height:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Prueba de caminos</h1>
+  <p>El camino <b>pasa por las casillas sin ocuparlas</b>: junto a una casa pasa por el frente, como una calle. Toca la casilla de inicio y luego la de destino; la ruta se traza sola (esquiva la montaña y pone puente sobre el río). Revisa el costo y confirma.</p>
+  <canvas id="mapa" aria-label="Territorio de prueba con caminos"></canvas>
+  <div id="info" role="status"></div>
+  <div class="barra"><button id="ok" hidden>Construir el camino</button><button id="no" hidden>Cancelar</button></div>
+  <div class="barra" aria-label="Época">
+    <button class="on" data-era="herradura">Herradura</button><button data-era="empedrado">Empedrado</button><button data-era="carretera">Carretera</button>
+    <button id="quitar">Quitar camino</button>
+  </div>
+  <p class="nota">En el juego, la época cambiaría sola (herradura en la fundación, empedrado con el café, carretera con la modernización). Dime si te gusta cómo se ve y se pone, y qué efecto quieres que tenga.</p>
+</main>
+<script type="module" src="caminos.js"></script>
+</body>
+</html>
