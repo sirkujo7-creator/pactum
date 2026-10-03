@@ -79,7 +79,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 1. Prueba de estilo en `pruebas/fresco.html` (no toca el juego): pueblo, pobladores y árboles antes y ahora, e interfaz en dos variantes (A muro de cal, B muro rojo pompeyano). Juan la aprueba o pide cambios.
 2. Interfaz al fresco con la variante A (muro de cal), elegida por Juan: barra de arriba compacta, menú lateral agrupado, íconos pintados, tarjetas con greca.
-3. Pobladores nuevos en el juego (`src/arte/gente.js`).
+3. Pobladores nuevos en el juego (`src/arte/gente.js`), y retratos de personajes y viñetas de los dilemas en el mismo estilo.
 4. Naturaleza: árboles nuevos, menos y más pequeños; parques ordenados (`src/arte/flora.js`).
 5. Obras: casas de bahareque con zócalo y teja; edificios públicos neoclásicos; huellas (`src/arte/obras-fresco.js`).
 6. Terreno y pantalla de inicio al fresco (nevado nítido, arrozales sin cuadrícula, nitidez al acercar).
