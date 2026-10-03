@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  tecActiva, estadoTec, saberAnual, proximoInvento, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -395,11 +395,49 @@ export class Interfaz {
       C.LAWS.map(l => {
         const on = hasLaw(S, l.id), bl = lawBlock(S, l);
         return `<div class="law ${on ? 'on' : ''}"><b>${l.n}</b><small>${l.d}</small>${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}${!on && l.id === 'censura' ? this.avisoActa(['censura']) : ''}<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button></div>`;
-      }).join('');
+      }).join('') + this.seccionTecnologia();
     this.leyes.querySelectorAll('[data-ley]').forEach(bt => bt.onclick = () => {
       const r = toggleLaw(S, bt.dataset.ley);
       if (r !== true) this.toast(r);
       this.mapa.cambio(); this.render();
+    });
+    const tp = this.leyes.querySelector('[data-tec-pend]'); if (tp) tp.onclick = () => this.tarjetaInvento(S.tec.pendiente);
+    this.leyes.querySelectorAll('[data-tec]').forEach(bt => bt.onclick = () => {
+      const [id, modo] = bt.dataset.tec.split(':');
+      if (decidirInvento(S, id, modo)) { this.toast(`${C.TEC.inventos[id].nombre}: ${modo === 'rechazado' ? 'rechazada' : C.TEC.inventos[id][modo].texto.toLowerCase()}.`); this.mapa.cambio(true); this.render(); }
+    });
+  }
+  // Fase 6: tecnología por épocas (saber, próximo invento e inventos adoptados).
+  seccionTecnologia() {
+    const S = this.S;
+    if (!tecActiva(S) || S.stage < 1) return '';
+    const T = estadoTec(S), K = C.TEC, p = proximoInvento(S), anual = saberAnual(S);
+    const prox = p ? `<p class="small">Próximo invento: <b>${p[1].icono} ${p[1].nombre}</b> con ${p[1].saber} de saber${p[1].etapa > S.stage ? ` (desde ${C.STAGES[p[1].etapa].n})` : ''}. Tienes ${Math.round(T.saber)} y sumas ${anual} por año (escuelas, bibliotecas y universidades).</p><div class="track"><div class="fill" style="width:${Math.min(100, T.saber / p[1].saber * 100)}%;background:var(--accent)"></div></div>` : '<p class="small">Ya llegaron todos los inventos.</p>';
+    const lista = Object.entries(T.adoptados).map(([id, modo]) => { const I = K.inventos[id], otro = modo === 'libre' ? 'regulada' : modo === 'regulada' ? 'libre' : 'libre';
+      return `<div class="law ${modo !== 'rechazado' ? 'on' : ''}"><b>${I.icono} ${I.nombre}</b><small>${modo === 'rechazado' ? 'No la adoptaste.' : `${I[modo].texto}. ${I[modo].explica}`}</small>
+        <button class="btn" data-tec="${id}:${otro}">${modo === 'rechazado' ? 'Adoptarla libre' : modo === 'libre' ? `Regularla (${Math.round(I.regulada.costo * S.price)} de oro por año)` : 'Quitar la regulación'}</button></div>`; }).join('');
+    return `<h3>Tecnología</h3>${prox}${T.pendiente ? `<p class="small neg">Hay un invento esperando tu decisión: ${K.inventos[T.pendiente].nombre}.</p><button class="btn" data-tec-pend>Decidir ahora</button>` : ''}${lista}
+      ${costoTecAnual(S) ? `<p class="small">La regulación cuesta ${costoTecAnual(S)} de oro por año.</p>` : ''}<p class="small">${K.leccion}</p>`;
+  }
+  // Fase 6: llega un invento: adoptarlo libre, regulado o rechazarlo.
+  inventoAnio(alTerminar) {
+    const S = this.S, e = S.tecEv;
+    if (!e || !e.nuevo || !tecActiva(S)) { alTerminar(); return; }
+    e.nuevo = false;
+    this.tarjetaInvento(e.id, alTerminar);
+  }
+  tarjetaInvento(id, alTerminar) {
+    const S = this.S, I = C.TEC.inventos[id];
+    this.tarjeta(`<div class="big">${I.icono}</div><h3>${I.nombre}</h3><p>${I.texto}</p>
+      <button class="opt" data-inv="libre"><b>${I.libre.texto}</b><small>${I.libre.explica}</small></button>
+      <button class="opt" data-inv="regulada"><b>${I.regulada.texto}</b><small>${I.regulada.explica} Cuesta ${Math.round(I.regulada.costo * S.price)} de oro por año.</small></button>
+      <button class="opt" data-inv="rechazado"><b>No adoptarla por ahora</b><small>Nada cambia. Puedes adoptarla después desde Leyes.</small></button>
+      <div class="phil"><b>Lo que enseña</b><br>${C.TEC.leccion}</div>`, false);
+    this.card.querySelectorAll('[data-inv]').forEach(bt => bt.onclick = () => {
+      decidirInvento(S, id, bt.dataset.inv);
+      this.toast(`${I.nombre}: ${bt.dataset.inv === 'rechazado' ? 'por ahora no' : I[bt.dataset.inv].texto.toLowerCase()}.`);
+      this.mapa.cambio(true); this.render();
+      this.alCerrar = alTerminar || null; this.cerrarTarjeta();
     });
   }
 
@@ -833,8 +871,8 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 5: comienza una nueva época visual.
-  epocaAnio(alTerminar) {
-    const S = this.S, e = S.epocaEv;
+  epocaAnio(alTerminar0) {
+    const S = this.S, e = S.epocaEv, alTerminar = () => this.inventoAnio(alTerminar0);
     if (!e || !e.nuevo || !C.EPOCAS || !climaActivo(S)) { alTerminar(); return; }
     e.nuevo = false;
     const E = C.EPOCAS.eras[e.era];

@@ -38,3 +38,4 @@ export * from './barrios.js';
 export * from './cultura.js';
 export * from './memoria.js';
 export * from './epocas.js';
+export * from './tecnologia.js';

@@ -63,17 +63,18 @@ Reglas técnicas:
 6. Rendimiento: fluido en un celular de gama media y en un computador corriente; máximo unos 150 pobladores animados.
 7. Accesibilidad: respetar "reducir movimiento", foco visible, textos legibles.
 
-## Fase actual: Fase 5, sociedad y memoria
+## Fase actual: Fase 6, conocimiento
 
-Los cinco pasos de la fase 5 están publicados (versión 0.37.0, 3 de octubre); falta que Juan pruebe las fases 4 y 5 y las apruebe. Las fases 0 a 3 están terminadas; su estado queda en `docs/DISENO.md`. Decisiones de Juan del 3 de octubre: Difícil cerca de 30% de victorias; fase 5 aprobada en este orden (un paso publicable a la vez):
+Las fases 0 a 3 están terminadas; las fases 4 (riesgo y mundo) y 5 (sociedad y memoria) están publicadas (versión 0.37.0) y esperan la prueba de Juan; su estado queda en `docs/DISENO.md`. Juan aprobó la fase 6 el 3 de octubre, en este orden (un paso publicable a la vez):
 
-1. Barrios y problemáticas: desde Ciudad, las casas forman barrios con nombre; cada barrio con su mezcla de clases y sus problemas (deserción escolar, trabajo infantil, violencia, brecha de género); asentamientos informales (desalojar, ignorar o legalizar y mejorar). Se ven en el mapa.
-2. Cultura y deporte: cancha, biblioteca, teatro, estadio, fiestas; reemplazan la "exigencia creciente" de la v9 (el absurdo, la identidad); dilema de "pan y circo".
-3. Memoria y legado: generaciones que recuerdan u olvidan, juicio de la historia con las causas, el sucesor que hereda las deudas (Hans Jonas).
-4. Evolución visual por épocas: casas y ropa que cambian con los años.
-5. Balance.
+1. Tecnología por épocas: el saber (universidades, bibliotecas, escuelas) trae inventos (imprenta, telégrafo, electricidad, radio, internet, automatización), cada uno con beneficio y dilema; adoptarlo libre, regulado o rechazarlo. Ninguna época es obligatoria para ganar. Se ve en el mapa.
+2. Megaproyectos (desde Polis): represa, ferrocarril, aeropuerto; años de obra, VPN y TIR, familias desplazadas; consulta previa con las comunidades (saltarla dispara el conflicto).
+3. El río que cambia de curso con la erosión y las crecidas.
+4. Balance.
 
-Se mantienen las metas: Normal alrededor de 50% (45% a 55%), regímenes a máximo 15 puntos, Difícil cerca de 30%; las opciones de los eventos sin flechas ni avisos; máximo una crisis mayor por año y dos años de respiro; máximo 4 recursos arriba y 5 medidores; las problemáticas se ven por barrio, no como medidores nuevos.
+Quedan por fuera (trabajo aparte, por decidir): modo aula, guardado en la nube y campaña por capítulos.
+
+Se mantienen las metas: Normal entre 45% y 55% (República), regímenes a máximo 15 puntos, Difícil cerca de 30%; opciones de eventos sin flechas ni avisos; máximo una crisis mayor por año y dos años de respiro; máximo 4 recursos arriba y 5 medidores.
 
 Terminado cuando:
 

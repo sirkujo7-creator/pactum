@@ -207,6 +207,42 @@ function recetas() {
     const t = V2(.36, .05); g.strokeStyle = '#6B4F3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(t[0] - 8, t[1] - 6); g.lineTo(t[0] + 6, t[1] - 8); g.stroke();
     for (let k = 0; k < 3; k++) { g.fillStyle = ['#C0602A', '#5E8FB0', '#E7C76B'][k]; g.fillRect(t[0] - 6 + k * 4.5, t[1] - 6.8 - k * .5, 2.6, 3); }
   }]);
+  // Fase 6: inventos adoptados.
+  const poste = (g, x, y, h) => { g.fillStyle = '#6B4F3A'; g.fillRect(x - .7, y - h, 1.4, h); g.fillRect(x - 4, y - h + 2, 8, 1); };
+  L.push(['m_imprenta', 56, 50, 28, 38, (g, r) => {
+    sombra(g, 16, 5, 4); const b = iso(g, .44, .34, 0, 12, '#E6DCC6', '#CBBFA6', null, r);
+    wash(g, caraI(b, .25, .5, 3, 6), '#4A4038', r, .97, .2); techo(g, b, 3, 7, '#6E5A46', '#CBBFA6', r);
+    const s2 = caraI(b, .15, .7, 10, 2.4); wash(g, s2, '#F4F1E6', r, .97, .2); g.fillStyle = '#2A2A2A'; g.fillRect((s2[0][0] + s2[2][0]) / 2 - 4, (s2[0][1] + s2[2][1]) / 2 - .4, 8, .8);
+    const q = V2(.34, .3); for (let k = 0; k < 3; k++) wash(g, [[q[0] - 3, q[1] - k * 1.4], [q[0] + 3, q[1] - k * 1.4], [q[0] + 3, q[1] - k * 1.4 - 1.2], [q[0] - 3, q[1] - k * 1.4 - 1.2]], '#F4F1E6', r, .95, .2);
+  }]);
+  L.push(['m_telegrafo', 64, 50, 32, 40, (g, r) => {
+    sombra(g, 18, 3, 2); const ps = [V2(-.4, .1), V2(0, -.05), V2(.4, -.2)];
+    ps.forEach(q => poste(g, q[0], q[1], 24)); g.strokeStyle = '#3A3A3A'; g.lineWidth = .5;
+    for (const dy of [-22, -21]) { g.beginPath(); g.moveTo(ps[0][0], ps[0][1] + dy); for (const q of ps.slice(1)) g.quadraticCurveTo((q[0] + ps[0][0]) / 2, q[1] + dy + 3, q[0], q[1] + dy); g.stroke(); }
+  }]);
+  L.push(['m_electricidad', 64, 62, 32, 48, (g, r) => {
+    sombra(g, 20, 5, 4); const b = iso(g, .46, .36, 0, 14, '#C9C5BC', '#ADA89E', '#BDB8AE', r);
+    const ch = b.up(V2(.1, -.08), 14); wash(g, [[ch[0] - 2.5, ch[1]], [ch[0] + 2.5, ch[1]], [ch[0] + 2, ch[1] - 18], [ch[0] - 2, ch[1] - 18]], '#B5563A', r, .97, .2);
+    poste(g, V2(-.42, .3)[0], V2(-.42, .3)[1], 22); g.fillStyle = '#F2D36B'; const L1 = V2(-.42, .3); g.beginPath(); g.arc(L1[0] + 3, L1[1] - 21, 1.6, 0, 7); g.fill();
+    wash(g, caraI(b, .3, .4, 3, 6), '#E7C76B', r, .95, .2);
+  }]);
+  L.push(['m_radio', 44, 70, 22, 60, (g, r) => {
+    sombra(g, 10, 3, 2); const p0 = V2(0, 0); g.strokeStyle = '#B03A2E'; g.lineWidth = .9;
+    g.beginPath(); g.moveTo(p0[0] - 6, p0[1]); g.lineTo(p0[0], p0[1] - 52); g.lineTo(p0[0] + 6, p0[1]); g.stroke();
+    for (let k = 1; k < 6; k++) { const y = p0[1] - k * 9, w = 6 * (1 - k * 9 / 52); g.strokeStyle = k % 2 ? '#F4F1E6' : '#B03A2E'; g.beginPath(); g.moveTo(p0[0] - w, y); g.lineTo(p0[0] + w, y - 4); g.stroke(); }
+    g.fillStyle = '#E04A3A'; g.beginPath(); g.arc(p0[0], p0[1] - 53, 1.6, 0, 7); g.fill();
+  }]);
+  L.push(['m_internet', 44, 66, 22, 56, (g, r) => {
+    sombra(g, 10, 3, 2); const p0 = V2(0, 0); g.fillStyle = '#8A8F96'; g.fillRect(p0[0] - 1, p0[1] - 46, 2, 46);
+    for (const [dy, s] of [[-40, 1], [-30, -1]]) { wash(g, [[p0[0] + s * 1, p0[1] + dy], [p0[0] + s * 7, p0[1] + dy - 2], [p0[0] + s * 7, p0[1] + dy - 9], [p0[0] + s * 1, p0[1] + dy - 7]], '#E4E1DA', r, .97, .2); }
+    g.strokeStyle = '#5E8FB0'; g.lineWidth = .7; for (let k = 1; k <= 3; k++) { g.beginPath(); g.arc(p0[0], p0[1] - 48, k * 3, Math.PI * 1.2, Math.PI * 1.8); g.stroke(); }
+  }]);
+  L.push(['m_automatizacion', 72, 62, 36, 46, (g, r) => {
+    sombra(g, 24, 6, 6); const b = iso(g, .62, .5, 0, 16, '#B9C1C8', '#9AA3AC', null, r);
+    for (let k = 0; k < 3; k++) { const t = caraI(b, .1 + k * .3, .2, 16, 6); wash(g, [t[0], t[1], [t[1][0] - 2, t[1][1] - 6]], '#7E8790', r, .95, .2); }
+    const c0 = caraI(b, .35, .3, 4, 8), cx = (c0[0][0] + c0[2][0]) / 2, cy = (c0[0][1] + c0[2][1]) / 2;
+    g.strokeStyle = '#E7C76B'; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, 3, 0, 7); g.stroke(); for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(cx + Math.cos(a) * 3, cy + Math.sin(a) * 3); g.lineTo(cx + Math.cos(a) * 4.6, cy + Math.sin(a) * 4.6); g.stroke(); }
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);

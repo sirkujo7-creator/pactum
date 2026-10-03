@@ -67,6 +67,42 @@
       "icono": "🏚️",
       "anios": 999,
       "texto": "Ranchos de tabla y zinc levantados por familias sin vivienda."
+    },
+    "imprenta": {
+      "nombre": "Imprenta",
+      "icono": "📰",
+      "anios": 999,
+      "texto": "La imprenta del pueblo: periódicos y libros."
+    },
+    "telegrafo": {
+      "nombre": "Línea del telégrafo",
+      "icono": "📡",
+      "anios": 999,
+      "texto": "Postes y cables que llevan las noticias."
+    },
+    "electricidad": {
+      "nombre": "Planta eléctrica",
+      "icono": "💡",
+      "anios": 999,
+      "texto": "La planta y los postes que iluminan la ciudad."
+    },
+    "radio": {
+      "nombre": "Torre de radio",
+      "icono": "📻",
+      "anios": 999,
+      "texto": "La antena de la emisora."
+    },
+    "internet": {
+      "nombre": "Antena de internet",
+      "icono": "🌐",
+      "anios": 999,
+      "texto": "La antena que conecta con el mundo."
+    },
+    "automatizacion": {
+      "nombre": "Fábrica automática",
+      "icono": "🤖",
+      "anios": 999,
+      "texto": "Una fábrica de máquinas que trabajan solas."
     }
   },
   "porFilosofia": {
