@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -160,7 +160,7 @@ export class Mapa extends Phaser.Scene {
       pone('cimientos', 0, 0, -.2);
       pone('material', 20, 8, .4);
       if (sube > 0) {
-        for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg)) {
+        for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg, epocaVisual(this.S))) {
           if (f.n || f.k.startsWith('bandera')) continue;
           const img = this.figura('edificios', f.k, t.r + .5 + (f.dv || 0), t.c + .5 + (f.du || 0), t.h, f.s || 1).setDepth(t.r + t.c + 1);
           const m = H.marcos[f.k], y0 = Math.round(m.ay * (1 - sube));
@@ -176,7 +176,7 @@ export class Mapa extends Phaser.Scene {
       return;
     }
     const vacio = x.b === 'mercado' && precioAlimento(this.S) >= 1.3; // fase 2: comida cara, puestos vacíos
-    for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg)) {
+    for (const f of figurasDeObra(x.b, i, this.S.stage, this.S.reg, epocaVisual(this.S))) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
       if (vacio && f.k.startsWith('mercado')) f.k += 'v';
       const r = t.r + .5 + (f.dv || 0), c = t.c + .5 + (f.du || 0), h = f.n || deSuelo ? this.T.hf(r, c) : t.h;
@@ -253,8 +253,9 @@ export class Mapa extends Phaser.Scene {
   revisarCambiosGenerales() {
     const vacio = precioAlimento(this.S) >= 1.3;
     if (vacio !== this.mercadoVacio) { this.mercadoVacio = vacio; this.S.map.forEach((x, i) => { if (x.b === 'mercado') this.ponerObra(i); }); }
-    if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto) return;
-    this.etapaVista = this.S.stage; this.regVisto = this.S.reg;
+    const era = epocaVisual(this.S);
+    if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto && era === this.eraVista) return;
+    this.etapaVista = this.S.stage; this.regVisto = this.S.reg; this.eraVista = era;
     this.S.map.forEach((x, i) => { if (['casa', 'mercado', 'agora'].includes(x.b)) this.ponerObra(i); });
   }
 

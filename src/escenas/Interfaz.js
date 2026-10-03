@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -821,8 +821,8 @@ export class Interfaz {
     this.tarjetaAsentamiento(a.i, alTerminar);
   }
   // Fase 5: nueva generación que juzga lo que recuerda.
-  generacionAnio(alTerminar) {
-    const S = this.S, e = S.genEv;
+  generacionAnio(alTerminar0) {
+    const S = this.S, e = S.genEv, alTerminar = () => this.epocaAnio(alTerminar0);
     if (!e || !e.nuevo || !memoriaActiva(S)) { alTerminar(); return; }
     e.nuevo = false;
     const M = C.MEMORIA, T = M.textos, CAT = M.categorias;
@@ -832,12 +832,23 @@ export class Interfaz {
       <div class="phil"><b>Lo que enseña</b><br>${M.leccion}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
+  // Fase 5: comienza una nueva época visual.
+  epocaAnio(alTerminar) {
+    const S = this.S, e = S.epocaEv;
+    if (!e || !e.nuevo || !C.EPOCAS || !climaActivo(S)) { alTerminar(); return; }
+    e.nuevo = false;
+    const E = C.EPOCAS.eras[e.era];
+    this.tarjeta(`<div class="big">${E.icono}</div><h3>Comienza la época del ${E.nombre.toLowerCase()}</h3><p>${E.texto}</p>
+      <div class="phil"><b>Lo que enseña</b><br>${C.EPOCAS.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
   seccionLegado() {
     const S = this.S;
     if (!memoriaActiva(S)) return '';
     const R = recuerdos(S), tot = R.reduce((s, x) => s + x.n, 0) || 1, J = juicioHistoria(S), b = balanceMemoria(S);
     const filas = R.slice(0, 5).map(x => `<div class="causa"><span>${x.icono} ${x.nombre}</span><span class="barra"><i class="${x.peso >= 0 ? 'pos' : 'neg'}" style="width:${Math.round(x.n / tot * 100)}%"></i></span><b>${Math.round(x.n)}</b></div>`).join('');
-    return `<h3>Legado</h3><p class="small">Generación ${generacion(S) + 1}. La próxima llega en el año ${proximaGeneracion(S)} y juzgará lo que recuerde: hoy el juicio sería <b class="${b > .1 ? 'pos' : b < -.1 ? 'neg' : ''}">${b > .1 ? 'favorable' : b < -.1 ? 'desfavorable' : 'neutro'}</b>. Hoy te recordarían como <b>${J.titulo}</b>.</p>
+    const E = C.EPOCAS ? C.EPOCAS.eras[epocaVisual(S)] : null;
+    return `<h3>Legado</h3><p class="small">${E ? `${E.icono} Época del ${E.nombre.toLowerCase()}. ` : ''}Generación ${generacion(S) + 1}. La próxima llega en el año ${proximaGeneracion(S)} y juzgará lo que recuerde: hoy el juicio sería <b class="${b > .1 ? 'pos' : b < -.1 ? 'neg' : ''}">${b > .1 ? 'favorable' : b < -.1 ? 'desfavorable' : 'neutro'}</b>. Hoy te recordarían como <b>${J.titulo}</b>.</p>
       ${filas ? `<div class="causas">${filas}</div>` : '<p class="small">Todavía no hay recuerdos: cada decisión deja una huella.</p>'}
       <p class="small">Patrimonio (obras de más de ${C.MEMORIA.patrimonio} años): ${J.patrimonio}. Deuda que heredaría tu sucesor: ${J.deuda} de oro.</p>`;
   }

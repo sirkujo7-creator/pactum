@@ -1,0 +1,10 @@
+{
+  "eras": [
+    { "nombre": "Bahareque", "icono": "🛖", "desde": { "etapa": 0, "anio": 0 }, "texto": "Casas de bahareque y teja de barro: caña, tierra y madera de la región." },
+    { "nombre": "Tapia y balcón", "icono": "🏠", "desde": { "etapa": 2, "anio": 0 }, "texto": "La ciudad crece: casas de tapia de dos pisos con balcones de madera, como en el centro de Ibagué." },
+    { "nombre": "Ladrillo", "icono": "🧱", "desde": { "etapa": 2, "anio": 50 }, "texto": "Llega el ladrillo y la gente se viste distinto: jean, camisa y menos sombreros." },
+    { "nombre": "Concreto", "icono": "🏢", "desde": { "etapa": 3, "anio": 80 }, "texto": "Edificios de concreto con terraza y tanque de agua: la ciudad moderna." }
+  ],
+  "ropaModerna": 2,
+  "leccion": "Modernización: las ciudades cambian de materiales, de ropa y de costumbres. Cada época trae comodidades nuevas y también pérdidas: oficios, paisajes y formas de vida que solo quedan en la memoria."
+}

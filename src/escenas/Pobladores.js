@@ -1,7 +1,7 @@
 // Pobladores animados y luz del día. Cada figura tiene casa y trabajo reales (src/core/pobladores.js).
 // Rutina: en la mañana va al trabajo (los niños a la escuela), en la tarde pasa por la plaza,
 // en la noche vuelve a casa y se encienden las ventanas. Con "reducir movimiento" todo queda quieto de día.
-import { planearPobladores } from '../core/index.js';
+import { planearPobladores, ropaModerna } from '../core/index.js';
 import { hornearPersonas } from '../arte/personas.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
@@ -33,6 +33,7 @@ export class Pobladores {
   // Vuelve a repartir casas y trabajos (tras construir, demoler o terminar el año).
   planear() {
     const { S, T } = this.scene, plan = planearPobladores(S);
+    this.ropa = ropaModerna(S) ? 'M' : ''; // fase 5: desde la época del ladrillo, ropa moderna
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     while (this.figuras.length > plan.length) this.figuras.pop().img.destroy();
     plan.forEach((p, k) => {
@@ -40,8 +41,8 @@ export class Pobladores {
       if (!f) {
         const casa = this.centro(p.casa, .3);
         f = { r: casa.r, c: casa.c, ruta: [], espera: Math.random() * 3, fase: Math.random() * 4, frente: 1, voltear: false, oculto: false };
-        f.img = this.scene.add.image(0, 0, 'personas', `${p.tipo}_${p.vi}_1_0`);
-        const m = this.H.marcos[`${p.tipo}_${p.vi}_1_0`];
+        f.img = this.scene.add.image(0, 0, 'personas', `${p.tipo}${this.ropa || ''}_${p.vi}_1_0`);
+        const m = this.H.marcos[`${p.tipo}${this.ropa || ''}_${p.vi}_1_0`];
         f.img.setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAMANO / this.H.escala);
         this.figuras.push(f);
       }
@@ -157,7 +158,7 @@ export class Pobladores {
 
   dibujar(f, andando, postura) {
     const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? Math.floor(f.fase) % 4 : (postura || 0);
-    f.img.setFrame(`${f.p.tipo}_${f.p.vi}_${f.frente}_${paso}`).setPosition(p[0], p[1]).setFlipX(f.voltear)
+    f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`).setPosition(p[0], p[1]).setFlipX(f.voltear)
       .setDepth(f.r + f.c + .01).setVisible(!f.oculto);
   }
 
