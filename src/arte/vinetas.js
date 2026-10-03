@@ -1,9 +1,11 @@
-// Viñetas en acuarela para los dilemas y sus consecuencias: una escena pequeña con los mismos
-// edificios, pobladores y colores del mapa. La composición de cada una viene de la versión 9.
+// Viñetas de los dilemas y sus consecuencias: una escena pequeña con los mismos edificios, pobladores y colores del
+// mapa. La composición de cada una viene de la versión 9; fase 8: pintadas al fresco (muro, pigmentos, gente nueva).
 import { mulberry, mix, wash, blob, papel, lienzo } from './acuarela.js';
 import { hornearEdificios, figurasDeObra } from './edificios.js';
 import { hornearNaturaleza } from './naturaleza.js';
-import { hornearPersonas } from './personas.js';
+import { hornearGente } from './gente.js';
+import { hornearFlora } from './flora.js';
+import { FR, pintar, texturaYeso } from './fresco.js';
 import { TW, TH } from './iso.js';
 
 // g: terreno de las 6 casillas (L llano, R río, M montaña); b: obras por casilla; fx: efectos.
@@ -44,20 +46,19 @@ export function vineta(id, reg = 'republica', etapa = 1) {
   if (CACHE[clave]) return CACHE[clave];
   const sc = ESCENAS[id] || ESCENAS[ALIAS[id]] || ESCENAS.default, fx = sc.fx || [], W = 320, H = 136;
   const c = lienzo(W * 2, H * 2), g = c.getContext('2d'); g.scale(2, 2);
-  const R = mulberry(id.length * 977 + id.charCodeAt(0)), E = hornearEdificios(), NAT = hornearNaturaleza(fx.includes('dry') ? 1 : 0), PER = hornearPersonas();
+  const R = mulberry(id.length * 977 + id.charCodeAt(0)), E = hornearEdificios(), NAT = hornearNaturaleza(fx.includes('dry') ? 1 : 0), PER = hornearGente(), FL = hornearFlora(fx.includes('dry') ? 1 : 0);
   const seco = fx.includes('dry');
-  g.fillStyle = '#ECEAE2'; g.fillRect(0, 0, W, H);
-  const q = g.createLinearGradient(0, 0, 0, 70); q.addColorStop(0, seco ? 'rgba(230,180,90,.45)' : 'rgba(118,160,186,.42)'); q.addColorStop(1, 'rgba(118,160,186,0)');
-  g.fillStyle = q; g.fillRect(0, 0, W, 70);
-  wash(g, [[0, 62], [50, 36], [110, 50], [170, 26], [230, 48], [280, 34], [320, 46], [320, 84], [0, 84]], '#9DAE9A', R, .45, 2);
-  wash(g, [[0, 70], [70, 54], [150, 64], [240, 52], [320, 62], [320, 90], [0, 90]], '#8DB06A', R, .5, 2);
+  // Fondo al fresco: cielo de muro claro, cordillera y lomas en pigmentos planos con contorno siena.
+  g.fillStyle = seco ? mix(FR.ocreClaro, FR.yeso, .5) : mix('#B9CFD2', FR.yeso, .45); g.fillRect(0, 0, W, H);
+  pintar(g, [[0, 62], [50, 36], [110, 50], [170, 26], [230, 48], [280, 34], [320, 46], [320, 84], [0, 84]], mix('#9FB0A6', FR.yeso, .25), R, { n: 4, bal: .45 });
+  pintar(g, [[0, 70], [70, 54], [150, 64], [240, 52], [320, 62], [320, 90], [0, 90]], mix(FR.tierraVerde, seco ? FR.ocre : FR.ocreClaro, seco ? .5 : .2), R, { n: 4, bal: .45 });
   const tipos = (sc.g || 'LLLLLL').split(''), pos = [];
   for (let r = 0; r < 2; r++) for (let k = 0; k < 3; k++) pos.push([W / 2 + ((k - 1) - (r - .5)) * TW / 2 * 1.15, 86 + ((k - 1) + (r - .5)) * TH / 2 * 1.15]);
   pos.forEach(([x, y], n) => {
     const t = tipos[n];
     let col = t === 'R' ? '#7DB0C6' : t === 'M' ? '#9A938A' : mix('#B8C67E', '#D5B878', seco ? .9 : 0);
     if (t === 'R' && fx.includes('poison')) col = '#7C8A5A';
-    wash(g, rombo(x, y, 1.15), col, R, .9, 1);
+    pintar(g, rombo(x, y, 1.15), col === '#7DB0C6' ? FR.agua : t === 'M' ? col : mix(FR.tierraVerde, FR.ocre, seco ? .7 : .15), R, { n: 3, bal: .4, bw: .5 });
   });
   if (fx.includes('flood')) pos.forEach(([x, y], n) => { if (tipos[n] !== 'R') wash(g, rombo(x, y, .95), '#7DB0C6', R, .4, 0); });
   if (fx.includes('bridge')) [1, 4].forEach(n => { const [x, y] = pos[n]; wash(g, [[x - 16, y - 2], [x + 16, y + 6], [x + 12, y + 9], [x - 20, y + 1]], '#9B7650', R, .95, .3); });
@@ -66,9 +67,9 @@ export function vineta(id, reg = 'republica', etapa = 1) {
   for (const n of orden) {
     const [x, y] = pos[n], t = tipos[n], k = sc.b[n];
     if (t === 'M') { const L = [x - TW * .575, y], Rr = [x + TW * .575, y], F = [x, y + TH * .575], P = [x, y - 42]; wash(g, [L, F, P], '#B3A995', R, .9, 1); wash(g, [F, Rr, P], '#8E8574', R, .9, 1); wash(g, [P, [P[0] - 10, P[1] + 13], [P[0], P[1] + 17], [P[0] + 10, P[1] + 13]], '#FBFBF7', R, .9, .5); }
-    if (k === 'cultivo') { for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) blob(g, x + (a - b) * 7.5, y + (a + b - 3) * 3.8, 3, 2.3, mix('#4F8A43', '#C9A94A', seco ? .8 : 0), R, .9); figura(g, NAT, 'platano', x + 12, y - 4, .8); }
+    if (k === 'cultivo') { for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) blob(g, x + (a - b) * 7.5, y + (a + b - 3) * 3.8, 3, 2.3, mix('#4F8A43', '#C9A94A', seco ? .8 : 0), R, .9); figura(g, FL, 'platano', x + 12, y - 4, 1); }
     else if (k) for (const f of figurasDeObra(k, n * 7 + 1, etapa, reg)) figura(g, f.n ? NAT : E, f.k, x + ((f.du || 0) - (f.dv || 0)) * TW / 2, y + ((f.du || 0) + (f.dv || 0)) * TH / 2 - (f.z || 0), (f.s || 1) * 1.1);
-    else if (t === 'L' && R() < .6) figura(g, NAT, R() < .5 ? 'arbol' : 'saman', x + (R() - .5) * 20, y + 4, .9);
+    else if (t === 'L' && R() < .6) figura(g, FL, R() < .5 ? 'arbol' : 'saman', x + (R() - .5) * 20, y + 4, 1.1);
   }
   const main = pos[1], gente = (n, x0, y0, dx, dy, alterna) => {
     const tipos = ['campesino', 'campesina', 'artesano', 'elite', 'nino'];
@@ -87,6 +88,6 @@ export function vineta(id, reg = 'republica', etapa = 1) {
     if (f === 'scroll') { const x = main[0] - 48, y = main[1] + 14; wash(g, [[x - 9, y - 7], [x + 9, y - 7], [x + 9, y + 7], [x - 9, y + 7]], '#EFE3C2', R, .95, .4); g.strokeStyle = '#8B6F4A'; g.globalAlpha = .6; g.lineWidth = .6; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(x - 6, y - 4 + k * 2.6); g.lineTo(x + 6, y - 4 + k * 2.6); g.stroke(); } g.globalAlpha = 1; }
     if (f === 'shadow') { g.globalAlpha = .85; figura(g, PER, 'elite_0_0_0', main[0] + 36, main[1] + 8, .9); g.globalAlpha = 1; }
   }
-  papel(g, W, H, .2);
+  texturaYeso(g, 0, 0, W, H, .45);
   return (CACHE[clave] = c.toDataURL('image/jpeg', .86));
 }

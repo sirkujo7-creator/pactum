@@ -116,7 +116,7 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | --- | --- |
 | 1. Prueba de estilo | Aprobada por Juan (4 de octubre): **variante A, muro de cal** (paneles claros con bordes rojo pompeyano). Muestra en `pruebas/fresco.html` |
 | 2. Interfaz | Publicado (0.47.0). Variante A (muro de cal): paneles, fichas, tarjetas y barra inferior con textura de muro y bordes rojo pompeyano; greca en las tarjetas y sobre la barra inferior; títulos en versalitas; íconos pintados al fresco en recursos, medidores y barra inferior (`src/arte/iconos.js`); recursos en una sola fila en celular; los ocho botones de la derecha agrupados en un menú (en computador quedan a la vista); el ícono grande de cada tarjeta va en un medallón. Pendiente para pasos siguientes: retratos de personajes, viñetas de los dilemas y los emojis dentro de los textos |
-| 3. Pobladores | Pendiente |
+| 3. Pobladores | Publicado (0.48.0). Pobladores del mapa con las figuras nuevas al fresco (`src/arte/gente.js`), con ropa moderna desde la época del ladrillo. Retratos de las voces del pueblo y de los personajes al estilo de El Fayum: tondo con aro rojo y ocre, rostro de tres cuartos y ojos almendrados. Viñetas de los dilemas con fondo de fresco, gente y árboles nuevos (los edificios cambian en el paso 5) |
 | 4. Naturaleza | Pendiente |
 | 5. Obras | Pendiente |
 | 6. Terreno e inicio | Pendiente |

@@ -1,29 +1,77 @@
-// Retratos de las voces del pueblo (Doña Rosa, Julián, Don Aurelio), como en la versión 9.
-import { mulberry, wash, blob, lienzo } from './acuarela.js';
+// Retratos al fresco (fase 8), a la manera de los retratos grecorromanos de El Fayum: busto de tres cuartos dentro de
+// un tondo con aro rojo pompeyano y ocre, rostro con luz desde la izquierda, ojos almendrados y contorno siena.
+// Sirven para las voces del pueblo (Doña Rosa, Julián, Don Aurelio) y para los personajes con papel propio.
+import { mulberry, lienzo } from './acuarela.js';
+import { FR, shade, mix, pintar, ovalo, contorno, texturaYeso } from './fresco.js';
 
 const CACHE = {};
-export function retrato(kind) {
-  if (CACHE[kind]) return CACHE[kind];
-  const c = lienzo(128, 128), g = c.getContext('2d'); g.scale(2, 2);
-  const rng = mulberry(kind.length * 31 + 7), W = (pts, col) => wash(g, pts, col, rng, .95, 0);
-  blob(g, 32, 32, 30, 30, { rosa: '#DCE7C9', julian: '#E9D9C0', aurelio: '#D9DDE6' }[kind], rng, .9);
-  const skin = { rosa: '#C98E62', julian: '#E0B08A', aurelio: '#EBC7A6' }[kind];
-  W([[14, 64], [16, 46], [24, 40], [40, 40], [48, 46], [50, 64]], { rosa: '#B4553A', julian: '#5A6F7E', aurelio: '#3B3A40' }[kind]);
-  if (kind === 'rosa') W([[16, 48], [32, 58], [48, 48], [46, 44], [32, 52], [18, 44]], '#E7C76B');
-  if (kind === 'julian') W([[24, 44], [40, 44], [42, 64], [22, 64]], '#C9B28A');
-  if (kind === 'aurelio') { W([[28, 40], [36, 40], [34, 56], [30, 56]], '#F1ECE0'); g.fillStyle = '#8C1C1C'; g.fillRect(30.5, 41, 3, 7); }
-  blob(g, 32, 30, 10, 10, skin, rng, .95);
-  g.fillStyle = '#2A2018'; g.beginPath(); g.arc(28.5, 30, 1.1, 0, 7); g.arc(35.5, 30, 1.1, 0, 7); g.fill();
-  g.strokeStyle = '#7A4A34'; g.lineWidth = 1; g.beginPath(); g.arc(32, 33.5, 3, .2, Math.PI - .2); g.stroke();
-  if (kind === 'rosa') {
-    g.fillStyle = '#2A2018'; g.beginPath(); g.ellipse(32, 22, 11, 5, 0, Math.PI, 0); g.fill();
-    W([[18, 20], [46, 20], [42, 16], [22, 16]], '#F4F1E6'); W([[23, 16], [41, 16], [39, 10], [25, 10]], '#F4F1E6');
-    g.fillStyle = '#1E1E1E'; g.fillRect(24, 14.5, 16, 2); g.strokeStyle = '#2A2018'; g.lineWidth = 2; g.beginPath(); g.moveTo(22, 28); g.quadraticCurveTo(20, 40, 24, 44); g.stroke();
+// spec: { fondo, piel, ropa, pelo, detalle, mujer, canas }
+function pintarRetrato(g, R, rng) {
+  // Tondo: fondo de muro, aro rojo y filo ocre.
+  g.save(); g.beginPath(); g.arc(32, 32, 30, 0, Math.PI * 2); g.clip();
+  g.fillStyle = mix(R.fondo || FR.ocreClaro, FR.yeso, .35); g.fillRect(0, 0, 64, 64);
+  g.globalAlpha = .25; g.fillStyle = shade(R.fondo || FR.ocreClaro, -.25); g.beginPath(); g.ellipse(20, 18, 22, 16, .4, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
+  // Hombros y ropa con pliegues.
+  const ropa = R.ropa;
+  pintar(g, [[6, 66], [9, 50], [20, 43], [32, 45], [44, 43], [55, 50], [58, 66]], ropa, rng, { n: 4, bw: .8 });
+  g.save(); g.globalAlpha = .4; g.strokeStyle = shade(ropa, -.35); g.lineWidth = .8;
+  [[18, 50, 16, 64], [25, 48, 24, 64], [41, 48, 43, 64]].forEach(([a, b2, c, d]) => { g.beginPath(); g.moveTo(a, b2); g.quadraticCurveTo(a - 1, (b2 + d) / 2, c, d); g.stroke(); });
+  g.strokeStyle = shade(ropa, .35); g.globalAlpha = .5; g.beginPath(); g.moveTo(14, 52); g.lineTo(12, 64); g.stroke(); g.restore();
+  if (R.detalle === 'cuello') pintar(g, [[28, 43], [36, 43], [35, 48], [29, 48]], FR.cal, rng, { n: 0, bw: .6 });
+  if (R.detalle === 'collar') { g.save(); g.strokeStyle = FR.ocre; g.lineWidth = 1.5; g.beginPath(); g.arc(32, 43, 7, .35, Math.PI - .35); g.stroke(); g.restore(); }
+  if (R.detalle === 'ruana') { pintar(g, [[8, 66], [12, 50], [32, 47], [52, 50], [56, 66]], ropa, rng, { n: 3, bw: .8 }); g.save(); g.strokeStyle = FR.ocre; g.lineWidth = 1.2; g.beginPath(); g.moveTo(12, 55); g.lineTo(52, 55); g.stroke(); g.restore(); }
+  if (R.detalle === 'gorra') { pintar(g, [[22, 46], [42, 46], [42, 49], [22, 49]], shade(ropa, -.2), rng, { n: 0, bw: .5 }); g.fillStyle = FR.ocre; g.fillRect(37, 51, 3, 3); }
+  // Cuello y cabeza (tres cuartos: el rostro mira un poco a la izquierda).
+  const piel = R.piel;
+  pintar(g, [[28, 44], [36, 44], [36, 36], [28, 36]], shade(piel, -.08), rng, { n: 0, bw: .6 });
+  ovalo(g, 31.5, 29, 9.3, 11.4, piel, rng, { n: 3, al: .1, bw: .75, j: .02 });
+  // Sombra del lado derecho y del cuello (la luz viene de la izquierda).
+  g.save(); g.globalAlpha = .26; g.fillStyle = FR.siena; g.beginPath(); g.ellipse(37, 30, 4.2, 9.5, -.1, 0, Math.PI * 2); g.fill(); g.restore();
+  // Oreja.
+  ovalo(g, 40, 30, 1.6, 2.6, shade(piel, -.08), rng, { n: 0, bw: .5 });
+  // Rasgos: cejas, ojos almendrados grandes (como en El Fayum), nariz, boca.
+  g.save(); g.lineCap = 'round';
+  g.strokeStyle = shade(R.pelo || FR.carbon, .05); g.lineWidth = 1.1;
+  g.beginPath(); g.moveTo(24.6, 24.6); g.quadraticCurveTo(27.2, 23.2, 29.8, 24.4); g.moveTo(32.6, 24.4); g.quadraticCurveTo(35, 23.4, 37.2, 24.8); g.stroke();
+  for (const [x, w] of [[27.2, 2.6], [34.8, 2.3]]) {
+    g.fillStyle = '#F4EEE0'; g.beginPath(); g.ellipse(x, 27.4, w, 1.25, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#3A2618'; g.beginPath(); g.arc(x - .3, 27.4, 1.15, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = FR.siena; g.lineWidth = .55; g.beginPath(); g.ellipse(x, 27.3, w, 1.3, 0, Math.PI * 1.05, Math.PI * 1.95); g.stroke();
   }
-  if (kind === 'julian') { g.fillStyle = '#4A3A2C'; g.beginPath(); g.ellipse(32, 22, 10, 5, 0, Math.PI, 0); g.fill(); g.strokeStyle = '#4A3A2C'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(26, 36); g.quadraticCurveTo(32, 40, 38, 36); g.stroke(); }
-  if (kind === 'aurelio') { W([[20, 20], [44, 20], [44, 18], [20, 18]], '#1E1E22'); W([[24, 18], [40, 18], [39, 4], [25, 4]], '#26262C'); g.strokeStyle = '#DDD'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(27, 35); g.lineTo(31, 34); g.moveTo(33, 34); g.lineTo(37, 35); g.stroke(); }
-  return (CACHE[kind] = c.toDataURL());
+  g.strokeStyle = shade(piel, -.4); g.lineWidth = .8; g.beginPath(); g.moveTo(31, 27.5); g.quadraticCurveTo(29.6, 31.8, 31, 32.6); g.lineTo(32.8, 32.4); g.stroke();
+  g.strokeStyle = '#8A3A2A'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(28.6, 35.6); g.quadraticCurveTo(31, 36.4, 33.6, 35.5); g.stroke();
+  g.globalAlpha = .22; g.fillStyle = FR.bermellon; g.beginPath(); g.ellipse(26, 31.5, 2.2, 1.4, 0, 0, Math.PI * 2); g.fill();
+  g.restore();
+  if (R.detalle === 'gafas') { g.save(); g.strokeStyle = FR.carbon; g.lineWidth = .8; g.beginPath(); g.arc(27.2, 27.4, 3.2, 0, Math.PI * 2); g.moveTo(38, 27.4); g.arc(34.8, 27.4, 3.1, 0, Math.PI * 2); g.moveTo(30.4, 27); g.lineTo(31.7, 27); g.stroke(); g.restore(); }
+  // Pelo (masa con mechones).
+  const pelo = R.pelo || FR.carbon;
+  pintar(g, R.mujer ? [[21, 32], [21.5, 22], [26, 16.4], [33, 15.6], [40, 18], [42.6, 25], [42.4, 36], [40, 40], [40.5, 28], [37, 21.2], [30, 20.4], [24.5, 23.4], [23, 33]]
+    : [[22, 27], [22.6, 21], [27, 16.8], [34, 16.2], [40, 18.4], [41.8, 24], [41, 29], [39.5, 23.4], [34, 20.4], [27, 21], [24, 24]], pelo, rng, { n: 2, bw: .6 });
+  g.save(); g.globalAlpha = .35; g.strokeStyle = shade(pelo, .35); g.lineWidth = .6; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(26 + k * 3.5, 18.5); g.quadraticCurveTo(27 + k * 3.5, 20, 25.5 + k * 3.8, 22); g.stroke(); } g.restore();
+  if (R.detalle === 'gorra') { pintar(g, [[20.5, 22.5], [43.5, 22.5], [42, 14.5], [22, 14.5]], shade(ropa, -.15), rng, { n: 1, bw: .6 }); pintar(g, [[18, 24.6], [33, 24.6], [31, 21.8], [20, 21.8]], shade(ropa, -.32), rng, { n: 0, bw: .5 }); g.fillStyle = FR.ocre; g.beginPath(); g.arc(32, 18.4, 1.6, 0, Math.PI * 2); g.fill(); }
+  if (R.detalle === 'corona') { for (let k = 0; k < 5; k++) pintar(g, [[22.5 + k * 4.4, 19.5], [25.5 + k * 4.4, 19.5], [24 + k * 4.4 + (k % 2 ? 1 : -1), 7.5 + (k % 2) * 3]], [FR.verde, FR.ocre, FR.cal, FR.ocre, FR.verde][k], rng, { n: 0, bw: .45 }); pintar(g, [[21, 22], [43, 22], [43, 18.6], [21, 18.6]], FR.rojo, rng, { n: 0, bw: .5 }); }
+  if (R.detalle === 'sombrero') { ovalo(g, 31, 17.6, 15, 3.4, FR.cal, rng, { n: 1, bw: .6, j: .02 }); pintar(g, [[24, 17.8], [38, 17.8], [37, 9.5], [25, 9.5]], FR.cal, rng, { n: 1, bw: .6 }); pintar(g, [[24, 15.8], [38, 15.8], [38, 13.4], [24, 13.4]], FR.carbon, rng, { n: 0, bw: .3 }); }
+  if (R.detalle === 'panoleta') pintar(g, [[20.5, 26], [22, 15.5], [32, 12.6], [42, 15.6], [43.5, 26], [41, 23], [32, 19], [23, 23]], FR.rojo, rng, { n: 1, bw: .6 });
+  if (R.detalle === 'laurel') { g.save(); g.strokeStyle = FR.verde; g.lineWidth = 1.4; g.beginPath(); g.arc(31.5, 22, 10, Math.PI * 1.05, Math.PI * 1.95); g.stroke(); for (let k = 0; k < 7; k++) { const a = Math.PI * (1.1 + k * .13); ovalo(g, 31.5 + Math.cos(a) * 10, 22 + Math.sin(a) * 10, .9, 2, FR.verde, rng, { n: 0, bw: .3, j: .02 }); } g.restore(); }
+  texturaYeso(g, 0, 0, 64, 64, .35);
+  g.restore();
+  // Aro rojo pompeyano con filo ocre.
+  g.save(); g.lineWidth = 3.4; g.strokeStyle = FR.rojo; g.beginPath(); g.arc(32, 32, 29.6, 0, Math.PI * 2); g.stroke();
+  g.lineWidth = 1; g.strokeStyle = FR.ocre; g.beginPath(); g.arc(32, 32, 31.2, 0, Math.PI * 2); g.stroke(); g.restore();
 }
+function hacer(clave, spec, semilla) {
+  if (CACHE[clave]) return CACHE[clave];
+  const c = lienzo(128, 128), g = c.getContext('2d'); g.scale(2, 2);
+  pintarRetrato(g, spec, mulberry(semilla));
+  return (CACHE[clave] = c.toDataURL());
+}
+// Las voces del pueblo: Doña Rosa (campesina), Julián (artesano) y Don Aurelio (élite).
+const VOCES = {
+  rosa: { fondo: '#C9D6A8', piel: '#C08458', ropa: FR.rojo, pelo: '#2A2018', detalle: 'panoleta', mujer: true },
+  julian: { fondo: '#E6C27A', piel: '#D9A27A', ropa: FR.azul, pelo: '#4A3A2C', detalle: 'ruana' },
+  aurelio: { fondo: '#D8CFDF', piel: '#E3B894', ropa: FR.violeta, pelo: '#9C958A', detalle: 'laurel' }
+};
+export function retrato(kind) { return hacer(kind, VOCES[kind] || VOCES.julian, kind.length * 31 + 7); }
 
 // Emblemas de los regímenes (de la versión 9).
 export const EMB = {
@@ -36,23 +84,5 @@ export const EMB = {
 };
 
 // Fase 4: retratos de los personajes con papel propio, a partir de sus datos (fondo, piel, ropa, pelo y un detalle).
-export function retratoFig(id, R) {
-  const kind = 'fig-' + id;
-  if (CACHE[kind]) return CACHE[kind];
-  const c = lienzo(128, 128), g = c.getContext('2d'); g.scale(2, 2);
-  const rng = mulberry(id.length * 47 + 11), W = (pts, col) => wash(g, pts, col, rng, .95, 0);
-  blob(g, 32, 32, 30, 30, R.fondo, rng, .9);
-  W([[14, 64], [16, 46], [24, 40], [40, 40], [48, 46], [50, 64]], R.ropa);
-  if (R.detalle === 'cuello') W([[29, 40], [35, 40], [35, 44], [29, 44]], '#F4F1E6');
-  if (R.detalle === 'collar') { g.strokeStyle = '#E9D9A0'; g.lineWidth = 1.4; g.beginPath(); g.arc(32, 41, 6, .3, Math.PI - .3); g.stroke(); }
-  if (R.detalle === 'gorra') { W([[22, 44], [42, 44], [42, 47], [22, 47]], '#2E3A28'); g.fillStyle = '#E2B24F'; g.fillRect(36, 48, 3, 3); }
-  blob(g, 32, 31, 10, 10.5, R.piel, rng, .95);
-  // Pelo (detrás y encima de la cabeza).
-  g.fillStyle = R.pelo; g.beginPath(); g.ellipse(32, 25, 10.5, 6, 0, Math.PI, 0); g.fill();
-  g.fillStyle = '#2A2018'; g.beginPath(); g.arc(28.5, 31, 1.1, 0, 7); g.arc(35.5, 31, 1.1, 0, 7); g.fill();
-  g.strokeStyle = '#7A4A34'; g.lineWidth = 1; g.beginPath(); g.arc(32, 34.5, 3, .2, Math.PI - .2); g.stroke();
-  if (R.detalle === 'gafas') { g.strokeStyle = '#2A2A2A'; g.lineWidth = .9; g.beginPath(); g.arc(28.5, 31, 2.6, 0, 7); g.moveTo(38.1, 31); g.arc(35.5, 31, 2.6, 0, 7); g.moveTo(31.1, 31); g.lineTo(32.9, 31); g.stroke(); }
-  if (R.detalle === 'gorra') { W([[20, 22], [44, 22], [42, 15], [22, 15]], '#2E3A28'); W([[18, 24], [34, 24], [32, 21], [20, 21]], '#1F281B'); g.fillStyle = '#E2B24F'; g.beginPath(); g.arc(32, 18.5, 1.6, 0, 7); g.fill(); }
-  if (R.detalle === 'corona') { W([[21, 22], [43, 22], [43, 18], [21, 18]], '#C0392B'); for (let k = 0; k < 5; k++) W([[23 + k * 4.5, 18], [25 + k * 4.5, 18], [24 + k * 4.5 + (k % 2 ? 1 : -1), 6 + (k % 2) * 3]], ['#2D6E5E', '#E7C76B', '#F4F1E6', '#E7C76B', '#2D6E5E'][k]); }
-  return (CACHE[kind] = c.toDataURL());
-}
+const MUJERES = new Set(['empresaria', 'vulcanologa']);
+export function retratoFig(id, R) { return hacer('fig-' + id, { ...R, mujer: MUJERES.has(id) || R.mujer }, id.length * 47 + 11); }
