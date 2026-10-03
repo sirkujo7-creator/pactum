@@ -114,7 +114,7 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 
 | Paso | Estado |
 | --- | --- |
-| 1. Prueba de estilo | Publicada en `pruebas/fresco.html`; espera la decisión de Juan (variante A o B y cambios) |
+| 1. Prueba de estilo | Aprobada por Juan (4 de octubre): **variante A, muro de cal** (paneles claros con bordes rojo pompeyano). Muestra en `pruebas/fresco.html` |
 | 2. Interfaz | Pendiente |
 | 3. Pobladores | Pendiente |
 | 4. Naturaleza | Pendiente |

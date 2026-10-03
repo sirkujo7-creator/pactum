@@ -78,7 +78,7 @@ Juan pidió el 3 de octubre que una partida dure **mínimo unos 100 años para g
 Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo grecorromano. Juan pidió el 4 de octubre rehacer los pobladores (le parecían horribles), árboles menos exagerados (también en los parques) y un solo estilo igual en todo, ojalá grecorromano. Eligió **fresco pompeyano** y **Tolima neoclásico**. Pasos (un paso publicable a la vez):
 
 1. Prueba de estilo en `pruebas/fresco.html` (no toca el juego): pueblo, pobladores y árboles antes y ahora, e interfaz en dos variantes (A muro de cal, B muro rojo pompeyano). Juan la aprueba o pide cambios.
-2. Interfaz al fresco con la variante elegida: barra de arriba compacta, menú lateral agrupado, íconos pintados, tarjetas con greca.
+2. Interfaz al fresco con la variante A (muro de cal), elegida por Juan: barra de arriba compacta, menú lateral agrupado, íconos pintados, tarjetas con greca.
 3. Pobladores nuevos en el juego (`src/arte/gente.js`).
 4. Naturaleza: árboles nuevos, menos y más pequeños; parques ordenados (`src/arte/flora.js`).
 5. Obras: casas de bahareque con zócalo y teja; edificios públicos neoclásicos; huellas (`src/arte/obras-fresco.js`).
