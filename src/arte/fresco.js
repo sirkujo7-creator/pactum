@@ -4,6 +4,17 @@
 import { mulberry, clamp, shade, mix, lienzo, poly } from './acuarela.js';
 export { mulberry, clamp, shade, mix, lienzo, poly };
 
+// Imagen de un lienzo como enlace corto (blob:) en vez de un texto gigante (data:). Safari en iPhone sufre con los
+// textos data: largos repetidos en el HTML y en el CSS; el enlace corto se crea una vez y se reutiliza.
+export function urlDe(c, tipo = 'image/png', calidad) {
+  const d = c.toDataURL(tipo, calidad);
+  try {
+    const b = atob(d.slice(d.indexOf(',') + 1)), u = new Uint8Array(b.length);
+    for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+    return URL.createObjectURL(new Blob([u], { type: tipo }));
+  } catch (e) { return d; }
+}
+
 // Paleta de pigmentos.
 export const FR = {
   yeso: '#EFE5CF', yesoOsc: '#E2D3B4', cal: '#F7F1E3', rojo: '#9C2F25', bermellon: '#B9442F', ocre: '#D4A24C',

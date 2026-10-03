@@ -42,12 +42,12 @@ export class Mapa extends Phaser.Scene {
     this.T = genTerreno(this.S.seed, this.S.n, desvios(this.S)); // fase 6: con los cambios de curso del río
     this.desviosVistos = desvios(this.S).length;
     // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
-    this.escalaSector = (DPR > 1.5 ? 1.9 : 1.5) * Math.min(1, 32 / this.S.n);
+    this.escalaSector = (DPR > 2.5 ? 1.6 : DPR > 1.5 ? 1.8 : 1.5) * Math.min(1, 32 / this.S.n); // fase 8: algo menos en pantallas muy nítidas (iPhone), para dar margen de memoria
     this.dry = sequedad(this.S);
     this.vistaInicial();
 
     // Fondo lejano y sombra del diorama.
-    const f = pintarFondo(this.T, 1.25); // fase 8: más resolución, para que el nevado no se vea pixelado de cerca
+    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600))); // fase 8: más resolución, sin pasar de 3600 px de ancho (límite seguro en celulares)
     this.textures.addCanvas('fondo', f.canvas);
     this.add.image(f.x, f.y, 'fondo').setOrigin(0).setScale(1 / f.escala).setDepth(PROF_FONDO);
     const N = this.T.N, pie = P(N, N, -2.2);

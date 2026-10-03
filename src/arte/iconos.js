@@ -1,8 +1,8 @@
 // Íconos pintados al fresco para la interfaz (fase 8): recursos, medidores y barra inferior.
 // Se pintan una vez en un lienzo pequeño y se usan como imágenes (data URL).
-import { FR, mulberry, lienzo, pintar, ovalo } from './fresco.js';
+import { FR, mulberry, lienzo, pintar, ovalo, urlDe } from './fresco.js';
 
-function icono(f, tam = 64) { const c = lienzo(tam, tam), g = c.getContext('2d'); g.translate(tam / 2, tam / 2); g.scale(tam / 24, tam / 24); f(g, mulberry(tam)); return c.toDataURL(); }
+function icono(f, tam = 64) { const c = lienzo(tam, tam), g = c.getContext('2d'); g.translate(tam / 2, tam / 2); g.scale(tam / 24, tam / 24); f(g, mulberry(tam)); return urlDe(c); }
 export const ICONOS = {
   oro: icono((g, r) => { ovalo(g, 0, 0, 9, 9, FR.ocre, r, { bw: .8 }); ovalo(g, 0, 0, 6.5, 6.5, FR.ocreClaro, r, { bw: .5, n: 1 }); g.strokeStyle = FR.verde; g.lineWidth = 1.2; g.beginPath(); g.arc(0, 0, 4.4, Math.PI * .2, Math.PI * .8, true); g.stroke(); }),
   deuda: icono((g, r) => { pintar(g, [[-8, -7], [8, -7], [8, 7], [-8, 7]], FR.sienaClara, r, { bw: .8 }); pintar(g, [[-6, -5], [6, -5], [6, 5], [-6, 5]], FR.ocreClaro, r, { bw: .5, n: 1 }); g.strokeStyle = FR.siena; g.lineWidth = .8; [-2.5, 0, 2.5].forEach(y => { g.beginPath(); g.moveTo(-4, y); g.lineTo(4, y); g.stroke(); }); }),
