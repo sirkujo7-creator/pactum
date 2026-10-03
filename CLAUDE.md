@@ -31,7 +31,7 @@ Simulador de gobierno para un jugador. Cada decisión enseña un concepto de fil
 ## Decisiones fijas
 
 - Nombre: **PACTUM: la nueva polis**.
-- Arte: acuarela propia por capas (forma, color, textura de papel, bordes, luz). Sin paquetes de arte externos. El arte se hornea a texturas una vez; nada de redibujar formas complejas en cada cuadro.
+- Arte: **fresco pompeyano con el Tolima neoclásico** (decisión de Juan, 4 de octubre; reemplaza la acuarela y se aplica en la fase 8). Un solo estilo para todo: mapa, obras, gente, íconos y paneles, con paleta de pigmentos (rojo pompeyano, ocres, tierra verde, azul egipcio, blanco de cal), contorno siena y textura de muro. Se conservan el Nevado, el río, el café, la guadua y las casas de bahareque; los edificios públicos son neoclásicos (columnas y frontón, como la arquitectura republicana). Pinceles en `src/arte/fresco.js`. Sin paquetes de arte externos. El arte se hornea a texturas una vez; nada de redibujar formas complejas en cada cuadro.
 - Motor: **Phaser 3**, guardado en `vendor/` (no por CDN), para que funcione sin internet.
 - **Sin paso de compilación**: módulos ES nativos, se publica tal cual en GitHub Pages.
 - App instalable (PWA) con `manifest.webmanifest` y `sw.js`.
@@ -75,7 +75,15 @@ Juan pidió el 3 de octubre que una partida dure **mínimo unos 100 años para g
 4. Más desastres y clima: epidemias (fiebre amarilla al principio, pandemia al final), sequías largas, avenidas torrenciales; con el cambio climático, El Niño y La Niña más seguidos en la segunda mitad. Siempre preparables y con años de respiro.
 5. Balance final.
 
-Después de la fase 7 (aprobado por Juan): **cambio visual, más pulido y con el mismo estilo** (acuarela). Pasos: prueba de estilo de la interfaz (Juan la aprueba antes), aplicarla a todo el juego, pantalla de inicio pintada como el mapa, mapa (nevado nítido, arrozales sin cuadrícula, nitidez al acercar), edificios y pobladores más grandes y legibles, revisión en celular y computador.
+Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo grecorromano. Juan pidió el 4 de octubre rehacer los pobladores (le parecían horribles), árboles menos exagerados (también en los parques) y un solo estilo igual en todo, ojalá grecorromano. Eligió **fresco pompeyano** y **Tolima neoclásico**. Pasos (un paso publicable a la vez):
+
+1. Prueba de estilo en `pruebas/fresco.html` (no toca el juego): pueblo, pobladores y árboles antes y ahora, e interfaz en dos variantes (A muro de cal, B muro rojo pompeyano). Juan la aprueba o pide cambios.
+2. Interfaz al fresco con la variante elegida: barra de arriba compacta, menú lateral agrupado, íconos pintados, tarjetas con greca.
+3. Pobladores nuevos en el juego (`src/arte/gente.js`).
+4. Naturaleza: árboles nuevos, menos y más pequeños; parques ordenados (`src/arte/flora.js`).
+5. Obras: casas de bahareque con zócalo y teja; edificios públicos neoclásicos; huellas (`src/arte/obras-fresco.js`).
+6. Terreno y pantalla de inicio al fresco (nevado nítido, arrozales sin cuadrícula, nitidez al acercar).
+7. Revisión en celular y computador, y rendimiento.
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.

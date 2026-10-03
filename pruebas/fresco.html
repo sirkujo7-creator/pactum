@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba de estilo: fresco</title>
+<style>
+@font-face{font-family:"Alegreya";font-weight:500;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya";font-weight:700;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya";font-weight:800;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:400;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:500;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-500-normal.woff2) format("woff2")}
+:root{
+  --yeso:#EFE5CF; --yeso-osc:#E2D3B4; --cal:#F7F1E3; --rojo:#9C2F25; --bermellon:#B9442F; --ocre:#D4A24C; --ocre-claro:#E6C27A;
+  --siena:#5B3423; --verde:#6E8A57; --azul:#3E7E9C; --carbon:#2E2723;
+  --panel:var(--cal); --panel-txt:var(--carbon); --panel-borde:var(--rojo); --acento:var(--rojo); --opcion:var(--yeso);
+}
+body[data-v="b"]{ --panel:#8E2B22; --panel-txt:var(--cal); --panel-borde:var(--ocre); --acento:var(--ocre); --opcion:#A53B30; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--yeso);background-image:var(--yeso-tex);color:var(--carbon);font:16px/1.45 "Alegreya Sans",system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:"Alegreya",Georgia,serif;font-weight:800;letter-spacing:.02em;color:var(--siena);margin:.2em 0}
+h1{font-size:30px;font-variant:small-caps}
+h2{font-size:22px;font-variant:small-caps;margin-top:28px;padding-bottom:6px;border-bottom:3px solid var(--rojo)}
+p{margin:.4em 0 .8em}
+.lienzo{width:100%;display:block;border-radius:6px;box-shadow:0 0 0 3px var(--cal),0 0 0 5px var(--rojo),0 8px 24px #5b342333;background:var(--yeso)}
+#escena{aspect-ratio:16/11;height:auto;max-height:600px}
+#gente{height:250px} #arboles{height:250px} #detalle{height:190px}
+.dos{display:grid;gap:16px}
+@media(min-width:760px){.dos{grid-template-columns:1fr 1fr}}
+.nota{font-size:14px;color:#6a5440}
+/* Interfaz de muestra */
+.variantes{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.variantes button{font:600 15px "Alegreya Sans",sans-serif;padding:8px 14px;border-radius:999px;border:2px solid var(--rojo);background:var(--cal);color:var(--siena);cursor:pointer}
+.variantes button.on{background:var(--rojo);color:var(--cal)}
+.variantes button:focus-visible,.op:focus-visible,.dock button:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+.tel{position:relative;width:min(390px,100%);height:760px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 0 0 6px var(--siena),0 12px 30px #0003;background:#cfc4a6 url() center/cover}
+.tel canvas{position:absolute;inset:0;width:100%;height:100%}
+.barra{position:absolute;left:8px;right:8px;top:8px;display:flex;flex-direction:column;gap:6px;z-index:2}
+.fila{display:flex;gap:5px;align-items:center}
+.regimen{font:800 15px Alegreya,serif;font-variant:small-caps;color:var(--cal);background:var(--rojo);padding:3px 10px;border-radius:4px;box-shadow:inset 0 0 0 1.5px var(--ocre)}
+.anio{font:700 14px Alegreya,serif;color:var(--siena);background:#f7f1e3dd;padding:3px 8px;border-radius:4px}
+.pill{display:flex;align-items:center;gap:3px;background:#f7f1e3ee;border:1.5px solid #5b342355;border-radius:5px;padding:2px 6px 2px 3px;font:700 14px "Alegreya Sans",sans-serif;color:var(--carbon)}
+.pill img{width:22px;height:22px}
+.pill small{font-weight:500;color:#6a5440;font-size:11px}
+.meds{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.med{background:#f7f1e3ee;border:1.5px solid #5b342355;border-radius:5px;padding:2px 4px}
+.med .l{display:flex;align-items:center;justify-content:space-between;font:700 12px "Alegreya Sans",sans-serif}
+.med img{width:18px;height:18px}
+.med .t{height:4px;background:#5b34232a;border-radius:2px;margin-top:2px;overflow:hidden}
+.med .f{height:100%;border-radius:2px}
+.menu{position:absolute;right:8px;top:118px;z-index:2;width:42px;height:42px;border-radius:50%;background:var(--cal);border:2px solid var(--rojo);color:var(--rojo);font:800 20px Alegreya,serif;display:grid;place-items:center;box-shadow:0 2px 6px #0003}
+.tarjeta{position:absolute;left:10px;right:10px;bottom:84px;z-index:3;background:var(--panel);color:var(--panel-txt);border-radius:6px;padding:20px 16px 14px;box-shadow:0 0 0 2px var(--panel-borde),0 10px 30px #0005;background-image:var(--yeso-tex);background-blend-mode:multiply}
+.tarjeta::before{content:"";position:absolute;left:10px;right:10px;top:6px;height:10px;background:var(--greca) repeat-x left/auto 10px}
+body[data-v="b"] .tarjeta::before{background-image:var(--greca-ocre)}
+.tarjeta h3{color:inherit;font-size:22px;font-variant:small-caps;margin:2px 0 4px}
+.tarjeta p{font-size:15px;margin:.2em 0 .7em}
+.op{display:block;width:100%;text-align:left;margin:6px 0;padding:8px 10px;border-radius:4px;border:0;border-left:5px solid var(--acento);background:var(--opcion);color:inherit;font:600 15px "Alegreya Sans",sans-serif;cursor:pointer}
+.op small{display:block;font-weight:400;opacity:.8;font-size:13px}
+.leccion{margin-top:8px;font-size:13px;padding:7px 9px;border-radius:4px;background:#0000000f;border-left:3px solid var(--acento)}
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;background:var(--cal);border-top:3px solid var(--rojo);padding:6px 4px 8px}
+.dock::before{content:"";position:absolute;left:0;right:0;top:-14px;height:9px;background:var(--greca) repeat-x left/auto 9px}
+.dock button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;font:600 12px "Alegreya Sans",sans-serif;color:var(--siena);gap:1px}
+.dock button img{width:28px;height:28px}
+.dock .fin{flex:1.3;background:var(--rojo);color:var(--cal);border-radius:6px;font:800 15px Alegreya,serif;justify-content:center;box-shadow:inset 0 0 0 2px var(--ocre)}
+.lista{padding-left:20px}
+.lista li{margin:.25em 0}
+</style>
+</head>
+<body data-v="a">
+<main>
+  <h1>Pactum al fresco</h1>
+  <p>Prueba de estilo: <b>fresco pompeyano</b> con el <b>Tolima neoclásico</b>. No cambia el juego: es solo para ver y decidir. Todo comparte la misma paleta de pigmentos, el mismo contorno siena y la misma textura de muro.</p>
+
+  <h2>El pueblo</h2>
+  <canvas id="escena" class="lienzo" aria-label="Un pueblo del Tolima pintado al fresco: casas de bahareque, un ágora con columnas, el río, cafetales y gente caminando"></canvas>
+  <p class="nota">Casas de bahareque con zócalo de color y teja de barro; el ágora con podio, columnas y frontón, como la arquitectura republicana; el río en azul egipcio; cafetales, guadua y palmas de cera.</p>
+
+  <h2>Pobladores: antes y ahora</h2>
+  <div class="dos">
+    <canvas id="gente" class="lienzo" aria-label="Pobladores de antes y pobladores nuevos al fresco"></canvas>
+    <canvas id="detalle" class="lienzo" aria-label="Pobladores nuevos en grande: campesino, campesina, artesano, élite y niño"></canvas>
+  </div>
+  <p class="nota">Proporciones clásicas, sin caras de caricatura. Conservan su identidad: el campesino con aguadeño y ruana, la campesina con pañoleta, el artesano con su gorro de fieltro (como el de los artesanos griegos) y la élite con manto terciado y corona de laurel. En las épocas modernas cambian a ropa actual.</p>
+
+  <h2>Árboles: antes y ahora</h2>
+  <canvas id="arboles" class="lienzo" aria-label="Árboles de antes y árboles nuevos al fresco"></canvas>
+  <p class="nota">Más pequeños, con copas redondeadas y toques de luz, como en los jardines pintados de Pompeya. En el mapa habría menos árboles, y en los parques pocos y ordenados.</p>
+
+  <h2>La interfaz</h2>
+  <div class="variantes" id="ui">
+    <button class="on" data-variante="a">A · Muro de cal</button>
+    <button data-variante="b">B · Muro rojo pompeyano</button>
+  </div>
+  <div class="tel" id="tel">
+    <canvas id="escena2" aria-hidden="true"></canvas>
+    <div class="barra" id="ui2">
+      <div class="fila"><span class="regimen">República</span><span class="anio">Pueblo · año 24</span></div>
+      <div class="fila">
+        <span class="pill" data-ico="oro">212</span><span class="pill" data-ico="alimento">96<small>+12</small></span>
+        <span class="pill" data-ico="poblacion">58<small>/70</small></span><span class="pill" data-ico="agua">80</span>
+      </div>
+      <div class="meds">
+        <div class="med"><div class="l" data-ico="bienestar">62</div><div class="t"><div class="f" style="width:62%;background:var(--verde)"></div></div></div>
+        <div class="med"><div class="l" data-ico="igualdad">51</div><div class="t"><div class="f" style="width:51%;background:var(--ocre)"></div></div></div>
+        <div class="med"><div class="l" data-ico="legitimidad">58</div><div class="t"><div class="f" style="width:58%;background:var(--verde)"></div></div></div>
+        <div class="med"><div class="l" data-ico="ambiente">74</div><div class="t"><div class="f" style="width:74%;background:var(--verde)"></div></div></div>
+        <div class="med"><div class="l" data-ico="rumbo">22</div><div class="t"><div class="f" style="width:22%;background:var(--rojo)"></div></div></div>
+      </div>
+    </div>
+    <div class="menu" aria-label="Menú">☰</div>
+    <div class="tarjeta">
+      <h3>Las tierras baldías</h3>
+      <p>Llegan colonos de Antioquia buscando tierra. Un hacendado de Ibagué dice tener títulos de la Colonia.</p>
+      <button class="op">Entregar las tierras a quien las trabaje<small>Sin costo en oro · Contrato social</small></button>
+      <button class="op">Reconocer los títulos del hacendado<small>+30 oro · Realismo político</small></button>
+      <button class="op">Medir la tierra y repartirla por sorteo<small>−30 oro · Deber</small></button>
+      <div class="leccion"><b>Época: fundación y tierras baldías.</b> Quién se quedó con la tierra marcó la desigualdad de los siglos siguientes.</div>
+    </div>
+    <div class="dock">
+      <button data-ico="construir">Construir</button><button data-ico="hacienda">Hacienda</button><button data-ico="sociedad">Sociedad</button><button data-ico="leyes">Leyes</button><button data-ico="cronica">Crónica</button>
+      <button class="fin">Año 24 ▸</button>
+    </div>
+  </div>
+
+  <h2>¿Qué cambia respecto al juego de hoy?</h2>
+  <ul class="lista">
+    <li>Un solo estilo para todo: mapa, obras, gente, íconos y paneles.</li>
+    <li>La barra de arriba ocupa menos: recursos en una fila y medidores delgados con íconos pintados.</li>
+    <li>Los botones de la derecha se agrupan en un solo menú.</li>
+    <li>Las tarjetas llevan greca, textura de muro y títulos en versalitas.</li>
+  </ul>
+  <p>Dime qué te gusta, qué cambiarías y cuál variante prefieres (A o B).</p>
+</main>
+<script type="module" src="fresco.js"></script>
+</body>
+</html>
