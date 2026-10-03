@@ -11,6 +11,7 @@ import { animoGrupo } from './grupos.js';
 import { efectoFig, reaccionarMovimiento } from './figuras.js';
 import { applyFx } from './dilemas.js';
 import { dejarMarca } from './marcas.js';
+import { efectoTec } from './tecnologia.js';
 
 const K = () => C.MOV;
 export function movimientosActivos(S) { return climaActivo(S) && !!C.MOV && !!C.GRUPOS; }
@@ -27,7 +28,7 @@ export function animoBase(S, id) { const b = K().movimientos[id].base; return b 
 export function cambioAnual(S, id) {
   const G = K().crecimiento;
   const d = clamp((G.animoTranquilo - animoBase(S, id)) * G.factor, -G.maxBaja, G.maxSube);
-  return d > 0 ? d * RM(S, 'movCrece', 1) * efectoFig(S, 'movimientos') : d; // fase 4: en República hay canales y crecen más lento
+  return d > 0 ? d * RM(S, 'movCrece', 1) * efectoFig(S, 'movimientos') * efectoTec(S, 'mov') : d; // fase 4: en República hay canales y crecen más lento
 }
 export function nombreEstado(f) { let n = ''; for (const e of K().estados) if (f >= e.desde) n = e.nombre; return n; }
 export function fuerzaMov(S, id) { return movimientosActivos(S) && S.mov && S.mov[id] ? S.mov[id].f : 0; }

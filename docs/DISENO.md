@@ -110,6 +110,15 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 8. Otras formas de ganar y efecto por edificio | Publicado (0.33.0). Desde Ciudad, además de la Polis, cuatro caminos que se ganan sosteniendo todas sus condiciones los años que pide la dificultad (6 en Normal): Polis próspera (bienestar 60, calificación AAA, sin deuda, tesoro de 250), Polis justa (igualdad 70, legitimidad 62, ninguna clase bajo 45), Polis verde (ambiente 82, sin minas, bosque en 26% del territorio) y Polis en paz (sin grupo armado, inseguridad menor que 10, sin movimientos movilizados, vecinos con 70 de promedio). Tarjeta «Caminos a la victoria» desde la meta, con el avance de cada uno. Cada edificio muestra en su ficha su efecto especial; nuevos efectos: el mercado estabiliza el precio de la comida (hasta 30%), el acueducto reduce los brotes (hasta la mitad) y el puerto suma 2% de comercio y mejora la relación con San Lorenzo. Robots (no buscan estos caminos): unos 2% ganan por ellos. República 47%; regímenes entre 40% y 54%; Fácil 100%, Difícil 8% |
 | 9. Ajuste de Difícil | Publicado (0.33.1). Decisión de Juan (3 de octubre): Difícil cerca de 30%. Golpes ×1,45, racha para suceso bueno de 2 y suceso bueno 55% de esas veces. Robots: Difícil 31% |
 
+## Estado de la fase 6 (conocimiento)
+
+| Paso | Estado |
+| --- | --- |
+| 1. Tecnología por épocas | Publicado (0.38.0). Saber por año desde Pueblo: 1,5 de base, 1,5 por escuela, 3 por biblioteca y 6 por universidad. Seis inventos que llegan al juntar saber (y con la etapa mínima): imprenta (12), telégrafo (30), electricidad (55, Ciudad), radio (85, Ciudad), internet (120, Polis) y automatización (160, Polis). Al llegar, una tarjeta: adoptarlo libre (todo el beneficio y todo el riesgo), regulado (menos de ambos, con un costo por año) o rechazarlo; se puede cambiar después en Leyes → Tecnología. Efectos: igualdad, legitimidad, ambiente, ingresos, cosecha, inseguridad, cultura, rumbo y crecimiento de los movimientos. Cada invento adoptado deja su obra en el mapa (imprenta, postes del telégrafo, planta eléctrica, torre de radio, antena, fábrica automática). Ninguno es obligatorio para ganar. Robots: imprenta hacia el año 16, telégrafo 28, electricidad 43, radio 52, internet 65; República 49 a 53%; regímenes entre 45% y 56% |
+| 2. Megaproyectos y consulta previa | Pendiente |
+| 3. El río que cambia | Pendiente |
+| 4. Balance | Pendiente |
+
 ## Estado de la fase 5 (sociedad y memoria)
 
 | Paso | Estado |

@@ -25,6 +25,7 @@ import { victoriasDelAnio } from './victorias.js';
 import { barriosDelAnio, efectoBarrios } from './barrios.js';
 import { memoriaDelAnio } from './memoria.js';
 import { epocasDelAnio } from './epocas.js';
+import { tecDelAnio, efectoTec } from './tecnologia.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -66,11 +67,11 @@ export function advance(S) {
 
   // Igualdad.
   const tot = (F.post.c + F.post.a + F.post.e + F.post.u) || 1, es = F.post.e / tot, ps = so.el / Math.max(1, so.P);
-  const tE = 85 - (es - ps) * 120 + sc * 10 + c.universidad * 5 + RM(S, 'eq') + (hasLaw(S, 'educacion') ? 8 : 0) + (hasLaw(S, 'censura') ? -3 : 0) + efectoBarrios(S, 'igualdad');
+  const tE = 85 - (es - ps) * 120 + sc * 10 + c.universidad * 5 + RM(S, 'eq') + (hasLaw(S, 'educacion') ? 8 : 0) + (hasLaw(S, 'censura') ? -3 : 0) + efectoBarrios(S, 'igualdad') + efectoTec(S, 'eq');
   S.eq = clamp(S.eq + (tE - S.eq) * .3, 0, 100);
 
   // Confianza.
-  const tT = 50 + RM(S, 'tr') + (hasLaw(S, 'censura') ? 6 : 0) + (hasLaw(S, 'prensa') ? -3 : 0) + (S.hap - 50) * .4 + c.agora * 10 + (S.gold < 0 ? -10 : 0) - Math.max(0, ip - 3) * .8 - presionMovimientos(S) + coherencia(S) + efectoFig(S, 'legitimidad');
+  const tT = 50 + RM(S, 'tr') + (hasLaw(S, 'censura') ? 6 : 0) + (hasLaw(S, 'prensa') ? -3 : 0) + (S.hap - 50) * .4 + c.agora * 10 + (S.gold < 0 ? -10 : 0) - Math.max(0, ip - 3) * .8 - presionMovimientos(S) + coherencia(S) + efectoFig(S, 'legitimidad') + efectoTec(S, 'tr');
   S.tr = clamp(S.tr + (tT - S.tr) * .3, 0, 100);
   if (S.sat.c < 25 || S.sat.a < 25) {
     if (RM(S, 'silence', false)) { S.corr = clamp(S.corr + 4, 0, 100); news.push('La guardia disolvió protestas. Nadie habla, pero el descontento crece.'); }
@@ -78,7 +79,7 @@ export function advance(S) {
   }
 
   // Ambiente.
-  const tA = envTarget(S, c) + efectoFig(S, 'ambiente');
+  const tA = envTarget(S, c) + efectoFig(S, 'ambiente') + efectoTec(S, 'env');
   S.env = clamp(S.env + (tA - S.env) * .3, 0, 100);
 
   // Fase 1: emergencia del año de El Niño o La Niña (la paga el fondo; lo que falte, el tesoro).
@@ -167,6 +168,7 @@ export function advance(S) {
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));
+  news.push(...tecDelAnio(S));
   if (S.reg === 'monarquia' && S.year % 15 === 0) {
     if (azar() < .5) { S.corr = clamp(S.corr - 10, 0, 100); S.tr = clamp(S.tr + 5, 0, 100); news.push('Sucesión en la corona: el heredero es prudente y querido.'); }
     else { S.corr = clamp(S.corr + 15, 0, 100); S.tr = clamp(S.tr - 5, 0, 100); news.push('Sucesión en la corona: el heredero es caprichoso y la corte murmura.'); }
