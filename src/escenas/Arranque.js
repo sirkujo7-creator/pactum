@@ -1,5 +1,6 @@
-// Escena de arranque: portada en acuarela y estado de la base técnica.
-import { pintarPortada, pintarNiebla, TINTA } from '../arte/acuarela.js';
+// Escena de arranque: portada al fresco (fase 8) y estado de la base técnica.
+import { pintarNiebla, TINTA } from '../arte/acuarela.js';
+import { pintarPortadaFresco } from '../arte/portada.js';
 import { VERSION } from '../version.js';
 import { DPR, tam, capaUI, el } from './pantalla.js';
 import { cargarContenido, C } from '../core/index.js';
@@ -34,14 +35,14 @@ export class Arranque extends Phaser.Scene {
     this.events.once('shutdown', () => window.removeEventListener('keydown', this.teclas));
     if (this.pedirNueva) this.elegirDificultad();
     // La portada se hornea una sola vez a buena resolución y luego solo se escala.
-    if (!this.textures.exists('portada')) this.textures.addCanvas('portada', pintarPortada(1600, 1000));
+    if (!this.textures.exists('portada')) this.textures.addCanvas('portada', pintarPortadaFresco(1600, 1000));
 
     this.fondo = this.add.image(0, 0, 'portada').setOrigin(.5, 1);
     if (!this.textures.exists('niebla')) this.textures.addCanvas('niebla', pintarNiebla());
     this.nieblas = [0, 1, 2].map(i => this.add.image(0, 0, 'niebla').setAlpha(.55 - i * .1));
 
-    this.titulo = this.add.text(0, 0, 'PACTUM', { fontFamily: SERIF, fontStyle: '800', color: TINTA, resolution: RES }).setOrigin(.5, 0);
-    this.subtitulo = this.add.text(0, 0, 'la nueva polis', { fontFamily: SERIF, fontStyle: '500', color: '#5A5648', resolution: RES }).setOrigin(.5, 0);
+    this.titulo = this.add.text(0, 0, 'PACTUM', { fontFamily: SERIF, fontStyle: '800', color: '#5B3423', resolution: RES }).setOrigin(.5, 0);
+    this.subtitulo = this.add.text(0, 0, 'la nueva polis', { fontFamily: SERIF, fontStyle: '700', color: '#9C2F25', resolution: RES }).setOrigin(.5, 0);
     this.estado = this.add.text(0, 0, 'Gobierna un territorio del Tolima junto al río.\nDel pueblo, por el pueblo, para el pueblo.', { fontFamily: SERIF, fontStyle: '500', color: TINTA, align: 'center', lineSpacing: 6, resolution: RES }).setOrigin(.5, 0);
     this.pie = this.add.text(0, 0, `Versión ${VERSION}`, { fontFamily: SANS, color: '#6A675C', resolution: RES }).setOrigin(.5, 1);
 
@@ -125,7 +126,7 @@ export class Arranque extends Phaser.Scene {
 
     // Panel de estado sobre un papel semitransparente para que se lea sobre el paisaje.
     this.estado.setFontSize(Math.round(clampN(base * .045, 16, 22))).setWordWrapWidth(w - 32).setPosition(w / 2, this.subtitulo.y + this.subtitulo.height + h * .03);
-    this.estado.setBackgroundColor('rgba(236,234,226,.78)').setPadding(16, 10, 16, 10);
+    this.estado.setBackgroundColor('rgba(247,241,227,.86)').setPadding(16, 10, 16, 10);
     this.actualizarEstado();
 
     this.pie.setFontSize(14).setPosition(w / 2, h - 12);

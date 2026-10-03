@@ -28,7 +28,7 @@ export class Mapa extends Phaser.Scene {
 
   async create() {
     const cam = this.cameras.main;
-    cam.setOrigin(0, 0).setBackgroundColor('#ECEAE2');
+    cam.setOrigin(0, 0).setBackgroundColor('#E6DABF');
     this.listo = false;
     this.ui = new Interfaz(this);
     this.events.once('shutdown', () => {
@@ -47,7 +47,7 @@ export class Mapa extends Phaser.Scene {
     this.vistaInicial();
 
     // Fondo lejano y sombra del diorama.
-    const f = pintarFondo(this.T, .8);
+    const f = pintarFondo(this.T, 1.25); // fase 8: más resolución, para que el nevado no se vea pixelado de cerca
     this.textures.addCanvas('fondo', f.canvas);
     this.add.image(f.x, f.y, 'fondo').setOrigin(0).setScale(1 / f.escala).setDepth(PROF_FONDO);
     const N = this.T.N, pie = P(N, N, -2.2);
