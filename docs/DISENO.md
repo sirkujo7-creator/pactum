@@ -110,6 +110,18 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 8. Otras formas de ganar y efecto por edificio | Publicado (0.33.0). Desde Ciudad, además de la Polis, cuatro caminos que se ganan sosteniendo todas sus condiciones los años que pide la dificultad (6 en Normal): Polis próspera (bienestar 60, calificación AAA, sin deuda, tesoro de 250), Polis justa (igualdad 70, legitimidad 62, ninguna clase bajo 45), Polis verde (ambiente 82, sin minas, bosque en 26% del territorio) y Polis en paz (sin grupo armado, inseguridad menor que 10, sin movimientos movilizados, vecinos con 70 de promedio). Tarjeta «Caminos a la victoria» desde la meta, con el avance de cada uno. Cada edificio muestra en su ficha su efecto especial; nuevos efectos: el mercado estabiliza el precio de la comida (hasta 30%), el acueducto reduce los brotes (hasta la mitad) y el puerto suma 2% de comercio y mejora la relación con San Lorenzo. Robots (no buscan estos caminos): unos 2% ganan por ellos. República 47%; regímenes entre 40% y 54%; Fácil 100%, Difícil 8% |
 | 9. Ajuste de Difícil | Publicado (0.33.1). Decisión de Juan (3 de octubre): Difícil cerca de 30%. Golpes ×1,45, racha para suceso bueno de 2 y suceso bueno 55% de esas veces. Robots: Difícil 31% |
 
+## Estado de la fase 8 (el fresco)
+
+| Paso | Estado |
+| --- | --- |
+| 1. Prueba de estilo | Publicada en `pruebas/fresco.html`; espera la decisión de Juan (variante A o B y cambios) |
+| 2. Interfaz | Pendiente |
+| 3. Pobladores | Pendiente |
+| 4. Naturaleza | Pendiente |
+| 5. Obras | Pendiente |
+| 6. Terreno e inicio | Pendiente |
+| 7. Revisión | Pendiente |
+
 ## Estado de la fase 7 (un siglo de historia)
 
 | Paso | Estado |
@@ -430,4 +442,5 @@ La fase 0 no agrega sistemas nuevos: muda el juego a la nueva base hasta que jue
 | 5: Sociedad y memoria | Barrios y problemáticas; cultura y deporte; memoria y legado; evolución visual por épocas |
 | 6: Conocimiento | Tecnología por épocas; megaproyectos; río que cambia (el volcán pasa a la fase 4); aula y nube en paralelo |
 | 7: Un siglo de historia | Pedida por Juan: partidas de unos 100 años para ganar, sin bajar la dificultad. Ritmo del siglo (etapas largas, calendario de llegada, una misión a la vez); épocas de la historia del Tolima con dilemas propios; economía con ciclos; más desastres y clima; balance |
-| Después | Cambio visual (más pulido, mismo estilo). Pendientes: relevo de generaciones y legado (a Juan le encantó); gobierno nacional y comunidad internacional (tras su prueba); campaña por capítulos (no prioritaria). Descartado: modo aula |
+| 8: El fresco | Cambio visual completo con un solo estilo: fresco pompeyano con el Tolima neoclásico (decisión de Juan, 4 de octubre; reemplaza la acuarela). Pobladores rehechos, árboles menos y más pequeños, obras neoclásicas y de bahareque, interfaz con greca e íconos pintados |
+| Después | Pendientes: relevo de generaciones y legado (a Juan le encantó); gobierno nacional y comunidad internacional (tras su prueba); campaña por capítulos (no prioritaria). Descartado: modo aula |
