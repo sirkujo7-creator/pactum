@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -97,6 +97,7 @@ export function usarContenido(d) {
   C.MEGA = d.megaproyectos;
   C.RIO = d.rio;
   C.RITMO = d.ritmo;
+  C.HIST = d.historia;
   C.FIG = d.figuras;
   C.FIG_FX = d.figuras ? Object.fromEntries(Object.entries(d.figuras.figuras).map(([k, f]) => [k, f.misiones.map((m, i) => efectos(m.premio, `misión ${i + 1} de ${k}`))])) : {};
   C.SUCESOS = d.sucesos && { ...d.sucesos, sucesos: Object.fromEntries(Object.entries(d.sucesos.sucesos).map(([k, q]) => [k, { ...q, fx: efectos(q.efectos, `suceso ${k}`) }])) };

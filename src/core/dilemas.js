@@ -90,11 +90,16 @@ function drawEventV9(S, conBuenos = false) {
   if (S.year < 3 || azar() > D(S).evp) return null;
   if (S.stage >= 1 && S.promises.length === 0 && azar() < C.PET.prob) return petition(S);
   const c = counts(S);
-  const pool = C.EV.filter(e => (conBuenos || !e.bueno) && S.stage >= e.st && cumple(S, e.cond, c) && !S.recent.includes(e.id));
+  const vistos = S.histVistos || [];
+  const pool = C.EV.filter(e => (conBuenos || !e.bueno) && S.stage >= e.st && cumple(S, e.cond, c) && !S.recent.includes(e.id) && !(e.cond && e.cond.epoca && vistos.includes(e.id)));
   if (!pool.length) return null;
   // Fase 1: en un año de El Niño o La Niña, casi siempre sale un dilema del clima.
   const delClima = pool.filter(e => e.cond && e.cond.clima);
-  const e = delClima.length && azar() < .8 ? delClima[rnd(delClima.length)] : pool[rnd(pool.length)];
+  // Fase 7: los dilemas de la época de la historia salen primero (cada uno una sola vez por partida).
+  const deEpoca = pool.filter(e => e.cond && e.cond.epoca);
+  const e = delClima.length && azar() < .8 ? delClima[rnd(delClima.length)]
+    : deEpoca.length && azar() < C.HIST.preferencia ? deEpoca[rnd(deEpoca.length)] : pool[rnd(pool.length)];
+  if (e.cond && e.cond.epoca) S.histVistos = [...vistos, e.id];
   S.recent.push(e.id);
   if (S.recent.length > 7) S.recent.shift();
   return { id: e.id, e: e.e, title: e.title, text: e.text, opts: e.opts, ...(e.bueno ? { bueno: true } : {}) };

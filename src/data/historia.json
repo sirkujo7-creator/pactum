@@ -1,0 +1,54 @@
+{
+  "leccion": "La historia del Tolima es la de Colombia en pequeño: la colonización de las tierras baldías, el café que conectó al mundo, la violencia entre partidos, la modernización, la búsqueda de la paz y los retos del clima. Cada época trae sus propios dilemas.",
+  "preferencia": 0.55,
+  "epocas": [
+    {
+      "id": "fundacion",
+      "nombre": "Fundación y tierras baldías",
+      "desde": 0,
+      "icono": "📜",
+      "texto": "Colonos de Antioquia y del altiplano abren monte en las laderas. Las tierras no tienen dueño claro y todo está por hacer: caminos, escuela, parroquia.",
+      "leccion": "En el siglo XIX, la colonización de tierras baldías amplió la frontera agrícola de Colombia. Quién se quedó con la tierra marcó la desigualdad de los siglos siguientes."
+    },
+    {
+      "id": "cafe",
+      "nombre": "El café y los arrieros",
+      "desde": 15,
+      "icono": "☕",
+      "texto": "El café se vuelve la riqueza del territorio. Los arrieros lo bajan en mulas hasta Honda, sobre el Magdalena, y de ahí al mundo.",
+      "leccion": "El café conectó a Colombia con el mercado mundial (1880-1930). Trajo dinero, caminos y cables aéreos, pero también dependencia de un solo producto y de su precio."
+    },
+    {
+      "id": "violencia",
+      "nombre": "La Violencia",
+      "desde": 35,
+      "icono": "🔥",
+      "texto": "Tras el asesinato del caudillo, liberales y conservadores se enfrentan en las veredas. El Tolima es uno de los lugares más golpeados.",
+      "leccion": "La Violencia (1946-1958) dejó cerca de 200.000 muertos y millones de desplazados. El Tolima fue uno de sus epicentros. Terminó con el Frente Nacional, un pacto entre los dos partidos que excluyó a los demás."
+    },
+    {
+      "id": "modernizacion",
+      "nombre": "Modernización y migración a la ciudad",
+      "desde": 50,
+      "icono": "🏭",
+      "texto": "Llegan la electricidad, las carreteras, la radio y las fábricas. Los jóvenes se van del campo a la ciudad.",
+      "leccion": "Entre 1950 y 1980 Colombia pasó de ser un país rural a uno urbano. La modernización trajo progreso, pero también barrios sin servicios y un campo envejecido."
+    },
+    {
+      "id": "paz",
+      "nombre": "Conflicto y acuerdos de paz",
+      "desde": 70,
+      "icono": "🕊️",
+      "texto": "El conflicto armado sigue, pero el país estrena Constitución y busca la paz: restitución de tierras, verdad y reincorporación.",
+      "leccion": "La Constitución de 1991 amplió los derechos y la participación. El Acuerdo de Paz de 2016 buscó cerrar más de 50 años de conflicto con verdad, justicia, reparación y garantías de no repetición."
+    },
+    {
+      "id": "digital",
+      "nombre": "Era digital y cambio climático",
+      "desde": 90,
+      "icono": "🌡️",
+      "texto": "Internet conecta las veredas con el mundo, pero también trae desinformación. El clima se calienta y el agua del páramo se vuelve el bien más preciado.",
+      "leccion": "El siglo XXI trae nuevos retos: la desinformación pone a prueba la democracia, el cambio climático amenaza el agua y los cultivos, y las migraciones ponen a prueba la hospitalidad."
+    }
+  ]
+}

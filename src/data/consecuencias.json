@@ -286,5 +286,76 @@
       "confianza": -4
     },
     "porque": "La distracción no resuelve los problemas: solo los aplaza."
+  },
+  "baldios_pleito": {
+    "icono": "⚖️",
+    "titulo": "El pleito por los baldíos",
+    "texto": "El hacendado demandó la entrega de tierras y el pleito cuesta abogados y tiempo.",
+    "efectos": {
+      "oro": -30,
+      "elite": -3
+    },
+    "porque": "La tierra entregada sin títulos claros termina en los tribunales."
+  },
+  "quina_fin": {
+    "icono": "🪵",
+    "titulo": "Se acabó la quina",
+    "texto": "Ya no quedan árboles de quina: los comerciantes se van y queda el monte pelado.",
+    "efectos": {
+      "oro": -25,
+      "ambiente": -4,
+      "artesanos": -3
+    },
+    "porque": "Una bonanza sin medida termina cuando se agota el recurso."
+  },
+  "cable_ruina": {
+    "icono": "🚡",
+    "titulo": "La compañía del cable quebró",
+    "texto": "La compañía inglesa quebró y el gobierno debe pagar la garantía.",
+    "efectos": {
+      "oro": -50,
+      "confianza": -4
+    },
+    "porque": "Garantizar un negocio privado traslada el riesgo al tesoro público."
+  },
+  "violencia_venganza": {
+    "icono": "🔥",
+    "titulo": "La venganza",
+    "texto": "La violencia que no se detuvo volvió como venganza entre familias de distinto partido.",
+    "efectos": {
+      "habitantes": -6,
+      "confianza": -6,
+      "campesinos": -4
+    },
+    "porque": "La violencia que se tolera se reproduce."
+  },
+  "pacto_cerrado": {
+    "icono": "🚪",
+    "titulo": "Los que quedaron por fuera",
+    "texto": "Los grupos que no cabían en el pacto entre partidos se organizan por fuera de la ley.",
+    "efectos": {
+      "confianza": -5,
+      "igualdad": -3
+    },
+    "porque": "Una democracia cerrada empuja a algunos a buscar otros caminos."
+  },
+  "acuerdo_incumplido": {
+    "icono": "⚠️",
+    "titulo": "Volvieron al monte",
+    "texto": "Algunos excombatientes que no encontraron oportunidades volvieron a un grupo armado.",
+    "efectos": {
+      "confianza": -5,
+      "campesinos": -3
+    },
+    "porque": "Una paz sin oportunidades es frágil."
+  },
+  "desinfo_crisis": {
+    "icono": "📢",
+    "titulo": "La desconfianza crece",
+    "texto": "Borrar publicaciones convenció a muchos de que el gobierno ocultaba algo: ahora nadie cree en los anuncios oficiales.",
+    "efectos": {
+      "confianza": -6
+    },
+    "porque": "La censura alimenta la sospecha."
   }
 }
