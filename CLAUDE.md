@@ -65,7 +65,7 @@ Reglas técnicas:
 
 ## Fase actual: Fase 6, conocimiento
 
-Las fases 0 a 3 están terminadas; las fases 4 (riesgo y mundo) y 5 (sociedad y memoria) están publicadas (versión 0.37.0) y esperan la prueba de Juan; su estado queda en `docs/DISENO.md`. Juan aprobó la fase 6 el 3 de octubre, en este orden (un paso publicable a la vez):
+Las fases 0 a 3 están terminadas. Las fases 4 (riesgo y mundo), 5 (sociedad y memoria) y 6 (conocimiento) están publicadas (versión 0.41.0, 3 de octubre) y esperan la prueba y la aprobación de Juan; su estado queda en `docs/DISENO.md`. Juan aprobó la fase 6 el 3 de octubre, en este orden (un paso publicable a la vez):
 
 1. Tecnología por épocas: el saber (universidades, bibliotecas, escuelas) trae inventos (imprenta, telégrafo, electricidad, radio, internet, automatización), cada uno con beneficio y dilema; adoptarlo libre, regulado o rechazarlo. Ninguna época es obligatoria para ganar. Se ve en el mapa.
 2. Megaproyectos (desde Polis): represa, ferrocarril, aeropuerto; años de obra, VPN y TIR, familias desplazadas; consulta previa con las comunidades (saltarla dispara el conflicto).
