@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -406,7 +406,7 @@ export class Interfaz {
   renderCronica() {
     const S = this.S, h = S.hist, G = GRAFICAS[this.grafica];
     const tabs = Object.entries(GRAFICAS).map(([k, v]) => `<button class="tab${k === this.grafica ? ' on' : ''}" data-g="${k}">${v.n}</button>`).join('');
-    this.cronica.innerHTML = `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.innerHTML = `${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
     this.cronica.querySelectorAll('[data-g]').forEach(bt => bt.onclick = () => { this.grafica = bt.dataset.g; this.renderCronica(); });
   }
 
@@ -425,6 +425,7 @@ export class Interfaz {
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
         ...(C.B[x.b].es && climaActivo(S) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
+        ...(esPatrimonio(S, x) ? [el('span', { class: 'especial', text: `🏛️ Patrimonio: construida ${x.ya ? `en el año ${x.ya}` : 'con la aldea fundadora'}. Demolerla cuesta ${C.MEMORIA.demolerPatrimonio} de legitimidad y queda en la memoria.` })] : []),
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));
       const ap = x.ob ? null : aporteObra(S, i);
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
@@ -814,10 +815,31 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 5: asentamiento informal nuevo: decidir qué hacer.
-  asentamientoAnio(alTerminar) {
-    const S = this.S, a = (S.asent || []).find(x => x.nuevo);
+  asentamientoAnio(alTerminar0) {
+    const S = this.S, a = (S.asent || []).find(x => x.nuevo), alTerminar = () => this.generacionAnio(alTerminar0);
     if (!a || !barriosActivos(S)) { alTerminar(); return; }
     this.tarjetaAsentamiento(a.i, alTerminar);
+  }
+  // Fase 5: nueva generación que juzga lo que recuerda.
+  generacionAnio(alTerminar) {
+    const S = this.S, e = S.genEv;
+    if (!e || !e.nuevo || !memoriaActiva(S)) { alTerminar(); return; }
+    e.nuevo = false;
+    const M = C.MEMORIA, T = M.textos, CAT = M.categorias;
+    const lista = e.recuerdos.length ? e.recuerdos.map(r => `<li>${CAT[r.id].icono} ${CAT[r.id].nombre}: ${CAT[r.id].recuerdo}.</li>`).join('') : '<li>Casi nada: tu gobierno no dejó huellas.</li>';
+    this.tarjeta(`<div class="big">👶</div><h3>Una nueva generación</h3><p>${T.generacion}</p><p><b>Lo que más recuerdan:</b></p><ul class="conds">${lista}</ul>
+      <p class="${e.n > 0 ? 'pos' : e.n < 0 ? 'neg' : ''}">${e.n > 0 ? T.juicioBueno.replace('{n}', e.n) : e.n < 0 ? T.juicioMalo.replace('{n}', -e.n) : T.juicioNeutro}</p><p class="small">${T.olvida}</p>
+      <div class="phil"><b>Lo que enseña</b><br>${M.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  seccionLegado() {
+    const S = this.S;
+    if (!memoriaActiva(S)) return '';
+    const R = recuerdos(S), tot = R.reduce((s, x) => s + x.n, 0) || 1, J = juicioHistoria(S), b = balanceMemoria(S);
+    const filas = R.slice(0, 5).map(x => `<div class="causa"><span>${x.icono} ${x.nombre}</span><span class="barra"><i class="${x.peso >= 0 ? 'pos' : 'neg'}" style="width:${Math.round(x.n / tot * 100)}%"></i></span><b>${Math.round(x.n)}</b></div>`).join('');
+    return `<h3>Legado</h3><p class="small">Generación ${generacion(S) + 1}. La próxima llega en el año ${proximaGeneracion(S)} y juzgará lo que recuerde: hoy el juicio sería <b class="${b > .1 ? 'pos' : b < -.1 ? 'neg' : ''}">${b > .1 ? 'favorable' : b < -.1 ? 'desfavorable' : 'neutro'}</b>. Hoy te recordarían como <b>${J.titulo}</b>.</p>
+      ${filas ? `<div class="causas">${filas}</div>` : '<p class="small">Todavía no hay recuerdos: cada decisión deja una huella.</p>'}
+      <p class="small">Patrimonio (obras de más de ${C.MEMORIA.patrimonio} años): ${J.patrimonio}. Deuda que heredaría tu sucesor: ${J.deuda} de oro.</p>`;
   }
   tarjetaAsentamiento(i, alTerminar) {
     const S = this.S, A = C.BARRIOS.asentamiento, b = nombreBarrio(barrioDe(S, i)), caro = S.gold < costoLegalizar(S);
@@ -990,13 +1012,23 @@ export class Interfaz {
     if (Sonido.on) Sonido.stop(); else Sonido.start();
     guardarSonido(Sonido.on); this.render();
   }
+  // Fase 5: juicio de la historia y herencia al sucesor (Hans Jonas).
+  juicioFinal() {
+    const S = this.S;
+    if (!memoriaActiva(S)) return '';
+    const J = juicioHistoria(S), M = C.MEMORIA;
+    return `<h2>El juicio de la historia</h2><p>Te recordarán como <b>${J.titulo}</b>.</p>
+      ${J.recuerdos.length ? `<ul class="conds">${J.recuerdos.map(r => `<li class="${r.peso >= 0 ? 'pos' : 'neg'}">${r.icono} ${r.nombre}: ${r.recuerdo}.</li>`).join('')}</ul>` : ''}
+      <p class="small">Atravesaste ${J.crisis === 1 ? 'una crisis mayor' : `${J.crisis} crisis mayores`} y ${J.generaciones === 1 ? 'un relevo' : `${J.generaciones} relevos`} de generación. ${J.patrimonio === 1 ? 'Dejas una obra patrimonial.' : `Dejas ${J.patrimonio} obras patrimoniales.`}</p>
+      <p class="small"><b>Lo que hereda tu sucesor:</b> ${J.deuda} de oro de deuda${J.erosion ? ` y ${J.erosion} casillas de suelo erosionado` : ''}. ${M.jonas}</p>`;
+  }
   final(end) {
     const nuevos = this.logros(end);
     const S = this.S, tot = Object.values(S.phil).reduce((a, b) => a + b, 0) || 1, top = topPhil(S);
     const barras = Object.keys(C.PH).map(k => `<div class="pbar"><span>${C.PH[k].a}</span><div class="track"><div class="fill" style="width:${S.phil[k] / tot * 100}%;background:var(--regc)"></div></div><span>${S.phil[k]}</span></div>`).join('');
     this.tarjeta(`<div class="big">${end.win ? '🏛️' : '🕯️'}</div><h3>${end.title}</h3><p>${end.text}</p>
       <p>Gobernaste ${S.year === 1 ? '1 año' : S.year + ' años'}. Llegaste a ${C.STAGES[S.stage].n} con ${S.pop} habitantes, ${Math.round(S.gold)} de oro, ${Math.round(totDebt(S))} de deuda y calificación ${rating(S).l}.</p>
-      <h2>Tu perfil de gobierno</h2>${S.phil[top] ? `<p><b>${C.PH[top].n} (${C.PH[top].a}).</b> ${C.PROFILE[top]}</p>` : ''}${barras}
+      ${this.juicioFinal()}<h2>Tu perfil de gobierno</h2>${S.phil[top] ? `<p><b>${C.PH[top].n} (${C.PH[top].a}).</b> ${C.PROFILE[top]}</p>` : ''}${barras}
       <div class="phil" style="margin-top:12px"><b>Para reflexionar</b><br>¿Tu gobierno fue del pueblo, por el pueblo y para el pueblo, o solo en su nombre? ¿Qué decisión cambiarías y por qué?</div>
       ${nuevos.length ? `<p><b>Logros nuevos:</b> ${nuevos.map(a => a.n).join(', ')}.</p>` : ''}
       ${end.win ? '<button class="main" id="seguirB">Seguir gobernando</button>' : ''}<button class="${end.win ? 'btn' : 'main'}" id="nuevaB" ${end.win ? 'style="width:100%;margin-top:8px"' : ''}>Nueva partida</button><button class="btn" id="verB" style="width:100%;margin-top:8px">Ver el territorio</button>`, false);

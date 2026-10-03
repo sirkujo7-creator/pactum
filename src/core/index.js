@@ -36,3 +36,4 @@ export * from './vecinos.js';
 export * from './victorias.js';
 export * from './barrios.js';
 export * from './cultura.js';
+export * from './memoria.js';

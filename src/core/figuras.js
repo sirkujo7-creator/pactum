@@ -83,7 +83,7 @@ export function figurasDelAnio(S, inseguridadActual) {
   const news = [], ev = [], P = K();
   for (const id of presentes(S)) {
     const F = P.figuras[id], e = estadoFig(S, id);
-    if (!e.visto) { e.visto = true; nuevaMision(S, id); ev.push({ tipo: 'llega', id }); news.push(`${F.icono} Llega ${F.nombre}, ${F.rol.toLowerCase()}.`); continue; }
+    if (!e.visto) { e.visto = true; nuevaMision(S, id); ev.push({ tipo: 'llega', id }); news.push(`${F.icono} Llega ${F.nombre}, ${F.rol.charAt(0).toLowerCase() + F.rol.slice(1)}.`); continue; }
     if (e.mision) {
       const m = F.misiones[e.mision.i];
       if (cumpleMision(S, m)) {

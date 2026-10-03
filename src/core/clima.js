@@ -25,7 +25,7 @@ export function factorAgua(S) { return climaActivo(S) && S.clima.fenomeno === 'n
 export function fenomenosAbiertos(S) { const d = C.CLIMA.fenomenos.desde; return climaActivo(S) && S.stage >= d.etapa && S.pop >= d.habitantes; }
 
 // Marca una crisis mayor (desastre, revolución o cesación de pagos) para respetar los años de respiro.
-export function marcarCrisis(S) { if (climaActivo(S)) S.clima.ultimaCrisis = S.year; }
+export function marcarCrisis(S) { if (climaActivo(S)) { S.clima.ultimaCrisis = S.year; S.crisisN = (S.crisisN || 0) + 1; } }
 
 // Aporte al fondo de emergencias (porcentaje de los ingresos).
 // Intereses del fondo (una reserva invertida rinde algo cada año).

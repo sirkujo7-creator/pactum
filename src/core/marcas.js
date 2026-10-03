@@ -5,6 +5,7 @@ import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { lado } from './mundo.js';
 import { centroPueblo } from './cobertura.js';
+import { recordar } from './memoria.js';
 
 const K = () => C.MARCAS;
 export function marcasActivas(S) { return climaActivo(S) && !!C.MARCAS; }
@@ -29,6 +30,7 @@ export function dejarMarca(S, tipo, d) {
   if (con.length >= K().maximo) { const viejo = con.filter(i => S.map[i].mk.t !== 'acta' && S.map[i].mk.t !== 'campamento' && S.map[i].mk.t !== 'asentamiento').sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
   const i = libres[0][0];
   S.map[i].mk = { t: tipo, y: S.year, d };
+  recordar(S, tipo); // fase 5: la huella queda en la memoria del pueblo
   return i;
 }
 
