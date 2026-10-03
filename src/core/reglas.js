@@ -14,6 +14,12 @@ export function ritmo(S) { return S && S.clima && S.mundo === 'acuarela' && C.RI
 export function aniosPolis(S) { const R = ritmo(S); return R ? R.aniosPolis[S.diff || 'normal'] : D(S).polis; }
 export function reqEtapa(S, k) { const R = ritmo(S); return R && R.etapas[k] ? R.etapas[k].requisito : C.STAGES[k].req; }
 function ritmoOk(S, k) { const R = ritmo(S), E = R && R.etapas[k]; return !E || (S.pop >= E.habitantes && S.year >= E.anio); }
+// Fase 7: época de la historia según el año (solo en el terreno en acuarela).
+export function epocaHistorica(S) {
+  if (!(S && S.clima && S.mundo === 'acuarela' && C.HIST)) return null;
+  let id = null; for (const e of C.HIST.epocas) if (S.year >= e.desde) id = e.id;
+  return id;
+}
 export function seatName(S) { return RG(S).sede; }
 export function hasLaw(S, k) { return !!(S.laws && S.laws[k]); }
 
@@ -45,6 +51,7 @@ export function cumple(S, cond, c) {
     else if (k === 'inflacionMayorQue') { if (!(S.infl > v)) return false; }
     else if (k === 'terreno') { if (!(countT(S, v) > 0)) return false; }
     else if (k === 'nuevo') { if (!(S.clima && S.mundo === 'acuarela')) return false; } // solo en el terreno en acuarela
+    else if (k === 'epoca') { if (epocaHistorica(S) !== v) return false; } // fase 7: dilemas de una época de la historia
     else if (k === 'clima') { const f = S.clima && S.clima.fenomeno; if (v === 'crisis' ? !f : f !== v) return false; }
     else throw new Error(`Condición desconocida: ${k}`);
   }

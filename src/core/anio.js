@@ -28,6 +28,7 @@ import { epocasDelAnio } from './epocas.js';
 import { tecDelAnio, efectoTec } from './tecnologia.js';
 import { megaDelAnio, efectoMega } from './megaproyectos.js';
 import { rioDelAnio } from './rio.js';
+import { historiaDelAnio } from './historia.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -173,6 +174,7 @@ export function advance(S) {
   news.push(...tecDelAnio(S));
   news.push(...megaDelAnio(S));
   news.push(...rioDelAnio(S));
+  news.push(...historiaDelAnio(S));
   if (S.reg === 'monarquia' && S.year % 15 === 0) {
     if (azar() < .5) { S.corr = clamp(S.corr - 10, 0, 100); S.tr = clamp(S.tr + 5, 0, 100); news.push('Sucesión en la corona: el heredero es prudente y querido.'); }
     else { S.corr = clamp(S.corr + 15, 0, 100); S.tr = clamp(S.tr - 5, 0, 100); news.push('Sucesión en la corona: el heredero es caprichoso y la corte murmura.'); }

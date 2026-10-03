@@ -1965,5 +1965,1558 @@
         }
       }
     ]
+  },
+  {
+    "id": "h_baldios",
+    "etapa": 0,
+    "icono": "📜",
+    "titulo": "Las tierras baldías",
+    "texto": "Llegan colonos de Antioquia buscando tierra. Las laderas son baldías: no tienen dueño, pero un hacendado de Ibagué dice tener títulos de la Colonia.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Entregar las tierras a quien las trabaje",
+        "efectos": {
+          "campesinos": 7,
+          "elite": -8,
+          "igualdad": 5
+        },
+        "filosofia": "contr",
+        "porque": "La tierra es de quien la trabaja: una idea que defendieron las leyes de baldíos del siglo XIX.",
+        "aQuien": "Los colonos reciben parcelas y el campo crece; el hacendado se siente despojado y la élite desconfía.",
+        "huella": "mural",
+        "despues": {
+          "anios": 5,
+          "id": "baldios_pleito"
+        }
+      },
+      {
+        "texto": "Reconocer los títulos del hacendado",
+        "efectos": {
+          "elite": 7,
+          "campesinos": -8,
+          "igualdad": -7,
+          "oro": 30
+        },
+        "filosofia": "real",
+        "porque": "Mantener a los poderosos de tu lado da estabilidad, aunque concentra la tierra.",
+        "aQuien": "El hacendado paga un tributo y arrienda la tierra a los colonos; ellos trabajan, pero no son dueños.",
+        "huella": "valla"
+      },
+      {
+        "texto": "Medir la tierra y repartirla por sorteo público",
+        "efectos": {
+          "oro": -40,
+          "confianza": 3,
+          "campesinos": 3
+        },
+        "filosofia": "deon",
+        "porque": "Una regla igual para todos, aplicada a la vista de todos, es la base de la justicia.",
+        "aQuien": "Medir cuesta oro, pero nadie puede decir que hubo trampa: la legitimidad sube.",
+        "huella": "placa"
+      }
+    ]
+  },
+  {
+    "id": "h_camino",
+    "etapa": 0,
+    "icono": "🐴",
+    "titulo": "El camino de herradura",
+    "texto": "Para sacar las cosechas hay que abrir un camino de herradura hasta el río Magdalena. Los vecinos ofrecen su trabajo si el gobierno pone las herramientas.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Convocar una minga para abrir el camino",
+        "efectos": {
+          "oro": -30,
+          "confianza": 2,
+          "animo": 4
+        },
+        "filosofia": "virt",
+        "porque": "El trabajo en común crea lazos: la minga es una tradición indígena y campesina.",
+        "aQuien": "Todos ponen el hombro y el camino queda listo; la comunidad se siente parte del proyecto.",
+        "huella": "placa",
+        "riesgo": {
+          "probabilidad": 0.25,
+          "texto": "Las lluvias tumbaron medio camino; hubo que empezar de nuevo.",
+          "efectos": {
+            "oro": -20
+          }
+        }
+      },
+      {
+        "texto": "Contratar a un empresario que cobre peaje",
+        "efectos": {
+          "oro": 20,
+          "elite": 4,
+          "campesinos": -7
+        },
+        "filosofia": "util",
+        "porque": "El camino se hace rápido y sin gastar del tesoro, aunque cada carga paga.",
+        "aQuien": "El empresario construye y cobra peaje; los campesinos pagan por sacar su cosecha.",
+        "huella": "valla"
+      },
+      {
+        "texto": "Esperar a tener más recursos",
+        "efectos": {
+          "confianza": -4
+        },
+        "filosofia": "real",
+        "porque": "No gastar hoy es prudente, pero el aislamiento también cuesta.",
+        "aQuien": "El tesoro queda intacto, pero las cosechas siguen saliendo a lomo de mula por trochas."
+      }
+    ]
+  },
+  {
+    "id": "h_pijao",
+    "etapa": 0,
+    "icono": "🪶",
+    "titulo": "El resguardo pijao",
+    "texto": "El cabildo pijao de Coyaima reclama tierras de su resguardo que ocuparon los colonos recién llegados.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Devolver las tierras al resguardo",
+        "efectos": {
+          "campesinos": -6,
+          "igualdad": 6,
+          "confianza": 2,
+          "tierra": -3
+        },
+        "filosofia": "deon",
+        "porque": "Los derechos de los pueblos originarios no prescriben: el resguardo es anterior a todos.",
+        "aQuien": "El cabildo recupera su territorio; algunos colonos deben moverse y se quejan.",
+        "huella": "acta"
+      },
+      {
+        "texto": "Negociar un acuerdo entre colonos y cabildo",
+        "efectos": {
+          "oro": -35,
+          "confianza": 2,
+          "igualdad": 3
+        },
+        "filosofia": "virt",
+        "porque": "El diálogo busca el punto medio donde ambos pueden vivir.",
+        "aQuien": "Un acuerdo de linderos con testigos; nadie gana todo, pero se evita la violencia.",
+        "huella": "tratado",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El acuerdo se rompió a los pocos meses: hubo peleas por los linderos.",
+          "efectos": {
+            "confianza": -5,
+            "campesinos": -3
+          }
+        }
+      },
+      {
+        "texto": "Dejar las cosas como están",
+        "efectos": {
+          "campesinos": 3,
+          "igualdad": -7,
+          "confianza": -4
+        },
+        "filosofia": "real",
+        "porque": "Evitar el conflicto hoy no lo resuelve: solo lo aplaza.",
+        "aQuien": "Los colonos se quedan; el cabildo guarda el reclamo para otro gobierno."
+      }
+    ]
+  },
+  {
+    "id": "h_parroquia",
+    "etapa": 0,
+    "icono": "⛪",
+    "titulo": "La fundación de la parroquia",
+    "texto": "El obispo ofrece fundar la parroquia, con escuela de primeras letras, a cambio de un terreno en la plaza y el diezmo de las cosechas.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Aceptar: escuela y parroquia",
+        "efectos": {
+          "campesinos": -4,
+          "animo": 5,
+          "igualdad": 3
+        },
+        "filosofia": "util",
+        "porque": "Una escuela pronto vale más que el diezmo que se paga.",
+        "aQuien": "Los niños aprenden a leer con el cura; los campesinos pagan el diezmo de mala gana.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Fundar una escuela pública sin diezmo",
+        "efectos": {
+          "oro": -55,
+          "igualdad": 5,
+          "confianza": 2,
+          "elite": -3
+        },
+        "filosofia": "contr",
+        "porque": "La educación pública y laica fue una bandera del liberalismo radical en Colombia (1863).",
+        "aQuien": "El tesoro paga la escuela y nadie paga diezmo; a los conservadores y a la élite no les gusta.",
+        "huella": "mural"
+      },
+      {
+        "texto": "Rechazar la oferta",
+        "efectos": {
+          "animo": -4
+        },
+        "filosofia": "real",
+        "porque": "Sin parroquia ni escuela el pueblo ahorra, pero se queda sin servicios.",
+        "aQuien": "No se paga diezmo, pero tampoco hay escuela por ahora."
+      }
+    ]
+  },
+  {
+    "id": "h_quina",
+    "etapa": 0,
+    "icono": "🌿",
+    "titulo": "La fiebre de la quina",
+    "texto": "Comerciantes extranjeros pagan bien por la corteza de quina, que cura el paludismo. Proponen talar los bosques de la cordillera para sacarla.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Permitir la extracción libre",
+        "efectos": {
+          "oro": 60,
+          "ambiente": -11,
+          "elite": 5
+        },
+        "filosofia": "util",
+        "porque": "La bonanza trae dinero rápido, aunque acaba con el recurso.",
+        "aQuien": "Llega mucho oro y la élite se enriquece; el bosque de la cordillera queda arrasado.",
+        "despues": {
+          "anios": 4,
+          "id": "quina_fin"
+        }
+      },
+      {
+        "texto": "Permitirla con cuota y resiembra",
+        "efectos": {
+          "oro": 25,
+          "ambiente": -3,
+          "confianza": 1
+        },
+        "filosofia": "virt",
+        "porque": "Usar la naturaleza con medida permite que dure para los que vienen.",
+        "aQuien": "Entra menos dinero, pero el bosque se recupera y la bonanza dura más.",
+        "huella": "vivero"
+      },
+      {
+        "texto": "Prohibirla",
+        "efectos": {
+          "ambiente": 3,
+          "elite": -6,
+          "artesanos": -3
+        },
+        "filosofia": "deon",
+        "porque": "Hay bienes comunes que no se venden.",
+        "aQuien": "El bosque se salva; los que esperaban trabajar con la quina se van decepcionados."
+      }
+    ]
+  },
+  {
+    "id": "h_arrieros",
+    "etapa": 0,
+    "icono": "🐴",
+    "titulo": "La huelga de los arrieros",
+    "texto": "Los arrieros que llevan el café hasta Honda exigen mejor pago: dicen que los exportadores se quedan con todo.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Mediar y fijar una tarifa justa",
+        "efectos": {
+          "artesanos": 5,
+          "elite": -4,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "Un pago justo para el trabajo más duro es una exigencia de la justicia.",
+        "aQuien": "Los arrieros vuelven a los caminos con mejor pago; los exportadores ganan un poco menos.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Dejar que el mercado decida",
+        "efectos": {
+          "artesanos": -7,
+          "elite": 4,
+          "oro": 15
+        },
+        "filosofia": "real",
+        "porque": "Sin intervención el comercio sigue, pero el más débil pone la carga.",
+        "aQuien": "Los exportadores contratan otros arrieros; los huelguistas pierden el trabajo.",
+        "huella": "pancarta"
+      },
+      {
+        "texto": "Ofrecer un fondo de ayuda para las mulas y los heridos",
+        "efectos": {
+          "oro": -50,
+          "artesanos": 4,
+          "animo": 3
+        },
+        "filosofia": "virt",
+        "porque": "Cuidar a quien trabaja es parte de la vida buena en comunidad.",
+        "aQuien": "El tesoro paga un fondo solidario; los arrieros se calman y vuelven al camino.",
+        "huella": "olla"
+      }
+    ]
+  },
+  {
+    "id": "h_cable",
+    "etapa": 0,
+    "icono": "🚡",
+    "titulo": "El cable aéreo",
+    "texto": "Una compañía inglesa ofrece construir un cable aéreo para bajar el café de la montaña, como el de Mariquita a Manizales. Pide garantía del gobierno.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Dar la garantía",
+        "efectos": {
+          "oro": -85,
+          "elite": 5,
+          "artesanos": 3
+        },
+        "filosofia": "util",
+        "porque": "Una obra moderna puede multiplicar el comercio de toda la región.",
+        "aQuien": "El cable funciona: el café baja más rápido y barato. El tesoro arriesga si la compañía quiebra.",
+        "despues": {
+          "anios": 6,
+          "id": "cable_ruina"
+        }
+      },
+      {
+        "texto": "Construirlo como obra pública",
+        "efectos": {
+          "oro": -125,
+          "confianza": 2,
+          "igualdad": 2
+        },
+        "filosofia": "contr",
+        "porque": "Si la obra es de todos, las ganancias también deben serlo.",
+        "aQuien": "El tesoro paga todo, pero el cable es del pueblo y cobra fletes bajos.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Mejor arreglar los caminos de siempre",
+        "efectos": {
+          "oro": -35,
+          "campesinos": 3
+        },
+        "filosofia": "virt",
+        "porque": "A veces la solución sencilla y cercana es la más sabia.",
+        "aQuien": "Los caminos quedan mejor; el comercio sigue lento, pero nadie se endeuda."
+      }
+    ]
+  },
+  {
+    "id": "h_trilladora",
+    "etapa": 0,
+    "icono": "☕",
+    "titulo": "La trilladora y las escogedoras",
+    "texto": "En la trilladora de café trabajan cientos de mujeres escogedoras por un salario muy bajo. Piden jornada de ocho horas.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Apoyar la jornada de ocho horas",
+        "efectos": {
+          "artesanos": 6,
+          "elite": -7,
+          "igualdad": 5
+        },
+        "filosofia": "contr",
+        "porque": "Las escogedoras de café organizaron algunas de las primeras huelgas de mujeres en Colombia.",
+        "aQuien": "Las escogedoras ganan tiempo y salud; el dueño de la trilladora protesta por los costos.",
+        "huella": "mural"
+      },
+      {
+        "texto": "No intervenir en un asunto privado",
+        "efectos": {
+          "elite": 4,
+          "artesanos": -7,
+          "igualdad": -4
+        },
+        "filosofia": "real",
+        "porque": "El orden económico se mantiene, pero la injusticia sigue.",
+        "aQuien": "Las escogedoras siguen igual; la élite agradece que no te metas.",
+        "huella": "pancarta"
+      },
+      {
+        "texto": "Abrir una guardería para sus hijos",
+        "efectos": {
+          "oro": -55,
+          "artesanos": 4,
+          "igualdad": 3,
+          "animo": 3
+        },
+        "filosofia": "util",
+        "porque": "Una solución práctica que mejora la vida de muchas familias.",
+        "aQuien": "Sin cambiar la jornada, las madres trabajan más tranquilas y los niños están cuidados.",
+        "huella": "olla"
+      }
+    ]
+  },
+  {
+    "id": "h_honda",
+    "etapa": 0,
+    "icono": "⛴️",
+    "titulo": "El puerto de Honda",
+    "texto": "Los comerciantes de Honda cobran un impuesto alto por cada bulto que baja por el Magdalena. Proponen bajarlo si les das el monopolio del transporte.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Aceptar el monopolio",
+        "efectos": {
+          "oro": 30,
+          "elite": 5,
+          "igualdad": -6,
+          "campesinos": -4
+        },
+        "filosofia": "real",
+        "porque": "Un aliado poderoso ayuda, pero un monopolio termina cobrándole a todos.",
+        "aQuien": "El café sale más barato hoy; mañana el monopolio pondrá sus condiciones.",
+        "huella": "valla",
+        "despues": {
+          "anios": 5,
+          "id": "sal_mal"
+        }
+      },
+      {
+        "texto": "Buscar otra ruta por Girardot",
+        "efectos": {
+          "oro": -40,
+          "campesinos": 3,
+          "confianza": 1
+        },
+        "filosofia": "util",
+        "porque": "Tener más de un camino da poder para negociar.",
+        "aQuien": "Abrir otra ruta cuesta, pero rompe la dependencia de Honda.",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "La nueva ruta se inundó en invierno y hubo pérdidas.",
+          "efectos": {
+            "oro": -25
+          }
+        }
+      },
+      {
+        "texto": "Pagar el impuesto sin negociar",
+        "efectos": {
+          "oro": -30
+        },
+        "filosofia": "deon",
+        "porque": "Cumplir las reglas que existen, aunque sean caras.",
+        "aQuien": "Todo sigue igual: el café sale caro, pero sin pleitos."
+      }
+    ]
+  },
+  {
+    "id": "h_banda",
+    "etapa": 0,
+    "icono": "🎻",
+    "titulo": "La banda y el conservatorio",
+    "texto": "Ibagué empieza a ser llamada la ciudad musical. Los músicos piden apoyo para una banda municipal y una escuela de música.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Financiar la banda y la escuela",
+        "efectos": {
+          "oro": -55,
+          "animo": 6,
+          "confianza": 2
+        },
+        "filosofia": "virt",
+        "porque": "La música educa el carácter, decía Aristóteles.",
+        "aQuien": "La plaza se llena de música los domingos y los jóvenes aprenden un oficio.",
+        "huella": "mural"
+      },
+      {
+        "texto": "Que la financien los ricos",
+        "efectos": {
+          "elite": -4,
+          "animo": 4,
+          "igualdad": -3
+        },
+        "filosofia": "util",
+        "porque": "La cultura sale sin gastar del tesoro, pero queda en manos de pocos.",
+        "aQuien": "Los ricos pagan y deciden quién toca: la música llega, pero no para todos."
+      },
+      {
+        "texto": "No es el momento",
+        "efectos": {
+          "animo": -4
+        },
+        "filosofia": "real",
+        "porque": "Primero lo urgente, dicen; pero un pueblo sin cultura también se apaga.",
+        "aQuien": "El tesoro ahorra; la plaza sigue en silencio."
+      }
+    ]
+  },
+  {
+    "id": "h_9abril",
+    "etapa": 0,
+    "icono": "🔥",
+    "titulo": "El 9 de abril",
+    "texto": "Mataron al caudillo en Bogotá. En la plaza hay una multitud furiosa; algunos quieren quemar las sedes del partido contrario.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "violencia"
+    },
+    "opciones": [
+      {
+        "texto": "Llamar a la calma y proteger ambas sedes",
+        "efectos": {
+          "confianza": 2,
+          "animo": -4
+        },
+        "filosofia": "deon",
+        "porque": "El deber del gobernante es proteger a todos, también a sus adversarios.",
+        "aQuien": "Hay rabia, pero no muertos; ambos partidos saben que el gobierno no toma bandos.",
+        "huella": "placa",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "La multitud desbordó a la guardia: hubo incendios y heridos.",
+          "efectos": {
+            "confianza": -6,
+            "oro": -30
+          }
+        }
+      },
+      {
+        "texto": "Dejar que la gente se desahogue",
+        "efectos": {
+          "confianza": -8,
+          "oro": -55,
+          "igualdad": -4
+        },
+        "filosofia": "real",
+        "porque": "Ceder a la furia evita enfrentarla, pero desata una violencia difícil de parar.",
+        "aQuien": "Se queman sedes y almacenes; el odio entre partidos crece.",
+        "huella": "pancarta",
+        "despues": {
+          "anios": 4,
+          "id": "violencia_venganza"
+        }
+      },
+      {
+        "texto": "Declarar el toque de queda con el ejército",
+        "efectos": {
+          "confianza": -4,
+          "elite": 4,
+          "campesinos": -4
+        },
+        "filosofia": "real",
+        "porque": "El orden por la fuerza calma la calle, pero no la herida.",
+        "aQuien": "No hay incendios; la gente se siente vigilada y la tensión queda por dentro.",
+        "huella": "reten"
+      }
+    ]
+  },
+  {
+    "id": "h_pajaros",
+    "etapa": 0,
+    "icono": "🐦",
+    "titulo": "Los pájaros",
+    "texto": "Grupos armados de un partido, los llamados pájaros, amenazan a campesinos del otro partido para quedarse con sus tierras.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "violencia"
+    },
+    "opciones": [
+      {
+        "texto": "Perseguirlos con la justicia",
+        "efectos": {
+          "oro": -40,
+          "confianza": 2,
+          "elite": -6
+        },
+        "filosofia": "deon",
+        "porque": "La ley debe valer igual para todos, también para los del partido de gobierno.",
+        "aQuien": "Algunos pájaros van a la cárcel; sus patrones en la élite te miran con recelo.",
+        "huella": "placa",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Un juez fue amenazado y renunció; el proceso se cayó.",
+          "efectos": {
+            "confianza": -4
+          }
+        }
+      },
+      {
+        "texto": "Mirar para otro lado",
+        "efectos": {
+          "campesinos": -10,
+          "igualdad": -8,
+          "elite": 3
+        },
+        "filosofia": "real",
+        "porque": "Callar ante el crimen es ponerse del lado del más fuerte.",
+        "aQuien": "Los campesinos amenazados venden barato o se van: comienza el desplazamiento.",
+        "huella": "pancarta",
+        "despues": {
+          "anios": 4,
+          "id": "violencia_venganza"
+        }
+      },
+      {
+        "texto": "Proteger a las familias amenazadas",
+        "efectos": {
+          "oro": -55,
+          "campesinos": 5,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "Primero los más vulnerables: la justicia empieza por proteger la vida.",
+        "aQuien": "Las familias se quedan en sus tierras con protección; cuesta oro y paciencia.",
+        "huella": "olla"
+      }
+    ]
+  },
+  {
+    "id": "h_bandolero",
+    "etapa": 0,
+    "icono": "🎯",
+    "titulo": "El bandolero famoso",
+    "texto": "Un bandolero liberal se volvió leyenda en las montañas del Tolima. Para unos es un justiciero; para otros, un asesino.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "violencia"
+    },
+    "opciones": [
+      {
+        "texto": "Ofrecerle una amnistía si entrega las armas",
+        "efectos": {
+          "confianza": 2,
+          "elite": -4,
+          "campesinos": 2
+        },
+        "filosofia": "util",
+        "porque": "Una amnistía puede salvar más vidas que una persecución larga.",
+        "aQuien": "El bandolero baja de la montaña y la violencia se calma un poco.",
+        "huella": "tratado",
+        "riesgo": {
+          "probabilidad": 0.35,
+          "texto": "Lo mataron al bajar de la montaña: sus seguidores se sienten traicionados.",
+          "efectos": {
+            "confianza": -6,
+            "campesinos": -3
+          }
+        }
+      },
+      {
+        "texto": "Mandar al ejército a capturarlo",
+        "efectos": {
+          "oro": -50,
+          "elite": 4,
+          "campesinos": -6
+        },
+        "filosofia": "real",
+        "porque": "El Estado no negocia con quien lo desafía, aunque cueste.",
+        "aQuien": "Hay operativos durante meses; los campesinos quedan en medio del fuego.",
+        "huella": "reten"
+      },
+      {
+        "texto": "Escuchar a la comunidad antes de decidir",
+        "efectos": {
+          "confianza": 2,
+          "oro": -20
+        },
+        "filosofia": "virt",
+        "porque": "La prudencia escucha antes de actuar.",
+        "aQuien": "La comunidad habla: la mayoría quiere paz, no venganza. Eso orienta lo que sigue.",
+        "huella": "placa"
+      }
+    ]
+  },
+  {
+    "id": "h_comision",
+    "etapa": 0,
+    "icono": "📖",
+    "titulo": "La comisión investigadora",
+    "texto": "Un sacerdote, un sociólogo y un abogado quieren investigar las causas de la violencia, como la comisión que escribió La Violencia en Colombia (1962).",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "violencia"
+    },
+    "opciones": [
+      {
+        "texto": "Apoyar la investigación y publicarla",
+        "efectos": {
+          "oro": -40,
+          "confianza": 3,
+          "elite": -6
+        },
+        "filosofia": "deon",
+        "porque": "Conocer la verdad es un deber con las víctimas: sin verdad no hay reconciliación.",
+        "aQuien": "El informe sale a la luz y duele, pero ayuda a entender y a no repetir.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Investigar en privado",
+        "efectos": {
+          "oro": -20,
+          "confianza": -3
+        },
+        "filosofia": "util",
+        "porque": "Saber sin escándalo, para decidir con calma.",
+        "aQuien": "El gobierno aprende, pero las víctimas sienten que se les oculta algo."
+      },
+      {
+        "texto": "Prohibirla: abre heridas",
+        "efectos": {
+          "confianza": -7,
+          "elite": 3
+        },
+        "filosofia": "real",
+        "porque": "Olvidar parece más fácil, pero lo que se calla vuelve.",
+        "aQuien": "No hay escándalo; la herida queda abierta sin nombre.",
+        "huella": "pancarta"
+      }
+    ]
+  },
+  {
+    "id": "h_frente",
+    "etapa": 0,
+    "icono": "🤝",
+    "titulo": "El pacto entre partidos",
+    "texto": "Los jefes de los dos partidos proponen turnarse el gobierno por dieciséis años para acabar la violencia, como el Frente Nacional (1958).",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "violencia"
+    },
+    "opciones": [
+      {
+        "texto": "Aceptar el pacto",
+        "efectos": {
+          "confianza": 2,
+          "elite": 4,
+          "igualdad": -4
+        },
+        "filosofia": "util",
+        "porque": "La paz entre los dos partidos salva vidas, aunque cierra el paso a otros.",
+        "aQuien": "La violencia baja; quienes no están en ningún partido quedan sin voz.",
+        "despues": {
+          "anios": 8,
+          "id": "pacto_cerrado"
+        }
+      },
+      {
+        "texto": "Pacto, pero abierto a nuevos movimientos",
+        "efectos": {
+          "confianza": 2,
+          "elite": -4,
+          "animo": 2
+        },
+        "filosofia": "contr",
+        "porque": "La paz es más justa si nadie queda por fuera.",
+        "aQuien": "Los dos partidos aceptan de mala gana; los nuevos grupos pueden participar.",
+        "huella": "acta",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Un partido se retiró del pacto: vuelven las tensiones.",
+          "efectos": {
+            "confianza": -5
+          }
+        }
+      },
+      {
+        "texto": "Rechazarlo",
+        "efectos": {
+          "confianza": -6,
+          "campesinos": -4
+        },
+        "filosofia": "deon",
+        "porque": "No se puede repartir el poder como un botín.",
+        "aQuien": "Mantienes tu independencia; la violencia sigue en las veredas."
+      }
+    ]
+  },
+  {
+    "id": "h_exodo",
+    "etapa": 0,
+    "icono": "🧳",
+    "titulo": "El éxodo del campo",
+    "texto": "Miles de jóvenes se van del campo a la ciudad buscando trabajo. Las veredas se quedan con los viejos.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Llevar escuelas y crédito al campo",
+        "efectos": {
+          "oro": -70,
+          "campesinos": 6,
+          "igualdad": 4
+        },
+        "filosofia": "contr",
+        "porque": "Que nadie tenga que irse para tener oportunidades.",
+        "aQuien": "El campo se vuelve atractivo para algunos jóvenes; cuesta oro y años.",
+        "huella": "mural"
+      },
+      {
+        "texto": "Preparar la ciudad para recibirlos",
+        "efectos": {
+          "oro": -55,
+          "artesanos": 4,
+          "habitantes": 5
+        },
+        "filosofia": "util",
+        "porque": "La ciudad crece de todos modos: mejor planearla.",
+        "aQuien": "Llega gente nueva y encuentra trabajo en los talleres; el campo se vacía.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Dejar que cada uno decida",
+        "efectos": {
+          "campesinos": -6,
+          "alimento": -21
+        },
+        "filosofia": "real",
+        "porque": "Sin política no hay costo, pero el campo pierde manos.",
+        "aQuien": "Los jóvenes se van; la cosecha baja porque faltan brazos."
+      }
+    ]
+  },
+  {
+    "id": "h_riego",
+    "etapa": 0,
+    "icono": "💧",
+    "titulo": "El distrito de riego",
+    "texto": "El gobierno nacional ofrece un distrito de riego para el arroz en el valle, como el de Usosaldaña. Pide que el pueblo ponga una parte.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Poner la parte del pueblo",
+        "efectos": {
+          "oro": -100,
+          "alimento": 40,
+          "campesinos": 5
+        },
+        "filosofia": "util",
+        "porque": "Riego para muchos multiplica la cosecha de todos.",
+        "aQuien": "El valle se llena de arrozales; el tesoro queda más flaco por unos años.",
+        "huella": "vivero"
+      },
+      {
+        "texto": "Que los grandes arroceros paguen",
+        "efectos": {
+          "elite": -6,
+          "alimento": 25,
+          "igualdad": -4
+        },
+        "filosofia": "real",
+        "porque": "El riego llega sin gastar, pero beneficia sobre todo a quien paga.",
+        "aQuien": "El agua llega primero a las grandes fincas; los pequeños esperan turno."
+      },
+      {
+        "texto": "Riego solo si se cuida el río",
+        "efectos": {
+          "oro": -70,
+          "alimento": 25,
+          "ambiente": 3
+        },
+        "filosofia": "virt",
+        "porque": "Usar el agua con medida para que alcance a los de río abajo.",
+        "aQuien": "Menos arroz que con el riego total, pero el río sigue vivo.",
+        "huella": "vivero"
+      }
+    ]
+  },
+  {
+    "id": "h_carretera",
+    "etapa": 0,
+    "icono": "🛣️",
+    "titulo": "La carretera al Quindío",
+    "texto": "La carretera nueva pasará cerca. Puede pasar por el pueblo, con comercio y ruido, o por fuera, sin molestar.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Que pase por el pueblo",
+        "efectos": {
+          "oro": 40,
+          "artesanos": 4,
+          "ambiente": -6,
+          "animo": -3
+        },
+        "filosofia": "util",
+        "porque": "Más comercio para la mayoría, a costa de la tranquilidad.",
+        "aQuien": "Llegan camiones, tiendas y dinero; también polvo y accidentes.",
+        "huella": "valla"
+      },
+      {
+        "texto": "Que pase por fuera, con un acceso",
+        "efectos": {
+          "oro": 15,
+          "ambiente": -1
+        },
+        "filosofia": "virt",
+        "porque": "El término medio: conectados, pero sin perder la plaza.",
+        "aQuien": "Menos comercio, pero el centro sigue siendo de la gente."
+      },
+      {
+        "texto": "Pedir un tren en vez de carretera",
+        "efectos": {
+          "oro": -30,
+          "ambiente": 2,
+          "confianza": -3
+        },
+        "filosofia": "deon",
+        "porque": "Pensar en el largo plazo aunque hoy nadie lo entienda.",
+        "aQuien": "El gobierno nacional no responde; el pueblo espera y otros se llevan la carretera.",
+        "riesgo": {
+          "probabilidad": 0.6,
+          "texto": "La carretera se fue por otro pueblo: el comercio se aleja.",
+          "efectos": {
+            "oro": -20,
+            "artesanos": -3
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "h_sindicato",
+    "etapa": 0,
+    "icono": "🏭",
+    "titulo": "El sindicato de la fábrica",
+    "texto": "Los obreros de la fábrica textil fundan un sindicato y piden contrato colectivo. El dueño amenaza con cerrar.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Reconocer el sindicato",
+        "efectos": {
+          "artesanos": 6,
+          "elite": -7,
+          "igualdad": 4
+        },
+        "filosofia": "contr",
+        "porque": "El derecho a asociarse es la base de la dignidad del trabajo.",
+        "aQuien": "Los obreros negocian juntos; el dueño protesta, pero no cierra.",
+        "huella": "mural",
+        "riesgo": {
+          "probabilidad": 0.25,
+          "texto": "El dueño cerró una línea de la fábrica: hubo despidos.",
+          "efectos": {
+            "artesanos": -5,
+            "oro": -15
+          }
+        }
+      },
+      {
+        "texto": "Apoyar al dueño",
+        "efectos": {
+          "elite": 6,
+          "artesanos": -8,
+          "igualdad": -6
+        },
+        "filosofia": "real",
+        "porque": "La inversión manda: sin dueño no hay fábrica.",
+        "aQuien": "La fábrica sigue y la élite te respalda; los obreros se sienten traicionados.",
+        "huella": "pancarta"
+      },
+      {
+        "texto": "Mesa de diálogo con ambos",
+        "efectos": {
+          "confianza": 2,
+          "oro": -20
+        },
+        "filosofia": "virt",
+        "porque": "El acuerdo nace de escucharse.",
+        "aQuien": "Un acuerdo a medias: mejores turnos, sin contrato colectivo.",
+        "huella": "placa"
+      }
+    ]
+  },
+  {
+    "id": "h_tv",
+    "etapa": 0,
+    "icono": "📺",
+    "titulo": "La televisión llega a la plaza",
+    "texto": "Llega el primer televisor público. Unos quieren noticieros y fútbol; otros, programas educativos para el campo.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Programas educativos (radio-escuela)",
+        "efectos": {
+          "oro": -35,
+          "igualdad": 4,
+          "campesinos": 3
+        },
+        "filosofia": "contr",
+        "porque": "La técnica al servicio de quien más lo necesita, como hizo Radio Sutatenza.",
+        "aQuien": "Los campesinos aprenden a leer por radio y televisión.",
+        "huella": "mural"
+      },
+      {
+        "texto": "Fútbol y novelas para todos",
+        "efectos": {
+          "animo": 6,
+          "confianza": 1
+        },
+        "filosofia": "util",
+        "porque": "Lo que más gente disfruta da la mayor felicidad.",
+        "aQuien": "La plaza se llena cada noche; la gente está contenta."
+      },
+      {
+        "texto": "Dejarla a los comerciantes",
+        "efectos": {
+          "oro": 20,
+          "elite": 3,
+          "igualdad": -3
+        },
+        "filosofia": "real",
+        "porque": "El negocio paga la novedad.",
+        "aQuien": "Los comerciantes cobran por ver; se llenan los bolsillos de pocos."
+      }
+    ]
+  },
+  {
+    "id": "h_constitucion",
+    "etapa": 0,
+    "icono": "📘",
+    "titulo": "La nueva Constitución",
+    "texto": "El país estrena Constitución (1991): participación ciudadana, tutela, derechos de los pueblos indígenas. Hay que adaptar el gobierno local.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz"
+    },
+    "opciones": [
+      {
+        "texto": "Abrir cabildos y presupuesto participativo",
+        "efectos": {
+          "oro": -40,
+          "confianza": 4,
+          "elite": -4
+        },
+        "filosofia": "contr",
+        "porque": "La democracia participativa reparte el poder de decidir.",
+        "aQuien": "Los barrios y veredas deciden parte del presupuesto; la élite pierde influencia.",
+        "huella": "acta"
+      },
+      {
+        "texto": "Cumplir lo mínimo que exige la ley",
+        "efectos": {
+          "confianza": -3
+        },
+        "filosofia": "real",
+        "porque": "Lo justo para no tener problemas, sin cambiar nada de fondo.",
+        "aQuien": "La ley se cumple en el papel; la gente no nota la diferencia."
+      },
+      {
+        "texto": "Crear una oficina de derechos humanos",
+        "efectos": {
+          "oro": -50,
+          "confianza": 2,
+          "igualdad": 3
+        },
+        "filosofia": "deon",
+        "porque": "Los derechos fundamentales deben tener quien los defienda.",
+        "aQuien": "Las víctimas encuentran a quién acudir; sube la legitimidad.",
+        "huella": "placa"
+      }
+    ]
+  },
+  {
+    "id": "h_restitucion",
+    "etapa": 0,
+    "icono": "🏡",
+    "titulo": "La restitución de tierras",
+    "texto": "Familias desplazadas hace años vuelven a reclamar las fincas que tuvieron que abandonar. Hoy las ocupan otros.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz"
+    },
+    "opciones": [
+      {
+        "texto": "Devolverles la tierra con la ley",
+        "efectos": {
+          "oro": -40,
+          "campesinos": 5,
+          "igualdad": 5,
+          "elite": -7
+        },
+        "filosofia": "deon",
+        "porque": "Lo quitado por la violencia debe volver a sus dueños.",
+        "aQuien": "Las familias vuelven a sus fincas; los ocupantes actuales protestan.",
+        "huella": "acta",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "Los reclamantes recibieron amenazas: algunos se van otra vez.",
+          "efectos": {
+            "campesinos": -4,
+            "confianza": -3
+          }
+        }
+      },
+      {
+        "texto": "Compensar con dinero y dejar a los ocupantes",
+        "efectos": {
+          "oro": -70,
+          "campesinos": 2,
+          "confianza": 1
+        },
+        "filosofia": "util",
+        "porque": "Una solución que no saca a nadie, aunque no repara del todo.",
+        "aQuien": "Las víctimas reciben dinero; muchas quedan inconformes porque querían su tierra."
+      },
+      {
+        "texto": "Aplazar el tema",
+        "efectos": {
+          "campesinos": -7,
+          "igualdad": -6,
+          "confianza": -6
+        },
+        "filosofia": "real",
+        "porque": "Evitar el conflicto con los poderosos tiene un precio moral.",
+        "aQuien": "Los reclamantes siguen esperando; crece la desconfianza.",
+        "huella": "pancarta"
+      }
+    ]
+  },
+  {
+    "id": "h_reincorporacion",
+    "etapa": 0,
+    "icono": "🕊️",
+    "titulo": "La reincorporación",
+    "texto": "Tras el acuerdo de paz (2016), un grupo de excombatientes pide tierra para un proyecto productivo en el territorio.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz"
+    },
+    "opciones": [
+      {
+        "texto": "Apoyar el proyecto productivo",
+        "efectos": {
+          "oro": -55,
+          "confianza": 2,
+          "elite": -4
+        },
+        "filosofia": "util",
+        "porque": "Una paz con trabajo evita que vuelvan a las armas.",
+        "aQuien": "Los excombatientes siembran café y la paz se hace concreta.",
+        "huella": "tratado",
+        "riesgo": {
+          "probabilidad": 0.25,
+          "texto": "Algunos vecinos rechazan el proyecto y hay tensiones.",
+          "efectos": {
+            "campesinos": -3
+          }
+        }
+      },
+      {
+        "texto": "Apoyarlo con participación de las víctimas",
+        "efectos": {
+          "oro": -70,
+          "confianza": 3,
+          "igualdad": 3
+        },
+        "filosofia": "contr",
+        "porque": "No hay paz sin las víctimas en el centro.",
+        "aQuien": "Víctimas y excombatientes trabajan juntos; cuesta más, pero sana más.",
+        "huella": "acta"
+      },
+      {
+        "texto": "Negarse",
+        "efectos": {
+          "elite": 3,
+          "confianza": -6
+        },
+        "filosofia": "real",
+        "porque": "Desconfiar es comprensible, pero cerrar la puerta también tiene costos.",
+        "aQuien": "Los excombatientes se van del territorio; algunos podrían volver al monte.",
+        "despues": {
+          "anios": 5,
+          "id": "acuerdo_incumplido"
+        }
+      }
+    ]
+  },
+  {
+    "id": "h_verdad",
+    "etapa": 0,
+    "icono": "🕯️",
+    "titulo": "La Comisión de la Verdad",
+    "texto": "La Comisión de la Verdad pide escuchar a las víctimas del territorio y a los responsables, en un acto público.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz"
+    },
+    "opciones": [
+      {
+        "texto": "Hacer el acto en la plaza",
+        "efectos": {
+          "oro": -30,
+          "confianza": 3,
+          "animo": -3
+        },
+        "filosofia": "deon",
+        "porque": "Escuchar la verdad de las víctimas es una forma de justicia.",
+        "aQuien": "El acto es doloroso, pero el pueblo empieza a hablar de lo que vivió.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Hacerlo en privado",
+        "efectos": {
+          "confianza": 1
+        },
+        "filosofia": "util",
+        "porque": "Proteger a quien habla también importa.",
+        "aQuien": "Las víctimas hablan con seguridad, pero el pueblo no se entera."
+      },
+      {
+        "texto": "No participar",
+        "efectos": {
+          "confianza": -7,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "No remover el pasado parece cómodo para algunos.",
+        "aQuien": "La Comisión se va con un vacío; las víctimas se sienten solas."
+      }
+    ]
+  },
+  {
+    "id": "h_coca",
+    "etapa": 0,
+    "icono": "🌱",
+    "titulo": "La sustitución de cultivos",
+    "texto": "En las veredas altas hay cultivos de coca. El programa nacional ofrece apoyo para sustituirlos por café y cacao.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz"
+    },
+    "opciones": [
+      {
+        "texto": "Sustitución voluntaria con acompañamiento",
+        "efectos": {
+          "oro": -55,
+          "campesinos": 5,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "Ofrecer alternativas reales antes que castigar.",
+        "aQuien": "Las familias cambian de cultivo poco a poco; necesitan apoyo varios años.",
+        "huella": "vivero",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El pago del programa se demoró: algunas familias volvieron a la coca.",
+          "efectos": {
+            "campesinos": -4,
+            "confianza": -3
+          }
+        }
+      },
+      {
+        "texto": "Erradicación forzosa",
+        "efectos": {
+          "campesinos": -8,
+          "elite": 3,
+          "ambiente": -4
+        },
+        "filosofia": "real",
+        "porque": "La ley se cumple ya, aunque la gente pierda su sustento.",
+        "aQuien": "Se arrancan los cultivos; las familias quedan sin ingresos y con rabia.",
+        "huella": "reten"
+      },
+      {
+        "texto": "No intervenir",
+        "efectos": {
+          "confianza": -6,
+          "oro": 10
+        },
+        "filosofia": "real",
+        "porque": "Ignorar el problema deja que otros lo manejen.",
+        "aQuien": "La economía ilegal crece; con ella, los grupos armados."
+      }
+    ]
+  },
+  {
+    "id": "h_desinfo",
+    "etapa": 0,
+    "icono": "📱",
+    "titulo": "La cadena de mentiras",
+    "texto": "Por las redes circula un audio falso que dice que el gobierno va a quitar las casas a los que no paguen el predial. Hay pánico.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Desmentir con datos y en persona",
+        "efectos": {
+          "oro": -15,
+          "confianza": 2
+        },
+        "filosofia": "deon",
+        "porque": "La verdad dicha con claridad es el mejor antídoto.",
+        "aQuien": "La gente escucha la explicación; el pánico baja poco a poco.",
+        "huella": "placa",
+        "riesgo": {
+          "probabilidad": 0.3,
+          "texto": "El desmentido llegó tarde: hubo una protesta frente a la alcaldía.",
+          "efectos": {
+            "confianza": -4
+          }
+        }
+      },
+      {
+        "texto": "Pedir que borren las publicaciones",
+        "efectos": {
+          "confianza": -4,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "Callar el rumor parece rápido, pero huele a censura.",
+        "aQuien": "Algunas publicaciones desaparecen; otros dicen que el gobierno oculta algo.",
+        "despues": {
+          "anios": 4,
+          "id": "desinfo_crisis"
+        }
+      },
+      {
+        "texto": "Talleres de lectura crítica en colegios",
+        "efectos": {
+          "oro": -40,
+          "igualdad": 3,
+          "confianza": 2
+        },
+        "filosofia": "virt",
+        "porque": "Enseñar a dudar con razones protege a todos a largo plazo.",
+        "aQuien": "Los jóvenes aprenden a verificar; el efecto se nota con los años.",
+        "huella": "mural"
+      }
+    ]
+  },
+  {
+    "id": "h_paramo",
+    "etapa": 0,
+    "icono": "🏔️",
+    "titulo": "El agua del páramo",
+    "texto": "Una empresa quiere explorar minería en el páramo de donde nace el agua del pueblo. Ofrece regalías altas.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Proteger el páramo",
+        "efectos": {
+          "ambiente": 6,
+          "oro": -15,
+          "elite": -6
+        },
+        "filosofia": "deon",
+        "porque": "El agua es un bien común: los páramos colombianos están protegidos por ley.",
+        "aQuien": "El agua queda segura para las próximas generaciones.",
+        "huella": "vivero"
+      },
+      {
+        "texto": "Aceptar la exploración",
+        "efectos": {
+          "oro": 70,
+          "ambiente": -11,
+          "confianza": -6
+        },
+        "filosofia": "util",
+        "porque": "Las regalías pueden pagar muchas obras hoy.",
+        "aQuien": "Llega mucho dinero; la gente teme por el agua.",
+        "despues": {
+          "anios": 5,
+          "id": "humo_mal"
+        }
+      },
+      {
+        "texto": "Consulta popular",
+        "efectos": {
+          "oro": -30,
+          "confianza": 3
+        },
+        "filosofia": "contr",
+        "porque": "Que decida la gente que vive del agua.",
+        "aQuien": "El pueblo vota; como en Cajamarca (Tolima, 2017), gana el no a la minería.",
+        "huella": "acta"
+      }
+    ]
+  },
+  {
+    "id": "h_teletrabajo",
+    "etapa": 0,
+    "icono": "💻",
+    "titulo": "Internet en las veredas",
+    "texto": "Con buena conexión, jóvenes podrían trabajar desde el campo para empresas de todo el mundo. Llevar fibra óptica a las veredas cuesta mucho.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Llevar internet a todas las veredas",
+        "efectos": {
+          "oro": -85,
+          "campesinos": 5,
+          "igualdad": 5
+        },
+        "filosofia": "contr",
+        "porque": "La conexión es hoy una oportunidad básica: no puede ser solo para la ciudad.",
+        "aQuien": "Algunos jóvenes se quedan en el campo trabajando en línea.",
+        "huella": "mural"
+      },
+      {
+        "texto": "Solo al centro urbano",
+        "efectos": {
+          "oro": -35,
+          "artesanos": 3,
+          "igualdad": -4
+        },
+        "filosofia": "util",
+        "porque": "Donde vive más gente, más beneficio por cada peso.",
+        "aQuien": "La ciudad se conecta; el campo queda atrás."
+      },
+      {
+        "texto": "Que lo hagan las empresas",
+        "efectos": {
+          "oro": 10,
+          "elite": 3,
+          "igualdad": -4
+        },
+        "filosofia": "real",
+        "porque": "El mercado llega donde le conviene.",
+        "aQuien": "Las empresas conectan solo donde es rentable."
+      }
+    ]
+  },
+  {
+    "id": "h_calor",
+    "etapa": 0,
+    "icono": "🌡️",
+    "titulo": "El año más caliente",
+    "texto": "Este fue el año más caliente registrado. Los cafetales de tierra baja sufren y la roya avanza.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Plan de adaptación: café en zonas altas y sombra",
+        "efectos": {
+          "oro": -55,
+          "campesinos": 4,
+          "ambiente": 3
+        },
+        "filosofia": "util",
+        "porque": "Prepararse con ciencia protege a la mayoría.",
+        "aQuien": "Los caficultores siembran variedades resistentes y árboles de sombra.",
+        "huella": "vivero"
+      },
+      {
+        "texto": "Subsidio para los que perdieron la cosecha",
+        "efectos": {
+          "oro": -65,
+          "campesinos": 5,
+          "animo": 2
+        },
+        "filosofia": "contr",
+        "porque": "Primero los que más pierden.",
+        "aQuien": "Las familias resisten este año; el problema sigue el próximo."
+      },
+      {
+        "texto": "No hacer nada: es el clima",
+        "efectos": {
+          "campesinos": -7,
+          "alimento": -28
+        },
+        "filosofia": "real",
+        "porque": "Lo que no se previene, se paga.",
+        "aQuien": "La cosecha baja y algunos caficultores abandonan sus fincas."
+      }
+    ]
+  },
+  {
+    "id": "h_migrantes",
+    "etapa": 0,
+    "icono": "🚌",
+    "titulo": "Llegan migrantes",
+    "texto": "Llegan cientos de familias que huyen de la crisis del país vecino. No tienen papeles ni trabajo.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Recibirlas con papeles y escuela",
+        "efectos": {
+          "oro": -55,
+          "habitantes": 8,
+          "confianza": 1,
+          "artesanos": -3
+        },
+        "filosofia": "deon",
+        "porque": "La hospitalidad con quien huye es un deber de humanidad.",
+        "aQuien": "Las familias se integran y trabajan; algunos artesanos temen la competencia.",
+        "huella": "olla"
+      },
+      {
+        "texto": "Recibirlas solo de paso",
+        "efectos": {
+          "oro": -20,
+          "confianza": -1
+        },
+        "filosofia": "util",
+        "porque": "Ayudar sin cargar al pueblo con todo.",
+        "aQuien": "Les dan comida y transporte hacia otras ciudades."
+      },
+      {
+        "texto": "Cerrar el paso",
+        "efectos": {
+          "confianza": -6,
+          "igualdad": -6,
+          "elite": 2
+        },
+        "filosofia": "real",
+        "porque": "Proteger lo propio primero, aunque otros sufran.",
+        "aQuien": "Las familias quedan en la carretera; la imagen del pueblo se daña.",
+        "huella": "pancarta"
+      }
+    ]
   }
 ]
