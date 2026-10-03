@@ -2,7 +2,7 @@
 // copias. Fase 8: pintados al fresco (color plano de pigmento, manchas de muro y contorno siena); los edificios
 // públicos son neoclásicos, con podio, columnas, friso, frontón y un emblema que dice qué es cada uno.
 import { mulberry, shade, mix, poly, lienzo } from './acuarela.js';
-import { FR, pintar, ovalo } from './fresco.js';
+import { FR, pintar, ovalo, urlDe } from './fresco.js';
 import { templo } from './obras-fresco.js';
 
 // Pinceles del fresco con la misma firma de los de acuarela (así todas las obras cambian de estilo a la vez).
@@ -468,5 +468,5 @@ export function iconoObra(k, etapa, reg) {
   wash(g, [[cx, cy - 16 * s * 1.2], [cx + 32 * s * 1.2, cy], [cx, cy + 16 * s * 1.2], [cx - 32 * s * 1.2, cy]], k === 'mina' ? '#A39C8E' : k === 'cafetal' ? '#7E9A5A' : k === 'cultivo' ? '#B9C67E' : '#C6D293', R, .8, 1);
   if (k === 'cultivo' || k === 'cafetal') for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) blob(g, cx + (a - b) * 7 * s, cy + (a + b - 3) * 3.5 * s, 3 * s, 2.2 * s, k === 'cafetal' ? '#2F5E36' : '#4F8A43', R, .9);
   if (m) g.drawImage(H.canvas, m.x, m.y, m.w, m.h, cx - m.ax / H.escala * s, cy - m.ay / H.escala * s, m.w / H.escala * s, m.h / H.escala * s);
-  return c.toDataURL();
+  return urlDe(c);
 }

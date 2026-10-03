@@ -14,16 +14,16 @@ import { retrato, retratoFig, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 import { ico as pintado } from '../arte/iconos.js';
-import { FR, lienzo, texturaYeso, greca } from '../arte/fresco.js';
+import { FR, lienzo, texturaYeso, greca, urlDe } from '../arte/fresco.js';
 
 // Fase 8: íconos pintados al fresco.
 export const IC = { gold: pintado('oro'), debt: pintado('deuda'), food: pintado('alimento'), pop: pintado('poblacion'), agua: pintado('agua'), energia: pintado('energia') };
-// Texturas de la interfaz (muro de yeso y greca), una sola vez.
+// Texturas de la interfaz (muro de cal, muro de yeso y greca), una sola vez, como enlaces cortos y ya pintadas sobre su
+// color (sin modos de mezcla, que Safari en iPhone recalcula en toda la pantalla).
 (() => {
-  const r = document.documentElement.style, y = lienzo(220, 220), gy = y.getContext('2d');
-  gy.fillStyle = '#fff'; gy.fillRect(0, 0, 220, 220); texturaYeso(gy, 0, 0, 220, 220, 1);
+  const r = document.documentElement.style, muro = col => { const y = lienzo(220, 220), gy = y.getContext('2d'); gy.fillStyle = col; gy.fillRect(0, 0, 220, 220); texturaYeso(gy, 0, 0, 220, 220, .7); return urlDe(y); };
   const gc = lienzo(64, 16), g = gc.getContext('2d'); greca(g, 0, 2, 64, 12, FR.rojo);
-  r.setProperty('--yeso-tex', `url(${y.toDataURL()})`); r.setProperty('--greca', `url(${gc.toDataURL()})`);
+  r.setProperty('--muro-cal', `url(${muro('#F7F1E3')})`); r.setProperty('--greca', `url(${urlDe(gc)})`);
 })();
 const BADUP = { d: 1, i: 1 };
 const signo = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(Math.round(v));

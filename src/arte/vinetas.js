@@ -5,7 +5,7 @@ import { hornearEdificios, figurasDeObra } from './edificios.js';
 import { hornearNaturaleza } from './naturaleza.js';
 import { hornearGente } from './gente.js';
 import { hornearFlora } from './flora.js';
-import { FR, pintar, texturaYeso } from './fresco.js';
+import { FR, pintar, texturaYeso, urlDe } from './fresco.js';
 import { TW, TH } from './iso.js';
 
 // g: terreno de las 6 casillas (L llano, R río, M montaña); b: obras por casilla; fx: efectos.
@@ -89,5 +89,5 @@ export function vineta(id, reg = 'republica', etapa = 1) {
     if (f === 'shadow') { g.globalAlpha = .85; figura(g, PER, 'elite_0_0_0', main[0] + 36, main[1] + 8, .9); g.globalAlpha = 1; }
   }
   texturaYeso(g, 0, 0, W, H, .45);
-  return (CACHE[clave] = c.toDataURL('image/jpeg', .86));
+  return (CACHE[clave] = urlDe(c, 'image/jpeg', .86));
 }

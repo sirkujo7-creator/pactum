@@ -2,7 +2,7 @@
 // un tondo con aro rojo pompeyano y ocre, rostro con luz desde la izquierda, ojos almendrados y contorno siena.
 // Sirven para las voces del pueblo (Doña Rosa, Julián, Don Aurelio) y para los personajes con papel propio.
 import { mulberry, lienzo } from './acuarela.js';
-import { FR, shade, mix, pintar, ovalo, contorno, texturaYeso } from './fresco.js';
+import { FR, shade, mix, pintar, ovalo, contorno, texturaYeso, urlDe } from './fresco.js';
 
 const CACHE = {};
 // spec: { fondo, piel, ropa, pelo, detalle, mujer, canas }
@@ -63,7 +63,7 @@ function hacer(clave, spec, semilla) {
   if (CACHE[clave]) return CACHE[clave];
   const c = lienzo(128, 128), g = c.getContext('2d'); g.scale(2, 2);
   pintarRetrato(g, spec, mulberry(semilla));
-  return (CACHE[clave] = c.toDataURL());
+  return (CACHE[clave] = urlDe(c));
 }
 // Las voces del pueblo: Doña Rosa (campesina), Julián (artesano) y Don Aurelio (élite).
 const VOCES = {

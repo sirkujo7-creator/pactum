@@ -42,7 +42,11 @@ export function recetasFlora(seco = 0) {
 }
 
 // Hornea las plantas en una hoja (atlas), con las mismas claves de la naturaleza anterior donde existen.
+const HOJAS = {};
 export function hornearFlora(seco = 0) {
+  const clave = Math.round(seco * 10) / 10;
+  if (HOJAS[clave]) return HOJAS[clave];
+  seco = clave;
   const E = 4, L = recetasFlora(seco), pad = 2;
   let x = 0, y = 0, fila = 0; const W = 1024 * 2, marcos = {};
   const pos = L.map(([k, w, h]) => { if (x + w * E > W) { x = 0; y += fila + pad; fila = 0; } const p = { x, y }; x += w * E + pad; fila = Math.max(fila, h * E); return p; });
@@ -52,5 +56,5 @@ export function hornearFlora(seco = 0) {
     marcos[k] = { x: p.x, y: p.y, w: w * E, h: h * E, ax: ax * E, ay: ay * E };
     g.save(); g.translate(p.x + ax * E, p.y + ay * E); g.scale(E, E); f(g, rng); g.restore();
   });
-  return { canvas: cv, marcos, escala: E };
+  return (HOJAS[clave] = { canvas: cv, marcos, escala: E });
 }
