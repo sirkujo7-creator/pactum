@@ -2,8 +2,9 @@
 // copias. Fase 8: las plantas son las del fresco (src/arte/flora.js): menos, más pequeñas y estilizadas.
 import { mulberry, shade, mix, wash, blob, lienzo } from './acuarela.js';
 import { recetasFlora } from './flora.js';
+import { RES_HOJA } from './fresco.js';
 
-const ESCALA = 4; // resolución del horneado (alta, para que se vea nítido de cerca)
+const ESCALA = RES_HOJA; // resolución del horneado (fase 8: 3 en celulares, 4 en computador)
 
 function sombra(g, rx, ry, dx) { g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(dx || 4, 2, rx, ry, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
 

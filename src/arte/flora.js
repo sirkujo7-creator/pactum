@@ -1,7 +1,7 @@
 // Árboles y plantas al fresco (fase 8): menos, más pequeños y estilizados, como los jardines pintados de Pompeya.
 // Copas redondeadas en tierra verde con la panza más oscura y toques de luz claros. Especies del Tolima: árbol de
 // copa, samán, palma de cera, guadua, cafeto, plátano, arbusto y frailejón.
-import { FR, mulberry, shade, mix, lienzo, pintar, ovalo, toques, sombraSuelo, contorno } from './fresco.js';
+import { FR, mulberry, shade, mix, lienzo, pintar, ovalo, toques, sombraSuelo, contorno, RES_HOJA } from './fresco.js';
 
 function tronco(g, x0, y0, x1, y1, w, rng, col = FR.sienaClara) {
   g.save(); g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo((x0 + x1) / 2 + (rng() - .5), (y0 + y1) / 2, x1, y1); g.stroke();
@@ -47,7 +47,7 @@ export function hornearFlora(seco = 0) {
   const clave = Math.round(seco * 10) / 10;
   if (HOJAS[clave]) return HOJAS[clave];
   seco = clave;
-  const E = 4, L = recetasFlora(seco), pad = 2;
+  const E = RES_HOJA, L = recetasFlora(seco), pad = 2;
   let x = 0, y = 0, fila = 0; const W = 1024 * 2, marcos = {};
   const pos = L.map(([k, w, h]) => { if (x + w * E > W) { x = 0; y += fila + pad; fila = 0; } const p = { x, y }; x += w * E + pad; fila = Math.max(fila, h * E); return p; });
   const cv = lienzo(W, y + fila + pad), g = cv.getContext('2d');

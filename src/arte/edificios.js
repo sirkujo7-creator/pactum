@@ -2,7 +2,7 @@
 // copias. Fase 8: pintados al fresco (color plano de pigmento, manchas de muro y contorno siena); los edificios
 // públicos son neoclásicos, con podio, columnas, friso, frontón y un emblema que dice qué es cada uno.
 import { mulberry, shade, mix, poly, lienzo } from './acuarela.js';
-import { FR, pintar, ovalo, urlDe } from './fresco.js';
+import { FR, pintar, ovalo, urlDe, RES_HOJA } from './fresco.js';
 import { templo } from './obras-fresco.js';
 
 // Pinceles del fresco con la misma firma de los de acuarela (así todas las obras cambian de estilo a la vez).
@@ -10,7 +10,7 @@ function wash(g, pts, col, rng, al = .9) { g.save(); g.globalAlpha = Math.min(1,
 function blob(g, x, y, rx, ry, col, rng, al = .9) { g.save(); g.globalAlpha = al; ovalo(g, x, y, rx, ry, col, rng, { n: 1, bw: .35, bal: .45 }); g.restore(); }
 import { TW, TH } from './iso.js';
 
-const ESCALA = 4; // resolución del horneado (alta, para que se vea nítido de cerca)
+const ESCALA = RES_HOJA; // resolución del horneado (fase 8: 3 en celulares, 4 en computador)
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // ---------- Pinceles de construcción ----------
