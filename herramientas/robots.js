@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, costoDialogo, dialogar
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, costoDialogo, dialogar
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -22,6 +22,8 @@ export function botYear(S, strat, eth, op = {}) {
   if (S.clima) { S.mant = MANT; if (prep) S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
   // Fase 4: relaciones con las polis vecinas: tratados si sobra oro, visitas si una relación se enfría.
   if (prep && S.vecinos) for (const id of Object.keys(S.vecinos)) { if (S.gold > costoAccion(S, 'tratado') + 120) accionVecino(S, id, 'tratado'); if (S.vecinos[id].rel < 42 && S.gold > costoAccion(S, 'visita') + 60) accionVecino(S, id, 'visita'); }
+  // Fase 5: asentamientos informales: legalizar si sobra oro; si no, esperar.
+  if (prep && S.asent) for (const a of [...S.asent]) { if (S.gold > costoLegalizar(S) + 100) decidirAsentamiento(S, a.i, 'legalizar'); else if (a.nuevo) decidirAsentamiento(S, a.i, 'ignorar'); }
   // Fase 4: ante un grupo armado, la estrategia equilibrada invierte en las veredas si tiene oro; si no, dialoga.
   if (prep && hayGrupo(S)) elegirEstrategia(S, S.gold > 150 ? 'inversion' : 'dialogo');
   // Fase 4: la estrategia equilibrada prepara la evacuación cuando el volcán pasa a alerta naranja.

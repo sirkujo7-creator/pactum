@@ -110,6 +110,16 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 8. Otras formas de ganar y efecto por edificio | Publicado (0.33.0). Desde Ciudad, además de la Polis, cuatro caminos que se ganan sosteniendo todas sus condiciones los años que pide la dificultad (6 en Normal): Polis próspera (bienestar 60, calificación AAA, sin deuda, tesoro de 250), Polis justa (igualdad 70, legitimidad 62, ninguna clase bajo 45), Polis verde (ambiente 82, sin minas, bosque en 26% del territorio) y Polis en paz (sin grupo armado, inseguridad menor que 10, sin movimientos movilizados, vecinos con 70 de promedio). Tarjeta «Caminos a la victoria» desde la meta, con el avance de cada uno. Cada edificio muestra en su ficha su efecto especial; nuevos efectos: el mercado estabiliza el precio de la comida (hasta 30%), el acueducto reduce los brotes (hasta la mitad) y el puerto suma 2% de comercio y mejora la relación con San Lorenzo. Robots (no buscan estos caminos): unos 2% ganan por ellos. República 47%; regímenes entre 40% y 54%; Fácil 100%, Difícil 8% |
 | 9. Ajuste de Difícil | Publicado (0.33.1). Decisión de Juan (3 de octubre): Difícil cerca de 30%. Golpes ×1,45, racha para suceso bueno de 2 y suceso bueno 55% de esas veces. Robots: Difícil 31% |
 
+## Estado de la fase 5 (sociedad y memoria)
+
+| Paso | Estado |
+| --- | --- |
+| 1. Barrios y problemáticas | Publicado (0.34.0). Desde Ciudad, las casas forman barrios según su dirección desde el centro (El Centro, La Pola, Belén, El Salado, Picaleña, Jordán, La Ribera). Cada barrio tiene cuatro problemáticas de 0 a 100: deserción escolar, trabajo infantil, violencia y brecha de género, que dependen de los servicios cercanos (escuela, hospital, policía), la pobreza, la inseguridad, la periferia, la ley de educación y los asentamientos. No son medidores nuevos: por encima de 30 pesan en la igualdad y en la inseguridad. Programas sociales por barrio (6 años): comedor y transporte escolar, cuadrante de policía y alumbrado, casa de la mujer. Asentamientos informales cuando hay mucho desempleo o falta vivienda (ranchos en la periferia; dan techo a 6 personas): legalizar y mejorar, desalojar (fuerza, acta, personajes) o ignorar. Sección Barrios en Sociedad; nombres de los barrios en la capa ◎. Robots: República 48%; regímenes entre 43% y 55%; Difícil 33% |
+| 2. Cultura y deporte | Pendiente |
+| 3. Memoria y legado | Pendiente |
+| 4. Evolución visual por épocas | Pendiente |
+| 5. Balance | Pendiente |
+
 ## Ideas propuestas (primera ronda)
 
 | # | Idea | Concepto que enseña | Cómo se ve |

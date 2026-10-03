@@ -181,6 +181,16 @@ function recetas() {
     wash(g, [[p[0], p[1] - 16], [p[0] - 14, p[1] - 16], [p[0] - 18, p[1] - 13], [p[0] - 14, p[1] - 10], [p[0], p[1] - 10]], '#C9A473', r, .97, .2);
     g.fillStyle = '#5A4632'; g.fillRect(p[0] + 3, p[1] - 21.6, 9, 1); g.fillRect(p[0] - 12, p[1] - 13.6, 9, 1);
   }]);
+  L.push(['m_asentamiento', 62, 46, 31, 36, (g, r) => {
+    sombra(g, 22, 5, 4);
+    for (const [u, v, pared, techo2] of [[-.28, -.08, '#9C7A55', '#8E9AA0'], [.12, -.18, '#7E6A52', '#A8B0B4'], [.02, .2, '#A88A62', '#7E8A90']]) {
+      const q = V2(u, v); wash(g, [[q[0] - 6, q[1]], [q[0] + 6, q[1]], [q[0] + 6, q[1] - 7], [q[0] - 6, q[1] - 7]], pared, r, .95, .3);
+      wash(g, [[q[0] - 7.5, q[1] - 6.5], [q[0] + 7.5, q[1] - 7.5], [q[0] + 6, q[1] - 10], [q[0] - 6, q[1] - 9]], techo2, r, .95, .2);
+      g.fillStyle = '#3A2E24'; g.fillRect(q[0] - 1.2, q[1] - 4.5, 2.4, 4.5);
+    }
+    const t = V2(.36, .05); g.strokeStyle = '#6B4F3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(t[0] - 8, t[1] - 6); g.lineTo(t[0] + 6, t[1] - 8); g.stroke();
+    for (let k = 0; k < 3; k++) { g.fillStyle = ['#C0602A', '#5E8FB0', '#E7C76B'][k]; g.fillRect(t[0] - 6 + k * 4.5, t[1] - 6.8 - k * .5, 2.6, 3); }
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);

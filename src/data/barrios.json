@@ -1,0 +1,93 @@
+{
+  "desde": {
+    "etapa": 2
+  },
+  "radioCentro": 2.5,
+  "nombres": {
+    "centro": "El Centro",
+    "sectores": [
+      "La Pola",
+      "Belén",
+      "El Salado",
+      "Picaleña",
+      "Jordán",
+      "La Ribera"
+    ]
+  },
+  "leccion": "Segregación urbana: en una misma ciudad conviven barrios con escuela, hospital y policía cerca, y barrios donde los niños dejan de estudiar para trabajar. Los promedios esconden las brechas; mirar barrio por barrio las revela.",
+  "problemas": {
+    "desercion": {
+      "nombre": "Deserción escolar",
+      "icono": "🎒",
+      "texto": "Niños y jóvenes que dejan la escuela."
+    },
+    "infantil": {
+      "nombre": "Trabajo infantil",
+      "icono": "🧒",
+      "texto": "Niños que trabajan en vez de estudiar."
+    },
+    "violencia": {
+      "nombre": "Violencia",
+      "icono": "🔪",
+      "texto": "Riñas, robos y miedo en las calles del barrio."
+    },
+    "genero": {
+      "nombre": "Brecha de género",
+      "icono": "♀️",
+      "texto": "Mujeres con menos estudio, ingresos y voz que los hombres."
+    }
+  },
+  "efectos": {
+    "umbral": 30,
+    "igualdad": 0.25,
+    "inseguridad": 0.15
+  },
+  "programas": {
+    "escolar": {
+      "nombre": "Comedor y transporte escolar",
+      "icono": "🍎",
+      "costo": 30,
+      "anios": 6,
+      "reduce": {
+        "desercion": 25,
+        "infantil": 15
+      },
+      "texto": "Comida y ruta escolar: los niños vuelven a clase."
+    },
+    "cuadrante": {
+      "nombre": "Cuadrante de policía y alumbrado",
+      "icono": "💡",
+      "costo": 30,
+      "anios": 6,
+      "reduce": {
+        "violencia": 25
+      },
+      "texto": "Patrullaje por cuadras y calles iluminadas."
+    },
+    "mujer": {
+      "nombre": "Casa de la mujer",
+      "icono": "🏠",
+      "costo": 25,
+      "anios": 6,
+      "reduce": {
+        "genero": 25,
+        "violencia": 5
+      },
+      "texto": "Formación, empleo y atención para las mujeres del barrio."
+    }
+  },
+  "asentamiento": {
+    "informales": 15,
+    "aniosEntre": 8,
+    "maximo": 3,
+    "capacidad": 6,
+    "violencia": 12,
+    "genero": 6,
+    "legalizar": 60,
+    "texto": "Familias sin vivienda levantaron ranchos de tabla y zinc en la periferia: no tienen agua, luz ni títulos.",
+    "desalojar": "Desalojar con la policía",
+    "ignorar": "Dejarlo así por ahora",
+    "legalizarTexto": "Legalizar y mejorar el barrio",
+    "leccion": "Informalidad urbana: cuando la ciudad no ofrece vivienda a quienes llegan, ellos la construyen como pueden. Desalojar no resuelve la falta de vivienda; legalizar y llevar servicios convierte un asentamiento en barrio."
+  }
+}

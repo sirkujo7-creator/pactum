@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -288,13 +288,14 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionBarrios() + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
     const seg = this.sociedad.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
     const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
     this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
+    this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
@@ -413,6 +414,7 @@ export class Interfaz {
     const S = this.S, T = this.mapa.T, t = T.tiles[i], x = S.map[i];
     const hijos = [];
     // Fase 4: huella de una decisión.
+    if (!x.b && x.mk && x.mk.t === 'asentamiento' && barriosActivos(S)) { this.cerrarFicha(); this.tarjetaAsentamiento(i); return; }
     if (!x.b && x.mk && C.MARCAS) {
       const M = C.MARCAS.tipos[x.mk.t];
       const G = 'grid-column:1/-1';
@@ -427,6 +429,7 @@ export class Interfaz {
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
+      if (x.b === 'casa' && barriosActivos(S)) hijos.push(el('span', { text: `Barrio: ${nombreBarrio(barrioDe(S, i))}.` }));
       if (x.b === 'casa' && !x.ob && coberturaActiva(S)) {
         const sv = serviciosDeCasa(S, i), CS = C.COB.servicios;
         hijos.push(el('span', { text: `${C.COB.textos.fichaCasa} ${Object.keys(CS).map(s => `${sv[s] ? '✓' : '✗'} ${CS[s]}`).join(' · ')}` }));
@@ -798,8 +801,8 @@ export class Interfaz {
     this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 4: relaciones con las polis vecinas.
-  vecinosAnio(alTerminar) {
-    const S = this.S, e = S.vecEv;
+  vecinosAnio(alTerminar0) {
+    const S = this.S, e = S.vecEv, alTerminar = () => this.asentamientoAnio(alTerminar0);
     if (!e || !e.nuevo || !vecinosActivos(S)) { alTerminar(); return; }
     e.nuevo = false;
     const V = C.VECINOS;
@@ -808,6 +811,50 @@ export class Interfaz {
       <p class="small">Cuida las relaciones en <b>Sociedad → Otras polis</b>. Con un promedio menor que ${V.minimo} hay aislamiento y no llegarás a Polis.</p>
       <div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Entendido</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 5: asentamiento informal nuevo: decidir qué hacer.
+  asentamientoAnio(alTerminar) {
+    const S = this.S, a = (S.asent || []).find(x => x.nuevo);
+    if (!a || !barriosActivos(S)) { alTerminar(); return; }
+    this.tarjetaAsentamiento(a.i, alTerminar);
+  }
+  tarjetaAsentamiento(i, alTerminar) {
+    const S = this.S, A = C.BARRIOS.asentamiento, b = nombreBarrio(barrioDe(S, i)), caro = S.gold < costoLegalizar(S);
+    this.tarjeta(`<div class="big">🏚️</div><h3>Asentamiento informal en ${b}</h3><p>${A.texto}</p>
+      <button class="opt" data-as="legalizar" ${caro ? 'disabled' : ''}><b>${A.legalizarTexto}</b><small>Cuesta ${costoLegalizar(S)} de oro: las familias reciben títulos, agua y luz; el asentamiento se vuelve barrio.${caro ? ' No alcanza el oro.' : ''}</small></button>
+      <button class="opt" data-as="desalojar"><b>${A.desalojar}</b><small>Recuperas el terreno, pero las familias quedan en la calle.</small></button>
+      <button class="opt" data-as="ignorar"><b>${A.ignorar}</b><small>El asentamiento sigue: más violencia y brecha de género en el barrio. Puedes decidir después tocándolo en el mapa.</small></button>
+      <div class="phil"><b>Lo que enseña</b><br>${A.leccion}</div>`, false);
+    this.card.querySelectorAll('[data-as]').forEach(bt => bt.onclick = () => {
+      const r = decidirAsentamiento(S, i, bt.dataset.as);
+      if (r !== true) { if (r) this.toast(r); return; }
+      this.toast({ legalizar: 'El asentamiento ahora es parte del barrio.', desalojar: 'Desalojo: las familias quedaron en la calle.', ignorar: 'El asentamiento sigue ahí.' }[bt.dataset.as]);
+      this.mapa.refrescarCasilla(i); this.mapa.cambio(true); this.render();
+      this.alCerrar = alTerminar || null; this.cerrarTarjeta();
+    });
+  }
+  seccionBarrios() {
+    const S = this.S, L = barrios(S);
+    if (!L.length) return '';
+    const P = C.BARRIOS.problemas;
+    const filas = L.map(b => { const [k, v] = b.peor;
+      return `<button class="sub" data-barrio="${b.id}" aria-label="${b.nombre}: ${b.casas} casas; problema mayor ${P[k].nombre} ${v}. Ver más"><span class="sn">🏘️ ${b.nombre} <small>${b.casas} casas${b.asent ? ' · 🏚️' : ''} · ${P[k].icono} ${P[k].nombre.toLowerCase()}</small></span><span class="track"><span class="fill" style="width:${v}%;background:${colorDe(100 - v)}"></span></span><b>${v}</b></button>`; }).join('');
+    return `<div class="cls otros"><div><div class="lab"><span>Barrios</span></div><p class="small">Cada barrio con su problema más grave. Toca uno para ver todo y lanzar programas sociales. En el mapa, el botón ◎ muestra sus nombres.</p><div class="subs">${filas}</div></div></div>`;
+  }
+  explicarBarrio(id) {
+    const S = this.S, b = barrios(S).find(x => x.id === id), K = C.BARRIOS;
+    if (!b) return;
+    const sv = b.servicios, pct = v => Math.round(v * 100) + '%';
+    const progs = Object.entries(K.programas).map(([t, p]) => { const no = puedePrograma(S, id, t);
+      return `<button class="opt" data-prog="${t}" ${no ? 'disabled' : ''}><b>${p.icono} ${p.nombre}</b><small>${p.texto} Cuesta ${costoPrograma(S, t)} de oro; dura ${p.anios} años.${no ? ` ${no}` : ''}</small></button>`; }).join('');
+    this.tarjeta(`<h3>🏘️ ${b.nombre}</h3><p class="small">${b.casas} casas, unas ${b.gente} personas.${b.asent ? ` Hay ${b.asent} asentamiento${b.asent > 1 ? 's' : ''} informal${b.asent > 1 ? 'es' : ''}.` : ''}</p>
+      <p class="small">Casas con servicio cerca: escuela ${pct(sv.escuela)}, hospital ${pct(sv.hospital)}, policía ${pct(sv.policia)}, mercado ${pct(sv.mercado)}.</p>
+      <div class="causas">${Object.entries(b.problemas).map(([k, v]) => `<div class="causa"><span>${K.problemas[k].icono} ${K.problemas[k].nombre}</span><span class="barra"><i class="${v > K.efectos.umbral ? 'neg' : 'pos'}" style="width:${v}%"></i></span><b class="${v > K.efectos.umbral ? 'neg' : 'pos'}">${v}</b></div>`).join('')}</div>
+      <p class="small">Suben con pocos servicios cerca, pobreza, inseguridad y asentamientos; bajan con escuelas, hospitales, policía, la ley de educación y los programas sociales. Por encima de ${K.efectos.umbral} pesan en la igualdad y la inseguridad del territorio.</p>
+      <h2>Programas sociales</h2>${progs}
+      <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('okB', () => this.cerrarTarjeta());
+    this.card.querySelectorAll('[data-prog]').forEach(bt => bt.onclick = () => { if (iniciarPrograma(S, id, bt.dataset.prog)) { this.toast(`${K.programas[bt.dataset.prog].nombre} en ${b.nombre}.`); this.render(); this.explicarBarrio(id); } });
   }
   seccionVecinos() {
     const S = this.S;

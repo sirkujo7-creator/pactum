@@ -22,6 +22,7 @@ import { desastresDelAnio } from './desastres.js';
 import { conflictoDelAnio } from './conflicto.js';
 import { vecinosDelAnio } from './vecinos.js';
 import { victoriasDelAnio } from './victorias.js';
+import { barriosDelAnio, efectoBarrios } from './barrios.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -63,7 +64,7 @@ export function advance(S) {
 
   // Igualdad.
   const tot = (F.post.c + F.post.a + F.post.e + F.post.u) || 1, es = F.post.e / tot, ps = so.el / Math.max(1, so.P);
-  const tE = 85 - (es - ps) * 120 + sc * 10 + c.universidad * 5 + RM(S, 'eq') + (hasLaw(S, 'educacion') ? 8 : 0) + (hasLaw(S, 'censura') ? -3 : 0);
+  const tE = 85 - (es - ps) * 120 + sc * 10 + c.universidad * 5 + RM(S, 'eq') + (hasLaw(S, 'educacion') ? 8 : 0) + (hasLaw(S, 'censura') ? -3 : 0) + efectoBarrios(S, 'igualdad');
   S.eq = clamp(S.eq + (tE - S.eq) * .3, 0, 100);
 
   // Confianza.
@@ -160,6 +161,7 @@ export function advance(S) {
   news.push(...desastresDelAnio(S));
   news.push(...conflictoDelAnio(S));
   news.push(...vecinosDelAnio(S));
+  news.push(...barriosDelAnio(S));
   marcasDelAnio(S);
   if (S.reg === 'monarquia' && S.year % 15 === 0) {
     if (azar() < .5) { S.corr = clamp(S.corr - 10, 0, 100); S.tr = clamp(S.tr + 5, 0, 100); news.push('Sucesión en la corona: el heredero es prudente y querido.'); }
