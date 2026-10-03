@@ -734,6 +734,7 @@ export class Mapa extends Phaser.Scene {
       paso();
     }
     if (this.trafico) this.trafico.revisar();
+    if (this.pob) this.pob.rejilla(); // la gente camina por las calles nuevas
     this.dibujarCobertura();
   }
   marcar(i) {
