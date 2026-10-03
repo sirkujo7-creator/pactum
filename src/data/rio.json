@@ -1,0 +1,25 @@
+{
+  "nombre": "El río cambia de curso",
+  "desde": { "etapa": 1, "anio": 8 },
+  "prob": 0.5,
+  "probLahar": 0.6,
+  "protege": 0.85,
+  "porErosion": 0.5,
+  "enfriar": 15,
+  "amplitud": 2.2,
+  "ancho": 3.2,
+  "maximoDesvios": 4,
+  "humedalAmbiente": 2,
+  "legitimidadPorObra": 2,
+  "textos": {
+    "titulo": "El río cambió de curso",
+    "nina": "Con las crecidas de La Niña, el río socavó la orilla y abrió un cauce nuevo.",
+    "lahar": "El lahar llenó el cauce de lodo y piedras; el río buscó un camino nuevo.",
+    "sinPerdidas": "El agua no se llevó ninguna obra: la orilla estaba libre.",
+    "conPerdidas": "El río se llevó lo que estaba construido en su orilla:",
+    "humedal": "Donde corría el agua quedó una madrevieja: un humedal con garzas y juncos.",
+    "prevenir": "Se previene sin construir ni talar en la ronda del río (la franja junto al agua): la vegetación de galería sostiene las orillas.",
+    "riesgoNina": "Si llega La Niña, el río puede cambiar de curso"
+  },
+  "leccion": "Los ríos no son líneas fijas: con las crecidas, el agua se come la orilla de afuera de cada curva y deja arena en la de adentro, y a veces corta la curva y abre un cauce nuevo. Por eso la ley colombiana protege la ronda hídrica (unos 30 metros a cada lado) y el ordenamiento territorial no permite construir en ella. El bosque de galería sostiene las orillas con sus raíces."
+}

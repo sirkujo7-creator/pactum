@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -39,7 +39,8 @@ export class Mapa extends Phaser.Scene {
 
     if (!partida.S || this.nueva) await nuevaPartida(this.semilla, this.opciones);
     this.S = partida.S;
-    this.T = genTerreno(this.S.seed, this.S.n);
+    this.T = genTerreno(this.S.seed, this.S.n, desvios(this.S)); // fase 6: con los cambios de curso del río
+    this.desviosVistos = desvios(this.S).length;
     // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
     this.escalaSector = (DPR > 1.5 ? 1.9 : 1.5) * Math.min(1, 32 / this.S.n);
     this.dry = sequedad(this.S);
@@ -135,7 +136,7 @@ export class Mapa extends Phaser.Scene {
     (this.plantas[i] || []).forEach(p => p.destroy());
     const x = this.S.map[i], t = this.T.tiles[i];
     let lista = [];
-    if (x.b || x.dr > 0 || x.er >= 2 || (x.mk && GRANDES.has(x.mk.t))) lista = []; // obra, derrumbe, ladera muy erosionada o huella grande
+    if (x.b || x.t === 'rio' || x.dr > 0 || x.er >= 2 || (x.mk && GRANDES.has(x.mk.t))) lista = []; // obra, derrumbe, ladera muy erosionada o huella grande
     else if (x.q > 0) lista = toconesDe(this.T, i);                       // cenizas de un incendio
     else if (x.t === 'bosque' && t.b !== 'niebla') lista = arbolesDeBosque(this.T, i); // bosque que volvió
     else if (!(t.b === 'niebla' && x.t !== 'bosque')) lista = (this.plantasPorCasilla[i] || []).filter(o => !Vida.esAnimal(o.k));
@@ -237,9 +238,20 @@ export class Mapa extends Phaser.Scene {
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
   huella(x) { return `${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}`; }
+  // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
+  revisarRio() {
+    const n = desvios(this.S).length;
+    if (n === this.desviosVistos) return false;
+    this.desviosVistos = n;
+    this.T = genTerreno(this.S.seed, this.S.n, desvios(this.S));
+    this.rio = caminoRio(this.T).filter(x => x.r >= 0 && x.c >= 0 && x.r <= this.T.N && x.c <= this.T.N).map(x => x.p);
+    this.largoRio = [0];
+    for (let i = 1; i < this.rio.length; i++) this.largoRio.push(this.largoRio[i - 1] + Math.hypot(this.rio[i][0] - this.rio[i - 1][0], this.rio[i][1] - this.rio[i - 1][1]));
+    return true;
+  }
   refrescarCambios(antes) {
-    const S = this.S, sectores = new Set(), cambiadas = [];
-    S.map.forEach((x, i) => { if (this.huella(x) !== antes[i]) cambiadas.push(i); });
+    const S = this.S, sectores = new Set(), cambiadas = [], rio = this.revisarRio();
+    S.map.forEach((x, i) => { if (rio || this.huella(x) !== antes[i]) cambiadas.push(i); });
     this.huellasVistas = S.map.map(x => this.huella(x));
     if (!cambiadas.length) return;
     for (const i of cambiadas) {

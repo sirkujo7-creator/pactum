@@ -207,6 +207,16 @@ function recetas() {
     const t = V2(.36, .05); g.strokeStyle = '#6B4F3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(t[0] - 8, t[1] - 6); g.lineTo(t[0] + 6, t[1] - 8); g.stroke();
     for (let k = 0; k < 3; k++) { g.fillStyle = ['#C0602A', '#5E8FB0', '#E7C76B'][k]; g.fillRect(t[0] - 6 + k * 4.5, t[1] - 6.8 - k * .5, 2.6, 3); }
   }]);
+  // Fase 6: madrevieja, el humedal que deja el río cuando cambia de curso.
+  L.push(['m_madrevieja', 64, 40, 32, 26, (g, r) => {
+    const c = V2(0, 0);
+    wash(g, [[c[0] - 26, c[1] + 1], [c[0] - 12, c[1] - 9], [c[0] + 8, c[1] - 10], [c[0] + 26, c[1] - 2], [c[0] + 14, c[1] + 9], [c[0] - 10, c[1] + 10]], '#C9BE8C', r, .55, .4);
+    wash(g, [[c[0] - 22, c[1] + 2], [c[0] - 14, c[1] - 5], [c[0] - 2, c[1] - 6], [c[0] + 4, c[1] - 2], [c[0] - 8, c[1] - 1], [c[0] - 14, c[1] + 4]], '#7FB2C4', r, .9, .3);
+    wash(g, [[c[0] + 2, c[1] + 3], [c[0] + 12, c[1] - 4], [c[0] + 22, c[1] - 1], [c[0] + 14, c[1] + 6], [c[0] + 4, c[1] + 7]], '#8DBBC9', r, .88, .3);
+    g.strokeStyle = '#5E7A3A'; g.lineWidth = .8;
+    for (let k = 0; k < 9; k++) { const x = c[0] - 20 + k * 5 + (r() - .5) * 2, y = c[1] + (k % 2 ? 5 : -6); g.beginPath(); g.moveTo(x, y); g.lineTo(x + (r() - .5) * 2, y - 5 - r() * 3); g.stroke(); }
+    g.fillStyle = '#F4F1E6'; blob(g, c[0] + 6, c[1] - 6, 1.8, 2.6, '#F4F1E6', r, .95); g.fillRect(c[0] + 6.4, c[1] - 11, .9, 4); g.fillStyle = '#3A3532'; g.fillRect(c[0] + 5.6, c[1] - 3.6, .5, 3); g.fillRect(c[0] + 6.8, c[1] - 3.6, .5, 3);
+  }]);
   // Fase 6: inventos adoptados.
   const poste = (g, x, y, h) => { g.fillStyle = '#6B4F3A'; g.fillRect(x - .7, y - h, 1.4, h); g.fillRect(x - 4, y - h + 2, 8, 1); };
   L.push(['m_imprenta', 56, 50, 28, 38, (g, r) => {
