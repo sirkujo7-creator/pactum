@@ -3,7 +3,7 @@
     "nombre": "Nevado del Ruiz",
     "desde": {
       "etapa": 1,
-      "anio": 8
+      "anio": 28
     },
     "niveles": [
       {
@@ -67,7 +67,7 @@
     "nombre": "Terremoto",
     "desde": {
       "etapa": 1,
-      "anio": 6
+      "anio": 18
     },
     "prob": 0.015,
     "danoProb": 0.35,

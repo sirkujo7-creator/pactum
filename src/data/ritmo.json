@@ -1,0 +1,48 @@
+{
+  "leccion": "Las sociedades cambian despacio: un pueblo tarda generaciones en volverse ciudad, y las instituciones se construyen con décadas de trabajo.",
+  "aniosPolis": {
+    "facil": 20,
+    "normal": 25,
+    "dificil": 30
+  },
+  "crecimiento": 0.09,
+  "etapas": [
+    null,
+    {
+      "habitantes": 55,
+      "anio": 12,
+      "requisito": "55 habitantes, desde el año 12"
+    },
+    {
+      "habitantes": 130,
+      "anio": 40,
+      "requisito": "130 habitantes, una escuela y un hospital, desde el año 40"
+    },
+    {
+      "habitantes": 220,
+      "anio": 68,
+      "requisito": "220 habitantes, un ágora y legitimidad de 55, desde el año 68"
+    }
+  ],
+  "personajes": {
+    "espaciado": 7,
+    "plazoPor": 1.5,
+    "respiroMisiones": 3,
+    "anio": {
+      "periodista": 13,
+      "lider": 20,
+      "padre": 27,
+      "comandante": 22,
+      "empresaria": 34,
+      "vulcanologa": 0
+    }
+  },
+  "inventos": {
+    "imprenta": 22,
+    "telegrafo": 36,
+    "electricidad": 50,
+    "radio": 62,
+    "internet": 80,
+    "automatizacion": 96
+  }
+}

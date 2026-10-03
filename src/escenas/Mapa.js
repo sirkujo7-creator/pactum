@@ -408,6 +408,8 @@ export class Mapa extends Phaser.Scene {
     this.ui.bFin.disabled = true;
     const guia = r.end ? null : checkGuide(S);
     if (guia) this.ui.toast(guia);
+    // Fase 7: en un año tranquilo (sin dilema, sin cambio de etapa ni de régimen) la pausa es más corta.
+    const tranquilo = !r.end && !r.stageUp && !S.regChange && !S.pend;
     // Reloj del navegador (no el de Phaser, que se atrasa si el aparato va lento).
     setTimeout(() => {
       if (!this.sys.isActive()) return;
@@ -421,7 +423,7 @@ export class Mapa extends Phaser.Scene {
       const fin = () => this.ui.render();
       const sigue = () => { const dilema = () => this.ui.clima(() => this.ui.suceso(fin)); if (r.stageUp) this.ui.etapa(dilema); else dilema(); };
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();
-    }, reducirMovimiento() ? 900 : 1900);
+    }, reducirMovimiento() || tranquilo ? 800 : 1900);
   }
   elegirOpcion(i) { const o = choose(this.S, i); this.cambio(true); return o; }
   // Tras cualquier cambio: interfaz, figuras que dependen de etapa y régimen, pobladores, huellas y sequía.

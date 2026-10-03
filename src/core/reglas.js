@@ -9,6 +9,11 @@ export function RM(S, k, d) {
   const R = RG(S), a = R.m3 && S && S.clima && S.mundo === 'acuarela' ? R.m3[k] : undefined, v = a !== undefined ? a : R.m[k];
   return v === undefined ? (d === undefined ? 0 : d) : v;
 }
+// Fase 7: el ritmo del siglo (solo en el terreno en acuarela; la v9 queda igual).
+export function ritmo(S) { return S && S.clima && S.mundo === 'acuarela' && C.RITMO ? C.RITMO : null; }
+export function aniosPolis(S) { const R = ritmo(S); return R ? R.aniosPolis[S.diff || 'normal'] : D(S).polis; }
+export function reqEtapa(S, k) { const R = ritmo(S); return R && R.etapas[k] ? R.etapas[k].requisito : C.STAGES[k].req; }
+function ritmoOk(S, k) { const R = ritmo(S), E = R && R.etapas[k]; return !E || (S.pop >= E.habitantes && S.year >= E.anio); }
 export function seatName(S) { return RG(S).sede; }
 export function hasLaw(S, k) { return !!(S.laws && S.laws[k]); }
 
@@ -49,8 +54,8 @@ export function cumple(S, cond, c) {
 // Requisitos para subir de etapa (Pueblo, Ciudad, Polis).
 export const ETAPA_OK = [
   null,
-  (S, c) => S.pop >= 40,
-  (S, c) => S.pop >= 80 && c.escuela >= 1 && c.hospital >= 1,
+  (S, c) => S.pop >= 40 && ritmoOk(S, 1),
+  (S, c) => S.pop >= 80 && c.escuela >= 1 && c.hospital >= 1 && ritmoOk(S, 2),
   // Fase 4: en Ciudad, además, relaciones mínimas con las polis vecinas (solo existen en el terreno en acuarela).
-  (S, c) => S.pop >= 150 && c.agora >= 1 && S.tr >= 55 && (!S.vecinos || !C.VECINOS || Object.values(S.vecinos).reduce((s, v) => s + v.rel, 0) / Object.keys(S.vecinos).length >= C.VECINOS.minimo)
+  (S, c) => S.pop >= 150 && ritmoOk(S, 3) && c.agora >= 1 && S.tr >= 55 && (!S.vecinos || !C.VECINOS || Object.values(S.vecinos).reduce((s, v) => s + v.rel, 0) / Object.keys(S.vecinos).length >= C.VECINOS.minimo)
 ];
