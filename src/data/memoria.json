@@ -1,0 +1,28 @@
+{
+  "generacion": 25,
+  "olvido": 0.4,
+  "maximoJuicio": 6,
+  "patrimonio": 30,
+  "demolerPatrimonio": 4,
+  "porMarca": { "mural": "justicia", "olla": "ayuda", "placa": "deber", "acta": "deber", "reten": "manoDura", "valla": "negocios", "pancarta": "abandono", "vivero": "ambiente", "tratado": "paz" },
+  "categorias": {
+    "justicia": { "nombre": "Justicia social", "icono": "🎨", "peso": 1, "titulo": "el gobierno de la justicia", "recuerdo": "los murales de la reforma y de los derechos" },
+    "ayuda": { "nombre": "Ayuda a quien lo necesitaba", "icono": "🍲", "peso": 1, "titulo": "el gobierno que no dejó a nadie solo", "recuerdo": "las ollas comunitarias de los años duros" },
+    "deber": { "nombre": "Deber y transparencia", "icono": "🪦", "peso": 0.8, "titulo": "el gobierno del deber", "recuerdo": "las placas de los actos honestos" },
+    "ambiente": { "nombre": "Cuidado del ambiente", "icono": "🌱", "peso": 0.6, "titulo": "el gobierno que cuidó el agua y el monte", "recuerdo": "los viveros y el páramo protegido" },
+    "paz": { "nombre": "Paz con los vecinos", "icono": "🪧", "peso": 0.5, "titulo": "el gobierno que abrió caminos", "recuerdo": "los caminos de los tratados" },
+    "negocios": { "nombre": "Negocios con la élite", "icono": "🪧", "peso": -0.5, "titulo": "el gobierno de los negocios", "recuerdo": "las vallas de los tratos con los ricos" },
+    "manoDura": { "nombre": "Mano dura", "icono": "🚧", "peso": -1, "titulo": "el gobierno de la mano dura", "recuerdo": "los retenes y los desalojos" },
+    "abandono": { "nombre": "Demandas abandonadas", "icono": "📢", "peso": -1, "titulo": "el gobierno que no escuchó", "recuerdo": "las pancartas que nadie atendió" },
+    "olvido": { "nombre": "Patrimonio perdido", "icono": "🏚️", "peso": -0.8, "titulo": "el gobierno que borró la memoria", "recuerdo": "los edificios antiguos demolidos" }
+  },
+  "textos": {
+    "generacion": "Nace una nueva generación: los jóvenes juzgan tu gobierno por lo que recuerdan sus padres.",
+    "juicioBueno": "La nueva generación agradece lo que recuerda: la legitimidad sube {n}.",
+    "juicioMalo": "La nueva generación reprocha lo que recuerda: la legitimidad baja {n}.",
+    "juicioNeutro": "La nueva generación no tiene una opinión fuerte de tu gobierno.",
+    "olvida": "Con el paso de los años, buena parte de los recuerdos se borra."
+  },
+  "leccion": "La memoria colectiva: los pueblos recuerdan menos las cifras que las huellas: un mural, un retén, una placa. Cada generación juzga a la anterior, y lo que no se cuida se olvida.",
+  "jonas": "Hans Jonas: obra de tal modo que los efectos de tus actos sean compatibles con la vida de quienes vendrán. Las deudas, la tierra erosionada y las promesas rotas las paga tu sucesor."
+}

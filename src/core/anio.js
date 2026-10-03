@@ -23,6 +23,7 @@ import { conflictoDelAnio } from './conflicto.js';
 import { vecinosDelAnio } from './vecinos.js';
 import { victoriasDelAnio } from './victorias.js';
 import { barriosDelAnio, efectoBarrios } from './barrios.js';
+import { memoriaDelAnio } from './memoria.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -163,6 +164,7 @@ export function advance(S) {
   news.push(...vecinosDelAnio(S));
   news.push(...barriosDelAnio(S));
   marcasDelAnio(S);
+  news.push(...memoriaDelAnio(S));
   if (S.reg === 'monarquia' && S.year % 15 === 0) {
     if (azar() < .5) { S.corr = clamp(S.corr - 10, 0, 100); S.tr = clamp(S.tr + 5, 0, 100); news.push('Sucesión en la corona: el heredero es prudente y querido.'); }
     else { S.corr = clamp(S.corr + 15, 0, 100); S.tr = clamp(S.tr - 5, 0, 100); news.push('Sucesión en la corona: el heredero es caprichoso y la corte murmura.'); }
