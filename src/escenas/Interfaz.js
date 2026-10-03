@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -264,6 +264,8 @@ export class Interfaz {
     this.cuentas.querySelectorAll('[data-pension]').forEach(b => b.onclick = () => { if (elegirPension(S, b.dataset.pension)) { this.toast(`Pensiones: ${C.CICLOS.pensiones.sistemas[b.dataset.pension].nombre.toLowerCase()}.`); this.mapa.cambio(); this.render(); } });
     const ren = this.cuentas.querySelector('[data-renovar]');
     if (ren) ren.onclick = () => { if (renovarCafetales(S)) { this.toast('Cafetales renovados con variedad resistente a la roya.'); this.mapa.cambio(); this.render(); } };
+    const vig = this.cuentas.querySelector('[data-vigilancia]');
+    if (vig) vig.onclick = () => { if (comprarVigilancia(S)) { this.toast('Vigilancia epidemiológica lista.'); this.mapa.cambio(); this.render(); } };
     const pl = this.cuentas.querySelector('[data-plan]');
     if (pl) pl.onclick = () => { if (comprarPlan(S)) { this.toast('Plan de evacuación listo: sirenas, rutas y simulacros.'); this.mapa.cambio(true); this.render(); } };
     const mil = this.cuentas.querySelector('[data-militar]');
@@ -501,7 +503,7 @@ export class Interfaz {
   // Fase 7: ciclos de la economía (bonanza, crisis del café, roya, pensiones). Las decisiones no se pueden saltar.
   cicloAnio(alTerminar) {
     const S = this.S, L = S.cicloEv;
-    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; alTerminar(); return; }
+    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; this.amenazaAnio(alTerminar); return; }
     const e = L.shift(), K = C.CICLOS, sigue = () => this.cicloAnio(alTerminar);
     const fin = (msg) => { if (msg) this.toast(msg); this.mapa.cambio(); this.render(); this.alCerrar = sigue; this.cerrarTarjeta(); };
     if (e.tipo === 'bonanza') {
@@ -529,6 +531,27 @@ export class Interfaz {
         <div class="phil"><b>Lo que enseña</b><br>${P.leccion}</div>`, false);
       this.card.querySelectorAll('[data-c]').forEach(x => x.onclick = () => { elegirPension(S, x.dataset.c); fin(`Pensiones: ${P.sistemas[x.dataset.c].nombre.toLowerCase()}.`); });
     } else sigue();
+  }
+  // Fase 7: epidemias, avenidas torrenciales y sequías largas.
+  amenazaAnio(alTerminar) {
+    const S = this.S, e = S.amenEv, K = C.AMENAZAS;
+    S.amenEv = null;
+    if (!e || !amenazasActivas(S)) { alTerminar(); return; }
+    let html;
+    if (e.tipo === 'epidemia') {
+      const t = K.epidemia.tipos.find(x => x.id === e.id);
+      html = `<div class="big">${t.icono}</div><h3>${t.nombre}</h3><p>${t.texto}</p>
+        <div class="ledger"><table class="budget"><tr><td>Vidas perdidas</td><td class="neg">${e.perdidos}</td></tr><tr><td>Costo de la emergencia</td><td>${e.costo}</td></tr><tr><td>Pagado con el fondo</td><td>${e.fondo}</td></tr></table></div>
+        <p class="small">${e.vigilancia ? 'La vigilancia epidemiológica detectó el brote a tiempo y salvó vidas.' : `${K.epidemia.vigilancia.nombre} (Hacienda → Riesgo de desastres), más hospitales y acueductos reducen las pérdidas.`}</p>
+        <div class="phil"><b>Lo que enseña</b><br>${t.leccion}</div>`;
+    } else if (e.tipo === 'avenida') {
+      this.mapa.temblor && this.mapa.temblor();
+      html = `<div class="big">${K.avenida.icono}</div><h3>${K.avenida.nombre}</h3><p>${K.avenida.texto}</p>
+        <div class="ledger"><table class="budget"><tr><td>Obras dañadas</td><td>${e.danadas}</td></tr><tr><td>Vidas perdidas</td><td class="neg">${e.perdidos}</td></tr><tr><td>Laderas taladas o erosionadas</td><td>${e.peladas}%</td></tr></table></div>
+        <p class="small">Repara las obras dañadas tocándolas. Deja que el bosque vuelva a las laderas.</p><div class="phil"><b>Lo que enseña</b><br>${K.avenida.leccion}</div>`;
+    } else html = `<div class="big">☀️</div><h3>La sequía se alarga</h3><p>${K.sequiaLarga.texto} Habrá otro año de El Niño.</p><p class="small">Llena el fondo de emergencias y revisa el agua de los acueductos.</p><div class="phil"><b>Lo que enseña</b><br>${K.sequiaLarga.leccion}</div>`;
+    this.tarjeta(html + '<button class="main" id="okB">Continuar</button>');
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   tarjetaInvento(id, alTerminar) {
     const S = this.S, I = C.TEC.inventos[id];
@@ -1108,13 +1131,23 @@ export class Interfaz {
     const R = C.RIO, E = estadoOrillas(S), p = probCambio(S, false), nivel = p >= .35 ? 'alto' : p >= .15 ? 'medio' : p > 0 ? 'bajo' : 'ninguno por ahora';
     return `<p class="small">🌊 ${R.textos.riesgoNina}: riesgo <b>${nivel}</b>. Orillas con su vegetación: ${Math.round(E.protegida * 100)}%; obras en la ronda del río: ${E.obras}. ${R.textos.prevenir}</p>`;
   }
+  // Fase 7: epidemias, avenidas y cambio climático en el riesgo de desastres.
+  lineasAmenazas() {
+    const S = this.S;
+    if (!amenazasActivas(S)) return '';
+    const K = C.AMENAZAS, E = K.epidemia, v = S.amen && S.amen.vigilancia, t = tipoEpidemia(S), p = probAvenida(S), f = factorClimatico(S);
+    return `<p class="small">${t.icono} ${E.riesgo} Si hoy llegara (${t.nombre.toLowerCase()}), se perdería cerca del <b>${Math.round(perdidaEpidemia(S) * 100)}%</b> de la población. ${v ? `${E.vigilancia.nombre}: <b>lista</b>.` : `${E.vigilancia.nombre}: ${E.vigilancia.texto}`}</p>
+      ${v ? '' : `<button class="btn" data-vigilancia ${puedeVigilancia(S) ? 'disabled' : ''}>Crear la vigilancia (${costoVigilancia(S)} de oro)</button>`}
+      ${p ? `<p class="small">${K.avenida.icono} ${K.avenida.riesgo}: hoy <b>${Math.round(riesgoLaderas(S) * 100)}%</b> de las laderas; riesgo ${p >= .07 ? 'alto' : p >= .045 ? 'medio' : 'bajo'}.</p>` : ''}
+      ${f > 1 ? `<p class="small">🌡️ ${K.clima.texto} Hoy son <b>${Math.round((f - 1) * 100)}%</b> más probables que al comienzo.</p>` : ''}`;
+  }
   seccionRiesgo() {
     const S = this.S;
     if (!desastresActivos(S) || S.stage < 1) return '';
     const VD = C.DESASTRES.volcan, n = nivelVolcan(S), N = VD.niveles[n], no = puedePlan(S);
     return `<h3>Riesgo de desastres</h3><p class="small">🌋 ${VD.nombre}: alerta <b>${N.nombre.toLowerCase()}</b> ${N.icono}. ${N.texto} ${volcan(S).plan ? 'Plan de evacuación: <b>listo</b>.' : n ? `Plan de evacuación: <b>sin preparar</b> (${costoPlan(S)} de oro).` : ''}</p>
       ${n && !volcan(S).plan ? `<button class="btn" data-plan ${no ? 'disabled' : ''}>Preparar el plan de evacuación</button>` : ''}
-      ${this.lineaRio()}<p class="small">🏚️ Terremotos: no se pueden predecir. ${hasLaw(S, 'sismo') ? 'El código sismorresistente está vigente.' : 'Prepárate con el código sismorresistente (Leyes), el mantenimiento de las obras y el fondo de emergencias.'}</p>`;
+      ${this.lineaRio()}${this.lineasAmenazas()}<p class="small">🏚️ Terremotos: no se pueden predecir. ${hasLaw(S, 'sismo') ? 'El código sismorresistente está vigente.' : 'Prepárate con el código sismorresistente (Leyes), el mantenimiento de las obras y el fondo de emergencias.'}</p>`;
   }
   seccionFiguras() {
     const S = this.S, P = presentes(S).filter(id => estadoFig(S, id).visto);

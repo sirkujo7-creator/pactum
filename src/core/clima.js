@@ -5,6 +5,7 @@ import { C } from './contenido.js';
 import { nearRiver } from './mundo.js';
 import { efectoTec } from './tecnologia.js';
 import { efectoMega } from './megaproyectos.js';
+import { factorClimatico } from './amenazas.js';
 
 export function climaActivo(S) { return !!(S && S.clima && S.mundo === 'acuarela'); }
 export function climaInicial() { return { lluvias: 'normales', fenomeno: null, pronostico: null, ultimaCrisis: -99, fertil: 0, evento: null }; }
@@ -88,7 +89,7 @@ export function climaDelAnioSiguiente(S) {
   }
   // ¿Se anuncia un fenómeno para dentro de dos años? Solo con respiro suficiente tras la última crisis.
   const F = C.CLIMA.fenomenos, anio = siguiente + 1;
-  if (!K.pronostico && !K.fenomeno && !(S.eco && (S.eco.aviso || S.eco.fase === 'recesion')) && fenomenosAbiertos(S) && anio - K.ultimaCrisis > F.respiro && azar() < F.probabilidadAnual) {
+  if (!K.pronostico && !K.fenomeno && !(S.eco && (S.eco.aviso || S.eco.fase === 'recesion')) && fenomenosAbiertos(S) && anio - K.ultimaCrisis > F.respiro && azar() < F.probabilidadAnual * factorClimatico(S)) {
     const tipo = azar() < .5 ? 'nino' : 'nina';
     K.pronostico = { tipo, anio, nuevo: true };
     noticias.push(`Pronóstico: ${F[tipo].nombre} llegará el año ${anio}.`);
