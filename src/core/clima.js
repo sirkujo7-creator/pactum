@@ -4,6 +4,7 @@ import { azar, clamp } from './azar.js';
 import { C } from './contenido.js';
 import { nearRiver } from './mundo.js';
 import { efectoTec } from './tecnologia.js';
+import { efectoMega } from './megaproyectos.js';
 
 export function climaActivo(S) { return !!(S && S.clima && S.mundo === 'acuarela'); }
 export function climaInicial() { return { lluvias: 'normales', fenomeno: null, pronostico: null, ultimaCrisis: -99, fertil: 0, evento: null }; }
@@ -18,7 +19,7 @@ export function factorCosecha(S) {
   // Fase 4: la ceniza de una erupción reduce la cosecha del año siguiente.
   return L.cosecha * (S.clima.fertil > 0 ? C.CLIMA.fenomenos.nina.fertilidadDespues : 1) * (S.ceniza === S.year && C.DESASTRES ? C.DESASTRES.volcan.erupcion.ceniza : 1)
     * (S.conf && S.conf.grupo && C.CONF ? 1 - Math.min(.4, S.conf.nivel * C.CONF.efectos.cosecha) : 1) // fase 4: veredas abandonadas por el conflicto
-    * (1 + efectoTec(S, 'cosecha')); // fase 6: la electricidad
+    * (1 + efectoTec(S, 'cosecha') + efectoMega(S, 'cosecha')); // fase 6: la electricidad y la represa
 }
 // En El Niño el río baja y los acueductos entregan menos agua.
 export function factorAgua(S) { return climaActivo(S) && S.clima.fenomeno === 'nino' ? 1 - C.CLIMA.fenomenos.nino.aguaMenos : 1; }

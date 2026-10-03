@@ -16,6 +16,8 @@ import { Vida } from './Vida.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
+// Huellas grandes que despejan la vegetación de su casilla (fase 6: megaproyectos e inventos).
+const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento']);
 const ZOOM_MAX = 2.6; // más cerca, el terreno pintado se vería pixelado
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
 
@@ -70,6 +72,7 @@ export class Mapa extends Phaser.Scene {
     this.prepararHojas();
     this.plantas = {}; this.obras = {}; this.humos = {};
     for (let i = 0; i < N * N; i++) { this.ponerPlantas(i); this.ponerObra(i); }
+    this.huellasVistas = this.S.map.map(x => this.huella(x));
     this.ponerVida();
     this.pob = new Pobladores(this);
     this.vida = new Vida(this);
@@ -132,7 +135,7 @@ export class Mapa extends Phaser.Scene {
     (this.plantas[i] || []).forEach(p => p.destroy());
     const x = this.S.map[i], t = this.T.tiles[i];
     let lista = [];
-    if (x.b || x.dr > 0 || x.er >= 2) lista = [];                           // obra, derrumbe o ladera muy erosionada
+    if (x.b || x.dr > 0 || x.er >= 2 || (x.mk && GRANDES.has(x.mk.t))) lista = []; // obra, derrumbe, ladera muy erosionada o huella grande
     else if (x.q > 0) lista = toconesDe(this.T, i);                       // cenizas de un incendio
     else if (x.t === 'bosque' && t.b !== 'niebla') lista = arbolesDeBosque(this.T, i); // bosque que volvió
     else if (!(t.b === 'niebla' && x.t !== 'bosque')) lista = (this.plantasPorCasilla[i] || []).filter(o => !Vida.esAnimal(o.k));
@@ -237,6 +240,7 @@ export class Mapa extends Phaser.Scene {
   refrescarCambios(antes) {
     const S = this.S, sectores = new Set(), cambiadas = [];
     S.map.forEach((x, i) => { if (this.huella(x) !== antes[i]) cambiadas.push(i); });
+    this.huellasVistas = S.map.map(x => this.huella(x));
     if (!cambiadas.length) return;
     for (const i of cambiadas) {
       this.ponerPlantas(i); this.ponerObra(i);
@@ -412,6 +416,8 @@ export class Mapa extends Phaser.Scene {
   cambio(completo) {
     this.ui.render();
     if (!completo) return;
+    // Fase 6: lo que cambió por una decisión (huellas, megaproyectos, asentamientos) se ve al instante.
+    if (this.huellasVistas) this.refrescarCambios(this.huellasVistas);
     this.revisarCambiosGenerales();
     this.pob.planear();
     this.efectos.actualizar(); this.efectos.humoIncendio();

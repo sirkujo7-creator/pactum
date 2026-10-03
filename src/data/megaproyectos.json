@@ -1,0 +1,28 @@
+{
+  "desde": { "etapa": 3 },
+  "horizonte": 25,
+  "leccionFinanzas": "Evaluación de proyectos: el VPN (valor presente neto) suma lo que el proyecto deja cada año, descontado con la tasa de interés, menos lo que cuesta; si es positivo, el proyecto crea valor. La TIR (tasa interna de retorno) es la tasa a la que el VPN da cero: si es mayor que la tasa de interés, conviene.",
+  "leccionConsulta": "Consulta previa: en Colombia, la Constitución de 1991 y el Convenio 169 de la OIT obligan a consultar a los pueblos indígenas y comunidades étnicas antes de proyectos que afecten su territorio. Saltarla viola sus derechos y suele terminar en conflicto.",
+  "consulta": { "costo": 20, "probBase": 0.55, "porRelacion": 0.006, "porAmbiente": 0.004, "porAnimoCampesino": 0.004 },
+  "sinConsulta": { "conflicto": 20, "legitimidad": -5, "relacionLider": -25, "movimientos": 20 },
+  "proyectos": {
+    "represa": { "nombre": "Represa hidroeléctrica", "icono": "🌊", "costo": 600, "anios": 5, "beneficio": 70, "marca": "represa",
+      "texto": "Una represa en el cañón del río: energía para toda la ciudad y riego para los cultivos, pero inunda el valle de arriba.",
+      "efectos": { "cosecha": 0.1, "ambiente": -8, "energia": 10 }, "desplazados": 12, "consultaMas": -0.15,
+      "impactos": "Inunda tierras y desplaza unas 12 familias; baja el ambiente 8. Da energía para 10 talleres más y cosechas 10% mayores." },
+    "ferrocarril": { "nombre": "Ferrocarril", "icono": "🚂", "costo": 500, "anios": 4, "beneficio": 55, "marca": "ferrocarril",
+      "texto": "Una línea de tren hasta el río Magdalena: el café y las mercancías llegan a los puertos en horas.",
+      "efectos": { "ingresos": 0.06, "vecinos": 10 }, "desplazados": 4, "consultaMas": 0,
+      "impactos": "Desplaza unas 4 familias en la ruta. Ingresos de artesanos y élite +6% y relaciones con los vecinos +10." },
+    "aeropuerto": { "nombre": "Aeropuerto", "icono": "✈️", "costo": 450, "anios": 4, "beneficio": 50, "marca": "aeropuerto",
+      "texto": "Un aeropuerto regional: turistas, negocios y conexión con todo el país.",
+      "efectos": { "ingresos": 0.04, "cultura": 2, "ambiente": -3 }, "desplazados": 3, "consultaMas": 0.05,
+      "impactos": "Desplaza unas 3 familias; ruido y ambiente −3. Ingresos +4% y más vida cultural." }
+  },
+  "textos": {
+    "consultaSi": "Las comunidades aprobaron el proyecto en la consulta previa. Puede empezar la obra con su respaldo.",
+    "consultaNo": "Las comunidades rechazaron el proyecto en la consulta previa. Puedes cancelarlo o seguir adelante contra su voluntad.",
+    "termina": "{p} está terminado.",
+    "detenido": "{p} se detuvo: no alcanzó el oro para la cuota del año."
+  }
+}
