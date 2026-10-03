@@ -7,6 +7,7 @@ import { casa, templo, fuente } from '../src/arte/obras-fresco.js';
 import { hornearPersonas } from '../src/arte/personas.js';
 import { hornearNaturaleza } from '../src/arte/naturaleza.js';
 import { P } from '../src/arte/iso.js';
+import { ICONOS } from '../src/arte/iconos.js';
 
 const DPR = Math.min(2.5, window.devicePixelRatio || 1);
 const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -136,27 +137,6 @@ function filaSprites(H, claves, g, W, alto, y0, esc) {
   const paso = W / (claves.length + .5);
   claves.forEach((k, i) => { const m = H.marcos[k], E = H.escala; if (!m) return; const s = esc / E; g.drawImage(H.canvas, m.x, m.y, m.w, m.h, paso * (i + .75) - m.ax * s, y0 + alto - 12 - m.ay * s + (m.h - m.ay) * 0, m.w * s, m.h * s); });
 }
-
-// ---------- Íconos pintados para la interfaz ----------
-function icono(f, tam = 64) { const c = lienzo(tam, tam), g = c.getContext('2d'); g.translate(tam / 2, tam / 2); g.scale(tam / 24, tam / 24); f(g, mulberry(tam)); return c.toDataURL(); }
-const ICONOS = {
-  oro: icono((g, r) => { ovalo(g, 0, 0, 9, 9, FR.ocre, r, { bw: .8 }); ovalo(g, 0, 0, 6.5, 6.5, FR.ocreClaro, r, { bw: .5, n: 1 }); g.strokeStyle = FR.verde; g.lineWidth = 1.2; g.beginPath(); g.arc(0, 0, 4.4, Math.PI * .2, Math.PI * .8, true); g.stroke(); }),
-  deuda: icono((g, r) => { pintar(g, [[-8, -7], [8, -7], [8, 7], [-8, 7]], FR.sienaClara, r, { bw: .8 }); pintar(g, [[-6, -5], [6, -5], [6, 5], [-6, 5]], FR.ocreClaro, r, { bw: .5, n: 1 }); g.strokeStyle = FR.siena; g.lineWidth = .8; [-2.5, 0, 2.5].forEach(y => { g.beginPath(); g.moveTo(-4, y); g.lineTo(4, y); g.stroke(); }); }),
-  alimento: icono((g, r) => { g.strokeStyle = FR.verde; g.lineWidth = 1.2; g.beginPath(); g.moveTo(0, 10); g.lineTo(0, -6); g.stroke(); for (let k = 0; k < 4; k++) { ovalo(g, -2.2, -5 + k * 3.4, 1.8, 2.6, FR.ocre, r, { bw: .5, n: 0 }); ovalo(g, 2.2, -5 + k * 3.4, 1.8, 2.6, FR.ocre, r, { bw: .5, n: 0 }); } ovalo(g, 0, -8.5, 1.6, 2.4, FR.ocre, r, { bw: .5, n: 0 }); }),
-  poblacion: icono((g, r) => { ovalo(g, -4, -4, 3, 3.2, FR.piel[1], r, { bw: .6, n: 0 }); pintar(g, [[-8, 9], [-7, 1], [-1, 1], [0, 9]], FR.rojo, r, { bw: .6, n: 1 }); ovalo(g, 4, -2, 3, 3.2, FR.piel[0], r, { bw: .6, n: 0 }); pintar(g, [[0, 10], [1, 3], [7, 3], [8, 10]], FR.azul, r, { bw: .6, n: 1 }); }),
-  agua: icono((g, r) => { pintar(g, [[-3, -9], [3, -9], [2, -6], [6, -2], [5, 5], [0, 10], [-5, 5], [-6, -2], [-2, -6]], FR.azul, r, { bw: .7, n: 2 }); g.strokeStyle = FR.cal; g.lineWidth = .9; g.beginPath(); g.moveTo(-3, 1); g.quadraticCurveTo(0, -1, 3, 1); g.stroke(); }),
-  energia: icono((g, r) => { pintar(g, [[-9, 4], [6, 4], [9, 0], [3, -2], [-6, -2]], FR.ocreRojo, r, { bw: .7, n: 1 }); pintar(g, [[6, 2], [10, -1], [9, 3]], FR.ocreRojo, r, { bw: .5, n: 0 }); ovalo(g, -7, -5, 2, 4, FR.ocre, r, { bw: .5, n: 0 }); ovalo(g, -7, -5.5, 1, 2.4, FR.cal, r, { borde: false, n: 0 }); }),
-  bienestar: icono((g, r) => { ovalo(g, 0, 0, 5.5, 5.5, FR.ocre, r, { bw: .7 }); g.strokeStyle = FR.ocreRojo; g.lineWidth = 1.4; for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; g.beginPath(); g.moveTo(Math.cos(a) * 7.5, Math.sin(a) * 7.5); g.lineTo(Math.cos(a) * 10, Math.sin(a) * 10); g.stroke(); } }),
-  igualdad: icono((g, r) => { g.strokeStyle = FR.siena; g.lineWidth = 1.3; g.beginPath(); g.moveTo(0, 9); g.lineTo(0, -8); g.moveTo(-8, -6); g.lineTo(8, -6); g.moveTo(-5, 9); g.lineTo(5, 9); g.stroke(); [-7, 7].forEach(x => { pintar(g, [[x - 4, 0], [x + 4, 0], [x + 2.5, 3], [x - 2.5, 3]], FR.ocre, r, { bw: .6, n: 0 }); g.beginPath(); g.moveTo(x, -6); g.lineTo(x - 3.5, 0); g.moveTo(x, -6); g.lineTo(x + 3.5, 0); g.lineWidth = .5; g.stroke(); g.lineWidth = 1.3; }); }),
-  legitimidad: icono((g, r) => { g.lineCap = 'round'; for (const s of [-1, 1]) { g.strokeStyle = FR.verdeOsc; g.lineWidth = 1; g.beginPath(); g.arc(0, 0, 8, Math.PI / 2 + s * .25, Math.PI / 2 + s * 2.6, s < 0); g.stroke(); for (let k = 0; k < 5; k++) { const a = Math.PI / 2 + s * (.6 + k * .45); g.save(); g.translate(Math.cos(a) * 8, Math.sin(a) * 8); g.rotate(a + (s > 0 ? .9 : -.9)); ovalo(g, 0, 0, 1.3, 3, FR.verde, r, { bw: .4, n: 0, j: .02 }); g.restore(); } } }),
-  ambiente: icono((g, r) => { pintar(g, [[0, -10], [6, -3], [5, 5], [0, 9], [-5, 5], [-6, -3]], FR.verde, r, { bw: .7, n: 2 }); g.strokeStyle = FR.verdeOsc; g.lineWidth = .8; g.beginPath(); g.moveTo(0, -8); g.lineTo(0, 10); [-4, 0, 4].forEach(y => { g.moveTo(0, y); g.lineTo(-3.5, y - 3); g.moveTo(0, y); g.lineTo(3.5, y - 3); }); g.stroke(); }),
-  rumbo: icono((g, r) => { ovalo(g, 0, 0, 9, 9, FR.cal, r, { bw: .7, n: 1 }); pintar(g, [[0, -8], [2, 0], [0, 8], [-2, 0]], FR.rojo, r, { bw: .5, n: 0 }); pintar(g, [[-8, 0], [0, -2], [8, 0], [0, 2]], FR.siena, r, { bw: .5, n: 0 }); }),
-  construir: icono((g, r) => { pintar(g, [[-9, 6], [-9, 9], [9, 9], [9, 6]], FR.ocreRojo, r, { bw: .6 }); pintar(g, [[-6, 6], [-6, -3], [6, -3], [6, 6]], FR.cal, r, { bw: .6, n: 1 }); pintar(g, [[-8, -3], [0, -9], [8, -3]], FR.rojo, r, { bw: .6, n: 1 }); [-3, 0, 3].forEach(x => { g.fillStyle = FR.siena; g.globalAlpha = .4; g.fillRect(x - .6, -2, 1.2, 8); g.globalAlpha = 1; }); }),
-  hacienda: null, sociedad: null,
-  leyes: icono((g, r) => { pintar(g, [[-8, -6], [8, -6], [8, 6], [-8, 6]], FR.ocreClaro, r, { bw: .7 }); ovalo(g, -8, 0, 2.2, 6, FR.sienaClara, r, { bw: .5, n: 0 }); ovalo(g, 8, 0, 2.2, 6, FR.sienaClara, r, { bw: .5, n: 0 }); g.strokeStyle = FR.siena; g.lineWidth = .7; [-3, 0, 3].forEach(y => { g.beginPath(); g.moveTo(-4, y); g.lineTo(4, y); g.stroke(); }); }),
-  cronica: icono((g, r) => { pintar(g, [[-9, -7], [0, -5], [9, -7], [9, 8], [0, 9], [-9, 8]], FR.cal, r, { bw: .7, n: 1 }); g.strokeStyle = FR.siena; g.lineWidth = .8; g.beginPath(); g.moveTo(0, -5); g.lineTo(0, 9); g.stroke(); g.lineWidth = .5; [-2, 1, 4].forEach(y => { g.beginPath(); g.moveTo(-7, y); g.lineTo(-2, y + .5); g.moveTo(2, y + .5); g.lineTo(7, y); g.stroke(); }); })
-};
-ICONOS.hacienda = ICONOS.oro; ICONOS.sociedad = ICONOS.poblacion;
 
 function interfaz(raiz) {
   raiz.querySelectorAll('[data-ico]').forEach(el => { const i = document.createElement('img'); i.src = ICONOS[el.dataset.ico]; i.alt = ''; el.prepend(i); });

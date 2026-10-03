@@ -13,13 +13,18 @@ import { iconoObra } from '../arte/edificios.js';
 import { retrato, retratoFig, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
+import { ico as pintado } from '../arte/iconos.js';
+import { FR, lienzo, texturaYeso, greca } from '../arte/fresco.js';
 
-export const IC = {
-  gold: '<svg viewBox="0 0 20 20" class="ic" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#D9A93E"/><circle cx="10" cy="10" r="5.5" fill="none" stroke="#9C7420" stroke-width="1.2"/><path d="M8.5 7.5h3M10 7.5v5" stroke="#9C7420" stroke-width="1.3"/></svg>',
-  debt: '<svg viewBox="0 0 20 20" class="ic" aria-hidden="true"><path d="M4 3h10l2 2v12H4z" fill="#F1E6C8" stroke="#8B6F4A"/><path d="M6.5 8h7M6.5 11h7M6.5 14h4" stroke="#B0402C" stroke-width="1.3"/></svg>',
-  food: '<svg viewBox="0 0 20 20" class="ic" aria-hidden="true"><path d="M10 18V6" stroke="#8A7A3A" stroke-width="1.4"/><ellipse cx="10" cy="5" rx="2" ry="3" fill="#E1B84A"/><ellipse cx="7" cy="9" rx="2" ry="3" transform="rotate(-30 7 9)" fill="#E1B84A"/><ellipse cx="13" cy="9" rx="2" ry="3" transform="rotate(30 13 9)" fill="#E1B84A"/><ellipse cx="7" cy="13" rx="2" ry="3" transform="rotate(-30 7 13)" fill="#D5A93E"/><ellipse cx="13" cy="13" rx="2" ry="3" transform="rotate(30 13 13)" fill="#D5A93E"/></svg>',
-  pop: '<svg viewBox="0 0 20 20" class="ic" aria-hidden="true"><circle cx="7" cy="6" r="2.6" fill="#C98E62"/><path d="M2.5 17c0-4 2-6 4.5-6s4.5 2 4.5 6z" fill="#B4553A"/><circle cx="13.5" cy="7" r="2.3" fill="#E0B08A"/><path d="M9.5 17c0-3.5 1.8-5.2 4-5.2s4 1.7 4 5.2z" fill="#2D5D72"/></svg>'
-};
+// Fase 8: íconos pintados al fresco.
+export const IC = { gold: pintado('oro'), debt: pintado('deuda'), food: pintado('alimento'), pop: pintado('poblacion'), agua: pintado('agua'), energia: pintado('energia') };
+// Texturas de la interfaz (muro de yeso y greca), una sola vez.
+(() => {
+  const r = document.documentElement.style, y = lienzo(220, 220), gy = y.getContext('2d');
+  gy.fillStyle = '#fff'; gy.fillRect(0, 0, 220, 220); texturaYeso(gy, 0, 0, 220, 220, 1);
+  const gc = lienzo(64, 16), g = gc.getContext('2d'); greca(g, 0, 2, 64, 12, FR.rojo);
+  r.setProperty('--yeso-tex', `url(${y.toDataURL()})`); r.setProperty('--greca', `url(${gc.toDataURL()})`);
+})();
 const BADUP = { d: 1, i: 1 };
 const signo = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(Math.round(v));
 const colorDe = v => v >= 60 ? 'var(--good)' : v >= 35 ? 'var(--gold)' : 'var(--bad)';
@@ -64,8 +69,8 @@ export class Interfaz {
     };
     this.bFin = el('button', { class: 'fin', on: { click: () => this.mapa.terminarAnio() } });
     this.dock = el('nav', { class: 'dock', 'aria-label': 'Acciones' }, [
-      dk('construir', '🔨', 'Construir', '1'), dk('hacienda', IC.gold, 'Hacienda', '2'), dk('sociedad', IC.pop, 'Sociedad', '3'),
-      dk('leyes', '📜', 'Leyes', '4'), dk('cronica', '📰', 'Crónica', '5'), this.bFin
+      dk('construir', pintado('construir'), 'Construir', '1'), dk('hacienda', pintado('hacienda'), 'Hacienda', '2'), dk('sociedad', pintado('sociedad'), 'Sociedad', '3'),
+      dk('leyes', pintado('leyes'), 'Leyes', '4'), dk('cronica', pintado('cronica'), 'Crónica', '5'), this.bFin
     ]);
     this.meta = el('button', { class: 'meta', on: { click: () => this.meta.classList.toggle('abierta') } });
     this.ficha = el('div', { class: 'ficha', role: 'dialog', 'aria-label': 'Ficha' }); this.ficha.hidden = true;
@@ -78,14 +83,17 @@ export class Interfaz {
     this.raiz = el('div', { class: 'mapa-ui' }, [
       el('header', { class: 'arriba' }, [el('div', { class: 'fila1' }, [this.bReg, this.era]), this.hud, this.medidores]),
       el('div', { class: 'controles' }, [
+        this.bGrupo = b('☰', 'Menú', () => this.alternarGrupo()),
+        this.grupo = el('div', { class: 'grupo' }, [
         b('?', 'Cómo jugar', () => this.ayuda(false)),
-        b('☰', 'Partidas y logros', () => this.menu()),
+        b('▤', 'Partidas y logros', () => this.menu()),
         this.bSonido = b('🔇', 'Activar sonido', () => this.alternarSonido()),
         b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25)),
         b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25)),
         b('⤢', 'Ver todo el territorio (0)', () => mapa.listo && mapa.encuadrar()),
         b('⌂', 'Ir a la aldea', () => mapa.listo && mapa.enfocarAldea()),
         this.bCob = b('◎', 'Capa de cobertura (c)', () => mapa.listo && mapa.alternarCobertura())
+        ])
       ]),
       this.meta,
       hoja('construir', 'Construir', [this.tray, this.hint, el('div', { class: 'dos' }, [this.bSoltar, this.bDeshacer])]),
@@ -99,6 +107,8 @@ export class Interfaz {
   }
 
   destruir() { this.raiz.remove(); }
+  // Fase 8: los botones de la derecha se agrupan en un solo menú (en computador quedan abiertos).
+  alternarGrupo(abrir) { const on = abrir ?? !this.grupo.classList.contains('abierto'); this.grupo.classList.toggle('abierto', on); this.bGrupo.setAttribute('aria-expanded', String(on)); this.bGrupo.classList.toggle('on', on); }
   avisar(t) { this.aviso.textContent = t; this.aviso.hidden = !t; }
   toast(t) {
     this.brindis.textContent = t; this.brindis.classList.add('show');
@@ -163,11 +173,11 @@ export class Interfaz {
       `<div class="pill" title="Deuda">${IC.debt}<b>${Math.round(totDebt(S))}</b></div>` +
       `<div class="pill" title="Alimento${pa !== 1 ? '. ' + C.ECO.textos.pastilla.replace('{p}', pa.toLocaleString('es-CO')) : ''}">${IC.food}<b>${Math.round(S.food)}</b><small class="${dfood < 0 ? 'neg' : ''}">${dfood >= 0 ? '+' : '−'}${Math.abs(dfood)}</small>${pa >= 1.15 ? `<small class="precio neg" aria-label="precio alto">▲${pa.toLocaleString('es-CO')}</small>` : pa <= .85 ? `<small class="precio pos" aria-label="precio bajo">▼${pa.toLocaleString('es-CO')}</small>` : ''}</div>` +
       `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>` +
-      (S.stage >= 1 ? `<div class="pill" title="Agua">💧<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">⚡<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '');
+      (S.stage >= 1 ? `<div class="pill" title="Agua">${IC.agua}<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">${IC.energia}<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '');
     this.medidores.replaceChildren(
-      ...[['Bienestar', '😊', S.hap, 'hap'], ['Igualdad', '⚖️', S.eq, 'eq'], ['Legitimidad', '🤝', S.tr, 'tr'], ['Ambiente', '🌿', S.env, 'env']].map(([n, ico, v, k]) =>
+      ...[['Bienestar', pintado('bienestar', 'mi'), S.hap, 'hap'], ['Igualdad', pintado('igualdad', 'mi'), S.eq, 'eq'], ['Legitimidad', pintado('legitimidad', 'mi'), S.tr, 'tr'], ['Ambiente', pintado('ambiente', 'mi'), S.env, 'env']].map(([n, ico, v, k]) =>
         el('button', { class: 'medidor', title: `${n}: ${Math.round(v)} de 100. ${C.IND[k].que} Toca para ver por qué sube o baja.`, 'aria-label': `${n}: ${Math.round(v)} de 100. Ver por qué`, on: { click: () => this.explicar(k) }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">${ico}</span><span class="nom">${n}</span></span><b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div>` })),
-      el('button', { class: 'medidor', title: `Rumbo del gobierno: de bien común (0) a interés propio (100). ${C.IND.corr.que} Toca para ver por qué cambia.`, 'aria-label': `Rumbo del gobierno: ${Math.round(S.corr)}. Ver por qué`, on: { click: () => this.explicar('corr') }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">🧭</span><span class="nom">Rumbo</span></span><b>${Math.round(S.corr)}</b></div><div class="track"><div class="fill" style="width:${S.corr}%;background:${colorDe(100 - S.corr)}"></div></div>` })
+      el('button', { class: 'medidor', title: `Rumbo del gobierno: de bien común (0) a interés propio (100). ${C.IND.corr.que} Toca para ver por qué cambia.`, 'aria-label': `Rumbo del gobierno: ${Math.round(S.corr)}. Ver por qué`, on: { click: () => this.explicar('corr') }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">${pintado('rumbo', 'mi')}</span><span class="nom">Rumbo</span></span><b>${Math.round(S.corr)}</b></div><div class="track"><div class="fill" style="width:${S.corr}%;background:${colorDe(100 - S.corr)}"></div></div>` })
     );
     // Meta, guía, promesas y exigencias (como en la v9).
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;

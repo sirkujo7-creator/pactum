@@ -247,3 +247,79 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .camino{margin:8px 0;padding:8px 10px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}.camino p{margin:4px 0}
 .conds{margin:4px 0 0;padding-left:0;list-style:none;font-size:.85rem}.conds li.pos{color:var(--good)}.conds li.neg{color:var(--bad)}
 .ficha .especial{grid-column:1/-1;font-size:.9rem;color:var(--accent);font-weight:600}
+
+/* ---------- Fase 8: interfaz al fresco (variante A, muro de cal) ---------- */
+/* Un solo estilo: paneles de cal con textura de muro, bordes rojo pompeyano, greca y títulos en versalitas. */
+:root,:root[data-theme="dark"]{--bg:#EFE5CF;--panel:#F7F1E3;--ink:#2E2723;--muted:#6A5440;--line:#D8C7A6;--gold:#B98A2E;--good:#5E7F45;--bad:#B0402C;--accent:#9C2F25;--sel:#D4A24C;--rojo:#9C2F25;--ocre:#D4A24C;--siena:#5B3423;--papel:#EFE5CF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#EFE5CF;--panel:#F7F1E3;--ink:#2E2723;--muted:#6A5440;--line:#D8C7A6;--gold:#B98A2E;--good:#5E7F45;--bad:#B0402C;--accent:#9C2F25}}
+html,body{background:#E6DABF}
+#ui button:focus-visible{outline:3px solid #3E7E9C}
+/* Barra superior compacta */
+.arriba{background:linear-gradient(to bottom,rgba(239,229,207,.92),rgba(239,229,207,0));padding-right:58px;gap:5px}
+.regb{border-radius:4px;border:0;background:var(--rojo);color:#F7F1E3;box-shadow:inset 0 0 0 1.5px var(--ocre);font-weight:800;font-variant:small-caps;letter-spacing:.02em;padding:2px 10px 2px 4px}
+.regb b{color:#F7F1E3}
+.era{background:rgba(247,241,227,.86);border-radius:4px;padding:1px 8px;color:var(--siena);font-weight:700}
+.era b{color:var(--rojo)}
+.hud{gap:4px}
+.pill{border-radius:5px;border:1.5px solid rgba(91,52,35,.3);background:rgba(247,241,227,.92);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 1px 3px rgba(60,40,20,.12);padding:1px 7px 1px 3px;gap:3px;font-weight:700}
+.pill .ic,.ic{width:21px;height:21px}
+.medidor{border-radius:5px;border:1.5px solid rgba(91,52,35,.3);background:rgba(247,241,227,.92);backdrop-filter:none;-webkit-backdrop-filter:none}
+.medidor .ico{display:inline-flex;align-items:center;margin-right:3px;vertical-align:-3px}
+.medidor .mi{width:16px;height:16px;display:block}
+.track{background:rgba(91,52,35,.16)}
+/* Botones de la derecha: un solo menú */
+.controles{gap:6px;align-items:flex-end}
+.redondo{background:var(--panel);border:2px solid var(--rojo);color:var(--rojo);font-family:Alegreya,Georgia,serif;font-weight:800;box-shadow:0 2px 6px rgba(60,40,20,.18)}
+.redondo.on,.controles button.on{background:var(--rojo);color:#F7F1E3}
+.grupo{display:none;flex-direction:column;gap:6px}
+.grupo.abierto{display:flex}
+@media (min-width:760px){.grupo{display:flex}.controles>.redondo:first-child{display:none}}
+/* Barra inferior con greca */
+.dock{background:var(--panel);background-image:var(--yeso-tex);background-blend-mode:multiply;border-top:3px solid var(--rojo);backdrop-filter:none;-webkit-backdrop-filter:none}
+.dock::before{content:"";position:absolute;left:0;right:0;top:-13px;height:9px;background:var(--greca) repeat-x left/auto 9px;pointer-events:none}
+.dk{color:var(--siena);font-weight:600}
+.dk .di img{width:26px;height:26px;display:block}
+.dk.on{background:rgba(156,47,37,.12);color:var(--rojo)}
+.dock .fin{background:var(--rojo);border-radius:6px;box-shadow:inset 0 0 0 2px var(--ocre)}
+@media (min-width:760px){.dock{border:2px solid var(--rojo);border-radius:8px}.dock::before{left:8px;right:8px}}
+/* Paneles, fichas y tarjetas: cal con textura de muro */
+.hoja,.ficha,.card,.meta{background-color:var(--panel);background-image:var(--yeso-tex);background-blend-mode:multiply;border-radius:6px;border:2px solid var(--rojo)}
+.hoja{border-top:3px solid var(--rojo);border-radius:8px 8px 0 0}
+@media (min-width:760px){.hoja{border:2px solid var(--rojo);border-radius:8px}}
+.sh-head{background:transparent;background-color:var(--panel);background-image:var(--yeso-tex);background-blend-mode:multiply}
+.sh-head h2,.card h3,.hoja h3,.card h2{font-family:Alegreya,Georgia,serif;font-weight:800;font-variant:small-caps;letter-spacing:.02em;color:var(--siena)}
+.card{position:relative;padding-top:26px;box-shadow:0 0 0 2px var(--rojo),0 18px 40px rgba(40,20,10,.35);border:0}
+.card::before{content:"";position:absolute;left:12px;right:12px;top:8px;height:10px;background:var(--greca) repeat-x left/auto 10px;pointer-events:none}
+.velo{background:rgba(46,32,22,.5)}
+.opt,.btn,.tool,.tab,.sub,.camino,.law{border-radius:5px}
+.opt{background:var(--bg);border:0;border-left:5px solid var(--rojo);box-shadow:0 1px 0 rgba(91,52,35,.15)}
+.opt.on{box-shadow:inset 0 0 0 2px var(--rojo)}
+.btn{background:var(--bg);border:1.5px solid rgba(91,52,35,.3);font-weight:600}
+.main{background:var(--rojo);border-radius:6px;box-shadow:inset 0 0 0 2px var(--ocre)}
+.phil{border-left-color:var(--rojo);background:rgba(91,52,35,.06);border-radius:0 5px 5px 0}
+.tab.on{background:var(--rojo);border-color:var(--rojo)}
+.tool.on{border-color:var(--ocre);box-shadow:0 0 0 2px var(--ocre)}
+.law.on{border-color:var(--rojo);background:rgba(156,47,37,.06)}
+.meta{border-width:1.5px}
+.toast{background:var(--siena);color:#F7F1E3;border-radius:6px;box-shadow:0 0 0 2px var(--ocre)}
+.ledger{background:repeating-linear-gradient(to bottom,transparent 0 25px,rgba(156,47,37,.18) 25px 26px),#F3E8CC}
+.anio-pasa{background:rgba(70,30,20,.55);color:#F7F1E3}
+.anio-pasa b{font-variant:small-caps;letter-spacing:.04em}
+.porque-afecta{background:rgba(62,126,156,.12);border-radius:5px}
+.salio-mal{background:rgba(176,64,44,.12);border-radius:5px}
+@media (max-width:520px){
+  .redondo{width:40px;height:40px;font-size:17px}
+  .pill{font-size:.9rem;padding:1px 5px 1px 2px}
+  .pill .ic{width:19px;height:19px}
+  .pill small{font-size:.7rem}
+}
+.txrow input,input[type=range]{accent-color:var(--rojo)}
+.card .big{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 2px var(--rojo),0 0 0 3px var(--panel),0 0 0 4.5px rgba(212,162,76,.8);font-size:1.7rem;margin:2px 0 4px}
+@media (max-width:520px){
+  .hud{gap:3px}
+  .pill{font-size:.84rem;padding:1px 4px 1px 2px;gap:2px}
+  .pill .ic{width:17px;height:17px}
+  .pill small{font-size:.66rem}
+  .arriba{padding-right:54px;padding-left:8px}
+}
+@media (min-width:760px){.meta{bottom:98px}}

@@ -114,8 +114,8 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 
 | Paso | Estado |
 | --- | --- |
-| 1. Prueba de estilo | Publicada en `pruebas/fresco.html`; espera la decisión de Juan (variante A o B y cambios) |
-| 2. Interfaz | Pendiente |
+| 1. Prueba de estilo | Aprobada por Juan (4 de octubre): **variante A, muro de cal** (paneles claros con bordes rojo pompeyano). Muestra en `pruebas/fresco.html` |
+| 2. Interfaz | Publicado (0.47.0). Variante A (muro de cal): paneles, fichas, tarjetas y barra inferior con textura de muro y bordes rojo pompeyano; greca en las tarjetas y sobre la barra inferior; títulos en versalitas; íconos pintados al fresco en recursos, medidores y barra inferior (`src/arte/iconos.js`); recursos en una sola fila en celular; los ocho botones de la derecha agrupados en un menú (en computador quedan a la vista); el ícono grande de cada tarjeta va en un medallón. Pendiente para pasos siguientes: retratos de personajes, viñetas de los dilemas y los emojis dentro de los textos |
 | 3. Pobladores | Pendiente |
 | 4. Naturaleza | Pendiente |
 | 5. Obras | Pendiente |
