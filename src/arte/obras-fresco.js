@@ -33,7 +33,7 @@ export function casa(g, rng, op = {}) {
 }
 
 // Edificio público neoclásico (ágora, escuela, banco...): podio con gradas, cella, columnas al frente, friso y frontón.
-// op: { col (color del friso), columnas (número), w, d, h }.
+// op: { col (color del friso), columnas (número), w, d, h, cella (color del muro), emblema (clave), cupula (color) }.
 export function templo(g, rng, op = {}) {
   const w = op.w || .86, d = op.d || .78, hp = 4, h = op.h || 20, n = op.columnas || 4, friso = op.col || FR.rojo;
   // Podio con dos gradas.
@@ -42,7 +42,8 @@ export function templo(g, rng, op = {}) {
   // Cella (muro del fondo) retirada del frente.
   const cel = cajaIso(w * .82, d * .7, h, 64, 32), Qc = cel.Q;
   g.save(); g.translate(...Qc(-d * .12, 0, hp)); g.translate(-Qc(0, 0, 0)[0], -Qc(0, 0, 0)[1]);
-  pintar(g, cel.izq, FR.ocreClaro, rng, { n: 3 }); pintar(g, cel.der, shade(FR.ocreClaro, -.15), rng, { n: 3 });
+  const cm = op.cella || FR.ocreClaro;
+  pintar(g, cel.izq, cm, rng, { n: 3 }); pintar(g, cel.der, shade(cm, -.15), rng, { n: 3 });
   pintar(g, rectCara(cel.izq, .38, .62, 0, .66), FR.siena, rng, { n: 1, bw: .5 });
   g.restore();
   // Columnas al frente (fuste claro, sombra a un lado, capitel y basa).
@@ -65,10 +66,28 @@ export function templo(g, rng, op = {}) {
   pintar(g, techoD, FR.teja, rng, { n: 3 });
   const fronton = [Q(T.r1, T.c0, hf + 3), Q(T.r1, T.c1, hf + 3), Q(T.r1, 0, hf + 3 + rh)];
   pintar(g, fronton, FR.cal, rng, { n: 2 });
-  // Tímpano con un medallón (laurel) y una franja de dentículos.
+  // Tímpano con su emblema y una franja de dentículos.
   const m = [(fronton[0][0] + fronton[1][0] + fronton[2][0]) / 3, (fronton[0][1] + fronton[1][1] + fronton[2][1]) / 3];
-  g.save(); g.strokeStyle = FR.verde; g.lineWidth = .9; g.beginPath(); g.arc(m[0], m[1] + .8, 2.2, Math.PI * .15, Math.PI * .85, true); g.stroke(); g.restore();
+  emblema(g, op.emblema || 'laurel', m[0], m[1] + .6, rng);
+  // Cúpula (sede de la monarquía, universidad).
+  if (op.cupula) { const c = Q(0, 0, hf + 3 + rh - 2); pintar(g, [[c[0] - 7, c[1]], [c[0] + 7, c[1]], [c[0] + 7, c[1] - 2]], shade(op.cupula, -.2), rng, { n: 0, bw: .4 }); const pts = []; for (let k = 0; k <= 12; k++) { const a = Math.PI + k / 12 * Math.PI; pts.push([c[0] + Math.cos(a) * 7, c[1] - 2 + Math.sin(a) * 7.5]); } pintar(g, pts, op.cupula, rng, { n: 2, bw: .5 }); g.fillStyle = FR.ocre; g.beginPath(); g.arc(c[0], c[1] - 10.4, 1.1, 0, Math.PI * 2); g.fill(); }
   g.save(); g.fillStyle = FR.cal; for (let k = 0; k < 10; k++) { const p = enCara(frisoI, .05 + k * .095, .15); g.globalAlpha = .9; g.fillRect(p[0] - .5, p[1] - 1.2, 1, 1); } g.restore();
+}
+
+// Emblemas del tímpano: dicen qué es cada edificio público.
+export function emblema(g, k, x, y, rng) {
+  g.save(); g.lineCap = 'round';
+  const linea = (col, w) => { g.strokeStyle = col; g.lineWidth = w; };
+  if (k === 'laurel') { linea(FR.verde, .9); g.beginPath(); g.arc(x, y + .2, 2.2, Math.PI * .15, Math.PI * .85, true); g.stroke(); }
+  else if (k === 'cruz') { g.fillStyle = FR.bermellon; g.fillRect(x - .6, y - 2, 1.2, 4); g.fillRect(x - 2, y - .6, 4, 1.2); }
+  else if (k === 'moneda') { g.fillStyle = FR.ocre; g.beginPath(); g.arc(x, y, 1.9, 0, Math.PI * 2); g.fill(); linea(FR.siena, .4); g.stroke(); }
+  else if (k === 'libro') { g.fillStyle = FR.cal; g.fillRect(x - 2.2, y - 1.2, 4.4, 2.4); linea(FR.siena, .45); g.strokeRect(x - 2.2, y - 1.2, 4.4, 2.4); g.beginPath(); g.moveTo(x, y - 1.2); g.lineTo(x, y + 1.2); g.stroke(); }
+  else if (k === 'mascara') { g.fillStyle = FR.ocreClaro; g.beginPath(); g.ellipse(x, y, 1.6, 2, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = FR.siena; g.fillRect(x - .9, y - .6, .6, .4); g.fillRect(x + .3, y - .6, .6, .4); g.beginPath(); g.arc(x, y + .7, .6, 0, Math.PI); g.fill(); }
+  else if (k === 'campana') { g.fillStyle = FR.ocre; g.beginPath(); g.moveTo(x - 1.8, y + 1.4); g.quadraticCurveTo(x - 1.4, y - 2, x, y - 2); g.quadraticCurveTo(x + 1.4, y - 2, x + 1.8, y + 1.4); g.closePath(); g.fill(); }
+  else if (k === 'balanza') { linea(FR.siena, .5); g.beginPath(); g.moveTo(x, y - 2); g.lineTo(x, y + 1.6); g.moveTo(x - 2.2, y - 1.2); g.lineTo(x + 2.2, y - 1.2); g.stroke(); g.fillStyle = FR.ocre; g.beginPath(); g.arc(x - 2, y + .2, .9, 0, Math.PI); g.arc(x + 2, y + .2, .9, 0, Math.PI); g.fill(); }
+  else if (k === 'corona') { g.fillStyle = FR.ocre; g.beginPath(); g.moveTo(x - 2.2, y + 1.2); g.lineTo(x - 2.2, y - 1.2); g.lineTo(x - 1.1, y); g.lineTo(x, y - 1.8); g.lineTo(x + 1.1, y); g.lineTo(x + 2.2, y - 1.2); g.lineTo(x + 2.2, y + 1.2); g.closePath(); g.fill(); }
+  else if (k === 'estrella') { g.fillStyle = FR.ocre; g.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? .8 : 2; g.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d); } g.fill(); }
+  g.restore();
 }
 
 // Fuente de la plaza (para el ágora y los parques).
