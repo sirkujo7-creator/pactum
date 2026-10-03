@@ -106,7 +106,7 @@ export function figurasDelAnio(S, inseguridadActual) {
       }
     }
     const n = nivelRel(e.rel);
-    if (n === 'baja' && F.baja.escandalo && S.corr > 50) { S.tr = clamp(S.tr - F.baja.escandalo, 0, 100); news.push(`${F.icono} ${F.nombre} publica un escándalo de corrupción: −${F.baja.escandalo} de legitimidad.`); }
+    if (n === 'baja' && F.baja.escandalo && S.corr > 50) { S.tr = clamp(S.tr - F.baja.escandalo, 0, 100); news.push(`${F.icono} ${F.nombre} publica un escándalo de corrupción: −${F.baja.escandalo} de legitimidad.`); S.escandaloEv = { nuevo: true }; } // fase 9: escena de cine
     if (n === 'baja' && F.baja.bloqueo && counts(S).mina > 0) { const o = F.baja.bloqueo * counts(S).mina; S.gold -= o; news.push(`${F.icono} El cabildo bloquea las minas: se pierden ${o} de oro.`); }
   }
   // Fase 7: si no hay ninguna misión en curso y pasó el respiro, la recibe quien lleva más tiempo esperando.

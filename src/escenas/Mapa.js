@@ -14,6 +14,7 @@ import { Pobladores } from './Pobladores.js';
 import { Efectos } from './Efectos.js';
 import { Vida } from './Vida.js';
 import { Trafico } from './Trafico.js';
+import { Cine } from './Cine.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
@@ -82,6 +83,7 @@ export class Mapa extends Phaser.Scene {
     this.vida = new Vida(this);
     this.efectos = new Efectos(this);
     this.trafico = new Trafico(this);
+    this.cine = new Cine(this);
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.capaCob = this.add.graphics().setDepth(PROF_POSIBLES - .5); // fase 2: capa de cobertura
@@ -401,7 +403,7 @@ export class Mapa extends Phaser.Scene {
   // ---------- Fin de año (como en la v9) ----------
   terminarAnio() {
     const S = this.S;
-    if (!this.listo || S.pend || S.over || this.ui.hayTarjeta() || this.cerrandoAnio) return;
+    if (!this.listo || S.pend || S.over || this.ui.hayTarjeta() || this.cerrandoAnio || (this.cine && this.cine.activo)) return;
     this.ui.cerrarHojas(); this.ui.cerrarFicha();
     const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr, antes = S.map.map(x => this.huella(x)), desgaste0 = S.desgaste;
     const r = advance(S);
@@ -492,6 +494,7 @@ export class Mapa extends Phaser.Scene {
     this.vida.update(Math.min(.05, delta / 1000), tiempo / 1000);
     this.efectos.update(Math.min(.05, delta / 1000));
     this.trafico.update(Math.min(.05, delta / 1000));
+    this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).
     const m = this.pob.manana(), a = .2 + .3 * m;
     if (Math.abs(a - (this._nieblaA || 0)) > .01) { this._nieblaA = a; for (const n of this.nieblas) n.setAlpha(a); }
@@ -617,6 +620,7 @@ export class Mapa extends Phaser.Scene {
         '4': () => this.ui.alternarHoja('leyes'), '5': () => this.ui.alternarHoja('cronica'), ' ': () => this.terminarAnio(),
         Escape: () => { if (this.ui.herramienta) this.ui.elegir(null); else if (this.ui.hojaAbierta()) this.ui.cerrarHojas(); else this.ui.cerrarFicha(); }
       };
+      if (this.cine && this.cine.activo) { if ([' ', 'Escape', 'Enter'].includes(e.key)) { this.cine.terminar(); e.preventDefault(); } return; } // fase 9: saltar la escena
       if (this.ui.hayTarjeta()) { if (e.key === 'Escape' && this.ui.tarjetaCerrable) this.ui.cerrarTarjeta(); return; }
       const f = acciones[e.key];
       if (f) { f(); e.preventDefault(); }
