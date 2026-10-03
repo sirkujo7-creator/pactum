@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -145,7 +145,9 @@ export class Interfaz {
     const c = counts(S), F = finance(S), so = F.so, R = rating(S), rg = RG(S);
     document.documentElement.style.setProperty('--regc', rg.col);
     const faltas = [...faltasNuevas(S), ...avisosFiguras(S)];
-    if (faltas.length) setTimeout(() => this.toast(faltas.join(' ')), 50);
+    // Fase 7: como mucho tres avisos a la vez (sin repetidos); el resto queda en la crónica.
+    const unicos = [...new Set(faltas)], txt = unicos.slice(0, 3).join(' ') + (unicos.length > 3 ? ` (y ${unicos.length - 3} más)` : '');
+    if (unicos.length) setTimeout(() => this.toast(txt), 50);
     guardarLuego(S);
     Sonido.mode(S.reg);
     this.bSonido.textContent = Sonido.on ? '🔊' : '🔇';
@@ -169,7 +171,7 @@ export class Interfaz {
     );
     // Meta, guía, promesas y exigencias (como en la v9).
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;
-    const meta = S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${nx.req}${S.stage === 2 && vecinosActivos(S) ? `; relaciones de ${C.VECINOS.minimo} con los vecinos` : ''}).` : `Meta: sostener la Polis ${D(S).polis} años.`;
+    const meta = S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${reqEtapa(S, S.stage + 1)}${S.stage === 2 && vecinosActivos(S) ? `; relaciones de ${C.VECINOS.minimo} con los vecinos` : ''}).` : `Meta: sostener la Polis ${aniosPolis(S)} años.`;
     const pr = S.promises.map(p => `Promesa: ${C.B[p.k].a} antes del año ${p.dl}.`).join(' ');
     const pron = climaActivo(S) && S.clima.pronostico, FEN = C.CLIMA && C.CLIMA.fenomenos;
     const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
@@ -413,7 +415,7 @@ export class Interfaz {
     const S = this.S;
     if (!tecActiva(S) || S.stage < 1) return '';
     const T = estadoTec(S), K = C.TEC, p = proximoInvento(S), anual = saberAnual(S);
-    const prox = p ? `<p class="small">Próximo invento: <b>${p[1].icono} ${p[1].nombre}</b> con ${p[1].saber} de saber${p[1].etapa > S.stage ? ` (desde ${C.STAGES[p[1].etapa].n})` : ''}. Tienes ${Math.round(T.saber)} y sumas ${anual} por año (escuelas, bibliotecas y universidades).</p><div class="track"><div class="fill" style="width:${Math.min(100, T.saber / p[1].saber * 100)}%;background:var(--accent)"></div></div>` : '<p class="small">Ya llegaron todos los inventos.</p>';
+    const prox = p ? `<p class="small">Próximo invento: <b>${p[1].icono} ${p[1].nombre}</b> con ${p[1].saber} de saber${p[1].etapa > S.stage ? ` (desde ${C.STAGES[p[1].etapa].n})` : ''}${anioInvento(S, p[0]) > S.year ? `, no antes del año ${anioInvento(S, p[0])}` : ''}. Tienes ${Math.round(T.saber)} y sumas ${anual} por año (escuelas, bibliotecas y universidades).</p><div class="track"><div class="fill" style="width:${Math.min(100, T.saber / p[1].saber * 100)}%;background:var(--accent)"></div></div>` : '<p class="small">Ya llegaron todos los inventos.</p>';
     const lista = Object.entries(T.adoptados).map(([id, modo]) => { const I = K.inventos[id], otro = modo === 'libre' ? 'regulada' : modo === 'regulada' ? 'libre' : 'libre';
       return `<div class="law ${modo !== 'rechazado' ? 'on' : ''}"><b>${I.icono} ${I.nombre}</b><small>${modo === 'rechazado' ? 'No la adoptaste.' : `${I[modo].texto}. ${I[modo].explica}`}</small>
         <button class="btn" data-tec="${id}:${otro}">${modo === 'rechazado' ? 'Adoptarla libre' : modo === 'libre' ? `Regularla (${Math.round(I.regulada.costo * S.price)} de oro por año)` : 'Quitar la regulación'}</button></div>`; }).join('');
@@ -838,6 +840,7 @@ export class Interfaz {
     const F = C.FIG.figuras, filas = L.map(e => {
       const f = F[e.id], img = `<img src="${retratoFig(e.id, f.retrato)}" alt="">`;
       if (e.tipo === 'llega') { const m = misionDe(S, e.id); return `<div class="say pro"><div class="fig-r">${img}</div><div><b>${f.icono} Llega ${f.nombre}</b> <small>(${f.rol})</small><span>“${f.presentacion}”</span>${m ? `<small><b>Su misión:</b> ${m.texto} Plazo: año ${m.limite}.</small>` : ''}</div></div>`; }
+      if (e.tipo === 'mision') { const m = misionDe(S, e.id); return `<div class="say pro"><div class="fig-r">${img}</div><div><b>${f.icono} ${f.nombre} te encarga una misión</b>${m ? `<span>${m.texto}</span><small>Plazo: año ${m.limite}.</small>` : ''}</div></div>`; }
       if (e.tipo === 'cumple') return `<div class="say pro"><div class="fig-r">${img}</div><div><b>✅ Cumpliste la misión de ${f.nombre}</b><span>${e.texto}</span><div class="chips">${this.chips(e.fx)}</div><small>Relación +${C.FIG.premioMision}.</small></div></div>`;
       return `<div class="say con"><div class="fig-r">${img}</div><div><b>❌ No cumpliste la misión de ${f.nombre}</b><span>${e.texto}</span><small>Relación −${C.FIG.castigoMision}.</small></div></div>`;
     }).join('');
@@ -888,13 +891,13 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
     this.boton('estrB', () => { this.cerrarTarjeta(); this.explicarConflicto(); });
   }
-  // Fase 4: caminos a la victoria (la Polis y cuatro caminos más desde Ciudad).
+  // Fase 4: caminos a la victoria (la Polis y cuatro caminos más; fase 7: desde Polis).
   caminosVictoria() {
     const S = this.S, V = C.VICTORIAS, abiertas = victoriasActivas(S);
     const polis = `<div class="camino"><b>🏛️ Polis</b> <small>${S.stage >= 3 ? `${S.polisYears} de ${D(S).polis} años` : `llega a Polis: ${C.STAGES[3].req}`}</small><p class="small">Sostener la Polis ${D(S).polis} años: un pueblo grande, con ágora y legítimo.</p></div>`;
-    const otros = caminos(S).map(c => `<div class="camino"><b>${c.icono} ${c.nombre}</b> <small>${abiertas ? `${c.llevados} de ${c.anios} años seguidos` : 'desde Ciudad'}</small><p class="small">${c.texto}</p>
+    const otros = caminos(S).map(c => `<div class="camino"><b>${c.icono} ${c.nombre}</b> <small>${abiertas ? `${c.llevados} de ${c.anios} años seguidos` : `desde ${C.STAGES[C.VICTORIAS.desde.etapa].n}`}</small><p class="small">${c.texto}</p>
       <ul class="conds">${c.estado.map(q => `<li class="${q.ok ? 'pos' : 'neg'}">${q.ok ? '✓' : '✗'} ${q.texto}</li>`).join('')}</ul></div>`).join('');
-    this.tarjeta(`<div class="big">🏆</div><h3>Caminos a la victoria</h3><p class="small">${abiertas ? `Gana el primero que sostengas ${D(S).polis} años seguidos, cumpliendo todas sus condiciones a la vez.` : 'Los cuatro caminos nuevos se abren cuando tu territorio sea Ciudad.'}</p>
+    this.tarjeta(`<div class="big">🏆</div><h3>Caminos a la victoria</h3><p class="small">${abiertas ? `Gana el primero que sostengas ${aniosPolis(S)} años seguidos, cumpliendo todas sus condiciones a la vez.` : `Los cuatro caminos nuevos se abren cuando tu territorio sea ${C.STAGES[C.VICTORIAS.desde.etapa].n}.`}</p>
       ${polis}${otros}<div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
   }
@@ -1153,7 +1156,7 @@ export class Interfaz {
   ayuda(primera) {
     const S = this.S;
     this.tarjeta(`<div class="big">🏛️</div><h3>${primera ? 'Bienvenido, gobernante' : 'Cómo jugar'}</h3>
-      <p>Gobiernas un territorio del Tolima junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis ${D(S).polis} años.</p>
+      <p>Gobiernas un territorio del Tolima junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis ${aniosPolis(S)} años.</p>
       <p><b>Tres clases sociales.</b> Campesinos, artesanos y élite tienen ingresos y ánimo propios. Las casas traen gente, pero cada persona necesita un empleo: cultivos, mercados, talleres. Sin empleo crece el descontento.</p>
       <p><b>Hacienda.</b> Fija un impuesto para cada clase. Desde Pueblo puedes pedir préstamos, emitir bonos o imprimir moneda. Imprimir genera inflación; endeudarte baja tu calificación y encarece el crédito.</p>
       <p><b>Dilemas.</b> Cada respuesta refleja una corriente filosófica, y algunas regresan años después como consecuencia.</p>

@@ -1,7 +1,7 @@
 // Otras formas de ganar (fase 4): desde Ciudad, además de la Polis, cuatro caminos (próspera, justa, verde, en paz).
 // Cada uno se gana sosteniendo todas sus condiciones los años que pide la dificultad. Solo en el terreno en acuarela.
 import { C } from './contenido.js';
-import { D, counts } from './reglas.js';
+import { counts, aniosPolis } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { rating, totDebt } from './hacienda.js';
 import { inseguridad } from './sucesos.js';
@@ -32,7 +32,7 @@ export function cumpleCondicion(S, q) {
 }
 // Estado de cada camino: años seguidos cumplidos, años que se piden y qué condiciones faltan hoy.
 export function caminos(S) {
-  const anios = D(S).polis;
+  const anios = aniosPolis(S);
   return Object.entries(K().caminos).map(([id, c]) => ({ id, ...c, anios, llevados: (S.caminos && S.caminos[id]) || 0,
     estado: c.condiciones.map(q => ({ ...q, ok: cumpleCondicion(S, q) })) }));
 }

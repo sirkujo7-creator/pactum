@@ -4,7 +4,7 @@
 // es obligatorio para ganar. Solo en el terreno en acuarela.
 import { C } from './contenido.js';
 import { clamp } from './azar.js';
-import { counts } from './reglas.js';
+import { counts, ritmo } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { dejarMarca } from './marcas.js';
 
@@ -47,6 +47,8 @@ export function decidirInvento(S, id, modo) {
   return true;
 }
 // Cierre del año: saber, costos de la regulación, rumbo y llegada de inventos. Devuelve las noticias.
+// Fase 7: cada invento llega en su época (año mínimo).
+export function anioInvento(S, id) { const R = ritmo(S); return (R && R.inventos[id]) || 0; }
 export function tecDelAnio(S) {
   if (!tecActiva(S)) return [];
   const T = datos(S), news = [];
@@ -55,7 +57,7 @@ export function tecDelAnio(S) {
   const corr = efectoTec(S, 'corr'); if (corr) S.corr = clamp(S.corr + corr, 0, 100);
   if (!T.pendiente) {
     const p = proximoInvento(S);
-    if (p && T.saber >= p[1].saber && S.stage >= p[1].etapa) { T.pendiente = p[0]; S.tecEv = { id: p[0], nuevo: true }; news.push(`${p[1].icono} ${p[1].texto}`); }
+    if (p && T.saber >= p[1].saber && S.stage >= p[1].etapa && S.year >= anioInvento(S, p[0])) { T.pendiente = p[0]; S.tecEv = { id: p[0], nuevo: true }; news.push(`${p[1].icono} ${p[1].texto}`); }
   }
   return news;
 }

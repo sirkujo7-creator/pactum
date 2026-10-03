@@ -2,7 +2,7 @@
 // promesas, etapas, elecciones y rumbo del gobierno (corrupción, reforma y revolución).
 import { azar, clamp } from './azar.js';
 import { C } from './contenido.js';
-import { counts, D, RG, RM, hasLaw, ETAPA_OK } from './reglas.js';
+import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
 import { society, waterCap, satTargets, calcHap, envTarget } from './sociedad.js';
 import { drawEvent } from './dilemas.js';
@@ -47,7 +47,7 @@ export function advance(S) {
   if (S.food < 0) { hunger = true; S.hungry = true; S.pop -= Math.ceil(S.pop * .12); S.food = 0; news.push('Faltó alimento: hubo hambre y se perdieron vidas.'); }
   const cp = c.casa * 10;
   const wcap = waterCap(S, c);
-  if (!hunger && S.pop < cp && S.pop < wcap) S.pop = Math.min(cp, S.pop + Math.max(1, Math.round(S.pop * .18 * S.hap / 60)));
+  if (!hunger && S.pop < cp && S.pop < wcap) S.pop = Math.min(cp, S.pop + Math.max(1, Math.round(S.pop * (ritmo(S) ? ritmo(S).crecimiento : .18) * S.hap / 60)));
   if (S.pop > cp) S.pop = cp;
   if (S.hap < 25) { S.pop -= Math.ceil(S.pop * .06); news.push('El descontento empuja a familias a irse.'); }
   S.pop = Math.max(0, S.pop);
@@ -189,7 +189,7 @@ export function advance(S) {
   if (S.env <= 5) return { end: { win: false, title: 'Colapso ecológico', text: 'El río y la tierra ya no sostienen la vida.' } };
   if (S.pop <= 3) return { end: { win: false, title: 'Territorio abandonado', text: 'Las últimas familias se marcharon.' } };
   // Claridad (decisión de Juan): tras ganar se puede seguir gobernando; la victoria no se repite.
-  if (S.polisYears >= D(S).polis && !S.ganado) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${D(S).polis} años un gobierno del pueblo y para el pueblo.` } };
+  if (S.polisYears >= aniosPolis(S) && !S.ganado) return { end: { win: true, title: 'Tu Polis perdura', text: `Sostuviste ${aniosPolis(S)} años un gobierno del pueblo y para el pueblo.` } };
   // Fase 4: otras formas de ganar (próspera, justa, verde, en paz).
   const otra = victoriasDelAnio(S);
   if (otra) return { end: otra };

@@ -14,7 +14,7 @@ for (const strat of ESTRATEGIAS) {
     const S = freshState(DIF, false, null, REG);
     if (process.env.ACTA) firmarActa(S, process.env.ACTA.split(','));
     let r;
-    for (let y = 0; y < 120; y++) { r = botYear(S, strat, ETH); if (r.end) break; }
+    for (let y = 0; y < 200; y++) { r = botYear(S, strat, ETH); if (r.end) break; }
     if (!r.end) out.end['sin fin'] = (out.end['sin fin'] || 0) + 1;
     else { out.end[r.end.title] = (out.end[r.end.title] || 0) + 1; if (r.end.win) out.win++; }
     out.stage[S.stage]++; out.years.push(S.year);
