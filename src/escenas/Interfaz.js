@@ -4,7 +4,7 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
+  culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -178,7 +178,7 @@ export class Interfaz {
     // La meta siempre queda a la vista en la primera línea; avisos y guía van en la segunda.
     const segunda = aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : '');
     this.meta.innerHTML = `<div class="gl1"><b>${meta}</b></div>${segunda ? `<div class="gl1 gl2">${segunda}</div>` : ''}` +
-      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.</span> ` : ''}${climaActivo(S) && C.VICTORIAS ? '<span class="lnk" role="button" tabindex="0" data-caminos>Caminos a la victoria</span> ' : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
+      `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">${culturaActiva(S) ? `El pueblo pide cultura y sentido (−${S.expc} de ánimo): canchas, biblioteca, teatro, estadio, fiestas, parques, sede y universidad lo calman.` : `El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.`}</span> ` : ''}${climaActivo(S) && C.VICTORIAS ? '<span class="lnk" role="button" tabindex="0" data-caminos>Caminos a la victoria</span> ' : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
     const cv = this.meta.querySelector('[data-caminos]');
     if (cv) cv.onclick = e => { e.stopPropagation(); this.caminosVictoria(); };
     const oc = this.meta.querySelector('[data-ocultar]');
@@ -288,7 +288,7 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionBarrios() + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionCultura() + this.seccionBarrios() + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
@@ -296,6 +296,7 @@ export class Interfaz {
     const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
     this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
+    const fi = this.sociedad.querySelector('[data-fiesta]'); if (fi) fi.onclick = () => { if (organizarFiesta(this.S)) { this.toast('🎉 ¡Fiestas en la plaza! La exigencia de sentido baja por dos años.'); this.mapa.cambio(true); this.render(); } };
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
@@ -832,6 +833,17 @@ export class Interfaz {
       this.mapa.refrescarCasilla(i); this.mapa.cambio(true); this.render();
       this.alCerrar = alTerminar || null; this.cerrarTarjeta();
     });
+  }
+  // Fase 5: cultura y deporte.
+  seccionCultura() {
+    const S = this.S;
+    if (!culturaActiva(S) || S.stage < 1) return '';
+    const K = C.CULTURA, c = counts(S), no = puedeFiesta(S);
+    const lista = Object.entries(C.B).filter(([, b]) => b.cul).map(([k, b]) => `${b.e} ${c[k] || 0}`).join(' · ');
+    return `<div class="cls otros"><div><div class="lab"><span>🎭 Cultura y deporte</span><span class="${S.expc > 0 ? 'neg' : ''}">${S.expc > 0 ? `−${S.expc} de ánimo` : 'sin exigencia'}</span></div>
+      <p class="small">Con los años el pueblo pide sentido e identidad, no solo bienestar. La cultura calma ${Math.round(culturaTotal(S))} puntos de esa exigencia. ${lista}.</p>
+      <button class="btn" data-fiesta ${no ? 'disabled' : ''}>🎉 ${K.fiesta.nombre} (${costoFiesta(S)} de oro)</button>
+      <p class="small">${no || K.fiesta.texto} ${K.leccion}</p></div></div>`;
   }
   seccionBarrios() {
     const S = this.S, L = barrios(S);
