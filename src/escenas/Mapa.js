@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
+import { barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -270,6 +270,7 @@ export class Mapa extends Phaser.Scene {
   dibujarCobertura() {
     const g = this.capaCob, S = this.S, T = this.T;
     g.clear();
+    (this.etiquetas || []).forEach(t => t.destroy()); this.etiquetas = [];
     // Quita el color de las casas pintadas antes (vuelven a su tono normal o de desgaste).
     for (const i of this.casasTenidas || []) this.ponerObra(i);
     this.casasTenidas = [];
@@ -277,6 +278,13 @@ export class Mapa extends Phaser.Scene {
     if (!coberturaActiva(S) || (!this.verCobertura && !solo)) return;
     const lista = solo ? [solo] : SERVICIOS, COL = { escuela: 0xD9A628, hospital: 0xC0392B, mercado: 0xD2691E, recaudo: 0x6E4B9E, policia: 0x2D5D72 };
     const N = T.N, en = (r, c) => P(Math.max(0, Math.min(N, r)), Math.max(0, Math.min(N, c)), T.hf(Math.max(0, Math.min(N - .01, r)), Math.max(0, Math.min(N - .01, c))));
+    // Fase 5: nombres de los barrios sobre el mapa.
+    if (this.verCobertura && barriosActivos(S)) for (const b of barrios(S)) {
+      let r = 0, c = 0; for (const i of b.centro) { r += T.tiles[i].r; c += T.tiles[i].c; }
+      r = r / b.centro.length + .5; c = c / b.centro.length + .5;
+      const q = P(r, c, T.hf(Math.min(T.N - .01, r), Math.min(T.N - .01, c)));
+      this.etiquetas.push(this.add.text(q[0], q[1] - 26, `${b.nombre}`, { fontFamily: 'Alegreya Sans, sans-serif', fontSize: '22px', color: '#22291F', stroke: '#F6F8F4', strokeThickness: 5 }).setOrigin(.5).setScale(.5).setDepth(40000));
+    }
     for (const s of lista) for (const p of puntosDe(S, s)) {
       const t = T.tiles[p.i], pts = [];
       for (let a = 0; a <= 48; a++) { const q = en(t.r + .5 + Math.cos(a / 48 * Math.PI * 2) * p.r, t.c + .5 + Math.sin(a / 48 * Math.PI * 2) * p.r); pts.push({ x: q[0], y: q[1] }); }

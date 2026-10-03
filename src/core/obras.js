@@ -14,6 +14,7 @@ export function whyNot(S, k, i) {
   const x = S.map[i], b = C.B[k];
   if (x.t === 'rio') return 'No se puede construir sobre el río.';
   if (x.b) return 'Esa casilla ya está ocupada.';
+  if (x.mk && x.mk.t === 'asentamiento') return 'Hay un asentamiento: primero decide si lo legalizas o lo desalojas.';
   if (!b.ok.includes(x.t)) return `${b.n}: ese terreno no sirve.`;
   if (b.hmin && (x.h || 0) < b.hmin) return `${b.n}: necesita ladera (terreno alto).`;
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;

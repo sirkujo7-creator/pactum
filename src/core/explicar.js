@@ -7,6 +7,7 @@ import { finance } from './hacienda.js';
 import { presionMovimientos } from './movimientos.js';
 import { efectoFig } from './figuras.js';
 import { coherencia } from './acta.js';
+import { efectoBarrios } from './barrios.js';
 
 const suma = L => L.reduce((s, x) => s + x[1], 0);
 const limpio = L => L.filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
@@ -28,7 +29,7 @@ export function desgloseIndicador(S, k) {
   if (k === 'env') { const p = [...partesAmbiente(S, c), ['Relación con el cabildo pijao', efectoFig(S, 'ambiente')]]; return { actual: S.env, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p) }; }
   if (k === 'eq') {
     const F = finance(S), so = F.so, tot = (F.post.c + F.post.a + F.post.e + F.post.u) || 1, es = F.post.e / tot, ps = so.el / Math.max(1, so.P), sc = satTargets(S, c, false).sc;
-    const p = [['Punto de partida', 85], ['Riqueza de la élite frente a su tamaño', -(es - ps) * 120], ['Escuelas', sc * 10], ['Universidades', c.universidad * 5], ['Régimen de gobierno', RM(S, 'eq')], ['Educación pública', L('educacion') ? 8 : 0], ['Censura', L('censura') ? -3 : 0]];
+    const p = [['Punto de partida', 85], ['Riqueza de la élite frente a su tamaño', -(es - ps) * 120], ['Escuelas', sc * 10], ['Universidades', c.universidad * 5], ['Régimen de gobierno', RM(S, 'eq')], ['Educación pública', L('educacion') ? 8 : 0], ['Censura', L('censura') ? -3 : 0], ['Problemáticas de los barrios', efectoBarrios(S, 'igualdad')]];
     return { actual: S.eq, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p) };
   }
   if (k === 'tr') {

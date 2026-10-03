@@ -20,7 +20,7 @@ export function counts(S) {
   S.map.forEach(x => { if (x.b && !(x.u >= aband) && !x.ob) c[x.b]++; }); // fase 2: una obra en construcción aún no presta servicio
   return c;
 }
-export function cap(S) { return counts(S).casa * 10; }
+export function cap(S) { return counts(S).casa * 10 + (S.asent ? S.asent.length * 6 : 0); } // fase 5: los asentamientos informales también albergan gente
 export function cost(S, k) { return Math.round(C.B[k].cost * S.price * (1 - RM(S, 'obrasDescuento')) * (hasLaw(S, 'sismo') ? 1.1 : 1)); } // fase 4: el código sismorresistente encarece las obras
 
 // Condiciones de los archivos de datos (dilemas y guía). Todas deben cumplirse.
