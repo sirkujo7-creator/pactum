@@ -5,7 +5,7 @@ import { DPR } from './escenas/pantalla.js';
 
 async function fuentesListas() {
   if (!document.fonts) return;
-  const pesos = ['500 20px Alegreya', '800 20px Alegreya', '400 20px "Alegreya Sans"', '700 20px "Alegreya Sans"'];
+  const pesos = ['500 20px Alegreya', '700 20px Alegreya', '800 20px Alegreya', '400 20px "Alegreya Sans"', '700 20px "Alegreya Sans"'];
   // Si tardan más de 3 s, se sigue con las fuentes de respaldo.
   await Promise.race([
     Promise.all(pesos.map(p => document.fonts.load(p, 'Pactum áéíóúñ'))),

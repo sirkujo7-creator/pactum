@@ -2,21 +2,23 @@
 // Cada sector es un lienzo con un bloque de casillas; si algo cambia, solo se repinta su sector.
 import { mulberry, clamp, shade, mix, poly, wash, blob, grano, lienzo } from './acuarela.js';
 import { P, TW, TH, EL, alturaEn } from './iso.js';
+import { yeso } from './fresco.js';
 
 export const LADO_SECTOR = 8;
 const BASE = -2.2; // profundidad de los costados del diorama
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = t => t * t * (3 - 2 * t);
 
-const GROUND = { agua: '#7DB0C6', galeria: '#86AE66', arrozal: '#A9CB84', seco: '#D1BE82', potrero: '#B8C67E', ladera: '#9DBA6C', niebla: '#6E9567', paramo: '#BDB47A', roca: '#9A938A', nieve: '#F3F2EC' };
-const DRYC = '#D5B878';
+// Fase 8: colores de pigmento del fresco (tierra verde, ocres, azul egipcio, blanco de cal).
+const GROUND = { agua: '#7AAAB6', galeria: '#8AA26C', arrozal: '#A9B97E', seco: '#D2B77E', potrero: '#B5B97C', ladera: '#93A56E', niebla: '#6A8360', paramo: '#C2B27A', roca: '#9C9184', nieve: '#F4EEE2' };
+const DRYC = '#D4B27A';
 
 function groundColor(t, dry) {
   let c = GROUND[t.b];
-  if (t.b === 'agua') return mix('#C8BA8E', DRYC, dry * .3);
+  if (t.b === 'agua') return mix('#D2C092', DRYC, dry * .3);
   if (['galeria', 'arrozal', 'potrero', 'ladera', 'niebla'].includes(t.b)) c = mix(c, DRYC, dry * (t.b === 'niebla' ? .25 : .45));
   if (t.b === 'seco') c = mix(c, '#D9B56C', dry * .4);
-  if (t.b !== 'nieve' && t.b !== 'roca' && t.h > 8.4) c = mix(c, '#F3F2EC', clamp((t.h - 8.4) / 1.4, 0, .7));
+  if (t.b !== 'nieve' && t.b !== 'roca' && t.h > 8.4) c = mix(c, '#F4EEE2', clamp((t.h - 8.4) / 1.4, 0, .7));
   return c;
 }
 // Mezcla suave entre bandas de altura.
@@ -30,10 +32,10 @@ function band(h, edges, cols) {
 }
 function colorAt(T, r, c, h, slope, dry) {
   const m = T.moistAt(r, c);
-  const low = mix(mix('#D3BF83', '#B9C67E', smooth(clamp((m - .35) / .3, 0, 1))), '#8DB36B', smooth(clamp((m - .75) / .25, 0, 1)));
-  const lowD = mix(low, '#D6B878', dry * .45);
-  let col = band(h, [2, 4.4, 6.1, 7.6, 9], [lowD, mix('#9DBA6C', DRYC, dry * .4), mix('#6E9567', DRYC, dry * .15), '#BDB47A', '#9A938A', '#F1F1EC']);
-  if (slope > 1.6 && h > 2) col = mix(col, '#9A938A', clamp((slope - 1.6) / 1.2, 0, .8));
+  const low = mix(mix('#D6BC84', '#B5B97C', smooth(clamp((m - .35) / .3, 0, 1))), '#8AA26C', smooth(clamp((m - .75) / .25, 0, 1)));
+  const lowD = mix(low, '#D6B57A', dry * .45);
+  let col = band(h, [2, 4.4, 6.1, 7.6, 9], [lowD, mix('#93A56E', DRYC, dry * .4), mix('#6A8360', DRYC, dry * .15), '#C2B27A', '#9C9184', '#F4EEE2']);
+  if (slope > 1.6 && h > 2) col = mix(col, '#9C9184', clamp((slope - 1.6) / 1.2, 0, .8));
   return col;
 }
 const light = t => clamp(1 + .2 * t.sx - .17 * t.sy, .62, 1.3);
@@ -57,8 +59,8 @@ function pintarRio(g, T, qx, dry) {
     g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round';
     g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke();
   };
-  const wc = dry > .5 ? '#86A7A8' : '#6FA8C2';
-  st(54, '#D2C497', .55); st(40, shade(wc, -.08), .95); st(30, wc, .9); st(14, shade(wc, .22), .55);
+  const wc = dry > .5 ? '#7E9EA2' : '#5F95AE'; // azul egipcio
+  st(54, '#DCC79A', .6); st(42, '#5B3423', .25); st(40, shade(wc, -.1), .97); st(30, wc, .92); st(14, '#9CC2C8', .55);
   g.restore(); g.globalAlpha = 1;
 }
 
@@ -111,14 +113,14 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     col = shade(col, (T.vary(t.c / 4, t.r / 4) - .5) * .1);
     const L2 = light(t);
     col = L2 >= 1 ? shade(col, (L2 - 1) * .8) : shade(col, (L2 - 1) * .9);
-    const vary = (T.vary(t.c / 4, t.r / 4) - .5) * .1, far0 = 1 - (t.r + t.c) / (2 * N), SD = 3;
+    const vary = (T.vary(t.c / 4, t.r / 4) - .5) * .1, far0 = 1 - (t.r + t.c) / (2 * N), SD = t.h > 4.4 ? 5 : 3; // fase 8: más fino en la montaña (sin mosaico en el nevado)
     for (let a = 0; a < SD; a++) for (let b = 0; b < SD; b++) {
       const r0 = t.r + a / SD, c0 = t.c + b / SD, r1 = r0 + 1 / SD, c1 = c0 + 1 / SD;
       const z00 = T.hf(r0, c0), z01 = T.hf(r0, c1), z11 = T.hf(r1, c1), z10 = T.hf(r1, c0);
       const sx = (z01 + z11 - z00 - z10) / 2 * SD, sy = (z10 + z11 - z00 - z01) / 2 * SD, Lq = clamp(1 + .2 * sx - .17 * sy, .62, 1.3);
       let cc = shade(colorAt(T, r0 + .5 / SD, c0 + .5 / SD, (z00 + z01 + z11 + z10) / 4, Math.hypot(sx, sy), dry), vary);
       cc = Lq >= 1 ? shade(cc, (Lq - 1) * .8) : shade(cc, (Lq - 1) * .9);
-      cc = mix(cc, '#DCE5E6', far0 * .22);
+      cc = mix(cc, '#E6E2D6', far0 * .2);
       const sq = [P(r0, c0, z00), P(r0, c1, z01), P(r1, c1, z11), P(r1, c0, z10)], s2 = [(sq[0][0] + sq[2][0]) / 2, (sq[0][1] + sq[2][1]) / 2];
       g.fillStyle = cc; poly(g, sq.map(p => [s2[0] + (p[0] - s2[0]) * 1.06, s2[1] + (p[1] - s2[1]) * 1.06])); g.fill();
     }
@@ -161,8 +163,8 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   // Grano del papel, solo sobre lo pintado y alineado con el mundo para que no se noten las uniones.
   g.save();
   recortar();
-  g.globalCompositeOperation = 'multiply'; g.globalAlpha = .2;
-  g.fillStyle = g.createPattern(grano(), 'repeat');
+  g.globalCompositeOperation = 'multiply'; g.globalAlpha = .32;
+  g.fillStyle = g.createPattern(yeso(), 'repeat'); // fase 8: textura de muro del fresco
   g.fillRect(k.x, k.y, k.w, k.h);
   g.restore();
   return { canvas: cv, x: k.x, y: k.y, w: k.w, h: k.h, escala: esc };
@@ -181,10 +183,11 @@ export function pintarFondo(T, escala = 1) {
     g.globalAlpha = al; g.fillStyle = q; poly(g, pts); g.fill(); g.globalAlpha = 1;
   };
   const X = f => izq + W * f;
-  far([[X(0), OY + 90], [X(0), OY - 20], [X(.1), OY - 60], [X(.22), OY - 34], [X(.35), OY - 95], [X(.47), OY - 50], [X(.6), OY - 82], [X(.75), OY - 44], [X(.9), OY - 76], [X(1), OY - 46], [X(1), OY + 90]], 'rgba(140,166,170,.8)', .8);
+  far([[X(0), OY + 90], [X(0), OY - 20], [X(.1), OY - 60], [X(.22), OY - 34], [X(.35), OY - 95], [X(.47), OY - 50], [X(.6), OY - 82], [X(.75), OY - 44], [X(.9), OY - 76], [X(1), OY - 46], [X(1), OY + 90]], 'rgba(150,166,152,.85)', .8);
   const nx = X(.36), nt = OY - 190;
-  far([[nx - 280, OY + 60], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 300, OY + 60]], 'rgba(150,170,186,.9)', .85);
-  wash(g, [[nx - 92, nt + 50], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 98, nt + 47], [nx + 52, nt + 40], [nx + 16, nt + 54], [nx - 24, nt + 42], [nx - 54, nt + 56]], '#FBFBF8', R, .92, 1);
+  far([[nx - 280, OY + 60], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 300, OY + 60]], 'rgba(160,156,176,.9)', .85);
+  const cap = [[nx - 92, nt + 50], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 98, nt + 47], [nx + 52, nt + 40], [nx + 16, nt + 54], [nx - 24, nt + 42], [nx - 54, nt + 56]];
+  wash(g, cap, '#F7F1E3', R, .95, 0); g.globalAlpha = .5; g.strokeStyle = '#5B3423'; g.lineWidth = 1; poly(g, cap); g.stroke(); g.globalAlpha = 1; // nevado con contorno siena
   return { canvas: cv, x: izq, y: arriba, w: W, h: H, escala };
 }
 
@@ -328,12 +331,12 @@ function pintarCafe(g, T, t, rng, dry) {
 }
 function pintarArroz(g, T, t, q, rng, dry) {
   const wet = dry < .5;
-  wash(g, q, wet ? '#9CC7A4' : '#C9C27E', rng, .55, 0);
-  g.globalAlpha = .5; g.strokeStyle = wet ? '#6FA86A' : '#A89A55'; g.lineWidth = .8;
+  wash(g, q, wet ? '#A3B98A' : '#C9BC80', rng, .5, 0); // fase 8: arrozal en tierra verde, sin el azul que hacía cuadrícula
+  g.globalAlpha = .4; g.strokeStyle = wet ? '#7E9A62' : '#A89A55'; g.lineWidth = .8;
   for (let k = 1; k < 7; k++) { const f = k / 7, a = [lerp(q[0][0], q[3][0], f), lerp(q[0][1], q[3][1], f)], b = [lerp(q[1][0], q[2][0], f), lerp(q[1][1], q[2][1], f)]; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
   g.globalAlpha = 1;
-  if (wet) { g.globalAlpha = .35; g.fillStyle = '#E9F4F2'; g.beginPath(); g.ellipse((q[0][0] + q[2][0]) / 2 - 6, (q[0][1] + q[2][1]) / 2 - 2, 6, 1.2, -.4, 0, 7); g.fill(); g.globalAlpha = 1; }
-  g.globalAlpha = .6; g.strokeStyle = '#8B7A55'; g.lineWidth = 1; poly(g, q); g.stroke(); g.globalAlpha = 1;
+  if (wet) { g.globalAlpha = .3; g.fillStyle = '#E9F0E6'; g.beginPath(); g.ellipse((q[0][0] + q[2][0]) / 2 - 6, (q[0][1] + q[2][1]) / 2 - 2, 6, 1.2, -.4, 0, 7); g.fill(); g.globalAlpha = 1; }
+  g.globalAlpha = .18; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
 }
 // Huerta de maíz, fríjol y yuca en surcos, para los cultivos lejos de la llanura.
 function pintarHuerta(g, T, t, q, rng, dry) {
