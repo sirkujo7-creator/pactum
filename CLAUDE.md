@@ -110,7 +110,14 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 3. **La revolución industrial por épocas (publicado en 0.64.0):** del taller artesanal a la fábrica con máquinas y luego a la automatización (más producción y menos empleo); dilemas de la industria en los archivos de datos.
 4. **Balance** con los robots y revisión en celular y computador (publicado en 0.65.0; la fase 11 queda terminada y espera la prueba de Juan).
 
-Siguiente (elegido por Juan): **cultura y civismo** y luego **historias humanas**.
+**Fase 12 (aprobada por Juan el 4 de octubre): cultura y civismo.** Un paso publicable a la vez:
+
+1. **El árbol de civismo (publicado en 0.66.0):** 18 leyes en tres ramas de seis (derechos, economía, territorio) con pros y contras; las nuevas se desbloquean con puntos de civismo, su época o una ley anterior; prensa y censura son contrarias; salen en El Pregonero.
+2. **Rasgo cultural de cada época:** al empezar cada época se elige uno de tres rasgos que se acumulan en la identidad del pueblo (estandarte en la Crónica).
+3. **La cultura en el mapa y los dilemas:** fiestas y patrimonio según los rasgos, dilemas de identidad y memoria, y el juicio de la historia los menciona.
+4. **Balance** con los robots (que eligen rasgos y leyes).
+
+Después: **historias humanas**.
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.

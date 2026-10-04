@@ -31,21 +31,22 @@ import { factorCostos, factorRoya, costoPensiones } from './ciclos.js';
 import { factorCalle, mantenimientoCalles } from './calles.js';
 import { fincasActivas, produccionFinca } from './fincas.js';
 import { industriaActiva, rentaFabrica } from './industria.js';
+import { efectoLeyes, costoLeyesNuevas } from './civismo.js';
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
   // Fase 2: el ciclo económico mueve los ingresos, y los campesinos ganan más cuando la comida está cara.
   const fi = factorIngresos(S), fv = factorVecinos(S), inc = { c: so.camp * 4 * w * fi * factorCampesinos(S), a: so.art * 7 * w * fi * (1 + fv + efectoTec(S, 'ing') + efectoMega(S, 'ingresos')), e: so.el * 25 * w * fi * (1 + efectoFig(S, 'ingresos') + fv + efectoTec(S, 'ing') + efectoMega(S, 'ingresos')), u: so.un * w }; // fase 4: comercio con los vecinos // fase 4: la empresaria invierte o saca su capital
   // Fase 2: lejos de una oficina de recaudo parte de la gente evade (ev = fracción que se pierde).
-  const ev = evasion(S), taxC = Math.round(inc.c * S.tx.c / 100 * (1 - ev)), taxA = Math.round(inc.a * S.tx.a / 100 * (1 - ev)), taxE = Math.round(inc.e * S.tx.e / 100 * (1 - ev));
+  const ev = evasion(S), taxC = Math.round(inc.c * S.tx.c / 100 * (1 - ev)), taxA = Math.round(inc.a * S.tx.a / 100 * (1 - ev)), taxE = Math.round(inc.e * S.tx.e / 100 * (1 - ev) * (1 + efectoLeyes(S, 'impuestoElite'))); // fase 12: impuesto progresivo
   const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
   const finca = fincasActivas(S), fab = industriaActiva(S) ? rentaFabrica(S) : null; // fase 10: las fincas rinden según su cultivo; fase 11: las fábricas, según su producto
-  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (fab && x.b === 'taller' ? fab(i) : finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : 1)) * factorCalle(S, i); // fase 9: junto a una calle se vende más
+  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (fab && x.b === 'taller' ? fab(i) : finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : x.b === 'mina' ? 1 + efectoLeyes(S, 'minas') : 1)) * factorCalle(S, i); // fase 9: junto a una calle se vende más
  if (r) up += C.B[x.b].up * (x.mt || 1); } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100 * factorCostos(S)); // fase 7: los costos suben con cada época
-  const lawCost = Math.round(((hasLaw(S, 'educacion') ? S.pop * .15 : 0) + (hasLaw(S, 'subsidio') ? so.camp * .8 : 0)) * S.price);
+  const lawCost = Math.round(((hasLaw(S, 'educacion') ? S.pop * .15 : 0) + (hasLaw(S, 'subsidio') ? so.camp * .8 : 0) + costoLeyesNuevas(S)) * S.price); // fase 12: leyes nuevas
   const admin = Math.round(S.pop * (.1 + .12 * S.stage) * (1 + S.year * .01) * S.price * RM(S, 'admin', 1) * factorCostos(S));
   const pensiones = costoPensiones(S); // fase 7
   const calles = mantenimientoCalles(S); // fase 9

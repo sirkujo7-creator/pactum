@@ -25,7 +25,8 @@
       "reacciones": {
         "policia": 12,
         "fuerza": 4,
-        "abuso": -10
+        "abuso": -10,
+        "paz": -10
       },
       "alta": {
         "texto": "La policía coopera: la inseguridad baja 5.",
@@ -77,7 +78,8 @@
         "prensa": 20,
         "soborno": -15,
         "fuerza": -8,
-        "escuchar": 3
+        "escuchar": 3,
+        "tutela": 10
       },
       "alta": {
         "texto": "La prensa reconoce su gestión: la legitimidad tiende a subir 2.",
@@ -127,7 +129,9 @@
       "reacciones": {
         "fuerza": -15,
         "escuchar": 8,
-        "ignorar": -6
+        "ignorar": -6,
+        "laico": -20,
+        "paz": 15
       },
       "alta": {
         "texto": "El párroco media en los conflictos: los movimientos crecen 30% más lento.",
@@ -181,7 +185,10 @@
         "campesinos": -8,
         "ambientalistas": -10,
         "escucharAmbiente": 12,
-        "escucharCampesinos": 8
+        "escucharCampesinos": 8,
+        "indigenas": 25,
+        "reformaAgraria": 10,
+        "consulta": 8
       },
       "alta": {
         "texto": "El cabildo cuida el bosque con el gobierno: el ambiente tiende a subir 3.",
@@ -232,7 +239,10 @@
         "mina": 6,
         "fuerza": 4,
         "escuchar": -3,
-        "soborno": 3
+        "soborno": 3,
+        "progresivo": -15,
+        "reformaAgraria": -10,
+        "consulta": -6
       },
       "alta": {
         "texto": "La empresaria invierte: los cafetales y el comercio rinden 10% más.",
@@ -330,6 +340,16 @@
     "escucharAmbiente": "que se escuche a los ambientalistas",
     "escucharCampesinos": "que se escuche a los campesinos",
     "planVolcan": "que se prepare un plan de evacuación",
-    "ignorarVolcan": "que se ignoren las alertas del volcán"
+    "ignorarVolcan": "que se ignoren las alertas del volcán",
+    "laico": "el Estado laico",
+    "paz": "el acuerdo de paz",
+    "indigenas": "los derechos indígenas",
+    "reformaAgraria": "la reforma agraria",
+    "consulta": "la consulta popular",
+    "progresivo": "el impuesto progresivo",
+    "tutela": "la acción de tutela",
+    "sufragio": "el sufragio universal",
+    "seguridadSocial": "la seguridad social",
+    "descentralizacion": "la descentralización"
   }
 }

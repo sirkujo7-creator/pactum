@@ -10,6 +10,7 @@ import { centroPueblo } from './cobertura.js';
 import { animoGrupo } from './grupos.js';
 import { reaccionar } from './figuras.js';
 import { recordar } from './memoria.js';
+import { efectoLeyes } from './civismo.js';
 
 const K = () => C.MEGA;
 export function megaActivos(S) { return climaActivo(S) && !!C.MEGA && S.stage >= K().desde.etapa; }
@@ -27,9 +28,9 @@ export function evaluarMega(S, id) {
 // Probabilidad de que la consulta apruebe.
 export function probConsulta(S, id) {
   const Q = K().consulta, lider = S.fig && S.fig.lider ? S.fig.lider.rel : 50;
-  return clamp(Q.probBase + (lider - 50) * Q.porRelacion + (S.env - 50) * Q.porAmbiente + (animoGrupo(S, 'jornaleros').valor - 50) * Q.porAnimoCampesino + (K().proyectos[id].consultaMas || 0), .05, .95);
+  return clamp(Q.probBase + (lider - 50) * Q.porRelacion + (S.env - 50) * Q.porAmbiente + (animoGrupo(S, 'jornaleros').valor - 50) * Q.porAnimoCampesino + (K().proyectos[id].consultaMas || 0) + efectoLeyes(S, 'consulta.prob'), .05, .95);
 }
-export function costoConsulta(S) { return Math.round(K().consulta.costo * S.price); }
+export function costoConsulta(S) { return Math.round(K().consulta.costo * S.price * Math.max(0, 1 + efectoLeyes(S, 'consulta.costo'))); } // fase 12: con la ley de consulta popular es gratis
 export function puedeConsultar(S, id) {
   const e = estadoMega(S, id);
   if (e) return 'Ya empezó el proceso de este proyecto.';

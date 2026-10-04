@@ -1,0 +1,314 @@
+{
+  "leccion": "Las leyes son ideas que una sociedad decide volver obligatorias. Cada una resuelve un problema y crea otro: gobernar es escoger qué costo se paga y quién lo paga.",
+  "textos": {
+    "titulo": "Árbol de civismo",
+    "ayuda": "Las leyes se ordenan en tres ramas. Las nuevas se desbloquean con puntos de civismo, que dan las escuelas, las bibliotecas, el ágora, la universidad, la prensa libre y una legitimidad alta. Desbloquear no es promulgar: después hay que tener cupo y oro.",
+    "puntos": "Civismo: {p} puntos (+{anual} por año).",
+    "desbloquear": "Desbloquear ({costo} de civismo)",
+    "faltanPuntos": "Faltan {n} puntos de civismo.",
+    "desdeEpoca": "Llega con la época: {epoca}.",
+    "desdeEtapa": "Se abre en {etapa}.",
+    "requiere": "Antes hay que haber promulgado: {leyes}.",
+    "opuesta": "Es contraria a «{ley}»: deróguela primero.",
+    "abierta": "Desbloqueaste la idea: {ley}. Ya puedes promulgarla.",
+    "pro": "A favor",
+    "contra": "En contra",
+    "libreComercio": "Sin aranceles hay libre comercio."
+  },
+  "puntos": {
+    "base": 0.2,
+    "escuela": 0.25,
+    "biblioteca": 0.5,
+    "agora": 0.8,
+    "universidad": 0.8,
+    "prensa": 0.3,
+    "legitimidad": {
+      "desde": 60,
+      "suma": 0.4
+    }
+  },
+  "ramas": {
+    "derechos": {
+      "nombre": "Derechos y ciudadanía",
+      "icono": "⚖️"
+    },
+    "economia": {
+      "nombre": "Economía y trabajo",
+      "icono": "⚙️"
+    },
+    "territorio": {
+      "nombre": "Territorio y convivencia",
+      "icono": "🏞️"
+    }
+  },
+  "viejas": {
+    "prensa": {
+      "rama": "derechos",
+      "pro": "La prensa vigila: menos corrupción cada año.",
+      "contra": "Las críticas bajan un poco la legitimidad."
+    },
+    "censura": {
+      "rama": "derechos",
+      "pro": "Silencia las críticas: sube la legitimidad aparente.",
+      "contra": "El gobierno se corrompe cada año y baja la igualdad."
+    },
+    "educacion": {
+      "rama": "derechos",
+      "pro": "Más igualdad; campesinos, artesanos y estudiantes contentos.",
+      "contra": "Cuesta oro por cada habitante."
+    },
+    "jornada": {
+      "rama": "economia",
+      "pro": "Obreros y artesanos contentos, menos huelgas.",
+      "contra": "Los ingresos rinden 5% menos y la élite protesta."
+    },
+    "bancoCentral": {
+      "rama": "economia",
+      "pro": "La inflación baja.",
+      "contra": "Ya no puedes imprimir moneda."
+    },
+    "subsidio": {
+      "rama": "economia",
+      "pro": "Campesinos mucho más contentos.",
+      "contra": "Cuesta oro por cada campesino."
+    },
+    "arancel": {
+      "rama": "economia",
+      "pro": "Tasas y comercio rinden 20% más y protegen al artesano.",
+      "contra": "Suben los precios, la élite comercial y los vecinos se molestan."
+    },
+    "ambiente": {
+      "rama": "territorio",
+      "pro": "El ambiente mejora mucho y el bosque vuelve.",
+      "contra": "Tasas y regalías bajan 25% y la élite se molesta."
+    },
+    "sismo": {
+      "rama": "territorio",
+      "pro": "Un terremoto hace mucho menos daño.",
+      "contra": "Las obras cuestan 10% más."
+    }
+  },
+  "opuestas": [
+    [
+      "prensa",
+      "censura"
+    ]
+  ],
+  "leyes": [
+    {
+      "id": "laico",
+      "nombre": "Estado laico y libertad de culto",
+      "rama": "derechos",
+      "icono": "🕊️",
+      "etapa": 1,
+      "civismo": 5,
+      "pro": "Todas las creencias valen lo mismo: más igualdad.",
+      "contra": "Al párroco y a los creyentes tradicionales les molesta.",
+      "efectos": {
+        "igualdad": 2,
+        "legitimidad": 1
+      },
+      "titular": "El Estado ya no tiene religión oficial",
+      "leccion": "John Locke defendió la tolerancia religiosa en 1689: el Estado cuida los cuerpos y los bienes; las almas son asunto de cada quien. La Constitución de 1991 hizo laico al Estado colombiano."
+    },
+    {
+      "id": "sufragio",
+      "nombre": "Sufragio universal",
+      "rama": "derechos",
+      "icono": "🗳️",
+      "etapa": 1,
+      "epoca": "violencia",
+      "civismo": 6,
+      "pro": "Todos votan, también las mujeres: mucha legitimidad.",
+      "contra": "Un pueblo que vota exige más cada año.",
+      "efectos": {
+        "legitimidad": 6,
+        "exigencia": 2,
+        "animo": {
+          "c": 2,
+          "a": 2
+        }
+      },
+      "titular": "¡Las mujeres votan!",
+      "leccion": "En Colombia el voto de la mujer se aprobó en 1954 y las mujeres votaron por primera vez en el plebiscito de 1957. Sin el voto de todos, la democracia es de unos pocos."
+    },
+    {
+      "id": "tutela",
+      "nombre": "Acción de tutela",
+      "rama": "derechos",
+      "icono": "📜",
+      "etapa": 2,
+      "epoca": "paz",
+      "civismo": 8,
+      "requiere": [
+        "sufragio"
+      ],
+      "pro": "Cualquiera defiende sus derechos ante un juez: menos abusos y más legitimidad.",
+      "contra": "Los jueces ordenan gastos que no estaban en el presupuesto.",
+      "efectos": {
+        "legitimidad": 4,
+        "rumbo": -0.8,
+        "costoFijo": 12
+      },
+      "titular": "Nace la tutela: los derechos se pueden reclamar",
+      "leccion": "La acción de tutela (artículo 86 de la Constitución de 1991) permite a cualquier persona pedirle a un juez que proteja sus derechos fundamentales en diez días. Es la herramienta jurídica más usada por los colombianos."
+    },
+    {
+      "id": "indigenas",
+      "nombre": "Derechos indígenas y consulta previa",
+      "rama": "derechos",
+      "icono": "🪶",
+      "etapa": 2,
+      "epoca": "paz",
+      "civismo": 8,
+      "requiere": [
+        "sufragio"
+      ],
+      "pro": "El cabildo pijao se vuelve aliado y se protegen el páramo y el agua.",
+      "contra": "Las minas rinden menos y los megaproyectos se frenan.",
+      "efectos": {
+        "igualdad": 3,
+        "ambiente": 3,
+        "minas": -0.3,
+        "consulta": {
+          "prob": 0.1
+        }
+      },
+      "titular": "Los pueblos indígenas serán consultados",
+      "leccion": "La Constitución de 1991 reconoció a Colombia como un país pluriétnico y multicultural, y el Convenio 169 de la OIT obliga a consultar a los pueblos indígenas antes de cualquier obra en sus territorios."
+    },
+    {
+      "id": "progresivo",
+      "nombre": "Impuesto progresivo",
+      "rama": "economia",
+      "icono": "📊",
+      "etapa": 1,
+      "civismo": 6,
+      "pro": "Paga más quien más tiene: más igualdad y más oro de la élite.",
+      "contra": "La élite se enoja y la empresaria saca capital.",
+      "efectos": {
+        "impuestoElite": 0.15,
+        "igualdad": 5,
+        "animo": {
+          "e": -7
+        }
+      },
+      "titular": "Los que más tienen pagarán más",
+      "leccion": "John Rawls defendió que las desigualdades solo son justas si benefician a los que están peor (el principio de diferencia). Thomas Piketty mostró que, sin impuestos progresivos, la riqueza se concentra cada vez más."
+    },
+    {
+      "id": "seguridadSocial",
+      "nombre": "Seguridad social",
+      "rama": "economia",
+      "icono": "🏥",
+      "etapa": 2,
+      "epoca": "modernizacion",
+      "civismo": 8,
+      "requiere": [
+        "jornada"
+      ],
+      "pro": "Salud y pensión para todos: menos pobreza y vejez digna.",
+      "contra": "Cuesta mucho oro por cada habitante.",
+      "efectos": {
+        "costoHab": 0.12,
+        "animo": {
+          "c": 4,
+          "a": 4
+        },
+        "igualdad": 4
+      },
+      "titular": "Salud y pensión para todos los trabajadores",
+      "leccion": "Otto von Bismarck creó el primer seguro social en Alemania en 1883. En Colombia, la Ley 100 de 1993 organizó el sistema de salud y pensiones. Es el corazón del Estado de bienestar."
+    },
+    {
+      "id": "reformaAgraria",
+      "nombre": "Reforma agraria",
+      "rama": "territorio",
+      "icono": "🌾",
+      "etapa": 1,
+      "epoca": "violencia",
+      "civismo": 9,
+      "requiere": [
+        "subsidio"
+      ],
+      "pro": "La tierra ociosa pasa a los campesinos: más igualdad y menos conflicto.",
+      "contra": "Los terratenientes se rebelan y la élite se enoja.",
+      "efectos": {
+        "animo": {
+          "c": 6,
+          "e": -6
+        },
+        "igualdad": 4,
+        "grupos": {
+          "terratenientes": -10,
+          "jornaleros": 6
+        },
+        "conflicto": -5
+      },
+      "titular": "La tierra para quien la trabaja",
+      "leccion": "La tierra es el problema más viejo de Colombia: la Ley 200 de 1936, la reforma de 1961 y el primer punto del Acuerdo de Paz de 2016 intentaron repartirla. Sin tierra para el campesino, el conflicto vuelve."
+    },
+    {
+      "id": "consulta",
+      "nombre": "Consulta popular",
+      "rama": "territorio",
+      "icono": "✋",
+      "etapa": 2,
+      "civismo": 7,
+      "requiere": [
+        "prensa"
+      ],
+      "pro": "El pueblo decide sobre minas, represas y megaproyectos: más legitimidad.",
+      "contra": "A veces dice que no y se pierde el oro de esos proyectos.",
+      "efectos": {
+        "legitimidad": 4,
+        "minas": -0.15,
+        "consulta": {
+          "costo": -1,
+          "prob": 0.05
+        }
+      },
+      "titular": "El pueblo decidirá sobre su territorio",
+      "leccion": "En 2017 el municipio de Cajamarca (Tolima) votó en consulta popular contra la mina de oro La Colosa. La democracia directa deja decidir al pueblo, aunque a veces diga que no."
+    },
+    {
+      "id": "descentralizacion",
+      "nombre": "Descentralización",
+      "rama": "territorio",
+      "icono": "🏘️",
+      "etapa": 2,
+      "civismo": 7,
+      "pro": "Barrios y veredas manejan parte del presupuesto: más legitimidad y ánimo.",
+      "contra": "Con menos control central, crece la corrupción local.",
+      "efectos": {
+        "legitimidad": 4,
+        "animo": {
+          "c": 2,
+          "a": 2
+        },
+        "rumbo": 0.6
+      },
+      "titular": "Los barrios y las veredas manejarán su presupuesto",
+      "leccion": "Alexis de Tocqueville admiró las asambleas de los pueblos de Estados Unidos: la democracia se aprende en lo local. En Colombia los alcaldes se eligen por voto popular desde 1988."
+    },
+    {
+      "id": "paz",
+      "nombre": "Acuerdo de paz y ley de víctimas",
+      "rama": "territorio",
+      "icono": "🤝",
+      "etapa": 2,
+      "epoca": "paz",
+      "civismo": 10,
+      "pro": "Baja el conflicto armado y se repara a las víctimas.",
+      "contra": "Divide a la sociedad: cuesta oro cada año y algo de legitimidad.",
+      "efectos": {
+        "conflicto": -15,
+        "costoFijo": 20,
+        "legitimidad": -2,
+        "igualdad": 3
+      },
+      "titular": "Se firma la paz: las víctimas serán reparadas",
+      "leccion": "La justicia transicional busca verdad, reparación y no repetición más que castigo. Colombia aprobó la Ley de Víctimas en 2011 y firmó el Acuerdo de Paz en 2016; el Nobel de Paz de ese año reconoció el esfuerzo, aunque el plebiscito lo dividió."
+    }
+  ]
+}

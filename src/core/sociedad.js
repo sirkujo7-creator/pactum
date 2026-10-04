@@ -14,6 +14,7 @@ import { efectoMega } from './megaproyectos.js';
 import { fincasActivas, empleoCampo, ambienteCampo } from './fincas.js';
 import { factorAguaClima } from './biomas.js';
 import { industriaActiva, empleoIndustria, ambienteIndustria } from './industria.js';
+import { efectoLeyes } from './civismo.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3 + efectoMega(S, 'energia'); } // fase 6: la represa
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
@@ -47,10 +48,10 @@ export { aporteBosque };
 // Partes de la meta del ambiente (las mismas cuentas de envTarget), para explicarla.
 export function partesAmbiente(S, c) {
   return [['Punto de partida', 62], ['Ley de protección ambiental', hasLaw(S, 'ambiente') ? 12 : 0], ['Parques', Math.min(20, c.parque * 4)], ['Bosques', aporteBosque(S)],
-    industriaActiva(S) ? ['Fábricas (según su producto)', ambienteIndustria(S)] : ['Talleres', -c.taller * 7], ['Minas', -c.mina * 12], fincasActivas(S) ? ['Fincas (según su cultivo)', ambienteCampo(S)] : ['Cultivos', -c.cultivo * 1.5], ['Casas', -c.casa * .4]];
+    industriaActiva(S) ? ['Fábricas (según su producto)', ambienteIndustria(S)] : ['Talleres', -c.taller * 7], ['Minas', -c.mina * 12], fincasActivas(S) ? ['Fincas (según su cultivo)', ambienteCampo(S)] : ['Cultivos', -c.cultivo * 1.5], ['Casas', -c.casa * .4], ['Leyes del árbol de civismo', efectoLeyes(S, 'ambiente')]];
 }
 export function envTarget(S, c) {
-  return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + aporteBosque(S) + (industriaActiva(S) ? ambienteIndustria(S) : -c.taller * 7) - c.mina * 12 + (fincasActivas(S) ? ambienteCampo(S) : -c.cultivo * 1.5) - c.casa * .4;
+  return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + aporteBosque(S) + (industriaActiva(S) ? ambienteIndustria(S) : -c.taller * 7) - c.mina * 12 + (fincasActivas(S) ? ambienteCampo(S) : -c.cultivo * 1.5) - c.casa * .4 + efectoLeyes(S, 'ambiente');
 }
 
 // Ánimo al que tiende cada clase este año.
@@ -61,28 +62,28 @@ export function satTargets(S, c, hunger) {
   const sc = S.stage >= 1 ? Math.min(1, c.escuela * 50 / P, cob.escuela) : .8, hc = S.stage >= 1 ? Math.min(1, c.hospital * 60 / P, cob.hospital) : .8;
   const cov = (sc + hc) * 8;
   // Fase 5: en el terreno en acuarela, la cultura, el deporte y las fiestas también calman la exigencia.
-  const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5)) - culturaTotal(S)) : 0;
+  const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5)) - culturaTotal(S)) + efectoLeyes(S, 'exigencia') : 0; // fase 12: el sufragio exige más
   const ds = D(S).sat;
   const wc = waterCap(S, c), thirst = S.pop > wc ? Math.min(25, (S.pop - wc) / Math.max(1, wc) * 60) : 0;
-  const L = k => hasLaw(S, k) ? 1 : 0, obras = animoPorDesgaste(S), eco = animoEconomia(S, obrasActivas(S));
+  const L = k => hasLaw(S, k) ? 1 : 0, nl = { c: efectoLeyes(S, 'animo.c'), a: efectoLeyes(S, 'animo.a'), e: efectoLeyes(S, 'animo.e') }, obras = animoPorDesgaste(S), eco = animoEconomia(S, obrasActivas(S));
   // partes(): las mismas cuentas separadas por causa, para explicarle al jugador por qué sube o baja cada clase.
   const partes = () => ({
     c: [['Régimen de gobierno', RM(S, 'sc')], ['Punto de partida', 48], ['Impuesto a campesinos', -(S.tx.c - 10) * 2], [hunger ? 'Hambre' : 'Comida suficiente', hunger ? -20 : 5],
       ['Escuelas y hospitales', cov], ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .2], ['Ambiente dañado', S.env < 35 ? -8 : 0],
       [culturaActiva(S) ? C.CULTURA.etiqueta : 'Exigencia de calidad de vida', -expc], ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('subsidio') * 10], ['Falta de agua', -thirst],
-      ['Obras deterioradas', -obras], ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.c]],
+      ['Obras deterioradas', -obras], ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.c], ['Leyes del árbol de civismo', nl.c]],
     a: [['Régimen de gobierno', RM(S, 'sa')], ['Punto de partida', 48], ['Impuesto a artesanos', -(S.tx.a - 12) * 1.8], ['Escuelas y hospitales', cov], ['Parques', Math.min(8, c.parque * 2)],
       ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .1], ['Ambiente dañado', S.env < 35 ? -8 : 0], [culturaActiva(S) ? C.CULTURA.etiqueta : 'Exigencia de calidad de vida', -expc],
       ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3], ['Falta de agua', -thirst], ['Obras deterioradas', -obras],
-      ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.a]],
+      ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.a], ['Leyes del árbol de civismo', nl.a]],
     e: [['Punto de partida', 58], ['Impuesto a la élite', -(S.tx.e - 15) * 1.4], ['Bancos', c.banco * 4], ['Igualdad (a la élite le molesta)', -(S.eq - 50) * .1], ['Inflación', -ip],
-      ['Dificultad', ds], ['Régimen de gobierno', RM(S, 'se')], ['Leyes que la afectan', -(L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)]]
+      ['Dificultad', ds], ['Régimen de gobierno', RM(S, 'se')], ['Leyes que la afectan', -(L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)], ['Leyes del árbol de civismo', nl.e]]
   });
   return {
     sc, expc, thirst, partes,
-    c: RM(S, 'sc') + 48 + 0 - (S.tx.c - 10) * 2 + (hunger ? -20 : 5) + cov - ur * 30 - ip * 1.5 + (S.eq - 50) * .2 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('subsidio') * 10 - thirst) - obras - sinMercado + eco.c,
-    a: RM(S, 'sa') + 48 - (S.tx.a - 12) * 1.8 + cov + Math.min(8, c.parque * 2) - ur * 30 - ip * 1.5 + (S.eq - 50) * .1 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3 - thirst) - obras - sinMercado + eco.a,
-    e: 58 - (S.tx.e - 15) * 1.4 + c.banco * 4 - (S.eq - 50) * .1 - ip + ds + RM(S, 'se') - (L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)
+    c: RM(S, 'sc') + 48 + 0 - (S.tx.c - 10) * 2 + (hunger ? -20 : 5) + cov - ur * 30 - ip * 1.5 + (S.eq - 50) * .2 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('subsidio') * 10 - thirst) - obras - sinMercado + eco.c + nl.c,
+    a: RM(S, 'sa') + 48 - (S.tx.a - 12) * 1.8 + cov + Math.min(8, c.parque * 2) - ur * 30 - ip * 1.5 + (S.eq - 50) * .1 + (S.env < 35 ? -8 : 0) - expc + ds + (L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3 - thirst) - obras - sinMercado + eco.a + nl.a,
+    e: 58 - (S.tx.e - 15) * 1.4 + c.banco * 4 - (S.eq - 50) * .1 - ip + ds + RM(S, 'se') - (L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3) + nl.e
   };
 }
 
