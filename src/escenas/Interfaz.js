@@ -9,7 +9,8 @@ import {
   fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
-  civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe
+  civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
+  rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -578,7 +579,7 @@ export class Interfaz {
   }
   // Fase 7: empieza una época de la historia.
   eraAnio(alTerminar0) {
-    const S = this.S, e = S.eraEv, alTerminar = () => this.cicloAnio(alTerminar0);
+    const S = this.S, e = S.eraEv, alTerminar = () => this.rasgoAnio(() => this.cicloAnio(alTerminar0)); // fase 12: el rasgo de la época
     if (!e || !e.nuevo || !historiaActiva(S)) { alTerminar(); return; }
     e.nuevo = false;
     const E = datosEpoca(e.id), sig = proximaEpoca(S);
@@ -586,6 +587,37 @@ export class Interfaz {
       <p class="small">Esta época trae sus propios dilemas${sig ? ` hasta el año ${sig.desde}` : ''}.</p>
       <div class="phil"><b>Lo que enseña</b><br>${E.leccion}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 12: al empezar cada época se elige el rasgo cultural del pueblo (no se puede saltar).
+  rasgoAnio(alTerminar) {
+    const S = this.S, ep = rasgoPendiente(S);
+    if (!ep || !S.rasgoEv || !S.rasgoEv.nuevo) { alTerminar(); return; }
+    S.rasgoEv.nuevo = false;
+    this.tarjetaRasgo(ep, alTerminar);
+  }
+  tarjetaRasgo(ep, alTerminar) {
+    const S = this.S, T = C.RASGOS.textos, E = datosEpoca(ep);
+    this.tarjeta(`<div class="big">${E.icono}</div><h3>${T.pregunta.replace('{epoca}', E.nombre.toLowerCase())}</h3><p class="small">${T.ayuda}</p>
+      ${opcionesRasgo(ep).map(r => `<button class="opt" data-rasgo="${r.id}"><b>${r.icono} ${r.nombre}</b><small class="pos">✓ ${r.pro}</small><small class="neg">✗ ${r.contra}</small><small><i>${r.leccion}</i></small></button>`).join('')}
+      ${this.estandarte()}<div class="phil"><b>Lo que enseña</b><br>${C.RASGOS.leccion}</div>`, false);
+    this.card.querySelectorAll('[data-rasgo]').forEach(b => b.onclick = () => {
+      if (!elegirRasgo(S, b.dataset.rasgo)) return;
+      this.toast(T.elegido.replace('{rasgo}', rasgosElegidos(S).slice(-1)[0].nombre.toLowerCase()));
+      this.mapa.cambio(); this.render();
+      this.alCerrar = alTerminar || null; this.cerrarTarjeta();
+    });
+  }
+  // El estandarte: los rasgos elegidos, uno por época.
+  estandarte() {
+    const S = this.S, L = rasgosElegidos(S), T = C.RASGOS.textos;
+    if (!L.length) return '';
+    return `<div class="estandarte" aria-label="${T.estandarte}">${L.map(r => `<span title="${r.nombre}"><i>${r.icono}</i><small>${r.nombre}</small></span>`).join('')}</div>`;
+  }
+  seccionIdentidad() {
+    const S = this.S;
+    if (!rasgosActivos(S)) return '';
+    const T = C.RASGOS.textos, L = rasgosElegidos(S);
+    return `<h3>🚩 ${T.titulo}</h3>${L.length ? this.estandarte() + `<ul class="conds">${L.map(r => `<li><b>${r.icono} ${r.nombre}</b> (${datosEpoca(r.epoca).nombre}): ${r.pro} ${r.contra}</li>`).join('')}</ul>` : `<p class="small">${T.vacio}</p>`}`;
   }
   // Fase 7: ciclos de la economía (bonanza, crisis del café, roya, pensiones). Las decisiones no se pueden saltar.
   cicloAnio(alTerminar) {
@@ -687,7 +719,7 @@ export class Interfaz {
     const tabs = Object.entries(GRAFICAS).map(([k, v]) => `<button class="tab${k === this.grafica ? ' on' : ''}" data-g="${k}">${v.n}</button>`).join('');
     const ep = historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null, sig = ep && proximaEpoca(S);
     const epoca = ep ? `<h3>${ep.icono} Época: ${ep.nombre}</h3><p class="small">${ep.texto}${sig ? ` Hasta el año ${sig.desde}; luego, ${sig.nombre.toLowerCase()}.` : ''}</p>` : '';
-    this.cronica.innerHTML = `${epoca}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.innerHTML = `${epoca}${this.seccionIdentidad()}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
     this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
     this.cronica.querySelectorAll('[data-g]').forEach(bt => bt.onclick = () => { this.grafica = bt.dataset.g; this.renderCronica(); });
   }

@@ -48,7 +48,7 @@ export { aporteBosque };
 // Partes de la meta del ambiente (las mismas cuentas de envTarget), para explicarla.
 export function partesAmbiente(S, c) {
   return [['Punto de partida', 62], ['Ley de protección ambiental', hasLaw(S, 'ambiente') ? 12 : 0], ['Parques', Math.min(20, c.parque * 4)], ['Bosques', aporteBosque(S)],
-    industriaActiva(S) ? ['Fábricas (según su producto)', ambienteIndustria(S)] : ['Talleres', -c.taller * 7], ['Minas', -c.mina * 12], fincasActivas(S) ? ['Fincas (según su cultivo)', ambienteCampo(S)] : ['Cultivos', -c.cultivo * 1.5], ['Casas', -c.casa * .4], ['Leyes del árbol de civismo', efectoLeyes(S, 'ambiente')]];
+    industriaActiva(S) ? ['Fábricas (según su producto)', ambienteIndustria(S)] : ['Talleres', -c.taller * 7], ['Minas', -c.mina * 12], fincasActivas(S) ? ['Fincas (según su cultivo)', ambienteCampo(S)] : ['Cultivos', -c.cultivo * 1.5], ['Casas', -c.casa * .4], ['Leyes nuevas y rasgos del pueblo', efectoLeyes(S, 'ambiente')]];
 }
 export function envTarget(S, c) {
   return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + aporteBosque(S) + (industriaActiva(S) ? ambienteIndustria(S) : -c.taller * 7) - c.mina * 12 + (fincasActivas(S) ? ambienteCampo(S) : -c.cultivo * 1.5) - c.casa * .4 + efectoLeyes(S, 'ambiente');
@@ -71,13 +71,13 @@ export function satTargets(S, c, hunger) {
     c: [['Régimen de gobierno', RM(S, 'sc')], ['Punto de partida', 48], ['Impuesto a campesinos', -(S.tx.c - 10) * 2], [hunger ? 'Hambre' : 'Comida suficiente', hunger ? -20 : 5],
       ['Escuelas y hospitales', cov], ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .2], ['Ambiente dañado', S.env < 35 ? -8 : 0],
       [culturaActiva(S) ? C.CULTURA.etiqueta : 'Exigencia de calidad de vida', -expc], ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('subsidio') * 10], ['Falta de agua', -thirst],
-      ['Obras deterioradas', -obras], ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.c], ['Leyes del árbol de civismo', nl.c]],
+      ['Obras deterioradas', -obras], ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.c], ['Leyes nuevas y rasgos del pueblo', nl.c]],
     a: [['Régimen de gobierno', RM(S, 'sa')], ['Punto de partida', 48], ['Impuesto a artesanos', -(S.tx.a - 12) * 1.8], ['Escuelas y hospitales', cov], ['Parques', Math.min(8, c.parque * 2)],
       ['Desempleo', -ur * 30], ['Inflación', -ip * 1.5], ['Igualdad', (S.eq - 50) * .1], ['Ambiente dañado', S.env < 35 ? -8 : 0], [culturaActiva(S) ? C.CULTURA.etiqueta : 'Exigencia de calidad de vida', -expc],
       ['Dificultad', ds], ['Leyes', L('educacion') * 3 + L('jornada') * 8 + L('arancel') * 3], ['Falta de agua', -thirst], ['Obras deterioradas', -obras],
-      ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.a], ['Leyes del árbol de civismo', nl.a]],
+      ['Mercado lejos', -sinMercado], ['Precios y ciclo económico', eco.a], ['Leyes nuevas y rasgos del pueblo', nl.a]],
     e: [['Punto de partida', 58], ['Impuesto a la élite', -(S.tx.e - 15) * 1.4], ['Bancos', c.banco * 4], ['Igualdad (a la élite le molesta)', -(S.eq - 50) * .1], ['Inflación', -ip],
-      ['Dificultad', ds], ['Régimen de gobierno', RM(S, 'se')], ['Leyes que la afectan', -(L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)], ['Leyes del árbol de civismo', nl.e]]
+      ['Dificultad', ds], ['Régimen de gobierno', RM(S, 'se')], ['Leyes que la afectan', -(L('jornada') * 6 + L('ambiente') * 4 + L('arancel') * 3)], ['Leyes nuevas y rasgos del pueblo', nl.e]]
   });
   return {
     sc, expc, thirst, partes,

@@ -20,7 +20,7 @@ export function estadoCivismo(S) { return estado(S); }
 // ---------- Puntos de civismo ----------
 export function civismoAnual(S) {
   const P = K().puntos, c = counts(S);
-  const v = P.base + P.escuela * c.escuela + P.biblioteca * c.biblioteca + P.agora * c.agora + P.universidad * c.universidad
+  const v = efectoLeyes(S, 'civismo') + P.base + P.escuela * c.escuela + P.biblioteca * c.biblioteca + P.agora * c.agora + P.universidad * c.universidad
     + (hasLaw(S, 'prensa') ? P.prensa : 0) + (S.tr >= P.legitimidad.desde ? P.legitimidad.suma : 0);
   return Math.round(v * 10) / 10;
 }
@@ -71,15 +71,12 @@ export function marcarUsada(S, id) { if (civismoActivo(S)) estado(S).usadas[id] 
 // ---------- Efectos de las leyes nuevas ----------
 // Suma un efecto (p. ej. 'legitimidad', 'animo.c', 'grupos.terratenientes', 'consulta.prob') de las leyes vigentes.
 export function efectoLeyes(S, clave) {
-  if (!civismoActivo(S) || !S.laws) return 0;
+  if (!civismoActivo(S)) return 0;
   const [k, sub] = clave.split('.');
   let v = 0;
-  for (const l of C.LEYES_NUEVAS) {
-    if (!hasLaw(S, l.id)) continue;
-    const e = l.efectos[k];
-    if (e === undefined) continue;
-    v += sub ? (e[sub] || 0) : e;
-  }
+  const suma = efectos => { const e = efectos[k]; if (e !== undefined) v += sub ? (e[sub] || 0) : e; };
+  for (const l of C.LEYES_NUEVAS) if (hasLaw(S, l.id)) suma(l.efectos);
+  for (const r of rasgosElegidos(S)) suma(r.efectos); // paso 2: los rasgos del pueblo usan las mismas claves
   return v;
 }
 // Costo anual de las leyes nuevas (por habitante y fijo), antes de multiplicar por S.price.
@@ -88,7 +85,32 @@ export function costoLeyesNuevas(S) { return efectoLeyes(S, 'costoHab') * S.pop 
 // Cierre del año: suma los puntos de civismo.
 export function civismoDelAnio(S) {
   if (!civismoActivo(S)) return [];
+  rasgosDelAnio(S);
   const E = estado(S);
   E.p = clamp(Math.round((E.p + civismoAnual(S)) * 10) / 10, 0, 999);
+  return [];
+}
+
+// ---------- Paso 2: el rasgo cultural de cada época ----------
+// Al empezar cada época de la historia se elige uno de tres rasgos (src/data/rasgos.json); se acumulan en S.rasgos
+// ({ época: rasgo }) y sus efectos se suman con efectoLeyes().
+export function rasgosActivos(S) { return civismoActivo(S) && !!C.RASGOS && !!epocaHistorica(S); }
+export function opcionesRasgo(epoca) { return (C.RASGOS.epocas[epoca] || []); }
+export function datosRasgo(id) { for (const L of Object.values(C.RASGOS.epocas)) { const r = L.find(x => x.id === id); if (r) return r; } return null; }
+export function rasgosElegidos(S) {
+  if (!S.rasgos || !C.RASGOS) return [];
+  return Object.entries(S.rasgos).map(([ep, id]) => ({ epoca: ep, ...datosRasgo(id) })).filter(r => r.efectos);
+}
+export function rasgoPendiente(S) { const e = rasgosActivos(S) ? epocaHistorica(S) : null; return e && opcionesRasgo(e).length && !(S.rasgos && S.rasgos[e]) ? e : null; }
+export function elegirRasgo(S, id) {
+  const e = rasgoPendiente(S);
+  if (!e || !opcionesRasgo(e).some(r => r.id === id)) return false;
+  (S.rasgos = S.rasgos || {})[e] = id; S.rasgoEv = null;
+  S.log.unshift({ y: S.year, t: C.RASGOS.textos.elegido.replace('{rasgo}', datosRasgo(id).nombre.toLowerCase()) });
+  return true;
+}
+export function rasgosDelAnio(S) {
+  const e = rasgoPendiente(S);
+  if (e && !(S.rasgoEv && S.rasgoEv.epoca === e)) S.rasgoEv = { epoca: e, nuevo: true };
   return [];
 }
