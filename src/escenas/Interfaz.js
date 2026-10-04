@@ -7,7 +7,8 @@ import {
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
   fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
-  avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera
+  avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
+  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -144,8 +145,8 @@ export class Interfaz {
     return this.iconos[clave] || (this.iconos[clave] = iconoObra(k, S.stage, S.reg));
   }
   // Fase 10: la finca (el antiguo cultivo) tiene su propio nombre y descripción.
-  descripcion(k) { return k === 'cultivo' && fincasActivas(this.S) ? C.CULTIVOS.textos.finca : C.B[k].d; }
-  nombre(k) { return k === 'cultivo' && fincasActivas(this.S) ? C.CULTIVOS.nombreFinca : k === 'agora' ? seatName(this.S) : k === 'calle' ? C.CALLES.textos.herramienta : k === 'quitarCalle' ? C.CALLES.textos.quitar : C.B[k].n; }
+  descripcion(k) { return k === 'cultivo' && fincasActivas(this.S) ? C.CULTIVOS.textos.finca : k === 'taller' && industriaActiva(this.S) ? C.INDUSTRIA.textos.fabrica : C.B[k].d; }
+  nombre(k) { return k === 'cultivo' && fincasActivas(this.S) ? C.CULTIVOS.nombreFinca : k === 'taller' && industriaActiva(this.S) ? C.INDUSTRIA.nombreFabrica : k === 'agora' ? seatName(this.S) : k === 'calle' ? C.CALLES.textos.herramienta : k === 'quitarCalle' ? C.CALLES.textos.quitar : C.B[k].n; }
   hayTarjeta() { return !this.velo.hidden; }
 
   // ---------- Paneles ----------
@@ -302,7 +303,7 @@ export class Interfaz {
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${this.seccionRiesgo()}${this.seccionMega()}
-      ${this.seccionEconomia()}${this.seccionCanasta()}${this.seccionClimaTerritorio()}${this.seccionCiclos()}
+      ${this.seccionEconomia()}${this.seccionCanasta()}${this.seccionIndustria()}${this.seccionClimaTerritorio()}${this.seccionCiclos()}
       ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
@@ -682,6 +683,7 @@ export class Interfaz {
       const ap = x.ob ? null : aporteObra(S, i);
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
       if (x.b === 'cultivo' && fincasActivas(S) && !x.ob) hijos.push(this.fichaFinca(i)); // fase 10
+      if (x.b === 'taller' && industriaActiva(S) && !x.ob) hijos.push(this.fichaFabrica(i)); // fase 11
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
       if (conectada(S, i)) hijos.push(el('span', { class: 'especial', text: `${C.CALLES.textos.ficha}${factorCalle(S, i) > 1 ? `: vende ${Math.round(C.CALLES.comercio * 100)}% más` : radioCalle(S, i) && C.COB.radios[x.b] ? ': su servicio llega una casilla más lejos' : x.b === 'casa' ? ': evade menos impuestos' : ''}.` }));
@@ -1260,6 +1262,54 @@ export class Interfaz {
       this.mapa.refrescarCasilla(i); this.render();
       this.cerrarTarjeta();
     });
+  }
+  // ---------- Fase 11: la fábrica y sus productos ----------
+  lineaInsumo(pr) {
+    const T = C.INDUSTRIA.textos, D = datosProducto(pr);
+    if (!D.insumo) return '';
+    const I = insumo(this.S, pr);
+    return T.insumo.replace('{insumo}', nombreInsumo(pr)).replace('{tiene}', I.tiene).replace('{necesita}', I.necesita);
+  }
+  fichaFabrica(i) {
+    const S = this.S, x = S.map[i], pr = productoDe(x), D = datosProducto(pr), p = produccionFabrica(S, i), T = C.INDUSTRIA.textos;
+    const estado = !p.encendida ? `<span class="neg">${T.energia}</span>` : `${T.ganancia.replace('{oro}', Math.round(p.renta * S.price))} y emplea ${p.empleo}. ${D.insumo ? (p.f < 1 ? `<span class="neg">${this.lineaInsumo(pr)}</span>` : this.lineaInsumo(pr)) : ''}`;
+    return el('div', { class: 'aporte', style: 'grid-column:1/-1' }, [
+      el('span', { html: `<b>${D.icono} ${D.nombre}.</b> ${estado} ` }),
+      el('button', { class: 'btn', style: 'margin-top:6px', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.tarjetaProducto(i) } }, 'Cambiar de producto')
+    ]);
+  }
+  // Elegir qué producir: cada producto con su materia prima, lo que deja y si ya está desbloqueado.
+  tarjetaProducto(i, alTerminar) {
+    const S = this.S, x = S.map[i], K = C.INDUSTRIA, T = K.textos, sug = mejorProducto(S, i);
+    const fila = pr => {
+      const D = datosProducto(pr), no = puedeProducir(S, i, pr), actual = productoDe(x) === pr, abierto = productoDisponible(S, pr);
+      const I = insumo(S, pr), f = insumoSi(S, i, pr);
+      return `<button class="opt${actual ? ' on' : ''}" data-pr="${pr}" ${no && !actual ? 'disabled' : ''}><b>${abierto ? D.icono : '🔒'} ${D.nombre}</b>${actual ? ' <small>· lo que produce hoy</small>' : ''}
+        <small>${D.texto}</small>
+        ${abierto ? `<small>${D.insumo ? `Necesita ${D.insumo.porFabrica} ${nombreInsumo(pr)} por fábrica; tienes ${I.tiene}. ` : ''}Al año: ${D.renta ? `hasta ${Math.round(D.renta * S.price)} de oro (hoy unos ${Math.round(D.renta * f * S.price)})` : 'casi sin ganancia'} · ${D.empleo} empleos · ambiente −${Math.abs(D.ambiente)}.</small>
+        <small>${x.nuevaF ? 'El primer producto va incluido en la fábrica nueva.' : `Cambiar cuesta ${costoCambio(S)} de oro.`}${no && !actual && abierto ? ` <span class="neg">${no}</span>` : ''}</small>` : `<small class="neg">${T.bloqueado.replace('{req}', requisitoProducto(S, pr))}</small>`}</button>`;
+    };
+    this.tarjeta(`<div class="big">🏭</div><h3>${T.elegir}</h3><p class="small">${T.ayuda.replace('{costo}', costoCambio(S))}${sug !== 'artesanias' ? ` Con lo que tienes hoy, deja más: <b>${datosProducto(sug).nombre.toLowerCase()}</b>.` : ''}</p>
+      ${listaProductos().map(fila).join('')}<div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">${x.nuevaF ? `Dejar ${datosProducto(productoDe(x)).nombre.toLowerCase()}` : 'Cerrar'}</button>`);
+    this.alCerrar = alTerminar || null; this.boton('okB', () => { delete x.nuevaF; this.cerrarTarjeta(); });
+    this.card.querySelectorAll('[data-pr]').forEach(b => b.onclick = () => {
+      const pr = b.dataset.pr;
+      if (productoDe(x) === pr) { delete x.nuevaF; this.cerrarTarjeta(); return; }
+      if (!producir(S, i, pr)) return;
+      this.toast(T.producido.replace('{producto}', datosProducto(pr).nombre.toLowerCase()));
+      this.mapa.refrescarCasilla(i); this.render();
+      this.cerrarTarjeta();
+    });
+  }
+  seccionIndustria() {
+    const S = this.S;
+    if (!industriaActiva(S) || S.stage < 1) return '';
+    const T = C.INDUSTRIA.textos, L = S.map.map((x, i) => x.b === 'taller' && !x.ob ? i : -1).filter(i => i >= 0);
+    if (!L.length) return `<h3>${T.seccion}</h3><p class="small">${T.sinFabricas}</p>`;
+    let total = 0;
+    const filas = L.map(i => { const pr = productoDe(S.map[i]), D = datosProducto(pr), p = produccionFabrica(S, i), oro = Math.round(p.renta * S.price); total += oro;
+      return `<tr><td>${D.icono} ${D.nombre}</td><td><small class="${!p.encendida || p.f < 1 ? 'neg' : ''}">${!p.encendida ? 'sin energía' : D.insumo ? `materia prima ${Math.round(p.f * 100)}%` : ''}</small></td><td>${oro}</td></tr>`; }).join('');
+    return `<h3>${T.seccion}</h3><p class="small">${T.seccionAyuda}</p><div class="ledger"><table class="budget"><tr><th style="text-align:left">Fábrica</th><th></th><th>Oro al año</th></tr>${filas}<tr class="tot"><td>Total de la industria</td><td></td><td>${total}</td></tr></table></div><p class="small"><i>${C.INDUSTRIA.leccion}</i></p>`;
   }
   // ---------- Fase 9: guerra con otra polis ----------
   estadoFrontera(id) {

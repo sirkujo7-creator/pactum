@@ -410,6 +410,16 @@ function recetas() {
     for (let k = 0; k < 3; k++) for (let j = 0; j < 3 - k; j++) { g.fillStyle = (j + k) % 2 ? '#B5654A' : '#A9573F'; g.fillRect(-9 + j * 5 + k * 2.5, -2 - k * 2.6, 4.6, 2.4); }
     g.strokeStyle = '#8A6A44'; g.lineWidth = 1.6; g.lineCap = 'round'; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(3 + k * 1.2, -1 - k * 1.8); g.lineTo(11 + k * 1.2, -3 - k * 1.8); g.stroke(); }
   }]);
+  // Fase 11: la carga de cada fábrica junto a su puerta, para ver en el mapa qué produce.
+  const op = { n: 1, bw: .4, bal: .6 };
+  const saco = (g, r, x, y, col) => { ovalo(g, x, y - 3, 3.4, 3.6, col, r, op); g.fillStyle = shade(col, -.3); g.fillRect(x - 1.2, y - 7.4, 2.4, 1.2); };
+  const caja = (g, r, x, y, w, h, col) => { pintar(g, [[x - w, y], [x + w, y], [x + w, y - h], [x - w, y - h]], col, r, op); g.fillStyle = shade(col, -.35); g.fillRect(x - w, y - h * .55, w * 2, .7); };
+  L.push(['carga-trilladora', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); saco(g, r, -5, 0, '#A88A5E'); saco(g, r, 2, 0, '#9C7E54'); saco(g, r, -1.5, -5, '#B3966A'); g.fillStyle = FR.siena; g.font = 'bold 4px serif'; g.fillText('C', -2.6, -6.6); }]);
+  L.push(['carga-molino', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); saco(g, r, -5, 0, '#EDE6D6'); saco(g, r, 2, 0, '#E2DACA'); saco(g, r, -1.5, -5, '#F4EEE2'); }]);
+  L.push(['carga-chocolate', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); caja(g, r, -4, 0, 4, 5, '#8A5A3C'); caja(g, r, 4, 0, 4, 5, '#7A4A2E'); caja(g, r, 0, -5, 4, 4.5, '#946446'); }]);
+  L.push(['carga-textiles', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); [[-5, 0, FR.rojo], [1, 0, FR.ocre], [7, 0, FR.azul], [-2, -4.5, FR.cal], [4, -4.5, FR.tierraVerde]].forEach(([x, y, col]) => { ovalo(g, x, y - 2.2, 3, 2.3, col, r, op); ovalo(g, x - 2.4, y - 2.2, .9, 2, shade(col, -.25), r, { n: 0, borde: false }); }); }]);
+  L.push(['carga-fundicion', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); for (let k = 0; k < 3; k++) for (let j = 0; j < 3 - k; j++) caja(g, r, -6 + j * 5 + k * 2.5, -k * 2.4, 2.4, 2.3, k === 2 ? '#C6683E' : '#7D7A76'); }]);
+  L.push(['carga-artesanias', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); ovalo(g, -5, -3, 3.4, 3.2, FR.ocreRojo, r, op); ovalo(g, -5, -6, 1.8, .8, shade(FR.ocreRojo, -.3), r, { n: 0, borde: false }); pintar(g, [[0, 0], [7, 0], [8, -5], [-1, -5]], '#C9A86A', r, op); ovalo(g, 3.5, -8, 3.4, 1.4, '#E6CF96', r, op); }]);
   L.push(['humo', 16, 16, 8, 8, g => { const gr = g.createRadialGradient(0, 0, 0, 0, 0, 7); gr.addColorStop(0, 'rgba(142,138,134,.9)'); gr.addColorStop(1, 'rgba(142,138,134,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); }]);
   return L;
 }
@@ -456,6 +466,8 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];
     case 'finca': return []; // fase 10: arroz, aguacate, algodón y ganadería sin sombrío
     case 'taller': return [{ k: 'taller', humo: [11, -36] }];
+    case 'taller-trilladora': case 'taller-molino': case 'taller-chocolate': case 'taller-textiles': case 'taller-fundicion': case 'taller-artesanias':
+      return [{ k: 'taller', humo: [11, -36] }, { k: 'carga-' + k.slice(7), du: .28, dv: .3 }]; // fase 11: lo que produce
     case 'mina': return [{ k: 'mina', du: .05, dv: .05, humo: [-1, -6], polvo: true }];
     default: return [{ k }];
   }

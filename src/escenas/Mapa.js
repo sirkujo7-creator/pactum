@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -191,7 +191,7 @@ export class Mapa extends Phaser.Scene {
       return;
     }
     const vacio = x.b === 'mercado' && precioAlimento(this.S) >= 1.3; // fase 2: comida cara, puestos vacíos
-    const kObra = x.b === 'cultivo' && x.cv ? ({ cafe: 'cafetal', cacao: 'cafetal', pancoger: 'cultivo', platano: 'cultivo' }[x.cv] || 'finca') : x.b; // fase 10: sombrío según el cultivo
+    const kObra = x.b === 'cultivo' && x.cv ? ({ cafe: 'cafetal', cacao: 'cafetal', pancoger: 'cultivo', platano: 'cultivo' }[x.cv] || 'finca') : x.b === 'taller' && x.pr ? 'taller-' + x.pr : x.b; // fase 10: sombrío según el cultivo; fase 11: la carga de la fábrica
     for (const f of figurasDeObra(kObra, i, this.S.stage, this.S.reg, epocaVisual(this.S))) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
       if (vacio && f.k.startsWith('mercado')) f.k += 'v';
@@ -249,7 +249,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x) { return `${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}`; } // fase 10: el cultivo y si ya produce
+  huella(x) { return `${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}`; } // fase 10: el cultivo y si ya produce
   // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
   revisarRio() {
     const n = desvios(this.S).length;
@@ -350,6 +350,7 @@ export class Mapa extends Phaser.Scene {
     this.animarObra(i);
     Sonido.tap();
     if (k === 'cultivo' && fincasActivas(this.S)) setTimeout(() => this.ui.tarjetaCultivo(i), 350); // fase 10: elegir qué sembrar
+    if (k === 'taller' && industriaActiva(this.S)) setTimeout(() => this.ui.tarjetaProducto(i), 350); // fase 11: elegir qué producir
     this.ui.logros();
     const guia = checkGuide(this.S);
     const ob = this.S.map[i].ob, empieza = ob ? C.OBRAS.textos.empieza.replace('{obra}', C.B[k].a).replace('{n}', ob.n === 1 ? 'un año' : ob.n + ' años') : '';

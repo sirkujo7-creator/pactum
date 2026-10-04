@@ -43,6 +43,7 @@ export function build(S, k, i, ofertaElegida) {
   if (x.mk) { S.undo[S.undo.length - 1].mk = x.mk; delete x.mk; } // fase 4: construir encima borra la huella
   if (climaActivo(S)) x.ya = S.year; // fase 5: año de construcción (las obras viejas son patrimonio)
   if (k === 'cultivo' && fincasActivas(S)) { x.cv = mejorCultivo(S, i, 'comida'); x.cvDesde = S.year; x.nueva = true; } // fase 10: se elige el cultivo en su ficha
+  if (k === 'taller' && industriaActiva(S)) x.nuevaF = true; // fase 11: el primer producto va incluido
   empezarObra(S, i, k, total, o ? o.anios : undefined);
   const nLater = S.later.length, aviso = aplicarOferta(S, i, k, o);
   // Deshacer también devuelve el soborno (y borra el escándalo pendiente).
@@ -64,7 +65,7 @@ export function undoBuild(S) {
   const u = S.undo.pop();
   if (!u) return null;
   const x = S.map[u.i];
-  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; S.gold += u.paid;
+  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; S.gold += u.paid;
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
   if (u.rel) restaurarRelaciones(S, u.rel);
@@ -81,7 +82,7 @@ export function demolish(S, i) {
   const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3);
   // Fase 5: demoler patrimonio cuesta legitimidad y queda en la memoria.
   if (esPatrimonio(S, x)) { S.tr = clamp(S.tr - C.MEMORIA.demolerPatrimonio, 0, 100); recordar(S, 'olvido', 2); }
-  S.gold += g; x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva;
+  S.gold += g; x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF;
   if (S.pop > cap(S)) S.pop = cap(S);
   return g;
 }
@@ -94,6 +95,7 @@ import { finance } from './hacienda.js';
 import { envTarget, satTargets } from './sociedad.js';
 import { counts } from './reglas.js';
 import { esPatrimonio, recordar } from './memoria.js';
+import { industriaActiva } from './industria.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
