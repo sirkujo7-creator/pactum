@@ -43,7 +43,7 @@
     "probabilidadDilema": 0.85,
     "exigenciaAnual": 0.5,
     "recompensaGuia": 0,
-    "multiplicadorMaloSinRachas": 1.24,
+    "multiplicadorMaloSinRachas": 1.40,
     "rachaParaBueno": 2,
     "probBueno": 0.55
   }
