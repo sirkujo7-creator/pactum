@@ -10,6 +10,7 @@ import { genTerreno } from './terreno.js';
 import { rindeObra } from './desgaste.js';
 import { precioCafe } from './economia.js';
 import { factorRoya } from './ciclos.js';
+import { azar, clamp } from './azar.js';
 
 const K = () => C.CULTIVOS;
 export function fincasActivas(S) { return climaActivo(S) && !!C.CULTIVOS; }
@@ -48,8 +49,10 @@ export function anioCosecha(S, x) { const D = datosCultivo(cultivoDe(x)); return
 export function produce(S, x) { return S.year >= anioCosecha(S, x); }
 // Golpe de la sequía (El Niño) a los cultivos que piden mucha agua.
 function factorSequia(S, D) { return D.sequia && S.clima && S.clima.fenomeno === 'nino' ? D.sequia : 1; }
-// Precio de cada cultivo (fase 10, paso 2 traerá sus ciclos); hoy el café sigue su mercado y la roya.
-export function precioCultivo(S, cv) { return cv === 'cafe' ? precioCafe(S) * factorRoya(S) : 1; }
+// Precio de cada cultivo (1 = normal). El café sigue su mercado (bonanzas, crisis y roya); los demás, su propio
+// ciclo en S.precios (fase 10, paso 2).
+export function precioCultivo(S, cv) { return cv === 'cafe' ? precioCafe(S) * factorRoya(S) : (S.precios && S.precios[cv] ? S.precios[cv].p : 1); }
+export function fasePrecio(S, cv) { return S.precios && S.precios[cv] ? S.precios[cv].fase : 'normal'; }
 
 // Producción de una finca en la casilla i: { comida, renta } al año (renta antes de multiplicar por S.price).
 export function produccionFinca(S, i) {
@@ -109,12 +112,60 @@ export function migrarFincas(S) {
     if (x.b === 'cultivo' && !x.cv) x.cv = 'pancoger';
   });
 }
+// ---------- Precios con ciclos (fase 10, paso 2) ----------
+// Cada año el precio se mueve un poco al azar y vuelve hacia su nivel normal (que puede subir con los años);
+// a veces llega una bonanza o una crisis de varios años. El algodón tiene su auge y su desplome (El Espinal).
+const normal = () => { let s = 0; for (let k = 0; k < 6; k++) s += azar(); return (s - 3) / Math.sqrt(.5); };
+function nivelBase(S, cv) {
+  const M = datosCultivo(cv).mercado, A = M.auge;
+  let b = 1 + (M.tendencia && S.year >= (M.desde || 0) ? M.tendencia * (S.year - (M.desde || 0)) : 0);
+  if (A && S.year >= A.desde + A.anios) b = A.despues;
+  return b;
+}
+export function preciosDelAnio(S) {
+  const news = [], ev = [], T = K().textos;
+  if (!S.precios) S.precios = {};
+  const tiene = canasta(S);
+  for (const cv of listaCultivos()) {
+    const M = datosCultivo(cv).mercado;
+    if (!M || cv === 'cafe') continue;
+    const P = S.precios[cv] || (S.precios[cv] = { p: 1, fase: 'normal', hasta: 0 });
+    const base = nivelBase(S, cv), A = M.auge;
+    // Auge del algodón: un precio altísimo durante unos años y después el desplome.
+    if (A && S.year === A.desde) { P.fase = 'auge'; P.hasta = S.year + A.anios - 1; P.p = A.factor; news.push(T.auge.replace('{precio}', A.factor.toLocaleString('es-CO'))); ev.push({ tipo: 'auge', cv }); continue; }
+    if (A && S.year === A.desde + A.anios) { P.fase = 'normal'; P.p = A.despues; news.push(T.desplome); ev.push({ tipo: 'desplome', cv }); continue; }
+    if (P.fase !== 'normal' && S.year <= P.hasta) continue; // la bonanza o la crisis siguen
+    if (P.fase !== 'normal') P.fase = 'normal';
+    P.p = clamp(P.p * Math.exp(normal() * M.volatilidad) + (base - P.p) * M.regreso, .3, 2.5);
+    const r = azar(), pb = M.bonanza ? M.bonanza.prob : 0, pc = M.crisis ? M.crisis.prob : 0;
+    const fase = r < pb ? 'bonanza' : r < pb + pc ? 'crisis' : null;
+    if (fase) {
+      const F = M[fase];
+      P.fase = fase; P.hasta = S.year + F.anios - 1; P.p = clamp(base * F.factor, .3, 2.5);
+      // Solo se avisa si el jugador siembra ese cultivo.
+      if (tiene[cv]) { news.push(T[fase].replace('{cultivo}', datosCultivo(cv).nombre.toLowerCase()).replace('{precio}', P.p.toLocaleString('es-CO', { maximumFractionDigits: 2 }))); ev.push({ tipo: fase, cv }); }
+    }
+  }
+  if (ev.length) S.preciosEv = ev;
+  return news;
+}
+// Canasta agrícola: oro de cada cultivo este año y su peso en el total.
+export function canastaOro(S) {
+  const oro = Object.fromEntries(listaCultivos().map(k => [k, 0])), fincas = canasta(S);
+  S.map.forEach((x, i) => { if (esFinca(x) && !x.ob) oro[cultivoDe(x)] += produccionFinca(S, i).renta * S.price; });
+  const total = Object.values(oro).reduce((a, b) => a + b, 0);
+  const filas = listaCultivos().filter(k => fincas[k]).map(k => ({ cv: k, fincas: fincas[k], oro: Math.round(oro[k]), parte: total ? oro[k] / total : 0, precio: precioCultivo(S, k), fase: k === 'cafe' ? (S.ciclo && S.ciclo.cafe ? S.ciclo.cafe.tipo : 'normal') : fasePrecio(S, k) }));
+  filas.sort((a, b) => b.oro - a.oro);
+  return { filas, total: Math.round(total), mayor: filas[0] && total ? filas[0] : null };
+}
+
 // Cierre del año: avisa las primeras cosechas.
 export function fincasDelAnio(S) {
   if (!fincasActivas(S)) return [];
   migrarFincas(S);
+  const precios = preciosDelAnio(S);
   S.map.forEach(x => { delete x.nueva; }); // la siembra gratis es solo el año en que se construye
   const news = [];
   S.map.forEach(x => { if (esFinca(x) && x.cvDesde !== undefined && anioCosecha(S, x) === S.year && datosCultivo(x.cv).madura) news.push(K().textos.primera.replace('{cultivo}', datosCultivo(x.cv).nombre.toLowerCase())); });
-  return [...new Set(news)];
+  return [...precios, ...new Set(news)];
 }

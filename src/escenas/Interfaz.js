@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -301,7 +301,7 @@ export class Interfaz {
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${this.seccionRiesgo()}${this.seccionMega()}
-      ${this.seccionEconomia()}${this.seccionCiclos()}
+      ${this.seccionEconomia()}${this.seccionCanasta()}${this.seccionCiclos()}
       ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
@@ -558,7 +558,7 @@ export class Interfaz {
   // Fase 7: ciclos de la economía (bonanza, crisis del café, roya, pensiones). Las decisiones no se pueden saltar.
   cicloAnio(alTerminar) {
     const S = this.S, L = S.cicloEv;
-    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; this.amenazaAnio(alTerminar); return; }
+    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; this.preciosAnio(() => this.amenazaAnio(alTerminar)); return; } // fase 10: precios de los cultivos
     const e = L.shift(), K = C.CICLOS, sigue = () => this.cicloAnio(alTerminar);
     const fin = (msg) => { if (msg) this.toast(msg); this.mapa.cambio(); this.render(); this.alCerrar = sigue; this.cerrarTarjeta(); };
     if (e.tipo === 'bonanza') {
@@ -588,6 +588,17 @@ export class Interfaz {
     } else sigue();
   }
   // Fase 7: epidemias, avenidas torrenciales y sequías largas.
+  // Fase 10: bonanzas y crisis de los cultivos que siembra el jugador, y el auge y desplome del algodón.
+  preciosAnio(alTerminar) {
+    const S = this.S, L = S.preciosEv;
+    S.preciosEv = null;
+    if (!L || !L.length || !fincasActivas(S)) { alTerminar(); return; }
+    const T = C.CULTIVOS.textos, K = C.CULTIVOS.canasta.textos;
+    const lineas = L.map(e => { const D = datosCultivo(e.cv), p = S.precios[e.cv].p.toLocaleString('es-CO', { maximumFractionDigits: 2 }); return `<p>${D.icono} ${(T[e.tipo] || '').replace('{cultivo}', D.nombre.toLowerCase()).replace('{precio}', p)}</p>`; }).join('');
+    const sube = L.some(e => e.tipo === 'bonanza' || e.tipo === 'auge');
+    this.tarjeta(`<div class="big">${sube ? '📈' : '📉'}</div><h3>El mercado del campo</h3>${lineas}<p class="small">Mira tu canasta en <b>Hacienda → ${K.titulo}</b>. En cada finca puedes cambiar de cultivo, pero la siembra cuesta y algunos tardan años en producir.</p><div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
   amenazaAnio(alTerminar) {
     const S = this.S, e = S.amenEv, K = C.AMENAZAS;
     if (e && e.tipo === 'avenida' && amenazasActivas(S) && this.escena('avenida', e, () => this.amenazaAnio(alTerminar))) return;
@@ -744,6 +755,18 @@ export class Interfaz {
     const m = tasaMigracion(S);
     if (S.year >= K.migracion.desde) filas.push(`<p class="small">🧳 Cada año se va a la ciudad el <b>${(m * 100).toLocaleString('es-CO', { maximumFractionDigits: 1 })}%</b> de la población. ${K.migracion.leccion}</p>`);
     return filas.length ? `<h3>Ciclos de la economía</h3>${filas.join('')}` : '';
+  }
+  // Fase 10: canasta agrícola: cuánto oro da cada cultivo, su precio y qué tan concentrada está la economía del campo.
+  seccionCanasta() {
+    const S = this.S;
+    if (!fincasActivas(S)) return '';
+    const K = C.CULTIVOS.canasta, T = K.textos, c = canastaOro(S);
+    if (!c.filas.length) return '';
+    const fase = f => ({ bonanza: ' <small class="pos">bonanza</small>', auge: ' <small class="pos">auge</small>', crisis: ' <small class="neg">crisis</small>' }[f] || '');
+    const filas = c.filas.map(f => { const D = datosCultivo(f.cv); return `<tr><td>${D.icono} ${D.nombre} <small>(${f.fincas})</small>${fase(f.fase)}</td><td><small class="${f.precio > 1.05 ? 'pos' : f.precio < .95 ? 'neg' : ''}">precio ×${f.precio.toLocaleString('es-CO', { maximumFractionDigits: 2 })}</small></td><td>${f.oro}${c.total ? ` <small>(${Math.round(f.parte * 100)}%)</small>` : ''}</td></tr>`; }).join('');
+    const M = c.mayor, concentrada = M && M.parte >= K.concentrado;
+    const juicio = !c.total ? '' : concentrada ? `<p class="small neg">${T.concentrada.replace('{pct}', Math.round(M.parte * 100)).replace('{cultivo}', datosCultivo(M.cv).nombre.toLowerCase())}</p>` : `<p class="small pos">${T.diversa}</p>`;
+    return `<h3>${T.titulo}</h3><p class="small">${T.ayuda}</p><div class="ledger"><table class="budget"><tr><th style="text-align:left">Cultivo (fincas)</th><th></th><th>Oro al año</th></tr>${filas}<tr class="tot"><td>Total del campo</td><td></td><td>${c.total}</td></tr></table></div>${juicio}<p class="small"><i>${T.leccion}</i></p>`;
   }
   // Fase 1: control de mantenimiento (desde 25 habitantes), estado de las obras y reparación.
   seccionMantenimiento() {

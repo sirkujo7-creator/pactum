@@ -30,6 +30,20 @@
         "calido": 1,
         "templado": 1,
         "frio": 0.75
+      },
+      "mercado": {
+        "volatilidad": 0.03,
+        "regreso": 0.3,
+        "bonanza": {
+          "prob": 0.0,
+          "factor": 1,
+          "anios": 0
+        },
+        "crisis": {
+          "prob": 0.0,
+          "factor": 1,
+          "anios": 0
+        }
       }
     },
     "arroz": {
@@ -48,6 +62,20 @@
         "calido": 1,
         "templado": 0.35,
         "frio": 0
+      },
+      "mercado": {
+        "volatilidad": 0.06,
+        "regreso": 0.25,
+        "bonanza": {
+          "prob": 0.04,
+          "factor": 1.35,
+          "anios": 2
+        },
+        "crisis": {
+          "prob": 0.05,
+          "factor": 0.7,
+          "anios": 2
+        }
       }
     },
     "cafe": {
@@ -82,6 +110,20 @@
         "calido": 1,
         "templado": 0.9,
         "frio": 0.3
+      },
+      "mercado": {
+        "volatilidad": 0.05,
+        "regreso": 0.3,
+        "bonanza": {
+          "prob": 0.03,
+          "factor": 1.3,
+          "anios": 2
+        },
+        "crisis": {
+          "prob": 0.03,
+          "factor": 0.75,
+          "anios": 2
+        }
       }
     },
     "cacao": {
@@ -99,6 +141,21 @@
         "calido": 1,
         "templado": 0.6,
         "frio": 0
+      },
+      "mercado": {
+        "volatilidad": 0.1,
+        "regreso": 0.15,
+        "tendencia": 0.006,
+        "bonanza": {
+          "prob": 0.05,
+          "factor": 1.6,
+          "anios": 3
+        },
+        "crisis": {
+          "prob": 0.05,
+          "factor": 0.55,
+          "anios": 3
+        }
       }
     },
     "aguacate": {
@@ -116,11 +173,27 @@
         "calido": 0.3,
         "templado": 0.8,
         "frio": 1
+      },
+      "mercado": {
+        "volatilidad": 0.1,
+        "regreso": 0.15,
+        "tendencia": 0.008,
+        "desde": 60,
+        "bonanza": {
+          "prob": 0.06,
+          "factor": 1.6,
+          "anios": 3
+        },
+        "crisis": {
+          "prob": 0.06,
+          "factor": 0.5,
+          "anios": 3
+        }
       }
     },
     "algodon": {
       "nombre": "Algodón",
-      "icono": "☁️",
+      "icono": "🧺",
       "texto": "El oro blanco: en los años 70 hizo rico a El Espinal y luego su precio se desplomó. Da mucho trabajo y dinero mientras dura, y cansa la tierra.",
       "comida": 0,
       "renta": 9,
@@ -132,6 +205,26 @@
         "calido": 1,
         "templado": 0.4,
         "frio": 0
+      },
+      "mercado": {
+        "volatilidad": 0.08,
+        "regreso": 0.2,
+        "bonanza": {
+          "prob": 0.03,
+          "factor": 1.4,
+          "anios": 2
+        },
+        "crisis": {
+          "prob": 0.04,
+          "factor": 0.6,
+          "anios": 3
+        },
+        "auge": {
+          "desde": 50,
+          "anios": 12,
+          "factor": 1.9,
+          "despues": 0.4
+        }
       }
     },
     "ganaderia": {
@@ -148,6 +241,20 @@
         "calido": 1,
         "templado": 0.9,
         "frio": 0.7
+      },
+      "mercado": {
+        "volatilidad": 0.05,
+        "regreso": 0.25,
+        "bonanza": {
+          "prob": 0.03,
+          "factor": 1.3,
+          "anios": 2
+        },
+        "crisis": {
+          "prob": 0.04,
+          "factor": 0.7,
+          "anios": 2
+        }
       }
     }
   },
@@ -158,6 +265,20 @@
     "primera": "Primera cosecha de {cultivo}.",
     "sinCafetal": "Ahora el café se siembra en una finca: construye una finca y elige café.",
     "sembrado": "Sembraste {cultivo}.",
-    "finca": "Una finca: tú eliges qué sembrar (comida, dinero o ambos) según el piso térmico de su tierra."
+    "finca": "Una finca: tú eliges qué sembrar (comida, dinero o ambos) según el piso térmico de su tierra.",
+    "bonanza": "Bonanza del {cultivo}: su precio sube a {precio} veces lo normal por unos años.",
+    "crisis": "Crisis del {cultivo}: su precio cae a {precio} de lo normal por unos años.",
+    "auge": "Llega el auge del algodón: el oro blanco se paga a {precio} veces lo normal. Muchos se lanzan a sembrarlo.",
+    "desplome": "Se desploma el algodón: la fibra sintética y la competencia hunden su precio. Quien sembró solo algodón lo pierde todo, como pasó en El Espinal."
+  },
+  "canasta": {
+    "concentrado": 0.6,
+    "textos": {
+      "titulo": "Canasta agrícola",
+      "ayuda": "Cuánto oro te da cada cultivo este año y cómo está su precio. Si casi todo sale de uno solo, una crisis de ese cultivo hunde las finanzas.",
+      "concentrada": "Monocultivo: el {pct}% del oro del campo sale del {cultivo}. Ganas mucho en sus bonanzas y lo pierdes en sus crisis.",
+      "diversa": "Canasta diversificada: ningún cultivo pesa más que el resto. Ganas menos en las bonanzas, pero aguantas las crisis.",
+      "leccion": "Harry Markowitz (premio Nobel de Economía) mostró que repartir la inversión entre activos que no suben y bajan a la vez reduce el riesgo sin perder tanto rendimiento. Un territorio también es un portafolio."
+    }
   }
 }
