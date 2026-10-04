@@ -95,7 +95,15 @@ export const Sonido = (() => {
     campana(t + .78); campana(t + .98);
     [[67, 0, .16], [72, .17, .16], [76, .34, .16], [79, .51, .75]].forEach(([n, d, dur]) => bronce(NOTE(n), t + 1.2 + d, dur, .045));
   }
+  // Fase 13: una carta: el papel que se desdobla y tres notas suaves y graves del tiple (distinto del periódico).
+  function carta() {
+    if (!on) return;
+    const t = ac.currentTime + .05;
+    if (!ruido) { const n = ac.sampleRate * .08; ruido = ac.createBuffer(1, n, ac.sampleRate); const d = ruido.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n); }
+    [0, .09, .2].forEach(d => { const s = ac.createBufferSource(), hp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = ruido; hp.type = 'highpass'; hp.frequency.value = 2500; g.gain.setValueAtTime(.06, t + d); g.gain.exponentialRampToValueAtTime(.001, t + d + .08); s.connect(hp); hp.connect(g); g.connect(master); s.start(t + d); });
+    [[57, .45], [60, .8], [64, 1.15]].forEach(([n, d]) => pluck(NOTE(n), t + d, 2.4, .07));
+  }
   function tap() { if (!on) return; pluck(NOTE(59), ac.currentTime, .25, .08); }
   function mode(r) { const m = MODES[r] || MODES.republica; SCALE = m.s; BASS = m.b; BEAT = m.beat; }
-  return { start, stop, chime, tap, prensa, mode, get on() { return on; } };
+  return { start, stop, chime, tap, prensa, carta, mode, get on() { return on; } };
 })();

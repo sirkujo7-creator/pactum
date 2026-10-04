@@ -12,7 +12,7 @@ export const EFECTOS = {
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
 export const ARCHIVOS = ['edificios', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
-  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos'];
+  'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias'];
 
 function efectos(obj, donde) {
   const fx = {};
@@ -109,6 +109,7 @@ export function usarContenido(d) {
   C.INDUSTRIA = d.industria;
   C.CIV = d.civismo;
   C.RASGOS = d.rasgos;
+  C.FAMILIAS = d.familias;
   C.LEYES_NUEVAS = d.civismo ? d.civismo.leyes.map(l => ({ ...l, n: l.nombre, d: l.pro, st: l.etapa, nueva: true })) : [];
   C.FIG = d.figuras;
   C.FIG_FX = d.figuras ? Object.fromEntries(Object.entries(d.figuras.figuras).map(([k, f]) => [k, f.misiones.map((m, i) => efectos(m.premio, `misión ${i + 1} de ${k}`))])) : {};

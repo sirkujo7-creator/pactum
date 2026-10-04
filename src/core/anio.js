@@ -38,6 +38,7 @@ import { fincasDelAnio } from './fincas.js';
 import { biomasDelAnio } from './biomas.js';
 import { avancesDelAnio } from './avances.js';
 import { civismoDelAnio, efectoLeyes } from './civismo.js';
+import { familiasDelAnio } from './familias.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -185,6 +186,7 @@ export function advance(S) {
   news.push(...epocasDelAnio(S));
   news.push(...tecDelAnio(S));
   news.push(...civismoDelAnio(S));
+  news.push(...familiasDelAnio(S));
   news.push(...megaDelAnio(S));
   news.push(...rioDelAnio(S));
   news.push(...historiaDelAnio(S));

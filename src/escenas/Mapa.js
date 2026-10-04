@@ -439,7 +439,7 @@ export class Mapa extends Phaser.Scene {
       if (S.desgaste && !desgaste0) this.ui.toast(C.DESGASTE.textos.abre);
       const fin = () => this.ui.render();
       const sigue = () => {
-        const dilema = () => this.ui.clima(() => this.ui.suceso(fin)), ed = S.avancesEv;
+        const dilema = () => this.ui.clima(() => this.ui.carta(() => this.ui.suceso(fin))), ed = S.avancesEv; // fase 13: la carta antes del dilema
         // Fase 11: los avances del año salen en El Pregonero (incluye el cambio de etapa).
         if (ed && ed.nuevo && ed.anio === S.year - 1) { ed.nuevo = false; this.ui.periodico(ed, dilema); } else if (r.stageUp) this.ui.etapa(dilema); else dilema();
       };
