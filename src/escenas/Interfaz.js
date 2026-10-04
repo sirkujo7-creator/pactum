@@ -39,6 +39,22 @@ const GRAFICAS = {
 
 const anios = n => n === 1 ? '1 año' : `${n} años`;
 const mayus = t => t.charAt(0).toUpperCase() + t.slice(1);
+// Emojis: se envuelven para teñirlos con CSS (sepia y pigmento) y que combinen con el fresco.
+const EMOJI = /(?:\p{Extended_Pictographic}|[☀-➿])️?(?:‍\p{Extended_Pictographic}️?)*/gu;
+function teñirEmojis(nodo) {
+  if (!nodo) return;
+  if (nodo.nodeType === 3) {
+    const t = nodo.nodeValue; EMOJI.lastIndex = 0;
+    if (!EMOJI.test(t) || (nodo.parentNode && nodo.parentNode.classList && nodo.parentNode.classList.contains('emo'))) return;
+    const f = document.createDocumentFragment(); let i = 0; EMOJI.lastIndex = 0;
+    for (const m of t.matchAll(EMOJI)) { if (m.index > i) f.append(t.slice(i, m.index)); const s = document.createElement('span'); s.className = 'emo'; s.textContent = m[0]; f.append(s); i = m.index + m[0].length; }
+    if (i < t.length) f.append(t.slice(i));
+    nodo.parentNode && nodo.parentNode.replaceChild(f, nodo);
+    return;
+  }
+  if (nodo.nodeType !== 1 || nodo.classList.contains('emo') || /^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(nodo.tagName)) return;
+  for (const h of [...nodo.childNodes]) teñirEmojis(h);
+}
 export class Interfaz {
   constructor(mapa) {
     this.mapa = mapa;
@@ -106,9 +122,13 @@ export class Interfaz {
       this.ficha, this.dock, this.pasa, this.aviso, this.brindis, this.velo
     ]);
     capaUI().append(this.raiz);
+    // Fase 9: los emojis de los textos se tiñen con los pigmentos del fresco (envueltos en <span class="emo">).
+    this.tinte = new MutationObserver(L => { for (const m of L) for (const n of m.addedNodes) teñirEmojis(n); });
+    this.tinte.observe(this.raiz, { childList: true, subtree: true });
+    teñirEmojis(this.raiz);
   }
 
-  destruir() { this.raiz.remove(); }
+  destruir() { this.tinte.disconnect(); this.raiz.remove(); }
   // Fase 8: los botones de la derecha se agrupan en un solo menú (en computador quedan abiertos).
   alternarGrupo(abrir) { const on = abrir ?? !this.grupo.classList.contains('abierto'); this.grupo.classList.toggle('abierto', on); this.bGrupo.setAttribute('aria-expanded', String(on)); this.bGrupo.classList.toggle('on', on); }
   avisar(t) { this.aviso.textContent = t; this.aviso.hidden = !t; }

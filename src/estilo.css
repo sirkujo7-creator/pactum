@@ -334,3 +334,11 @@ html,body{background:#E6DABF}
 .cine-franja small{color:#C9B48E;font-size:12px;margin-top:2px}
 @media (prefers-reduced-motion:reduce){.cine-franja{transition:none}}
 #ui.en-cine > *:not(.cine){visibility:hidden}
+.emo{filter:sepia(.6) saturate(.85) hue-rotate(-10deg) contrast(.95) brightness(.97);font-style:normal}
+/* Fase 9 (revisión): en celular los recursos caben en una sola fila; el precio de la comida queda en su ficha */
+@media (max-width:520px){
+  .hud{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:calc(100vw - 70px)}
+  .hud::-webkit-scrollbar{display:none}
+  .pill{flex-shrink:0}
+  .pill small.precio{display:none}
+}
