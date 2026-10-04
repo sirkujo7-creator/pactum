@@ -45,3 +45,20 @@ export function familiasDelAnio(S) {
   S.cartaEv = { ...r, nuevo: true };
   return [`📨 Llegó una carta de ${p.c.de}.`];
 }
+
+// ---------- Paso 2: el álbum ----------
+// Miembros de una familia: los del comienzo más los que aparecen en las cartas, con su estado (vive, murió, se fue).
+export function miembrosFamilia(S, f) {
+  const E = estado(S), L = datosFamilia(f).miembros.map(n => ({ nombre: n, estado: 'vive' }));
+  const buscar = q => L.find(m => m.nombre.split(' (')[0] === q);
+  for (const h of E.hechos.filter(x => x.f === f)) {
+    let m = buscar(h.quien);
+    if (!m && (h.t === 'nace' || h.t === 'muere')) { m = { nombre: h.quien, estado: 'vive' }; L.push(m); }
+    if (!m) continue;
+    m.estado = h.t === 'muere' ? 'murio' : h.t === 'migra' ? 'sefue' : h.t === 'vuelve' ? 'vive' : m.estado;
+    m.anio = h.anio;
+  }
+  return L;
+}
+export function listaFamilias() { return Object.keys(K().familias); }
+export function listaObjetos() { return Object.keys(K().objetos); }

@@ -402,3 +402,11 @@ ol.avances li small{grid-column:2;color:var(--muted)}
 .carta-objeto{display:flex;gap:10px;align-items:flex-start;border:1.5px dashed var(--siena);border-radius:6px;padding:8px;margin-bottom:12px;background:rgba(255,255,255,.35)}
 .carta-objeto .big-emo{font-size:2rem;line-height:1}
 .carta-objeto small{display:block;margin-top:3px}
+/* Fase 13: álbum de las familias. */
+details.familia{border:1px solid var(--line);border-radius:6px;padding:6px 10px;margin-bottom:6px;background:rgba(255,255,255,.3)}
+details.familia summary{cursor:pointer;list-style-position:inside}
+.objetos{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;margin-bottom:12px}
+.objeto{display:grid;justify-items:center;gap:2px;padding:6px 4px;border:1.5px solid var(--siena);border-radius:6px;background:#F4ECD8;color:var(--ink);font:inherit;cursor:pointer}
+.objeto span{font-size:1.6rem;line-height:1.1}
+.objeto small{font-size:.7rem;line-height:1.15;text-align:center}
+.objeto.falta{opacity:.45;border-style:dashed;cursor:default}
