@@ -75,6 +75,28 @@
       ]
     },
     {
+      "id": "p_trilladora",
+      "icono": "☕",
+      "nombre": "Trilladora de café",
+      "producto": "trilladora",
+      "cuando": {
+        "etapa": 1
+      },
+      "titular": "Abre la primera trilladora: el café ya no sale en cáscara",
+      "texto": "Una fábrica puede trillar, secar y empacar el café de tus fincas. Vender el grano listo deja más que venderlo crudo."
+    },
+    {
+      "id": "p_molino",
+      "icono": "🌾",
+      "nombre": "Molino de arroz",
+      "producto": "molino",
+      "cuando": {
+        "etapa": 1
+      },
+      "titular": "El arroz del llano se pule en casa",
+      "texto": "Una fábrica puede descascarar y empacar el arroz de tus fincas, en vez de mandarlo crudo a otra parte."
+    },
+    {
       "id": "imprenta",
       "icono": "📰",
       "nombre": "La imprenta",
@@ -93,6 +115,17 @@
       },
       "titular": "Los postes del telégrafo unen al territorio con el mundo",
       "texto": "Las noticias que tardaban semanas llegan en minutos. El comercio y el gobierno se aceleran."
+    },
+    {
+      "id": "p_chocolate",
+      "icono": "🍫",
+      "nombre": "Chocolatería",
+      "producto": "chocolate",
+      "cuando": {
+        "invento": "telegrafo"
+      },
+      "titular": "Con el telégrafo llegan los pedidos de chocolate",
+      "texto": "Las tiendas de la capital piden chocolate de mesa: una fábrica puede convertir el cacao de tus fincas en pastillas."
     },
     {
       "id": "etapa2",
@@ -129,6 +162,29 @@
       },
       "titular": "¡Se hizo la luz! Llega la electricidad",
       "texto": "Las noches se iluminan y las máquinas pueden moverse sin agua ni mulas. Empieza otra forma de trabajar."
+    },
+    {
+      "id": "p_textiles",
+      "icono": "🧵",
+      "nombre": "Textiles",
+      "producto": "textiles",
+      "cuando": {
+        "invento": "electricidad"
+      },
+      "titular": "Telares eléctricos: nace la industria textil",
+      "texto": "Con electricidad, una fábrica puede hilar y tejer el algodón de tus fincas. Da mucho empleo."
+    },
+    {
+      "id": "p_fundicion",
+      "icono": "🔩",
+      "nombre": "Fundición",
+      "producto": "fundicion",
+      "cuando": {
+        "etapa": 2,
+        "invento": "electricidad"
+      },
+      "titular": "Los hornos eléctricos funden el metal de las minas",
+      "texto": "En una ciudad con electricidad, una fábrica puede fundir lo que sacan tus minas: herramientas, rieles y vigas."
     },
     {
       "id": "carretera",

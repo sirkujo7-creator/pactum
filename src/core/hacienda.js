@@ -30,6 +30,7 @@ export function canBorrow(S) { return S.stage >= 1 && rating(S).l !== 'CCC'; }
 import { factorCostos, factorRoya, costoPensiones } from './ciclos.js';
 import { factorCalle, mantenimientoCalles } from './calles.js';
 import { fincasActivas, produccionFinca } from './fincas.js';
+import { industriaActiva, rentaFabrica } from './industria.js';
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
   // Fase 2: el ciclo económico mueve los ingresos, y los campesinos ganan más cuando la comida está cara.
@@ -39,8 +40,8 @@ export function finance(S) {
   const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
-  const finca = fincasActivas(S); // fase 10: las fincas rinden según su cultivo
-  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : 1)) * factorCalle(S, i); // fase 9: junto a una calle se vende más
+  const finca = fincasActivas(S), fab = industriaActiva(S) ? rentaFabrica(S) : null; // fase 10: las fincas rinden según su cultivo; fase 11: las fábricas, según su producto
+  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (fab && x.b === 'taller' ? fab(i) : finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : 1)) * factorCalle(S, i); // fase 9: junto a una calle se vende más
  if (r) up += C.B[x.b].up * (x.mt || 1); } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100 * factorCostos(S)); // fase 7: los costos suben con cada época

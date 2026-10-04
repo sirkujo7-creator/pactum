@@ -1,0 +1,77 @@
+{
+  "leccion": "Valor agregado: un bulto de café en grano vale poco; trillado, tostado y empacado vale varias veces más. El economista argentino Raúl Prebisch (CEPAL) mostró que los países que solo venden materias primas pierden frente a los que las transforman: por eso América Latina buscó industrializarse.",
+  "nombreFabrica": "Fábrica",
+  "cambio": 25,
+  "minimo": 0.4,
+  "textos": {
+    "fabrica": "Una fábrica: tú eliges qué producir. Transforma lo que dan tus fincas y lo vende más caro.",
+    "elegir": "¿Qué producirá esta fábrica?",
+    "ayuda": "Cada producto usa una materia prima de tu territorio. Sin ella la fábrica trabaja a medias y no deja ganancia. Cambiar de producto cuesta {costo} de oro.",
+    "insumo": "Materia prima ({insumo}): tienes {tiene} y necesita {necesita}.",
+    "sinInsumo": "Sin materia prima: trabaja a medias y no deja ganancia.",
+    "bloqueado": "Se desbloquea con: {req}.",
+    "producido": "La fábrica ahora es: {producto}.",
+    "energia": "Sin energía (molinos o electricidad) la fábrica no funciona.",
+    "fincasDe": "fincas de {cultivo}",
+    "minas": "minas",
+    "ganancia": "Deja {oro} de oro por año",
+    "seccion": "La industria",
+    "seccionAyuda": "Cuánto deja cada fábrica y si le alcanza la materia prima.",
+    "sinFabricas": "Aún no tienes fábricas. Se construyen desde Pueblo, con energía de los molinos."
+  },
+  "productos": {
+    "artesanias": {
+      "nombre": "Artesanías",
+      "icono": "🏺",
+      "texto": "Sombreros de iraca, ollas de barro y canastos. No necesita cosecha, pero casi no deja ganancia al tesoro.",
+      "renta": 0,
+      "empleo": 9,
+      "ambiente": -7
+    },
+    "trilladora": {
+      "nombre": "Trilladora de café",
+      "icono": "☕",
+      "texto": "Quita la cáscara al café, lo seca y lo empaca para exportarlo. Vende más caro el café de tus fincas, pero sus aguas mieles ensucian el río.",
+      "insumo": { "cultivo": "cafe", "porFabrica": 3 },
+      "renta": 7,
+      "empleo": 9,
+      "ambiente": -6
+    },
+    "molino": {
+      "nombre": "Molino de arroz",
+      "icono": "🌾",
+      "texto": "Descascara, pule y empaca el arroz del llano tolimense. Ganancia segura y modesta.",
+      "insumo": { "cultivo": "arroz", "porFabrica": 3 },
+      "renta": 5,
+      "empleo": 8,
+      "ambiente": -5
+    },
+    "chocolate": {
+      "nombre": "Chocolatería",
+      "icono": "🍫",
+      "texto": "Convierte el cacao en pastillas de chocolate para la taza de la mañana. Buena ganancia y poca contaminación.",
+      "insumo": { "cultivo": "cacao", "porFabrica": 2 },
+      "renta": 9,
+      "empleo": 9,
+      "ambiente": -4
+    },
+    "textiles": {
+      "nombre": "Textiles",
+      "icono": "🧵",
+      "texto": "Hila y teje el algodón con telares eléctricos. Mucho empleo y buena ganancia, mientras haya algodón.",
+      "insumo": { "cultivo": "algodon", "porFabrica": 3 },
+      "renta": 10,
+      "empleo": 12,
+      "ambiente": -8
+    },
+    "fundicion": {
+      "nombre": "Fundición",
+      "icono": "🔩",
+      "texto": "Funde el metal de las minas para hacer herramientas, rieles y vigas. La que más deja y la que más contamina.",
+      "insumo": { "obra": "mina", "porFabrica": 1 },
+      "renta": 12,
+      "empleo": 10,
+      "ambiente": -11
+    }
+  }
+}
