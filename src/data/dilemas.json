@@ -3767,5 +3767,247 @@
         "aQuien": "El páramo sigue retrocediendo."
       }
     ]
+  },
+  {
+    "id": "i_ninos_fabrica",
+    "etapa": 1,
+    "icono": "👦",
+    "titulo": "Niños en la fábrica",
+    "texto": "En los talleres trabajan niños de diez años: son ágiles, cobran poco y sus familias necesitan el dinero. El maestro del pueblo pide que vuelvan a la escuela.",
+    "condicion": {
+      "nuevo": true,
+      "edificios": {
+        "taller": 2
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Prohibir el trabajo infantil",
+        "efectos": {
+          "elite": -4,
+          "artesanos": -2,
+          "confianza": 4,
+          "igualdad": 2
+        },
+        "filosofia": "deon",
+        "porque": "Un niño no es un medio para producir: tiene derecho a la infancia y a estudiar.",
+        "aQuien": "Los dueños pierden mano de obra barata y algunas familias, un ingreso; los niños vuelven al aula."
+      },
+      {
+        "texto": "Escuela obligatoria con almuerzo gratis",
+        "efectos": {
+          "oro": -35,
+          "igualdad": 3,
+          "artesanos": 2,
+          "confianza": 2
+        },
+        "filosofia": "virt",
+        "porque": "Si la escuela alimenta, la familia no pierde nada al mandar al niño a estudiar.",
+        "aQuien": "El tesoro paga los almuerzos; las familias y los niños ganan."
+      },
+      {
+        "texto": "Dejarlo así: es costumbre",
+        "efectos": {
+          "oro": 20,
+          "elite": 3,
+          "igualdad": -3
+        },
+        "filosofia": "util",
+        "porque": "Hoy las familias necesitan ese ingreso y la fábrica produce más barato.",
+        "aQuien": "La fábrica gana; los niños crecen sin estudiar."
+      }
+    ]
+  },
+  {
+    "id": "i_aguas_mieles",
+    "etapa": 1,
+    "icono": "☕",
+    "titulo": "Aguas mieles en la quebrada",
+    "texto": "La trilladora bota al río las aguas mieles del lavado del café. Aguas abajo los peces mueren y las lavanderas se quejan del olor.",
+    "condicion": {
+      "nuevo": true,
+      "productos": {
+        "trilladora": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Exigir tanques de tratamiento",
+        "efectos": {
+          "oro": -40,
+          "ambiente": 5,
+          "elite": -2
+        },
+        "filosofia": "deon",
+        "porque": "Quien contamina debe pagar por limpiar: el río es de todos.",
+        "aQuien": "La trilladora gasta en tanques; el río se recupera."
+      },
+      {
+        "texto": "Cobrar una multa cada año",
+        "efectos": {
+          "oro": 20,
+          "elite": -3,
+          "ambiente": 1
+        },
+        "filosofia": "util",
+        "porque": "La multa obliga al dueño a pensar en el costo que causa (Arthur Pigou).",
+        "aQuien": "El tesoro recibe la multa; el río mejora poco."
+      },
+      {
+        "texto": "Dejarla trabajar: da empleo",
+        "efectos": {
+          "elite": 3,
+          "ambiente": -5
+        },
+        "filosofia": "real",
+        "porque": "El café es la riqueza del territorio y no conviene frenarlo.",
+        "aQuien": "La trilladora sigue igual; la quebrada se pudre."
+      }
+    ]
+  },
+  {
+    "id": "i_huelga_textil",
+    "etapa": 2,
+    "icono": "🧵",
+    "titulo": "Huelga en la textilera",
+    "texto": "Las tejedoras de la fábrica textil paran los telares: piden jornada de ocho horas y que no las despidan por estar embarazadas.",
+    "condicion": {
+      "nuevo": true,
+      "productos": {
+        "textiles": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Sentar a dueños y tejedoras a negociar",
+        "efectos": {
+          "oro": -25,
+          "artesanos": 6,
+          "elite": -2,
+          "confianza": 3
+        },
+        "filosofia": "contr",
+        "porque": "Un acuerdo entre las partes es más justo y más duradero que una imposición.",
+        "aQuien": "Los dueños ceden algo; las tejedoras ganan derechos."
+      },
+      {
+        "texto": "Proteger por ley a las madres trabajadoras",
+        "efectos": {
+          "artesanos": 5,
+          "igualdad": 4,
+          "elite": -5
+        },
+        "filosofia": "deon",
+        "porque": "Nadie debe perder su trabajo por ser madre.",
+        "aQuien": "Las tejedoras ganan; los dueños se quejan del costo."
+      },
+      {
+        "texto": "Enviar la policía a abrir la fábrica",
+        "efectos": {
+          "artesanos": -9,
+          "elite": 5,
+          "confianza": -5
+        },
+        "filosofia": "real",
+        "porque": "El orden y la producción primero.",
+        "aQuien": "Los telares vuelven a sonar; las obreras guardan rencor."
+      }
+    ]
+  },
+  {
+    "id": "i_aranceles",
+    "etapa": 2,
+    "icono": "🚢",
+    "titulo": "¿Proteger la industria de casa?",
+    "texto": "Llegan telas y herramientas baratas de afuera y las fábricas del territorio no pueden competir. Los industriales piden aranceles; los consumidores quieren precios bajos.",
+    "condicion": {
+      "nuevo": true,
+      "edificios": {
+        "taller": 2
+      },
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Proteger a la industria con aranceles",
+        "efectos": {
+          "elite": 4,
+          "artesanos": 4,
+          "campesinos": -3,
+          "inflacion": 1
+        },
+        "filosofia": "real",
+        "porque": "Sustituir importaciones: así crecieron las industrias de América Latina (CEPAL).",
+        "aQuien": "Las fábricas respiran y dan empleo; todo cuesta un poco más."
+      },
+      {
+        "texto": "Abrir el comercio",
+        "efectos": {
+          "campesinos": 3,
+          "artesanos": -6,
+          "oro": 15
+        },
+        "filosofia": "util",
+        "porque": "Adam Smith y David Ricardo: cada uno produce lo que hace mejor y todos compran más barato.",
+        "aQuien": "Bajan los precios; algunas fábricas cierran."
+      },
+      {
+        "texto": "Apoyar a las fábricas para que compitan",
+        "efectos": {
+          "oro": -45,
+          "artesanos": 3,
+          "elite": 2
+        },
+        "filosofia": "virt",
+        "porque": "En vez de un muro, mejores máquinas y obreros más capacitados.",
+        "aQuien": "El tesoro invierte; la industria mejora sin subir los precios."
+      }
+    ]
+  },
+  {
+    "id": "i_robots",
+    "etapa": 3,
+    "icono": "🦾",
+    "titulo": "Las máquinas reemplazan obreros",
+    "texto": "La fábrica automatizada despidió a la mitad de sus obreros. Producen más que nunca, pero en la plaza hay padres de familia sin trabajo.",
+    "condicion": {
+      "nuevo": true,
+      "nivelFabrica": 2
+    },
+    "opciones": [
+      {
+        "texto": "Capacitar a los despedidos en oficios nuevos",
+        "efectos": {
+          "oro": -50,
+          "artesanos": 5,
+          "igualdad": 2
+        },
+        "filosofia": "virt",
+        "porque": "Destrucción creativa (Schumpeter): el oficio viejo muere, hay que preparar a la gente para el nuevo.",
+        "aQuien": "El tesoro paga los cursos; los obreros se reinventan."
+      },
+      {
+        "texto": "Cobrar un impuesto a los robots",
+        "efectos": {
+          "oro": 30,
+          "elite": -5,
+          "igualdad": 3
+        },
+        "filosofia": "contr",
+        "porque": "Si la máquina ocupa el puesto de una persona, que también aporte a lo común.",
+        "aQuien": "Los dueños pagan más; el tesoro sostiene a los que quedaron sin empleo."
+      },
+      {
+        "texto": "Dejar que el mercado se acomode",
+        "efectos": {
+          "elite": 5,
+          "artesanos": -7,
+          "igualdad": -3
+        },
+        "filosofia": "real",
+        "porque": "Toda revolución industrial destruye empleos y luego crea otros.",
+        "aQuien": "Los dueños ganan; los despedidos se las arreglan solos."
+      }
+    ]
   }
 ]

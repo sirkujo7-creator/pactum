@@ -57,12 +57,13 @@ export function elegirSalario(S, s) {
 // Lo que hace una fábrica en la casilla i: { renta, empleo, ambiente, f (materia prima), encendida }.
 export function produccionFabrica(S, i, en) {
   const x = S.map[i], pr = productoDe(x), D = datosProducto(pr), on = (en || encendidas(S)).has(i);
-  if (!on) return { renta: 0, empleo: 0, ambiente: D.ambiente * K().minimo * (nearRiver(S, i) ? K().rio : 1), f: 0, encendida: false };
+  if (!on) return { renta: 0, empleo: 0, ambiente: D.ambiente * K().minimo * (nearRiver(S, i) ? K().rio : 1) * datosNivel(nivelDe(x)).ambiente, f: 0, encendida: false };
   const f = insumo(S, pr).f, m = K().minimo + (1 - K().minimo) * f, r = rindeObra(S, x);
   // La ganancia sigue a medias el precio de la materia prima: la industria amortigua las crisis del campo.
   const precio = D.insumo && D.insumo.cultivo ? .5 + .5 * precioCultivo(S, D.insumo.cultivo) : precioCiclo(S, pr);
   const rio = nearRiver(S, i) ? K().rio : 1; // paso 2: junto al río, sus desechos lo ensucian más
-  return { renta: D.renta * f * r * precio * salario(S).renta, empleo: Math.round(D.empleo * m * (r ? 1 : 0)), ambiente: D.ambiente * m * rio, f, encendida: true };
+  const N = datosNivel(nivelDe(x)); // paso 3: con máquinas o automatizada, más ganancia y menos empleo
+  return { renta: D.renta * f * r * precio * salario(S).renta * N.renta, empleo: Math.round(D.empleo * m * N.empleo * (r ? 1 : 0)), ambiente: D.ambiente * m * rio * N.ambiente, f, encendida: true };
 }
 // Para la hacienda: una función que da la ganancia de la fábrica en i (con las fábricas encendidas calculadas una vez).
 export function rentaFabrica(S) { const en = encendidas(S); return i => produccionFabrica(S, i, en).renta; }
@@ -115,3 +116,30 @@ export function mejorProducto(S, i) {
   }
   return mejor;
 }
+
+// ---------- Paso 3: la revolución industrial por épocas ----------
+// Nivel de cada fábrica (x.nv): 0 taller artesanal, 1 con máquinas (pide la electricidad), 2 automatizada (pide la
+// automatización). Cada salto deja más ganancia y da menos empleo.
+export function nivelDe(x) { return x.nv || 0; }
+export function datosNivel(n) { return K().niveles[n]; }
+function adoptado(S, inv) { const a = S.tec && S.tec.adoptados[inv]; return !!a && a !== 'rechazado'; }
+export function nivelDisponible(S, n) { const N = datosNivel(n); return !!N && (!N.invento || adoptado(S, N.invento)); }
+export function costoNivel(S, n) { return Math.round((datosNivel(n).costo || 0) * S.price); }
+export function puedeModernizar(S, i) {
+  const x = S.map[i], n = nivelDe(x) + 1, N = datosNivel(n);
+  if (!industriaActiva(S) || x.b !== 'taller' || x.ob) return 'Aquí no hay una fábrica.';
+  if (!N) return 'Ya está en el nivel más alto.';
+  if (!nivelDisponible(S, n)) return K().textos.nivelBloqueado.replace('{invento}', C.TEC.inventos[N.invento].nombre.toLowerCase());
+  if (S.gold < costoNivel(S, n)) return `Necesitas ${costoNivel(S, n)} de oro.`;
+  return null;
+}
+export function modernizar(S, i) {
+  if (puedeModernizar(S, i)) return false;
+  const x = S.map[i], n = nivelDe(x) + 1;
+  S.gold -= costoNivel(S, n); x.nv = n;
+  S.log.unshift({ y: S.year, t: K().textos.modernizada.replace('{nivel}', datosNivel(n).nombre.toLowerCase()) });
+  return true;
+}
+// Para los dilemas: cuántas fábricas hay de un producto y el nivel más alto.
+export function fabricasDe(S, pr) { return fabricas(S).filter(i => productoDe(S.map[i]) === pr).length; }
+export function nivelMaximo(S) { return fabricas(S).reduce((m, i) => Math.max(m, nivelDe(S.map[i])), 0); }

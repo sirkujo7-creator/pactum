@@ -65,7 +65,7 @@ export function undoBuild(S) {
   const u = S.undo.pop();
   if (!u) return null;
   const x = S.map[u.i];
-  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; S.gold += u.paid;
+  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; delete x.nv; S.gold += u.paid;
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
   if (u.rel) restaurarRelaciones(S, u.rel);
@@ -82,7 +82,7 @@ export function demolish(S, i) {
   const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3);
   // Fase 5: demoler patrimonio cuesta legitimidad y queda en la memoria.
   if (esPatrimonio(S, x)) { S.tr = clamp(S.tr - C.MEMORIA.demolerPatrimonio, 0, 100); recordar(S, 'olvido', 2); }
-  S.gold += g; x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF;
+  S.gold += g; x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; delete x.nv;
   if (S.pop > cap(S)) S.pop = cap(S);
   return g;
 }

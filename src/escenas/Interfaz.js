@@ -8,7 +8,7 @@ import {
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
   fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
-  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas
+  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -1274,9 +1274,16 @@ export class Interfaz {
   fichaFabrica(i) {
     const S = this.S, x = S.map[i], pr = productoDe(x), D = datosProducto(pr), p = produccionFabrica(S, i), T = C.INDUSTRIA.textos;
     const estado = !p.encendida ? `<span class="neg">${T.energia}</span>` : `${T.ganancia.replace('{oro}', Math.round(p.renta * S.price))} y emplea ${p.empleo}. ${D.insumo ? (p.f < 1 ? `<span class="neg">${this.lineaInsumo(pr)}</span>` : this.lineaInsumo(pr)) : ''}${nearRiver(S, i) ? ` <span class="neg">${T.rio}</span>` : ''}`;
+    const nv = nivelDe(x), N = datosNivel(nv), sig = datosNivel(nv + 1), no = puedeModernizar(S, i);
+    const nivel = `${N.icono} ${T.nivel.replace('{nivel}', N.nombre.toLowerCase())}${sig ? ` <small>Siguiente: ${sig.nombre.toLowerCase()} — ${sig.texto}${no ? ` <span class="neg">${no}</span>` : ''}</small>` : ''}`;
     return el('div', { class: 'aporte', style: 'grid-column:1/-1' }, [
-      el('span', { html: `<b>${D.icono} ${D.nombre}.</b> ${estado} ` }),
-      el('button', { class: 'btn', style: 'margin-top:6px', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.tarjetaProducto(i) } }, 'Cambiar de producto')
+      el('span', { html: `<b>${D.icono} ${D.nombre}.</b> ${estado}<br>${nivel} ` }),
+      el('button', { class: 'btn', style: 'margin-top:6px', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.tarjetaProducto(i) } }, 'Cambiar de producto'),
+      ...(sig && nivelDisponible(S, nv + 1) ? [el('button', { class: 'btn', style: 'margin:6px 0 0 6px', ...(S.over || no ? { disabled: '' } : {}), on: { click: () => {
+        if (!modernizar(S, i)) return;
+        this.toast(`${T.modernizada.replace('{nivel}', sig.nombre.toLowerCase())} ${T.nivelLeccion}`);
+        this.mapa.refrescarCasilla(i); this.mapa.cambio(); this.render(); this.abrirFicha(i);
+      } } }, T.modernizar.replace('{nivel}', sig.nombre.toLowerCase()).replace('{costo}', costoNivel(S, nv + 1)))] : [])
     ]);
   }
   // Elegir qué producir: cada producto con su materia prima, lo que deja y si ya está desbloqueado.

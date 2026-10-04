@@ -187,6 +187,16 @@
       "texto": "En una ciudad con electricidad, una fábrica puede fundir lo que sacan tus minas: herramientas, rieles y vigas."
     },
     {
+      "id": "n_maquinas",
+      "icono": "⚙️",
+      "nombre": "Fábricas con máquinas",
+      "cuando": {
+        "invento": "electricidad"
+      },
+      "titular": "Las fábricas cambian el martillo por el motor",
+      "texto": "Con electricidad, cada fábrica puede modernizarse: produce más con menos obreros, y echa más humo."
+    },
+    {
       "id": "carretera",
       "icono": "🛣️",
       "nombre": "Carreteras",
@@ -241,6 +251,16 @@
       },
       "titular": "Las máquinas aprenden a trabajar solas",
       "texto": "Robots y programas hacen el trabajo de muchas personas. Se produce más con menos gente: ¿quién se queda con la ganancia?"
+    },
+    {
+      "id": "n_auto",
+      "icono": "🦾",
+      "nombre": "Fábricas automatizadas",
+      "cuando": {
+        "invento": "automatizacion"
+      },
+      "titular": "Primera fábrica sin obreros en la línea",
+      "texto": "Las fábricas pueden automatizarse: mucha más ganancia y muy poco empleo. ¿Qué harán los obreros que sobran?"
     }
   ]
 }

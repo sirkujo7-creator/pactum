@@ -420,6 +420,8 @@ function recetas() {
   L.push(['carga-textiles', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); [[-5, 0, FR.rojo], [1, 0, FR.ocre], [7, 0, FR.azul], [-2, -4.5, FR.cal], [4, -4.5, FR.tierraVerde]].forEach(([x, y, col]) => { ovalo(g, x, y - 2.2, 3, 2.3, col, r, op); ovalo(g, x - 2.4, y - 2.2, .9, 2, shade(col, -.25), r, { n: 0, borde: false }); }); }]);
   L.push(['carga-fundicion', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); for (let k = 0; k < 3; k++) for (let j = 0; j < 3 - k; j++) caja(g, r, -6 + j * 5 + k * 2.5, -k * 2.4, 2.4, 2.3, k === 2 ? '#C6683E' : '#7D7A76'); }]);
   L.push(['carga-artesanias', 26, 18, 13, 15, (g, r) => { sombra(g, 10, 2.5, 1); ovalo(g, -5, -3, 3.4, 3.2, FR.ocreRojo, r, op); ovalo(g, -5, -6, 1.8, .8, shade(FR.ocreRojo, -.3), r, { n: 0, borde: false }); pintar(g, [[0, 0], [7, 0], [8, -5], [-1, -5]], '#C9A86A', r, op); ovalo(g, 3.5, -8, 3.4, 1.4, '#E6CF96', r, op); }]);
+  L.push(['chimenea', 16, 56, 8, 52, (g, r) => { sombra(g, 6, 2, 1); pintar(g, [[-4, 0], [4, 0], [3, -48], [-3, -48]], '#9E5A44', r, op); g.fillStyle = '#6E3B2C'; for (let y = -44; y < -2; y += 7) g.fillRect(-3.5, y, 7, .7); pintar(g, [[-4.2, -48], [4.2, -48], [4.2, -51], [-4.2, -51]], '#5A3A2C', r, op); }]);
+  L.push(['nave', 40, 30, 20, 24, (g, r) => { sombra(g, 16, 4, 2); pintar(g, [[-16, 0], [16, 0], [16, -14], [-16, -14]], '#A7ADB0', r, op); pintar(g, [[-16, -14], [16, -14], [12, -20], [-12, -20]], '#7F878C', r, op); g.fillStyle = '#4F86A6'; for (let x = -13; x < 14; x += 6) g.fillRect(x, -11, 4, 4); g.fillStyle = '#2E3A40'; g.fillRect(-3, -6, 6, 6); }]);
   L.push(['humo', 16, 16, 8, 8, g => { const gr = g.createRadialGradient(0, 0, 0, 0, 0, 7); gr.addColorStop(0, 'rgba(142,138,134,.9)'); gr.addColorStop(1, 'rgba(142,138,134,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); }]);
   return L;
 }
@@ -466,10 +468,16 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];
     case 'finca': return []; // fase 10: arroz, aguacate, algodón y ganadería sin sombrío
     case 'taller': return [{ k: 'taller', humo: [11, -36] }];
-    case 'taller-trilladora': case 'taller-molino': case 'taller-chocolate': case 'taller-textiles': case 'taller-fundicion': case 'taller-artesanias':
-      return [{ k: 'taller', humo: [11, -36] }, { k: 'carga-' + k.slice(7), du: .28, dv: .3 }]; // fase 11: lo que produce
     case 'mina': return [{ k: 'mina', du: .05, dv: .05, humo: [-1, -6], polvo: true }];
-    default: return [{ k }];
+    default:
+      if (k.startsWith('taller-')) { // fase 11: producto y nivel (con máquinas: chimenea alta; automatizada: nave de metal)
+        const [, pr, nv] = k.split('-'), f = [{ k: 'taller', humo: +nv ? null : [11, -36] }]; // un solo humo por casilla
+        if (+nv >= 1) f.push({ k: 'chimenea', du: -.32, dv: .02, humo: +nv === 1 ? [0, -50] : null });
+        if (+nv >= 2) f.push({ k: 'nave', du: .02, dv: -.34 });
+        if (pr !== 'artesanias') f.push({ k: 'carga-' + pr, du: .28, dv: .3 });
+        return f;
+      }
+      return [{ k }];
   }
 }
 
