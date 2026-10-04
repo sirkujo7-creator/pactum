@@ -114,7 +114,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 1. **El árbol de civismo (publicado en 0.66.0):** 18 leyes en tres ramas de seis (derechos, economía, territorio) con pros y contras; las nuevas se desbloquean con puntos de civismo, su época o una ley anterior; prensa y censura son contrarias; salen en El Pregonero.
 2. **Rasgo cultural de cada época (publicado en 0.67.0):** al empezar cada época se elige uno de tres rasgos que se acumulan en la identidad del pueblo (estandarte en la Crónica).
-3. **La cultura en el mapa y los dilemas:** fiestas y patrimonio según los rasgos, dilemas de identidad y memoria, y el juicio de la historia los menciona.
+3. **La cultura en el mapa y los dilemas (publicado en 0.68.0):** fiestas y patrimonio según los rasgos, dilemas de identidad y memoria, y el juicio de la historia los menciona.
 4. **Balance** con los robots (que eligen rasgos y leyes).
 
 Después: **historias humanas**.

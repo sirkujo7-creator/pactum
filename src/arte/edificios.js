@@ -142,6 +142,15 @@ function recetas() {
     for (let k = 0; k < 6; k++) wash(g, caraI(b, .04 + k * .155, .15, 2 + (k % 2) * 3, 6 + (k % 3) * 2), cols[k], r, .9, .3);
     const s = caraI(b, .3, .4, 4, 4); blob(g, (s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2, 3, 2.4, '#F4EFE2', r, .9);
   }]);
+  // Fase 12: estandarte del pueblo: pedestal de piedra, asta y bandera roja con borde ocre.
+  L.push(['m_estandarte', 40, 64, 20, 54, (g, r) => {
+    sombra(g, 12, 3.5, 2); const b = iso(g, .3, .3, 0, 6, '#E3D9C4', '#C9BDA4', '#D6CBB3', r);
+    g.strokeStyle = '#5B3423'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(0, -6); g.lineTo(0, -48); g.stroke();
+    g.fillStyle = '#D4A24C'; g.beginPath(); g.arc(0, -49, 1.6, 0, 7); g.fill();
+    pintar(g, [[0.5, -46], [15, -44], [13, -38], [15, -32], [0.5, -33]], '#9C2F25', r, { n: 1, bw: .4, bal: .6 });
+    g.strokeStyle = '#D4A24C'; g.lineWidth = .8; g.beginPath(); g.moveTo(1.5, -44.5); g.lineTo(13.5, -43); g.stroke();
+    g.fillStyle = '#F7F1E3'; g.beginPath(); g.arc(7, -39.3, 2.4, 0, 7); g.fill();
+  }]);
   L.push(['m_reten', 56, 46, 28, 36, (g, r) => {
     sombra(g, 20, 5, 4);
     for (const [u, v] of [[-.3, .1], [.05, .25], [.32, -.05]]) { const q = V2(u, v); for (let k = 0; k < 3; k++) wash(g, [[q[0] - 6, q[1] - k * 2.2], [q[0] + 6, q[1] - k * 2.2], [q[0] + 6, q[1] - k * 2.2 - 2], [q[0] - 6, q[1] - k * 2.2 - 2]], '#B7A27A', r, .95, .2); }

@@ -6,6 +6,7 @@ import { C } from './contenido.js';
 import { clamp } from './azar.js';
 import { climaActivo } from './clima.js';
 import { counts, hasLaw, epocaHistorica } from './reglas.js';
+import { dejarMarca } from './marcas.js';
 
 const K = () => C.CIV;
 export function civismoActivo(S) { return climaActivo(S) && !!C.CIV; }
@@ -106,6 +107,7 @@ export function elegirRasgo(S, id) {
   const e = rasgoPendiente(S);
   if (!e || !opcionesRasgo(e).some(r => r.id === id)) return false;
   (S.rasgos = S.rasgos || {})[e] = id; S.rasgoEv = null;
+  dejarMarca(S, 'estandarte', C.RASGOS.textos.marca.replace('{anio}', S.year).replace('{rasgo}', datosRasgo(id).nombre)); // paso 3: el estandarte en el mapa
   S.log.unshift({ y: S.year, t: C.RASGOS.textos.elegido.replace('{rasgo}', datosRasgo(id).nombre.toLowerCase()) });
   return true;
 }
@@ -113,4 +115,12 @@ export function rasgosDelAnio(S) {
   const e = rasgoPendiente(S);
   if (e && !(S.rasgoEv && S.rasgoEv.epoca === e)) S.rasgoEv = { epoca: e, nuevo: true };
   return [];
+}
+
+// ---------- Paso 3: la cultura del pueblo ----------
+// La fiesta del pueblo es la del rasgo más reciente que tenga fiesta propia (si no, la de siempre).
+export function fiestaDelPueblo(S) {
+  const L = rasgosElegidos(S).filter(r => r.fiesta), F = C.CULTURA && C.CULTURA.fiesta;
+  const f = L.length ? L[L.length - 1].fiesta : null;
+  return f ? { ...F, nombre: f.nombre, texto: f.texto, bono: F.bono + (f.bono || 0) } : F;
 }
