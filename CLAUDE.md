@@ -120,7 +120,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 **Fase 13 (aprobada por Juan el 4 de octubre): historias humanas**, sin censura (las cartas cuentan la historia tal como fue). Un paso publicable a la vez:
 
 1. **Las familias y sus cartas (publicado en 0.70.0):** cinco familias (Tique, Rojas, Quintero, Arango, Lozano); cada pocos años una carta que cambia según las decisiones, con viñeta, frase para pensar y recuerdo.
-2. **El álbum de las familias:** árbol de cada familia, cartas guardadas y recuerdos con su historia (Crónica).
+2. **El álbum de las familias (publicado en 0.71.0):** árbol de cada familia, cartas guardadas y recuerdos con su historia (Crónica).
 3. **En el mapa y al final:** los miembros de las familias caminan por el pueblo y se pueden tocar; epílogo con el destino de cada familia.
 4. **Balance** y revisión en celular y computador.
 

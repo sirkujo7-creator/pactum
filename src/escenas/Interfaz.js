@@ -11,7 +11,7 @@ import {
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
-  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto
+  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -720,7 +720,9 @@ export class Interfaz {
     const tabs = Object.entries(GRAFICAS).map(([k, v]) => `<button class="tab${k === this.grafica ? ' on' : ''}" data-g="${k}">${v.n}</button>`).join('');
     const ep = historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null, sig = ep && proximaEpoca(S);
     const epoca = ep ? `<h3>${ep.icono} Época: ${ep.nombre}</h3><p class="small">${ep.texto}${sig ? ` Hasta el año ${sig.desde}; luego, ${sig.nombre.toLowerCase()}.` : ''}</p>` : '';
-    this.cronica.innerHTML = `${epoca}${this.seccionIdentidad()}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.innerHTML = `${epoca}${this.seccionIdentidad()}${this.seccionAlbum()}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.querySelectorAll('[data-carta]').forEach(bt => bt.onclick = () => { const r = estadoFamilias(this.S).cartas.find(x => x.n === +bt.dataset.carta); if (r) this.tarjetaCarta(r, null, true); });
+    this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
     this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
     this.cronica.querySelectorAll('[data-g]').forEach(bt => bt.onclick = () => { this.grafica = bt.dataset.g; this.renderCronica(); });
   }
@@ -1552,6 +1554,24 @@ export class Interfaz {
     this.card.classList.add('carta');
     if (!reabrir) Sonido.carta();
     this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 13: el álbum de las familias (Crónica): cada familia con su gente y sus cartas, y los recuerdos.
+  seccionAlbum() {
+    const S = this.S;
+    if (!familiasActivas(S)) return '';
+    const T = C.FAMILIAS.textos, E = estadoFamilias(S), R = cartasRecibidas(S);
+    if (!R.length) return `<h3>📬 ${T.album}</h3><p class="small">${T.sinCartas}</p>`;
+    const marca = { vive: '', murio: ' <span class="neg">† (año {a})</span>', sefue: ' <span class="small">(se fue, año {a})</span>' };
+    const fams = listaFamilias().map(f => {
+      const F = datosFamilia(f), mias = R.filter(c => c.familia === f);
+      if (!mias.length) return '';
+      const gente = miembrosFamilia(S, f).map(m => `<li>${m.nombre}${(marca[m.estado] || '').replace('{a}', m.anio)}</li>`).join('');
+      const cartas = mias.map(c => `<button class="btn" data-carta="${c.n}">✉️ Año ${c.anio} · ${c.de}</button>`).join('');
+      return `<details class="familia"><summary><b>${F.icono} ${F.nombre}</b> <small>(${mias.length} ${mias.length === 1 ? 'carta' : 'cartas'})</small></summary><p class="small">${F.origen}</p><ul class="conds">${gente}</ul><div class="av-hem">${cartas}</div></details>`;
+    }).join('');
+    const objs = listaObjetos().map(o => { const O = datosObjeto(o), tiene = E.objetos[o] !== undefined;
+      return `<button class="objeto${tiene ? '' : ' falta'}" ${tiene ? `data-objeto="${o}"` : 'disabled'} title="${tiene ? O.nombre : '?'}"><span>${tiene ? O.icono : '?'}</span><small>${tiene ? O.nombre : 'Por descubrir'}</small></button>`; }).join('');
+    return `<h3>📬 ${T.album}</h3><p class="small">${T.albumAyuda}</p>${fams}<h3>🗝️ ${T.objetos} (${Object.keys(E.objetos).length} de ${listaObjetos().length})</h3><div class="objetos">${objs}</div>`;
   }
   // Fase 11: El Pregonero. Los avances del año salen en un periódico que se despliega desde arriba, con su sonido.
   periodico(ed, alTerminar, reabrir) {
