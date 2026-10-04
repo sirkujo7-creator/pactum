@@ -1,0 +1,145 @@
+{
+  "leccion": "Tucídides escribió que la guerra del Peloponeso nació del miedo: cuando un vecino crece y el otro teme, la desconfianza se vuelve inevitable si nadie la detiene. La diplomacia es el arte de detenerla a tiempo.",
+  "desde": {
+    "etapa": 2
+  },
+  "tension": {
+    "sube": 8,
+    "porHostilidad": 0.4,
+    "baja": 6,
+    "incidente": 35,
+    "tropas": 60,
+    "guerra": 100
+  },
+  "fuerzas": {
+    "lagunilla": 46,
+    "sanlorenzo": 54,
+    "altamira": 50,
+    "porAnio": 0.15,
+    "azar": 16
+  },
+  "propia": {
+    "base": 30,
+    "animoEjercito": 0.3,
+    "gasto": 2,
+    "cuartel": 6,
+    "legitimidad": 0.2,
+    "aliado": 10,
+    "fortificacion": 14,
+    "etapa": 3
+  },
+  "costos": {
+    "oro": 30,
+    "poblacion": 0.02,
+    "animo": 4,
+    "alimento": 0.1,
+    "obrasDanadas": 3,
+    "dano": 30
+  },
+  "ocupar": {
+    "frente": -2,
+    "casillas": 3
+  },
+  "aniosMax": 3,
+  "respuestas": {
+    "negociar": {
+      "nombre": "Negociar",
+      "costo": 60,
+      "relacion": 20,
+      "tension": -35,
+      "texto": "Una comisión cruza la frontera con propuestas: compensaciones, reglas para el río y el comercio.",
+      "filosofia": "Habermas: el acuerdo nace del diálogo entre iguales."
+    },
+    "mediacion": {
+      "nombre": "Pedir mediación a un aliado",
+      "costo": 20,
+      "relacion": 10,
+      "tension": -40,
+      "requiere": 70,
+      "texto": "Una polis aliada sienta a las dos partes a la mesa.",
+      "filosofia": "Kant: una federación de pueblos libres hace posible la paz perpetua."
+    },
+    "preparar": {
+      "nombre": "Fortificar la frontera",
+      "costo": 70,
+      "anios": 6,
+      "texto": "Murallas, trincheras y vigías en el borde. No calma al vecino, pero si hay guerra resistirás mejor.",
+      "filosofia": "Vegecio: si quieres la paz, prepara la guerra."
+    },
+    "ultimatum": {
+      "nombre": "Lanzar un ultimátum",
+      "costo": 0,
+      "legitimidad": 3,
+      "tension": 15,
+      "retroceso": 0.55,
+      "texto": "Le exiges al vecino que retire sus tropas o habrá guerra. Si eres más fuerte puede retroceder; si no, la precipitas.",
+      "filosofia": "Maquiavelo: es más seguro ser temido que amado, si no se puede ser ambas cosas."
+    }
+  },
+  "declarar": {
+    "legitimidad": 8,
+    "legitimidadPreventiva": 4,
+    "legitimidadJusta": 0,
+    "texto": "Declarar la guerra es la decisión más grave de un gobierno. La tradición de la guerra justa (Agustín, Tomás de Aquino) pide causa justa, último recurso y proporción: recuperar el territorio propio lo es; atacar por ventaja, no."
+  },
+  "tratados": {
+    "justa": {
+      "nombre": "Paz justa",
+      "texto": "Reparaciones mutuas, se devuelven las tierras y se reabren el río y el comercio.",
+      "relacion": 50,
+      "legitimidad": 4,
+      "costo": 40,
+      "tension": 0,
+      "filosofia": "Kant, La paz perpetua: ningún tratado de paz vale si guarda en secreto la semilla de otra guerra."
+    },
+    "impuesta": {
+      "nombre": "Paz impuesta",
+      "texto": "El vencido paga tributo y acepta tus condiciones.",
+      "relacion": 5,
+      "tributo": 120,
+      "tension": 50,
+      "filosofia": "El Tratado de Versalles (1919) humilló al vencido y sembró la guerra siguiente."
+    },
+    "armisticio": {
+      "nombre": "Armisticio",
+      "texto": "Se detienen las armas sin resolver el fondo: las tierras quedan como están.",
+      "relacion": 25,
+      "tension": 40,
+      "filosofia": "Hobbes: sin un poder común, la paz es solo una pausa entre guerras."
+    },
+    "rendicion": {
+      "nombre": "Aceptar sus condiciones",
+      "texto": "Pagas tributo y las tierras ocupadas quedan en su poder hasta un tratado futuro.",
+      "relacion": 30,
+      "tributo": 100,
+      "legitimidad": 6,
+      "tension": 20,
+      "filosofia": "Tucídides, el diálogo de Melos: «los fuertes hacen lo que pueden y los débiles sufren lo que deben»."
+    },
+    "resistir": {
+      "nombre": "Resistir un año más",
+      "texto": "Rechazas sus condiciones: la guerra sigue.",
+      "filosofia": "Clausewitz: la guerra es la continuación de la política por otros medios."
+    }
+  },
+  "recuperar": {
+    "nombre": "Negociar la devolución de las tierras",
+    "costo": 90,
+    "requiere": 50,
+    "texto": "Con buenas relaciones, el vecino devuelve las casillas ocupadas a cambio de una compensación."
+  },
+  "textos": {
+    "incidente": "Incidente en la frontera con {vecino}: una patrulla suya cruzó el borde y hubo empujones con los campesinos. La tensión sube.",
+    "tropas": "{vecino} acampa tropas en el borde de tu territorio. Si la tensión llega al límite, habrá guerra.",
+    "guerra": "{vecino} te declara la guerra.",
+    "declaras": "Declaras la guerra a {vecino}.",
+    "anio": "Guerra con {vecino}: {resultado}.",
+    "avanzas": "tus tropas avanzan",
+    "retrocedes": "el enemigo avanza",
+    "ocupa": "{vecino} ocupa {n} casillas del borde.",
+    "recuperas": "Recuperas las tierras ocupadas por {vecino}.",
+    "fin": "Termina la guerra con {vecino}: hay que firmar la paz.",
+    "retrocede": "{vecino} retira sus tropas ante tu ultimátum.",
+    "ocupada": "Ocupada por {vecino}: no rinde ni se puede construir hasta recuperarla."
+  }
+}

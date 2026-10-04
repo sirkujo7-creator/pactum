@@ -2,7 +2,7 @@
 // bajan franjas de cine con un texto y se ve lo que pasa: marchas, procesiones, escándalos, desplazados, tomas
 // armadas, terremotos, lahares y avenidas. Solo muestra lo que ya ocurrió en la lógica (no cambia el balance).
 // Se salta con un toque, Esc, Enter o la barra espaciadora. Con "reducir movimiento" no hay escena.
-import { C, plaza, clamp } from '../core/index.js';
+import { C, plaza, clamp, casillasBorde } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
 import { FR } from '../arte/fresco.js';
@@ -29,6 +29,7 @@ export class Cine {
       tx.addCanvas('cinePancarta', c);
     }
     if (!tx.exists('cinePapel')) { const c = lienzo(10, 12), g = c.getContext('2d'); g.fillStyle = FR.cal; g.fillRect(0, 0, 10, 12); g.fillStyle = '#9A8E7E'; for (let k = 0; k < 4; k++) g.fillRect(2, 2 + k * 2.5, 6, 1); tx.addCanvas('cinePapel', c); }
+    if (!tx.exists('cineBandera')) { const c = lienzo(40, 64), g = c.getContext('2d'); g.strokeStyle = FR.siena; g.lineWidth = 3; g.beginPath(); g.moveTo(6, 4); g.lineTo(6, 62); g.stroke(); g.fillStyle = FR.cal; g.beginPath(); g.moveTo(7, 6); g.quadraticCurveTo(22, 2, 36, 8); g.lineTo(36, 26); g.quadraticCurveTo(22, 20, 7, 26); g.fill(); tx.addCanvas('cineBandera', c); }
     if (!tx.exists('cineVela')) { const c = lienzo(16, 16), g = c.getContext('2d'), gr = g.createRadialGradient(8, 8, 0, 8, 8, 8); gr.addColorStop(0, 'rgba(255,226,140,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, 16, 16); tx.addCanvas('cineVela', c); }
   }
 
@@ -53,7 +54,7 @@ export class Cine {
     if (!K || !K.escenas[tipo] || reducirMovimiento() || this.activo || !this.scene.listo) { luego(); return; }
     this.activo = true; this.luego = luego; this.t = 0; this.tipo = tipo; this.datos = datos || {};
     this.dur = K.duracion;
-    const texto = K.escenas[tipo].texto.replace('{movimiento}', this.datos.movimiento || 'El movimiento').replace('{lider}', this.datos.lider || 'El líder');
+    const texto = K.escenas[tipo].texto.replace('{movimiento}', this.datos.movimiento || 'El movimiento').replace('{lider}', this.datos.lider || 'El líder').replace('{vecino}', this.datos.vecino || 'el vecino');
     // Franjas de cine con el texto; un toque las salta.
     const capa = capaUI();
     this.velo = el('div', { class: 'cine vivo', role: 'dialog', 'aria-label': texto, on: { pointerup: () => this.terminar() } }, [
@@ -81,6 +82,30 @@ export class Cine {
       }
       const q = this.punto((o.r + p.r) / 2, (o.c + p.c) / 2);
       return [q[0], q[1] - 10];
+    }
+    if (tipo === 'asedio') {
+      // Tropas del vecino (de verde oliva) que entran por su borde hacia el pueblo, con fogonazos y humo.
+      const N = this.T().N, L = casillasBorde(S, this.datos.id || 'altamira'), b = L.length ? L[0] : plaza(S), o = { r: Math.floor(b / N) + .5, c: b % N + .5 };
+      const hacia = { r: o.r + (p.r - o.r) * .45, c: o.c + (p.c - o.c) * .45 };
+      for (let k = 0; k < 12; k++) {
+        const de = { r: o.r + ((k % 4) - 1.5) * .3, c: o.c + (Math.floor(k / 4) - 1) * .3 }, a = { r: hacia.r + ((k % 4) - 1.5) * .3, c: hacia.c + (Math.floor(k / 4) - 1) * .3 };
+        const s0 = this.caminante('artesano', k % 3, de, [a], .45, (k % 4) * .15 + Math.floor(k / 4) * .3);
+        s0.img.setTint(0x8C8F6A);
+      }
+      for (let k = 0; k < 2; k++) { const q = this.punto(hacia.r + (k ? .8 : -.6), hacia.c + (k ? -.5 : .7)); this.objetos.push(sc.add.particles(q[0], q[1], 'edificios', { frame: 'humo', lifespan: 2600, speedY: { min: -24, max: -12 }, scale: { start: .3, end: 1 }, alpha: { start: .6, end: 0 }, tint: 0x3A322C, frequency: 150 }).setDepth(40000 - 2)); }
+      this.fogonazos = { cada: .3, prox: .6, centro: hacia };
+      const q = this.punto((o.r + hacia.r) / 2, (o.c + hacia.c) / 2);
+      return [q[0], q[1] - 10];
+    }
+    if (tipo === 'paz') {
+      // Dos delegaciones llegan a la plaza desde lados opuestos, con banderas blancas, y se encuentran.
+      for (let k = 0; k < 10; k++) {
+        const lado = k < 5 ? -1 : 1, j = k % 5, de = { r: p.r + lado * 1.8 + (j - 2) * .12, c: p.c - lado * .4 + (j - 2) * .25 }, a = { r: p.r + lado * .35 + (j - 2) * .06, c: p.c + (j - 2) * .22 };
+        const x = this.caminante(j === 2 ? 'elite' : TIPOS[(k + 1) % 4], k % 3, de, [a], .5, j * .15);
+        x.mira = p;
+        if (j === 0) x.extra = sc.add.image(0, 0, 'cineBandera').setScale(.3).setOrigin(.15, 1);
+      }
+      return [pz[0], pz[1] - 10];
     }
     if (tipo === 'escandalo') {
       for (let k = 0; k < 12; k++) {
@@ -160,7 +185,7 @@ export class Cine {
       } else if (a.mira) { const dr = a.mira.r - a.r, dc = a.mira.c - a.c; a.frente = (dc + dr) >= 0 ? 1 : 0; a.voltear = (dc - dr) < 0; }
       const q = this.punto(a.r, a.c), paso = andando ? Math.floor(a.fase) % 4 : (a.mira && Math.floor(this.t * 3 + a.vi) % 4 === 0 ? 1 : 0);
       a.img.setFrame(`${a.tipo}_${a.vi}_${a.frente}_${paso}`).setPosition(q[0], q[1]).setFlipX(a.voltear).setDepth(a.r + a.c + .02);
-      if (a.extra) a.extra.setPosition(q[0] + (this.tipo === 'procesion' ? 3 : 0), q[1] - (this.tipo === 'procesion' ? 10 : this.tipo === 'desplazados' ? 14 : 12)).setDepth(a.r + a.c + .03);
+      if (a.extra) a.extra.setPosition(q[0] + (this.tipo === 'procesion' ? 3 : 0), q[1] - (this.tipo === 'procesion' ? 10 : 12)).setDepth(a.r + a.c + .03);
     }
     // Fogonazos de la toma armada.
     const F = this.fogonazos;

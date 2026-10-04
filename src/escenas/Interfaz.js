@@ -4,7 +4,8 @@
 import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
-  amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle
+  amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
+  guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -621,6 +622,7 @@ export class Interfaz {
       hijos.push(el('b', { style: G, text: `${M.icono} ${M.nombre}` }), el('span', { style: G, text: M.texto }), el('span', { class: 'aporte', style: G, text: x.mk.d }),
         el('span', { class: 'small', style: G, text: `${x.mk.t === 'acta' ? 'Permanece mientras gobiernes.' : `Se borrará hacia el año ${x.mk.y + M.anios}.`} Si construyes aquí, la huella desaparece. ${C.MARCAS.leccion}` }));
     }
+    if (x.oc && C.GUERRA) hijos.push(el('span', { class: 'neg', style: 'grid-column:1/-1', text: C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre) })); // fase 9
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
         ...(C.B[x.b].es && climaActivo(S) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
@@ -919,7 +921,7 @@ export class Interfaz {
       this.tarjeta(`<div class="big">${F.icono}</div><h3>Pronóstico: ${F.nombre}</h3><p>${F.pronostico.replace('{anio}', K.pronostico.anio)}</p>
         <p><b>Tienes un año para prepararte.</b> ${F.preparar}</p><p class="small">Fondo de emergencias hoy: ${Math.round(S.fondo || 0)} de oro, con un aporte de ${S.aporteFondo || 0}% de los ingresos.</p>
         <div class="phil"><b>Lo que enseña</b><br>${F.concepto}</div><button class="main" id="okB">Entendido</button>`);
-      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
+      this.alCerrar = () => this.economia(alTerminar); this.boton('okB', () => this.cerrarTarjeta()); return;
     }
     this.economia(alTerminar);
   }
@@ -931,14 +933,14 @@ export class Interfaz {
       E.aviso.nuevo = false;
       this.tarjeta(`<div class="big">📉</div><h3>Pronóstico económico</h3><p>${T.aviso.replace('{anio}', E.aviso.anio)}</p>
         <p><b>Tienes un año para prepararte.</b> ${T.preparar}</p><div class="phil"><b>Lo que enseña</b><br>${C.ECO.leccionCiclo}</div><button class="main" id="okB">Entendido</button>`);
-      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
+      this.alCerrar = () => this.economia(alTerminar); this.boton('okB', () => this.cerrarTarjeta()); return; // sigue con el resto de tarjetas del año
     }
     if (E.evento && E.evento.nuevo) {
       E.evento.nuevo = false;
       this.tarjeta(`<div class="big">📉</div><h3>Recesión</h3><p>${C.ECO.fases.recesion.texto}</p>
         <p class="small">Obras en marcha ahora: ${S.map.filter(x => x.ob && !x.ob.det).length}. Cada una emplea el doble mientras dure la recesión.</p>
         <div class="phil"><b>Lo que enseña</b><br>${C.ECO.leccionCiclo}</div><button class="main" id="okB">Continuar</button>`);
-      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return;
+      this.alCerrar = () => this.economia(alTerminar); this.boton('okB', () => this.cerrarTarjeta()); return;
     }
     this.avisoEjercito(alTerminar);
   }
@@ -1042,7 +1044,7 @@ export class Interfaz {
   }
   // Fase 4: relaciones con las polis vecinas.
   vecinosAnio(alTerminar0) {
-    const S = this.S, e = S.vecEv, alTerminar = () => this.asentamientoAnio(alTerminar0);
+    const S = this.S, e = S.vecEv, alTerminar = () => this.guerraAnio(() => this.asentamientoAnio(alTerminar0));
     if (!e || !e.nuevo || !vecinosActivos(S)) { alTerminar(); return; }
     e.nuevo = false;
     const V = C.VECINOS;
@@ -1144,7 +1146,7 @@ export class Interfaz {
     if (!vecinosActivos(S)) return '';
     const V = C.VECINOS, prom = Math.round(promedioRel(S));
     const filas = Object.entries(S.vecinos).map(([id, v]) => { const n = V.vecinos[id];
-      return `<button class="sub" data-vecino="${id}" aria-label="${n.nombre}: relación ${Math.round(v.rel)}. Ver más"><span class="sn">${n.icono} ${n.nombre} <small>${{ aliado: 'aliado', hostil: 'hostil', neutral: v.tratado ? 'con tratado' : '' }[nivelVecino(v.rel)]}</small></span><span class="track"><span class="fill" style="width:${v.rel}%;background:${colorDe(v.rel)}"></span></span><b>${Math.round(v.rel)}</b></button>`; }).join('');
+      return `<button class="sub" data-vecino="${id}" aria-label="${n.nombre}: relación ${Math.round(v.rel)}. Ver más"><span class="sn">${n.icono} ${n.nombre} <small>${this.estadoFrontera(id) || { aliado: 'aliado', hostil: 'hostil', neutral: v.tratado ? 'con tratado' : '' }[nivelVecino(v.rel)]}</small></span><span class="track"><span class="fill" style="width:${v.rel}%;background:${colorDe(v.rel)}"></span></span><b>${Math.round(v.rel)}</b></button>`; }).join('');
     return `<div class="cls otros"><div><div class="lab"><span>Otras polis</span><span class="${aislado(S) ? 'neg' : ''}">promedio ${prom}</span></div><p class="small">${aislado(S) ? `<b class="neg">${V.textos.aislamiento}</b>` : `Mínimo para llegar a Polis: ${V.minimo}.`} Comercio con los vecinos: ${Math.round(factorVecinos(S) * 100)}% en los ingresos de artesanos y élite.</p><div class="subs">${filas}</div></div></div>`;
   }
   explicarVecino(id) {
@@ -1154,10 +1156,82 @@ export class Interfaz {
       <p class="small"><b>Le agrada:</b> ${n.gusta}.</p>
       ${ten.length ? `<p>Este año la relación se mueve por:</p>${this.filasCausas(ten)}` : '<p class="small">Este año no hay tensiones: la relación vuelve poco a poco a lo normal.</p>'}
       <p class="small">Aliados (${V.aliado} o más) envían ayuda en las emergencias; hostiles (${V.hostil} o menos) bloquean el comercio.</p>
-      ${boton('tratado')}${boton('visita')}
+      ${boton('tratado')}${boton('visita')}${guerraActiva(S) ? `<button class="opt" id="fronB"><b>Frontera y guerra</b><small>${this.estadoFrontera(id) || 'Sin tensión'}. Tensión ${Math.round(v.tension || 0)} de ${C.GUERRA.tension.guerra}.</small></button>` : ''}
       <div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
+    this.boton('fronB', () => this.tarjetaFrontera(id));
     this.card.querySelectorAll('[data-acc]').forEach(b => b.onclick = () => { if (accionVecino(S, id, b.dataset.acc)) { this.toast(`${V.acciones[b.dataset.acc].nombre} con ${n.nombre}.`); this.render(); this.explicarVecino(id); } });
+  }
+  // ---------- Fase 9: guerra con otra polis ----------
+  estadoFrontera(id) {
+    const S = this.S, v = S.vecinos[id], G = S.guerra, oc = ocupadasPor(S, id).length;
+    if (!guerraActiva(S)) return '';
+    if (G && G.activa && G.activa.id === id) return 'en guerra';
+    if (G && G.tratado && G.tratado.id === id) return 'firmando la paz';
+    if (oc) return `ocupa ${oc} casillas tuyas`;
+    if (v.tropas) return 'tropas en el borde';
+    if ((v.tension || 0) >= C.GUERRA.tension.incidente) return 'tensión en la frontera';
+    return '';
+  }
+  // Ficha de la frontera: tensión, fuerzas, respuestas, declarar la guerra y recuperar tierras.
+  tarjetaFrontera(id, alTerminar) {
+    const S = this.S, Gk = C.GUERRA, n = C.VECINOS.vecinos[id], v = S.vecinos[id], ten = Math.round(v.tension || 0), W = S.guerra && S.guerra.activa;
+    const resp = a => { const R = Gk.respuestas[a], no = puedeResponder(S, id, a); return `<button class="opt" data-resp="${a}" ${no ? 'disabled' : ''}><b>${R.nombre}</b><small>${R.texto} ${costoRespuesta(S, a) ? `Cuesta ${costoRespuesta(S, a)} de oro.` : ''} <i>${R.filosofia}</i>${no ? ` <span class="neg">${no}</span>` : ''}</small></button>`; };
+    const noDec = puedeDeclarar(S, id), noRec = puedeRecuperar(S, id), oc = ocupadasPor(S, id).length;
+    this.tarjeta(`<div class="big">⚔️</div><h3>Frontera con ${n.nombre}</h3>
+      <p class="small">${this.estadoFrontera(id) ? `<b>${mayus(this.estadoFrontera(id))}.</b> ` : ''}Relación ${Math.round(v.rel)}. Tensión ${ten} de ${Gk.tension.guerra}: sube cada año mientras la relación sea hostil (${C.VECINOS.hostil} o menos). En ${Gk.tension.tropas} acampan tropas en el borde; en ${Gk.tension.guerra} hay guerra.</p>
+      <div class="track"><div class="fill" style="width:${Math.min(100, ten / Gk.tension.guerra * 100)}%;background:${colorDe(100 - ten)}"></div></div>
+      <p><b>Tu fuerza: ${fuerzaPropia(S)}</b> · Fuerza de ${n.nombre}: ${fuerzaVecino(S, id)}</p>${this.filasCausas(partesFuerza(S))}
+      ${W ? `<p class="small">Guerra en curso con ${C.VECINOS.vecinos[W.id].nombre}: año ${W.anios + 1}, frente ${W.frente > 0 ? 'a tu favor' : W.frente < 0 ? 'en contra' : 'parejo'}.</p>` : `${resp('negociar')}${resp('mediacion')}${resp('preparar')}${resp('ultimatum')}`}
+      ${oc ? `<button class="opt" id="recB" ${noRec ? 'disabled' : ''}><b>${Gk.recuperar.nombre}</b><small>${Gk.recuperar.texto} Cuesta ${costoRecuperar(S)} de oro.${noRec ? ` <span class="neg">${noRec}</span>` : ''}</small></button>` : ''}
+      <button class="opt" id="decB" ${noDec ? 'disabled' : ''}><b>Declarar la guerra</b><small>${Gk.declarar.texto} ${noDec ? `<span class="neg">${noDec}</span>` : `Costo: −${costoDeclarar(S, id)} de legitimidad${costoDeclarar(S, id) ? '' : ' (causa justa: recuperar lo tuyo)'}.`}</small></button>
+      <div class="phil"><b>Lo que enseña</b><br>${Gk.leccion}</div><button class="main" id="okB">${alTerminar ? 'Decidir después' : 'Cerrar'}</button>`);
+    this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
+    this.card.querySelectorAll('[data-resp]').forEach(b => b.onclick = () => { const t = responder(S, id, b.dataset.resp); if (t) { this.toast(t); this.mapa.cambio(true); this.tarjetaFrontera(id, alTerminar); } });
+    this.boton('recB', () => { if (recuperarTierras(S, id)) { this.toast(C.GUERRA.textos.recuperas.replace('{vecino}', n.nombre)); this.mapa.cambio(true); this.tarjetaFrontera(id, alTerminar); } });
+    this.boton('decB', () => {
+      if (!declararGuerra(S, id)) return;
+      this.alCerrar = null; this.cerrarTarjeta(); this.mapa.cambio(true);
+      this.guerraAnio(alTerminar || (() => this.render())); // escena del asedio y la carta de la guerra
+    });
+  }
+  // Cartas de la guerra al cerrar el año (y al declararla): incidente, tropas, inicio, años de guerra y la paz.
+  guerraAnio(alTerminar) {
+    const S = this.S, Gk = C.GUERRA, L = S.guerraEv || [], e = L.find(x => x.nuevo), sigue = () => this.guerraAnio(alTerminar);
+    if (!guerraActiva(S)) { S.guerraEv = []; alTerminar(); return; }
+    if (!e) {
+      S.guerraEv = [];
+      const T = estadoGuerra(S).tratado;
+      if (T) { if (this.escena('paz', T, sigue, { vecino: C.VECINOS.vecinos[T.id].nombre, id: T.id })) return; this.tarjetaTratado(alTerminar); return; }
+      alTerminar(); return;
+    }
+    const n = C.VECINOS.vecinos[e.id], T = Gk.textos, nom = n.nombre;
+    if ((e.tipo === 'guerra' || e.tipo === 'declaras') && this.escena('asedio', e, sigue, { vecino: nom, id: e.id })) return;
+    e.nuevo = false;
+    if (e.tipo === 'tropas') { this.tarjetaFrontera(e.id, sigue); return; }
+    if (e.tipo === 'fin') { sigue(); return; }
+    let html;
+    if (e.tipo === 'incidente') html = `<div class="big">🚩</div><h3>Incidente en la frontera</h3><p>${T.incidente.replace('{vecino}', nom)}</p><p class="small">Mejora la relación con ${nom} (tratado, visita) o responde a la tensión en <b>Sociedad → Otras polis → ${nom} → Frontera y guerra</b>.</p>`;
+    else if (e.tipo === 'guerra' || e.tipo === 'declaras') html = `<div class="big">⚔️</div><h3>${e.tipo === 'guerra' ? `${nom} te declara la guerra` : `Guerra contra ${nom}`}</h3><p>${e.tipo === 'guerra' ? 'La tensión se desbordó: sus tropas cruzan el borde.' : T.declaras.replace('{vecino}', nom)}</p>
+      <p class="small">Cada año de guerra: −${Math.round(Gk.costos.oro * S.price)} de oro, −${Math.round(Gk.costos.poblacion * 100)}% de habitantes, menos comida y ánimo, comercio cortado con ${nom} y obras dañadas cerca de su borde. Quien pierde el frente pierde casillas del borde. Dura hasta ${Gk.aniosMax} años.</p>
+      <p><b>Tu fuerza: ${fuerzaPropia(S)}</b> · ${nom}: ${fuerzaVecino(S, e.id)}</p>${this.filasCausas(partesFuerza(S))}<p class="small">Sube tu fuerza con el Ejército (cuartel y gasto militar), la legitimidad, los aliados y fortificando la frontera.</p>`;
+    else if (e.tipo === 'anio') html = `<div class="big">${e.avanza ? '🛡️' : '🔥'}</div><h3>Un año de guerra con ${nom}</h3><p>${e.avanza ? 'Tus tropas ganan terreno.' : 'El enemigo avanza.'} Frente: ${['muy en contra', 'en contra', 'parejo', 'a tu favor', 'muy a tu favor'][e.frente + 2]}.</p>
+      ${e.ocupa ? `<p class="neg"><b>${T.ocupa.replace('{vecino}', nom).replace('{n}', e.ocupa)}</b> No rinden ni se puede construir en ellas hasta recuperarlas.</p>` : ''}${e.recupera ? `<p class="pos"><b>${T.recuperas.replace('{vecino}', nom)}</b></p>` : ''}
+      <p class="small">El asedio costó oro, habitantes, comida y ánimo, y dañó obras cerca del borde (repáralas tocándolas).</p>`;
+    this.tarjeta(`${html}<div class="phil"><b>Lo que enseña</b><br>${Gk.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = sigue; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  tarjetaTratado(alTerminar) {
+    const S = this.S, Gk = C.GUERRA, T = estadoGuerra(S).tratado, nom = C.VECINOS.vecinos[T.id].nombre;
+    const tit = { ganas: `Ganaste la guerra contra ${nom}`, pierdes: `Perdiste la guerra contra ${nom}`, empate: `La guerra con ${nom} queda en tablas` }[T.resultado];
+    const ops = opcionesTratado(S).map(o => { const X = Gk.tratados[o], c = costoTratado(S, o); return `<button class="opt" data-tr="${o}" ${c > S.gold && o !== 'rendicion' ? 'disabled' : ''}><b>${X.nombre}</b><small>${X.texto}${c ? ` Cuesta ${c} de oro.` : ''}${X.tributo && o === 'impuesta' ? ` Recibes ${Math.round(X.tributo * S.price)} de oro.` : ''} <i>${X.filosofia}</i></small></button>`; }).join('');
+    this.tarjeta(`<div class="big">🕊️</div><h3>${tit}</h3><p>Hay que firmar la paz. Lo que acuerdes marcará la relación con ${nom} por muchos años.</p>${ops}<div class="phil"><b>Lo que enseña</b><br>${Gk.tratados.justa.filosofia}</div>`, false);
+    this.card.querySelectorAll('[data-tr]').forEach(b => b.onclick = () => {
+      if (!firmarTratado(S, b.dataset.tr)) return;
+      this.toast(`${Gk.tratados[b.dataset.tr].nombre} con ${nom}.`);
+      this.mapa.cambio(true); this.render();
+      this.alCerrar = alTerminar; this.cerrarTarjeta();
+    });
   }
   seccionConflicto() {
     const S = this.S;

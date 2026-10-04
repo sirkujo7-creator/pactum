@@ -23,6 +23,7 @@ export function estadoObra(x) { return K().estados[nivelObra(x)]; }
 
 // Lo que rinde una obra (tasas, cosecha): 1, o menos si está agrietada; 0 si está abandonada.
 export function rindeObra(S, x) {
+  if (x.oc && climaActivo(S)) return 0; // fase 9: ocupada por un vecino en guerra
   if (!climaActivo(S) || !x.u) return 1;
   const n = nivelObra(x);
   return n >= 3 ? 0 : n === 2 ? K().rindeAgrietada : 1;
