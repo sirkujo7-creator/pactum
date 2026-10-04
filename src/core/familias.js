@@ -62,3 +62,25 @@ export function miembrosFamilia(S, f) {
 }
 export function listaFamilias() { return Object.keys(K().familias); }
 export function listaObjetos() { return Object.keys(K().objetos); }
+
+// ---------- Paso 3: en el mapa y al final ----------
+// Quién representa hoy a cada familia en el pueblo: quien escribió su última carta, si sigue vivo y en el pueblo.
+const CLASE = { tique: 'c', rojas: 'c', quintero: 'a', arango: 'e', lozano: 'u' };
+export function representantes(S) {
+  if (!familiasActivas(S) || !S.fam) return [];
+  const R = cartasRecibidas(S), out = [];
+  for (const f of listaFamilias()) {
+    const mias = R.filter(c => c.familia === f);
+    if (!mias.length) continue;
+    const vivos = miembrosFamilia(S, f).filter(m => m.estado === 'vive').map(m => m.nombre.split(' (')[0]);
+    const quien = [...mias].reverse().map(c => c.de).find(n => vivos.includes(n) || !miembrosFamilia(S, f).some(m => m.nombre.split(' (')[0] === n));
+    if (quien) out.push({ familia: f, nombre: quien, clase: CLASE[f], ultima: mias[mias.length - 1] });
+  }
+  return out;
+}
+// El epílogo: por familia, lo que pasó en cada una de sus cartas.
+export function epilogo(S) {
+  if (!familiasActivas(S) || !S.fam) return [];
+  const R = cartasRecibidas(S);
+  return listaFamilias().map(f => ({ familia: f, ...datosFamilia(f), hechos: R.filter(c => c.familia === f).map(c => c.resumen).filter(Boolean) })).filter(x => x.hechos.length);
+}

@@ -121,8 +121,8 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 1. **Las familias y sus cartas (publicado en 0.70.0):** cinco familias (Tique, Rojas, Quintero, Arango, Lozano); cada pocos años una carta que cambia según las decisiones, con viñeta, frase para pensar y recuerdo.
 2. **El álbum de las familias (publicado en 0.71.0):** árbol de cada familia, cartas guardadas y recuerdos con su historia (Crónica).
-3. **En el mapa y al final:** los miembros de las familias caminan por el pueblo y se pueden tocar; epílogo con el destino de cada familia.
-4. **Balance** y revisión en celular y computador.
+3. **En el mapa y al final (publicado en 0.72.0):** los miembros de las familias caminan por el pueblo y se pueden tocar; epílogo con el destino de cada familia.
+4. **Balance** y revisión en celular y computador (publicado en 0.72.0; la fase 13 queda terminada y espera la prueba de Juan).
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
