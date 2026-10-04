@@ -100,8 +100,16 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 3. **Biomas que cambian (publicado en 0.59.0):** con el cambio climático los pisos térmicos suben (el café trepa, el páramo se encoge, el Nevado pierde su glaciar, el deshielo da agua y luego la quita); la tala, la ganadería y la reforestación cambian el bioma casilla por casilla; dilemas del entorno (minería en el páramo, cafeteros que suben, el glaciar que desaparece) en los archivos de datos.
 4. **Balance** con los robots (que eligen cultivos) y revisión en celular y computador (publicado en 0.60.0; la fase 10 queda terminada y espera la prueba de Juan).
 
+**Ideas de otros juegos (decisión de Juan, 4 de octubre):** se adoptan, en este orden, **la industria** (al estilo Victoria 3: cadenas de producción, obreros y mercado), **cultura y civismo** (rasgo cultural por época, como Humankind, y árbol de civismo, como Civilization VI) e **historias humanas** (cartas y viñetas de pobladores, como Valiant Hearts). Dawn of Man, solo como posible prólogo opcional. Descartados: Ancestors, Spore y Hearts of Iron IV.
+
+**Fase 11 (propuesta, espera visto bueno de Juan): la industria como decisión.**
+
+1. **La fábrica y sus productos:** el taller pasa a ser la fábrica, y en su ficha se elige qué producir, como en la finca: trilladora de café, molino de arroz, textiles (algodón), chocolate (cacao), fundición (mina) o artesanías. Transforma lo que da el campo y lo vende más caro (valor agregado); sin materia prima rinde poco.
+2. **Obreros, mercado y contaminación:** precios de cada producto con ciclos, salarios y el sindicato de Marta Quintero ligados a las fábricas, contaminación del aire y del río; la canasta de Hacienda muestra campo e industria.
+3. **La revolución industrial por épocas:** del taller artesanal a la fábrica con máquinas y luego a la automatización (más producción y menos empleo); dilemas de la industria en los archivos de datos.
+4. **Balance** con los robots y revisión en celular y computador.
+
 **Pendientes para después (no olvidar):**
-- **La industria como decisión** (Juan lo dejó pendiente el 4 de octubre, junto con los cultivos).
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
 - **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.
 - Campaña por capítulos: le gusta, pero no es prioridad.
