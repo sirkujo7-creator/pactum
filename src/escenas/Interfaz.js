@@ -5,7 +5,8 @@ import {
   C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
-  guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor
+  guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -141,7 +142,9 @@ export class Interfaz {
     const S = this.S, clave = `${k}-${S.stage >= 2 ? 2 : 0}-${k === 'agora' ? S.reg : ''}`;
     return this.iconos[clave] || (this.iconos[clave] = iconoObra(k, S.stage, S.reg));
   }
-  nombre(k) { return k === 'agora' ? seatName(this.S) : k === 'calle' ? C.CALLES.textos.herramienta : k === 'quitarCalle' ? C.CALLES.textos.quitar : C.B[k].n; }
+  // Fase 10: la finca (el antiguo cultivo) tiene su propio nombre y descripción.
+  descripcion(k) { return k === 'cultivo' && fincasActivas(this.S) ? C.CULTIVOS.textos.finca : C.B[k].d; }
+  nombre(k) { return k === 'cultivo' && fincasActivas(this.S) ? C.CULTIVOS.nombreFinca : k === 'agora' ? seatName(this.S) : k === 'calle' ? C.CALLES.textos.herramienta : k === 'quitarCalle' ? C.CALLES.textos.quitar : C.B[k].n; }
   hayTarjeta() { return !this.velo.hidden; }
 
   // ---------- Paneles ----------
@@ -232,7 +235,7 @@ export class Interfaz {
 
   renderConstruir() {
     const S = this.S;
-    this.tray.replaceChildren(...Object.entries(C.B).map(([k, b]) => {
+    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
       const bloqueada = b.st > S.stage;
       return el('button', {
         class: 'tool' + (this.herramienta === k ? ' on' : ''), 'aria-pressed': String(this.herramienta === k),
@@ -272,7 +275,7 @@ export class Interfaz {
         const paga = v.anios > 1 ? `Cuesta ${v.costo} de oro en ${v.anios} pagos de ${v.cuota}, uno por año; presta servicio al terminar.` : v.anios === 1 ? `Cuesta ${v.costo} de oro; tarda un año y presta servicio al terminar.` : `Cuesta ${v.costo} de oro.`;
         prev = `<span class="prev">${paga} ${v.anios ? 'Cuando esté lista' : 'Si la construyes'}:</span>${this.efectos(v)}<span class="prev small">Toca una casilla marcada.</span>`;
       }
-      this.hint.innerHTML = `<b>${this.nombre(k)}.</b> ${C.B[k].d} ${prev}`;
+      this.hint.innerHTML = `<b>${this.nombre(k)}.</b> ${this.descripcion(k)} ${prev}`;
     } else this.hint.textContent = 'Elige una obra para construir, o toca una casilla para ver su ficha.';
     this.bSoltar.hidden = !k;
     this.bDeshacer.hidden = !S.undo.length || S.over;
@@ -644,12 +647,13 @@ export class Interfaz {
     }
     if (x.oc && C.GUERRA) hijos.push(el('span', { class: 'neg', style: 'grid-column:1/-1', text: C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre) })); // fase 9
     if (x.b) {
-      hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: C.B[x.b].d }),
-        ...(C.B[x.b].es && climaActivo(S) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
+      hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: this.descripcion(x.b) }),
+        ...(C.B[x.b].es && climaActivo(S) && !(x.b === 'cultivo' && fincasActivas(S)) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
         ...(esPatrimonio(S, x) ? [el('span', { class: 'especial', text: `🏛️ Patrimonio: construida ${x.ya ? `en el año ${x.ya}` : 'con la aldea fundadora'}. Demolerla cuesta ${C.MEMORIA.demolerPatrimonio} de legitimidad y queda en la memoria.` })] : []),
         el('span', { text: `Mantenimiento: ${Math.round(C.B[x.b].up * S.price * (x.mt || 1))} de oro al año${x.mt ? ' (buenos materiales)' : ''}.` }));
       const ap = x.ob ? null : aporteObra(S, i);
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
+      if (x.b === 'cultivo' && fincasActivas(S) && !x.ob) hijos.push(this.fichaFinca(i)); // fase 10
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
       if (conectada(S, i)) hijos.push(el('span', { class: 'especial', text: `${C.CALLES.textos.ficha}${factorCalle(S, i) > 1 ? `: vende ${Math.round(C.CALLES.comercio * 100)}% más` : radioCalle(S, i) && C.COB.radios[x.b] ? ': su servicio llega una casilla más lejos' : x.b === 'casa' ? ': evade menos impuestos' : ''}.` }));
@@ -1181,6 +1185,40 @@ export class Interfaz {
     this.boton('okB', () => this.cerrarTarjeta());
     this.boton('fronB', () => this.tarjetaFrontera(id));
     this.card.querySelectorAll('[data-acc]').forEach(b => b.onclick = () => { if (accionVecino(S, id, b.dataset.acc)) { this.toast(`${V.acciones[b.dataset.acc].nombre} con ${n.nombre}.`); this.render(); this.explicarVecino(id); } });
+  }
+  // ---------- Fase 10: la finca y sus cultivos ----------
+  fichaFinca(i) {
+    const S = this.S, x = S.map[i], cv = cultivoDe(x), D = datosCultivo(cv), p = produccionFinca(S, i), piso = nombrePiso(pisoTermico(S, i));
+    const estado = produce(S, x) ? `Da ${Math.round(p.comida)} de alimento y ${Math.round(p.renta * S.price)} de oro al año.` : C.CULTIVOS.textos.madurando.replace('{anio}', anioCosecha(S, x));
+    return el('div', { class: 'aporte', style: 'grid-column:1/-1' }, [
+      el('span', { html: `<b>${D.icono} ${D.nombre}</b> en tierra ${piso}${tieneRiego(S, i) ? ', con riego' : ''}. ${estado} ` }),
+      el('button', { class: 'btn', style: 'margin-top:6px', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.tarjetaCultivo(i) } }, 'Cambiar de cultivo')
+    ]);
+  }
+  // Elegir qué sembrar: cada cultivo con su aptitud aquí, lo que da y lo que cuesta.
+  tarjetaCultivo(i, alTerminar) {
+    const S = this.S, x = S.map[i], K = C.CULTIVOS, piso = pisoTermico(S, i), sug = mejorCultivo(S, i, 'renta'), bonoRio = nearRiver(S, i) ? K.riego : 0;
+    const fila = cv => {
+      const D = datosCultivo(cv), a = aptitud(S, i, cv), no = puedeSembrar(S, i, cv), actual = x.cv === cv;
+      const nivel = a >= 1 ? 'excelente aquí' : a >= .75 ? 'buena aquí' : a >= .4 ? 'regular aquí' : a > 0 ? 'mala aquí' : 'no se da aquí';
+      const comida = D.comida ? Math.round((D.comida + bonoRio) * a) : 0; // junto al río, la comida rinde más
+      return `<button class="opt${actual ? ' on' : ''}" data-cv="${cv}" ${no && !actual ? 'disabled' : ''}><b>${D.icono} ${D.nombre}</b> <small class="${a >= .75 ? 'pos' : a < .4 ? 'neg' : ''}">${mayus(nivel)}${actual ? ' · lo que siembra hoy' : ''}</small>
+        <small>${D.texto}</small><small>Al año: ${D.comida ? `${comida} de alimento` : 'sin alimento'} · ${D.renta ? `unos ${Math.round(D.renta * a * S.price)} de oro` : 'sin oro'} · ${D.empleo} empleos · ambiente ${D.ambiente > 0 ? '+' : '−'}${Math.abs(D.ambiente).toLocaleString('es-CO')}${D.madura ? ` · primera cosecha en ${D.madura === 1 ? 'un año' : D.madura + ' años'}` : ''}${D.sequia ? ' · sufre con la sequía' : ''}${D.riego ? ' · pide riego' : ''}.</small>
+        <small>${x.nueva ? 'La siembra va incluida en la finca nueva.' : `Sembrar cuesta ${costoSiembra(S, cv)} de oro.`}${no && !actual ? ` <span class="neg">${no}</span>` : ''}</small></button>`;
+    };
+    const orden = listaCultivos().sort((a, b) => aptitud(S, i, b) - aptitud(S, i, a));
+    this.tarjeta(`<div class="big">🌱</div><h3>${K.textos.elegir}</h3><p class="small">Tierra ${nombrePiso(piso)}${tieneRiego(S, i) ? ', con riego' : ''}. ${K.textos.ayuda} Para ganar dinero, aquí rinde más: <b>${datosCultivo(sug).nombre.toLowerCase()}</b>.</p>
+      ${orden.map(fila).join('')}<div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">${x.nueva ? `Dejar ${datosCultivo(cultivoDe(x)).nombre.toLowerCase()}` : 'Cerrar'}</button>`);
+    this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
+    this.card.querySelectorAll('[data-cv]').forEach(b => b.onclick = () => {
+      const cv = b.dataset.cv;
+      if (x.cv === cv) { this.cerrarTarjeta(); return; }
+      if (!sembrar(S, i, cv)) return;
+      const D = datosCultivo(cv);
+      this.toast(K.textos.sembrado.replace('{cultivo}', D.nombre.toLowerCase()) + (D.madura ? ` ${K.textos.madurando.replace('{anio}', S.year + D.madura)}` : ''));
+      this.mapa.refrescarCasilla(i); this.render();
+      this.cerrarTarjeta();
+    });
   }
   // ---------- Fase 9: guerra con otra polis ----------
   estadoFrontera(id) {

@@ -1,0 +1,120 @@
+// La finca y sus cultivos (fase 10): el campo deja de ser dos edificios (cultivo y cafetal) y pasa a ser una
+// decisión. Cada finca (el edificio "cultivo") lleva en x.cv lo que siembra: pancoger, arroz, café, plátano,
+// cacao, aguacate, algodón o ganadería. Cada cultivo rinde según el piso térmico de su casilla y da comida,
+// dinero, empleo y un efecto en el ambiente; los de tardío rendimiento esperan años su primera cosecha
+// (x.cvDesde). Solo en el terreno en acuarela; en la versión 9 todo sigue igual.
+import { C } from './contenido.js';
+import { climaActivo } from './clima.js';
+import { lado, nearRiver } from './mundo.js';
+import { genTerreno } from './terreno.js';
+import { rindeObra } from './desgaste.js';
+import { precioCafe } from './economia.js';
+import { factorRoya } from './ciclos.js';
+
+const K = () => C.CULTIVOS;
+export function fincasActivas(S) { return climaActivo(S) && !!C.CULTIVOS; }
+export const esFinca = x => x.b === 'cultivo' || x.b === 'cafetal';
+export function cultivoDe(x) { return x.cv || (x.b === 'cafetal' ? 'cafe' : 'pancoger'); }
+export function datosCultivo(cv) { return K().cultivos[cv]; }
+export function listaCultivos() { return Object.keys(K().cultivos); }
+
+// ---------- Piso térmico ----------
+// La altura de cada casilla sale del terreno; se calcula una vez por partida (y otra vez si el río cambia).
+const ALTURAS = new WeakMap();
+function alturas(S) {
+  const dv = (S.rio && S.rio.desvios) || [], clave = `${S.seed}|${lado(S)}|${dv.length}`;
+  let a = ALTURAS.get(S);
+  if (!a || a.clave !== clave) { const T = genTerreno(S.seed, lado(S), dv); a = { clave, h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d) }; ALTURAS.set(S, a); }
+  return a;
+}
+// Cuánto han subido los pisos térmicos (fase 10, paso 3: el cambio climático). Por ahora no se mueven.
+export function subidaPisos(S) { return (S.pisos && S.pisos.subida) || 0; }
+export function pisoTermico(S, i) {
+  const L = K().pisos.limites, h = alturas(S).h[i] - subidaPisos(S);
+  return h > L[2] ? 'paramo' : h > L[1] ? 'frio' : h > L[0] ? 'templado' : 'calido';
+}
+export function nombrePiso(p) { return K().pisos.nombres[p]; }
+// Riego: junto al río o cerca de su cauce.
+export function tieneRiego(S, i) { return nearRiver(S, i) || alturas(S).d[i] < 3.2; }
+// Qué tan apto es el lugar para el cultivo (0 a 1): piso térmico y, para el arroz, riego.
+export function aptitud(S, i, cv) {
+  const D = datosCultivo(cv);
+  let a = D.pisos[pisoTermico(S, i)] || 0;
+  if (D.riego && !tieneRiego(S, i)) a *= .4;
+  return a;
+}
+// ¿Ya da cosecha? Los cultivos de tardío rendimiento esperan sus años desde la siembra.
+export function anioCosecha(S, x) { const D = datosCultivo(cultivoDe(x)); return x.cvDesde === undefined ? -999 : x.cvDesde + D.madura; }
+export function produce(S, x) { return S.year >= anioCosecha(S, x); }
+// Golpe de la sequía (El Niño) a los cultivos que piden mucha agua.
+function factorSequia(S, D) { return D.sequia && S.clima && S.clima.fenomeno === 'nino' ? D.sequia : 1; }
+// Precio de cada cultivo (fase 10, paso 2 traerá sus ciclos); hoy el café sigue su mercado y la roya.
+export function precioCultivo(S, cv) { return cv === 'cafe' ? precioCafe(S) * factorRoya(S) : 1; }
+
+// Producción de una finca en la casilla i: { comida, renta } al año (renta antes de multiplicar por S.price).
+export function produccionFinca(S, i) {
+  const x = S.map[i];
+  if (!esFinca(x) || x.ob) return { comida: 0, renta: 0 };
+  const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * aptitud(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
+  const riego = D.comida && nearRiver(S, i) ? K().riego : 0;
+  return { comida: (D.comida + riego) * r, renta: D.renta * r * precioCultivo(S, cv) };
+}
+// Empleo y efecto en el ambiente de todas las fincas.
+export function empleoCampo(S) { let n = 0; S.map.forEach(x => { if (esFinca(x) && !x.ob && rindeObra(S, x)) n += datosCultivo(cultivoDe(x)).empleo; }); return n; }
+export function ambienteCampo(S) { let n = 0; S.map.forEach(x => { if (esFinca(x) && !x.ob) n += datosCultivo(cultivoDe(x)).ambiente; }); return n; }
+export function protegeSuelo(x) { return esFinca(x) && !!C.CULTIVOS && !!datosCultivo(cultivoDe(x)).protege; }
+// Cuántas fincas hay de cada cultivo (para la canasta agrícola y los conteos).
+export function canasta(S) {
+  const out = Object.fromEntries(listaCultivos().map(k => [k, 0]));
+  S.map.forEach(x => { if (esFinca(x) && !x.ob) out[cultivoDe(x)]++; });
+  return out;
+}
+
+// ---------- Sembrar ----------
+export function costoSiembra(S, cv) { return Math.round(datosCultivo(cv).siembra * S.price); }
+export function puedeSembrar(S, i, cv) {
+  const x = S.map[i];
+  if (!fincasActivas(S) || !esFinca(x)) return 'Aquí no hay una finca.';
+  if (!datosCultivo(cv)) return 'Cultivo desconocido.';
+  if (x.cv === cv) return 'Ya siembra eso.';
+  if (x.ob) return 'La finca aún se está construyendo.';
+  if (!aptitud(S, i, cv)) return `No se da en tierra ${nombrePiso(pisoTermico(S, i))}.`;
+  if (!x.nueva && S.gold < costoSiembra(S, cv)) return `Necesitas ${costoSiembra(S, cv)} de oro.`;
+  return null;
+}
+// La primera siembra de una finca recién construida ya va en su costo; cambiar después cuesta la siembra.
+export function sembrar(S, i, cv) {
+  if (puedeSembrar(S, i, cv)) return false;
+  const x = S.map[i];
+  if (!x.nueva) S.gold -= costoSiembra(S, cv);
+  x.cv = cv; x.cvDesde = S.year; x.b = 'cultivo'; delete x.nueva;
+  S.log.unshift({ y: S.year, t: K().textos.sembrado.replace('{cultivo}', datosCultivo(cv).nombre.toLowerCase()) });
+  return true;
+}
+// El mejor cultivo de comida o de dinero para una casilla (lo usan los robots y la sugerencia de la ficha).
+export function mejorCultivo(S, i, para = 'comida') {
+  let mejor = 'pancoger', v0 = -1;
+  for (const cv of listaCultivos()) {
+    const D = datosCultivo(cv), a = aptitud(S, i, cv), v = para === 'comida' ? (D.comida + (D.comida && nearRiver(S, i) ? K().riego : 0)) * a : D.renta * a * precioCultivo(S, cv);
+    if (v > v0) { v0 = v; mejor = cv; }
+  }
+  return mejor;
+}
+
+// Las partidas de antes: el cafetal pasa a ser una finca de café y los cultivos, fincas de pancoger (ya maduras).
+export function migrarFincas(S) {
+  if (!fincasActivas(S)) return;
+  S.map.forEach(x => {
+    if (x.b === 'cafetal') { x.b = 'cultivo'; x.cv = 'cafe'; }
+    if (x.b === 'cultivo' && !x.cv) x.cv = 'pancoger';
+  });
+}
+// Cierre del año: avisa las primeras cosechas.
+export function fincasDelAnio(S) {
+  if (!fincasActivas(S)) return [];
+  migrarFincas(S);
+  S.map.forEach(x => { delete x.nueva; }); // la siembra gratis es solo el año en que se construye
+  const news = [];
+  S.map.forEach(x => { if (esFinca(x) && x.cvDesde !== undefined && anioCosecha(S, x) === S.year && datosCultivo(x.cv).madura) news.push(K().textos.primera.replace('{cultivo}', datosCultivo(x.cv).nombre.toLowerCase())); });
+  return [...new Set(news)];
+}

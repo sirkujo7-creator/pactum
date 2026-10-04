@@ -454,6 +454,7 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.3, s: .9, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
     case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];
+    case 'finca': return []; // fase 10: arroz, aguacate, algodón y ganadería sin sombrío
     case 'taller': return [{ k: 'taller', humo: [11, -36] }];
     case 'mina': return [{ k: 'mina', du: .05, dv: .05, humo: [-1, -6], polvo: true }];
     default: return [{ k }];

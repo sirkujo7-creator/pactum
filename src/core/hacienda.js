@@ -29,6 +29,7 @@ export function canBorrow(S) { return S.stage >= 1 && rating(S).l !== 'CCC'; }
 // Cuentas del año: ingresos por clase, tasas, mantenimiento, administración, deuda y alimento.
 import { factorCostos, factorRoya, costoPensiones } from './ciclos.js';
 import { factorCalle, mantenimientoCalles } from './calles.js';
+import { fincasActivas, produccionFinca } from './fincas.js';
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
   // Fase 2: el ciclo económico mueve los ingresos, y los campesinos ganan más cuando la comida está cara.
@@ -38,7 +39,8 @@ export function finance(S) {
   const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
-  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : 1) * factorCalle(S, i); // fase 9: junto a una calle se vende más
+  const finca = fincasActivas(S); // fase 10: las fincas rinden según su cultivo
+  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : 1)) * factorCalle(S, i); // fase 9: junto a una calle se vende más
  if (r) up += C.B[x.b].up * (x.mt || 1); } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100 * factorCostos(S)); // fase 7: los costos suben con cada época
@@ -52,7 +54,7 @@ export function finance(S) {
   S.bonds.forEach(b => { cpn += Math.round(b.amt * b.cpn); if (b.due <= S.year) mat += b.amt; });
   const rev = taxC + taxA + taxE + fee, fondo = aporteFondo(S, rev), obras = cuotasPendientes(S), militar = gastoMilitar(S, rev), net = rev - up - admin - lawCost - pay - cpn - mat - fondo - obras - militar - pensiones - calles;
   let fcap = 0;
-  S.map.forEach((x, i) => { if (x.b === 'cultivo') fcap += (nearRiver(S, i) ? 16 : 12) * rindeObra(S, x); });
+  S.map.forEach((x, i) => { if (finca) { if (x.b === 'cultivo') fcap += produccionFinca(S, i).comida; } else if (x.b === 'cultivo') fcap += (nearRiver(S, i) ? 16 : 12) * rindeObra(S, x); });
   if (climaActivo(S)) fcap *= factorCosecha(S); // fase 1: las lluvias del año
   const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.ceil(S.pop * .5);
   const post = { c: inc.c * (1 - S.tx.c / 100), a: inc.a * (1 - S.tx.a / 100), e: inc.e * (1 - S.tx.e / 100), u: inc.u };

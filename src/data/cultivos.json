@@ -1,0 +1,163 @@
+{
+  "leccion": "Un territorio que siembra una sola cosa gana mucho en las bonanzas y lo pierde todo en las crisis. Diversificar es repartir el riesgo, como hace un buen inversionista con su portafolio.",
+  "nombreFinca": "Finca",
+  "pisos": {
+    "limites": [
+      2,
+      4.4,
+      6.1
+    ],
+    "nombres": {
+      "calido": "cálida",
+      "templado": "templada",
+      "frio": "fría",
+      "paramo": "de páramo"
+    }
+  },
+  "riego": 4,
+  "cultivos": {
+    "pancoger": {
+      "nombre": "Maíz y fríjol",
+      "icono": "🌽",
+      "texto": "El pancoger: la comida de la casa. Precio estable y poco dinero.",
+      "comida": 12,
+      "renta": 0,
+      "empleo": 7,
+      "ambiente": -1.5,
+      "madura": 0,
+      "siembra": 8,
+      "pisos": {
+        "calido": 1,
+        "templado": 1,
+        "frio": 0.75
+      }
+    },
+    "arroz": {
+      "nombre": "Arroz",
+      "icono": "🌾",
+      "texto": "El Tolima es tierra arrocera. Tanta comida como el pancoger y algo de dinero, pero pide riego (junto al río o con agua cerca) y El Niño lo golpea.",
+      "comida": 12,
+      "renta": 2,
+      "empleo": 6,
+      "ambiente": -1.8,
+      "madura": 0,
+      "siembra": 12,
+      "riego": true,
+      "sequia": 0.55,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.35,
+        "frio": 0
+      }
+    },
+    "cafe": {
+      "nombre": "Café",
+      "icono": "☕",
+      "texto": "El grano que conectó al Tolima con el mundo. Mucho dinero en la ladera templada, pero su precio sube y baja y la roya lo ataca. Tarda 3 años en dar la primera cosecha.",
+      "comida": 0,
+      "renta": 10,
+      "empleo": 6,
+      "ambiente": -0.3,
+      "madura": 3,
+      "siembra": 20,
+      "protege": true,
+      "pisos": {
+        "calido": 0.4,
+        "templado": 1,
+        "frio": 0.65
+      }
+    },
+    "platano": {
+      "nombre": "Plátano",
+      "icono": "🍌",
+      "texto": "Comida y algo de dinero, con poco riesgo. Da sombra al café y protege la ladera.",
+      "comida": 7,
+      "renta": 4,
+      "empleo": 5,
+      "ambiente": -0.6,
+      "madura": 1,
+      "siembra": 10,
+      "protege": true,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.9,
+        "frio": 0.3
+      }
+    },
+    "cacao": {
+      "nombre": "Cacao",
+      "icono": "🍫",
+      "texto": "Cultivo bajo sombra, amable con el bosque y con buen precio; es la apuesta de la sustitución y de la paz. Tarda 4 años en producir.",
+      "comida": 0,
+      "renta": 8,
+      "empleo": 6,
+      "ambiente": 0.3,
+      "madura": 4,
+      "siembra": 18,
+      "protege": true,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.6,
+        "frio": 0
+      }
+    },
+    "aguacate": {
+      "nombre": "Aguacate",
+      "icono": "🥑",
+      "texto": "Fruta de exportación muy rentable en tierra fría, pero gasta mucha agua y empuja la tala del bosque de niebla. Tarda 4 años en producir.",
+      "comida": 2,
+      "renta": 12,
+      "empleo": 4,
+      "ambiente": -1.6,
+      "madura": 4,
+      "siembra": 24,
+      "sequia": 0.6,
+      "pisos": {
+        "calido": 0.3,
+        "templado": 0.8,
+        "frio": 1
+      }
+    },
+    "algodon": {
+      "nombre": "Algodón",
+      "icono": "☁️",
+      "texto": "El oro blanco: en los años 70 hizo rico a El Espinal y luego su precio se desplomó. Da mucho trabajo y dinero mientras dura, y cansa la tierra.",
+      "comida": 0,
+      "renta": 9,
+      "empleo": 7,
+      "ambiente": -2.5,
+      "madura": 0,
+      "siembra": 14,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.4,
+        "frio": 0
+      }
+    },
+    "ganaderia": {
+      "nombre": "Ganadería",
+      "icono": "🐄",
+      "texto": "Vacas en potrero: algo de comida y dinero con muy poca gente. Da poco empleo y daña el suelo.",
+      "comida": 5,
+      "renta": 6,
+      "empleo": 2,
+      "ambiente": -2.2,
+      "madura": 0,
+      "siembra": 16,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.9,
+        "frio": 0.7
+      }
+    }
+  },
+  "textos": {
+    "elegir": "¿Qué sembrar en esta finca?",
+    "ayuda": "Cada cultivo rinde según el piso térmico de la casilla. Cambiar de cultivo cuesta la siembra y, en los cultivos de tardío rendimiento, hay que esperar la primera cosecha.",
+    "madurando": "Primera cosecha en el año {anio}.",
+    "primera": "Primera cosecha de {cultivo}.",
+    "sinCafetal": "Ahora el café se siembra en una finca: construye una finca y elige café.",
+    "sembrado": "Sembraste {cultivo}.",
+    "finca": "Una finca: tú eliges qué sembrar (comida, dinero o ambos) según el piso térmico de su tierra."
+  }
+}

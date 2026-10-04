@@ -11,6 +11,7 @@ import { animoEconomia } from './economia.js';
 import { obrasActivas } from './construccion.js';
 import { culturaTotal, culturaActiva } from './cultura.js';
 import { efectoMega } from './megaproyectos.js';
+import { fincasActivas, empleoCampo, ambienteCampo } from './fincas.js';
 
 export function energy(S, c) { return (S.stage >= 1 ? 1 : 0) + c.molino * 3 + efectoMega(S, 'energia'); } // fase 6: la represa
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
@@ -22,7 +23,7 @@ export function society(S) {
   const c = counts(S), P = S.pop;
   let el = Math.round((2 + c.mercado * .5 + poweredT(S, c) * 1.5 + c.mina * 2 + c.banco * 3 + c.puerto * 1.5 + c.cafetal * .3) * S.eliteMood);
   el = clamp(el, P >= 5 ? 1 : 0, Math.floor(P * .2));
-  const W = P - el, jc = c.cultivo * 7 + c.cafetal * 6;
+  const W = P - el, jc = fincasActivas(S) ? empleoCampo(S) : c.cultivo * 7 + c.cafetal * 6; // fase 10: el empleo depende del cultivo
   let ja = 0;
   Object.keys(C.B).forEach(k => { if (k !== 'taller') ja += (C.B[k].ja || 0) * c[k]; });
   ja += poweredT(S, c) * 9;
@@ -44,10 +45,10 @@ export { aporteBosque };
 // Partes de la meta del ambiente (las mismas cuentas de envTarget), para explicarla.
 export function partesAmbiente(S, c) {
   return [['Punto de partida', 62], ['Ley de protección ambiental', hasLaw(S, 'ambiente') ? 12 : 0], ['Parques', Math.min(20, c.parque * 4)], ['Bosques', aporteBosque(S)],
-    ['Talleres', -c.taller * 7], ['Minas', -c.mina * 12], ['Cultivos', -c.cultivo * 1.5], ['Casas', -c.casa * .4]];
+    ['Talleres', -c.taller * 7], ['Minas', -c.mina * 12], fincasActivas(S) ? ['Fincas (según su cultivo)', ambienteCampo(S)] : ['Cultivos', -c.cultivo * 1.5], ['Casas', -c.casa * .4]];
 }
 export function envTarget(S, c) {
-  return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + aporteBosque(S) - c.taller * 7 - c.mina * 12 - c.cultivo * 1.5 - c.casa * .4;
+  return (hasLaw(S, 'ambiente') ? 12 : 0) + 62 + Math.min(20, c.parque * 4) + aporteBosque(S) - c.taller * 7 - c.mina * 12 + (fincasActivas(S) ? ambienteCampo(S) : -c.cultivo * 1.5) - c.casa * .4;
 }
 
 // Ánimo al que tiende cada clase este año.

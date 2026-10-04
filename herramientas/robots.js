@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -73,6 +73,11 @@ export function botYear(S, strat, eth, op = {}) {
   if (prep && S.clima) for (const id of presentes(S)) {
     const m = misionDe(S, id);
     if (!m) continue;
+    // Fase 10: el café ya no es un edificio: se construye una finca en la ladera y se siembra café.
+    if (m.tipo === 'edificio' && m.edificio === 'cafetal' && fincasActivas(S)) {
+      if (counts(S).cafetal < m.n && S.gold > cost(S, 'cultivo') + 150) { const t = freeTiles(S, 'cultivo').filter(i => aptitud(S, i, 'cafe') >= 1); if (t.length) { build(S, 'cultivo', t[0]); sembrar(S, t[0], 'cafe'); } }
+      continue;
+    }
     if (m.tipo === 'edificio' && counts(S)[m.edificio] < m.n && S.gold > cost(S, m.edificio) + 150 && C.B[m.edificio].st <= S.stage && !obrasEnCurso(S)[m.edificio]) { const t = ordenarSitios(S, m.edificio, freeTiles(S, m.edificio)); if (t.length) build(S, m.edificio, t[0]); }
   }
   for (let n = 0; n < 8; n++) {
