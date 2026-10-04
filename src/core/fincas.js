@@ -11,6 +11,7 @@ import { rindeObra } from './desgaste.js';
 import { precioCafe } from './economia.js';
 import { factorRoya } from './ciclos.js';
 import { azar, clamp } from './azar.js';
+import { efectoLeyes } from './civismo.js';
 
 const K = () => C.CULTIVOS;
 export function fincasActivas(S) { return climaActivo(S) && !!C.CULTIVOS; }
@@ -61,7 +62,7 @@ export function produccionFinca(S, i) {
   if (!esFinca(x) || x.ob) return { comida: 0, renta: 0 };
   const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * aptitud(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
   const riego = D.comida && nearRiver(S, i) ? K().riego : 0;
-  return { comida: (D.comida + riego) * r, renta: D.renta * r * precioCultivo(S, cv) };
+  return { comida: (D.comida + riego) * r, renta: D.renta * r * precioCultivo(S, cv) * (1 + efectoLeyes(S, 'fincas')) }; // fase 12: rasgos (colonos, cafeteros...)
 }
 // Empleo y efecto en el ambiente de todas las fincas.
 export function empleoCampo(S) { let n = 0; S.map.forEach(x => { if (esFinca(x) && !x.ob && rindeObra(S, x)) n += datosCultivo(cultivoDe(x)).empleo; }); return n; }

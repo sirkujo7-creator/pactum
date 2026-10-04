@@ -387,3 +387,8 @@ ol.avances li small{grid-column:2;color:var(--muted)}
 .civ-puntos{border:1.5px solid var(--rojo);border-radius:6px;padding:6px 10px;background:rgba(212,162,76,.12)}
 .law.cerrada{opacity:.82;border-style:dashed}
 .law small.pos,.law small.neg{display:block}
+/* Fase 12: estandarte del pueblo (rasgos de cada época). */
+.estandarte{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0 12px;padding:8px 6px 14px;background:var(--rojo);color:#F7F1E3;clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%);box-shadow:inset 0 0 0 2px var(--ocre)}
+.estandarte>span{display:grid;justify-items:center;width:76px;text-align:center}
+.estandarte i{font-style:normal;font-size:1.5rem;line-height:1.2;background:#F7F1E3;border-radius:50%;width:38px;height:38px;display:grid;place-items:center}
+.estandarte small{font-size:.7rem;line-height:1.1;margin-top:3px}

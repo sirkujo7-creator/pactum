@@ -1,0 +1,45 @@
+{
+  "leccion": "La identidad de un pueblo no viene dada: se construye con lo que elige recordar, celebrar y hacer en cada época. El antropólogo Benedict Anderson llamó a las naciones «comunidades imaginadas».",
+  "textos": {
+    "titulo": "Identidad del pueblo",
+    "pregunta": "¿Qué define a tu pueblo en la época {epoca}?",
+    "ayuda": "Elige un rasgo. Se suma a los de las épocas anteriores y te acompaña el resto de la partida.",
+    "elegido": "Tu pueblo ahora es: {rasgo}.",
+    "estandarte": "Estandarte del pueblo",
+    "vacio": "Aún no has elegido rasgos: el primero llega al cerrar el primer año.",
+    "a": "A favor",
+    "b": "En contra"
+  },
+  "epocas": {
+    "fundacion": [
+      { "id": "minga", "nombre": "Pueblo de minga", "icono": "🤲", "pro": "El trabajo se hace en comunidad: más igualdad y campesinos contentos.", "contra": "A la élite no le gusta compartir.", "efectos": { "igualdad": 3, "animo": { "c": 2, "e": -3 } }, "leccion": "La minga es el trabajo colectivo de los pueblos andinos: todos ayudan a todos, y luego se comparte la comida." },
+      { "id": "colonos", "nombre": "Colonos emprendedores", "icono": "🪓", "pro": "Abren tierra y negocios: las fincas rinden 10% más.", "contra": "Cada quien por su lado: menos igualdad y más tala.", "efectos": { "fincas": 0.1, "igualdad": -2, "ambiente": -2 }, "leccion": "La colonización antioqueña llevó miles de familias a las laderas del Tolima en el siglo XIX: fundaron pueblos y tumbaron monte." },
+      { "id": "devotos", "nombre": "Pueblo devoto", "icono": "⛪", "pro": "La parroquia une al pueblo: más legitimidad.", "contra": "La tradición pesa: menos igualdad.", "efectos": { "legitimidad": 3, "igualdad": -2 }, "leccion": "En muchos pueblos la plaza se organizó alrededor de la iglesia: el párroco era autoridad moral, maestro y juez." }
+    ],
+    "cafe": [
+      { "id": "arrieros", "nombre": "Arrieros", "icono": "🐴", "pro": "Llevan y traen mercancía: mercados y puertos rinden 15% más.", "contra": "Viven en el camino: las fincas rinden un poco menos.", "efectos": { "comercio": 0.15, "fincas": -0.05 }, "leccion": "Los arrieros con sus mulas unieron las montañas con el río Magdalena: sin ellos, el café no habría salido del Tolima." },
+      { "id": "cafeteros", "nombre": "Cafeteros", "icono": "☕", "pro": "El café es orgullo y saber: las fincas rinden 10% más.", "contra": "Todo gira alrededor de un solo grano: menos igualdad.", "efectos": { "fincas": 0.1, "igualdad": -2 }, "leccion": "La cultura cafetera (paisaje, música, comida y trabajo) es Patrimonio de la Humanidad de la UNESCO desde 2011." },
+      { "id": "artesanos", "nombre": "Artesanos", "icono": "🧺", "pro": "Manos hábiles: las fábricas rinden 15% más y los artesanos están contentos.", "contra": "La élite prefiere lo importado.", "efectos": { "fabricas": 0.15, "animo": { "a": 2, "e": -2 }}, "leccion": "Los sombreros de iraca, la cerámica de La Chamba y los tejidos del Tolima son saberes que pasan de padres a hijos." }
+    ],
+    "violencia": [
+      { "id": "memoria", "nombre": "Pueblo que recuerda", "icono": "🕯️", "pro": "Nombra a sus víctimas: menos conflicto y más igualdad.", "contra": "Los lugares de memoria cuestan oro cada año.", "efectos": { "igualdad": 2, "conflicto": -4, "legitimidad": 1, "costoFijo": 6 }, "leccion": "Recordar es una forma de justicia: el Centro Nacional de Memoria Histórica documenta lo que pasó para que no se repita." },
+      { "id": "orden", "nombre": "Mano firme", "icono": "🛡️", "pro": "Orden ante todo: baja el conflicto.", "contra": "El poder se acostumbra a mandar sin control: se tuerce el rumbo.", "efectos": { "conflicto": -7, "legitimidad": 1, "rumbo": 0.6, "igualdad": -2 }, "leccion": "Thomas Hobbes pensaba que sin un poder fuerte la vida es «solitaria, pobre, brutal y corta». Pero un poder sin límites también abusa." },
+      { "id": "resistencia", "nombre": "Resistencia campesina", "icono": "🌾", "pro": "El campo se organiza y se defiende sin armas: campesinos contentos y menos conflicto.", "contra": "Los terratenientes lo ven como amenaza.", "efectos": { "animo": { "c": 4, "e": -3 }, "conflicto": -3 }, "leccion": "En el Tolima nacieron las ligas campesinas de los años 30 y, más tarde, comunidades que se declararon neutrales ante la guerra." }
+    ],
+    "modernizacion": [
+      { "id": "industrial", "nombre": "Ciudad industrial", "icono": "🏭", "pro": "Chimeneas y empleo: las fábricas rinden 15% más.", "contra": "Más humo: baja el ambiente.", "efectos": { "fabricas": 0.15, "ambiente": -4 }, "leccion": "Entre 1950 y 1970 las ciudades colombianas se llenaron de fábricas y de migrantes del campo: nació la clase obrera." },
+      { "id": "letrada", "nombre": "Ciudad letrada", "icono": "📚", "pro": "Escuelas, libros y debate: más saber y más civismo.", "contra": "Sostener colegios y bibliotecas cuesta oro cada año.", "efectos": { "saber": 1, "civismo": 0.3, "costoFijo": 8 }, "leccion": "El uruguayo Ángel Rama llamó «ciudad letrada» al grupo que, con la escritura, organizaba el poder en América Latina." },
+      { "id": "festiva", "nombre": "Capital musical", "icono": "🎶", "pro": "Conservatorio, festival y bambuco: más cultura y artesanos contentos.", "contra": "Las fiestas cuestan oro cada año.", "efectos": { "cultura": 3, "animo": { "a": 2 }, "costoFijo": 6 }, "leccion": "Ibagué es la «Capital Musical de Colombia»: su Conservatorio (1906) y el Festival Folclórico Colombiano celebran el bambuco y el sanjuanero." }
+    ],
+    "paz": [
+      { "id": "reconciliada", "nombre": "Pueblo reconciliado", "icono": "🕊️", "pro": "Víctimas y excombatientes conviven: baja el conflicto y sube la legitimidad.", "contra": "No todos perdonan: parte de la élite se resiente.", "efectos": { "conflicto": -6, "legitimidad": 2, "animo": { "e": -2 }}, "leccion": "Reconciliar no es olvidar: es reconocer el daño y decidir convivir. Así lo plantean las comisiones de la verdad." },
+      { "id": "participativa", "nombre": "Democracia participativa", "icono": "✋", "pro": "Cabildos abiertos y presupuestos participativos: más civismo y legitimidad.", "contra": "Un pueblo que participa exige más.", "efectos": { "civismo": 0.5, "legitimidad": 2, "exigencia": 1 }, "leccion": "La Constitución de 1991 cambió la democracia representativa por la participativa: consultas, cabildos, revocatorias y veedurías." },
+      { "id": "emprendedora", "nombre": "Pueblo emprendedor", "icono": "💼", "pro": "Negocios por todas partes: mercados que rinden más y élite contenta.", "contra": "La riqueza no llega a todos: menos igualdad.", "efectos": { "comercio": 0.15, "animo": { "e": 3 }, "igualdad": -3 }, "leccion": "Joseph Schumpeter veía en el emprendedor el motor del capitalismo: el que combina de forma nueva lo que ya existe." }
+    ],
+    "digital": [
+      { "id": "verde", "nombre": "Territorio verde", "icono": "🌿", "pro": "Cuida el páramo, el bosque y el agua: mejora el ambiente.", "contra": "Menos cultivos y menos humo: fincas y fábricas rinden un poco menos.", "efectos": { "ambiente": 5, "fincas": -0.05, "fabricas": -0.1 }, "leccion": "El desarrollo sostenible (Informe Brundtland, 1987) satisface lo de hoy sin quitarles a los que vienen." },
+      { "id": "conectada", "nombre": "Territorio conectado", "icono": "📡", "pro": "Internet en cada vereda: más saber y más comercio.", "contra": "Algunos oficios desaparecen: artesanos menos contentos.", "efectos": { "saber": 1.5, "comercio": 0.1, "animo": { "a": -2 }}, "leccion": "La brecha digital es la nueva desigualdad: quien no está conectado queda por fuera de la educación y del trabajo." },
+      { "id": "solidaria", "nombre": "Pueblo solidario", "icono": "🤝", "pro": "Nadie se queda atrás: más igualdad y todos más contentos.", "contra": "La red de apoyo cuesta oro cada año.", "efectos": { "igualdad": 3, "animo": { "c": 2, "a": 2 }, "costoFijo": 10 }, "leccion": "La solidaridad, decía el sociólogo Émile Durkheim, es lo que mantiene unida a una sociedad." }
+    ]
+  }
+}

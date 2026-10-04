@@ -10,6 +10,7 @@ import { counts } from './reglas.js';
 import { poweredT } from './sociedad.js';
 import { nearRiver } from './mundo.js';
 import { fase } from './economia.js';
+import { efectoLeyes } from './civismo.js';
 import { datosAvance, cumpleAvance, requisitoAvance } from './avances.js';
 
 const K = () => C.INDUSTRIA;
@@ -63,7 +64,7 @@ export function produccionFabrica(S, i, en) {
   const precio = D.insumo && D.insumo.cultivo ? .5 + .5 * precioCultivo(S, D.insumo.cultivo) : precioCiclo(S, pr);
   const rio = nearRiver(S, i) ? K().rio : 1; // paso 2: junto al río, sus desechos lo ensucian más
   const N = datosNivel(nivelDe(x)); // paso 3: con máquinas o automatizada, más ganancia y menos empleo
-  return { renta: D.renta * f * r * precio * salario(S).renta * N.renta, empleo: Math.round(D.empleo * m * N.empleo * (r ? 1 : 0)), ambiente: D.ambiente * m * rio * N.ambiente, f, encendida: true };
+  return { renta: D.renta * f * r * precio * salario(S).renta * N.renta * (1 + efectoLeyes(S, 'fabricas')), empleo: Math.round(D.empleo * m * N.empleo * (r ? 1 : 0)), ambiente: D.ambiente * m * rio * N.ambiente, f, encendida: true };
 }
 // Para la hacienda: una función que da la ganancia de la fábrica en i (con las fábricas encendidas calculadas una vez).
 export function rentaFabrica(S) { const en = encendidas(S); return i => produccionFabrica(S, i, en).renta; }

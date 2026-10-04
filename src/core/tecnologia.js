@@ -3,6 +3,7 @@
 // (todo el beneficio y todo el riesgo), regulado (menos de ambos, con un costo por año) o rechazarlo. Ningún invento
 // es obligatorio para ganar. Solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { efectoLeyes } from './civismo.js';
 import { clamp } from './azar.js';
 import { counts, ritmo } from './reglas.js';
 import { climaActivo } from './clima.js';
@@ -16,7 +17,7 @@ export function estadoTec(S) { return datos(S); }
 export function saberAnual(S) {
   if (!tecActiva(S) || S.stage < 1) return 0;
   const Q = K().saber, c = counts(S);
-  return Q.base + c.escuela * Q.escuela + c.biblioteca * Q.biblioteca + c.universidad * Q.universidad;
+  return Q.base + c.escuela * Q.escuela + c.biblioteca * Q.biblioteca + c.universidad * Q.universidad + efectoLeyes(S, 'saber'); // fase 12: rasgos
 }
 // Próximo invento por llegar (el primero que no se ha decidido).
 export function proximoInvento(S) {
