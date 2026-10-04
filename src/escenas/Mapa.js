@@ -15,6 +15,7 @@ import { Efectos } from './Efectos.js';
 import { Vida } from './Vida.js';
 import { Trafico } from './Trafico.js';
 import { Cine } from './Cine.js';
+import { Frontera } from './Frontera.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
@@ -84,6 +85,7 @@ export class Mapa extends Phaser.Scene {
     this.efectos = new Efectos(this);
     this.trafico = new Trafico(this);
     this.cine = new Cine(this);
+    this.frontera = new Frontera(this);
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.capaCob = this.add.graphics().setDepth(PROF_POSIBLES - .5); // fase 2: capa de cobertura
@@ -446,6 +448,7 @@ export class Mapa extends Phaser.Scene {
     this.refrescarCalles();
     this.pob.planear();
     this.efectos.actualizar(); this.efectos.humoIncendio();
+    if (this.frontera) this.frontera.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
     if (Math.abs(d - this.dry) >= .15) this.repintarTodo(d);

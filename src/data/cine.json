@@ -3,14 +3,38 @@
   "duracion": 3.6,
   "saltar": "Toca para continuar",
   "escenas": {
-    "marcha": { "texto": "{movimiento}: la marcha llega a la plaza con sus pancartas." },
-    "marchaLider": { "texto": "{lider} encabeza la marcha campesina hacia la plaza." },
-    "procesion": { "texto": "Llega el padre Anselmo: la procesión recorre las calles con velas." },
-    "escandalo": { "texto": "La prensa publica un escándalo: el pueblo se agolpa a leer el periódico." },
-    "desplazados": { "texto": "Llegan familias desplazadas por el conflicto, con lo poco que pudieron cargar." },
-    "toma": { "texto": "Toma armada: disparos y humo en la plaza; la gente corre a refugiarse." },
-    "terremoto": { "texto": "La tierra tiembla: el polvo se levanta sobre las casas." },
-    "lahar": { "texto": "El Nevado despierta: un río de lodo y ceniza baja por el cauce." },
-    "avenida": { "texto": "Avenida torrencial: el agua baja de la ladera arrastrando lodo y piedras." }
+    "marcha": {
+      "texto": "{movimiento}: la marcha llega a la plaza con sus pancartas."
+    },
+    "marchaLider": {
+      "texto": "{lider} encabeza la marcha campesina hacia la plaza."
+    },
+    "procesion": {
+      "texto": "Llega el padre Anselmo: la procesión recorre las calles con velas."
+    },
+    "escandalo": {
+      "texto": "La prensa publica un escándalo: el pueblo se agolpa a leer el periódico."
+    },
+    "desplazados": {
+      "texto": "Llegan familias desplazadas por el conflicto, con lo poco que pudieron cargar."
+    },
+    "toma": {
+      "texto": "Toma armada: disparos y humo en la plaza; la gente corre a refugiarse."
+    },
+    "terremoto": {
+      "texto": "La tierra tiembla: el polvo se levanta sobre las casas."
+    },
+    "lahar": {
+      "texto": "El Nevado despierta: un río de lodo y ceniza baja por el cauce."
+    },
+    "avenida": {
+      "texto": "Avenida torrencial: el agua baja de la ladera arrastrando lodo y piedras."
+    },
+    "asedio": {
+      "texto": "Guerra con {vecino}: sus tropas cruzan el borde y el pueblo se atrinchera."
+    },
+    "paz": {
+      "texto": "Las delegaciones se encuentran en la plaza para firmar la paz con {vecino}."
+    }
   }
 }
