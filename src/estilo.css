@@ -392,3 +392,13 @@ ol.avances li small{grid-column:2;color:var(--muted)}
 .estandarte>span{display:grid;justify-items:center;width:76px;text-align:center}
 .estandarte i{font-style:normal;font-size:1.5rem;line-height:1.2;background:#F7F1E3;border-radius:50%;width:38px;height:38px;display:grid;place-items:center}
 .estandarte small{font-size:.7rem;line-height:1.1;margin-top:3px}
+/* Fase 13: la carta de una familia: papel con renglones, letra cursiva y firma. */
+.card.carta{background:#F4ECD8;background-image:repeating-linear-gradient(180deg,transparent 0 27px,rgba(62,126,156,.16) 27px 28px),var(--muro-cal);animation:carta-llega .5s ease-out both}
+@keyframes carta-llega{from{transform:translateY(16px) rotate(-1.2deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.card.carta{animation:none}}
+.carta-cab{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:4px}
+.carta-texto p{font-family:Alegreya,Georgia,serif;font-style:italic;font-size:1.08rem;line-height:28px;margin:0 0 6px;color:#2A221C}
+.carta-texto .firma{text-align:right;font-weight:700}
+.carta-objeto{display:flex;gap:10px;align-items:flex-start;border:1.5px dashed var(--siena);border-radius:6px;padding:8px;margin-bottom:12px;background:rgba(255,255,255,.35)}
+.carta-objeto .big-emo{font-size:2rem;line-height:1}
+.carta-objeto small{display:block;margin-top:3px}

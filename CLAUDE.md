@@ -117,7 +117,12 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 3. **La cultura en el mapa y los dilemas (publicado en 0.68.0):** fiestas y patrimonio según los rasgos, dilemas de identidad y memoria, y el juicio de la historia los menciona.
 4. **Balance** con los robots (que eligen rasgos y leyes) (publicado en 0.69.0; la fase 12 queda terminada y espera la prueba de Juan).
 
-Después: **historias humanas**.
+**Fase 13 (aprobada por Juan el 4 de octubre): historias humanas**, sin censura (las cartas cuentan la historia tal como fue). Un paso publicable a la vez:
+
+1. **Las familias y sus cartas (publicado en 0.70.0):** cinco familias (Tique, Rojas, Quintero, Arango, Lozano); cada pocos años una carta que cambia según las decisiones, con viñeta, frase para pensar y recuerdo.
+2. **El álbum de las familias:** árbol de cada familia, cartas guardadas y recuerdos con su historia (Crónica).
+3. **En el mapa y al final:** los miembros de las familias caminan por el pueblo y se pueden tocar; epílogo con el destino de cada familia.
+4. **Balance** y revisión en celular y computador.
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.

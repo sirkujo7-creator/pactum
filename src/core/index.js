@@ -51,3 +51,4 @@ export * from './biomas.js';
 export * from './avances.js';
 export * from './industria.js';
 export * from './civismo.js';
+export * from './familias.js';

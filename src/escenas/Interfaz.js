@@ -10,7 +10,8 @@ import {
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
-  rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas
+  rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
+  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -879,14 +880,14 @@ export class Interfaz {
   // ---------- Tarjetas ----------
   tarjeta(html, cerrable = true) {
     this.cerrarFicha();
-    this.card.classList.remove('periodico'); this.velo.classList.remove('con-periodico');
+    this.card.classList.remove('periodico', 'carta'); this.velo.classList.remove('con-periodico');
     this.card.innerHTML = html;
     this.velo.hidden = false;
     this.tarjetaCerrable = cerrable;
     const f = this.card.querySelector('button'); if (f) f.focus({ preventScroll: true });
     this.card.scrollTop = 0;
   }
-  cerrarTarjeta() { this.velo.hidden = true; this.card.innerHTML = ''; this.card.classList.remove('periodico'); this.velo.classList.remove('con-periodico'); if (this.alCerrar) { const f = this.alCerrar; this.alCerrar = null; f(); } }
+  cerrarTarjeta() { this.velo.hidden = true; this.card.innerHTML = ''; this.card.classList.remove('periodico', 'carta'); this.velo.classList.remove('con-periodico'); if (this.alCerrar) { const f = this.alCerrar; this.alCerrar = null; f(); } }
   boton(id, fn) { const b = this.card.querySelector('#' + id); if (b) b.onclick = fn; }
 
   // Claridad: todos los efectos de una obra en fichas pequeñas (verde ayuda, rojo cuesta).
@@ -1532,6 +1533,25 @@ export class Interfaz {
       <h2>Riesgo de sucesos este año</h2>${Object.entries(R).map(([k, p]) => `<p class="small">${Q[k].icono} <b>${Q[k].titulo}</b>: riesgo ${nivel(p)}. ${Q[k].prevenir}</p>`).join('')}
       <div class="phil"><b>Lo que enseña</b><br>${C.SUCESOS.leccion}</div><button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 13: una carta de una familia del pueblo (papel, viñeta, firma, frase para pensar y recuerdo).
+  carta(alTerminar) {
+    const S = this.S, e = S.cartaEv;
+    if (!e || !e.nuevo || !familiasActivas(S) || e.anio !== S.year - 1) { if (alTerminar) alTerminar(); return; }
+    e.nuevo = false;
+    this.tarjetaCarta(e, alTerminar);
+  }
+  tarjetaCarta(r, alTerminar, reabrir) {
+    const S = this.S, T = C.FAMILIAS.textos, c = cartaRecibida(r), F = datosFamilia(c.familia), O = c.objeto ? datosObjeto(c.objeto) : null;
+    this.tarjeta(`<img class="vig" src="${vineta(c.escena || 'default', S.reg, S.stage)}" alt="">
+      <div class="carta-cab"><span>${F.icono} ${F.nombre}</span><span>${T.anio.replace('{anio}', c.anio)}</span></div>
+      <h3>${T.de.replace('{quien}', c.de)}</h3><div class="carta-texto"><p>${c.texto}</p><p class="firma">— ${c.de}</p></div>
+      <div class="phil"><b>${T.pensar}</b><br>${c.frase}</div>
+      ${O ? `<div class="carta-objeto"><span class="big-emo">${O.icono}</span><div><b>${T.recuerdo}: ${O.nombre}</b><small>${O.texto}</small></div></div>` : ''}
+      <button class="main" id="okB">${reabrir ? 'Cerrar' : O ? T.guardar : 'Continuar'}</button>`, !!reabrir);
+    this.card.classList.add('carta');
+    if (!reabrir) Sonido.carta();
+    this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 11: El Pregonero. Los avances del año salen en un periódico que se despliega desde arriba, con su sonido.
   periodico(ed, alTerminar, reabrir) {

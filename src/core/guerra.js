@@ -115,7 +115,7 @@ export function declararGuerra(S, id) {
 }
 function empezar(S, id, quien) {
   const G = estadoGuerra(S), v = S.vecinos[id];
-  G.activa = { id, desde: S.year, frente: 0, anios: 0, quien };
+  G.activa = { id, desde: S.year, frente: 0, anios: 0, quien }; G.hubo = (G.hubo || 0) + 1; // fase 13: las cartas recuerdan la guerra
   v.rel = Math.min(v.rel, 10); v.tension = 0; v.tropas = true;
   marcarCrisis(S);
   (S.guerraEv = S.guerraEv || []).push({ tipo: quien === 'tu' ? 'declaras' : 'guerra', id, nuevo: true });
