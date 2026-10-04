@@ -2,6 +2,7 @@
 import { C } from './contenido.js';
 import { countT } from './mundo.js';
 import { glaciar as glaciarDe } from './biomas.js';
+import { fabricasDe, nivelMaximo } from './industria.js';
 
 export function D(S) { return C.DIFFS[S.diff || 'normal']; }
 export function RG(S) { return C.REG[S.reg || 'republica']; }
@@ -57,6 +58,8 @@ export function cumple(S, cond, c) {
     else if (k === 'glaciarMenorQue') { if (!(S.pisos && S.pisos.subida && glaciarDe(S) < v)) return false; } // fase 10: biomas que cambian
     else if (k === 'subidaPisos') { if (!(S.pisos && S.pisos.subida >= v)) return false; }
     else if (k === 'fincas') { if (Object.entries(v).some(([cv, n]) => S.map.filter(x => x.b === 'cultivo' && x.cv === cv).length < n)) return false; }
+    else if (k === 'productos') { if (Object.entries(v).some(([pr, n]) => fabricasDe(S, pr) < n)) return false; } // fase 11: la industria
+    else if (k === 'nivelFabrica') { if (nivelMaximo(S) < v) return false; }
     else if (k === 'clima') { const f = S.clima && S.clima.fenomeno; if (v === 'crisis' ? !f : f !== v) return false; }
     else throw new Error(`Condición desconocida: ${k}`);
   }

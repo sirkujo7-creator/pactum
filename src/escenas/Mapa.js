@@ -191,7 +191,7 @@ export class Mapa extends Phaser.Scene {
       return;
     }
     const vacio = x.b === 'mercado' && precioAlimento(this.S) >= 1.3; // fase 2: comida cara, puestos vacíos
-    const kObra = x.b === 'cultivo' && x.cv ? ({ cafe: 'cafetal', cacao: 'cafetal', pancoger: 'cultivo', platano: 'cultivo' }[x.cv] || 'finca') : x.b === 'taller' && x.pr ? 'taller-' + x.pr : x.b; // fase 10: sombrío según el cultivo; fase 11: la carga de la fábrica
+    const kObra = x.b === 'cultivo' && x.cv ? ({ cafe: 'cafetal', cacao: 'cafetal', pancoger: 'cultivo', platano: 'cultivo' }[x.cv] || 'finca') : x.b === 'taller' && (x.pr || x.nv) ? `taller-${x.pr || 'artesanias'}-${x.nv || 0}` : x.b; // fase 10: sombrío según el cultivo; fase 11: la carga de la fábrica
     for (const f of figurasDeObra(kObra, i, this.S.stage, this.S.reg, epocaVisual(this.S))) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
       if (vacio && f.k.startsWith('mercado')) f.k += 'v';
@@ -249,7 +249,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x) { return `${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}`; } // fase 10: el cultivo y si ya produce
+  huella(x) { return `${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}`; } // fase 10: el cultivo y si ya produce
   // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
   revisarRio() {
     const n = desvios(this.S).length;

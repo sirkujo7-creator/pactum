@@ -24,7 +24,12 @@
     "salarioCambia": "Salarios en las fábricas: {nombre}.",
     "rio": "Junto al río: sus desechos lo ensucian más (ambiente ×1,4).",
     "metal": "El precio del metal sigue el ciclo de la economía: sube en el auge y cae en la recesión.",
-    "parte": "La industria aporta el {pct}% del oro de la producción (campo e industria)."
+    "parte": "La industria aporta el {pct}% del oro de la producción (campo e industria).",
+    "modernizar": "Modernizar: {nivel} ({costo} de oro)",
+    "nivel": "Nivel: {nivel}.",
+    "nivelBloqueado": "Para modernizarla hace falta adoptar {invento}.",
+    "modernizada": "La fábrica se modernizó: {nivel}.",
+    "nivelLeccion": "Joseph Schumpeter llamó «destrucción creativa» a esto: cada máquina nueva acaba con oficios viejos y crea otros. La pregunta política es qué pasa con quienes pierden su trabajo."
   },
   "productos": {
     "artesanias": {
@@ -122,5 +127,35 @@
       "auge": 1.3,
       "recesion": 0.7
     }
-  }
+  },
+  "niveles": [
+    {
+      "nombre": "Taller artesanal",
+      "icono": "🔨",
+      "texto": "Herramientas de mano y molinos de agua.",
+      "renta": 1,
+      "empleo": 1,
+      "ambiente": 1
+    },
+    {
+      "nombre": "Fábrica con máquinas",
+      "icono": "⚙️",
+      "invento": "electricidad",
+      "costo": 60,
+      "texto": "Motores eléctricos y máquinas: produce más con menos gente y echa más humo.",
+      "renta": 1.6,
+      "empleo": 0.8,
+      "ambiente": 1.3
+    },
+    {
+      "nombre": "Fábrica automatizada",
+      "icono": "🤖",
+      "invento": "automatizacion",
+      "costo": 120,
+      "texto": "Robots y programas hacen casi todo: mucha ganancia, poco empleo y algo menos de humo.",
+      "renta": 2.3,
+      "empleo": 0.4,
+      "ambiente": 1.1
+    }
+  ]
 }
