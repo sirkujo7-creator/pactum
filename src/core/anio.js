@@ -37,6 +37,7 @@ import { guerraDelAnio } from './guerra.js';
 import { fincasDelAnio } from './fincas.js';
 import { biomasDelAnio } from './biomas.js';
 import { avancesDelAnio } from './avances.js';
+import { civismoDelAnio, efectoLeyes } from './civismo.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -78,11 +79,11 @@ export function advance(S) {
 
   // Igualdad.
   const tot = (F.post.c + F.post.a + F.post.e + F.post.u) || 1, es = F.post.e / tot, ps = so.el / Math.max(1, so.P);
-  const tE = 85 - (es - ps) * 120 + sc * 10 + c.universidad * 5 + RM(S, 'eq') + (hasLaw(S, 'educacion') ? 8 : 0) + (hasLaw(S, 'censura') ? -3 : 0) + efectoBarrios(S, 'igualdad') + efectoTec(S, 'eq');
+  const tE = 85 - (es - ps) * 120 + sc * 10 + c.universidad * 5 + RM(S, 'eq') + (hasLaw(S, 'educacion') ? 8 : 0) + (hasLaw(S, 'censura') ? -3 : 0) + efectoBarrios(S, 'igualdad') + efectoTec(S, 'eq') + efectoLeyes(S, 'igualdad');
   S.eq = clamp(S.eq + (tE - S.eq) * .3, 0, 100);
 
   // Confianza.
-  const tT = 50 + RM(S, 'tr') + (hasLaw(S, 'censura') ? 6 : 0) + (hasLaw(S, 'prensa') ? -3 : 0) + (S.hap - 50) * .4 + c.agora * 10 + (S.gold < 0 ? -10 : 0) - Math.max(0, ip - 3) * .8 - presionMovimientos(S) + coherencia(S) + efectoFig(S, 'legitimidad') + efectoTec(S, 'tr');
+  const tT = 50 + RM(S, 'tr') + (hasLaw(S, 'censura') ? 6 : 0) + (hasLaw(S, 'prensa') ? -3 : 0) + (S.hap - 50) * .4 + c.agora * 10 + (S.gold < 0 ? -10 : 0) - Math.max(0, ip - 3) * .8 - presionMovimientos(S) + coherencia(S) + efectoFig(S, 'legitimidad') + efectoTec(S, 'tr') + efectoLeyes(S, 'legitimidad');
   S.tr = clamp(S.tr + (tT - S.tr) * .3, 0, 100);
   if (S.sat.c < 25 || S.sat.a < 25) {
     if (RM(S, 'silence', false)) { S.corr = clamp(S.corr + 4, 0, 100); news.push('La guardia disolvió protestas. Nadie habla, pero el descontento crece.'); }
@@ -145,7 +146,7 @@ export function advance(S) {
 
   // Rumbo del gobierno: corrupción, reforma y revolución (Aristóteles y Polibio).
   const minSat = Math.min(S.sat.c, S.sat.a, S.sat.e);
-  S.corr = clamp(S.corr + RM(S, 'drift') + (hasLaw(S, 'censura') ? 1.5 : 0) - (hasLaw(S, 'prensa') ? 1.5 : 0), 0, 100);
+  S.corr = clamp(S.corr + RM(S, 'drift') + (hasLaw(S, 'censura') ? 1.5 : 0) - (hasLaw(S, 'prensa') ? 1.5 : 0) + efectoLeyes(S, 'rumbo'), 0, 100);
   if (minSat < 25) S.corr = clamp(S.corr + 3, 0, 100);
   if (minSat > 50 && S.tr > 55) S.corr = clamp(S.corr - 2, 0, 100);
   S.regChange = null;
@@ -183,6 +184,7 @@ export function advance(S) {
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));
   news.push(...tecDelAnio(S));
+  news.push(...civismoDelAnio(S));
   news.push(...megaDelAnio(S));
   news.push(...rioDelAnio(S));
   news.push(...historiaDelAnio(S));

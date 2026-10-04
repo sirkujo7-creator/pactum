@@ -16,6 +16,7 @@ import { dejarMarca } from './marcas.js';
 import { crisisLibre } from './desastres.js';
 import { lado } from './mundo.js';
 import { centroPueblo } from './cobertura.js';
+import { efectoLeyes } from './civismo.js';
 
 const K = () => C.CONF;
 export function conflictoActivo(S) { return climaActivo(S) && !!C.CONF && S.stage >= K().desde.etapa && S.year >= K().desde.anio; }
@@ -27,7 +28,7 @@ export function partesConflicto(S) {
   const Q = K().causas, cob = cobertura(S), c = counts(S);
   return [['Punto de partida', Q.base], ['Casas sin policía cerca', (1 - (c.policia ? cob.policia : 0)) * Q.sinPolicia], ['Casas sin escuela cerca', (1 - (c.escuela ? cob.escuela : 0)) * Q.sinEscuela],
     ['Pobreza rural (jornaleros sin tierra)', Math.max(0, 45 - animoGrupo(S, 'jornaleros').valor) * Q.pobrezaRural], ['Pocos campesinos con tierra', Math.max(0, .4 - tierra(S)) * Q.pocaTierra],
-    ['Poca legitimidad', Math.max(0, 50 - S.tr) * Q.legitimidad], ['Inseguridad', inseguridad(S) * Q.inseguridad], ['Minas (rentas ilegales)', c.mina * Q.mina]];
+    ['Poca legitimidad', Math.max(0, 50 - S.tr) * Q.legitimidad], ['Inseguridad', inseguridad(S) * Q.inseguridad], ['Minas (rentas ilegales)', c.mina * Q.mina], ['Leyes (reforma agraria, acuerdo de paz)', efectoLeyes(S, 'conflicto')]];
 }
 export function metaConflicto(S) { return clamp(partesConflicto(S).reduce((s, x) => s + x[1], 0), 0, 100); }
 export function puedeEstrategia(S, id) { const E = K().estrategias[id]; return E.requiere && !counts(S)[E.requiere] ? `Necesitas ${C.B[E.requiere].a}.` : null; }

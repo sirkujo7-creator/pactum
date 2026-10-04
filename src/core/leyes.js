@@ -5,6 +5,7 @@ import { RG, RM, hasLaw } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { contradecir } from './acta.js';
 import { reaccionar } from './figuras.js';
+import { bloqueoCivismo, datosLey, marcarUsada } from './civismo.js';
 
 export function lawSlots(S) { return 1 + S.stage; }
 export function lawCostNow(S) { return Math.round(40 * S.price * (1 - RM(S, 'leyesDescuento'))); }
@@ -14,6 +15,7 @@ export function lawBlock(S, l) {
   if (l.st > S.stage) return `Se abre en ${C.STAGES[l.st].n}.`;
   if (l.no && l.no.includes(S.reg)) return `No es posible en ${RG(S).n}.`;
   if (!hasLaw(S, l.id)) {
+    const bc = bloqueoCivismo(S, l); if (bc) return bc; // fase 12: árbol de civismo (desbloqueo, época, requisitos y contrarias)
     if (Object.keys(S.laws).length >= lawSlots(S)) return `Solo caben ${lawSlots(S)} leyes en esta etapa. Deroga una primero.`;
     if (S.gold < lawCostNow(S)) return `Te faltan ${lawCostNow(S) - Math.floor(S.gold)} de oro.`;
     if (S.reg === 'aristocracia' && ['jornada', 'ambiente', 'arancel'].includes(l.id) && S.sat.e < 45) return 'El Senado la rechaza: la élite está descontenta.';
@@ -23,7 +25,7 @@ export function lawBlock(S, l) {
 }
 
 export function toggleLaw(S, id) {
-  const l = C.LAWS.find(x => x.id === id), bl = lawBlock(S, l);
+  const l = datosLey(id), bl = lawBlock(S, l);
   if (bl) return bl;
   if (hasLaw(S, id)) {
     delete S.laws[id]; S.tr = clamp(S.tr - 2, 0, 100);
@@ -32,9 +34,9 @@ export function toggleLaw(S, id) {
   }
   S.gold -= lawCostNow(S);
   if (S.reg !== 'monarquia' && S.reg !== 'tirania') S.tr = clamp(S.tr - 2, 0, 100);
-  S.laws[id] = S.year;
+  S.laws[id] = S.year; marcarUsada(S, id);
   S.log.unshift({ y: S.year, t: `Promulgaste la ley: ${l.n}.` });
   if (id === 'censura') contradecir(S, 'censura');
-  if (id === 'censura' || id === 'prensa') reaccionar(S, id);
+  if (id === 'censura' || id === 'prensa' || l.nueva) reaccionar(S, id);
   return true;
 }

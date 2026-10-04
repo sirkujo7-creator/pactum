@@ -8,12 +8,18 @@ import { eraCalle } from './calles.js';
 
 const K = () => C.AVANCES;
 export function avancesActivos(S) { return climaActivo(S) && !!C.AVANCES; }
-export function listaAvances() { return K().avances; }
-export function datosAvance(id) { return K().avances.find(a => a.id === id); }
+// Fase 12: cada ley nueva del árbol de civismo también es un avance (sale en El Pregonero al desbloquearla).
+let LISTA = null;
+export function listaAvances() {
+  if (!LISTA || LISTA.base !== K().avances) LISTA = { base: K().avances, l: [...K().avances, ...(C.LEYES_NUEVAS || []).map(l => ({ id: 'l_' + l.id, icono: l.icono, nombre: l.nombre, ley: true, cuando: { leyAbierta: l.id }, requisito: 'desbloquearla en el árbol de civismo (Leyes)', titular: l.titular, texto: `${l.pro} ${l.contra}`, leccion: l.leccion }))] };
+  return LISTA.l;
+}
+export function datosAvance(id) { return listaAvances().find(a => a.id === id); }
 function llego(S, id) { const T = S.tec; return !!(T && (T.adoptados[id] || T.pendiente === id)); }
 // ¿Se cumple el avance? Además de las condiciones de siempre (etapa, año, edificios...): invento y era de los caminos.
 export function cumpleAvance(S, a) {
-  const { invento, eraCalle: era, ...resto } = a.cuando || {};
+  const { invento, eraCalle: era, leyAbierta, ...resto } = a.cuando || {};
+  if (leyAbierta && !(S.civ && S.civ.abiertas[leyAbierta])) return false;
   if (invento && !llego(S, invento)) return false;
   if (era && (!C.CALLES || eraCalle(S) !== era)) return false;
   return cumple(S, resto);
@@ -65,6 +71,6 @@ export function cabecera(S) {
 export function caminoAvances(S) {
   const A = estado(S), L = listaAvances();
   const logrados = L.filter(a => A.vistos[a.id] !== undefined).map(a => ({ ...a, anio: A.vistos[a.id] }));
-  const faltan = L.filter(a => A.vistos[a.id] === undefined);
+  const faltan = L.filter(a => A.vistos[a.id] === undefined && !a.ley); // las leyes se desbloquean a voluntad, no son «lo que viene»
   return { logrados, proximos: faltan.slice(0, 3), ocultos: Math.max(0, faltan.length - 3) };
 }

@@ -10,6 +10,7 @@ import { coherencia } from './acta.js';
 import { efectoBarrios } from './barrios.js';
 import { efectoTec } from './tecnologia.js';
 import { efectoMega } from './megaproyectos.js';
+import { efectoLeyes } from './civismo.js';
 
 const suma = L => L.reduce((s, x) => s + x[1], 0);
 const limpio = L => L.filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
@@ -31,17 +32,17 @@ export function desgloseIndicador(S, k) {
   if (k === 'env') { const p = [...partesAmbiente(S, c), ['Relación con el cabildo pijao', efectoFig(S, 'ambiente')], ['Tecnología adoptada', efectoTec(S, 'env')], ['Megaproyectos', efectoMega(S, 'ambiente')]]; return { actual: S.env, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p) }; }
   if (k === 'eq') {
     const F = finance(S), so = F.so, tot = (F.post.c + F.post.a + F.post.e + F.post.u) || 1, es = F.post.e / tot, ps = so.el / Math.max(1, so.P), sc = satTargets(S, c, false).sc;
-    const p = [['Punto de partida', 85], ['Riqueza de la élite frente a su tamaño', -(es - ps) * 120], ['Escuelas', sc * 10], ['Universidades', c.universidad * 5], ['Régimen de gobierno', RM(S, 'eq')], ['Educación pública', L('educacion') ? 8 : 0], ['Censura', L('censura') ? -3 : 0], ['Problemáticas de los barrios', efectoBarrios(S, 'igualdad')], ['Tecnología adoptada', efectoTec(S, 'eq')]];
+    const p = [['Punto de partida', 85], ['Riqueza de la élite frente a su tamaño', -(es - ps) * 120], ['Escuelas', sc * 10], ['Universidades', c.universidad * 5], ['Régimen de gobierno', RM(S, 'eq')], ['Educación pública', L('educacion') ? 8 : 0], ['Censura', L('censura') ? -3 : 0], ['Problemáticas de los barrios', efectoBarrios(S, 'igualdad')], ['Tecnología adoptada', efectoTec(S, 'eq')], ['Leyes del árbol de civismo', efectoLeyes(S, 'igualdad')]];
     return { actual: S.eq, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p) };
   }
   if (k === 'tr') {
     const p = [['Punto de partida', 50], ['Régimen de gobierno', RM(S, 'tr')], ['Bienestar del pueblo', (S.hap - 50) * .4], ['Sede de gobierno (ágora)', c.agora * 10], ['Tesoro en rojo', S.gold < 0 ? -10 : 0],
-      ['Inflación', -Math.max(0, ip - 3) * .8], ['Censura', L('censura') ? 6 : 0], ['Libertad de prensa', L('prensa') ? -3 : 0], ['Movimientos sociales movilizados', -presionMovimientos(S)], ['Coherencia con el acta fundacional', coherencia(S)], ['Relación con la prensa', efectoFig(S, 'legitimidad')], ['Tecnología adoptada', efectoTec(S, 'tr')]];
+      ['Inflación', -Math.max(0, ip - 3) * .8], ['Censura', L('censura') ? 6 : 0], ['Libertad de prensa', L('prensa') ? -3 : 0], ['Movimientos sociales movilizados', -presionMovimientos(S)], ['Coherencia con el acta fundacional', coherencia(S)], ['Relación con la prensa', efectoFig(S, 'legitimidad')], ['Tecnología adoptada', efectoTec(S, 'tr')], ['Leyes del árbol de civismo', efectoLeyes(S, 'legitimidad')]];
     return { actual: S.tr, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p), extra: 'Además: protestas (−5), promesas, emergencias, elecciones y dilemas la mueven de golpe.' };
   }
   if (k === 'corr') {
     const minSat = Math.min(S.sat.c, S.sat.a, S.sat.e);
-    const p = [['Tendencia del régimen', RM(S, 'drift')], ['Censura', L('censura') ? 1.5 : 0], ['Libertad de prensa', L('prensa') ? -1.5 : 0], ['Alguna clase muy descontenta', minSat < 25 ? 3 : 0], ['Buen gobierno (todos contentos y legitimidad alta)', minSat > 50 && S.tr > 55 ? -2 : 0]];
+    const p = [['Tendencia del régimen', RM(S, 'drift')], ['Censura', L('censura') ? 1.5 : 0], ['Libertad de prensa', L('prensa') ? -1.5 : 0], ['Alguna clase muy descontenta', minSat < 25 ? 3 : 0], ['Buen gobierno (todos contentos y legitimidad alta)', minSat > 50 && S.tr > 55 ? -2 : 0], ['Leyes del árbol de civismo', efectoLeyes(S, 'rumbo')]];
     return { actual: S.corr, cambio: suma(p), partes: p.filter(x => x[1]).map(([t, v]) => [t, v]), extra: 'Además: sobornos y algunos dilemas lo mueven de golpe.' };
   }
   return null;

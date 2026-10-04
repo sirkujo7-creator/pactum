@@ -383,3 +383,7 @@ ol.avances li small{grid-column:2;color:var(--muted)}
 .av-oculto small{grid-row:1}
 .av-hem{display:grid;gap:6px;margin-bottom:12px}
 .av-hem .btn{text-align:left}
+/* Fase 12: árbol de civismo. */
+.civ-puntos{border:1.5px solid var(--rojo);border-radius:6px;padding:6px 10px;background:rgba(212,162,76,.12)}
+.law.cerrada{opacity:.82;border-style:dashed}
+.law small.pos,.law small.neg{display:block}

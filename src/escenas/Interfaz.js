@@ -8,7 +8,8 @@ import {
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
   fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
-  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar
+  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
+  civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -455,13 +456,41 @@ export class Interfaz {
     this.boton('okB', () => this.cerrarTarjeta());
   }
 
+  // Fase 12: una ley en el árbol de civismo: pros y contras, estado, y desbloquear o promulgar.
+  tarjetaLey(l) {
+    const S = this.S, on = hasLaw(S, l.id), T = C.CIV.textos, pc = prosContras(l.id), ab = abierta(S, l.id);
+    const falta = l.nueva && !ab ? faltaRequisito(S, l) : '', puede = l.nueva && !ab ? puedeAbrir(S, l.id) : null, bl = ab ? lawBlock(S, l) : '';
+    const boton = l.nueva && !ab
+      ? `<button class="btn" data-abrir="${l.id}" ${puede || S.over ? 'disabled' : ''}>🔓 ${T.desbloquear.replace('{costo}', l.civismo)}</button>`
+      : `<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button>`;
+    return `<div class="law ${on ? 'on' : ''}${l.nueva && !ab ? ' cerrada' : ''}"><b>${l.nueva ? (ab ? l.icono : '🔒') + ' ' : ''}${l.n}</b>
+      <small class="pos">✓ ${pc.pro || l.d}</small>${pc.contra ? `<small class="neg">✗ ${pc.contra}</small>` : ''}
+      ${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${falta ? `<small class="neg">${falta}</small>` : puede && !falta ? `<small class="neg">${puede}</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}
+      ${!on && l.id === 'censura' ? this.avisoActa(['censura']) : ''}${l.leccion && ab ? `<small><i>${l.leccion}</i></small>` : ''}${boton}</div>`;
+  }
   renderLeyes() {
     const S = this.S, n = Object.keys(S.laws || {}).length;
+    if (civismoActivo(S)) return this.renderArbol(n);
     this.leyes.innerHTML = `<p class="small">Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</p>` +
       C.LAWS.map(l => {
         const on = hasLaw(S, l.id), bl = lawBlock(S, l);
         return `<div class="law ${on ? 'on' : ''}"><b>${l.n}</b><small>${l.d}</small>${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}${!on && l.id === 'censura' ? this.avisoActa(['censura']) : ''}<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button></div>`;
       }).join('') + this.seccionTecnologia();
+    this.botonesLeyes();
+  }
+  renderArbol(n) {
+    const S = this.S, T = C.CIV.textos, E = estadoCivismo(S), L = todasLasLeyes(S);
+    const ramas = Object.entries(C.CIV.ramas).map(([k, R]) => `<h3>${R.icono} ${R.nombre}</h3>${L.filter(l => ramaDe(l.id) === k).map(l => this.tarjetaLey(l)).join('')}${k === 'economia' ? `<p class="small"><i>${T.libreComercio}</i></p>` : ''}`).join('');
+    this.leyes.innerHTML = `<h3>🌳 ${T.titulo}</h3><p class="small">${T.ayuda}</p><p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}<p class="small"><i>${C.CIV.leccion}</i></p>` + this.seccionTecnologia();
+    this.leyes.querySelectorAll('[data-abrir]').forEach(bt => bt.onclick = () => {
+      const id = bt.dataset.abrir, r = puedeAbrir(S, id);
+      if (r) { this.toast(r); return; }
+      abrirLey(S, id); this.toast(T.abierta.replace('{ley}', todasLasLeyes(S).find(l => l.id === id).n)); this.render();
+    });
+    this.botonesLeyes();
+  }
+  botonesLeyes() {
+    const S = this.S;
     this.leyes.querySelectorAll('[data-ley]').forEach(bt => bt.onclick = () => {
       const r = toggleLaw(S, bt.dataset.ley);
       if (r !== true) this.toast(r);
@@ -1479,7 +1508,7 @@ export class Interfaz {
     const [a, ...otros] = L, q = a.cuando || {};
     const obras = q.etapa ? obrasDeEtapa(q.etapa) : [];
     const ep = !reabrir && historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null;
-    const leccion = q.etapa ? C.STAGES[q.etapa].lesson : q.invento ? C.TEC.leccion : C.AVANCES.leccion;
+    const leccion = q.etapa ? C.STAGES[q.etapa].lesson : q.invento ? C.TEC.leccion : a.leccion || C.AVANCES.leccion;
     const nota = x => `<article><h4>${x.icono} ${x.titular}</h4><p>${x.texto}</p></article>`;
     const breves = ed.breves && ed.breves.length ? `<article class="pe-breves"><h4>${P.breves}</h4><ul>${ed.breves.map(t => `<li>${t}</li>`).join('')}</ul></article>` : '';
     this.tarjeta(`<header class="pe-cab"><div class="pe-linea"><span>Año ${ed.anio}${ep ? ` · ${ep.nombre}` : ''}</span><span>${P.edicion.replace('{n}', ed.n)}</span><span>${cab.precio}</span></div>

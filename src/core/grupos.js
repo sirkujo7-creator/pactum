@@ -11,6 +11,7 @@ import { cobertura } from './cobertura.js';
 import { empleosDeObra, obrasActivas } from './construccion.js';
 import { ejercitoActivo, ejercito, seguridad, partesEjercito } from './ejercito.js';
 import { industriaActiva, empleoIndustria, hayFabricas, salario } from './industria.js';
+import { efectoLeyes } from './civismo.js';
 
 const K = () => C.GRUPOS;
 export function gruposActivos(S) { return climaActivo(S) && !!C.GRUPOS; }
@@ -57,7 +58,7 @@ const claseDe = g => g === 'propietarios' || g === 'jornaleros' ? 'c' : g === 't
 // Ánimo de un subgrupo: el de su clase más sus causas propias.
 export function animoGrupo(S, g) {
   if (g === 'soldados') { const a = ejercito(S).animo; return { clase: 'x', base: a, propias: [], valor: a, ejercito: true }; }
-  const k = claseDe(g), P = propias(S, g).filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]);
+  const k = claseDe(g), P = [...propias(S, g), ['Leyes del árbol de civismo', efectoLeyes(S, 'grupos.' + g)]].filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]);
   return { clase: k, base: S.sat[k], propias: P, valor: clamp(S.sat[k] + P.reduce((s, x) => s + x[1], 0), 0, 100) };
 }
 
