@@ -2,7 +2,8 @@
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
   coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
-  industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo
+  industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
+  civismoActivo, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -129,6 +130,8 @@ export function botYear(S, strat, eth, op = {}) {
   if (strat === 'debt' && S.gold < 30 && canBorrow(S)) takeLoan(S);
   // Fase 3: la estrategia equilibrada abre diálogo con los movimientos movilizados si le sobra el oro.
   if (strat === 'fair' && !eth) for (const m of listaMovimientos(S)) if (m.f >= 70 && S.gold - costoDialogo(S, m.id) >= 80) dialogar(S, m.id);
+  // Fase 12: la estrategia equilibrada desbloquea y promulga leyes del árbol de civismo.
+  if (prep && civismoActivo(S) && op.civismo !== false) robotCivismo(S);
   // Fase 12: el rasgo de la época (al azar entre los tres).
   const ep = rasgoPendiente(S); if (ep) { const L = opcionesRasgo(ep); elegirRasgo(S, L[rnd(L.length)].id); }
   const r = advance(S);
@@ -208,4 +211,14 @@ function robotIndustria(S) {
   // Salarios: altos si el sindicato aprieta y sobra el oro; si no, justos.
   const sind = fuerzaMov(S, 'sindicato');
   elegirSalario(S, sind >= 60 && S.gold > 250 ? 'alto' : 'justo');
+}
+
+// Fase 12: leyes del árbol de civismo en orden de preferencia (el acuerdo de paz primero si hay grupo armado).
+function robotCivismo(S) {
+  const orden = [...(hayGrupo(S) ? ['paz'] : []), 'sufragio', 'progresivo', 'descentralizacion', 'tutela', 'indigenas', 'laico', 'paz'];
+  for (const id of orden) if (!puedeAbrir(S, id)) { abrirLey(S, id); break; }
+  for (const id of orden) {
+    if (hasLaw(S, id)) continue;
+    if (!lawBlock(S, datosLey(id)) && S.gold > lawCostNow(S) + 150) { toggleLaw(S, id); break; }
+  }
 }
