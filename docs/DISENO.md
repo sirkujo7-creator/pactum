@@ -112,12 +112,14 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 
 ## Estado de la fase 13 (historias humanas)
 
-Aprobada por Juan el 4 de octubre, sin censura: las cartas cuentan la historia tal como fue (muertes, desplazamiento, extorsión, reclutamiento).
+Terminada (0.72.0): espera la prueba de Juan. Aprobada por Juan el 4 de octubre, sin censura: las cartas cuentan la historia tal como fue (muertes, desplazamiento, extorsión, reclutamiento).
 
 | Paso | Estado |
 | --- | --- |
 | 1. Las familias y sus cartas | Publicado (0.70.0). Cinco familias atraviesan el siglo (`src/data/familias.json`, `src/core/familias.js`): los Tique (pijao del resguardo), los Rojas (campesinos que llegan de Boyacá), los Quintero (obreros: escogedores de café, tejedoras, repartidores), los Arango (comerciantes de la tienda de la plaza) y los Lozano (desplazados que llegan hacia el año 70). Cada tres años como mucho llega una carta de un miembro (24 cartas, 39 variantes): la colonización de los baldíos, las fichas de la tienda de raya, los arrieros, el asesinato de Ignacio Tique y de Pedro Rojas en La Violencia, las tierras compradas sobre el miedo, el sindicato de Marta Quintero, el primer voto de una mujer, la reforma agraria, la extorsión, el desplazamiento, el reclutamiento de un muchacho sin escuela, la Comisión de la Verdad, la restitución de tierras, el trabajo por aplicaciones... Cada carta cambia según lo que decidió el jugador (leyes, rasgos, salarios, fincas, fábricas, guerra y conflicto), trae una viñeta, una frase para pensar y a veces un recuerdo con su dato histórico (14 en total). Llega antes del dilema del año, con su sonido (papel y tiple). Solo narra: no cambia el balance |
 | 2. El álbum de las familias | Publicado (0.71.0). En la Crónica, **Álbum de las familias**: cada familia con su origen, su gente (los del comienzo y los que aparecen en las cartas, con † y el año si murieron o «se fue» si migraron) y sus cartas para releer; y los **recuerdos** (14 objetos con su dato histórico: el chumbe, el azadón, la ficha de la tienda de raya, el carriel, la foto de Pedro Rojas, la radio, la cédula de la primera votante, la escritura de la parcela, el carné del sindicato, la libreta de deudas, la maleta del desplazamiento, el título de restitución, el celular del repartidor y el cuaderno de la lengua); los que faltan aparecen como «por descubrir» |
+| 3. En el mapa y al final | Publicado (0.72.0). Quien escribió la última carta de cada familia (si sigue vivo) camina por el pueblo como un poblador más, con una marca roja sobre la cabeza; al tocarlo se ve su familia y se puede leer su última carta. Al terminar la partida, el juicio de la historia cierra con **«Qué fue de las familias»**: la historia de cada una, contada según lo que decidió el jugador |
+| 4. Revisión | Publicada (0.72.0). Las familias solo narran: el balance no cambia. Normal 47%, Difícil 28%. Partida larga en el navegador sin errores; probado en celular y computador |
 
 ## Estado de la fase 12 (cultura y civismo)
 

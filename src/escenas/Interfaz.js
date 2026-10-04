@@ -11,7 +11,7 @@ import {
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
-  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos
+  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -792,7 +792,9 @@ export class Interfaz {
       el('b', { style: 'grid-column:1/-1', text: `${p.nombre}, ${p.edad} años` }),
       el('span', { style: 'grid-column:1/-1', text: `${p.oficio}${p.clase === 'u' || p.clase === 'n' ? '' : trabajo}. Clase: ${cl.toLowerCase()}.` }),
       el('em', { style: 'grid-column:1/-1', text: `“${pensamiento(S, p)}”` }),
-      el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: 'Cada figura representa a unas dos personas del pueblo.' })
+      ...(p.familia ? [el('span', { style: 'grid-column:1/-1', html: `<b>${datosFamilia(p.familia).icono} ${datosFamilia(p.familia).nombre}.</b> ${datosFamilia(p.familia).origen}` }),
+        el('button', { class: 'btn', style: 'grid-column:1/-1', on: { click: () => { const r = representantes(S).find(x => x.familia === p.familia); if (r) this.tarjetaCarta(estadoFamilias(S).cartas.find(c => c.n === r.ultima.n), null, true); } } }, '✉️ Leer su última carta')] : []),
+      el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: p.familia ? 'Una de las familias que te escriben.' : 'Cada figura representa a unas dos personas del pueblo.' })
     );
     this.ficha.hidden = false;
   }
@@ -1657,9 +1659,15 @@ export class Interfaz {
     return `<h2>El juicio de la historia</h2><p>Te recordarán como <b>${J.titulo}</b>.</p>
       ${J.recuerdos.length ? `<ul class="conds">${J.recuerdos.map(r => `<li class="${r.peso >= 0 ? 'pos' : 'neg'}">${r.icono} ${r.nombre}: ${r.recuerdo}.</li>`).join('')}</ul>` : ''}
       <p class="small">Atravesaste ${J.crisis === 1 ? 'una crisis mayor' : `${J.crisis} crisis mayores`} y ${J.generaciones === 1 ? 'un relevo' : `${J.generaciones} relevos`} de generación. ${J.patrimonio === 1 ? 'Dejas una obra patrimonial.' : `Dejas ${J.patrimonio} obras patrimoniales.`}</p>
-      <p class="small"><b>Lo que hereda tu sucesor:</b> ${J.deuda} de oro de deuda${J.erosion ? ` y ${J.erosion} casillas de suelo erosionado` : ''}. ${M.jonas}</p>${this.legadoCivico()}`;
+      <p class="small"><b>Lo que hereda tu sucesor:</b> ${J.deuda} de oro de deuda${J.erosion ? ` y ${J.erosion} casillas de suelo erosionado` : ''}. ${M.jonas}</p>${this.legadoCivico()}${this.epilogoFamilias()}`;
   }
   // Fase 12: el juicio de la historia también recuerda la identidad del pueblo y sus leyes.
+  // Fase 13: qué fue de las familias.
+  epilogoFamilias() {
+    const S = this.S, L = epilogo(S), T = C.FAMILIAS && C.FAMILIAS.textos;
+    if (!L.length) return '';
+    return `<h2>${T.epilogo}</h2><p class="small">${T.epilogoAyuda}</p>${L.map(f => `<p><b>${f.icono} ${f.nombre}:</b> ${f.hechos.join(' ')}</p>`).join('')}`;
+  }
   legadoCivico() {
     const S = this.S, R = rasgosElegidos(S), L = civismoActivo(S) ? leyesTodas(S).filter(l => hasLaw(S, l.id)) : [];
     if (!R.length && !L.length) return '';

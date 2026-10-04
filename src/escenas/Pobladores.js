@@ -39,7 +39,7 @@ export class Pobladores {
     this.ropa = ropaModerna(S) ? 'M' : ''; // fase 5: desde la época del ladrillo, ropa moderna
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     this.rejilla();
-    while (this.figuras.length > plan.length) this.figuras.pop().img.destroy();
+    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.marca) f.marca.destroy(); }
     plan.forEach((p, k) => {
       let f = this.figuras[k];
       if (!f) {
@@ -254,6 +254,9 @@ export class Pobladores {
     const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? Math.floor(f.fase) % 4 : (postura || 0);
     f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`).setPosition(p[0], p[1]).setFlipX(f.voltear)
       .setDepth(f.r + f.c + .01).setVisible(!f.oculto);
+    // Fase 13: los miembros de las familias que escriben cartas llevan una marca roja sobre la cabeza.
+    if (f.p.familia && !f.marca) f.marca = this.scene.add.circle(0, 0, 1.7, 0x9C2F25).setStrokeStyle(.6, 0xD4A24C);
+    if (f.marca) f.marca.setPosition(p[0], p[1] - f.img.displayHeight - 2.5).setDepth(f.r + f.c + .02).setVisible(!!f.p.familia && !f.oculto);
   }
 
   // Figura más cercana a un punto del mundo (para la ficha).

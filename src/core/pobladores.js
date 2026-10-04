@@ -3,6 +3,7 @@
 import { mulberry } from './azar.js';
 import { C } from './contenido.js';
 import { society } from './sociedad.js';
+import { representantes } from './familias.js';
 
 export const MAX_FIGURAS = 150;
 
@@ -57,6 +58,15 @@ export function planearPobladores(S) {
   const resto = lista.filter(p => p.clase !== 'e');
   resto.forEach((p, k) => { p.casa = cerca[(h + k) % cerca.length]; });
   lista.forEach(p => { p.plaza = pz; p.oficio = p.sexo === 'm' ? femenino(oficioDe(p, S)) : oficioDe(p, S); });
+  // Fase 13: algunos pobladores son miembros de las familias que escriben cartas.
+  for (const r of representantes(S)) {
+    const p = lista.find(x => !x.familia && (x.clase === r.clase || (r.clase === 'u' && x.clase === 'c')));
+    if (!p) continue;
+    p.nombre = r.nombre; p.familia = r.familia;
+    const mujer = /^(Rosa|Mercedes|Marta|Beatriz|Elvira|Luz|Yuli)/.test(r.nombre);
+    if (p.tipo !== 'elite') p.tipo = r.clase === 'c' || r.clase === 'u' ? (mujer ? 'campesina' : 'campesino') : p.tipo;
+    p.sexo = mujer ? 'm' : 'h'; p.oficio = mujer ? femenino(oficioDe(p, S)) : oficioDe(p, S);
+  }
   return lista;
 }
 
