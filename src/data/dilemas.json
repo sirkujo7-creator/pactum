@@ -3518,5 +3518,254 @@
         "huella": "pancarta"
       }
     ]
+  },
+  {
+    "id": "h_mineria_paramo",
+    "etapa": 1,
+    "icono": "⛏️",
+    "titulo": "Oro bajo el páramo",
+    "texto": "Una minera extranjera encontró oro bajo el páramo, donde nacen los ríos que beben el pueblo y los arrozales. Ofrece regalías e inversión; los campesinos de abajo temen por el agua.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz",
+      "terreno": "montana"
+    },
+    "opciones": [
+      {
+        "texto": "Dar la licencia minera",
+        "efectos": {
+          "oro": 90,
+          "ambiente": -9,
+          "campesinos": -6,
+          "elite": 5
+        },
+        "filosofia": "util",
+        "porque": "Las regalías financian escuelas y vías hoy; el costo ambiental llega después y lo pagan otros.",
+        "aQuien": "Entra el oro de las regalías, pero los campesinos de abajo temen quedarse sin agua.",
+        "despues": {
+          "anios": 6,
+          "id": "paramo_herido",
+          "probabilidad": 0.7
+        }
+      },
+      {
+        "texto": "Convocar una consulta popular",
+        "efectos": {
+          "oro": -25,
+          "confianza": 5,
+          "elite": -4,
+          "ambiente": 3
+        },
+        "filosofia": "contr",
+        "porque": "En 2017 Cajamarca (Tolima) votó en consulta popular contra la mina La Colosa: el pueblo decidió sobre su agua.",
+        "aQuien": "El pueblo vota y dice no a la mina; la élite pierde el negocio, la legitimidad sube."
+      },
+      {
+        "texto": "Declarar el páramo zona protegida",
+        "efectos": {
+          "ambiente": 6,
+          "elite": -6,
+          "oro": -10
+        },
+        "filosofia": "deon",
+        "porque": "Hans Jonas: obra de modo que tus actos no destruyan las condiciones de la vida futura.",
+        "aQuien": "El páramo queda a salvo; los inversionistas se van molestos.",
+        "huella": "vivero"
+      }
+    ]
+  },
+  {
+    "id": "h_cafe_sube",
+    "etapa": 1,
+    "icono": "☕",
+    "titulo": "El café sube la montaña",
+    "texto": "Hace más calor: en las laderas bajas el café ya no rinde y la roya avanza. Los cafeteros quieren tumbar el bosque de niebla para sembrar más arriba, donde ahora hace el frío que el café necesita.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz",
+      "subidaPisos": 0.15,
+      "fincas": {
+        "cafe": 1
+      }
+    },
+    "opciones": [
+      {
+        "texto": "Permitir que siembren más arriba",
+        "efectos": {
+          "oro": 40,
+          "ambiente": -8,
+          "campesinos": 4
+        },
+        "filosofia": "real",
+        "porque": "El campo se adapta como puede; frenarlo es condenar a los cafeteros.",
+        "aQuien": "Los cafeteros salvan su ingreso, pero el bosque de niebla retrocede."
+      },
+      {
+        "texto": "Pagar variedades de café que aguantan el calor",
+        "efectos": {
+          "oro": -45,
+          "campesinos": 5,
+          "confianza": 3
+        },
+        "filosofia": "util",
+        "porque": "Adaptarse con ciencia (como Cenicafé) protege el ingreso sin tumbar el bosque.",
+        "aQuien": "Cuesta oro, pero el café aguanta en su sitio y el bosque se queda."
+      },
+      {
+        "texto": "Ayudarlos a cambiar a cacao en las tierras bajas",
+        "efectos": {
+          "oro": -30,
+          "ambiente": 3,
+          "campesinos": -2,
+          "igualdad": 2
+        },
+        "filosofia": "virt",
+        "porque": "La prudencia: no pelear contra el clima sino cambiar con él.",
+        "aQuien": "Algunos cafeteros se resisten; los que cambian ganan un cultivo nuevo."
+      }
+    ]
+  },
+  {
+    "id": "h_glaciar",
+    "etapa": 1,
+    "icono": "🏔️",
+    "titulo": "El Nevado se queda sin hielo",
+    "texto": "Los científicos confirman que el glaciar del Nevado retrocede cada año. Hoy los ríos bajan crecidos por el deshielo; cuando se acabe el hielo, bajarán menos.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital",
+      "glaciarMenorQue": 0.8
+    },
+    "opciones": [
+      {
+        "texto": "Construir reservorios para el agua del futuro",
+        "efectos": {
+          "oro": -60,
+          "confianza": 4,
+          "ambiente": 2
+        },
+        "filosofia": "deon",
+        "porque": "Gobernar es pensar en quienes vendrán: el agua de mañana se guarda hoy.",
+        "aQuien": "Cuesta oro, pero el pueblo tendrá agua cuando el glaciar falte."
+      },
+      {
+        "texto": "Aprovechar el agua extra ahora",
+        "efectos": {
+          "oro": 30,
+          "alimento": 30,
+          "ambiente": -3
+        },
+        "filosofia": "util",
+        "porque": "El agua de hoy produce comida y oro hoy.",
+        "aQuien": "Más riego y más cosecha ahora; el problema queda para después.",
+        "despues": {
+          "anios": 10,
+          "id": "sin_deshielo",
+          "probabilidad": 0.8
+        }
+      },
+      {
+        "texto": "Declarar la emergencia climática",
+        "efectos": {
+          "oro": -20,
+          "confianza": 5,
+          "elite": -3
+        },
+        "filosofia": "contr",
+        "porque": "Nombrar el problema en público obliga a todos a responder.",
+        "aQuien": "La élite se queja de las restricciones; el pueblo valora la honestidad."
+      }
+    ]
+  },
+  {
+    "id": "h_ganaderia",
+    "etapa": 1,
+    "icono": "🐄",
+    "titulo": "Potreros en la ladera",
+    "texto": "Los ganaderos piden permiso para convertir laderas de bosque en potrero. Dan algo de empleo y carne, pero la ladera sin árboles se lava con las lluvias.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Dar el permiso",
+        "efectos": {
+          "oro": 35,
+          "elite": 5,
+          "ambiente": -7
+        },
+        "filosofia": "real",
+        "porque": "La ganadería mueve la economía regional.",
+        "aQuien": "Llega el dinero ganadero; las laderas quedan peladas y más expuestas a derrumbes."
+      },
+      {
+        "texto": "Promover la ganadería silvopastoril",
+        "efectos": {
+          "oro": -35,
+          "ambiente": 4,
+          "campesinos": 3
+        },
+        "filosofia": "virt",
+        "porque": "Árboles y ganado juntos: menos erosión, sombra para las vacas y más agua en el suelo.",
+        "aQuien": "Cuesta oro enseñar el método; las laderas siguen verdes."
+      },
+      {
+        "texto": "Negar el permiso",
+        "efectos": {
+          "elite": -6,
+          "ambiente": 2
+        },
+        "filosofia": "deon",
+        "porque": "El bosque de la ladera protege a todos los de abajo.",
+        "aQuien": "Los ganaderos se molestan; el bosque se queda."
+      }
+    ]
+  },
+  {
+    "id": "h_guardianes",
+    "etapa": 1,
+    "icono": "🌿",
+    "titulo": "Los guardianes del páramo",
+    "texto": "Las familias que viven en el páramo ofrecen cuidarlo y restaurarlo si se les paga por proteger el agua que baja al pueblo.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital",
+      "subidaPisos": 0.3
+    },
+    "opciones": [
+      {
+        "texto": "Pagarles por cuidar el agua",
+        "efectos": {
+          "oro": -50,
+          "ambiente": 6,
+          "campesinos": 5,
+          "igualdad": 3
+        },
+        "filosofia": "contr",
+        "porque": "Pagar por servicios ambientales reconoce que el agua limpia tiene un costo para quien la cuida.",
+        "aQuien": "Las familias del páramo viven de protegerlo; el agua mejora."
+      },
+      {
+        "texto": "Mejor sacarlas del páramo",
+        "efectos": {
+          "ambiente": 3,
+          "campesinos": -8,
+          "confianza": -4
+        },
+        "filosofia": "real",
+        "porque": "Sin gente, el páramo se recupera solo.",
+        "aQuien": "Las familias pierden su tierra y su forma de vida; el pueblo lo ve como un desalojo."
+      },
+      {
+        "texto": "No hacer nada por ahora",
+        "efectos": {
+          "ambiente": -3
+        },
+        "filosofia": "util",
+        "porque": "Hay otras urgencias para el presupuesto.",
+        "aQuien": "El páramo sigue retrocediendo."
+      }
+    ]
   }
 ]

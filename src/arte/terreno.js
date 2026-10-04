@@ -14,12 +14,12 @@ const smooth = t => t * t * (3 - 2 * t);
 const GROUND = { agua: '#7AAAB6', galeria: '#8AA26C', arrozal: '#A9B97E', seco: '#D2B77E', potrero: '#B5B97C', ladera: '#93A56E', niebla: '#6A8360', paramo: '#C2B27A', roca: '#9C9184', nieve: '#F4EEE2' };
 const DRYC = '#D4B27A';
 
-function groundColor(t, dry) {
+function groundColor(t, dry, sub = 0) {
   let c = GROUND[t.b];
   if (t.b === 'agua') return mix('#D2C092', DRYC, dry * .3);
   if (['galeria', 'arrozal', 'potrero', 'ladera', 'niebla'].includes(t.b)) c = mix(c, DRYC, dry * (t.b === 'niebla' ? .25 : .45));
   if (t.b === 'seco') c = mix(c, '#D9B56C', dry * .4);
-  if (t.b !== 'nieve' && t.b !== 'roca' && t.h > 8.4) c = mix(c, '#F4EEE2', clamp((t.h - 8.4) / 1.4, 0, .7));
+  if (t.b !== 'nieve' && t.b !== 'roca' && t.h - sub > 8.4) c = mix(c, '#F4EEE2', clamp((t.h - sub - 8.4) / 1.4, 0, .7));
   return c;
 }
 // Mezcla suave entre bandas de altura.
@@ -79,7 +79,7 @@ export function cajaSector(T, sr, sc) {
 
 // Pinta un sector. opciones: { dry (0 lluvias a 1 sequía), escala (resolución) }.
 export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
-  const dry = opciones.dry || 0, esc = opciones.escala || 1.5, N = T.N;
+  const dry = opciones.dry || 0, esc = opciones.escala || 1.5, N = T.N, sub = opciones.subida || 0; // fase 10: los pisos térmicos suben
   const k = cajaSector(T, sr, sc);
   const cv = lienzoPrevio && lienzoPrevio.width === Math.ceil(k.w * esc) ? lienzoPrevio : lienzo(k.w * esc, k.h * esc);
   const g = cv.getContext('2d');
@@ -110,7 +110,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     const qc = [(q[0][0] + q[2][0]) / 2, (q[0][1] + q[2][1]) / 2];
     const qx = q.map(p => [qc[0] + (p[0] - qc[0]) * 1.035, qc[1] + (p[1] - qc[1]) * 1.035]);
     zona.push(qx);
-    let col = groundColor(t, dry);
+    let col = groundColor(t, dry, sub);
     col = shade(col, (T.vary(t.c / 4, t.r / 4) - .5) * .1);
     const L2 = light(t);
     col = L2 >= 1 ? shade(col, (L2 - 1) * .8) : shade(col, (L2 - 1) * .9);
@@ -119,7 +119,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
       const r0 = t.r + a / SD, c0 = t.c + b / SD, r1 = r0 + 1 / SD, c1 = c0 + 1 / SD;
       const z00 = T.hf(r0, c0), z01 = T.hf(r0, c1), z11 = T.hf(r1, c1), z10 = T.hf(r1, c0);
       const sx = (z01 + z11 - z00 - z10) / 2 * SD, sy = (z10 + z11 - z00 - z01) / 2 * SD, Lq = clamp(1 + .2 * sx - .17 * sy, .62, 1.3);
-      let cc = shade(colorAt(T, r0 + .5 / SD, c0 + .5 / SD, (z00 + z01 + z11 + z10) / 4, Math.hypot(sx, sy), dry), vary);
+      let cc = shade(colorAt(T, r0 + .5 / SD, c0 + .5 / SD, (z00 + z01 + z11 + z10) / 4 - sub, Math.hypot(sx, sy), dry), vary);
       cc = Lq >= 1 ? shade(cc, (Lq - 1) * .8) : shade(cc, (Lq - 1) * .9);
       cc = mix(cc, '#E6E2D6', far0 * .2);
       const sq = [P(r0, c0, z00), P(r0, c1, z01), P(r1, c1, z11), P(r1, c0, z10)], s2 = [(sq[0][0] + sq[2][0]) / 2, (sq[0][1] + sq[2][1]) / 2];
@@ -173,7 +173,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
 }
 
 // Cielo, cordillera lejana y nevado, detrás del diorama.
-export function pintarFondo(T, escala = 1) {
+export function pintarFondo(T, escala = 1, glaciar = 1) { // fase 10: el casquete del Nevado se encoge con el glaciar
   const N = T.N, izq = P(N, 0)[0] - 300, der = P(0, N)[0] + 300, arriba = P(0, 0, 12)[1] - 260, abajo = P(0, 0)[1] + N * TH * .35;
   const W = der - izq, H = abajo - arriba;
   const cv = lienzo(W * escala, H * escala), g = cv.getContext('2d'), R = mulberry(T.seed * 3 + 1);
@@ -188,7 +188,8 @@ export function pintarFondo(T, escala = 1) {
   far([[X(0), OY + 90], [X(0), OY - 20], [X(.1), OY - 60], [X(.22), OY - 34], [X(.35), OY - 95], [X(.47), OY - 50], [X(.6), OY - 82], [X(.75), OY - 44], [X(.9), OY - 76], [X(1), OY - 46], [X(1), OY + 90]], 'rgba(150,166,152,.85)', .8);
   const nx = X(.36), nt = OY - 190;
   far([[nx - 280, OY + 60], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 300, OY + 60]], 'rgba(160,156,176,.9)', .85);
-  const cap = [[nx - 92, nt + 50], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 98, nt + 47], [nx + 52, nt + 40], [nx + 16, nt + 54], [nx - 24, nt + 42], [nx - 54, nt + 56]];
+  const cap0 = [[nx - 92, nt + 50], [nx - 70, nt + 36], [nx - 22, nt + 7], [nx + 12, nt], [nx + 70, nt + 26], [nx + 98, nt + 47], [nx + 52, nt + 40], [nx + 16, nt + 54], [nx - 24, nt + 42], [nx - 54, nt + 56]];
+  const kg = clamp(.25 + .75 * glaciar, .25, 1), cap = cap0.map(([x, y]) => [nx + 5 + (x - nx - 5) * kg, nt + (y - nt) * kg]); // la nieve se retira hacia la cumbre
   wash(g, cap, '#F7F1E3', R, .95, 0); g.globalAlpha = .5; g.strokeStyle = '#5B3423'; g.lineWidth = 1; poly(g, cap); g.stroke(); g.globalAlpha = 1; // nevado con contorno siena
   return { canvas: cv, x: izq, y: arriba, w: W, h: H, escala };
 }

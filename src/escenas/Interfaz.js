@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -301,7 +301,7 @@ export class Interfaz {
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
       ${this.seccionRiesgo()}${this.seccionMega()}
-      ${this.seccionEconomia()}${this.seccionCanasta()}${this.seccionCiclos()}
+      ${this.seccionEconomia()}${this.seccionCanasta()}${this.seccionClimaTerritorio()}${this.seccionCiclos()}
       ${this.seccionEjercito()}
       ${this.seccionMantenimiento()}
       ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
@@ -558,7 +558,7 @@ export class Interfaz {
   // Fase 7: ciclos de la economía (bonanza, crisis del café, roya, pensiones). Las decisiones no se pueden saltar.
   cicloAnio(alTerminar) {
     const S = this.S, L = S.cicloEv;
-    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; this.preciosAnio(() => this.amenazaAnio(alTerminar)); return; } // fase 10: precios de los cultivos
+    if (!L || !L.length || !ciclosActivos(S)) { S.cicloEv = null; this.preciosAnio(() => this.biomasAnio(() => this.amenazaAnio(alTerminar))); return; } // fase 10: precios de los cultivos y el clima
     const e = L.shift(), K = C.CICLOS, sigue = () => this.cicloAnio(alTerminar);
     const fin = (msg) => { if (msg) this.toast(msg); this.mapa.cambio(); this.render(); this.alCerrar = sigue; this.cerrarTarjeta(); };
     if (e.tipo === 'bonanza') {
@@ -588,6 +588,21 @@ export class Interfaz {
     } else sigue();
   }
   // Fase 7: epidemias, avenidas torrenciales y sequías largas.
+  // Fase 10: el clima del territorio (pisos que suben, glaciar, páramo y agua).
+  seccionClimaTerritorio() {
+    const S = this.S;
+    if (!biomasActivos(S) || !(S.pisos && S.pisos.empezo)) return '';
+    const B = C.BIOMAS, g = glaciar(S), p = paramoQueda(S), a = factorAguaClima(S), metros = Math.round(subidaPisos(S) * 450 / 10) * 10;
+    return `<h3>Clima del territorio</h3><p class="small">Los pisos térmicos han subido unos <b>${metros} metros</b> desde el año ${S.pisos.empezo}. Queda el <b>${Math.round(g * 100)}%</b> del glaciar y el <b>${Math.round(p * 100)}%</b> del páramo. ${B.textos.agua}: <b class="${a < 1 ? 'neg' : 'pos'}">${a >= 1 ? '+' : '−'}${Math.round(Math.abs(a - 1) * 100)}%</b>. Sube más rápido si el ambiente está mal (más emisiones).</p><p class="small"><i>${B.leccion}</i></p>`;
+  }
+  biomasAnio(alTerminar) {
+    const S = this.S, L = S.biomasEv;
+    S.biomasEv = null;
+    if (!L || !L.length || !biomasActivos(S)) { alTerminar(); return; }
+    const T = C.BIOMAS.textos, ico = { empieza: '🌡️', glaciarMitad: '🏔️', glaciarSeVa: '🏔️', paramo: '🌿' };
+    this.tarjeta(`<div class="big">${ico[L[0]]}</div><h3>${L[0] === 'empieza' ? 'El clima cambia' : L[0] === 'paramo' ? 'El páramo se encoge' : 'El glaciar del Nevado'}</h3>${L.map(k => `<p>${T[k]}</p>`).join('')}<p class="small">Míralo en <b>Hacienda → Clima del territorio</b>. Revisa tus fincas: el piso térmico de algunas casillas ya cambió.</p><div class="phil"><b>Lo que enseña</b><br>${C.BIOMAS.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
+  }
   // Fase 10: bonanzas y crisis de los cultivos que siembra el jugador, y el auge y desplome del algodón.
   preciosAnio(alTerminar) {
     const S = this.S, L = S.preciosEv;

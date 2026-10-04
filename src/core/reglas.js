@@ -1,6 +1,7 @@
 // Consultas básicas del estado: dificultad, régimen, leyes y condiciones escritas en los datos.
 import { C } from './contenido.js';
 import { countT } from './mundo.js';
+import { glaciar as glaciarDe } from './biomas.js';
 
 export function D(S) { return C.DIFFS[S.diff || 'normal']; }
 export function RG(S) { return C.REG[S.reg || 'republica']; }
@@ -53,6 +54,9 @@ export function cumple(S, cond, c) {
     else if (k === 'terreno') { if (!(countT(S, v) > 0)) return false; }
     else if (k === 'nuevo') { if (!(S.clima && S.mundo === 'acuarela')) return false; } // solo en el terreno en acuarela
     else if (k === 'epoca') { if (epocaHistorica(S) !== v) return false; } // fase 7: dilemas de una época de la historia
+    else if (k === 'glaciarMenorQue') { if (!(S.pisos && S.pisos.subida && glaciarDe(S) < v)) return false; } // fase 10: biomas que cambian
+    else if (k === 'subidaPisos') { if (!(S.pisos && S.pisos.subida >= v)) return false; }
+    else if (k === 'fincas') { if (Object.entries(v).some(([cv, n]) => S.map.filter(x => x.b === 'cultivo' && x.cv === cv).length < n)) return false; }
     else if (k === 'clima') { const f = S.clima && S.clima.fenomeno; if (v === 'crisis' ? !f : f !== v) return false; }
     else throw new Error(`Condición desconocida: ${k}`);
   }

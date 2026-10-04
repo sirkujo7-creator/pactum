@@ -47,3 +47,4 @@ export * from './amenazas.js';
 export * from './calles.js';
 export * from './guerra.js';
 export * from './fincas.js';
+export * from './biomas.js';

@@ -357,5 +357,28 @@
       "confianza": -6
     },
     "porque": "La censura alimenta la sospecha."
+  },
+  "paramo_herido": {
+    "icono": "💧",
+    "titulo": "El agua baja turbia",
+    "texto": "La mina del páramo enturbió los ríos: los arrozales y el acueducto sufren, y los campesinos de abajo protestan.",
+    "efectos": {
+      "ambiente": -6,
+      "campesinos": -6,
+      "confianza": -4,
+      "alimento": -25
+    },
+    "porque": "El páramo es la fábrica de agua: lo que pasa arriba lo sufren todos abajo."
+  },
+  "sin_deshielo": {
+    "icono": "🏜️",
+    "titulo": "Se acabó el agua del deshielo",
+    "texto": "El glaciar ya no alimenta los ríos y el riego que se amplió con el agua extra no alcanza.",
+    "efectos": {
+      "alimento": -35,
+      "campesinos": -5,
+      "oro": -20
+    },
+    "porque": "Lo que se construye sobre un recurso que se agota, se cae con él."
   }
 }

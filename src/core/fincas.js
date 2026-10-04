@@ -22,10 +22,11 @@ export function listaCultivos() { return Object.keys(K().cultivos); }
 // ---------- Piso térmico ----------
 // La altura de cada casilla sale del terreno; se calcula una vez por partida (y otra vez si el río cambia).
 const ALTURAS = new WeakMap();
+export function alturasTerreno(S) { return alturas(S); }
 function alturas(S) {
   const dv = (S.rio && S.rio.desvios) || [], clave = `${S.seed}|${lado(S)}|${dv.length}`;
   let a = ALTURAS.get(S);
-  if (!a || a.clave !== clave) { const T = genTerreno(S.seed, lado(S), dv); a = { clave, h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d) }; ALTURAS.set(S, a); }
+  if (!a || a.clave !== clave) { const T = genTerreno(S.seed, lado(S), dv); a = { clave, h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d), pend: T.tiles.map(t => t.slope) }; ALTURAS.set(S, a); }
   return a;
 }
 // Cuánto han subido los pisos térmicos (fase 10, paso 3: el cambio climático). Por ahora no se mueven.
