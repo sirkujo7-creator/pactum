@@ -62,7 +62,40 @@ export const Sonido = (() => {
   }
   function stop() { on = false; if (!ac) return; master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(0, ac.currentTime + .5); clearInterval(timer); timer = null; }
   function chime() { if (!on) return; const t = ac.currentTime; [76, 83, 88].forEach((n, k) => pluck(NOTE(n), t + k * .12, 1.8, .07)); }
+  // El Pregonero (fase 11): la prensa que golpea, la campanilla del voceador y una fanfarria de metales.
+  // Bien distinto de la campanita del año (cuerdas pulsadas): ruido de máquina, campana y bronces.
+  let ruido = null;
+  function golpe(t, vol) {
+    if (!ruido) { const n = ac.sampleRate * .08; ruido = ac.createBuffer(1, n, ac.sampleRate); const d = ruido.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n); }
+    const s = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = ruido;
+    bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 1.4;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + .07);
+    s.connect(bp); bp.connect(g); g.connect(master); s.start(t);
+    const o = ac.createOscillator(), og = ac.createGain(); o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(60, t + .08);
+    og.gain.setValueAtTime(vol * .8, t); og.gain.exponentialRampToValueAtTime(.001, t + .1); o.connect(og); og.connect(master); o.start(t); o.stop(t + .12);
+  }
+  function campana(t) {
+    [[1, .06], [2.76, .025], [5.4, .012]].forEach(([m, v]) => {
+      const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = 1320 * m;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .004); g.gain.exponentialRampToValueAtTime(.0005, t + 1.3);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + 1.4);
+    });
+  }
+  function bronce(f, t, dur, vol) {
+    const o = ac.createOscillator(), o2 = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = 'sawtooth'; o2.type = 'sawtooth'; o.frequency.value = f; o2.frequency.value = f * 1.006;
+    lp.type = 'lowpass'; lp.frequency.setValueAtTime(500, t); lp.frequency.linearRampToValueAtTime(2400, t + .05); lp.frequency.exponentialRampToValueAtTime(900, t + dur);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .03); g.gain.setValueAtTime(vol, t + dur * .7); g.gain.exponentialRampToValueAtTime(.0008, t + dur);
+    o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(master); o.start(t); o2.start(t); o.stop(t + dur + .05); o2.stop(t + dur + .05);
+  }
+  function prensa() {
+    if (!on) return;
+    const t = ac.currentTime + .05;
+    [0, .16, .3, .42, .52, .6].forEach((d, k) => golpe(t + d, .22 + k * .02));
+    campana(t + .78); campana(t + .98);
+    [[67, 0, .16], [72, .17, .16], [76, .34, .16], [79, .51, .75]].forEach(([n, d, dur]) => bronce(NOTE(n), t + 1.2 + d, dur, .045));
+  }
   function tap() { if (!on) return; pluck(NOTE(59), ac.currentTime, .25, .08); }
   function mode(r) { const m = MODES[r] || MODES.republica; SCALE = m.s; BASS = m.b; BEAT = m.beat; }
-  return { start, stop, chime, tap, mode, get on() { return on; } };
+  return { start, stop, chime, tap, prensa, mode, get on() { return on; } };
 })();

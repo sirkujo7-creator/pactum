@@ -102,8 +102,9 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 **Ideas de otros juegos (decisión de Juan, 4 de octubre):** se adoptan, en este orden, **la industria** (al estilo Victoria 3: cadenas de producción, obreros y mercado), **cultura y civismo** (rasgo cultural por época, como Humankind, y árbol de civismo, como Civilization VI) e **historias humanas** (cartas y viñetas de pobladores, como Valiant Hearts). Dawn of Man, solo como posible prólogo opcional. Descartados: Ancestors, Spore y Hearts of Iron IV.
 
-**Fase 11 (propuesta, espera visto bueno de Juan): la industria como decisión.**
+**Fase 11 (aprobada por Juan el 4 de octubre): la industria como decisión.** Juan pidió además destacar los avances paso a paso con un sistema de desbloqueo, en un periódico que se despliega con su propio sonido.
 
+0. **El Pregonero y el camino de avances (publicado en 0.61.0):** los desbloqueos (etapas, inventos, caminos y luego productos y civismo) en `src/data/avances.json`; salen en el periódico al cerrar el año; camino de avances y hemeroteca en la Crónica.
 1. **La fábrica y sus productos:** el taller pasa a ser la fábrica, y en su ficha se elige qué producir, como en la finca: trilladora de café, molino de arroz, textiles (algodón), chocolate (cacao), fundición (mina) o artesanías. Transforma lo que da el campo y lo vende más caro (valor agregado); sin materia prima rinde poco.
 2. **Obreros, mercado y contaminación:** precios de cada producto con ciclos, salarios y el sindicato de Marta Quintero ligados a las fábricas, contaminación del aire y del río; la canasta de Hacienda muestra campo e industria.
 3. **La revolución industrial por épocas:** del taller artesanal a la fábrica con máquinas y luego a la automatización (más producción y menos empleo); dilemas de la industria en los archivos de datos.

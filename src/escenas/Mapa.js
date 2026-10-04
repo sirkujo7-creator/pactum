@@ -437,7 +437,11 @@ export class Mapa extends Phaser.Scene {
       if (L && L.cosecha !== 1) this.ui.toast(`${L.icono} ${L.texto}`);
       if (S.desgaste && !desgaste0) this.ui.toast(C.DESGASTE.textos.abre);
       const fin = () => this.ui.render();
-      const sigue = () => { const dilema = () => this.ui.clima(() => this.ui.suceso(fin)); if (r.stageUp) this.ui.etapa(dilema); else dilema(); };
+      const sigue = () => {
+        const dilema = () => this.ui.clima(() => this.ui.suceso(fin)), ed = S.avancesEv;
+        // Fase 11: los avances del año salen en El Pregonero (incluye el cambio de etapa).
+        if (ed && ed.nuevo && ed.anio === S.year - 1) { ed.nuevo = false; this.ui.periodico(ed, dilema); } else if (r.stageUp) this.ui.etapa(dilema); else dilema();
+      };
       if (S.regChange) this.ui.cambioRegimen(S.regChange, sigue); else sigue();
     }, reducirMovimiento() || tranquilo ? 800 : 1900);
   }
