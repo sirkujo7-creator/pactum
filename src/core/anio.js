@@ -35,6 +35,7 @@ import { crisisLibre } from './desastres.js';
 import { callesDelAnio } from './calles.js';
 import { guerraDelAnio } from './guerra.js';
 import { fincasDelAnio } from './fincas.js';
+import { biomasDelAnio } from './biomas.js';
 
 // Avanza un año. Devuelve {stageUp, end: {win, title, text} | null}.
 export function advance(S) {
@@ -175,6 +176,7 @@ export function advance(S) {
   news.push(...vecinosDelAnio(S));
   news.push(...guerraDelAnio(S));
   news.push(...fincasDelAnio(S));
+  news.push(...biomasDelAnio(S));
   news.push(...barriosDelAnio(S));
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));

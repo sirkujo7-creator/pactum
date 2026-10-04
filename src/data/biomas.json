@@ -1,0 +1,29 @@
+{
+  "leccion": "Con el calentamiento global, los pisos térmicos de los Andes suben: el café trepa la montaña, el páramo se encoge y los glaciares se derriten. El Nevado del Ruiz ha perdido buena parte de su hielo en las últimas décadas.",
+  "desde": 50,
+  "subida": {
+    "base": 0.011,
+    "porEmisiones": 0.012,
+    "ambienteLimpio": 65
+  },
+  "limites": {
+    "nieve": 9,
+    "paramo": 6.1,
+    "roca": 7.6
+  },
+  "agua": {
+    "deshielo": 0.08,
+    "perdidaParamo": 0.2,
+    "sinGlaciar": 0.05,
+    "minimo": 0.75
+  },
+  "repintar": 0.08,
+  "textos": {
+    "empieza": "El clima del territorio se calienta: los pisos térmicos empiezan a subir. El café rendirá mejor más arriba y peor en las laderas bajas; el páramo y el glaciar se encogen.",
+    "glaciarMitad": "El glaciar del Nevado ya perdió la mitad de su hielo. Mientras se derrite, los ríos llevan más agua; cuando se acabe, llevarán menos.",
+    "glaciarSeVa": "El glaciar del Nevado casi desapareció. El agua del deshielo se acaba y el territorio depende del páramo y de sus acueductos.",
+    "paramo": "El páramo se encoge: la «fábrica de agua» del territorio ya perdió una cuarta parte. El agua para el pueblo baja.",
+    "agua": "Agua del clima (deshielo y páramo)"
+  },
+  "sinNieve": 1.0
+}

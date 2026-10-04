@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -53,7 +53,8 @@ export class Mapa extends Phaser.Scene {
     this.vistaInicial();
 
     // Fondo lejano y sombra del diorama.
-    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600))); // fase 8: más resolución, sin pasar de 3600 px de ancho (límite seguro en celulares)
+    this.subidaVista = subidaPisos(this.S); this.glaciarVisto = glaciar(this.S); // fase 10: el clima del territorio
+    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600)), this.glaciarVisto); // fase 8: más resolución, sin pasar de 3600 px de ancho (límite seguro en celulares)
     this.textures.addCanvas('fondo', f.canvas);
     this.add.image(f.x, f.y, 'fondo').setOrigin(0).setScale(1 / f.escala).setDepth(PROF_FONDO);
     const N = this.T.N, pie = P(N, N, -2.2);
@@ -110,7 +111,7 @@ export class Mapa extends Phaser.Scene {
   // ---------- Terreno ----------
   pintarSector(sr, sc) {
     const clave = `sector-${sr}-${sc}`, previo = this.sectores[clave];
-    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, dry: this.dry, calles: this.dibCalles, anio: this.S.year });
+    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, dry: this.dry, calles: this.dibCalles, anio: this.S.year, subida: this.subidaVista || 0 });
     if (previo) { previo.destroy(); this.textures.remove(clave); }
     this.textures.addCanvas(clave, s.canvas);
     this.sectores[clave] = this.add.image(s.x, s.y, clave).setOrigin(0).setScale(1 / s.escala).setDepth(PROF_TERRENO + (sr + sc) * .01);
@@ -454,7 +455,15 @@ export class Mapa extends Phaser.Scene {
     if (this.frontera) this.frontera.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
-    if (Math.abs(d - this.dry) >= .15) this.repintarTodo(d);
+    // Fase 10: si los pisos térmicos subieron lo suficiente, se repinta el terreno (y el Nevado si perdió hielo).
+    const sub = subidaPisos(this.S);
+    if (Math.abs(d - this.dry) >= .15 || Math.abs(sub - (this.subidaVista || 0)) >= C.BIOMAS.repintar) { this.subidaVista = sub; this.repintarTodo(d); }
+    const g = glaciar(this.S);
+    if (Math.abs(g - this.glaciarVisto) >= .12) { this.glaciarVisto = g; this.repintarFondo(); }
+  }
+  repintarFondo() {
+    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600)), this.glaciarVisto), tx = this.textures.get('fondo'), cv = tx.getSourceImage();
+    if (cv.width === f.canvas.width && cv.height === f.canvas.height) { const g = cv.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.drawImage(f.canvas, 0, 0); tx.refresh(); } // sin la transformación de la primera pintura
   }
   // El paisaje se seca o reverdece según el ambiente: se repinta poco a poco, un sector por cuadro.
   repintarTodo(d) {
