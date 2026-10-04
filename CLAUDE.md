@@ -98,7 +98,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 1. **La finca y sus cultivos (publicado en 0.57.0):** un solo edificio, la finca; en su ficha se elige qué sembrar: pancoger (maíz y fríjol), arroz, café, plátano, cacao, aguacate, algodón o ganadería. Cada cultivo tiene su piso térmico, su comida o su dinero, el agua que pide, el empleo, el efecto en el ambiente y los años hasta la primera cosecha; cambiar de cultivo cuesta oro y tiempo. Las partidas guardadas conservan sus cultivos (cafetal → finca de café). Se ve en el mapa.
 2. **Precios y canasta agrícola (publicado en 0.58.0):** cada cultivo con sus ciclos de precio (bonanzas y crisis; el algodón se desploma como en El Espinal); en Hacienda, la canasta agrícola muestra cuánto depende la economía de cada cultivo (lección de diversificación y riesgo).
 3. **Biomas que cambian (publicado en 0.59.0):** con el cambio climático los pisos térmicos suben (el café trepa, el páramo se encoge, el Nevado pierde su glaciar, el deshielo da agua y luego la quita); la tala, la ganadería y la reforestación cambian el bioma casilla por casilla; dilemas del entorno (minería en el páramo, cafeteros que suben, el glaciar que desaparece) en los archivos de datos.
-4. **Balance** con los robots (que eligen cultivos) y revisión en celular y computador.
+4. **Balance** con los robots (que eligen cultivos) y revisión en celular y computador (publicado en 0.60.0; la fase 10 queda terminada y espera la prueba de Juan).
 
 **Pendientes para después (no olvidar):**
 - **La industria como decisión** (Juan lo dejó pendiente el 4 de octubre, junto con los cultivos).

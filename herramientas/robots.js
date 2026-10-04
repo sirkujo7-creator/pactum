@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -80,6 +80,9 @@ export function botYear(S, strat, eth, op = {}) {
     }
     if (m.tipo === 'edificio' && counts(S)[m.edificio] < m.n && S.gold > cost(S, m.edificio) + 150 && C.B[m.edificio].st <= S.stage && !obrasEnCurso(S)[m.edificio]) { const t = ordenarSitios(S, m.edificio, freeTiles(S, m.edificio)); if (t.length) build(S, m.edificio, t[0]); }
   }
+  // Fase 10: la estrategia equilibrada siembra cultivos de dinero cuando le sobra comida, repartiendo entre varios
+  // (diversifica: castiga el cultivo que ya pesa mucho), y resiembra las fincas cuyo piso térmico cambió.
+  if (prep && fincasActivas(S) && op.monocultivo !== false) robotCampo(S, op);
   for (let n = 0; n < 8; n++) {
     // Fase 2: las obras en construcción cuentan como ya encargadas (no se empieza otra igual).
     const c2 = counts(S), F2 = finance(S), eo = obrasEnCurso(S);
@@ -128,4 +131,46 @@ export function botYear(S, strat, eth, op = {}) {
   if (S.pend && S.pend.mov && strat === 'fair' && !eth) { const o = S.pend.opts; choose(S, S.gold + (o[0].fx.t || 0) >= 100 ? 0 : 1); }
   else if (S.pend) { const o = S.pend.opts; let k = eth ? o.findIndex(x => x.f === eth) : -1; if (k < 0) k = rnd(o.length); choose(S, k); }
   return r;
+}
+
+// Fase 10: puntaje de un cultivo de dinero en una casilla, con el peso que ya tiene en la canasta.
+function puntajeRenta(S, i, cv, cuantas, total, mono) {
+  const D = datosCultivo(cv);
+  if (!D.renta || D.comida > 6) return 0;
+  const a = aptitud(S, i, cv);
+  if (a < .75) return 0;
+  const peso = total ? cuantas[cv] / total : 0;
+  return D.renta * a * precioCultivo(S, cv) * (mono ? 1 : 1 - Math.min(.8, peso * 1.2)) / (1 + D.madura * .08);
+}
+function mejorRenta(S, i, mono) {
+  const c = canasta(S), dinero = listaCultivos().filter(k => datosCultivo(k).renta && datosCultivo(k).comida <= 6), total = dinero.reduce((t, k) => t + c[k], 0);
+  let mejor = null, v0 = 0;
+  for (const cv of dinero) { const v = puntajeRenta(S, i, cv, c, total, mono); if (v > v0) { v0 = v; mejor = cv; } }
+  return mejor;
+}
+function robotCampo(S, op) {
+  const mono = !!op.monocultivo, F = finance(S);
+  // Una finca de dinero nueva si sobra comida, hay gente sin trabajo y oro.
+  if (S.stage >= 1 && F.fprod - F.cons > 10 && F.so.un >= 8 && S.gold > cost(S, 'cultivo') + 110) { // sin quitarle gente a las fincas de comida
+    const dc = medirDesdeCentro(S);
+    let mejor = -1, cv0 = null, v0 = 0;
+    for (const i of freeTiles(S, 'cultivo')) {
+      if (dc(i) > 12 || S.map[i].t === 'bosque') continue;
+      const cv = mono ? (aptitud(S, i, op.monocultivo) >= .75 ? op.monocultivo : null) : mejorRenta(S, i, false);
+      if (!cv) continue;
+      const v = datosCultivo(cv).renta * aptitud(S, i, cv) - dc(i) * .2;
+      if (v > v0) { v0 = v; mejor = i; cv0 = cv; }
+    }
+    if (mejor >= 0) { build(S, 'cultivo', mejor); sembrar(S, mejor, cv0); }
+  }
+  // Cada 4 años: resembrar las fincas de dinero que perdieron su piso térmico (o cuyo cultivo se desplomó).
+  if (S.year % 4 === 0) S.map.forEach((x, i) => {
+    if (x.b !== 'cultivo' || x.ob) return;
+    const cv = cultivoDe(x), D = datosCultivo(cv);
+    if (!D.renta || D.comida > 6) return;
+    const malo = aptitud(S, i, cv) < .5 || precioCultivo(S, cv) < .5;
+    if (!malo) return;
+    const nuevo = mono ? null : mejorRenta(S, i, false);
+    if (nuevo && nuevo !== cv && !puedeSembrar(S, i, nuevo) && S.gold > costoSiembra(S, nuevo) + 120) sembrar(S, i, nuevo);
+  });
 }

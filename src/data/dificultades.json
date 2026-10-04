@@ -27,7 +27,7 @@
     "probabilidadDilema": 0.75,
     "exigenciaAnual": 0.45,
     "recompensaGuia": 20,
-    "multiplicadorMaloSinRachas": 1.33,
+    "multiplicadorMaloSinRachas": 1.24,
     "rachaParaBueno": 3,
     "probBueno": 0.6
   },
@@ -43,7 +43,7 @@
     "probabilidadDilema": 0.85,
     "exigenciaAnual": 0.5,
     "recompensaGuia": 0,
-    "multiplicadorMaloSinRachas": 1.22,
+    "multiplicadorMaloSinRachas": 1.24,
     "rachaParaBueno": 2,
     "probBueno": 0.55
   }
