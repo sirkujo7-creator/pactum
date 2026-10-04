@@ -1,7 +1,8 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra
+  coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
+  industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -83,6 +84,8 @@ export function botYear(S, strat, eth, op = {}) {
   // Fase 10: la estrategia equilibrada siembra cultivos de dinero cuando le sobra comida, repartiendo entre varios
   // (diversifica: castiga el cultivo que ya pesa mucho), y resiembra las fincas cuyo piso térmico cambió.
   if (prep && fincasActivas(S) && op.monocultivo !== false) robotCampo(S, op);
+  // Fase 11: la estrategia equilibrada transforma lo que da el campo en sus fábricas.
+  if (prep && industriaActiva(S) && op.industria !== false) robotIndustria(S);
   for (let n = 0; n < 8; n++) {
     // Fase 2: las obras en construcción cuentan como ya encargadas (no se empieza otra igual).
     const c2 = counts(S), F2 = finance(S), eo = obrasEnCurso(S);
@@ -173,4 +176,34 @@ function robotCampo(S, op) {
     const nuevo = mono ? null : mejorRenta(S, i, false);
     if (nuevo && nuevo !== cv && !puedeSembrar(S, i, nuevo) && S.gold > costoSiembra(S, nuevo) + 120) sembrar(S, i, nuevo);
   });
+}
+
+// Fase 11: fábricas que transforman la cosecha. Una fábrica nueva cuando sobra materia prima, hay gente sin empleo y
+// oro; las de artesanías pasan al producto que más deja; se modernizan con la electricidad (y se automatizan solo
+// si no hay desempleo); salarios altos si el sindicato está muy fuerte y sobra el oro.
+function robotIndustria(S) {
+  if (S.stage < 1) return;
+  const F = finance(S), c = counts(S), fab = S.map.map((x, i) => x.b === 'taller' && !x.ob ? i : -1).filter(i => i >= 0);
+  // Cambiar de producto si deja más.
+  for (const i of fab) {
+    const pr = mejorProducto(S, i), ya = productoDe(S.map[i]);
+    if (pr !== ya && insumoSi(S, i, pr) >= .66 && !puedeProducir(S, i, pr) && (ya === 'artesanias' || insumoSi(S, i, ya) < .34) && S.gold > 90) producir(S, i, pr);
+  }
+  // Una fábrica nueva si hay materia prima sin usar.
+  if (F.so.un >= 6 && c.taller < 6 && S.gold > cost(S, 'taller') + 160 && !obrasEnCurso(S).taller) {
+    const t = ordenarSitios(S, 'taller', freeTiles(S, 'taller').filter(i => !nearRiver(S, i)));
+    if (t.length) {
+      const i = t[0], pr = mejorProducto(S, i);
+      if (pr !== 'artesanias' && insumoSi(S, i, pr) >= .66) { build(S, 'taller', i); if (S.map[i].b === 'taller') S.map[i].pr = pr; } // el primer producto va incluido
+    }
+  }
+  // Modernizar: con máquinas en cuanto se pueda; automatizar solo sin desempleo.
+  for (const i of fab) {
+    const n = nivelDe(S.map[i]) + 1;
+    if (n === 2 && F.so.un > 2) continue;
+    if (!puedeModernizar(S, i) && S.gold > costoNivel(S, n) + 180) modernizar(S, i);
+  }
+  // Salarios: altos si el sindicato aprieta y sobra el oro; si no, justos.
+  const sind = fuerzaMov(S, 'sindicato');
+  elegirSalario(S, sind >= 60 && S.gold > 250 ? 'alto' : 'justo');
 }

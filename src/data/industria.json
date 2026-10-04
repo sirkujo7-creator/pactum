@@ -48,7 +48,7 @@
         "cultivo": "cafe",
         "porFabrica": 3
       },
-      "renta": 7,
+      "renta": 6,
       "empleo": 9,
       "ambiente": -6
     },
@@ -60,7 +60,7 @@
         "cultivo": "arroz",
         "porFabrica": 3
       },
-      "renta": 5,
+      "renta": 4,
       "empleo": 8,
       "ambiente": -5
     },
@@ -72,7 +72,7 @@
         "cultivo": "cacao",
         "porFabrica": 2
       },
-      "renta": 9,
+      "renta": 7,
       "empleo": 9,
       "ambiente": -4
     },
@@ -84,7 +84,7 @@
         "cultivo": "algodon",
         "porFabrica": 3
       },
-      "renta": 10,
+      "renta": 8,
       "empleo": 12,
       "ambiente": -8
     },
@@ -96,7 +96,7 @@
         "obra": "mina",
         "porFabrica": 1
       },
-      "renta": 12,
+      "renta": 10,
       "empleo": 10,
       "ambiente": -11
     }
