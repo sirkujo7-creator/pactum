@@ -91,7 +91,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 2. **Pulir el movimiento de la gente (publicado en 0.53.0):** andar más suave, menos gente moviéndose y más quieta con sentido (grupos en la plaza, vendedores, niños jugando), caminar por las calles, rutina visible.
 3. **Eventos de cine (publicado en 0.54.0):** escena corta (la cámara viaja al lugar, franjas de cine, lo que pasa) y luego la decisión: movimientos y personajes (marcha campesina con la líder pijao, procesión del párroco, escándalo del periodista, caravana de desplazados), conflicto armado visible (toma armada), desastres en escena (lahar, terremoto, avenida torrencial). Respetan una crisis mayor por año y los años de respiro.
 4. **Guerra con otra polis (publicado en 0.55.0):** nueva; tensión que puede llevar a guerra, tropas en el borde, asedio, daño visible y tratado de paz; con su balance. Decisiones de Juan (4 de octubre): **se puede perder territorio** (casillas del borde que ocupa el vecino hasta recuperarlas en un tratado), **el jugador también puede declarar la guerra** (desde Ciudad, con cuartel, a un vecino hostil, con su costo de legitimidad y el debate de la guerra justa) y la guerra es **rara y evitable** (solo si se descuida a un vecino).
-5. Revisión final en celular y computador (incluye el paso 7 de la fase 8).
+5. Revisión final en celular y computador (incluye el paso 7 de la fase 8), publicada en 0.56.0.
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
