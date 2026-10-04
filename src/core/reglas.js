@@ -29,6 +29,7 @@ export function counts(S) {
   // Fase 1: una obra abandonada por el deterioro no cuenta hasta que se repare.
   const aband = C.DESGASTE ? C.DESGASTE.estados[3].desde : 101;
   S.map.forEach(x => { if (x.b && !(x.u >= aband) && !x.ob) c[x.b]++; }); // fase 2: una obra en construcción aún no presta servicio
+  if (S.mundo === 'acuarela' && S.clima) S.map.forEach(x => { if (x.b === 'cultivo' && x.cv === 'cafe' && !(x.u >= aband) && !x.ob) c.cafetal++; }); // fase 10: las fincas de café cuentan como cafetales
   return c;
 }
 export function cap(S) { return counts(S).casa * 10 + (S.asent ? S.asent.length * 6 : 0); } // fase 5: los asentamientos informales también albergan gente

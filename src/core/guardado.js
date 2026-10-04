@@ -5,8 +5,9 @@ import { LADO_V9, LADO_INICIAL, genMundo } from './mundo.js';
 import { whyNot } from './obras.js';
 import { climaInicial } from './clima.js';
 import { ecoInicial } from './economia.js';
+import { migrarFincas } from './fincas.js';
 
-export const VERSION_GUARDADO = 7;
+export const VERSION_GUARDADO = 8;
 
 // Cada migración lleva el estado de la versión k a la k+1.
 const MIGRACIONES = {
@@ -32,7 +33,9 @@ const MIGRACIONES = {
   // 5 → 6 (fase 2): economía viva.
   5: S => { if (S.clima && !S.eco) S.eco = ecoInicial(); return S; },
   // 6 → 7 (fase 3): parte de los campesinos con tierra propia.
-  6: S => { if (S.clima && S.tierra === undefined) S.tierra = .35; return S; }
+  6: S => { if (S.clima && S.tierra === undefined) S.tierra = .35; return S; },
+  // 7 → 8 (fase 10): el cafetal pasa a ser una finca de café y cada cultivo, una finca con lo que sembraba.
+  7: S => { migrarFincas(S); return S; }
 };
 
 // Reubica las obras de un mapa de la v9 en un terreno en acuarela del mismo código.

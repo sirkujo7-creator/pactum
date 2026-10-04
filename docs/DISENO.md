@@ -110,6 +110,15 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 8. Otras formas de ganar y efecto por edificio | Publicado (0.33.0). Desde Ciudad, además de la Polis, cuatro caminos que se ganan sosteniendo todas sus condiciones los años que pide la dificultad (6 en Normal): Polis próspera (bienestar 60, calificación AAA, sin deuda, tesoro de 250), Polis justa (igualdad 70, legitimidad 62, ninguna clase bajo 45), Polis verde (ambiente 82, sin minas, bosque en 26% del territorio) y Polis en paz (sin grupo armado, inseguridad menor que 10, sin movimientos movilizados, vecinos con 70 de promedio). Tarjeta «Caminos a la victoria» desde la meta, con el avance de cada uno. Cada edificio muestra en su ficha su efecto especial; nuevos efectos: el mercado estabiliza el precio de la comida (hasta 30%), el acueducto reduce los brotes (hasta la mitad) y el puerto suma 2% de comercio y mejora la relación con San Lorenzo. Robots (no buscan estos caminos): unos 2% ganan por ellos. República 47%; regímenes entre 40% y 54%; Fácil 100%, Difícil 8% |
 | 9. Ajuste de Difícil | Publicado (0.33.1). Decisión de Juan (3 de octubre): Difícil cerca de 30%. Golpes ×1,45, racha para suceso bueno de 2 y suceso bueno 55% de esas veces. Robots: Difícil 31% |
 
+## Estado de la fase 10 (el campo y el clima)
+
+| Paso | Estado |
+| --- | --- |
+| 1. La finca y sus cultivos | Publicado (0.57.0). El cultivo y el cafetal se vuelven un solo edificio, la **finca** (`src/core/fincas.js`, `src/data/cultivos.json`); al construirla se abre la tarjeta para elegir qué sembrar, y en su ficha se puede cambiar. Ocho cultivos: maíz y fríjol (pancoger), arroz (pide riego, sufre con El Niño), café (3 años hasta la primera cosecha, sigue su mercado y la roya), plátano, cacao (4 años, mejora el ambiente), aguacate (4 años, tierra fría, sufre con la sequía), algodón y ganadería (poco empleo, daña el suelo). Cada uno rinde según el piso térmico de la casilla (cálida, templada, fría) y da alimento, oro, empleo y un efecto en el ambiente; junto al río la comida rinde 4 más. Cambiar de cultivo cuesta la siembra (la primera va incluida en la finca nueva). El café, el plátano y el cacao protegen la ladera de la erosión. Cada cultivo se pinta distinto en el mapa (matas pequeñas mientras no produce). Las partidas guardadas conservan todo: los cafetales pasan a ser fincas de café y los cultivos, fincas de pancoger. Robots: siembran comida (pancoger) y café para la misión de la empresaria. Difícil se ajustó de 1,28 a 1,22 en los golpes. Resultados: Normal 49% (regímenes entre 42% y 52%), Difícil 28%, Fácil 89% |
+| 2. Precios y canasta agrícola | Pendiente |
+| 3. Biomas que cambian | Pendiente |
+| 4. Balance | Pendiente |
+
 ## Estado de la fase 9 (vida y escena)
 
 | Paso | Estado |

@@ -7,6 +7,7 @@ import { C } from './contenido.js';
 import { lado } from './mundo.js';
 import { hasLaw, cap } from './reglas.js';
 import { climaActivo } from './clima.js';
+import { protegeSuelo } from './fincas.js';
 
 const P = () => C.CLIMA.suelo;
 
@@ -88,7 +89,7 @@ export function sueloDelAnio(S) {
   const E = K.erosion, lluvioso = fen === 'nina' || (S.clima.lluvias === 'abundantes');
   S.map.forEach(x => {
     if (!x.tl || x.t === 'bosque') return;
-    if ((x.h || 0) < 1 || x.b === 'cafetal' || x.b === 'parque') { if (x.er > 0) x.er--; return; }
+    if ((x.h || 0) < 1 || x.b === 'cafetal' || x.b === 'parque' || protegeSuelo(x)) { if (x.er > 0) x.er--; return; } // fase 10: café, plátano y cacao protegen la ladera
     if (x.dr > 0) return;
     if (lluvioso || azar() < E.probabilidad) x.er = Math.min(E.maximo, (x.er || 0) + 1);
   });

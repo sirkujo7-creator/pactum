@@ -3,6 +3,7 @@
 import { mulberry, clamp, shade, mix, poly, wash, blob, grano, lienzo } from './acuarela.js';
 import { P, TW, TH, EL, alturaEn } from './iso.js';
 import { yeso, FR } from './fresco.js';
+import { C } from '../core/contenido.js';
 
 export const LADO_SECTOR = 8;
 const BASE = -2.2; // profundidad de los costados del diorama
@@ -156,7 +157,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   if (opciones.mapa) {
     g.save(); recortar();
     pintarSuelo(g, T, opciones.mapa, k, dry);
-    pintarObras(g, T, opciones.mapa, k, dry, !!opciones.calles);
+    pintarObras(g, T, opciones.mapa, k, dry, !!opciones.calles, opciones.anio);
     if (opciones.calles) pintarCalles(g, T, opciones.calles, k);
     g.restore();
   }
@@ -216,7 +217,7 @@ export function caminos(T, mapa) {
   return { segs, puentes };
 }
 
-function pintarObras(g, T, mapa, k, dry, conCalles) {
+function pintarObras(g, T, mapa, k, dry, conCalles, anio) {
   const N = T.N, cerca = t => t.r >= k.r0 - 2 && t.r < k.r1 + 2 && t.c >= k.c0 - 2 && t.c < k.c1 + 2;
   const lista = T.tiles.filter(t => mapa[t.r * N + t.c].b && cerca(t)).sort((a, b) => (a.r + a.c) - (b.r + b.c));
   const { segs, puentes } = conCalles ? { segs: [], puentes: [] } : caminos(T, mapa); // fase 9: con calles, el jugador traza los caminos
@@ -225,7 +226,16 @@ function pintarObras(g, T, mapa, k, dry, conCalles) {
   for (const t of lista) {
     const b = mapa[t.r * N + t.c].b, rng = mulberry(t.r * 313 + t.c * 71 + T.seed);
     const q = [P(t.r, t.c, t.h00), P(t.r, t.c + 1, t.h01), P(t.r + 1, t.c + 1, t.h11), P(t.r + 1, t.c, t.h10)];
-    if (b === 'cultivo') (t.h < 2.2 && t.d < 6 ? pintarArroz : pintarHuerta)(g, T, t, q, rng, dry);
+    const x = mapa[t.r * N + t.c];
+    if (b === 'cultivo' && x.cv && C.CULTIVOS) {
+      // Fase 10: la finca se pinta según su cultivo; mientras no da cosecha, con matas pequeñas.
+      const D = C.CULTIVOS.cultivos[x.cv], joven = anio !== undefined && x.cvDesde !== undefined && D && anio < x.cvDesde + D.madura;
+      if (x.cv === 'arroz') pintarArroz(g, T, t, q, rng, dry);
+      else if (x.cv === 'pancoger') pintarHuerta(g, T, t, q, rng, dry);
+      else if (x.cv === 'cafe') pintarCafe(g, T, t, rng, dry, joven);
+      else pintarHuerto(g, T, t, q, rng, dry, x.cv, joven);
+    }
+    else if (b === 'cultivo') (t.h < 2.2 && t.d < 6 ? pintarArroz : pintarHuerta)(g, T, t, q, rng, dry);
     else if (b === 'cafetal') pintarCafe(g, T, t, rng, dry);
     else if (b === 'mina') { const c = P(t.r + .55, t.c + .5, t.h); blob(g, c[0] + 4, c[1] + 3, 22, 8, '#8E857A', rng, .75); blob(g, c[0] - 6, c[1] + 1, 12, 5, '#6E6358', rng, .6); }
   }
@@ -363,12 +373,13 @@ function pintarSuelo(g, T, mapa, k, dry) {
   }
 }
 
-function pintarCafe(g, T, t, rng, dry) {
+function pintarCafe(g, T, t, rng, dry, joven) {
   const col = mix('#2E5E36', '#6E7A3A', dry * .4);
   wash(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, .45, .6);
   for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
     const u = .14 + b * .145, v = .18 + a * .21 + Math.sin(b * .9 + a) * .03, r = t.r + v, c = t.c + u, p = P(r, c, T.hf(r, c));
     g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.2, 1.2, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+    if (joven) { blob(g, p[0], p[1] - 1.2, 1.4, 1.2, col, rng, .9); continue; }
     blob(g, p[0], p[1] - 2.4, 3, 2.6, col, rng, .95);
     if (rng() < .45 && dry < .6) { g.fillStyle = '#B8322A'; g.beginPath(); g.arc(p[0] + (rng() - .5) * 3, p[1] - 2.8, .75, 0, 7); g.fill(); }
   }
@@ -381,6 +392,34 @@ function pintarArroz(g, T, t, q, rng, dry) {
   g.globalAlpha = 1;
   if (wet) { g.globalAlpha = .3; g.fillStyle = '#E9F0E6'; g.beginPath(); g.ellipse((q[0][0] + q[2][0]) / 2 - 6, (q[0][1] + q[2][1]) / 2 - 2, 6, 1.2, -.4, 0, 7); g.fill(); g.globalAlpha = 1; }
   g.globalAlpha = .18; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
+}
+// Fase 10: fincas de plátano, cacao, aguacate, algodón y ganadería (matas pequeñas si aún no producen).
+function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
+  const pt = (u, v) => { const r = t.r + v, c = t.c + u; return P(r, c, T.hf(r, c)); };
+  if (cv === 'ganaderia') {
+    wash(g, q, mix('#A9B66E', DRYC, dry * .6), rng, .55, .6);
+    g.globalAlpha = .7; g.strokeStyle = '#6B4A30'; g.lineWidth = .8;
+    const borde = [pt(.06, .06), pt(.94, .06), pt(.94, .94), pt(.06, .94)];
+    g.beginPath(); borde.forEach((p, k) => k ? g.lineTo(p[0], p[1] - 2) : g.moveTo(p[0], p[1] - 2)); g.closePath(); g.stroke();
+    for (const p of borde) { g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0], p[1] - 3); g.stroke(); }
+    g.globalAlpha = 1;
+    for (const [u, v] of [[.35, .4], [.65, .62], [.45, .75]]) { const p = pt(u, v); blob(g, p[0], p[1] - 2.6, 4, 2.2, '#F2EEE4', rng, .97); blob(g, p[0] - 1, p[1] - 2.9, 1.6, 1, '#2E2723', rng, .9); blob(g, p[0] + 4, p[1] - 3.4, 1.6, 1.3, '#F2EEE4', rng, .97); }
+    return;
+  }
+  const suelo = cv === 'algodon' ? mix('#B99A6A', '#C9B07A', dry) : mix('#8E7A52', '#A89A6A', dry);
+  wash(g, q, suelo, rng, .5, .6);
+  const filas = cv === 'algodon' ? 5 : 3, cols = cv === 'algodon' ? 6 : 4, s = joven ? .45 : 1;
+  for (let a = 0; a < filas; a++) for (let b = 0; b < cols; b++) {
+    const u = .14 + b * (.72 / (cols - 1)), v = .16 + a * (.68 / (filas - 1)), p = pt(u, v);
+    g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.4 * s, 1.2 * s, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+    if (cv === 'algodon') { blob(g, p[0], p[1] - 1.6, 2.2 * s, 1.6 * s, mix('#5E8A46', '#B8A65A', dry * .7), rng, .9); if (!joven) for (let k = 0; k < 3; k++) { g.fillStyle = '#F6F2EA'; g.beginPath(); g.arc(p[0] + (rng() - .5) * 3.4, p[1] - 2.2 - rng() * 1.5, .9, 0, 7); g.fill(); } continue; }
+    if (cv === 'platano') { g.save(); g.translate(p[0], p[1] - 3 * s); for (let k = 0; k < 5; k++) { g.save(); g.rotate(-Math.PI / 2 + (k - 2) * .6); g.fillStyle = mix('#6FA04A', '#B3A65A', dry * .5); g.beginPath(); g.ellipse(0, -3 * s, 1.1 * s, 3.4 * s, 0, 0, 7); g.fill(); g.restore(); } g.restore(); continue; }
+    const col = cv === 'cacao' ? mix('#3E6A3A', '#7A7A40', dry * .4) : mix('#2F5432', '#6E7A3A', dry * .4);
+    blob(g, p[0], p[1] - 3.2 * s, (cv === 'aguacate' ? 3.6 : 3.1) * s, (cv === 'aguacate' ? 3.4 : 2.8) * s, col, rng, .95);
+    if (!joven && cv === 'cacao') for (let k = 0; k < 2; k++) { g.fillStyle = k ? '#C9822E' : '#9C2F25'; g.beginPath(); g.ellipse(p[0] + (k ? 1.6 : -1.4), p[1] - 1.4, .7, 1.1, 0, 0, 7); g.fill(); }
+    if (!joven && cv === 'aguacate') { g.fillStyle = '#4E6E2A'; g.beginPath(); g.ellipse(p[0] + 1.2, p[1] - 2, .7, .9, 0, 0, 7); g.fill(); }
+  }
+  g.globalAlpha = .4; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
 }
 // Huerta de maíz, fríjol y yuca en surcos, para los cultivos lejos de la llanura.
 function pintarHuerta(g, T, t, q, rng, dry) {

@@ -8,6 +8,7 @@ import { cap, cost } from './reglas.js';
 import { nearRiver } from './mundo.js';
 import { marcarTala } from './suelo.js';
 import { cuotaInicial, empezarObra, devolucionObra, porEtapas, oferta, aplicarOferta } from './construccion.js';
+import { fincasActivas, mejorCultivo } from './fincas.js';
 
 // Devuelve el motivo por el que no se puede construir k en la casilla i, o '' si se puede.
 export function whyNot(S, k, i) {
@@ -16,7 +17,9 @@ export function whyNot(S, k, i) {
   if (x.b) return 'Esa casilla ya está ocupada.';
   if (x.oc && C.GUERRA) return C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre); // fase 9
   if (x.mk && x.mk.t === 'asentamiento') return 'Hay un asentamiento: primero decide si lo legalizas o lo desalojas.';
-  if (!b.ok.includes(x.t)) return `${b.n}: ese terreno no sirve.`;
+  const finca = fincasActivas(S); // fase 10: el café se siembra en una finca; la finca va en llano o en bosque (talándolo)
+  if (finca && k === 'cafetal') return C.CULTIVOS.textos.sinCafetal;
+  if (!(finca && k === 'cultivo' ? ['llano', 'bosque'] : b.ok).includes(x.t)) return `${b.n}: ese terreno no sirve.`;
   if (b.hmin && (x.h || 0) < b.hmin) return `${b.n}: necesita ladera (terreno alto).`;
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;
   const pago = cuotaInicial(S, k, cost(S, k));
@@ -39,6 +42,7 @@ export function build(S, k, i, ofertaElegida) {
   x.b = k;
   if (x.mk) { S.undo[S.undo.length - 1].mk = x.mk; delete x.mk; } // fase 4: construir encima borra la huella
   if (climaActivo(S)) x.ya = S.year; // fase 5: año de construcción (las obras viejas son patrimonio)
+  if (k === 'cultivo' && fincasActivas(S)) { x.cv = mejorCultivo(S, i, 'comida'); x.cvDesde = S.year; x.nueva = true; } // fase 10: se elige el cultivo en su ficha
   empezarObra(S, i, k, total, o ? o.anios : undefined);
   const nLater = S.later.length, aviso = aplicarOferta(S, i, k, o);
   // Deshacer también devuelve el soborno (y borra el escándalo pendiente).
@@ -60,7 +64,7 @@ export function undoBuild(S) {
   const u = S.undo.pop();
   if (!u) return null;
   const x = S.map[u.i];
-  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; S.gold += u.paid;
+  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; S.gold += u.paid;
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
   if (u.rel) restaurarRelaciones(S, u.rel);
@@ -77,7 +81,7 @@ export function demolish(S, i) {
   const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3);
   // Fase 5: demoler patrimonio cuesta legitimidad y queda en la memoria.
   if (esPatrimonio(S, x)) { S.tr = clamp(S.tr - C.MEMORIA.demolerPatrimonio, 0, 100); recordar(S, 'olvido', 2); }
-  S.gold += g; x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya;
+  S.gold += g; x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva;
   if (S.pop > cap(S)) S.pop = cap(S);
   return g;
 }

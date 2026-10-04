@@ -46,3 +46,4 @@ export * from './ciclos.js';
 export * from './amenazas.js';
 export * from './calles.js';
 export * from './guerra.js';
+export * from './fincas.js';
