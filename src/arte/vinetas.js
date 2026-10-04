@@ -26,6 +26,7 @@ const ESCENAS = {
   default: { b: { 1: 'casa' }, fx: [] }
 };
 const ALIAS = {
+  c_lengua: 'tierras', c_monumento: 'protesta', c_musica: 'festival', c_procesion: 'festival', c_turismo: 'festival', // fase 12: cultura
   i_ninos_fabrica: 'huelga', i_aguas_mieles: 'humo', i_huelga_textil: 'huelga', i_aranceles: 'precios', i_robots: 'huelga', // fase 11: la industria
   crecida_mal: 'crecida', diques: 'alianza', evasion2: 'evasion', evasion_venganza: 'evasion', migra_bien: 'migra', migra_mal: 'migra', oro_mal: 'humo',
   corrup_mal: 'corrup', corrup_bien: 'corrup', corrup_filtra: 'corrup', maestros_bien: 'maestros', humo_mal: 'humo', sal_mal: 'precios', protesta_mal: 'protesta',

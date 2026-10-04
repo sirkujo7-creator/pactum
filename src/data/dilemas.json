@@ -4009,5 +4009,224 @@
         "aQuien": "Los dueños ganan; los despedidos se las arreglan solos."
       }
     ]
+  },
+  {
+    "id": "c_lengua",
+    "etapa": 1,
+    "icono": "🪶",
+    "titulo": "La lengua de los abuelos",
+    "texto": "Saúl Tique cuenta que en el cabildo ya casi nadie habla la lengua de los abuelos pijao, y con ella se van los nombres de las plantas, los cerros y las historias.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Escuela bilingüe en el resguardo",
+        "efectos": {
+          "oro": -35,
+          "igualdad": 3,
+          "campesinos": 2
+        },
+        "filosofia": "virt",
+        "porque": "Una lengua guarda una forma de ver el mundo: enseñarla es cuidar ese saber.",
+        "aQuien": "El tesoro paga maestros; los niños pijao aprenden su lengua y el español."
+      },
+      {
+        "texto": "Un museo y un diccionario",
+        "efectos": {
+          "oro": -15,
+          "confianza": 2
+        },
+        "filosofia": "util",
+        "porque": "Lo que se registra no se pierde del todo, y cuesta menos.",
+        "aQuien": "Se salva la memoria, aunque la lengua se siga hablando poco."
+      },
+      {
+        "texto": "Que cada familia decida",
+        "efectos": {
+          "igualdad": -2
+        },
+        "filosofia": "real",
+        "porque": "El Estado no puede obligar a nadie a hablar una lengua.",
+        "aQuien": "No cuesta oro; la lengua se apaga con los abuelos."
+      }
+    ]
+  },
+  {
+    "id": "c_monumento",
+    "etapa": 1,
+    "icono": "🕯️",
+    "titulo": "¿Monumento o silencio?",
+    "texto": "Las familias de las víctimas de La Violencia piden un monumento con sus nombres en la plaza. Otros dicen que es mejor no remover el pasado.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Levantar el monumento con los nombres",
+        "efectos": {
+          "oro": -30,
+          "confianza": 4,
+          "igualdad": 2,
+          "elite": -2
+        },
+        "filosofia": "deon",
+        "porque": "Las víctimas tienen derecho a la verdad y a ser recordadas.",
+        "aQuien": "Las familias encuentran un lugar para su duelo; algunos poderosos se incomodan."
+      },
+      {
+        "texto": "Crear una comisión que escriba la historia",
+        "efectos": {
+          "oro": -20,
+          "confianza": 2
+        },
+        "filosofia": "contr",
+        "porque": "Un relato acordado entre todos sirve más que una piedra.",
+        "aQuien": "Se escucha a todas las partes, aunque tarda años."
+      },
+      {
+        "texto": "Pasar la página",
+        "efectos": {
+          "elite": 3,
+          "confianza": -4
+        },
+        "filosofia": "real",
+        "porque": "Recordar el dolor puede reabrir las heridas.",
+        "aQuien": "Nadie gasta oro; las familias sienten que el pueblo las olvidó."
+      }
+    ]
+  },
+  {
+    "id": "c_musica",
+    "etapa": 2,
+    "icono": "🎶",
+    "titulo": "La música que llega de afuera",
+    "texto": "En la emisora ya casi no suenan el bambuco ni el sanjuanero: los jóvenes prefieren la música que llega de afuera. Los músicos viejos piden protección.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Cuota de música colombiana en la radio",
+        "efectos": {
+          "artesanos": 2,
+          "confianza": -2
+        },
+        "filosofia": "deon",
+        "porque": "La cultura propia merece un espacio garantizado, como dice la Constitución.",
+        "aQuien": "Los músicos del Tolima suenan más; a los jóvenes no les gusta que les impongan qué oír."
+      },
+      {
+        "texto": "Escuelas de música gratuitas",
+        "efectos": {
+          "oro": -35,
+          "igualdad": 2,
+          "artesanos": 2
+        },
+        "filosofia": "virt",
+        "porque": "Si los jóvenes aprenden a tocar, la tradición se renueva desde adentro.",
+        "aQuien": "El tesoro paga; aparecen bandas que mezclan el bambuco con lo nuevo."
+      },
+      {
+        "texto": "Que cada quien oiga lo que quiera",
+        "efectos": {
+          "elite": 1
+        },
+        "filosofia": "util",
+        "porque": "La cultura siempre ha cambiado con lo que llega de afuera.",
+        "aQuien": "No cuesta nada; los viejos músicos se quedan sin público."
+      }
+    ]
+  },
+  {
+    "id": "c_procesion",
+    "etapa": 1,
+    "icono": "⛪",
+    "titulo": "La procesión y el Estado laico",
+    "texto": "El párroco pide que la alcaldía pague la procesión de Semana Santa, como siempre. Pero ahora la ley dice que el Estado es laico.",
+    "condicion": {
+      "nuevo": true,
+      "ley": "laico"
+    },
+    "opciones": [
+      {
+        "texto": "Pagar la parte cultural y turística",
+        "efectos": {
+          "oro": -20,
+          "confianza": 2
+        },
+        "filosofia": "real",
+        "porque": "La procesión también es patrimonio cultural y atrae visitantes.",
+        "aQuien": "El párroco queda conforme; algunos critican la incoherencia."
+      },
+      {
+        "texto": "No pagarla: el Estado es laico",
+        "efectos": {
+          "confianza": -2,
+          "igualdad": 1
+        },
+        "filosofia": "deon",
+        "porque": "Si el Estado paga un culto, discrimina a los demás.",
+        "aQuien": "Los creyentes tradicionales se molestan; las demás iglesias se sienten iguales."
+      },
+      {
+        "texto": "Un fondo para las fiestas de todas las creencias",
+        "efectos": {
+          "oro": -30,
+          "igualdad": 2,
+          "confianza": 1
+        },
+        "filosofia": "contr",
+        "porque": "Tratar a todas las creencias por igual, sin excluir a ninguna.",
+        "aQuien": "Cuesta más; nadie queda por fuera."
+      }
+    ]
+  },
+  {
+    "id": "c_turismo",
+    "etapa": 2,
+    "icono": "🎟️",
+    "titulo": "Turistas en el festival",
+    "texto": "Una empresa de turismo ofrece comprar los derechos de la fiesta del pueblo: traerá miles de visitantes, pero decidirá el programa y cobrará la entrada.",
+    "condicion": {
+      "nuevo": true,
+      "etapa": 2
+    },
+    "opciones": [
+      {
+        "texto": "Vender los derechos",
+        "efectos": {
+          "oro": 60,
+          "elite": 4,
+          "artesanos": -3
+        },
+        "filosofia": "util",
+        "porque": "Más visitantes, más empleo y más oro para el tesoro.",
+        "aQuien": "Entra el oro; la gente del pueblo tiene que pagar para entrar a su propia fiesta."
+      },
+      {
+        "texto": "Mantenerla comunitaria y gratuita",
+        "efectos": {
+          "confianza": 3,
+          "elite": -2
+        },
+        "filosofia": "virt",
+        "porque": "Una fiesta es de quien la hace, no se vende.",
+        "aQuien": "No llega oro; la fiesta sigue siendo del pueblo."
+      },
+      {
+        "texto": "Alianza: la comunidad decide y la empresa promociona",
+        "efectos": {
+          "oro": 25,
+          "confianza": 1
+        },
+        "filosofia": "contr",
+        "porque": "Un acuerdo que respeta la tradición y aprovecha el turismo.",
+        "aQuien": "Llega algo de oro y la fiesta conserva su alma."
+      }
+    ]
   }
 ]

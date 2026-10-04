@@ -10,7 +10,7 @@ import {
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
-  rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos
+  rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -364,7 +364,7 @@ export class Interfaz {
     const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
     this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
-    const fi = this.sociedad.querySelector('[data-fiesta]'); if (fi) fi.onclick = () => { if (organizarFiesta(this.S)) { this.toast('🎉 ¡Fiestas en la plaza! La exigencia de sentido baja por dos años.'); this.mapa.cambio(true); this.render(); } };
+    const fi = this.sociedad.querySelector('[data-fiesta]'); if (fi) fi.onclick = () => { if (organizarFiesta(this.S)) { this.toast(`🎉 ¡${fiestaDelPueblo(this.S).nombre}! La exigencia de sentido baja por dos años.`); this.mapa.cambio(true); this.render(); } };
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
@@ -1244,8 +1244,8 @@ export class Interfaz {
     const lista = Object.entries(C.B).filter(([, b]) => b.cul).map(([k, b]) => `${b.e} ${c[k] || 0}`).join(' · ');
     return `<div class="cls otros"><div><div class="lab"><span>🎭 Cultura y deporte</span><span class="${S.expc > 0 ? 'neg' : ''}">${S.expc > 0 ? `−${S.expc} de ánimo` : 'sin exigencia'}</span></div>
       <p class="small">Con los años el pueblo pide sentido e identidad, no solo bienestar. La cultura calma ${Math.round(culturaTotal(S))} puntos de esa exigencia. ${lista}.</p>
-      <button class="btn" data-fiesta ${no ? 'disabled' : ''}>🎉 ${K.fiesta.nombre} (${costoFiesta(S)} de oro)</button>
-      <p class="small">${no || K.fiesta.texto} ${K.leccion}</p></div></div>`;
+      <button class="btn" data-fiesta ${no ? 'disabled' : ''}>🎉 ${fiestaDelPueblo(S).nombre} (${costoFiesta(S)} de oro)</button>
+      <p class="small">${no || fiestaDelPueblo(S).texto} ${K.leccion}</p></div></div>`;
   }
   seccionBarrios() {
     const S = this.S, L = barrios(S);
@@ -1617,7 +1617,13 @@ export class Interfaz {
     return `<h2>El juicio de la historia</h2><p>Te recordarán como <b>${J.titulo}</b>.</p>
       ${J.recuerdos.length ? `<ul class="conds">${J.recuerdos.map(r => `<li class="${r.peso >= 0 ? 'pos' : 'neg'}">${r.icono} ${r.nombre}: ${r.recuerdo}.</li>`).join('')}</ul>` : ''}
       <p class="small">Atravesaste ${J.crisis === 1 ? 'una crisis mayor' : `${J.crisis} crisis mayores`} y ${J.generaciones === 1 ? 'un relevo' : `${J.generaciones} relevos`} de generación. ${J.patrimonio === 1 ? 'Dejas una obra patrimonial.' : `Dejas ${J.patrimonio} obras patrimoniales.`}</p>
-      <p class="small"><b>Lo que hereda tu sucesor:</b> ${J.deuda} de oro de deuda${J.erosion ? ` y ${J.erosion} casillas de suelo erosionado` : ''}. ${M.jonas}</p>`;
+      <p class="small"><b>Lo que hereda tu sucesor:</b> ${J.deuda} de oro de deuda${J.erosion ? ` y ${J.erosion} casillas de suelo erosionado` : ''}. ${M.jonas}</p>${this.legadoCivico()}`;
+  }
+  // Fase 12: el juicio de la historia también recuerda la identidad del pueblo y sus leyes.
+  legadoCivico() {
+    const S = this.S, R = rasgosElegidos(S), L = civismoActivo(S) ? leyesTodas(S).filter(l => hasLaw(S, l.id)) : [];
+    if (!R.length && !L.length) return '';
+    return `${R.length ? `<p>Tu pueblo fue <b>${R.map(r => r.nombre.toLowerCase()).join(', ')}</b>.</p>${this.estandarte()}` : ''}${L.length ? `<p class="small"><b>Leyes que dejaste:</b> ${L.map(l => l.n.toLowerCase()).join(', ')}.</p>` : ''}`;
   }
   final(end) {
     const nuevos = this.logros(end);
