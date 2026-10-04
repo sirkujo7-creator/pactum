@@ -108,7 +108,9 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 1. **La fábrica y sus productos (publicado en 0.62.0):** el taller pasa a ser la fábrica, y en su ficha se elige qué producir, como en la finca: trilladora de café, molino de arroz, textiles (algodón), chocolate (cacao), fundición (mina) o artesanías. Transforma lo que da el campo y lo vende más caro (valor agregado); sin materia prima rinde poco.
 2. **Obreros, mercado y contaminación (publicado en 0.63.0):** precios de cada producto con ciclos, salarios y el sindicato de Marta Quintero ligados a las fábricas, contaminación del aire y del río; la canasta de Hacienda muestra campo e industria.
 3. **La revolución industrial por épocas (publicado en 0.64.0):** del taller artesanal a la fábrica con máquinas y luego a la automatización (más producción y menos empleo); dilemas de la industria en los archivos de datos.
-4. **Balance** con los robots y revisión en celular y computador.
+4. **Balance** con los robots y revisión en celular y computador (publicado en 0.65.0; la fase 11 queda terminada y espera la prueba de Juan).
+
+Siguiente (elegido por Juan): **cultura y civismo** y luego **historias humanas**.
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
