@@ -1,0 +1,190 @@
+{
+  "leccion": "Un territorio no avanza de golpe: cada obra, cada invento y cada decisión abre la puerta a la siguiente. Los historiadores llaman a esto «dependencia de la trayectoria»: lo que se decide hoy define lo que será posible mañana.",
+  "periodico": {
+    "nombres": [
+      {
+        "nombre": "El Pregonero",
+        "sub": "Hoja volante escrita a mano · se lee en voz alta en la plaza",
+        "precio": "Gratis en la plaza"
+      },
+      {
+        "invento": "imprenta",
+        "nombre": "El Pregonero",
+        "sub": "Periódico del territorio · impreso en la imprenta del pueblo",
+        "precio": "Precio: un real"
+      },
+      {
+        "invento": "radio",
+        "nombre": "El Pregonero",
+        "sub": "Periódico y radio del territorio",
+        "precio": "Precio: cinco centavos"
+      },
+      {
+        "invento": "internet",
+        "nombre": "El Pregonero digital",
+        "sub": "Noticias del territorio en la red",
+        "precio": "Gratis en línea"
+      }
+    ],
+    "lema": "Lo que avanza el territorio, contado a todos",
+    "edicion": "Edición n.º {n}",
+    "extra": "¡Extra! ¡Extra!",
+    "nuevasObras": "Nuevas obras",
+    "tambien": "También se abre",
+    "breves": "Breves del año",
+    "editorial": "Editorial: lo que enseña",
+    "seguir": "Seguir gobernando",
+    "cerrar": "Cerrar"
+  },
+  "textos": {
+    "titulo": "Camino de avances",
+    "ayuda": "Lo que ya lograste, lo que viene y lo que pide. Cada avance sale en El Pregonero.",
+    "logrado": "Año {anio}",
+    "desdeInicio": "Desde el comienzo",
+    "pide": "Pide: {req}",
+    "porDescubrir": "{n} avances por descubrir",
+    "hemeroteca": "Hemeroteca",
+    "hemerotecaAyuda": "Las ediciones de El Pregonero. Toca una para volver a leerla.",
+    "sinEdiciones": "Todavía no ha salido ninguna edición.",
+    "reqEtapa": "ser {etapa} ({req})",
+    "reqInvento": "que llegue {invento} ({saber} de saber)",
+    "reqAnio": "llegar al año {anio}"
+  },
+  "avances": [
+    {
+      "id": "aldea",
+      "icono": "🛖",
+      "nombre": "La aldea",
+      "cuando": {},
+      "titular": "Nace una aldea junto al río",
+      "texto": "Unas pocas familias levantan casas de bahareque, siembran sus fincas y abren un mercado."
+    },
+    {
+      "id": "etapa1",
+      "icono": "🏘️",
+      "nombre": "Pueblo",
+      "cuando": {
+        "etapa": 1
+      },
+      "titular": "¡El caserío ya es Pueblo!",
+      "texto": "Llegaron tantas familias que el territorio cambió de rango. Con la gente crecen las exigencias: escuela, hospital y agua limpia.",
+      "tambien": [
+        "préstamos y bonos de deuda",
+        "la cobertura de los servicios (qué casas alcanza cada obra)",
+        "el saber y los inventos"
+      ]
+    },
+    {
+      "id": "imprenta",
+      "icono": "📰",
+      "nombre": "La imprenta",
+      "cuando": {
+        "invento": "imprenta"
+      },
+      "titular": "Llega la imprenta: este periódico ya no se escribe a mano",
+      "texto": "Los libros y los periódicos llegan a todos. El gobierno debe decidir si la deja libre o la regula."
+    },
+    {
+      "id": "telegrafo",
+      "icono": "📡",
+      "nombre": "El telégrafo",
+      "cuando": {
+        "invento": "telegrafo"
+      },
+      "titular": "Los postes del telégrafo unen al territorio con el mundo",
+      "texto": "Las noticias que tardaban semanas llegan en minutos. El comercio y el gobierno se aceleran."
+    },
+    {
+      "id": "etapa2",
+      "icono": "🏙️",
+      "nombre": "Ciudad",
+      "cuando": {
+        "etapa": 2
+      },
+      "titular": "¡Somos Ciudad!",
+      "texto": "Escuela, hospital y más de ochenta habitantes: el pueblo se convirtió en ciudad. Llega la riqueza y, con ella, la desigualdad.",
+      "tambien": [
+        "las relaciones con las polis vecinas",
+        "el cuartel y la defensa de la frontera",
+        "el puerto, el teatro y el estadio"
+      ]
+    },
+    {
+      "id": "empedrado",
+      "icono": "🧱",
+      "nombre": "Calles empedradas",
+      "cuando": {
+        "eraCalle": "empedrado"
+      },
+      "requisito": "ser Ciudad o llegar a la época de La Violencia",
+      "titular": "Adiós al barro: las calles se empiedran",
+      "texto": "Los caminos de herradura dan paso a calles empedradas. Por ellas ya no van mulas sino chivas cargadas de gente y de café."
+    },
+    {
+      "id": "electricidad",
+      "icono": "💡",
+      "nombre": "La electricidad",
+      "cuando": {
+        "invento": "electricidad"
+      },
+      "titular": "¡Se hizo la luz! Llega la electricidad",
+      "texto": "Las noches se iluminan y las máquinas pueden moverse sin agua ni mulas. Empieza otra forma de trabajar."
+    },
+    {
+      "id": "carretera",
+      "icono": "🛣️",
+      "nombre": "Carreteras",
+      "cuando": {
+        "eraCalle": "carretera"
+      },
+      "requisito": "ser Polis o llegar a la época de la modernización",
+      "titular": "Llegan las carreteras y los camiones",
+      "texto": "Los caminos se pavimentan: los camiones llevan la cosecha a la ciudad en horas. El territorio se conecta, y también se va la gente joven."
+    },
+    {
+      "id": "radio",
+      "icono": "📻",
+      "nombre": "La radio",
+      "cuando": {
+        "invento": "radio"
+      },
+      "titular": "La radio entra en todas las casas",
+      "texto": "Desde la sala o la cocina, todo el territorio escucha las mismas voces. Sirve para educar y también para manipular."
+    },
+    {
+      "id": "etapa3",
+      "icono": "🏛️",
+      "nombre": "Polis",
+      "cuando": {
+        "etapa": 3
+      },
+      "titular": "¡Nace la Polis!",
+      "texto": "Con su ágora y la confianza del pueblo, el territorio es una polis: una comunidad que se gobierna a sí misma. Ahora hay que sostenerla.",
+      "tambien": [
+        "las elecciones cada cuatro años",
+        "los megaproyectos",
+        "nuevos caminos a la victoria"
+      ]
+    },
+    {
+      "id": "internet",
+      "icono": "🌐",
+      "nombre": "Internet",
+      "cuando": {
+        "invento": "internet"
+      },
+      "titular": "El Pregonero ahora se lee en la red",
+      "texto": "Internet llega al territorio: cualquiera puede publicar y opinar. La información vuela, y las mentiras también."
+    },
+    {
+      "id": "automatizacion",
+      "icono": "🤖",
+      "nombre": "La automatización",
+      "cuando": {
+        "invento": "automatizacion"
+      },
+      "titular": "Las máquinas aprenden a trabajar solas",
+      "texto": "Robots y programas hacen el trabajo de muchas personas. Se produce más con menos gente: ¿quién se queda con la ganancia?"
+    }
+  ]
+}

@@ -110,6 +110,14 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 8. Otras formas de ganar y efecto por edificio | Publicado (0.33.0). Desde Ciudad, además de la Polis, cuatro caminos que se ganan sosteniendo todas sus condiciones los años que pide la dificultad (6 en Normal): Polis próspera (bienestar 60, calificación AAA, sin deuda, tesoro de 250), Polis justa (igualdad 70, legitimidad 62, ninguna clase bajo 45), Polis verde (ambiente 82, sin minas, bosque en 26% del territorio) y Polis en paz (sin grupo armado, inseguridad menor que 10, sin movimientos movilizados, vecinos con 70 de promedio). Tarjeta «Caminos a la victoria» desde la meta, con el avance de cada uno. Cada edificio muestra en su ficha su efecto especial; nuevos efectos: el mercado estabiliza el precio de la comida (hasta 30%), el acueducto reduce los brotes (hasta la mitad) y el puerto suma 2% de comercio y mejora la relación con San Lorenzo. Robots (no buscan estos caminos): unos 2% ganan por ellos. República 47%; regímenes entre 40% y 54%; Fácil 100%, Difícil 8% |
 | 9. Ajuste de Difícil | Publicado (0.33.1). Decisión de Juan (3 de octubre): Difícil cerca de 30%. Golpes ×1,45, racha para suceso bueno de 2 y suceso bueno 55% de esas veces. Robots: Difícil 31% |
 
+## Estado de la fase 11 (la industria como decisión)
+
+Aprobada por Juan el 4 de octubre. Pidió además que los avances se destaquen paso a paso, con un sistema de desbloqueo que salga en un periódico desplegable con su propio sonido.
+
+| Paso | Estado |
+| --- | --- |
+| 0. El Pregonero y el camino de avances | Publicado (0.61.0). Todo lo que se desbloquea vive en una lista (`src/data/avances.json`, `src/core/avances.js`): etapas (con sus obras nuevas y lo que se abre), inventos y la era de los caminos (empedrado, carretera); después se sumarán los productos de la industria y el civismo. Al cerrar el año, los avances nuevos salen juntos en **El Pregonero**, un periódico que se despliega desde arriba con su propio sonido (golpes de la prensa, campanilla del voceador y fanfarria de metales): titular grande, notas en columnas, breves del año y una editorial con la lección. Reemplaza la tarjeta del cambio de etapa. El nombre cambia con los inventos (hoja volante, periódico impreso con la imprenta, periódico y radio, El Pregonero digital con internet). En la Crónica: **Camino de avances** (lo logrado con su año, los tres siguientes con lo que piden y cuántos faltan por descubrir) y la **Hemeroteca** para releer las ediciones. Solo anota: el balance no cambia |
+
 ## Estado de la fase 10 (el campo y el clima)
 
 Terminada (0.60.0): espera la prueba de Juan.

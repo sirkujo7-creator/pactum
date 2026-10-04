@@ -6,7 +6,8 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
+  avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -655,7 +656,8 @@ export class Interfaz {
     const tabs = Object.entries(GRAFICAS).map(([k, v]) => `<button class="tab${k === this.grafica ? ' on' : ''}" data-g="${k}">${v.n}</button>`).join('');
     const ep = historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null, sig = ep && proximaEpoca(S);
     const epoca = ep ? `<h3>${ep.icono} Época: ${ep.nombre}</h3><p class="small">${ep.texto}${sig ? ` Hasta el año ${sig.desde}; luego, ${sig.nombre.toLowerCase()}.` : ''}</p>` : '';
-    this.cronica.innerHTML = `${epoca}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.innerHTML = `${epoca}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
     this.cronica.querySelectorAll('[data-g]').forEach(bt => bt.onclick = () => { this.grafica = bt.dataset.g; this.renderCronica(); });
   }
 
@@ -813,13 +815,14 @@ export class Interfaz {
   // ---------- Tarjetas ----------
   tarjeta(html, cerrable = true) {
     this.cerrarFicha();
+    this.card.classList.remove('periodico'); this.velo.classList.remove('con-periodico');
     this.card.innerHTML = html;
     this.velo.hidden = false;
     this.tarjetaCerrable = cerrable;
     const f = this.card.querySelector('button'); if (f) f.focus({ preventScroll: true });
     this.card.scrollTop = 0;
   }
-  cerrarTarjeta() { this.velo.hidden = true; this.card.innerHTML = ''; if (this.alCerrar) { const f = this.alCerrar; this.alCerrar = null; f(); } }
+  cerrarTarjeta() { this.velo.hidden = true; this.card.innerHTML = ''; this.card.classList.remove('periodico'); this.velo.classList.remove('con-periodico'); if (this.alCerrar) { const f = this.alCerrar; this.alCerrar = null; f(); } }
   boton(id, fn) { const b = this.card.querySelector('#' + id); if (b) b.onclick = fn; }
 
   // Claridad: todos los efectos de una obra en fichas pequeñas (verde ayuda, rojo cuesta).
@@ -1405,6 +1408,40 @@ export class Interfaz {
       <h2>Riesgo de sucesos este año</h2>${Object.entries(R).map(([k, p]) => `<p class="small">${Q[k].icono} <b>${Q[k].titulo}</b>: riesgo ${nivel(p)}. ${Q[k].prevenir}</p>`).join('')}
       <div class="phil"><b>Lo que enseña</b><br>${C.SUCESOS.leccion}</div><button class="main" id="okB">Cerrar</button>`);
     this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 11: El Pregonero. Los avances del año salen en un periódico que se despliega desde arriba, con su sonido.
+  periodico(ed, alTerminar, reabrir) {
+    const S = this.S, P = C.AVANCES.periodico, cab = cabecera(S), L = ed.ids.map(datosAvance).filter(Boolean);
+    if (!L.length) { if (alTerminar) alTerminar(); return; }
+    const [a, ...otros] = L, q = a.cuando || {};
+    const obras = q.etapa ? obrasDeEtapa(q.etapa) : [];
+    const ep = !reabrir && historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null;
+    const leccion = q.etapa ? C.STAGES[q.etapa].lesson : q.invento ? C.TEC.leccion : C.AVANCES.leccion;
+    const nota = x => `<article><h4>${x.icono} ${x.titular}</h4><p>${x.texto}</p></article>`;
+    const breves = ed.breves && ed.breves.length ? `<article class="pe-breves"><h4>${P.breves}</h4><ul>${ed.breves.map(t => `<li>${t}</li>`).join('')}</ul></article>` : '';
+    this.tarjeta(`<header class="pe-cab"><div class="pe-linea"><span>Año ${ed.anio}${ep ? ` · ${ep.nombre}` : ''}</span><span>${P.edicion.replace('{n}', ed.n)}</span><span>${cab.precio}</span></div>
+      <h2 class="pe-nombre">${cab.nombre}</h2><div class="pe-sub">${cab.sub} — <i>${P.lema}</i></div></header>
+      <div class="pe-extra">${P.extra}</div>
+      <article class="pe-princ"><div class="pe-grabado" aria-hidden="true">${a.icono}</div><h3 class="pe-titular">${a.titular}</h3><p class="pe-bajada">${a.texto}</p>
+        ${obras.length ? `<div class="pe-obras"><b>${P.nuevasObras}:</b>${obras.map(k => `<span><img src="${this.icono(k)}" alt="">${this.nombre(k)}</span>`).join('')}</div>` : ''}
+        ${a.tambien ? `<p class="pe-tambien"><b>${P.tambien}:</b> ${a.tambien.join('; ')}.</p>` : ''}</article>
+      ${otros.length || breves ? `<div class="pe-cols">${otros.map(nota).join('')}${breves}</div>` : ''}
+      <div class="pe-edit"><b>${P.editorial}</b><p>${leccion}</p></div>
+      <button class="main" id="okB">${reabrir ? P.cerrar : P.seguir}</button>`, !!reabrir);
+    this.card.classList.add('periodico'); this.velo.classList.add('con-periodico');
+    if (!reabrir) Sonido.prensa();
+    this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 11: el camino de avances y la hemeroteca (en la Crónica).
+  seccionAvances() {
+    const S = this.S;
+    if (!avancesActivos(S) || !S.avances) return '';
+    const T = C.AVANCES.textos, K = caminoAvances(S), eds = estadoAvances(S).ediciones;
+    const hecho = a => `<li class="av-ok"><span class="av-ico">${a.icono}</span><b>${a.nombre}</b><small>${a.anio > 0 ? T.logrado.replace('{anio}', a.anio) : T.desdeInicio}</small></li>`;
+    const viene = a => `<li class="av-prox"><span class="av-ico">${a.icono}</span><b>${a.nombre}</b><small>${T.pide.replace('{req}', requisitoAvance(a, S))}</small></li>`;
+    const hem = eds.length ? `<div class="av-hem">${eds.slice().reverse().map(e => `<button class="btn" data-ed="${e.n}">Año ${e.anio} · ${datosAvance(e.ids[0]).titular}</button>`).join('')}</div>` : `<p class="small">${T.sinEdiciones}</p>`;
+    return `<h3>${T.titulo}</h3><p class="small">${T.ayuda}</p><ol class="avances">${K.logrados.map(hecho).join('')}${K.proximos.map(viene).join('')}${K.ocultos ? `<li class="av-oculto"><span class="av-ico">❔</span><small>${T.porDescubrir.replace('{n}', K.ocultos)}</small></li>` : ''}</ol>
+      <h3>📰 ${T.hemeroteca}</h3><p class="small">${T.hemerotecaAyuda}</p>${hem}`;
   }
   etapa(alTerminar) {
     const S = this.S, st = C.STAGES[S.stage];

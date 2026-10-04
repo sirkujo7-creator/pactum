@@ -342,3 +342,44 @@ html,body{background:#E6DABF}
   .pill{flex-shrink:0}
   .pill small.precio{display:none}
 }
+
+/* Fase 11: El Pregonero, el periódico de los avances. Papel de prensa, cabecera grande y columnas; se despliega desde arriba. */
+.velo.con-periodico{align-items:flex-start;padding-top:max(10px,env(safe-area-inset-top,0px))}
+.card.periodico{max-width:640px;max-height:94dvh;border-radius:2px;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));background:#F2EAD6;background-image:var(--muro-cal);color:#2A221C;box-shadow:0 0 0 1px #8C7A62,0 22px 50px rgba(30,20,10,.45);transform-origin:50% 0;animation:pe-desplegar .85s cubic-bezier(.2,.85,.3,1.15) both}
+.card.periodico::before{display:none}
+@keyframes pe-desplegar{0%{transform:perspective(1100px) translateY(-40px) rotateX(-85deg);opacity:0}55%{opacity:1}75%{transform:perspective(1100px) rotateX(6deg)}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.card.periodico{animation:pe-aparecer .2s both}}
+@keyframes pe-aparecer{from{opacity:0}to{opacity:1}}
+.pe-cab{text-align:center;border-bottom:3px double #2A221C;padding-bottom:6px;margin-bottom:6px}
+.pe-linea{display:flex;justify-content:space-between;gap:4px 8px;flex-wrap:wrap;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #2A221C;padding-bottom:3px;color:#4A3B2E}
+.card .pe-nombre{font-family:Alegreya,Georgia,serif;font-size:clamp(2rem,9vw,3rem);font-weight:900;font-variant:normal;letter-spacing:.01em;line-height:1;margin:6px 0 2px;color:#1E1712}
+.pe-sub{font-size:.78rem;color:#4A3B2E}
+.pe-extra{text-align:center;font-family:Alegreya,Georgia,serif;font-weight:900;font-size:.95rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rojo);margin:2px 0 6px}
+.pe-princ{border-bottom:1px solid #2A221C;padding-bottom:8px;margin-bottom:8px}
+.pe-grabado{float:right;width:64px;height:64px;margin:4px 0 4px 10px;display:grid;place-items:center;font-size:2.2rem;border:1.5px solid #2A221C;background:rgba(91,52,35,.07);filter:grayscale(.35)}
+.card .pe-titular{font-family:Alegreya,Georgia,serif;font-size:clamp(1.5rem,6vw,2.1rem);font-weight:900;font-variant:normal;letter-spacing:0;line-height:1.05;margin:2px 0 6px;color:#1E1712}
+.card .pe-bajada{font-size:1rem;font-style:italic;margin-bottom:8px}
+.pe-obras{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;clear:both;font-size:.9rem}
+.pe-obras span{display:inline-flex;align-items:center;gap:4px;border:1px solid #8C7A62;padding:2px 6px 2px 2px;background:rgba(255,255,255,.35)}
+.pe-obras img{width:26px;height:26px;object-fit:contain}
+.card .pe-tambien{font-size:.9rem;margin:8px 0 0}
+.pe-cols{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:8px}
+@media(min-width:560px){.pe-cols{grid-template-columns:1fr 1fr}.pe-cols>article+article{border-left:1px solid #2A221C;padding-left:10px}}
+.pe-cols h4{font-family:Alegreya,Georgia,serif;font-size:1.05rem;line-height:1.15;margin:0 0 4px}
+.pe-cols p,.pe-cols li{font-size:.88rem;margin:0 0 6px}
+.pe-breves ul{margin:0;padding-left:16px}
+.pe-edit{border:1.5px solid #2A221C;padding:6px 10px;margin-bottom:12px;background:rgba(91,52,35,.06)}
+.pe-edit b{font-family:Alegreya,Georgia,serif;font-variant:small-caps}
+.card .pe-edit p{margin:4px 0 0;font-size:.9rem}
+/* Camino de avances y hemeroteca (Crónica). */
+ol.avances{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:4px}
+ol.avances li{display:grid;grid-template-columns:34px 1fr;column-gap:8px;align-items:center;padding:4px 6px;border-radius:4px}
+ol.avances li small{grid-column:2;color:var(--muted)}
+.av-ico{grid-row:span 2;font-size:1.4rem;text-align:center}
+.av-ok{background:rgba(94,127,69,.12);border-left:3px solid var(--good)}
+.av-prox{opacity:.75;border-left:3px dashed var(--muted)}
+.av-prox .av-ico{filter:grayscale(1)}
+.av-oculto{opacity:.6}
+.av-oculto small{grid-row:1}
+.av-hem{display:grid;gap:6px;margin-bottom:12px}
+.av-hem .btn{text-align:left}

@@ -48,3 +48,4 @@ export * from './calles.js';
 export * from './guerra.js';
 export * from './fincas.js';
 export * from './biomas.js';
+export * from './avances.js';
