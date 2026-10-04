@@ -8,7 +8,7 @@ import {
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
   fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
-  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto
+  industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -317,6 +317,7 @@ export class Interfaz {
         this.mapa.cambio();
       };
     });
+    this.cuentas.querySelectorAll('[data-sal]').forEach(b => b.onclick = () => { if (elegirSalario(S, b.dataset.sal)) { this.toast(C.INDUSTRIA.textos.salarioCambia.replace('{nombre}', C.INDUSTRIA.salarios[b.dataset.sal].nombre.toLowerCase())); this.mapa.cambio(); this.render(); } });
     this.cuentas.querySelectorAll('[data-mega]').forEach(b => b.onclick = () => this.explicarMega(b.dataset.mega));
     this.cuentas.querySelectorAll('[data-pension]').forEach(b => b.onclick = () => { if (elegirPension(S, b.dataset.pension)) { this.toast(`Pensiones: ${C.CICLOS.pensiones.sistemas[b.dataset.pension].nombre.toLowerCase()}.`); this.mapa.cambio(); this.render(); } });
     const ren = this.cuentas.querySelector('[data-renovar]');
@@ -1272,7 +1273,7 @@ export class Interfaz {
   }
   fichaFabrica(i) {
     const S = this.S, x = S.map[i], pr = productoDe(x), D = datosProducto(pr), p = produccionFabrica(S, i), T = C.INDUSTRIA.textos;
-    const estado = !p.encendida ? `<span class="neg">${T.energia}</span>` : `${T.ganancia.replace('{oro}', Math.round(p.renta * S.price))} y emplea ${p.empleo}. ${D.insumo ? (p.f < 1 ? `<span class="neg">${this.lineaInsumo(pr)}</span>` : this.lineaInsumo(pr)) : ''}`;
+    const estado = !p.encendida ? `<span class="neg">${T.energia}</span>` : `${T.ganancia.replace('{oro}', Math.round(p.renta * S.price))} y emplea ${p.empleo}. ${D.insumo ? (p.f < 1 ? `<span class="neg">${this.lineaInsumo(pr)}</span>` : this.lineaInsumo(pr)) : ''}${nearRiver(S, i) ? ` <span class="neg">${T.rio}</span>` : ''}`;
     return el('div', { class: 'aporte', style: 'grid-column:1/-1' }, [
       el('span', { html: `<b>${D.icono} ${D.nombre}.</b> ${estado} ` }),
       el('button', { class: 'btn', style: 'margin-top:6px', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.tarjetaProducto(i) } }, 'Cambiar de producto')
@@ -1309,7 +1310,12 @@ export class Interfaz {
     let total = 0;
     const filas = L.map(i => { const pr = productoDe(S.map[i]), D = datosProducto(pr), p = produccionFabrica(S, i), oro = Math.round(p.renta * S.price); total += oro;
       return `<tr><td>${D.icono} ${D.nombre}</td><td><small class="${!p.encendida || p.f < 1 ? 'neg' : ''}">${!p.encendida ? 'sin energía' : D.insumo ? `materia prima ${Math.round(p.f * 100)}%` : ''}</small></td><td>${oro}</td></tr>`; }).join('');
-    return `<h3>${T.seccion}</h3><p class="small">${T.seccionAyuda}</p><div class="ledger"><table class="budget"><tr><th style="text-align:left">Fábrica</th><th></th><th>Oro al año</th></tr>${filas}<tr class="tot"><td>Total de la industria</td><td></td><td>${total}</td></tr></table></div><p class="small"><i>${C.INDUSTRIA.leccion}</i></p>`;
+    const campo = fincasActivas(S) ? canastaOro(S).total : 0, pct = total + campo ? Math.round(total / (total + campo) * 100) : 0;
+    const metal = L.some(i => productoDe(S.map[i]) === 'fundicion') ? `<p class="small">${T.metal} Hoy: ×${precioCiclo(S, 'fundicion').toLocaleString('es-CO')}.</p>` : '';
+    const sal = Object.entries(C.INDUSTRIA.salarios).map(([k, v]) => `<button class="opt${salarioActual(S) === k ? ' on' : ''}" data-sal="${k}"><b>${v.nombre}</b><small>${v.texto} Ganancia ×${v.renta.toLocaleString('es-CO')}; ánimo de los obreros ${v.animo > 0 ? '+' : v.animo < 0 ? '−' : ''}${Math.abs(v.animo)}.</small></button>`).join('');
+    return `<h3>${T.seccion}</h3><p class="small">${T.seccionAyuda}</p><div class="ledger"><table class="budget"><tr><th style="text-align:left">Fábrica</th><th></th><th>Oro al año</th></tr>${filas}<tr class="tot"><td>Total de la industria</td><td></td><td>${total}</td></tr></table></div>
+      ${total + campo ? `<p class="small">${T.parte.replace('{pct}', pct)}</p>` : ''}${metal}<p class="small"><i>${C.INDUSTRIA.leccion}</i></p>
+      <h3>${T.salarioTitulo}</h3><p class="small">${T.salarioAyuda}</p>${sal}<p class="small"><i>${T.salarioLeccion}</i></p>`;
   }
   // ---------- Fase 9: guerra con otra polis ----------
   estadoFrontera(id) {

@@ -17,7 +17,14 @@
     "ganancia": "Deja {oro} de oro por año",
     "seccion": "La industria",
     "seccionAyuda": "Cuánto deja cada fábrica y si le alcanza la materia prima.",
-    "sinFabricas": "Aún no tienes fábricas. Se construyen desde Pueblo, con energía de los molinos."
+    "sinFabricas": "Aún no tienes fábricas. Se construyen desde Pueblo, con energía de los molinos.",
+    "salarioTitulo": "Salarios en las fábricas",
+    "salarioAyuda": "Decide cuánto se paga a los obreros. Pagar poco deja más oro hoy; pagar bien evita huelgas mañana.",
+    "salarioLeccion": "En 1914 Henry Ford duplicó el salario de sus obreros (5 dólares al día): dejaron de renunciar y pudieron comprar los carros que fabricaban. Karl Marx, en cambio, veía en la ganancia del dueño el trabajo que no se le paga al obrero (la plusvalía).",
+    "salarioCambia": "Salarios en las fábricas: {nombre}.",
+    "rio": "Junto al río: sus desechos lo ensucian más (ambiente ×1,4).",
+    "metal": "El precio del metal sigue el ciclo de la economía: sube en el auge y cae en la recesión.",
+    "parte": "La industria aporta el {pct}% del oro de la producción (campo e industria)."
   },
   "productos": {
     "artesanias": {
@@ -32,7 +39,10 @@
       "nombre": "Trilladora de café",
       "icono": "☕",
       "texto": "Quita la cáscara al café, lo seca y lo empaca para exportarlo. Vende más caro el café de tus fincas, pero sus aguas mieles ensucian el río.",
-      "insumo": { "cultivo": "cafe", "porFabrica": 3 },
+      "insumo": {
+        "cultivo": "cafe",
+        "porFabrica": 3
+      },
       "renta": 7,
       "empleo": 9,
       "ambiente": -6
@@ -41,7 +51,10 @@
       "nombre": "Molino de arroz",
       "icono": "🌾",
       "texto": "Descascara, pule y empaca el arroz del llano tolimense. Ganancia segura y modesta.",
-      "insumo": { "cultivo": "arroz", "porFabrica": 3 },
+      "insumo": {
+        "cultivo": "arroz",
+        "porFabrica": 3
+      },
       "renta": 5,
       "empleo": 8,
       "ambiente": -5
@@ -50,7 +63,10 @@
       "nombre": "Chocolatería",
       "icono": "🍫",
       "texto": "Convierte el cacao en pastillas de chocolate para la taza de la mañana. Buena ganancia y poca contaminación.",
-      "insumo": { "cultivo": "cacao", "porFabrica": 2 },
+      "insumo": {
+        "cultivo": "cacao",
+        "porFabrica": 2
+      },
       "renta": 9,
       "empleo": 9,
       "ambiente": -4
@@ -59,7 +75,10 @@
       "nombre": "Textiles",
       "icono": "🧵",
       "texto": "Hila y teje el algodón con telares eléctricos. Mucho empleo y buena ganancia, mientras haya algodón.",
-      "insumo": { "cultivo": "algodon", "porFabrica": 3 },
+      "insumo": {
+        "cultivo": "algodon",
+        "porFabrica": 3
+      },
       "renta": 10,
       "empleo": 12,
       "ambiente": -8
@@ -68,10 +87,40 @@
       "nombre": "Fundición",
       "icono": "🔩",
       "texto": "Funde el metal de las minas para hacer herramientas, rieles y vigas. La que más deja y la que más contamina.",
-      "insumo": { "obra": "mina", "porFabrica": 1 },
+      "insumo": {
+        "obra": "mina",
+        "porFabrica": 1
+      },
       "renta": 12,
       "empleo": 10,
       "ambiente": -11
+    }
+  },
+  "salarios": {
+    "bajo": {
+      "nombre": "Salarios bajos",
+      "renta": 1.25,
+      "animo": -9,
+      "texto": "Más ganancia para el tesoro y los dueños; los obreros viven apretados y el sindicato crece."
+    },
+    "justo": {
+      "nombre": "Salario justo",
+      "renta": 1,
+      "animo": 0,
+      "texto": "Lo que se acostumbra pagar: ni sobra ni falta."
+    },
+    "alto": {
+      "nombre": "Salarios altos",
+      "renta": 0.8,
+      "animo": 6,
+      "texto": "Menos ganancia, pero los obreros viven mejor, compran más y el sindicato se calma."
+    }
+  },
+  "rio": 1.4,
+  "ciclo": {
+    "fundicion": {
+      "auge": 1.3,
+      "recesion": 0.7
     }
   }
 }

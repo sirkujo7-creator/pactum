@@ -8,6 +8,8 @@ import { fincasActivas, esFinca, cultivoDe, produce, precioCultivo, datosCultivo
 import { rindeObra } from './desgaste.js';
 import { counts } from './reglas.js';
 import { poweredT } from './sociedad.js';
+import { nearRiver } from './mundo.js';
+import { fase } from './economia.js';
 import { datosAvance, cumpleAvance, requisitoAvance } from './avances.js';
 
 const K = () => C.INDUSTRIA;
@@ -40,14 +42,27 @@ export function insumoSi(S, i, pr) {
   const n = fabricas(S).filter(j => j !== i && productoDe(S.map[j]) === pr).length + 1;
   return Math.min(1, insumo(S, pr).tiene / (q.porFabrica * n));
 }
+// Paso 2: el precio del metal (fundición) sigue el ciclo de la economía.
+export function precioCiclo(S, pr) { const c = K().ciclo && K().ciclo[pr]; return c ? (c[fase(S)] || 1) : 1; }
+// Paso 2: los salarios de las fábricas (bajo, justo o alto): más ganancia o obreros más contentos.
+export function salarioActual(S) { return S.salario || 'justo'; }
+export function salario(S) { return K().salarios[salarioActual(S)]; }
+export function hayFabricas(S) { return fabricas(S).length > 0; }
+export function elegirSalario(S, s) {
+  if (!K().salarios[s] || salarioActual(S) === s) return false;
+  if (s === 'justo') delete S.salario; else S.salario = s;
+  S.log.unshift({ y: S.year, t: K().textos.salarioCambia.replace('{nombre}', K().salarios[s].nombre.toLowerCase()) });
+  return true;
+}
 // Lo que hace una fábrica en la casilla i: { renta, empleo, ambiente, f (materia prima), encendida }.
 export function produccionFabrica(S, i, en) {
   const x = S.map[i], pr = productoDe(x), D = datosProducto(pr), on = (en || encendidas(S)).has(i);
-  if (!on) return { renta: 0, empleo: 0, ambiente: D.ambiente * K().minimo, f: 0, encendida: false };
+  if (!on) return { renta: 0, empleo: 0, ambiente: D.ambiente * K().minimo * (nearRiver(S, i) ? K().rio : 1), f: 0, encendida: false };
   const f = insumo(S, pr).f, m = K().minimo + (1 - K().minimo) * f, r = rindeObra(S, x);
   // La ganancia sigue a medias el precio de la materia prima: la industria amortigua las crisis del campo.
-  const precio = D.insumo && D.insumo.cultivo ? .5 + .5 * precioCultivo(S, D.insumo.cultivo) : 1;
-  return { renta: D.renta * f * r * precio, empleo: Math.round(D.empleo * m * (r ? 1 : 0)), ambiente: D.ambiente * m, f, encendida: true };
+  const precio = D.insumo && D.insumo.cultivo ? .5 + .5 * precioCultivo(S, D.insumo.cultivo) : precioCiclo(S, pr);
+  const rio = nearRiver(S, i) ? K().rio : 1; // paso 2: junto al río, sus desechos lo ensucian más
+  return { renta: D.renta * f * r * precio * salario(S).renta, empleo: Math.round(D.empleo * m * (r ? 1 : 0)), ambiente: D.ambiente * m * rio, f, encendida: true };
 }
 // Para la hacienda: una función que da la ganancia de la fábrica en i (con las fábricas encendidas calculadas una vez).
 export function rentaFabrica(S) { const en = encendidas(S); return i => produccionFabrica(S, i, en).renta; }
