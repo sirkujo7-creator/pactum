@@ -10,6 +10,7 @@ import { precioAlimento, fase } from './economia.js';
 import { cobertura } from './cobertura.js';
 import { empleosDeObra, obrasActivas } from './construccion.js';
 import { ejercitoActivo, ejercito, seguridad, partesEjercito } from './ejercito.js';
+import { industriaActiva, empleoIndustria, hayFabricas, salario } from './industria.js';
 
 const K = () => C.GRUPOS;
 export function gruposActivos(S) { return climaActivo(S) && !!C.GRUPOS; }
@@ -23,8 +24,8 @@ const DE_TRABAJO = { mercado: 'comerciantes', banco: 'comerciantes', escuela: 'f
 export function tamanos(S) {
   const so = society(S), c = counts(S), t = tierra(S);
   const prop = Math.round(so.camp * t);
-  // Los artesanos con empleo se reparten según los puestos de cada tipo de obra.
-  const pu = { obreros: poweredT(S, c) * 9 + empleosDeObra(S), comerciantes: 0, funcionarios: 0 };
+  // Los artesanos con empleo se reparten según los puestos de cada tipo de obra (fase 11: en las fábricas, según su producto).
+  const pu = { obreros: (industriaActiva(S) ? empleoIndustria(S) : poweredT(S, c) * 9) + empleosDeObra(S), comerciantes: 0, funcionarios: 0 };
   for (const k of Object.keys(C.B)) if (k !== 'taller' && k !== 'cuartel' && C.B[k].ja) pu[DE_TRABAJO[k] || 'obreros'] += C.B[k].ja * c[k];
   const tot = pu.obreros + pu.comerciantes + pu.funcionarios || 1;
   const com = Math.round(so.art * pu.comerciantes / tot), fun = Math.round(so.art * pu.funcionarios / tot);
@@ -41,7 +42,7 @@ function propias(S, g) {
   switch (g) {
     case 'propietarios': return [['Tienen su propia tierra', 4], ['Precio de la comida (la venden)', pa * 10]];
     case 'jornaleros': return [['Trabajan tierra ajena', -4], ['Precio de la comida (compran parte)', -pa * 6], ['Subsidio al campo', L('subsidio') ? 3 : 0]];
-    case 'obreros': return [['Jornada de 8 horas', L('jornada') ? 5 : 0], ['Ambiente sucio en el trabajo', S.env < 50 ? -3 : 0], ['Recesión: despidos', f === 'recesion' ? -4 : 0], ['Obras públicas en marcha', Math.min(4, obrasActivas(S))]];
+    case 'obreros': return [['Salarios de las fábricas', industriaActiva(S) && hayFabricas(S) ? salario(S).animo : 0], ['Jornada de 8 horas', L('jornada') ? 5 : 0], ['Ambiente sucio en el trabajo', S.env < 50 ? -3 : 0], ['Recesión: despidos', f === 'recesion' ? -4 : 0], ['Obras públicas en marcha', Math.min(4, obrasActivas(S))]];
     case 'comerciantes': return [['Orden y seguridad (Ejército)', seguridad(S)], ['Ciclo económico', f === 'auge' ? 5 : f === 'recesion' ? -5 : 0], ['Aranceles que protegen', L('arancel') ? 3 : 0], ['Casas con mercado cerca', (cobertura(S).mercado - .5) * 6]];
     case 'funcionarios': return [['Empleo estable del Estado', 3], ['Tesoro en rojo: sueldos atrasados', S.gold < 0 ? -8 : 0], ['Corrupción en el gobierno', S.corr > 50 ? -4 : 0]];
     case 'terratenientes': return [['Orden y seguridad (Ejército)', seguridad(S)], ['Tierra repartida a campesinos', -(t - K().tierraInicial) * 20], ['Precio de la comida (la venden)', pa * 8], ['Protección ambiental', L('ambiente') ? -3 : 0]];
