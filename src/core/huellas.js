@@ -145,3 +145,37 @@ export function colonosDelAnio(S) {
   S.colUlt = S.year;
   return [K2.textos.llega];
 }
+
+// ---------- Paso 3: leyes que se ven ----------
+// Las leyes vigentes dejan su señal junto a las obras que tocan (huellas.json, leyes). El resguardo indígena es una
+// maloca en una casilla lejana que aparece con la ley y se va si se deroga.
+export function leyesVisibles(S, obra) {
+  if (!huellasActivas(S) || !C.HUELLAS.leyes || !S.laws) return [];
+  return Object.entries(C.HUELLAS.leyes).filter(([id, v]) => S.laws[id] !== undefined && v.en.includes(obra)).map(([id]) => id);
+}
+export function sincronizarLeyes(S) {
+  if (!huellasActivas(S) || !C.HUELLAS.leyes) return;
+  const i = S.map.findIndex(x => x.mk && x.mk.t === 'resguardo'), ley = S.laws && S.laws.indigenas !== undefined;
+  if (ley && i < 0) { const j = baldio(S, 1); if (j >= 0) { const x = S.map[j]; S.map[j].mk = { t: 'resguardo', y: S.year, d: `Año ${S.year}: se reconoce el resguardo indígena.` }; } }
+  if (!ley && i >= 0) delete S.map[i].mk;
+}
+
+// ---------- Paso 4: guerra y conflicto ----------
+// Obras quemadas (x.qm): hollín en los muros hasta repararlas o hasta que pasen unos años.
+export function quemar(S, lista) { if (!huellasActivas(S)) return; for (const i of lista) if (S.map[i].b) S.map[i].qm = S.year; }
+export function quemadaVisible(S, x) { return huellasActivas(S) && x.qm !== undefined && S.year - x.qm < C.HUELLAS.guerra.quemadas; }
+// Trincheras: zanjas entre el pueblo y el borde del vecino durante la guerra (marcas que duran unos años).
+export function cavarTrincheras(S, casillasDelBorde) {
+  if (!huellasActivas(S) || !C.HUELLAS.guerra || !casillasDelBorde.length) return [];
+  const G = C.HUELLAS.guerra, N = lado(S), hechas = S.map.filter(x => x.mk && x.mk.t === 'trinchera').length;
+  if (hechas >= G.maxTrincheras) return [];
+  const b = casillasDelBorde[0], c = S.centro !== undefined ? S.centro : S.map.findIndex(x => x.b === 'casa');
+  if (c < 0) return [];
+  const obras = S.map.map((x, i) => x.b ? i : -1).filter(i => i >= 0);
+  const dB = i => Math.hypot(Math.floor(i / N) - Math.floor(b / N), i % N - b % N);
+  const dObra = i => Math.min(...obras.map(j => Math.max(Math.abs(Math.floor(i / N) - Math.floor(j / N)), Math.abs(i % N - j % N))));
+  const L = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && !x.mk && !x.oc && x.t === 'llano'; })
+    .map(i => [i, dObra(i)]).filter(([, d]) => d >= 1 && d <= 3).sort((a, z) => dB(a[0]) - dB(z[0])).slice(0, Math.min(G.trincheras, G.maxTrincheras - hechas));
+  for (const [i] of L) S.map[i].mk = { t: 'trinchera', y: S.year, d: `Año ${S.year}: trinchera de la guerra.` };
+  return L.length ? [G.textos.trinchera] : [];
+}

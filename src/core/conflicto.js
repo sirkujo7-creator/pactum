@@ -4,6 +4,7 @@
 // toma armada (crisis mayor). El gobierno elige una estrategia: ofensiva, diálogo de paz o inversión social.
 // Solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { registrarMuertes, quemar, dejarRuinas } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { counts, cap } from './reglas.js';
 import { climaActivo, marcarCrisis } from './clima.js';
@@ -85,6 +86,7 @@ export function conflictoDelAnio(S) {
       const i = cand[Math.floor(azar() * cand.length)], x = S.map[i];
       x.u = Math.min(100, (x.u || 0) + Tm.dano); x.sin = S.year;
       applyFx(S, { p: -Tm.perdida, c: Tm.legitimidad });
+      registrarMuertes(S, Tm.perdida, 'conflicto'); quemar(S, [i]); dejarRuinas(S, 'toma', [i]); // huellas: la toma deja muertos, hollín y a veces ruinas
       marcarCrisis(S);
       const t = T.toma.replace('{grupo}', g).replace('{obra}', C.B[x.b].a);
       S.confEv = { tipo: 'toma', nuevo: true, texto: t, obra: i }; news.push(t);

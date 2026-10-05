@@ -16,6 +16,7 @@ export function whyNot(S, k, i) {
   if (x.t === 'rio') return 'No se puede construir sobre el río.';
   if (x.b) return 'Esa casilla ya está ocupada.';
   if (x.oc && C.GUERRA) return C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre); // fase 9
+  if (x.mk && x.mk.t === 'resguardo' && C.HUELLAS) return C.HUELLAS.textos.resguardo;
   if (esColono(x) && C.HUELLAS) return C.HUELLAS.colonos.textos.bloquea; // huellas: la parcela de unos colonos
   const fu = motivoFundacion(S, k, i); if (fu) return fu; // la plaza de fundación y el casco urbano
   if (x.mk && x.mk.t === 'asentamiento') return 'Hay un asentamiento: primero decide si lo legalizas o lo desalojas.';

@@ -1,4 +1,5 @@
 // Leyes: cupos por etapa, costo y restricciones según el régimen.
+import { sincronizarLeyes } from './huellas.js';
 import { clamp } from './azar.js';
 import { C } from './contenido.js';
 import { RG, RM, hasLaw } from './reglas.js';
@@ -30,6 +31,7 @@ export function toggleLaw(S, id) {
   if (hasLaw(S, id)) {
     delete S.laws[id]; S.tr = clamp(S.tr - 2, 0, 100);
     S.log.unshift({ y: S.year, t: `Derogaste la ley: ${l.n}.` });
+    sincronizarLeyes(S); // huellas: las leyes que se ven
     return true;
   }
   S.gold -= lawCostNow(S);
@@ -38,5 +40,6 @@ export function toggleLaw(S, id) {
   S.log.unshift({ y: S.year, t: `Promulgaste la ley: ${l.n}.` });
   if (id === 'censura') contradecir(S, 'censura');
   if (id === 'censura' || id === 'prensa' || l.nueva) reaccionar(S, id);
+  sincronizarLeyes(S);
   return true;
 }

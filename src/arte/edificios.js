@@ -229,6 +229,48 @@ function recetas() {
   L.push(['m_colono', 64, 52, 32, 34, (g, r) => rancho(g, r, 'colono')]);
   L.push(['m_arriendo', 64, 52, 32, 34, (g, r) => rancho(g, r, 'arriendo')]);
   L.push(['m_sorteo', 64, 52, 32, 34, (g, r) => rancho(g, r, 'sorteo')]);
+  // Huellas, paso 3: la señal de cada ley vigente, pequeña, junto a las obras que toca.
+  const posteLey = (g, h = 14) => { g.strokeStyle = '#5A4430'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -h); g.stroke(); };
+  const tabla = (g, r, x, y, w, h, col) => { wash(g, [[x, y], [x + w, y], [x + w, y + h], [x, y + h]], col, r, .98); g.globalAlpha = .5; g.strokeStyle = FR.siena; g.lineWidth = .5; g.strokeRect(x, y, w, h); g.globalAlpha = 1; };
+  const LEY = {
+    educacion: (g, r) => { g.strokeStyle = '#6B4F3A'; g.lineWidth = 1; g.beginPath(); g.moveTo(-5, 0); g.lineTo(-2, -15); g.moveTo(5, 0); g.lineTo(2, -15); g.stroke(); tabla(g, r, -7, -15, 14, 9, '#2F4A3A'); g.strokeStyle = '#E8E2D0'; g.lineWidth = .5; g.beginPath(); g.moveTo(-5, -12); g.lineTo(3, -12); g.moveTo(-5, -9.5); g.lineTo(1, -9.5); g.stroke(); for (let k = 0; k < 3; k++) { g.fillStyle = [FR.rojo, FR.azul, FR.ocre][k]; g.fillRect(6, -1.6 - k * 1.6, 6, 1.5); } },
+    subsidio: (g, r) => { for (const [x, y] of [[-5, 0], [3, 1], [-1, -4]]) { blob(g, x, y - 3, 4, 4, '#D8C9A0', r, .97); g.fillStyle = FR.rojo; g.beginPath(); g.arc(x, y - 3, 1.2, 0, 7); g.fill(); } },
+    jornada: (g, r) => { posteLey(g, 16); g.fillStyle = '#F4EEDF'; g.beginPath(); g.arc(0, -19, 5, 0, 7); g.fill(); g.strokeStyle = FR.siena; g.lineWidth = .8; g.stroke(); g.beginPath(); g.moveTo(0, -19); g.lineTo(0, -22.5); g.moveTo(0, -19); g.lineTo(2.6, -19); g.stroke(); },
+    ambiente: (g, r) => { posteLey(g, 12); tabla(g, r, -6, -18, 12, 7, '#4F8A43'); blob(g, 0, -14.5, 2.2, 1.6, '#C9E0A8', r, .95); g.fillStyle = '#5A4430'; g.fillRect(8, -6, 1, 6); blob(g, 8.5, -8, 3, 3, '#5E9A4A', r, .95); },
+    arancel: (g, r) => { for (const x of [-9, 9]) { g.fillStyle = '#5A4430'; g.fillRect(x - .8, -8, 1.6, 8); } for (let k = 0; k < 6; k++) { g.fillStyle = k % 2 ? FR.cal : FR.rojo; g.fillRect(-9 + k * 3, -7, 3, 2); } },
+    prensa: (g, r) => { wash(g, [[-7, 0], [7, 0], [7, -11], [-7, -11]], '#B08E62', r, .98); wash(g, [[-9, -11], [9, -11], [7, -15], [-7, -15]], FR.rojo, r, .98); for (let k = 0; k < 3; k++) tabla(g, r, -6 + k * 4.2, -9, 3.4, 5, '#F4EEDF'); },
+    censura: (g, r) => { posteLey(g, 10); tabla(g, r, -7, -17, 14, 9, '#E8E2D0'); g.fillStyle = '#2A2420'; for (let k = 0; k < 3; k++) g.fillRect(-5, -15 + k * 2.5, 10, 1.4); g.strokeStyle = FR.rojo; g.lineWidth = 1.4; g.beginPath(); g.moveTo(-7, -17); g.lineTo(7, -8); g.moveTo(7, -17); g.lineTo(-7, -8); g.stroke(); },
+    bancoCentral: (g, r) => { iso(g, .1, .1, 0, 12, '#DCD0B4', '#C2B596', '#EDE4CC', r); g.fillStyle = '#D9A93A'; g.beginPath(); g.ellipse(0, -15, 4, 3.4, 0, 0, 7); g.fill(); g.strokeStyle = '#8A6A20'; g.lineWidth = .6; g.stroke(); },
+    sismo: (g, r) => { posteLey(g, 9); g.fillStyle = '#E8C23A'; g.beginPath(); g.moveTo(0, -18); g.lineTo(6, -8); g.lineTo(-6, -8); g.closePath(); g.fill(); g.strokeStyle = '#2A2420'; g.lineWidth = .8; g.beginPath(); g.moveTo(-3, -10.5); g.lineTo(-1, -13); g.lineTo(1, -10.5); g.lineTo(3, -13); g.stroke(); },
+    laico: (g, r) => { posteLey(g, 10); tabla(g, r, -8, -17, 16, 8, FR.azul); g.fillStyle = FR.cal; g.fillRect(-5, -14.5, 6, 4); g.strokeStyle = FR.cal; g.lineWidth = .7; g.beginPath(); g.moveTo(3, -10); g.lineTo(6, -15); g.stroke(); },
+    sufragio: (g, r) => { iso(g, .16, .12, 0, 6, '#8A6A48', '#6E5238', '#A8865E', r); iso(g, .12, .1, 6, 5, '#B08E62', '#8E7050', '#C9A577', r); g.fillStyle = '#2A2420'; g.fillRect(-2, -11.6, 4, .9); for (let k = 0; k < 3; k++) { g.fillStyle = ['#E8C23A', FR.azul, FR.rojo][k]; g.fillRect(-9, -18 + k * 1.6, 5, 1.6); } g.strokeStyle = '#5A4430'; g.lineWidth = .6; g.beginPath(); g.moveTo(-9, -18); g.lineTo(-9, -6); g.stroke(); },
+    tutela: (g, r) => { iso(g, .2, .12, 0, 5, '#8A6A48', '#6E5238', '#A8865E', r); g.strokeStyle = '#D9A93A'; g.lineWidth = .9; g.beginPath(); g.moveTo(0, -6); g.lineTo(0, -14); g.moveTo(-5, -12.5); g.lineTo(5, -12.5); g.stroke(); for (const x of [-5, 5]) { g.beginPath(); g.ellipse(x, -10.5, 2.2, .9, 0, 0, 7); g.stroke(); } },
+    progresivo: (g, r) => { posteLey(g, 10); tabla(g, r, -8, -18, 16, 10, '#E8E2D0'); for (let k = 0; k < 4; k++) { g.fillStyle = FR.ocre; g.fillRect(-6 + k * 3.4, -10 - (k + 1) * 1.6, 2.6, (k + 1) * 1.6); } },
+    seguridadSocial: (g, r) => { g.fillStyle = '#6E5238'; g.fillRect(-8, -5, 16, 1.6); g.fillRect(-8, -8.5, 16, 1.2); for (const x of [-7, 7]) g.fillRect(x - .6, -5, 1.2, 5); g.strokeStyle = '#5A4430'; g.lineWidth = .9; g.beginPath(); g.moveTo(9, 0); g.lineTo(9, -9); g.quadraticCurveTo(9, -11, 11, -10.5); g.stroke(); },
+    reformaAgraria: (g, r) => { g.strokeStyle = FR.cal; g.lineWidth = .5; g.beginPath(); g.moveTo(-16, -2); g.lineTo(16, 2); g.stroke(); for (const x of [-16, -5, 5, 16]) { g.fillStyle = '#F2ECDD'; g.fillRect(x - 1, -5 + x * .12, 2, 5); } },
+    consulta: (g, r) => { posteLey(g, 10); tabla(g, r, -9, -18, 9, 9, '#4F8A43'); tabla(g, r, 0, -18, 9, 9, FR.rojo); g.fillStyle = FR.cal; g.font = 'bold 5px sans-serif'; g.fillText('SÍ', -7.4, -11.5); g.fillText('NO', 1.2, -11.5); },
+    descentralizacion: (g, r) => { posteLey(g, 10); tabla(g, r, -7, -17, 14, 8, '#5E8A4A'); g.fillStyle = FR.cal; g.beginPath(); g.moveTo(-3, -11); g.lineTo(0, -14.5); g.lineTo(3, -11); g.lineTo(3, -10); g.lineTo(-3, -10); g.fill(); },
+    paz: (g, r) => { iso(g, .16, .16, 0, 8, '#DCD0B4', '#C2B596', '#EDE4CC', r); g.fillStyle = '#FBF8F0'; g.beginPath(); g.ellipse(0, -14, 5, 2.6, -.3, 0, 7); g.fill(); g.beginPath(); g.moveTo(-1, -15); g.quadraticCurveTo(-6, -22, -9, -19); g.quadraticCurveTo(-5, -17, -2, -14); g.fill(); g.beginPath(); g.ellipse(4.5, -16, 1.8, 1.6, 0, 0, 7); g.fill(); g.strokeStyle = '#9A9080'; g.lineWidth = .4; g.stroke(); g.strokeStyle = '#5E9A4A'; g.lineWidth = .8; g.beginPath(); g.moveTo(6, -15.5); g.lineTo(9, -14.5); g.stroke(); }
+  };
+  for (const [id, f] of Object.entries(LEY)) L.push(['ley_' + id, 40, 34, 20, 28, (g, r) => { sombra(g, 8, 2.5, 2); f(g, r); }]);
+  L.push(['m_resguardo', 64, 52, 32, 34, (g, r) => {
+    sombra(g, 24, 7, 4);
+    const q = V2(0, -.05);
+    wash(g, [[q[0] - 14, q[1]], [q[0] + 14, q[1]], [q[0] + 14, q[1] - 6], [q[0] - 14, q[1] - 6]], '#B08E62', r, .97);
+    wash(g, [[q[0] - 17, q[1] - 5], [q[0], q[1] - 30], [q[0] + 17, q[1] - 5]], '#C9A85E', r, .98); // techo cónico de palma
+    g.globalAlpha = .4; g.strokeStyle = '#7A5A28'; g.lineWidth = .5; for (let k = -3; k <= 3; k++) { g.beginPath(); g.moveTo(q[0], q[1] - 30); g.lineTo(q[0] + k * 5, q[1] - 5); g.stroke(); } g.globalAlpha = 1;
+    g.fillStyle = '#3A2E24'; g.fillRect(q[0] - 2, q[1] - 5, 4, 5);
+    for (let k = 0; k < 4; k++) { const p = V2(-.35 + k * .08, .3 - k * .04); g.strokeStyle = '#6E8A3A'; g.lineWidth = 1; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0], p[1] - 6); g.stroke(); blob(g, p[0], p[1] - 7, 2, 1.4, '#4F8A43', r, .9); }
+  }]);
+  // Huellas, paso 4: trinchera con sacos de arena y alambre; hollín de una obra quemada.
+  L.push(['m_trinchera', 64, 40, 32, 24, (g, r) => {
+    const A = V2(-.42, .2), B = V2(-.1, -.12), Cc = V2(.15, .1), D = V2(.42, -.2);
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    for (const [w, col] of [[9, '#A08A6A'], [5, '#4E3E30']]) { g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(...A); g.lineTo(...B); g.lineTo(...Cc); g.lineTo(...D); g.stroke(); }
+    for (let k = 0; k < 9; k++) { const t = k / 8, p = t < .33 ? [A[0] + (B[0] - A[0]) * t * 3, A[1] + (B[1] - A[1]) * t * 3] : t < .66 ? [B[0] + (Cc[0] - B[0]) * (t - .33) * 3, B[1] + (Cc[1] - B[1]) * (t - .33) * 3] : [Cc[0] + (D[0] - Cc[0]) * (t - .66) * 3, Cc[1] + (D[1] - Cc[1]) * (t - .66) * 3]; blob(g, p[0], p[1] - 4, 2.6, 1.6, k % 2 ? '#C9B98E' : '#B5A47A', r, .97); }
+    g.strokeStyle = '#5A5450'; g.lineWidth = .5; for (const x of [-20, -8, 4, 16]) { g.beginPath(); g.moveTo(x, 9); g.lineTo(x, 3); g.stroke(); } g.beginPath(); g.moveTo(-20, 5); for (let x = -20; x <= 16; x += 3) g.lineTo(x, 5 + (x % 2 ? 1 : -1)); g.stroke();
+  }]);
+  L.push(['hollin', 30, 24, 15, 20, (g, r) => { for (let k = 0; k < 6; k++) blob(g, -8 + k * 3.2, -6 - (k % 3) * 3, 3.5, 4.5, '#2A2420', r, .45); }]);
   // Fase 6: madrevieja, el humedal que deja el río cuando cambia de curso.
   L.push(['m_madrevieja', 64, 40, 32, 26, (g, r) => {
     const c = V2(0, 0);
