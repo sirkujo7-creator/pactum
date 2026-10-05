@@ -1,4 +1,18 @@
 {
+  "fundacion": {
+    "icono": "✝️",
+    "nombre": "Plaza de fundación",
+    "articulo": "la plaza de fundación",
+    "descripcion": "La primera obra del pueblo: una plaza de tierra con la cruz de fundación y una ceiba. Marca el centro; las casas y las obras del casco urbano se levantan a su alrededor.",
+    "costo": 20,
+    "mantenimiento": 0,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ],
+    "especial": "Marca el centro del pueblo y el casco urbano, que crece con cada etapa."
+  },
   "casa": {
     "icono": "🏠",
     "nombre": "Casas",

@@ -9,7 +9,7 @@ export const MAX_FIGURAS = 150;
 
 // Casilla que hace de plaza: la sede de gobierno, si no el mercado, el parque o la primera casa.
 export function plaza(S) {
-  for (const k of ['agora', 'mercado', 'parque', 'casa']) { const i = S.map.findIndex(x => x.b === k); if (i >= 0) return i; }
+  for (const k of ['agora', 'fundacion', 'mercado', 'parque', 'casa']) { const i = S.map.findIndex(x => x.b === k); if (i >= 0) return i; }
   return -1;
 }
 

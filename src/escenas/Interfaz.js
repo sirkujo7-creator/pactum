@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, faltaFundar, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, faltaFundar, ofrecerPlaza, radioCasco, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -212,14 +212,14 @@ export class Interfaz {
     // Meta, guía, promesas y exigencias (como en la v9).
     const nx = C.STAGES[S.stage + 1], g = S.guide && S.gstep < C.GUIDE.length ? C.GUIDE[S.gstep] : null;
     const ff = faltaFundar(S);
-    const meta = ff ? `Funda tu aldea: elige dónde construir ${ff.casas} ${ff.casas === 1 ? 'casa' : 'casas'} y ${ff.fincas} ${ff.fincas === 1 ? 'finca' : 'fincas'} (el oro ya lo tienes). Junto al río la comida rinde más.` : S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${reqEtapa(S, S.stage + 1)}${S.stage === 2 && vecinosActivos(S) ? `; relaciones de ${C.VECINOS.minimo} con los vecinos` : ''}).` : `Meta: sostener la Polis ${aniosPolis(S)} años.`;
+    const meta = ff && ff.plaza ? C.HUELLAS.fundacion.textos.meta.replace('{casas}', `${ff.casas} ${ff.casas === 1 ? 'casa' : 'casas'}`).replace('{fincas}', `${ff.fincas} ${ff.fincas === 1 ? 'finca' : 'fincas'}`) : ff ? `Funda tu aldea: elige dónde construir ${ff.casas} ${ff.casas === 1 ? 'casa' : 'casas'} y ${ff.fincas} ${ff.fincas === 1 ? 'finca' : 'fincas'} (el oro ya lo tienes). Junto al río la comida rinde más.` : S.ganado ? '🏛️ Polis sostenida: ganaste. Sigues gobernando sin meta fija.' : nx ? `Meta: ${nx.n} (${reqEtapa(S, S.stage + 1)}${S.stage === 2 && vecinosActivos(S) ? `; relaciones de ${C.VECINOS.minimo} con los vecinos` : ''}).` : `Meta: sostener la Polis ${aniosPolis(S)} años.`;
     const pr = S.promises.map(p => `Promesa: ${C.B[p.k].a} antes del año ${p.dl}.`).join(' ');
     const pron = climaActivo(S) && S.clima.pronostico, FEN = C.CLIMA && C.CLIMA.fenomenos;
     const avisoClima = pron ? `${FEN[pron.tipo].icono} <b>${FEN[pron.tipo].nombre} llega el año ${pron.anio}.</b> Fondo de emergencias: ${Math.round(S.fondo || 0)} de oro.` : '';
     const avisoEco = economiaActiva(S) && S.eco.aviso ? `📉 <b>Recesión anunciada para el año ${S.eco.aviso.anio}.</b>` : '';
     const aviso = avisoClima || avisoEco;
     // La meta siempre queda a la vista en la primera línea; avisos y guía van en la segunda.
-    const segunda = ff ? 'Toca <b>Construir</b>, elige <b>Casas</b> o <b>Finca</b> y luego el lugar en el mapa. La primera obra marca el centro de tu pueblo.' : aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : '');
+    const segunda = ff && ff.plaza ? C.HUELLAS.fundacion.textos.metaGuia : ff ? 'Toca <b>Construir</b>, elige <b>Casas</b> o <b>Finca</b> y luego el lugar en el mapa. La primera obra marca el centro de tu pueblo.' : aviso || (g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t}` : '');
     this.meta.innerHTML = `<div class="gl1"><b>${meta}</b></div>${segunda ? `<div class="gl1 gl2">${segunda}</div>` : ''}` +
       `<div class="gmore">${aviso && g ? `<b>Guía ${S.gstep + 1}/${C.GUIDE.length}</b> ${g.t} ` : ''}${avisoClima ? FEN[pron.tipo].preparar + ' ' : avisoEco ? C.ECO.textos.preparar + ' ' : ''}${pr ? pr + ' ' : ''}${L && L.cosecha !== 1 ? `${L.icono} ${L.texto} ` : ''}${S.expc > 0 ? `<span class="neg">${culturaActiva(S) ? `El pueblo pide cultura y sentido (−${S.expc} de ánimo): canchas, biblioteca, teatro, estadio, fiestas, parques, sede y universidad lo calman.` : `El pueblo exige más calidad de vida (−${S.expc} de ánimo): parques, sede de gobierno y universidad la mejoran.`}</span> ` : ''}${climaActivo(S) && C.VICTORIAS ? '<span class="lnk" role="button" tabindex="0" data-caminos>Caminos a la victoria</span> ' : ''}${g ? '<span class="lnk" role="button" tabindex="0" data-ocultar>Ocultar guía</span>' : ''}</div>`;
     const cv = this.meta.querySelector('[data-caminos]');
@@ -241,7 +241,7 @@ export class Interfaz {
 
   renderConstruir() {
     const S = this.S;
-    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
+    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
       const bloqueada = b.st > S.stage;
       return el('button', {
         class: 'tool' + (this.herramienta === k ? ' on' : ''), 'aria-pressed': String(this.herramienta === k),
@@ -772,10 +772,11 @@ export class Interfaz {
         hijos.push(el('span', { text: o.det ? T.parada.replace('{c}', o.c) : o.p >= o.n ? T.ultimoAnio : T.proximoPago.replace('{c}', o.c) }));
         hijos.push(el('span', { class: 'small', text: C.OBRAS.leccion }));
       }
+      if (x.b === 'fundacion') { const r = radioCasco(S); hijos.push(el('span', { class: 'small', text: (r ? C.HUELLAS.fundacion.textos.casco.replace('{r}', r) + ' ' : '') + C.HUELLAS.leccion })); }
       const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3), rep = S.desgaste && !x.ob ? costoReparar(S, i) : 0;
       if (rep) hijos.push(el('button', { class: 'btn', style: 'grid-column:1/-1;margin-top:6px', ...(S.over || S.gold < rep ? { disabled: '' } : {}), on: { click: () => this.mapa.repararObra(i) } }, `Reparar (−${rep} oro)`));
       hijos.push(el('div', { class: 'dos' }, [
-        el('button', { class: 'btn', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.mapa.demoler(i) } }, `Demoler (+${g} oro)`),
+        x.b === 'fundacion' ? el('span', { class: 'small', text: C.HUELLAS.fundacion.textos.noDemoler }) : el('button', { class: 'btn', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.mapa.demoler(i) } }, `Demoler (+${g} oro)`),
         el('button', { class: 'btn', on: { click: () => this.cerrarFicha() } }, 'Cerrar')
       ]));
     } else {

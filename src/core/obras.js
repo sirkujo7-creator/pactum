@@ -16,6 +16,7 @@ export function whyNot(S, k, i) {
   if (x.t === 'rio') return 'No se puede construir sobre el río.';
   if (x.b) return 'Esa casilla ya está ocupada.';
   if (x.oc && C.GUERRA) return C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre); // fase 9
+  const fu = motivoFundacion(S, k, i); if (fu) return fu; // la plaza de fundación y el casco urbano
   if (x.mk && x.mk.t === 'asentamiento') return 'Hay un asentamiento: primero decide si lo legalizas o lo desalojas.';
   const finca = fincasActivas(S); // fase 10: el café se siembra en una finca; la finca va en llano o en bosque (talándolo)
   if (finca && k === 'cafetal') return C.CULTIVOS.textos.sinCafetal;
@@ -71,6 +72,7 @@ export function undoBuild(S) {
   if (u.acta) deshacerFaltas(S, u.acta);
   if (u.rel) restaurarRelaciones(S, u.rel);
   if (u.mk) x.mk = u.mk;
+  if (u.k === 'fundacion' && S.fundando) { S.fundando.plaza = 1; delete S.centro; } // deshacer la plaza: se vuelve a elegir el centro
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
   if (S.pop > cap(S)) S.pop = cap(S);
   return u;
@@ -79,7 +81,7 @@ export function undoBuild(S) {
 // Demoler devuelve el 30% del costo actual.
 export function demolish(S, i) {
   const x = S.map[i];
-  if (!x.b) return 0;
+  if (!x.b || x.b === 'fundacion') return 0; // la plaza de fundación no se demuele
   const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3);
   // Fase 5: demoler patrimonio cuesta legitimidad y queda en la memoria.
   if (esPatrimonio(S, x)) { S.tr = clamp(S.tr - C.MEMORIA.demolerPatrimonio, 0, 100); recordar(S, 'olvido', 2); }
@@ -98,6 +100,7 @@ import { counts } from './reglas.js';
 import { esPatrimonio, recordar } from './memoria.js';
 import { industriaActiva } from './industria.js';
 import { avanzarFundacion } from './estado.js';
+import { motivoFundacion } from './huellas.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };

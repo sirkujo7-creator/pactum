@@ -36,7 +36,7 @@ export function requisitoAvance(a, S) {
 function estado(S) { if (!S.avances) S.avances = { vistos: {}, ediciones: [] }; return S.avances; }
 export function estadoAvances(S) { return estado(S); }
 // Obras que se abren con una etapa (sin el cafetal, que ahora es un cultivo de la finca).
-export function obrasDeEtapa(etapa) { return Object.entries(C.B).filter(([k, b]) => b.st === etapa && !(k === 'cafetal' && C.CULTIVOS)).map(([k]) => k); }
+export function obrasDeEtapa(etapa) { return Object.entries(C.B).filter(([k, b]) => b.st === etapa && !(k === 'cafetal' && C.CULTIVOS) && k !== 'fundacion').map(([k]) => k); }
 // Primera vez (partida nueva o guardada antes de este paso): lo que ya se cumple se anota sin periódico.
 function empezar(S) {
   const A = estado(S);
