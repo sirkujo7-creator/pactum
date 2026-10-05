@@ -36,6 +36,7 @@ export class Mapa extends Phaser.Scene {
     this.ui = new Interfaz(this);
     this.events.once('shutdown', () => {
       this.ui.destruir();
+      if (this._toque) for (const ev of ['touchend', 'click', 'keydown']) document.removeEventListener(ev, this._toque);
       for (const k of ['fondo', ...Object.keys(this.sectores || {})]) if (this.textures.exists(k)) this.textures.remove(k);
     });
     this.ui.avisar('Pintando el territorio…');
@@ -100,7 +101,12 @@ export class Mapa extends Phaser.Scene {
     this.listo = true;
     guardarYa(this.S);
     // Si el jugador dejó el sonido encendido, vuelve con el primer toque (los navegadores lo exigen así).
-    if (quiereSonido() && !Sonido.on) document.addEventListener('pointerdown', () => { if (!Sonido.on) { Sonido.start(); this.ui.render(); } }, { once: true });
+    // El sonido arranca con el primer toque (en iPhone debe ser un toque completo: touchend o click) y se reactiva si el
+    // aparato lo suspende (por ejemplo, al volver a la app).
+    if (!this._toque) {
+      this._toque = () => { if (quiereSonido() && !Sonido.on) { Sonido.start(); this.ui.render(); } else Sonido.despertar(); };
+      for (const ev of ['touchend', 'click', 'keydown']) document.addEventListener(ev, this._toque);
+    }
     // Al empezar: la bienvenida en una partida nueva, o el dilema pendiente si lo hay.
     if (this.nueva && this.opciones.bienvenida) this.ui.ayuda(true);
     else if (this.S.pend) this.ui.suceso(() => this.ui.render());
