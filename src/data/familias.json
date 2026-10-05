@@ -1,6 +1,6 @@
 {
   "leccion": "La historia no la viven los gobiernos sino las familias. Lo que en el libro de historia es una cifra, en una casa es un nombre.",
-  "intervalo": 3,
+  "intervalo": 6,
   "textos": {
     "de": "Carta de {quien}",
     "anio": "Año {anio} del territorio",
@@ -144,8 +144,8 @@
     {
       "id": "rojas1",
       "familia": "rojas",
-      "desde": 1,
-      "hasta": 10,
+      "desde": 3,
+      "hasta": 12,
       "de": "Rosa Rojas",
       "escena": "tierras",
       "variantes": [

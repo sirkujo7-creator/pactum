@@ -115,6 +115,7 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | Ajuste | Estado |
 | --- | --- |
 | Fundar a elección y movimiento más suave | Publicado (0.73.0). Las partidas nuevas empiezan con el mapa vacío: el jugador escoge dónde fundar con la **misión de fundación** (2 casas y 2 fincas, con el oro que valían ya en el tesoro); la primera obra marca el centro del pueblo y no se puede cerrar el primer año sin al menos una casa y una finca. Los robots y las partidas guardadas siguen igual (`?clasico=1` abre una partida con la aldea de antes). Movimiento: cada figura usa el mismo pincel en sus cuatro pasos (antes el dibujo «temblaba» al caminar), el arriero conserva su ropa (antes cambiaba de color en cada paso), la gente y los animales ya no se voltean de un lado al otro en las esquinas, los animales tienen un leve vaivén al andar y el tráfico es menor (máximo 4, solo con 4 o más tramos de calle) y descansa entre viaje y viaje |
+| Caminos naturales y cartas más espaciadas | Publicado (0.74.0). Los caminos ya no tienen borde dibujado ni parecen en relieve: orilla difusa, cuerpo semitransparente y centro gastado, en tonos de tierra (herradura), piedra (empedrado) y asfalto (carretera). Las cartas de las familias llegan cada 6 años como mucho (antes 3), nunca el mismo año en que se elige el rasgo de la época, y la primera llega hacia el año 2 o 3 |
 
 ## Estado de la fase 13 (historias humanas)
 

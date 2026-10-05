@@ -36,6 +36,7 @@ export function familiasDelAnio(S) {
   if (!familiasActivas(S)) return [];
   const E = estado(S);
   if (S.year - E.ultima < K().intervalo) return [];
+  if (S.rasgoEv && S.rasgoEv.nuevo) return []; // el año en que se elige el rasgo ya trae bastante
   const p = cartaPosible(S);
   if (!p) return [];
   const V = p.c.variantes[p.v], r = { id: p.c.id, v: p.v, anio: S.year, n: E.cartas.length + 1 };
