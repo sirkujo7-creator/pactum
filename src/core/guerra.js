@@ -5,6 +5,7 @@
 // pierde el frente ve ocupadas casillas de su borde hasta recuperarlas. Al final se firma un tratado de paz.
 // Solo en el terreno en acuarela, desde Ciudad.
 import { C } from './contenido.js';
+import { registrarMuertes } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { counts } from './reglas.js';
 import { climaActivo, marcarCrisis } from './clima.js';
@@ -188,7 +189,7 @@ function anioDeGuerra(S) {
   news.push(txt('anio', id, { resultado: P.textos[diff > 0 ? 'avanzas' : 'retrocedes'] }));
   // Asedio: gasto, gente, ánimo, comida y daño en las obras del borde.
   S.gold -= Math.round(X.oro * S.price);
-  S.pop = Math.max(1, S.pop - Math.round(S.pop * X.poblacion));
+  const caidos = Math.min(S.pop - 1, Math.round(S.pop * X.poblacion)); S.pop = Math.max(1, S.pop - caidos); registrarMuertes(S, caidos, 'guerra');
   for (const k of ['c', 'a', 'e']) S.sat[k] = clamp(S.sat[k] - X.animo, 0, 100);
   S.food = Math.max(0, S.food - Math.round(S.food * X.alimento));
   S.vecinos[id].rel = Math.min(S.vecinos[id].rel, 10);

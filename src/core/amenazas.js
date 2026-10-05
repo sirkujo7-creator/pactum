@@ -3,6 +3,7 @@
 // frecuentes El Niño y La Niña. Son crisis mayores: respetan los años de respiro y siempre se pueden preparar.
 // Solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { registrarMuertes, dejarRuinas, noticiaRuinas, factorEpidemia } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { counts, epocaHistorica } from './reglas.js';
 import { marcarCrisis } from './clima.js';
@@ -45,12 +46,12 @@ export function amenazasDelAnio(S, libre) {
   if (!libre) return news;
   // Epidemia.
   const E = R.epidemia;
-  if (S.stage >= E.desdeEtapa && S.year - A.ultEpi >= E.enfriar && azar() < E.prob) {
+  if (S.stage >= E.desdeEtapa && S.year - A.ultEpi >= E.enfriar && azar() < E.prob * factorEpidemia(S)) { // huellas: sin cementerio, más riesgo
     const t = tipoEpidemia(S), perdidos = Math.max(1, Math.round(S.pop * perdidaEpidemia(S)));
     const costo = Math.round(S.pop * E.costoPorHabitante * S.price), fondo = Math.min(S.fondo || 0, costo);
     S.pop = Math.max(1, S.pop - perdidos); S.fondo = (S.fondo || 0) - fondo; S.gold -= costo - fondo;
     ['c', 'a', 'e'].forEach(k => S.sat[k] = clamp(S.sat[k] - E.animo, 0, 100));
-    A.ultEpi = S.year; marcarCrisis(S);
+    A.ultEpi = S.year; marcarCrisis(S); registrarMuertes(S, perdidos, 'epidemia');
     S.amenEv = { tipo: 'epidemia', id: t.id, perdidos, costo, fondo, vigilancia: !!A.vigilancia };
     news.push(`${t.icono} ${t.nombre}: se perdieron ${perdidos} vidas.`);
     return news;
@@ -58,13 +59,15 @@ export function amenazasDelAnio(S, libre) {
   // Avenida torrencial.
   const V = R.avenida;
   if (S.year - A.ultAven >= V.enfriar && azar() < probAvenida(S)) {
-    let danadas = 0;
-    S.map.forEach((x, i) => { if (x.b && ((x.h || 0) >= 1 || nearRiver(S, i)) && azar() < (x.tl || x.er > 0 ? .7 : .25)) { x.u = Math.min(100, (x.u || 0) + V.dano); x.sin = S.year; danadas++; } });
+    let danadas = 0; const tocadas = [];
+    S.map.forEach((x, i) => { if (x.b && ((x.h || 0) >= 1 || nearRiver(S, i)) && azar() < (x.tl || x.er > 0 ? .7 : .25)) { x.u = Math.min(100, (x.u || 0) + V.dano); x.sin = S.year; danadas++; tocadas.push(i); } });
     const perdidos = Math.round(S.pop * V.perdida * (1 + laderasPeladas(S)));
     S.pop = Math.max(1, S.pop - perdidos);
-    A.ultAven = S.year; marcarCrisis(S);
-    S.amenEv = { tipo: 'avenida', danadas, perdidos, peladas: Math.round(laderasPeladas(S) * 100) };
+    A.ultAven = S.year; marcarCrisis(S); registrarMuertes(S, perdidos, 'avenida');
+    const ruinas = dejarRuinas(S, 'avenida', tocadas);
+    S.amenEv = { tipo: 'avenida', danadas, perdidos, ruinas, peladas: Math.round(laderasPeladas(S) * 100) };
     news.push(`${V.icono} ${V.nombre}: ${danadas} obras dañadas.`);
+    if (ruinas) news.push(noticiaRuinas(ruinas));
   }
   return news;
 }

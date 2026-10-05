@@ -195,7 +195,7 @@ export function pintarFondo(T, escala = 1, glaciar = 1) { // fase 10: el casquet
 }
 
 // ---------- Obras pintadas en el suelo ----------
-const DE_PIE = new Set(['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'acueducto', 'molino', 'puerto', 'parque', 'fundacion']);
+const DE_PIE = new Set(['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'acueducto', 'molino', 'puerto', 'parque', 'fundacion', 'cementerio']);
 const conCamino = b => !!b && b !== 'mina';
 
 // Caminos entre obras vecinas y puentes cuando las separa una casilla de río (como en la versión 9).
@@ -275,7 +275,7 @@ function pintarObras(g, T, mapa, k, dry, conCalles, anio) {
     const lado = (p, q, col) => { const hp = tierra(p), hq = tierra(q); if (hp >= h && hq >= h) return; wash(g, [P(p[0], p[1], h), P(q[0], q[1], h), P(q[0], q[1], Math.min(hq, h)), P(p[0], p[1], Math.min(hp, h))], col, rng, .95, .2); };
     lado(D, C, '#A88B62'); lado(C, B, '#8C7250');
     const top = esq.map(([r, c]) => P(r, c, h));
-    wash(g, top, b === 'parque' ? mix('#9CC57D', DRYC, dry * .5) : b === 'fundacion' ? '#DCCDA8' : '#CDBB93', rng, .95, .6);
+    wash(g, top, b === 'parque' ? mix('#9CC57D', DRYC, dry * .5) : b === 'fundacion' ? '#DCCDA8' : b === 'cementerio' ? '#C2C29A' : '#CDBB93', rng, .95, .6);
     if (b === 'parque') { const c = P(t.r + .5, t.c + .5, h); g.globalAlpha = .7; g.fillStyle = '#E7DDC4'; g.beginPath(); g.ellipse(c[0], c[1], 17, 7, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
     else { g.globalAlpha = .18; g.strokeStyle = '#8C7250'; g.lineWidth = .6; for (let s = 0; s < 5; s++) { const c = P(t.r + .2 + rng() * .6, t.c + .2 + rng() * .6, h); g.beginPath(); g.moveTo(c[0] - 3, c[1]); g.lineTo(c[0] + 3, c[1] + .5); g.stroke(); } g.globalAlpha = 1; }
   }

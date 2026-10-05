@@ -14,7 +14,8 @@
       "fundacion",
       "acueducto",
       "molino",
-      "puerto"
+      "puerto",
+      "cementerio"
     ],
     "textos": {
       "primero": "Primero levanta la plaza de fundación: marca el centro de tu pueblo.",
@@ -26,5 +27,42 @@
       "fundada": "Se levanta la cruz de fundación: aquí estará la plaza mayor del pueblo.",
       "casco": "Casco urbano: {r} casillas alrededor de la plaza. Fincas, minas y obras del río pueden ir más lejos."
     }
+  },
+  "cementerio": {
+    "distancia": 4,
+    "capacidad": 40,
+    "desdeMuertos": 3,
+    "animo": 4,
+    "epidemia": 1.6,
+    "textos": {
+      "cerca": "El cementerio debe quedar a {d} casillas o más de la plaza, por salud.",
+      "leccion": "En 1787 una cédula real de Carlos III ordenó sacar los cementerios de las iglesias y llevarlos fuera de los pueblos: los muertos enterrados entre los vivos propagaban enfermedades. Así nacieron los cementerios a las afueras.",
+      "partes": "Muertos sin sepultura digna",
+      "falta": "{n} muertos sin sepultura digna: construye un cementerio lejos de la plaza (el pueblo se aflige y las epidemias se propagan más).",
+      "lleno": "El cementerio está lleno ({n} muertos de {c}): hace falta otro.",
+      "ficha": "Tumbas: {n} de {c}."
+    }
+  },
+  "ruinas": {
+    "prob": {
+      "terremoto": 0.35,
+      "terremotoLey": 0.1,
+      "erupcion": 0.5,
+      "avenida": 0.4
+    },
+    "textos": {
+      "ficha": "En ruinas desde el año {anio}: no da nada hasta que la reconstruyas.",
+      "boton": "Reconstruir (−{c} oro)",
+      "noticia": "🏚️ {n} obras quedaron en ruinas."
+    }
+  },
+  "luto": {
+    "anios": 3,
+    "minimo": 2,
+    "texto": "Velas y flores en la plaza: el pueblo llora a sus {n} muertos del año {anio}."
+  },
+  "epidemia": {
+    "anios": 2,
+    "texto": "Banderas amarillas en las casas con enfermos, como se hacía con la fiebre amarilla."
   }
 }

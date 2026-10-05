@@ -375,6 +375,47 @@ function recetas() {
     g.globalAlpha = .55; g.strokeStyle = FR.siena; g.lineWidth = .7; g.strokeRect(-2.2, -44, 4.4, 35); g.strokeRect(-9, -37.5, 18, 4.5); g.globalAlpha = 1;
     for (const [x, c] of [[-6, FR.rojo], [5, FR.ocre]]) blob(g, x, -1, 2, 1.3, c, r, .85); // flores al pie
   }]);
+  // Huellas, paso 1: cementerio con tapia blanca, tumbas, ciprés, ruinas, velas de luto y bandera amarilla.
+  L.push(['cementerio', 72, 50, 36, 30, (g, r) => {
+    sombra(g, 30, 9, 4);
+    const T = '#EDE6D6', TL = '#D6CDB8', TR = '#C4BAA3';
+    iso(g, .86, .07, 0, 6, TL, TR, T, r, 0, -.4);   // tapia del fondo
+    iso(g, .07, .86, 0, 6, TL, TR, T, r, -.4, 0);   // tapia izquierda (fondo)
+    iso(g, .07, .3, 0, 6, TL, TR, T, r, .4, -.27);  // tapia derecha, a los lados de la portada
+    iso(g, .07, .3, 0, 6, TL, TR, T, r, .4, .27);
+    iso(g, .3, .07, 0, 6, TL, TR, T, r, -.27, .4);  // tapia del frente
+    iso(g, .3, .07, 0, 6, TL, TR, T, r, .27, .4);
+    const p = V2(.4, 0); // portada con arco
+    wash(g, [[p[0] - 5, p[1] + 2], [p[0] + 1, p[1] - 1], [p[0] + 1, p[1] - 13], [p[0] - 5, p[1] - 10]], T, r, .98);
+    g.fillStyle = '#4A3A2E'; g.globalAlpha = .8; g.beginPath(); g.moveTo(p[0] - 3.6, p[1] + .8); g.lineTo(p[0] - .4, p[1] - .8); g.lineTo(p[0] - .4, p[1] - 6.5); g.quadraticCurveTo(p[0] - 2, p[1] - 9, p[0] - 3.6, p[1] - 5); g.fill(); g.globalAlpha = 1;
+    g.strokeStyle = '#7A6A58'; g.lineWidth = .8; g.beginPath(); g.moveTo(p[0] - 2, p[1] - 12); g.lineTo(p[0] - 2, p[1] - 17); g.moveTo(p[0] - 3.5, p[1] - 15.5); g.lineTo(p[0] - .5, p[1] - 15.5); g.stroke();
+  }]);
+  L.push(['tumba', 10, 14, 5, 12, (g, r) => {
+    blob(g, 0, 0, 4, 1.8, '#9C8C6E', r, .8);
+    g.fillStyle = '#F2ECDD'; g.fillRect(-.8, -10, 1.6, 10); g.fillRect(-3, -7.5, 6, 1.5);
+    g.globalAlpha = .5; g.strokeStyle = FR.siena; g.lineWidth = .4; g.strokeRect(-.8, -10, 1.6, 10); g.globalAlpha = 1;
+  }]);
+  L.push(['cipres', 16, 40, 8, 38, (g, r) => {
+    sombra(g, 5, 2, 2); g.fillStyle = '#5A4430'; g.fillRect(-.8, -4, 1.6, 4);
+    for (let k = 0; k < 5; k++) blob(g, Math.sin(k) * .6, -8 - k * 5.5, 4.2 - k * .55, 5, k % 2 ? '#2E4A33' : '#3A5A3C', r, .95);
+  }]);
+  L.push(['ruina', 64, 46, 32, 30, (g, r) => {
+    sombra(g, 26, 8, 4);
+    for (let k = 0; k < 9; k++) blob(g, -16 + k * 4 + Math.sin(k * 3) * 2, 6 - (k % 3) * 2, 5 + k % 3, 2.5, ['#A39079', '#8E7B66', '#B7A58C'][k % 3], r, .95);
+    wash(g, [[-14, 2], [-2, 8], [-2, -6], [-6, -12], [-9, -5], [-14, -9]], '#E4D9C2', r, .97); // muro quebrado
+    wash(g, [[-2, 8], [10, 2], [10, -4], [5, -1], [2, -8], [-2, -6]], '#CBBFA6', r, .97);
+    g.globalAlpha = .7; g.strokeStyle = '#4A3A2E'; g.lineWidth = .8; g.beginPath(); g.moveTo(-8, -3); g.lineTo(-6, 1); g.lineTo(-8, 4); g.stroke(); g.globalAlpha = 1;
+    for (let k = 0; k < 7; k++) blob(g, 4 + (k % 4) * 4 - 6, 6 + Math.floor(k / 4) * 3, 2.6, 1.3, k % 2 ? '#B5452E' : '#9E3A26', r, .95); // tejas caídas
+    g.strokeStyle = '#5A4430'; g.lineWidth = 1.6; g.lineCap = 'round'; g.beginPath(); g.moveTo(-12, -2); g.lineTo(8, -9); g.moveTo(-4, 6); g.lineTo(12, -3); g.stroke(); // vigas
+  }]);
+  L.push(['velas', 30, 20, 15, 14, (g, r) => {
+    for (const [x, y, c] of [[-8, 2, FR.rojo], [7, 3, FR.ocre], [-1, 4, '#F2ECDD'], [10, -1, FR.rojo]]) blob(g, x, y, 2.4, 1.4, c, r, .9);
+    for (const [x, y, h] of [[-5, 0, 7], [-1, 1, 9], [3, 0, 6], [6, 2, 8], [-3, 3, 5]]) {
+      g.fillStyle = '#F4EEDF'; g.fillRect(x - .8, y - h, 1.6, h);
+      const gr = g.createRadialGradient(x, y - h - 1.5, 0, x, y - h - 1.5, 3); gr.addColorStop(0, 'rgba(255,214,120,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(x - 3, y - h - 4.5, 6, 6);
+    }
+  }]);
+  L.push(['bandera-amarilla', 16, 26, 3, 24, g => bandera(g, 0, 0, 20, '#E8C23A')]);
   L.push(['fuente', 44, 34, 22, 24, (g, r) => {
     sombra(g, 12, 3.5, 3); g.fillStyle = '#D8CCB2'; g.beginPath(); g.ellipse(0, -2, 12, 5, 0, 0, 7); g.fill(); g.fillStyle = '#BFB296'; g.fillRect(-12, -2, 24, 3); g.beginPath(); g.ellipse(0, 1, 12, 5, 0, 0, Math.PI); g.fill();
     g.fillStyle = '#86BDD2'; g.beginPath(); g.ellipse(0, -2.5, 9.5, 3.6, 0, 0, 7); g.fill(); g.fillStyle = '#D8CCB2'; g.fillRect(-1.5, -12, 3, 10); g.fillStyle = '#B9E0EC'; g.beginPath(); g.ellipse(0, -12, 3, 1.4, 0, 0, 7); g.fill();
@@ -484,6 +525,7 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'agora': return [{ k: 'sede-' + reg }];
     // Fase 8: parque ordenado: la fuente al centro, dos árboles a los lados y setos.
     case 'fundacion': return [{ k: 'cruzFundacion', du: .06, dv: .06 }, { k: 'arbol', du: -.3, dv: -.28, s: 1.1, n: true }];
+    case 'cementerio': return [{ k: 'cementerio' }, { k: 'cipres', du: -.3, dv: -.32 }, { k: 'cipres', du: -.36, dv: .05, s: .85 }];
     case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.3, s: .9, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
     case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];

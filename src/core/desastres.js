@@ -3,6 +3,7 @@
 // mantenimiento y el fondo de emergencias; lección del Eje Cafetero, 1999). Son crisis mayores: respetan los años
 // de respiro. Solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { registrarMuertes, dejarRuinas, noticiaRuinas } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { hasLaw } from './reglas.js';
 import { climaActivo, marcarCrisis } from './clima.js';
@@ -41,22 +42,23 @@ export function comprarPlan(S) {
 
 function erupcion(S) {
   const V = volcan(S), E = K().volcan.erupcion, T = K().volcan.textos;
-  let danadas = 0;
+  let danadas = 0; const fuertes = [];
   S.map.forEach((x, i) => {
     if (!x.b) return;
     const d = nearRiver(S, i) ? E.danoRibera : azar() < .3 ? E.danoOtros : 0;
-    if (d) { x.u = Math.min(100, (x.u || 0) + d); x.sin = S.year; danadas++; }
+    if (d) { x.u = Math.min(100, (x.u || 0) + d); x.sin = S.year; danadas++; if (d === E.danoRibera) fuertes.push(i); }
   });
   const perdidos = Math.round(S.pop * (V.plan ? E.perdidaConPlan : E.perdidaSinPlan));
   S.pop = Math.max(1, S.pop - perdidos);
   S.tr = clamp(S.tr + (V.plan ? E.legitimidadConPlan : E.legitimidadSinPlan), 0, 100);
   if (!V.plan) reaccionar(S, 'ignorarVolcan');
   S.ceniza = S.year + 1; S.lahar = S.year;
-  S.desastre = { tipo: 'erupcion', anio: S.year, plan: V.plan, perdidos, danadas, nuevo: true };
+  registrarMuertes(S, perdidos, 'erupcion'); const ruinas = dejarRuinas(S, 'erupcion', fuertes); // huellas: muertos y ruinas
+  S.desastre = { tipo: 'erupcion', anio: S.year, plan: V.plan, perdidos, danadas, ruinas, nuevo: true };
   const conPlan = V.plan;
   V.nivel = 1; V.desde = S.year; V.plan = false; // tras la erupción, hay que volver a prepararse
   marcarCrisis(S);
-  return [T.erupcion, conPlan ? T.conPlan : T.sinPlan];
+  return [T.erupcion, conPlan ? T.conPlan : T.sinPlan, noticiaRuinas(ruinas)].filter(Boolean);
 }
 
 // Cierre del año: volcán y terremoto (como mucho uno). Devuelve las noticias.
@@ -77,16 +79,18 @@ export function desastresDelAnio(S) {
   const Q = D.terremoto;
   if (!S.desastre?.nuevo && S.stage >= Q.desde.etapa && S.year >= Q.desde.anio && crisisLibre(S, S.year) && azar() < Q.prob) {
     const ley = hasLaw(S, 'sismo');
-    let danadas = 0;
-    S.map.forEach(x => { if (x.b && azar() < (ley ? Q.danoProbConLey : Q.danoProb)) { x.u = Math.min(100, (x.u || 0) + Q.dano + ((x.u || 0) > 40 ? Q.danoExtraViejas : 0)); danadas++; } });
+    let danadas = 0; const tocadas = [];
+    S.map.forEach((x, i) => { if (x.b && azar() < (ley ? Q.danoProbConLey : Q.danoProb)) { x.u = Math.min(100, (x.u || 0) + Q.dano + ((x.u || 0) > 40 ? Q.danoExtraViejas : 0)); danadas++; tocadas.push(i); } });
     const perdidos = Math.round(S.pop * (ley ? Q.perdidaConLey : Q.perdida));
     S.pop = Math.max(1, S.pop - perdidos);
     const costo = Math.round(S.pop * Q.costoPorHabitante * S.price), cubierto = Math.min(S.fondo || 0, costo);
     S.fondo = (S.fondo || 0) - cubierto; S.gold -= costo - cubierto;
     if (!ley) S.tr = clamp(S.tr + Q.legitimidad, 0, 100);
-    S.desastre = { tipo: 'terremoto', anio: S.year, ley, perdidos, danadas, costo, cubierto, nuevo: true };
+    registrarMuertes(S, perdidos, 'terremoto'); const ruinas = dejarRuinas(S, ley ? 'terremotoLey' : 'terremoto', tocadas);
+    S.desastre = { tipo: 'terremoto', anio: S.year, ley, perdidos, danadas, ruinas, costo, cubierto, nuevo: true };
     marcarCrisis(S);
     news.push(Q.textos.ocurre, ley ? Q.textos.conLey : Q.textos.sinLey);
+    if (ruinas) news.push(noticiaRuinas(ruinas));
   }
   return news;
 }

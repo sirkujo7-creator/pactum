@@ -47,7 +47,7 @@ export function reparar(S, i) {
   const g = costoReparar(S, i);
   if (!g) return 'No necesita reparación.';
   if (S.gold < g) return `Te faltan ${g - Math.floor(S.gold)} de oro.`;
-  S.gold -= g; S.map[i].u = 0;
+  S.gold -= g; S.map[i].u = 0; delete S.map[i].ru; // huellas: reconstruir una ruina
   return true;
 }
 
