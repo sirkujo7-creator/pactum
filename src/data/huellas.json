@@ -48,7 +48,9 @@
       "terremoto": 0.35,
       "terremotoLey": 0.1,
       "erupcion": 0.5,
-      "avenida": 0.4
+      "avenida": 0.4,
+      "guerra": 0.3,
+      "toma": 0.5
     },
     "textos": {
       "ficha": "En ruinas desde el año {anio}: no da nada hasta que la reconstruyas.",
@@ -96,6 +98,158 @@
         "nombre": "Parcela sorteada",
         "texto": "Parcela medida y sorteada a la vista de todos: mojones blancos en las esquinas."
       }
+    }
+  },
+  "leyes": {
+    "educacion": {
+      "en": [
+        "escuela"
+      ],
+      "max": 3,
+      "texto": "Pizarras y libros en las escuelas: la educación es gratis."
+    },
+    "subsidio": {
+      "en": [
+        "cultivo",
+        "cafetal"
+      ],
+      "max": 3,
+      "texto": "Bultos de semilla con sello oficial en las fincas."
+    },
+    "jornada": {
+      "en": [
+        "taller"
+      ],
+      "max": 3,
+      "texto": "Reloj de la jornada en las fábricas: ocho horas y a casa."
+    },
+    "ambiente": {
+      "en": [
+        "taller",
+        "mina"
+      ],
+      "max": 3,
+      "texto": "Letreros verdes y árboles sembrados junto a fábricas y minas."
+    },
+    "arancel": {
+      "en": [
+        "mercado",
+        "puerto"
+      ],
+      "max": 2,
+      "texto": "Talanquera de la aduana en el mercado y el puerto."
+    },
+    "prensa": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Un quiosco de periódicos en la plaza."
+    },
+    "censura": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Periódicos tachados en la plaza."
+    },
+    "bancoCentral": {
+      "en": [
+        "banco"
+      ],
+      "max": 1,
+      "texto": "Columna con la moneda del banco central."
+    },
+    "sismo": {
+      "en": [
+        "casa"
+      ],
+      "max": 2,
+      "texto": "Señales de construcción sismorresistente en las casas."
+    },
+    "laico": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Oficina del registro civil en la plaza."
+    },
+    "sufragio": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Urna de votación en la plaza."
+    },
+    "tutela": {
+      "en": [
+        "agora",
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Mesa de tutelas con la balanza de la justicia."
+    },
+    "indigenas": {
+      "en": [
+        "resguardo"
+      ],
+      "max": 1,
+      "texto": "Maloca del resguardo indígena, lejos del pueblo."
+    },
+    "progresivo": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Tablero con las tarifas del impuesto progresivo."
+    },
+    "seguridadSocial": {
+      "en": [
+        "hospital"
+      ],
+      "max": 2,
+      "texto": "Banca de los pensionados junto al hospital."
+    },
+    "reformaAgraria": {
+      "en": [
+        "cultivo",
+        "cafetal"
+      ],
+      "max": 4,
+      "texto": "Mojones y cuerdas: las fincas se dividen en parcelas."
+    },
+    "consulta": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Cartel de la consulta popular: SÍ o NO."
+    },
+    "descentralizacion": {
+      "en": [
+        "casa"
+      ],
+      "max": 3,
+      "texto": "Letreros de las juntas de acción comunal en los barrios."
+    },
+    "paz": {
+      "en": [
+        "plaza"
+      ],
+      "max": 1,
+      "texto": "Monumento de la paloma blanca en la plaza."
+    }
+  },
+  "textos": {
+    "resguardo": "Es tierra del resguardo indígena, protegida por la ley: no se puede construir encima."
+  },
+  "guerra": {
+    "quemadas": 8,
+    "trincheras": 2,
+    "maxTrincheras": 6,
+    "textos": {
+      "quemada": "Quemada en el año {anio}: hollín en los muros. Se borra al repararla o con los años.",
+      "trinchera": "🪖 Se cavan trincheras entre el pueblo y la frontera."
     }
   }
 }

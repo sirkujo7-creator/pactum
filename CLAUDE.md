@@ -136,9 +136,9 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 0. **Plaza de fundación (publicado en 0.77.0):** primera obra de cada partida nueva (cruz de piedra y ceiba, Leyes de Indias); marca el centro y el casco urbano (4, 6 y 9 casillas por etapa; libre en Polis). Fincas, minas y obras del río pueden ir fuera del casco. No se demuele. Datos en `src/data/huellas.json`, lógica en `src/core/huellas.js`.
 1. **Desastres y muertes (publicado en 0.78.0):** ruinas que cuestan oro al reconstruir; cementerio como edificio con su parcela, lejos de la plaza (mínimo 4 casillas; cédula de Carlos III, 1787), con tumbas que crecen con las muertes y más riesgo de epidemia sin él; luto en la plaza, campos secos, bandera amarilla en epidemias.
 2. **Barrio de invasión que crece (publicado en 0.79.0)** casilla por casilla, con informalidad, menos impuestos, enfermedad, deserción e inseguridad (legalizar, ignorar o desalojar); colonos que toman baldíos con ranchos y cercas en el borde.
-3. **Leyes que se ven:** cada ley con su señal en el mapa.
-4. **Guerra y conflicto:** casas quemadas y trincheras que sanan con los años.
-5. **Balance** con los robots.
+3. **Leyes que se ven (publicado en 0.80.0):** cada ley vigente con su señal junto a las obras que toca (pizarras en las escuelas, urna y quiosco en la plaza, mojones de la reforma agraria en las fincas, maloca del resguardo indígena lejos del pueblo…).
+4. **Guerra y conflicto (publicado en 0.80.0):** casas quemadas con hollín (8 años o hasta repararlas), ruinas, trincheras con sacos y alambre entre el pueblo y la frontera (12 años); la toma armada deja muertos que piden sepultura.
+5. **Balance** con los robots (0.80.0: Normal 52%, Difícil 27%; falta medir los seis regímenes). La fase queda terminada y espera la prueba de Juan.
 
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.

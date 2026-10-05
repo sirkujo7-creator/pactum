@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -20,7 +20,7 @@ import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
 // Huellas grandes que despejan la vegetación de su casilla (fase 6: megaproyectos e inventos).
-const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento', 'colono', 'arriendo', 'sorteo']);
+const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento', 'colono', 'arriendo', 'sorteo', 'resguardo', 'trinchera']);
 const ZOOM_MAX = 2.6; // más cerca, el terreno pintado se vería pixelado
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
 
@@ -234,9 +234,10 @@ export class Mapa extends Phaser.Scene {
   huellaExtra(x, i) {
     const S = this.S;
     if (!C.HUELLAS) return '';
+    const ly = (x.b ? this.leyesAqui(i, x).join(',') : '') + (x.b && quemadaVisible(S, x) ? 'q' : '');
     if (x.b === 'cementerio') return 't' + Math.ceil(tumbasDe(S, i) * 12 / C.HUELLAS.cementerio.capacidad);
-    if (x.b === 'casa' && i % 3 === 1) return epidemiaVisible(S) ? 'e' : '';
-    return i === this.plazaLuto() && lutoVisible(S) ? 'l' : '';
+    if (x.b === 'casa' && i % 3 === 1) return (epidemiaVisible(S) ? 'e' : '') + ly;
+    return (i === this.plazaLuto() && lutoVisible(S) ? 'l' : '') + ly;
   }
   // Huellas, paso 1: tumbas en el cementerio, velas de luto en la plaza y banderas amarillas en una epidemia.
   huellasDeObra(i, x, t) {
@@ -247,6 +248,31 @@ export class Mapa extends Phaser.Scene {
     }
     if (lutoVisible(S) && i === this.plazaLuto()) pon('velas', .28, -.05, .9);
     if (x.b === 'casa' && i % 3 === 1 && epidemiaVisible(S)) pon('bandera-amarilla', .22, -.22, .9);
+    // Paso 4: una obra quemada en la guerra o en una toma: muros ahumados y hollín.
+    if (quemadaVisible(S, x)) { for (const im of this.obras[i]) if (im.texture.key === 'edificios') im.setTint(0x8C8076); pon('hollin', -.05, -.05, 1); }
+    // Paso 3: la señal de cada ley vigente que toca esta obra (en la plaza, alrededor de la cruz).
+    const L = this.leyesAqui(i, x), plaza = i === this.plazaLuto();
+    const sitios = plaza ? [[.38, .2], [.2, .38], [.38, -.3], [-.3, .38], [.05, .42], [.42, .05], [-.38, -.1], [-.1, -.38]] : [[.34, .3], [.3, -.3], [-.3, .34]];
+    L.forEach((id, k) => { const [dv, du] = sitios[k % sitios.length]; pon('ley_' + id, dv, du, .85); });
+  }
+  // Leyes vigentes que se ven en la casilla i: en su obra (las primeras, repartidas) o en la plaza.
+  leyesAqui(i, x) {
+    const S = this.S, H = C.HUELLAS && C.HUELLAS.leyes;
+    if (!H || !x.b) return [];
+    // Dónde va cada ley se calcula una vez por momento (muchas casillas preguntan seguido).
+    const ahora = Math.floor(performance.now() / 40);
+    if (!this._leyes || this._leyes.t !== ahora) {
+      const plaza = this.plazaLuto(), donde = {};
+      for (const [id, v] of Object.entries(H)) {
+        if (!S.laws || S.laws[id] === undefined) continue;
+        const tipo = v.en.find(t => t === 'plaza' ? plaza >= 0 : S.map.some(y => y.b === t && !y.ob));
+        if (!tipo || tipo === 'resguardo') continue;
+        const L = tipo === 'plaza' ? [plaza] : S.map.map((y, j) => v.en.includes(y.b) && !y.ob && !y.ru ? j : -1).filter(j => j >= 0).sort((a, b) => (a * 7919) % 1009 - (b * 7919) % 1009).slice(0, v.max);
+        for (const j of L) (donde[j] = donde[j] || []).push(id);
+      }
+      this._leyes = { t: ahora, donde };
+    }
+    return this._leyes.donde[i] || [];
   }
   plazaLuto() { const p = plazaFundacion(this.S); return p >= 0 ? p : centroPueblo(this.S); }
   // Grietas en el muro y maleza al pie de una obra descuidada.
@@ -482,6 +508,7 @@ export class Mapa extends Phaser.Scene {
   elegirOpcion(i) { if (!this.S.pend) return null; const o = choose(this.S, i); this.cambio(true); return o; } // sin dilema pendiente, nada que elegir
   // Tras cualquier cambio: interfaz, figuras que dependen de etapa y régimen, pobladores, huellas y sequía.
   cambio(completo) {
+    this._leyes = null; // huellas: las leyes pudieron cambiar
     this.ui.render();
     if (!completo) return;
     // Fase 6: lo que cambió por una decisión (huellas, megaproyectos, asentamientos) se ve al instante.

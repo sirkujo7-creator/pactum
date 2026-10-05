@@ -157,6 +157,18 @@
       "icono": "🪓",
       "anios": 999,
       "texto": "Parcela medida y sorteada a la vista de todos: mojones blancos en las esquinas."
+    },
+    "resguardo": {
+      "nombre": "Resguardo indígena",
+      "icono": "🛖",
+      "anios": 999,
+      "texto": "Maloca y tierras comunales del pueblo indígena, protegidas por la ley."
+    },
+    "trinchera": {
+      "nombre": "Trinchera",
+      "icono": "🪖",
+      "anios": 12,
+      "texto": "Zanja con sacos de arena y alambre que se cavó durante la guerra. La tierra tarda años en cerrarla."
     }
   },
   "porFilosofia": {
