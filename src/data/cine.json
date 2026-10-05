@@ -1,40 +1,52 @@
 {
   "leccion": "Antes de cada decisión grande, el pueblo la vive: la cámara va al lugar y muestra lo que pasa.",
-  "duracion": 3.6,
-  "saltar": "Toca para continuar",
+  "duracion": 9,
+  "saltar": "Saltar",
   "escenas": {
     "marcha": {
+      "titulo": "La marcha",
       "texto": "{movimiento}: la marcha llega a la plaza con sus pancartas."
     },
     "marchaLider": {
+      "titulo": "La marcha campesina",
       "texto": "{lider} encabeza la marcha campesina hacia la plaza."
     },
     "procesion": {
+      "titulo": "La procesión",
       "texto": "Llega el padre Anselmo: la procesión recorre las calles con velas."
     },
     "escandalo": {
+      "titulo": "El escándalo",
       "texto": "La prensa publica un escándalo: el pueblo se agolpa a leer el periódico."
     },
     "desplazados": {
+      "titulo": "Los desplazados",
       "texto": "Llegan familias desplazadas por el conflicto, con lo poco que pudieron cargar."
     },
     "toma": {
+      "titulo": "La toma armada",
       "texto": "Toma armada: disparos y humo en la plaza; la gente corre a refugiarse."
     },
     "terremoto": {
+      "titulo": "El terremoto",
       "texto": "La tierra tiembla: el polvo se levanta sobre las casas."
     },
     "lahar": {
+      "titulo": "El lahar",
       "texto": "El Nevado despierta: un río de lodo y ceniza baja por el cauce."
     },
     "avenida": {
+      "titulo": "La avenida torrencial",
       "texto": "Avenida torrencial: el agua baja de la ladera arrastrando lodo y piedras."
     },
     "asedio": {
+      "titulo": "La invasión",
       "texto": "Guerra con {vecino}: sus tropas cruzan el borde y el pueblo se atrinchera."
     },
     "paz": {
+      "titulo": "La firma de la paz",
       "texto": "Las delegaciones se encuentran en la plaza para firmar la paz con {vecino}."
     }
-  }
+  },
+  "seguir": "Continuar ▸"
 }

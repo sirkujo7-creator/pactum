@@ -325,14 +325,21 @@ html,body{background:#E6DABF}
 @media (min-width:760px){.meta{bottom:98px}}
 
 /* Fase 9: eventos de cine (franjas negras con el texto de la escena) */
-.cine{position:absolute;inset:0;z-index:6;cursor:pointer}
-.cine-franja{position:absolute;left:0;right:0;height:12vh;min-height:56px;background:#1E1612;transition:transform .35s ease}
+.cine{position:absolute;inset:0;z-index:6}
+.cine-franja{position:absolute;left:0;right:0;height:15vh;min-height:72px;background:#1E1612;transition:transform .35s ease}
 .cine-franja.arriba{top:0;transform:translateY(-100%)}
-.cine-franja.abajo{bottom:0;transform:translateY(100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 16px;text-align:center}
+.cine-franja.abajo{bottom:0;height:auto;min-height:15vh;padding-bottom:14px !important;transform:translateY(100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 16px;text-align:center}
 .cine.on .cine-franja{transform:none}
 .cine-franja p{margin:0;color:#F7F1E3;font:italic 600 clamp(15px,2.2vw,22px)/1.3 Alegreya,Georgia,serif;max-width:46em}
-.cine-franja small{color:#C9B48E;font-size:12px;margin-top:2px}
-@media (prefers-reduced-motion:reduce){.cine-franja{transition:none}}
+.cine-franja.arriba{display:flex;align-items:flex-end;justify-content:center;padding:0 16px 8px}
+.cine-franja h2{margin:0;color:#E8C77A;font:700 clamp(20px,3.4vw,34px)/1.1 Alegreya,Georgia,serif;letter-spacing:.06em;text-transform:uppercase;text-align:center}
+.cine.on .cine-franja h2{animation:cineTitulo 1.2s ease both .3s}
+@keyframes cineTitulo{from{opacity:0;letter-spacing:.3em}to{opacity:1;letter-spacing:.06em}}
+#ui .cine-boton{margin-top:6px;background:none;border:1px solid #6E5A44;color:#C9B48E;font:600 13px/1 'Alegreya Sans',system-ui,sans-serif;padding:6px 14px;border-radius:999px;cursor:pointer}
+#ui .cine-boton.seguir{background:#E8C77A;border-color:#E8C77A;color:#1E1612;font-size:15px;padding:9px 22px;animation:cineLatir 1.6s ease-in-out infinite}
+#ui .cine-boton:focus-visible{outline:2px solid #F7F1E3;outline-offset:2px}
+@keyframes cineLatir{50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.cine-franja{transition:none}.cine-franja h2,.cine-boton.seguir{animation:none}}
 #ui.en-cine > *:not(.cine){visibility:hidden}
 .emo{filter:sepia(.6) saturate(.85) hue-rotate(-10deg) contrast(.95) brightness(.97);font-style:normal}
 /* Fase 9 (revisión): en celular los recursos caben en una sola fila; el precio de la comida queda en su ficha */
