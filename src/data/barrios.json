@@ -88,6 +88,14 @@
     "desalojar": "Desalojar con la policía",
     "ignorar": "Dejarlo así por ahora",
     "legalizarTexto": "Legalizar y mejorar el barrio",
-    "leccion": "Informalidad urbana: cuando la ciudad no ofrece vivienda a quienes llegan, ellos la construyen como pueden. Desalojar no resuelve la falta de vivienda; legalizar y llevar servicios convierte un asentamiento en barrio."
+    "leccion": "Informalidad urbana: cuando la ciudad no ofrece vivienda a quienes llegan, ellos la construyen como pueden. Desalojar no resuelve la falta de vivienda; legalizar y llevar servicios convierte un asentamiento en barrio.",
+    "crecer": 2,
+    "maxRanchos": 6,
+    "desercion": 6,
+    "evasion": 0.02,
+    "epidemia": 0.06,
+    "legalizarPorRancho": 0.5,
+    "crece": "🏚️ El asentamiento de {barrio} crece: ya son {n} ranchos sin agua, escuela ni títulos.",
+    "efectos": "Cada rancho: más evasión de impuestos (no pagan), más deserción escolar, violencia y riesgo de epidemia."
   }
 }

@@ -16,6 +16,7 @@ export function whyNot(S, k, i) {
   if (x.t === 'rio') return 'No se puede construir sobre el río.';
   if (x.b) return 'Esa casilla ya está ocupada.';
   if (x.oc && C.GUERRA) return C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre); // fase 9
+  if (esColono(x) && C.HUELLAS) return C.HUELLAS.colonos.textos.bloquea; // huellas: la parcela de unos colonos
   const fu = motivoFundacion(S, k, i); if (fu) return fu; // la plaza de fundación y el casco urbano
   if (x.mk && x.mk.t === 'asentamiento') return 'Hay un asentamiento: primero decide si lo legalizas o lo desalojas.';
   const finca = fincasActivas(S); // fase 10: el café se siembra en una finca; la finca va en llano o en bosque (talándolo)
@@ -100,7 +101,7 @@ import { counts } from './reglas.js';
 import { esPatrimonio, recordar } from './memoria.js';
 import { industriaActiva } from './industria.js';
 import { avanzarFundacion } from './estado.js';
-import { motivoFundacion } from './huellas.js';
+import { motivoFundacion, esColono } from './huellas.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };

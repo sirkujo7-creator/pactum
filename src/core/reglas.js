@@ -1,5 +1,6 @@
 // Consultas básicas del estado: dificultad, régimen, leyes y condiciones escritas en los datos.
 import { C } from './contenido.js';
+import { totalRanchos, capacidadColonos } from './huellas.js';
 import { countT } from './mundo.js';
 import { glaciar as glaciarDe } from './biomas.js';
 import { fabricasDe, nivelMaximo } from './industria.js';
@@ -34,7 +35,7 @@ export function counts(S) {
   if (S.mundo === 'acuarela' && S.clima) S.map.forEach(x => { if (x.b === 'cultivo' && x.cv === 'cafe' && !(x.u >= aband) && !x.ob) c.cafetal++; }); // fase 10: las fincas de café cuentan como cafetales
   return c;
 }
-export function cap(S) { return counts(S).casa * 10 + (S.asent ? S.asent.length * 6 : 0); } // fase 5: los asentamientos informales también albergan gente
+export function cap(S) { return counts(S).casa * 10 + (S.asent ? totalRanchos(S) * 6 : 0) + capacidadColonos(S); } // fase 5: los asentamientos informales también albergan gente
 export function cost(S, k) { return Math.round(C.B[k].cost * S.price * (1 - RM(S, 'obrasDescuento')) * (hasLaw(S, 'sismo') ? 1.1 : 1)); } // fase 4: el código sismorresistente encarece las obras
 
 // Condiciones de los archivos de datos (dilemas y guía). Todas deben cumplirse.

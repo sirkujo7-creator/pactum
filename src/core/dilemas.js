@@ -1,5 +1,6 @@
 // Dilemas, peticiones del pueblo y consecuencias diferidas.
 import { azar, rnd, clamp } from './azar.js';
+import { llegarColonos } from './huellas.js';
 import { C } from './contenido.js';
 import { D, counts, cap, cumple } from './reglas.js';
 import { calcHap } from './sociedad.js';
@@ -149,6 +150,7 @@ export function choose(S, i) {
   }
   // Fase 4: la decisión deja una huella en el mapa.
   if (!ev.followUp) { const t = marcaDeOpcion(ev, o); if (t) extra.marca = dejarMarca(S, t, `Año ${S.year}: ${ev.title}. Decidiste: ${o.l.toLowerCase()}.`); }
+  if (o.colonos) { const L = llegarColonos(S, o.colonos); if (L.length) { extra.colonos = L; S.log.unshift({ y: S.year, t: C.HUELLAS.colonos.textos.dilema.replace('{n}', L.length) }); } } // huellas: los colonos llegan de verdad
   return Object.assign({}, o, { fx: real }, extra);
 }
 
