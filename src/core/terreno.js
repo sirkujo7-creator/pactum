@@ -31,7 +31,9 @@ export const BIOMA = {
 export function metros(h) { return Math.round((300 + h * 450) / 50) * 50; }
 
 // desvios (fase 6): cambios de curso del río por la erosión y las crecidas; cada uno empuja el cauce en un tramo.
-export function genTerreno(seed, N, desvios) {
+// terr (fase 14): el tipo de territorio cambia el relieve y la humedad (src/data/territorios.json). Sin terr, el de siempre.
+export function genTerreno(seed, N, desvios, terr) {
+  const P = terr ? { cordillera: 1, colinas: 1, base: 0, cauce: 1, canon: 0, humedad: 0, ...terr } : null;
   const n1 = makeNoise(seed), n2 = makeNoise(seed + 17), n3 = makeNoise(seed + 99), dv = desvios || [];
   // El río cruza en diagonal; su curva depende de la semilla.
   const riverMid = s => N * 1.08 + 2.6 * Math.sin(s * Math.PI * 1.6 + seed % 7) + 1.2 * Math.sin(s * Math.PI * 4.1 + seed % 3)
@@ -44,14 +46,19 @@ export function genTerreno(seed, N, desvios) {
     const fbm = n1(u * 3.2, v * 3.2) * .55 + n2(u * 7, v * 7) * .3 + n3(u * 14, v * 14) * .15;
     const back = clamp(1 - (u + v) / 1.25, 0, 1);
     const peaks = n2(u * 4.3 + 11, v * 4.3 + 3);
-    const ridge = Math.pow(back, 1.5) * 10.5 * (0.55 + 0.75 * peaks);
-    let h = fbm * 2.6 + ridge + (1 - back) * 0.4;
+    const ridge = Math.pow(back, 1.5) * 10.5 * (0.55 + 0.75 * peaks) * (P ? P.cordillera : 1);
+    let h = fbm * 2.6 * (P ? P.colinas : 1) + ridge + (1 - back) * 0.4;
     const d = riverD(r, c);
-    h -= 2.3 * Math.exp(-((d / 1.7) ** 2));
+    if (P) {
+      // La base sube el territorio, pero el valle del río se mantiene bajo; el cañón levanta paredes a lado y lado.
+      h += P.base * (1 - Math.exp(-((d / 3.2) ** 2))) + P.canon * (1 - Math.exp(-((d / 3.3) ** 2))) * (0.8 + 0.4 * peaks);
+      h -= 2.3 * Math.exp(-((d / (1.7 * P.cauce)) ** 2));
+    } else h -= 2.3 * Math.exp(-((d / 1.7) ** 2));
     h += 0.9 * Math.exp(-(((u - .78) ** 2 + (v - .9) ** 2) / .02));
     return Math.max(0, h);
   };
-  const moistAt = (r, c) => clamp(1.2 - riverD(r, c) / 5, 0, 1) * .7 + n3(c / 5, r / 5) * .5;
+  const hum = P ? P.humedad : 0;
+  const moistAt = (r, c) => clamp(1.2 - riverD(r, c) / 5, 0, 1) * .7 + n3(c / 5, r / 5) * .5 + hum;
   const H = [];
   for (let r = 0; r <= N; r++) for (let c = 0; c <= N; c++) H.push(hf(r, c));
   const hv = (r, c) => H[r * (N + 1) + c];
@@ -59,7 +66,7 @@ export function genTerreno(seed, N, desvios) {
   for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
     const h00 = hv(r, c), h01 = hv(r, c + 1), h11 = hv(r + 1, c + 1), h10 = hv(r + 1, c);
     const h = (h00 + h01 + h11 + h10) / 4, sx = (h01 + h11 - h00 - h10) / 2, sy = (h10 + h11 - h00 - h01) / 2, slope = Math.hypot(sx, sy);
-    const d = riverD(r + .5, c + .5), moist = clamp(1.2 - d / 5, 0, 1) * .7 + n3(c / 5, r / 5) * .5;
+    const d = riverD(r + .5, c + .5), moist = clamp(1.2 - d / 5, 0, 1) * .7 + n3(c / 5, r / 5) * .5 + hum;
     let b;
     if (d < 1.3 && h < 2.2) b = 'agua';
     else if (h > 9) b = 'nieve';
@@ -73,5 +80,5 @@ export function genTerreno(seed, N, desvios) {
     else b = 'potrero';
     tiles.push({ r, c, h, h00, h01, h11, h10, sx, sy, slope, b, d, lado: side(r + .5, c + .5) });
   }
-  return { seed, N, H, hv, hf, tiles, riverMid, riverD, moistAt, vary: makeNoise(seed + 55) };
+  return { seed, N, terr: terr || null, H, hv, hf, tiles, riverMid, riverD, moistAt, vary: makeNoise(seed + 55) };
 }

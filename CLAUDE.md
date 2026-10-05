@@ -26,7 +26,7 @@ Simulador de gobierno para un jugador. Cada decisión enseña un concepto de fil
 | `referencia/referencia-estilo-acuarela.html` | Prueba de estilo aprobada: terreno continuo con luz, 7 entornos, casas de bahareque, pobladores con identidad, luz del día y temporadas. Es la guía visual obligatoria |
 | `referencia/balance-v9.js` | Herramienta de balance original de la v9, con su lógica tal cual. Sirve para comparar: `node herramientas/prueba-equivalencia.js` comprueba que `src/core` da exactamente los mismos resultados |
 | `herramientas/balance-fases.js` | Informe de las fases 1 y 2 con las mismas semillas: versión 9, jugador preparado y sin prepararse; victorias, año de victoria, crisis por partida y derrotas después de una crisis |
-| `herramientas/balance.js` | Robots que juegan cientos de partidas con la lógica real de `src/core`. Uso: `node herramientas/balance.js` (variables opcionales `DIF`, `REG`, `NG`, `ETH`) |
+| `herramientas/balance.js` | Robots que juegan cientos de partidas con la lógica real de `src/core`. Uso: `node herramientas/balance.js` (variables opcionales `DIF`, `REG`, `NG`, `ETH`, `TERR`) |
 
 ## Decisiones fijas
 
@@ -128,7 +128,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 **Decisiones del 5 de octubre (después de 0.75.1):**
 - **Cine más largo (publicado en 0.76.0):** las escenas duran unos diez segundos, con título grande, y se quedan en pantalla hasta tocar «Continuar». La invasión muestra la columna del vecino con fusiles y estandarte marchando hacia las casas, con humo y fogonazos. Regla para lo que viene: todo evento mecánico grande debe verse en el mapa.
-- **Fase 14 (aprobada en idea): territorios al azar.** Cinco tipos de territorio con relieve, colores y vegetación propios, que salen al azar en cada partida: valle del Magdalena, ladera cafetera, cañón del Combeima, alta montaña y páramo, sur seco.
+- **Fase 14: territorios al azar (publicado en 0.81.0).** Cinco tipos de territorio con relieve, colores y vegetación propios, que salen al azar en cada partida nueva: valle del Magdalena, ladera cafetera, cañón del Combeima, alta montaña y páramo, sur seco (`src/data/territorios.json`; `TERR=` en `balance.js`; `?terr=` en la dirección para probar). Cada uno con sus ventajas y costos, balanceados entre 46% y 55%. Las partidas guardadas antes conservan su terreno de siempre.
 - **Fase 15 (aprobada en idea): la polis en el mundo.** El Tolima **sigue siendo una polis independiente**, nunca un departamento. Tres círculos: polis hermanas andinas (Antioquia con sus colonos y baldíos, Santafé, Huila, Quindío, Valle), regiones lejanas por rutas (Caribe, Pacífico, Llanos, Amazonía; río Magdalena, Camino del Quindío, ferrocarril, cable aéreo) y potencias por época (España, Inglaterra, Estados Unidos, Alemania, China, ONU). Pantalla «El mundo». Juan quiere ampliarlo aún más; con escenas de cine para caravanas, llegadas e invasiones.
 
 **Fase «El mapa cuenta la historia» (aprobada por Juan el 5 de octubre, antes de la fase 14):** las decisiones, leyes y desgracias dejan huellas físicas en el mapa, no solo números. Las huellas van alrededor del pueblo, lejos de las obras (0.76.1). Un paso publicable a la vez:

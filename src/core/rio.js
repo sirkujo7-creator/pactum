@@ -5,7 +5,7 @@
 import { C } from './contenido.js';
 import { azar, clamp } from './azar.js';
 import { climaActivo } from './clima.js';
-import { genTerreno } from './terreno.js';
+import { terrenoDe } from './mundo.js';
 import { LOGICO, lado } from './mundo.js';
 import { cap } from './reglas.js';
 import { recordar } from './memoria.js';
@@ -40,11 +40,11 @@ export function probCambio(S, lahar) {
 const esAgua = (T, i) => T.tiles[i].b === 'agua';
 // Busca un tramo para el desvío: prefiere la orilla pelada (sin bosque) y evita la montaña.
 function elegirDesvio(S) {
-  const N = lado(S), R = K(), dv = desvios(S), T0 = genTerreno(S.seed, N, dv);
+  const N = lado(S), R = K(), dv = desvios(S), T0 = terrenoDe(S, dv);
   const cand = [];
   for (let k = 0; k < 10; k++) {
     const s = -.7 + 1.4 * azar(), a = (azar() < .5 ? -1 : 1) * R.amplitud, d = { s: Math.round(s * 1000) / 1000, a, w: R.ancho / N };
-    const T1 = genTerreno(S.seed, N, [...dv, d]);
+    const T1 = terrenoDe(S, [...dv, d]);
     const nuevas = [], secas = [];
     for (let i = 0; i < N * N; i++) { const a0 = esAgua(T0, i), a1 = esAgua(T1, i); if (a1 && !a0) nuevas.push(i); else if (a0 && !a1) secas.push(i); }
     if (nuevas.length < 2 || !secas.length || nuevas.some(i => S.map[i].t === 'montana')) continue;

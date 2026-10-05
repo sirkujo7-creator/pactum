@@ -14,7 +14,11 @@ const smooth = t => t * t * (3 - 2 * t);
 const GROUND = { agua: '#7AAAB6', galeria: '#8AA26C', arrozal: '#A9B97E', seco: '#D2B77E', potrero: '#B5B97C', ladera: '#93A56E', niebla: '#6A8360', paramo: '#C2B27A', roca: '#9C9184', nieve: '#F4EEE2' };
 const DRYC = '#D4B27A';
 
-function groundColor(t, dry, sub = 0) {
+// Fase 14: cada territorio tiñe un poco sus colores (pigmentos más ocres en el sur seco, más fríos en la montaña).
+let PAL = null;
+const teñir = c => PAL ? mix(c, PAL.color, PAL.fuerza) : c;
+function groundColor(t, dry, sub = 0) { return teñir(groundColor0(t, dry, sub)); }
+function groundColor0(t, dry, sub = 0) {
   let c = GROUND[t.b];
   if (t.b === 'agua') return mix('#D2C092', DRYC, dry * .3);
   if (['galeria', 'arrozal', 'potrero', 'ladera', 'niebla'].includes(t.b)) c = mix(c, DRYC, dry * (t.b === 'niebla' ? .25 : .45));
@@ -37,7 +41,7 @@ function colorAt(T, r, c, h, slope, dry) {
   const lowD = mix(low, '#D6B57A', dry * .45);
   let col = band(h, [2, 4.4, 6.1, 7.6, 9], [lowD, mix('#93A56E', DRYC, dry * .4), mix('#6A8360', DRYC, dry * .15), '#C2B27A', '#9C9184', '#F4EEE2']);
   if (slope > 1.6 && h > 2) col = mix(col, '#9C9184', clamp((slope - 1.6) / 1.2, 0, .8));
-  return col;
+  return teñir(col);
 }
 const light = t => clamp(1 + .2 * t.sx - .17 * t.sy, .62, 1.3);
 
@@ -79,6 +83,7 @@ export function cajaSector(T, sr, sc) {
 
 // Pinta un sector. opciones: { dry (0 lluvias a 1 sequía), escala (resolución) }.
 export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
+  PAL = T.terr && T.terr.paleta || null;
   const dry = opciones.dry || 0, esc = opciones.escala || 1.5, N = T.N, sub = opciones.subida || 0; // fase 10: los pisos térmicos suben
   const k = cajaSector(T, sr, sc);
   const cv = lienzoPrevio && lienzoPrevio.width === Math.ceil(k.w * esc) ? lienzoPrevio : lienzo(k.w * esc, k.h * esc);
@@ -173,7 +178,8 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
 }
 
 // Cielo, cordillera lejana y nevado, detrás del diorama.
-export function pintarFondo(T, escala = 1, glaciar = 1) { // fase 10: el casquete del Nevado se encoge con el glaciar
+export function pintarFondo(T, escala = 1, glaciar = 1) {
+  PAL = T.terr && T.terr.paleta || null; // fase 10: el casquete del Nevado se encoge con el glaciar
   const N = T.N, izq = P(N, 0)[0] - 300, der = P(0, N)[0] + 300, arriba = P(0, 0, 12)[1] - 260, abajo = P(0, 0)[1] + N * TH * .35;
   const W = der - izq, H = abajo - arriba;
   const cv = lienzo(W * escala, H * escala), g = cv.getContext('2d'), R = mulberry(T.seed * 3 + 1);

@@ -21,6 +21,8 @@ export function recetasFlora(seco = 0) {
   return [
     ['arbol', 30, 36, 15, 32, (g, r) => { sombraSuelo(g, 8, 2.4, 3); tronco(g, 0, 0, 0, -9, 1.6, r); copa(g, 0, -15, 7.5, 7, hoja(FR.verde), r); }],
     ['saman', 46, 30, 23, 26, (g, r) => { sombraSuelo(g, 15, 3, 4); tronco(g, 0, 0, 0, -7, 1.8, r); tronco(g, 0, -5, -6, -9, 1.1, r); tronco(g, 0, -5, 6, -9, 1.1, r); ovalo(g, 0, -12, 14, 4.2, shade(hoja(FR.tierraVerde), -.15), r, { n: 3, bw: .55 }); ovalo(g, -1, -13.4, 12, 3.4, hoja(FR.tierraVerde), r, { n: 3, borde: false }); toques(g, -2, -13.5, 10, 2.4, mix(FR.tierraVerde, FR.cal, .6), r, 9, .7); }],
+    // Fase 14: cardón (cactus columnar) del sur seco del Tolima.
+    ['cardon', 20, 30, 10, 28, (g, r) => { sombraSuelo(g, 5, 1.6, 2); const v = '#7E9A5A', o = shade(v, -.2); for (const [x, y, w, h] of [[0, 0, 2.6, 22], [-4.5, -7, 2, 8], [4.5, -9, 2, 9]]) { g.fillStyle = o; g.fillRect(x - w, y - h + w, w * 2, h - w); g.beginPath(); g.ellipse(x, y - h + w, w, w, 0, Math.PI, 0); g.fill(); g.fillStyle = v; g.fillRect(x - w * .6, y - h + w + .5, w * 1.2, h - w - 1); } g.fillStyle = o; g.fillRect(-4.5, -7.5, 4.5, 1.6); g.fillRect(0, -9.5, 4.5, 1.6); }],
     ['arbusto', 18, 14, 9, 11, (g, r) => { sombraSuelo(g, 5, 1.6, 2); ovalo(g, 0, -3.5, 4.8, 3.4, hoja(FR.tierraVerde), r, { n: 2, bw: .5 }); toques(g, -1, -4.5, 3, 2, mix(FR.tierraVerde, FR.cal, .6), r, 4, .7); }],
     ['arbolNiebla', 28, 44, 14, 40, (g, r) => { sombraSuelo(g, 7, 2.2, 3); tronco(g, 0, 0, 0, -12, 1.5, r); copa(g, 0, -15, 6, 4.5, hoja(FR.verdeOsc), r); copa(g, .5, -23, 5, 4, hoja(shade(FR.verdeOsc, .08)), r); copa(g, 0, -30, 3.6, 3.4, hoja(shade(FR.verdeOsc, .16)), r); }],
     ['palma', 24, 60, 12, 56, (g, r) => {

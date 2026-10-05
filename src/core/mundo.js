@@ -2,6 +2,7 @@
 // Generador de la versión 9. El terreno continuo en acuarela (paso 3) se pintará encima de estos datos.
 import { mulberry, clamp } from './azar.js';
 import { genTerreno } from './terreno.js';
+import { C } from './contenido.js';
 
 export const LADO_V9 = 20;
 export const LADO_INICIAL = 32;
@@ -89,7 +90,17 @@ export function genMap(seed, N = LADO_V9) {
 // Río → río; páramo, roca y nevado → montaña (minas); bosque de niebla → bosque;
 // el resto (valle, arrozales, potreros, laderas) → llano. La altura lógica 1 es ladera (café) y 2 es alta montaña.
 export const LOGICO = { agua: 'rio', nieve: 'montana', roca: 'montana', paramo: 'montana', niebla: 'bosque' };
-export function genMundo(seed, N = LADO_INICIAL) {
-  const T = genTerreno(seed, N);
+export function genMundo(seed, N = LADO_INICIAL, terr) {
+  const T = genTerreno(seed, N, null, relieve(terr));
   return T.tiles.map(t => ({ t: LOGICO[t.b] || 'llano', b: null, h: t.b === 'agua' ? 0 : t.h > 4.4 ? 2 : t.h > 2 ? 1 : 0 }));
+}
+
+// Fase 14: territorios al azar. El relieve de cada tipo de territorio (o null: el de siempre).
+export function relieve(terr) { return terr && C.TERR && C.TERR.territorios[terr] ? C.TERR.territorios[terr].relieve : null; }
+export function terrenoDe(S, dv) { return genTerreno(S.seed, lado(S), dv, relieve(S.terr)); }
+// El territorio de una partida nueva: al azar según la semilla (o el que se pida).
+export function elegirTerritorio(seed, pedido) {
+  if (!C.TERR) return undefined;
+  if (pedido && C.TERR.territorios[pedido]) return pedido;
+  const L = C.TERR.lista; return L[Math.floor(mulberry(seed * 3 + 11)() * L.length)];
 }

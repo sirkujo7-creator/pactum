@@ -722,7 +722,8 @@ export class Interfaz {
     const tabs = Object.entries(GRAFICAS).map(([k, v]) => `<button class="tab${k === this.grafica ? ' on' : ''}" data-g="${k}">${v.n}</button>`).join('');
     const ep = historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null, sig = ep && proximaEpoca(S);
     const epoca = ep ? `<h3>${ep.icono} Época: ${ep.nombre}</h3><p class="small">${ep.texto}${sig ? ` Hasta el año ${sig.desde}; luego, ${sig.nombre.toLowerCase()}.` : ''}</p>` : '';
-    this.cronica.innerHTML = `${epoca}${this.seccionIdentidad()}${this.seccionAlbum()}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    const T = S.terr && C.TERR && C.TERR.territorios[S.terr], terr = T ? `<h3>${T.icono} ${T.nombre}</h3><p class="small">${T.texto} ${C.TERR.leccion}</p>` : ''; // fase 14
+    this.cronica.innerHTML = `${terr}${epoca}${this.seccionIdentidad()}${this.seccionAlbum()}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
     this.cronica.querySelectorAll('[data-carta]').forEach(bt => bt.onclick = () => { const r = estadoFamilias(this.S).cartas.find(x => x.n === +bt.dataset.carta); if (r) this.tarjetaCarta(r, null, true); });
     this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
     this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
@@ -1701,10 +1702,15 @@ export class Interfaz {
     this.boton('nuevaB', () => { this.cerrarTarjeta(); this.mapa.scene.start('Arranque', { nueva: true }); });
     this.boton('verB', () => this.cerrarTarjeta());
   }
+  // Fase 14: el territorio que tocó en esta partida (al azar).
+  parrafoTerritorio() {
+    const S = this.S, T = S.terr && C.TERR && C.TERR.territorios[S.terr];
+    return T ? `<div class="phil"><b>${C.TERR.titulo}: ${T.icono} ${T.nombre}</b><br>${T.texto} <i>${T.pista}</i></div>` : '';
+  }
   ayuda(primera) {
     const S = this.S;
     this.tarjeta(`<div class="big">🏛️</div><h3>${primera ? 'Bienvenido, gobernante' : 'Cómo jugar'}</h3>
-      <p>Gobiernas un territorio del Tolima junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis ${aniosPolis(S)} años.</p>
+      <p>Gobiernas un territorio del Tolima junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis ${aniosPolis(S)} años.</p>${this.parrafoTerritorio()}
       <p><b>Tres clases sociales.</b> Campesinos, artesanos y élite tienen ingresos y ánimo propios. Las casas traen gente, pero cada persona necesita un empleo: cultivos, mercados, talleres. Sin empleo crece el descontento.</p>
       <p><b>Hacienda.</b> Fija un impuesto para cada clase. Desde Pueblo puedes pedir préstamos, emitir bonos o imprimir moneda. Imprimir genera inflación; endeudarte baja tu calificación y encarece el crédito.</p>
       <p><b>Dilemas.</b> Cada respuesta refleja una corriente filosófica, y algunas regresan años después como consecuencia.</p>
