@@ -48,8 +48,8 @@ export function colocarNaturaleza(T, mapa) {
     switch (t.b) {
       // Fase 8: menos árboles (Juan los veía exagerados).
       case 'galeria': if (p < .55) add('arbol', 1); else if (p < .72) add('guadua', 1); break;
-      case 'seco': if (p < .28) add('saman', 1); else if (p < .45) add('arbusto', 1); break;
-      case 'potrero': if (p < .07) add('arbol', 1); else if (p < .25) add('vaca', 1); break;
+      case 'seco': if (p < .28) add('saman', 1); else if (p < .45) add(T.terr && T.terr.cardones ? 'cardon' : 'arbusto', 1); else if (T.terr && T.terr.cardones && p < .55) add('cardon', 1, .85); break; // fase 14: cardones en el sur seco
+      case 'potrero': if (p < .07) add(T.terr && T.terr.palmas ? 'palma' : 'arbol', 1); else if (p < .25) add('vaca', 1); break; // fase 14: palmas en el valle
       case 'arrozal': if (p < .15) add('garza', 1); break;
       case 'ladera': if (p < .16) add('platano', 1); else if (p < .28) add('guadua', 1); else if (p < .34) add('palma', 1); else if (p < .44) add('arbol', 1, .9); break;
       case 'niebla': add('arbolNiebla', p < .5 ? 2 : 1); if (p < .12) add('palma', 1, 1.1); break;

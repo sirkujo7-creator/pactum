@@ -78,6 +78,7 @@ export function efectoLeyes(S, clave) {
   const suma = efectos => { const e = efectos[k]; if (e !== undefined) v += sub ? (e[sub] || 0) : e; };
   for (const l of C.LEYES_NUEVAS) if (hasLaw(S, l.id)) suma(l.efectos);
   for (const r of rasgosElegidos(S)) suma(r.efectos); // paso 2: los rasgos del pueblo usan las mismas claves
+  const T = S.terr && C.TERR && C.TERR.territorios[S.terr]; if (T && T.efectos) suma(T.efectos); // fase 14: lo que da y lo que cuesta cada territorio
   return v;
 }
 // Costo anual de las leyes nuevas (por habitante y fijo), antes de multiplicar por S.price.

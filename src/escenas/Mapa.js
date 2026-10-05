@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -46,7 +46,7 @@ export class Mapa extends Phaser.Scene {
     migrarFincas(this.S); // fase 10: cafetales y cultivos viejos pasan a ser fincas
     iniciarCalles(this.S); // fase 9: las partidas sin calles reciben una plaza alrededor del centro
     this.dibCalles = dibujoCalles(this.S);
-    this.T = genTerreno(this.S.seed, this.S.n, desvios(this.S)); // fase 6: con los cambios de curso del río
+    this.T = terrenoDe(this.S, desvios(this.S)); // fase 6: con los cambios de curso del río
     this.desviosVistos = desvios(this.S).length;
     // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
     this.escalaSector = (DPR > 2.5 ? 1.6 : DPR > 1.5 ? 1.8 : 1.5) * Math.min(1, 32 / this.S.n); // fase 8: algo menos en pantallas muy nítidas (iPhone), para dar margen de memoria
@@ -312,7 +312,7 @@ export class Mapa extends Phaser.Scene {
     const n = desvios(this.S).length;
     if (n === this.desviosVistos) return false;
     this.desviosVistos = n;
-    this.T = genTerreno(this.S.seed, this.S.n, desvios(this.S));
+    this.T = terrenoDe(this.S, desvios(this.S));
     this.rio = caminoRio(this.T).filter(x => x.r >= 0 && x.c >= 0 && x.r <= this.T.N && x.c <= this.T.N).map(x => x.p);
     this.largoRio = [0];
     for (let i = 1; i < this.rio.length; i++) this.largoRio.push(this.largoRio[i - 1] + Math.hypot(this.rio[i][0] - this.rio[i - 1][0], this.rio[i][1] - this.rio[i - 1][1]));

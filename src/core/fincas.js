@@ -6,7 +6,7 @@
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { lado, nearRiver } from './mundo.js';
-import { genTerreno } from './terreno.js';
+import { terrenoDe } from './mundo.js';
 import { rindeObra } from './desgaste.js';
 import { precioCafe } from './economia.js';
 import { factorRoya } from './ciclos.js';
@@ -27,7 +27,7 @@ export function alturasTerreno(S) { return alturas(S); }
 function alturas(S) {
   const dv = (S.rio && S.rio.desvios) || [], clave = `${S.seed}|${lado(S)}|${dv.length}`;
   let a = ALTURAS.get(S);
-  if (!a || a.clave !== clave) { const T = genTerreno(S.seed, lado(S), dv); a = { clave, h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d), pend: T.tiles.map(t => t.slope) }; ALTURAS.set(S, a); }
+  if (!a || a.clave !== clave) { const T = terrenoDe(S, dv); a = { clave, h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d), pend: T.tiles.map(t => t.slope) }; ALTURAS.set(S, a); }
   return a;
 }
 // Cuánto han subido los pisos térmicos (fase 10, paso 3: el cambio climático). Por ahora no se mueven.

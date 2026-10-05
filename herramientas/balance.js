@@ -11,7 +11,7 @@ const res = {};
 for (const strat of ESTRATEGIAS) {
   const out = { win: 0, end: {}, stage: [0, 0, 0, 0], years: [] };
   for (let g = 0; g < NG; g++) {
-    const S = freshState(DIF, false, null, REG);
+    const S = freshState(DIF, false, null, REG, process.env.TERR ? { terr: process.env.TERR } : {}); // fase 14: TERR=valle, ladera, canon, montana o sur
     if (process.env.ACTA) firmarActa(S, process.env.ACTA.split(','));
     let r;
     for (let y = 0; y < 200; y++) { r = botYear(S, strat, ETH); if (r.end) break; }

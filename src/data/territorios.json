@@ -1,0 +1,122 @@
+{
+  "leccion": "La geografía no decide la historia, pero la condiciona: el relieve, el agua y el clima definen qué se puede sembrar, dónde se funda un pueblo y qué tan difícil es unirlo con otros. El geógrafo Agustín Codazzi recorrió el Tolima en 1850 con la Comisión Corográfica para describir sus regiones.",
+  "titulo": "Tu territorio",
+  "lista": [
+    "valle",
+    "ladera",
+    "canon",
+    "montana",
+    "sur"
+  ],
+  "territorios": {
+    "valle": {
+      "nombre": "Valle del Magdalena",
+      "icono": "🌾",
+      "texto": "Llanura caliente y ancha junto al río grande: tierra plana para el arroz y el ganado, con la cordillera lejana. Mucho espacio para crecer, pero el río se desborda y el calor seca la tierra en El Niño.",
+      "pista": "Mucha tierra plana y fincas que rinden más; el comercio por el río deja más oro. Cuida el agua en las sequías.",
+      "relieve": {
+        "cordillera": 0.66,
+        "colinas": 0.6,
+        "base": 0,
+        "cauce": 1.35,
+        "canon": 0,
+        "humedad": 0.12,
+        "paleta": {
+          "color": "#C2BE78",
+          "fuerza": 0.14
+        },
+        "palmas": true
+      },
+      "efectos": {
+        "fincas": 0.12,
+        "comercio": 0.08
+      }
+    },
+    "ladera": {
+      "nombre": "Ladera cafetera",
+      "icono": "☕",
+      "texto": "Lomas templadas de la cordillera Central, como Líbano o Fresno: tierra de café, guadua y arrieros. Poca tierra plana; los caminos suben y bajan.",
+      "pista": "El café da mucho, pero la tierra plana es escasa y construir en la pendiente cuesta más cada año.",
+      "relieve": {
+        "cordillera": 0.8,
+        "colinas": 1.25,
+        "base": 1.5,
+        "cauce": 1,
+        "canon": 0,
+        "humedad": 0.05,
+        "paleta": {
+          "color": "#6E9A58",
+          "fuerza": 0.16
+        }
+      },
+      "efectos": {
+        "costoHab": 0.1
+      }
+    },
+    "canon": {
+      "nombre": "Cañón del Combeima",
+      "icono": "🏞️",
+      "texto": "Un río encajonado entre paredes de montaña, como el Combeima que baja del Nevado hacia Ibagué: agua abundante y paisajes hermosos, pero poco espacio plano y laderas que se derrumban si se talan.",
+      "pista": "Agua de sobra y paisajes hermosos; poco espacio plano, construir cuesta más y las laderas taladas se derrumban.",
+      "relieve": {
+        "cordillera": 0.85,
+        "colinas": 0.9,
+        "base": 0,
+        "cauce": 1,
+        "canon": 2.7,
+        "humedad": 0.1,
+        "paleta": {
+          "color": "#6F8E80",
+          "fuerza": 0.14
+        }
+      },
+      "efectos": {
+        "costoHab": 0.12
+      }
+    },
+    "montana": {
+      "nombre": "Alta montaña y páramo",
+      "icono": "🏔️",
+      "texto": "Tierra fría cerca del Nevado: bosques de niebla, frailejones y nacimientos de agua, como Murillo o Santa Isabel. Minería y papa; poco espacio y caminos difíciles.",
+      "pista": "El páramo da agua y minas, y los bosques cuidan el ambiente; pero la vida en el frío cuesta más.",
+      "relieve": {
+        "cordillera": 1.0,
+        "colinas": 1,
+        "base": 2.1,
+        "cauce": 1.4,
+        "canon": 0,
+        "humedad": 0.15,
+        "paleta": {
+          "color": "#8C9488",
+          "fuerza": 0.16
+        }
+      },
+      "efectos": {
+        "costoHab": 0.06
+      }
+    },
+    "sur": {
+      "nombre": "Sur seco del Tolima",
+      "icono": "🌵",
+      "texto": "Tierra caliente y seca de bosque tropical seco, cerca de Natagaima y Coyaima, territorio del pueblo pijao. Llanuras amplias, pero el agua es escasa y la tierra se erosiona.",
+      "pista": "Espacio de sobra y fincas que rinden algo más; el agua es escasa: acueductos y riego son clave.",
+      "relieve": {
+        "cordillera": 0.7,
+        "colinas": 0.75,
+        "base": 0,
+        "cauce": 1,
+        "canon": 0,
+        "humedad": -0.35,
+        "paleta": {
+          "color": "#D6A868",
+          "fuerza": 0.28
+        },
+        "cardones": true
+      },
+      "efectos": {
+        "fincas": 0.05,
+        "comercio": 0.04
+      }
+    }
+  }
+}
