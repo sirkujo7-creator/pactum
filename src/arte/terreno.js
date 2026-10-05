@@ -283,10 +283,11 @@ function pintarObras(g, T, mapa, k, dry, conCalles, anio) {
 
 // ---------- Calles en damero (fase 9) ----------
 // dib: { era, tramos: [[a, b, agua]], esquinas: [[e, v1, v2]] }, con esquinas e = r * (N + 1) + c.
+// Pedido de Juan (5 de octubre): caminos planos, sin borde dibujado, que se funden con el suelo como tierra gastada.
 export const ESTILO_CALLE = {
-  herradura: { ancho: 5, borde: FR.siena, color: mix(FR.ocre, FR.ocreClaro, .45) },
-  empedrado: { ancho: 7, borde: FR.siena, color: mix(FR.cal, '#B9AE9A', .55) },
-  carretera: { ancho: 9, borde: FR.carbon, color: '#5E5852' }
+  herradura: { ancho: 4.5, borde: '#8C7656', color: '#B9A27C', centro: '#C9B48E' },
+  empedrado: { ancho: 6.5, borde: '#8E8576', color: '#B4AA98', centro: '#C2B9A7' },
+  carretera: { ancho: 8.5, borde: '#6E685F', color: '#68625B', centro: '#716B63' }
 };
 function pintarCalles(g, T, dib, k) {
   const N = T.N, M = N + 1, E = ESTILO_CALLE[dib.era] || ESTILO_CALLE.herradura;
@@ -303,11 +304,12 @@ function pintarCalles(g, T, dib, k) {
   const geo = tramos.map(([a, b, agua]) => ({ a, b, agua, L: pts(a, b, agua) }));
   const linea = L => { g.beginPath(); L.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); };
   const capa = (ancho, col, al, dash) => { g.save(); g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = ancho; g.lineCap = 'round'; g.lineJoin = 'round'; if (dash) g.setLineDash(dash); for (const t of geo) linea(t.L); g.restore(); };
-  capa(E.ancho + 2.2, E.borde, .5); capa(E.ancho, E.color, 1);
+  // Orilla difusa (sin línea de contorno), cuerpo semitransparente y un centro más gastado: no parece en relieve.
+  capa(E.ancho + 3, E.borde, .14); capa(E.ancho + 1, E.color, .45); capa(E.ancho * .55, E.centro, .5);
   const enLinea = (L, t) => { const n = L.length - 1, x = Math.min(n - 1e-6, t * n), i = Math.floor(x), f = x - i; return [lerp(L[i][0], L[i + 1][0], f), lerp(L[i][1], L[i + 1][1], f)]; };
   if (dib.era === 'empedrado') { g.save(); g.fillStyle = shade(E.color, -.25); g.globalAlpha = .55; for (const t of geo) { const R = mulberry(t.a * 31 + t.b); for (let j = 0; j < 16; j++) { const p = enLinea(t.L, R()); g.beginPath(); g.ellipse(p[0] + (R() - .5) * 4, p[1] + (R() - .5) * 2.4, 1, .65, 0, 0, 7); g.fill(); } } g.restore(); }
-  if (dib.era === 'carretera') capa(.8, FR.ocre, .9, [4, 4]);
-  if (dib.era === 'herradura') { g.save(); g.fillStyle = FR.siena; g.globalAlpha = .3; for (const t of geo) for (let j = 1; j < 6; j++) { const p = enLinea(t.L, j / 6); g.beginPath(); g.arc(p[0], p[1], .6, 0, 7); g.fill(); } g.restore(); }
+  if (dib.era === 'carretera') capa(.7, '#D9C9A0', .6, [4, 5]);
+  if (dib.era === 'herradura') { g.save(); g.fillStyle = '#7A6447'; g.globalAlpha = .18; for (const t of geo) for (let j = 1; j < 6; j++) { const p = enLinea(t.L, j / 6); g.beginPath(); g.arc(p[0], p[1], .6, 0, 7); g.fill(); } g.restore(); }
   // Puentes: tramos sobre el agua y esquinas por donde pasa el río.
   const puente = (p, q) => {
     g.save(); g.lineCap = 'butt';
