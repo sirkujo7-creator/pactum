@@ -58,6 +58,7 @@ export function build(S, k, i, ofertaElegida) {
     if (k === 'policia' || k === 'mina') reaccionar(S, k);
     if (o && o.sob) reaccionar(S, 'soborno');
   }
+  const fm = avanzarFundacion(S, i); if (fm) msg = (msg ? msg + ' ' : '') + fm; // la misión de fundación
   return msg || true;
 }
 
@@ -96,6 +97,7 @@ import { envTarget, satTargets } from './sociedad.js';
 import { counts } from './reglas.js';
 import { esPatrimonio, recordar } from './memoria.js';
 import { industriaActiva } from './industria.js';
+import { avanzarFundacion } from './estado.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };

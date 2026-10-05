@@ -28,7 +28,8 @@ export function hornearNaturaleza(dry = 0) {
   for (const [k, , , , , pintar] of lista) {
     const m = marcos[k];
     g.save(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(ESCALA, ESCALA);
-    pintar(g, mulberry(k.length * 97 + k.charCodeAt(0) * 13 + (k.charCodeAt(k.length - 1) || 0)));
+    const b = k.replace(/\d+$/, ''); // los cuadros de una misma animación (perro0, perro1...) con el mismo pincel: sin temblor
+    pintar(g, mulberry(b.length * 97 + b.charCodeAt(0) * 13 + (b.charCodeAt(b.length - 1) || 0)));
     g.restore();
   }
   return (HOJAS[clave] = { canvas: cv, marcos, escala: ESCALA });

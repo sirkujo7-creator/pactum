@@ -51,12 +51,13 @@ let HOJA = null;
 export function hornearVehiculos() {
   if (HOJA) return HOJA;
   const E = RES_HOJA, w = 44, h = 34, ax = 22, ay = 24, claves = [];
-  for (const era of ['herradura', 'empedrado', 'carretera']) for (const eje of ['c', 'r']) for (const dir of [1, -1]) for (let p = 0; p < (era === 'herradura' ? 4 : 1); p++) claves.push([era, eje, dir, p]);
+  // Cada arriero conserva su ropa (vi) en los cuatro pasos; antes cambiaba de color en cada paso.
+  for (const era of ['herradura', 'empedrado', 'carretera']) for (const eje of ['c', 'r']) for (const dir of [1, -1]) for (let p = 0; p < (era === 'herradura' ? 4 : 1); p++) for (let vi = 0; vi < (era === 'herradura' ? 3 : 1); vi++) claves.push([era, eje, dir, p, vi]);
   const cols = 8, cv = lienzo(cols * w * E, Math.ceil(claves.length / cols) * h * E), g = cv.getContext('2d'), marcos = {};
-  claves.forEach(([era, eje, dir, p], n) => {
+  claves.forEach(([era, eje, dir, p, vi], n) => {
     const x = (n % cols) * w * E, y = Math.floor(n / cols) * h * E;
-    marcos[`${era}_${eje}_${dir > 0 ? '+' : '-'}_${p}`] = { x, y, w: w * E, h: h * E, ax: ax * E, ay: ay * E };
-    g.save(); g.translate(x + ax * E, y + ay * E); g.scale(E, E); vehiculo(g, era, eje, dir, p, n % 3); g.restore();
+    marcos[`${era}_${eje}_${dir > 0 ? '+' : '-'}_${p}_${vi}`] = { x, y, w: w * E, h: h * E, ax: ax * E, ay: ay * E };
+    g.save(); g.translate(x + ax * E, y + ay * E); g.scale(E, E); vehiculo(g, era, eje, dir, p, vi); g.restore();
   });
   return (HOJA = { canvas: cv, marcos, escala: E });
 }

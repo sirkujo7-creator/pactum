@@ -124,6 +124,8 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 3. **En el mapa y al final (publicado en 0.72.0):** los miembros de las familias caminan por el pueblo y se pueden tocar; epílogo con el destino de cada familia.
 4. **Balance** y revisión en celular y computador (publicado en 0.72.0; la fase 13 queda terminada y espera la prueba de Juan).
 
+**Ajustes del 5 de octubre (publicado en 0.73.0):** las partidas empiezan con el mapa vacío y una misión de fundación (2 casas y 2 fincas con su oro); movimiento más suave de gente, animales y arrieros; menos tráfico en los caminos.
+
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
 - **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.

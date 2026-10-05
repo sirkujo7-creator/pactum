@@ -78,15 +78,16 @@ export class Vida {
 
   mover(a, dt, vel) {
     const d = a.ruta, dr = d.r - a.r, dc = d.c - a.c, dist = Math.hypot(dr, dc);
-    if (dist < .02) { a.ruta = null; return 0; }
+    if (dist < .02) { a.ruta = null; a.bob = 0; return 0; }
     const v = Math.min(dist, vel * dt);
     a.r += dr / dist * v; a.c += dc / dist * v;
-    a.img.setFlipX((dc - dr) < 0);
+    if (Math.abs(dc - dr) > dist * .3) a.img.setFlipX((dc - dr) < 0); // sin voltearse de un lado al otro
+    a.paso = (a.paso || 0) + v * 34; a.bob = Math.abs(Math.sin(a.paso)) * .9; // un leve vaivén al andar (no se desliza)
     return v;
   }
   dibujar(a, alto = 0) {
     const p = P(a.r, a.c, this.scene.T.hf(a.r, a.c));
-    a.img.setPosition(p[0], p[1] - alto).setDepth(a.r + a.c + (alto ? 50 : 0));
+    a.img.setPosition(p[0], p[1] - alto - (a.ruta && !reducirMovimiento() ? a.bob || 0 : 0)).setDepth(a.r + a.c + (alto ? 50 : 0));
   }
   // Vaca: pasta con la cabeza abajo y de vez en cuando da unos pasos.
   vaca(a, dt) {

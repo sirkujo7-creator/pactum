@@ -23,7 +23,7 @@ function pliegues(g, xs, y0, y1, col) {
 
 // Dibuja una figura con los pies en (0, 0). frente: true de frente, false de espaldas. paso: 0 a 3. mod: ropa moderna.
 export function figura(g, tipo, vi, frente, paso, mod = false) {
-  const rng = mulberry(tipo.length * 31 + vi * 7 + paso * 3 + (frente ? 1 : 0)), V = TIPOS_GENTE[tipo][vi], piel = FR.piel[vi % 3];
+  const rng = mulberry(tipo.length * 31 + vi * 7 + (frente ? 1 : 0)) /* el mismo pincel en los cuatro pasos: sin temblor al caminar */, V = TIPOS_GENTE[tipo][vi], piel = FR.piel[vi % 3];
   const ph = paso / 4 * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(Math.sin(ph)) * .5;
   const nino = tipo === 'nino', E = nino ? .74 : 1;
   // Sombra en el suelo.

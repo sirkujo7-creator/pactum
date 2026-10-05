@@ -110,6 +110,12 @@ Terminada (0.19.1), con el paréntesis de claridad. Falta que Juan la pruebe y l
 | 8. Otras formas de ganar y efecto por edificio | Publicado (0.33.0). Desde Ciudad, además de la Polis, cuatro caminos que se ganan sosteniendo todas sus condiciones los años que pide la dificultad (6 en Normal): Polis próspera (bienestar 60, calificación AAA, sin deuda, tesoro de 250), Polis justa (igualdad 70, legitimidad 62, ninguna clase bajo 45), Polis verde (ambiente 82, sin minas, bosque en 26% del territorio) y Polis en paz (sin grupo armado, inseguridad menor que 10, sin movimientos movilizados, vecinos con 70 de promedio). Tarjeta «Caminos a la victoria» desde la meta, con el avance de cada uno. Cada edificio muestra en su ficha su efecto especial; nuevos efectos: el mercado estabiliza el precio de la comida (hasta 30%), el acueducto reduce los brotes (hasta la mitad) y el puerto suma 2% de comercio y mejora la relación con San Lorenzo. Robots (no buscan estos caminos): unos 2% ganan por ellos. República 47%; regímenes entre 40% y 54%; Fácil 100%, Difícil 8% |
 | 9. Ajuste de Difícil | Publicado (0.33.1). Decisión de Juan (3 de octubre): Difícil cerca de 30%. Golpes ×1,45, racha para suceso bueno de 2 y suceso bueno 55% de esas veces. Robots: Difícil 31% |
 
+## Ajustes pedidos por Juan (5 de octubre)
+
+| Ajuste | Estado |
+| --- | --- |
+| Fundar a elección y movimiento más suave | Publicado (0.73.0). Las partidas nuevas empiezan con el mapa vacío: el jugador escoge dónde fundar con la **misión de fundación** (2 casas y 2 fincas, con el oro que valían ya en el tesoro); la primera obra marca el centro del pueblo y no se puede cerrar el primer año sin al menos una casa y una finca. Los robots y las partidas guardadas siguen igual (`?clasico=1` abre una partida con la aldea de antes). Movimiento: cada figura usa el mismo pincel en sus cuatro pasos (antes el dibujo «temblaba» al caminar), el arriero conserva su ropa (antes cambiaba de color en cada paso), la gente y los animales ya no se voltean de un lado al otro en las esquinas, los animales tienen un leve vaivén al andar y el tráfico es menor (máximo 4, solo con 4 o más tramos de calle) y descansa entre viaje y viaje |
+
 ## Estado de la fase 13 (historias humanas)
 
 Terminada (0.72.0): espera la prueba de Juan. Aprobada por Juan el 4 de octubre, sin censura: las cartas cuentan la historia tal como fue (muertes, desplazamiento, extorsión, reclutamiento).
