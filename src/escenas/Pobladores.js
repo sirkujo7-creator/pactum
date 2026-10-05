@@ -243,7 +243,9 @@ export class Pobladores {
       f.andado += dt;
       const v = Math.min(dist, f.vel * dt * Math.min(1, .45 + f.andado * 1.4));
       f.r += dr / dist * v; f.c += dc / dist * v; f.fase += v * 13;
-      f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0;
+      // Solo gira si la dirección cambia de verdad (en las esquinas suavizadas no se voltea de un lado al otro).
+      if (Math.abs(dc + dr) > dist * .3) f.frente = (dc + dr) >= 0 ? 1 : 0;
+      if (Math.abs(dc - dr) > dist * .3) f.voltear = (dc - dr) < 0;
       this.dibujar(f, true);
     }
     this.luzDelDia();

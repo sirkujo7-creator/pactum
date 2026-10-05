@@ -24,11 +24,11 @@ export class Trafico {
     this.red = new Map();
     for (const k of calles) { const [a, b] = k.split('|').map(Number); (this.red.get(a) || this.red.set(a, []).get(a)).push(b); (this.red.get(b) || this.red.set(b, []).get(b)).push(a); }
     this.nodos = [...this.red.keys()];
-    const n = calles.length ? Math.min(6, 1 + Math.floor(calles.length / 6)) : 0;
+    const n = calles.length >= 4 ? Math.min(4, 1 + Math.floor(calles.length / 10)) : 0; // pocos: el camino no tiene que estar siempre ocupado
     while (this.lista.length > n) this.lista.pop().img.destroy();
     while (this.lista.length < n) {
-      const k = this.lista.length, img = this.scene.add.image(0, 0, 'vehiculos', 'herradura_c_+_0').setScale(1 / this.H.escala);
-      this.lista.push({ img, de: -1, a: -1, u: Math.random(), previo: -1, vel: .3 + (k % 3) * .06 });
+      const k = this.lista.length, img = this.scene.add.image(0, 0, 'vehiculos', 'herradura_c_+_0_0').setScale(1 / this.H.escala);
+      this.lista.push({ img, de: -1, a: -1, u: Math.random(), previo: -1, vel: .3 + (k % 3) * .06, vi: k % 3, descanso: 2 + Math.random() * 10 });
     }
     this.M = M;
     for (const v of this.lista) { v.de = -1; this.colocar(v, 0); }
@@ -47,7 +47,7 @@ export class Trafico {
     if ((v.de < 0 || v.a < 0) && !this.elegir(v)) { v.img.setVisible(false); return; }
     const { T } = this.scene, M = this.M, r1 = Math.floor(v.de / M), c1 = v.de % M, r2 = Math.floor(v.a / M), c2 = v.a % M;
     const r = r1 + (r2 - r1) * v.u, c = c1 + (c2 - c1) * v.u, N = T.N, p = P(r, c, T.hf(Math.min(N, r), Math.min(N, c)));
-    const eje = r1 === r2 ? 'c' : 'r', dir = (r2 - r1) + (c2 - c1) > 0 ? '+' : '-', k = `${this.era}_${eje}_${dir}_${this.era === 'herradura' ? paso : 0}`, m = this.H.marcos[k];
+    const eje = r1 === r2 ? 'c' : 'r', dir = (r2 - r1) + (c2 - c1) > 0 ? '+' : '-', k = `${this.era}_${eje}_${dir}_${this.era === 'herradura' ? paso : 0}_${this.era === 'herradura' ? v.vi : 0}`, m = this.H.marcos[k];
     v.img.setVisible(true).setFrame(k).setOrigin(m.ax / m.w, m.ay / m.h).setPosition(p[0], p[1]).setDepth(r + c + .03);
   }
   update(dt) {
@@ -56,7 +56,9 @@ export class Trafico {
     this.reloj += dt;
     const paso = quieto ? 0 : Math.floor(this.reloj * 6) % 4;
     for (const v of this.lista) {
-      if (!quieto) { v.u += dt * v.vel; if (v.u >= 1) { v.previo = v.de; v.de = v.a; v.a = -1; v.u = 0; } }
+      // Entre viaje y viaje descansa un rato fuera de la vista (en el pueblo o en la finca).
+      if (v.descanso > 0) { v.descanso -= dt; v.img.setVisible(false); continue; }
+      if (!quieto) { v.u += dt * v.vel; if (v.u >= 1) { v.previo = v.de; v.de = v.a; v.a = -1; v.u = 0; if (Math.random() < .35) { v.descanso = 8 + Math.random() * 20; v.de = -1; } } }
       this.colocar(v, paso);
     }
   }

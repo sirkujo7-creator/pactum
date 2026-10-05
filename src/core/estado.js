@@ -28,6 +28,16 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
     riv = riv.sort((a, b) => nota(a) - nota(b)).slice(0, 6);
   }
   const start = riv[Math.floor(R0() * riv.length)];
+  // Fundar a elección (pedido de Juan, 5 de octubre): el mapa empieza vacío; el jugador escoge dónde levantar las dos
+  // primeras casas y fincas, con el oro que valían. La primera obra marca el centro del pueblo.
+  if (opciones.fundar && mundo !== 'v9') {
+    const F = C.FUNDACION || { casas: 2, fincas: 2 };
+    S.gold += F.casas * C.B.casa.cost + F.fincas * C.B.cultivo.cost;
+    S.fundando = { casas: F.casas, fincas: F.fincas };
+    S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35;
+    S.log.unshift({ y: 1, t: 'Quince personas buscan un lugar para fundar su aldea. Te eligen para gobernar.' });
+    return S;
+  }
   S.map[start].b = 'cultivo';
   const want = ['cultivo', 'casa', 'casa'];
   const q = [start], seen = new Set([start]);
@@ -43,4 +53,21 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
   if (mundo !== 'v9') { S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.centro = start; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35; }
   S.log.unshift({ y: 1, t: 'Quince personas fundan una aldea junto al río. Te eligen para gobernar.' });
   return S;
+}
+
+// La misión de fundación: cuántas casas y fincas faltan (null si ya se fundó o la partida no empezó así).
+export function faltaFundar(S) {
+  if (!S.fundando) return null;
+  const casas = S.map.filter(x => x.b === 'casa').length, fincas = S.map.filter(x => x.b === 'cultivo' || x.b === 'cafetal').length;
+  return { casas: Math.max(0, S.fundando.casas - casas), fincas: Math.max(0, S.fundando.fincas - fincas), alguna: casas > 0 && fincas > 0 };
+}
+// Tras cada obra durante la fundación: la primera marca el centro; con todas hechas, la aldea queda fundada.
+export function avanzarFundacion(S, i) {
+  if (!S.fundando) return null;
+  if (S.centro === undefined) S.centro = i;
+  const f = faltaFundar(S);
+  if (f.casas || f.fincas) return null;
+  delete S.fundando;
+  S.log.unshift({ y: S.year, t: 'Fundaste la aldea: las primeras familias ya tienen casa y tierra.' });
+  return 'Fundaste la aldea. Ahora termina el año para ver crecer a tu pueblo.';
 }

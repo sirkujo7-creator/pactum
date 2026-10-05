@@ -14,7 +14,7 @@ export async function nuevaPartida(semilla, opciones = {}) {
   const q = new URLSearchParams(location.search);
   const lado = Math.max(16, Math.min(64, +q.get('lado') || 32));
   const reg = opciones.reg || (REGIMENES.includes(q.get('reg')) ? q.get('reg') : 'republica');
-  const S = freshState(opciones.diff || 'normal', opciones.guide !== undefined ? opciones.guide : !q.get('prueba'), semilla || null, reg, { n: lado });
+  const S = freshState(opciones.diff || 'normal', opciones.guide !== undefined ? opciones.guide : !q.get('prueba'), semilla || null, reg, { n: lado, fundar: !q.get('prueba') && !q.get('clasico') });
   if (q.get('prueba')) { S.gold = 5000; S.stage = q.get('etapa') !== null ? Math.max(0, Math.min(3, +q.get('etapa'))) : 3; }
   partida.S = S;
   return S;
