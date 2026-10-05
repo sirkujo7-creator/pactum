@@ -126,6 +126,11 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 **Ajustes del 5 de octubre (publicado en 0.73.0):** las partidas empiezan con el mapa vacío y una misión de fundación (2 casas y 2 fincas con su oro); movimiento más suave de gente, animales y arrieros; menos tráfico en los caminos. En 0.74.0: caminos sin borde, como tierra gastada, y cartas cada 6 años como mucho. En 0.75.0: vecindad (parques que alegran a las casas cercanas, fábricas, minas y cuarteles que molestan a sus vecinos, bonos por materia prima y fincas cerca).
 
+**Decisiones del 5 de octubre (después de 0.75.1):**
+- **Cine más largo (publicado en 0.76.0):** las escenas duran unos diez segundos, con título grande, y se quedan en pantalla hasta tocar «Continuar». La invasión muestra la columna del vecino con fusiles y estandarte marchando hacia las casas, con humo y fogonazos. Regla para lo que viene: todo evento mecánico grande debe verse en el mapa.
+- **Fase 14 (aprobada en idea): territorios al azar.** Cinco tipos de territorio con relieve, colores y vegetación propios, que salen al azar en cada partida: valle del Magdalena, ladera cafetera, cañón del Combeima, alta montaña y páramo, sur seco.
+- **Fase 15 (aprobada en idea): la polis en el mundo.** El Tolima **sigue siendo una polis independiente**, nunca un departamento. Tres círculos: polis hermanas andinas (Antioquia con sus colonos y baldíos, Santafé, Huila, Quindío, Valle), regiones lejanas por rutas (Caribe, Pacífico, Llanos, Amazonía; río Magdalena, Camino del Quindío, ferrocarril, cable aéreo) y potencias por época (España, Inglaterra, Estados Unidos, Alemania, China, ONU). Pantalla «El mundo». Juan quiere ampliarlo aún más; con escenas de cine para caravanas, llegadas e invasiones.
+
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
 - **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.

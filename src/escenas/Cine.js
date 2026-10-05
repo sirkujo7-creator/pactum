@@ -1,8 +1,8 @@
 // Eventos de cine (fase 9): antes de la tarjeta de un suceso grande, una escena corta. La cámara viaja al lugar,
 // bajan franjas de cine con un texto y se ve lo que pasa: marchas, procesiones, escándalos, desplazados, tomas
 // armadas, terremotos, lahares y avenidas. Solo muestra lo que ya ocurrió en la lógica (no cambia el balance).
-// Se salta con un toque, Esc, Enter o la barra espaciadora. Con "reducir movimiento" no hay escena.
-import { C, plaza, clamp, casillasBorde } from '../core/index.js';
+// Dura unos diez segundos y se queda en pantalla hasta tocar «Continuar» (o Esc, Enter, barra espaciadora). Con "reducir movimiento" no hay escena.
+import { C, plaza, clamp, casillasBorde, bordes } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
 import { FR } from '../arte/fresco.js';
@@ -30,6 +30,7 @@ export class Cine {
     }
     if (!tx.exists('cinePapel')) { const c = lienzo(10, 12), g = c.getContext('2d'); g.fillStyle = FR.cal; g.fillRect(0, 0, 10, 12); g.fillStyle = '#9A8E7E'; for (let k = 0; k < 4; k++) g.fillRect(2, 2 + k * 2.5, 6, 1); tx.addCanvas('cinePapel', c); }
     if (!tx.exists('cineBandera')) { const c = lienzo(40, 64), g = c.getContext('2d'); g.strokeStyle = FR.siena; g.lineWidth = 3; g.beginPath(); g.moveTo(6, 4); g.lineTo(6, 62); g.stroke(); g.fillStyle = FR.cal; g.beginPath(); g.moveTo(7, 6); g.quadraticCurveTo(22, 2, 36, 8); g.lineTo(36, 26); g.quadraticCurveTo(22, 20, 7, 26); g.fill(); tx.addCanvas('cineBandera', c); }
+    if (!tx.exists('cineFusil')) { const c = lienzo(8, 44), g = c.getContext('2d'); g.strokeStyle = '#3A2E26'; g.lineWidth = 3; g.beginPath(); g.moveTo(4, 2); g.lineTo(4, 42); g.stroke(); g.fillStyle = '#C9C2B4'; g.fillRect(2.5, 0, 3, 6); tx.addCanvas('cineFusil', c); }
     if (!tx.exists('cineVela')) { const c = lienzo(16, 16), g = c.getContext('2d'), gr = g.createRadialGradient(8, 8, 0, 8, 8, 8); gr.addColorStop(0, 'rgba(255,226,140,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, 16, 16); tx.addCanvas('cineVela', c); }
   }
 
@@ -53,13 +54,16 @@ export class Cine {
     const K = C.CINE;
     if (!K || !K.escenas[tipo] || reducirMovimiento() || this.activo || !this.scene.listo) { luego(); return; }
     this.activo = true; this.luego = luego; this.t = 0; this.tipo = tipo; this.datos = datos || {};
-    this.dur = K.duracion;
+    this.dur = K.duracion; this.inicio = performance.now();
     const texto = K.escenas[tipo].texto.replace('{movimiento}', this.datos.movimiento || 'El movimiento').replace('{lider}', this.datos.lider || 'El líder').replace('{vecino}', this.datos.vecino || 'el vecino');
     // Franjas de cine con el texto; un toque las salta.
     const capa = capaUI();
-    this.velo = el('div', { class: 'cine vivo', role: 'dialog', 'aria-label': texto, on: { pointerup: () => this.terminar() } }, [
-      el('div', { class: 'cine-franja arriba' }),
-      el('div', { class: 'cine-franja abajo' }, [el('p', { text: texto }), el('small', { text: K.saltar })])
+    // La escena no se va sola: al acabar se queda quieta en pantalla hasta que se toca «Continuar».
+    this.fin = false;
+    this.boton = el('button', { class: 'cine-boton', type: 'button', text: K.saltar, on: { click: e => { e.stopPropagation(); this.terminar(); } } });
+    this.velo = el('div', { class: 'cine vivo', role: 'dialog', 'aria-label': texto }, [
+      el('div', { class: 'cine-franja arriba' }, [el('h2', { text: K.escenas[tipo].titulo || '' })]),
+      el('div', { class: 'cine-franja abajo' }, [el('p', { text: texto }), this.boton])
     ]);
     capa.append(this.velo); capa.classList.add('en-cine'); // la interfaz se esconde durante la escena
     requestAnimationFrame(() => this.velo && this.velo.classList.add('on'));
@@ -84,17 +88,33 @@ export class Cine {
       return [q[0], q[1] - 10];
     }
     if (tipo === 'asedio') {
-      // Tropas del vecino (de verde oliva) que entran por su borde hacia el pueblo, con fogonazos y humo.
-      const N = this.T().N, L = casillasBorde(S, this.datos.id || 'altamira'), b = L.length ? L[0] : plaza(S), o = { r: Math.floor(b / N) + .5, c: b % N + .5 };
-      const hacia = { r: o.r + (p.r - o.r) * .45, c: o.c + (p.c - o.c) * .45 };
-      for (let k = 0; k < 12; k++) {
-        const de = { r: o.r + ((k % 4) - 1.5) * .3, c: o.c + (Math.floor(k / 4) - 1) * .3 }, a = { r: hacia.r + ((k % 4) - 1.5) * .3, c: hacia.c + (Math.floor(k / 4) - 1) * .3 };
-        const s0 = this.caminante('artesano', k % 3, de, [a], .45, (k % 4) * .15 + Math.floor(k / 4) * .3);
-        s0.img.setTint(0x8C8F6A);
+      // La invasión: una columna del vecino (de verde oliva, con su estandarte) cruza el borde y marcha hacia las casas
+      // más cercanas; allí empiezan los fogonazos y el humo. La cámara sigue a la tropa.
+      const N = this.T().N, L = casillasBorde(S, this.datos.id || 'altamira'), b = L.length ? L[0] : plaza(S), o0 = { r: Math.floor(b / N) + .5, c: b % N + .5 };
+      const casas = S.map.map((x, i) => x.b && !x.ob ? i : -1).filter(i => i >= 0).sort((a, z) => Math.hypot(Math.floor(a / N) + .5 - o0.r, a % N + .5 - o0.c) - Math.hypot(Math.floor(z / N) + .5 - o0.r, z % N + .5 - o0.c));
+      const blanco = casas.length ? { r: Math.floor(casas[0] / N) + .5, c: casas[0] % N + .5 } : p;
+      // Dirección de la marcha: hacia las casas; si están pegadas al borde, hacia adentro del territorio.
+      const lado = bordes(S)[this.datos.id || 'altamira'], n = { r0: [1, 0], rN: [-1, 0], c0: [0, 1], cN: [0, -1] }[lado] || [1, 0];
+      let D = Math.hypot(blanco.r - o0.r, blanco.c - o0.c), ur = D > 2 ? (blanco.r - o0.r) / D : n[0], uc = D > 2 ? (blanco.c - o0.c) / D : n[1];
+      if (D <= 2) D = 2;
+      // Si el borde queda lejos, la columna ya viene a cinco casillas y media del pueblo.
+      const dentro = q => ({ r: clamp(q.r, .6, N - .6), c: clamp(q.c, .6, N - .6) }), ini = dentro(D > 5.5 ? { r: blanco.r - ur * 5.5, c: blanco.c - uc * 5.5 } : o0), hacia = dentro(D > 2.5 ? { r: blanco.r - ur * .9, c: blanco.c - uc * .9 } : { r: ini.r + ur * 2.2, c: ini.c + uc * 2.2 });
+      const pr = -uc, pc = ur; // perpendicular: el ancho de la columna
+      for (let k = 0; k < 18; k++) {
+        const fila = Math.floor(k / 3), col = k % 3 - 1, at = -fila * .32, lat = col * .3;
+        const de = dentro({ r: ini.r + ur * at + pr * lat, c: ini.c + uc * at + pc * lat }), w = lat * 2.2 + (fila % 2 ? .18 : 0), a = { r: hacia.r + ur * at * .35 + pr * w, c: hacia.c + uc * at * .35 + pc * w };
+        const s0 = this.caminante('artesano', k % 3, de, [a], .62, .1 + fila * .05);
+        s0.img.setTint(0x6E7550);
+        s0.extra = k === 1 ? sc.add.image(0, 0, 'cineBandera').setScale(.42).setOrigin(.15, 1).setTint(0xB03A2E) : sc.add.image(0, 0, 'cineFusil').setScale(.32).setOrigin(.5, .9).setAngle(-14);
       }
-      for (let k = 0; k < 2; k++) { const q = this.punto(hacia.r + (k ? .8 : -.6), hacia.c + (k ? -.5 : .7)); this.objetos.push(sc.add.particles(q[0], q[1], 'edificios', { frame: 'humo', lifespan: 2600, speedY: { min: -24, max: -12 }, scale: { start: .3, end: 1 }, alpha: { start: .6, end: 0 }, tint: 0x3A322C, frequency: 150 }).setDepth(40000 - 2)); }
-      this.fogonazos = { cada: .3, prox: .6, centro: hacia };
-      const q = this.punto((o.r + hacia.r) / 2, (o.c + hacia.c) / 2);
+      this.seguirTropa = true;
+      this.objetos.push(...[0, 1, 2].map(k => {
+        const q = this.punto(blanco.r + [-.4, .5, .2][k], blanco.c + [.5, -.3, .9][k]);
+        return sc.add.particles(q[0], q[1], 'edificios', { frame: 'humo', lifespan: 3000, speedY: { min: -26, max: -12 }, scale: { start: .3, end: 1.15 }, alpha: { start: .65, end: 0 }, tint: 0x3A322C, frequency: 140, emitting: false }).setDepth(40000 - 2);
+      }));
+      this.humoTarde = { desde: 5.5, hecho: false };
+      this.fogonazos = { cada: .28, prox: 4.5, centro: { r: (hacia.r + blanco.r) / 2, c: (hacia.c + blanco.c) / 2 }, radio: 1.6 };
+      const q = this.punto(ini.r, ini.c);
       return [q[0], q[1] - 10];
     }
     if (tipo === 'paz') {
@@ -130,7 +150,7 @@ export class Cine {
       return [pz[0], pz[1] - 10];
     }
     if (tipo === 'terremoto') {
-      sc.cameras.main.shake(2600, .008);
+      sc.cameras.main.shake(5200, .007);
       const obras = S.map.map((x, i) => x.b && x.b !== 'cultivo' && x.b !== 'cafetal' ? i : -1).filter(i => i >= 0), N = this.T().N;
       obras.sort((a, b) => Math.hypot(Math.floor(a / N) + .5 - p.r, a % N + .5 - p.c) - Math.hypot(Math.floor(b / N) + .5 - p.r, b % N + .5 - p.c));
       for (const i of obras.slice(0, 7)) {
@@ -172,8 +192,18 @@ export class Cine {
     this.t += dt;
     const sc = this.scene, K = this.camara;
     // Cámara: un segundo de viaje.
-    if (K) { const f = suave(Math.min(1, this.t / 1.1)); sc.fijarCamara(K.s0 + (K.s1 - K.s0) * f, K.x0 + (K.x1 - K.x0) * f, K.y0 + (K.y1 - K.y0) * f); }
-    const tt = this.t - .6; // los actores empiezan cuando la cámara va llegando
+    if (K && this.t < 1.8) { const f = suave(Math.min(1, this.t / 1.8)); sc.fijarCamara(K.s0 + (K.s1 - K.s0) * f, K.x0 + (K.x1 - K.x0) * f, K.y0 + (K.y1 - K.y0) * f); }
+    const tt = this.t - 1; // los actores empiezan cuando la cámara va llegando
+    // La invasión: la cámara sigue a la columna, y el humo sale cuando llega a las casas.
+    if (this.seguirTropa && tt > .5) {
+      const V = this.caminantes.filter(a => a.img.visible);
+      if (V.length) {
+        const r = V.reduce((x, a) => x + a.r, 0) / V.length, c = V.reduce((x, a) => x + a.c, 0) / V.length, q = this.punto(r, c), [x0, y0] = sc.centro();
+        sc.fijarCamara(sc.escala, x0 + (q[0] - x0) * Math.min(1, dt * 1.5), y0 + (q[1] - 10 - y0) * Math.min(1, dt * 1.5));
+        if (K) { K.x1 = x0; K.y1 = y0; }
+      }
+    }
+    if (this.humoTarde && !this.humoTarde.hecho && tt > this.humoTarde.desde) { this.humoTarde.hecho = true; for (const o of this.objetos) if (o.emitting === false) o.start(); }
     for (const a of this.caminantes) {
       if (tt < a.demora) continue;
       a.img.setVisible(true);
@@ -185,13 +215,13 @@ export class Cine {
       } else if (a.mira) { const dr = a.mira.r - a.r, dc = a.mira.c - a.c; a.frente = (dc + dr) >= 0 ? 1 : 0; a.voltear = (dc - dr) < 0; }
       const q = this.punto(a.r, a.c), paso = andando ? Math.floor(a.fase) % 4 : (a.mira && Math.floor(this.t * 3 + a.vi) % 4 === 0 ? 1 : 0);
       a.img.setFrame(`${a.tipo}_${a.vi}_${a.frente}_${paso}`).setPosition(q[0], q[1]).setFlipX(a.voltear).setDepth(a.r + a.c + .02);
-      if (a.extra) a.extra.setPosition(q[0] + (this.tipo === 'procesion' ? 3 : 0), q[1] - (this.tipo === 'procesion' ? 10 : 12)).setDepth(a.r + a.c + .03);
+      if (a.extra) { const fx = this.tipo === 'procesion' ? 3 : this.tipo === 'asedio' ? 4 : 0, fy = this.tipo === 'procesion' ? 10 : this.tipo === 'asedio' ? 7 : 12; a.extra.setPosition(q[0] + (a.voltear ? -fx : fx), q[1] - fy).setDepth(a.r + a.c + .03); }
     }
     // Fogonazos de la toma armada.
     const F = this.fogonazos;
     if (F && tt > F.prox) {
       F.prox = tt + F.cada * (.5 + Math.random());
-      const q = this.punto(F.centro.r + (Math.random() - .5) * 2.4, F.centro.c + (Math.random() - .5) * 2.4);
+      const R = F.radio || 2.4, q = this.punto(F.centro.r + (Math.random() - .5) * R, F.centro.c + (Math.random() - .5) * R);
       const b = sc.add.circle(q[0], q[1] - 6, 5, 0xFFD27A, .95).setDepth(40000 - 1).setBlendMode('ADD');
       sc.tweens.add({ targets: b, alpha: 0, scale: 2.2, duration: 220, onComplete: () => b.destroy() });
     }
@@ -205,7 +235,7 @@ export class Cine {
         g.strokePath();
       }
     }
-    if (this.t >= this.dur + .6) this.terminar();
+    if (!this.fin && Math.max(this.t, (performance.now() - this.inicio) / 1000) >= this.dur + 1) { this.fin = true; this.boton.textContent = C.CINE.seguir; this.boton.classList.add('seguir'); this.boton.focus({ preventScroll: true }); }
   }
   terminar() {
     if (!this.activo) return;
@@ -214,7 +244,7 @@ export class Cine {
     this.scene.cameras.main.resetFX && this.scene.cameras.main.resetFX();
     for (const a of this.caminantes) { a.img.destroy(); if (a.extra) a.extra.destroy(); }
     for (const o of this.objetos) o.destroy();
-    this.caminantes = []; this.objetos = []; this.fogonazos = null; this.lodo = null; this.camara = null;
+    this.caminantes = []; this.objetos = []; this.boton = null; this.fogonazos = null; this.lodo = null; this.seguirTropa = false; this.humoTarde = null; this.camara = null;
     const v = this.velo; this.velo = null;
     if (v) { v.classList.remove('on'); setTimeout(() => v.remove(), 350); }
     capaUI().classList.remove('en-cine');
