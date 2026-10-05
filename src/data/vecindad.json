@@ -1,0 +1,47 @@
+{
+  "leccion": "Ordenamiento territorial: no da lo mismo dónde se construye. Las ciudades separan las zonas de vivienda de las de industria, y ponen parques donde vive la gente. Un Plan de Ordenamiento Territorial (POT) decide qué va en cada lugar.",
+  "parque": {
+    "radio": 1,
+    "animoArtesanos": 8,
+    "animoCampesinos": 2
+  },
+  "molestias": {
+    "taller": {
+      "radio": 1,
+      "animo": -7,
+      "texto": "humo y ruido de una fábrica"
+    },
+    "mina": {
+      "radio": 2,
+      "animo": -9,
+      "texto": "polvo y explosiones de una mina"
+    },
+    "cuartel": {
+      "radio": 1,
+      "animo": -3,
+      "texto": "el ruido del cuartel"
+    }
+  },
+  "cercania": {
+    "fabrica": {
+      "radio": 3,
+      "bono": 0.12
+    },
+    "mercado": {
+      "radio": 2,
+      "bono": 0.08
+    }
+  },
+  "textos": {
+    "ficha": "Vecindario de esta casa:",
+    "parque": "🌳 parque cerca",
+    "sinParque": "sin parque cerca",
+    "molestia": "{icono} molestia: {texto}",
+    "avisoMolestia": "{obra} queda junto a {n} {casas}: sus vecinos se molestan ({texto}).",
+    "avisoParque": "El parque alegra a {n} {casas}.",
+    "fabricaCerca": "Tiene su materia prima cerca: rinde {pct}% más.",
+    "mercadoCerca": "Junto a las fincas: vende más fresco ({pct}% más).",
+    "partesParque": "Parques cerca de las casas",
+    "partesMolestia": "Fábricas, minas o cuarteles pegados a las casas"
+  }
+}

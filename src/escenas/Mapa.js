@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, genTerreno, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar, avisoVecindad } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -353,8 +353,9 @@ export class Mapa extends Phaser.Scene {
     if (k === 'taller' && industriaActiva(this.S)) setTimeout(() => this.ui.tarjetaProducto(i), 350); // fase 11: elegir qué producir
     this.ui.logros();
     const guia = checkGuide(this.S);
-    const ob = this.S.map[i].ob, empieza = ob ? C.OBRAS.textos.empieza.replace('{obra}', C.B[k].a).replace('{n}', ob.n === 1 ? 'un año' : ob.n + ' años') : '';
-    if (typeof r === 'string' || guia || empieza) this.ui.toast([empieza, typeof r === 'string' ? r : '', guia || ''].join(' ').trim());
+    const ob = this.S.map[i].ob, empieza = ob ? C.OBRAS.textos.empieza.replace('{obra}', k === 'taller' && industriaActiva(this.S) ? 'una fábrica' : C.B[k].a).replace('{n}', ob.n === 1 ? 'un año' : ob.n + ' años') : '';
+    const vec = avisoVecindad(this.S, i, k); // vecindad: molestias o parque junto a las casas
+    if (typeof r === 'string' || guia || empieza || vec) this.ui.toast([empieza, typeof r === 'string' ? r : '', vec, guia || ''].join(' ').trim());
     this.marcarPosibles(this.ui.herramienta);
     this.ui.render();
   }
