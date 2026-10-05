@@ -1,6 +1,7 @@
 // Fin de año: cuentas, población, inflación, ánimo, igualdad, confianza, ambiente,
 // promesas, etapas, elecciones y rumbo del gobierno (corrupción, reforma y revolución).
 import { azar, clamp } from './azar.js';
+import { registrarMuertes } from './huellas.js';
 import { C } from './contenido.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
@@ -55,7 +56,7 @@ export function advance(S) {
   S.food += F.fprod - F.cons;
   let hunger = false;
   if (S.stage >= 1 && S.pop > waterCap(S, c)) news.push(`Falta agua: ${S.pop} habitantes y acueductos para ${waterCap(S, c)}.`);
-  if (S.food < 0) { hunger = true; S.hungry = true; S.pop -= Math.ceil(S.pop * .12); S.food = 0; news.push('Faltó alimento: hubo hambre y se perdieron vidas.'); }
+  if (S.food < 0) { hunger = true; S.hungry = true; const mh = Math.ceil(S.pop * .12); S.pop -= mh; registrarMuertes(S, mh, 'hambre'); S.food = 0; news.push('Faltó alimento: hubo hambre y se perdieron vidas.'); }
   const cp = c.casa * 10;
   const wcap = waterCap(S, c);
   if (!hunger && S.pop < cp && S.pop < wcap) S.pop = Math.min(cp, S.pop + Math.max(1, Math.round(S.pop * (ritmo(S) ? ritmo(S).crecimiento : .18) * S.hap / 60)));

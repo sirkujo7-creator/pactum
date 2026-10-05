@@ -346,5 +346,19 @@
     "aniosDeObra": 2,
     "cultura": 5,
     "especial": "El que más baja la exigencia de cultura y sentido, pero los días de partido sube un poco la inseguridad. Abre el dilema de «pan y circo»."
+  },
+  "cementerio": {
+    "icono": "🪦",
+    "nombre": "Cementerio",
+    "articulo": "un cementerio",
+    "descripcion": "Una parcela cercada con tapia blanca para enterrar a los muertos. Debe quedar lejos de la plaza, por salud. Sin cementerio, los muertos no tienen sepultura digna: el pueblo se aflige y las epidemias se propagan más.",
+    "costo": 35,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ],
+    "especial": "Da sepultura a 40 muertos. Las tumbas se ven crecer con cada muerte."
   }
 }
