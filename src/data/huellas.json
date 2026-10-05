@@ -1,0 +1,30 @@
+{
+  "leccion": "Las Leyes de Indias (1573) mandaban fundar los pueblos alrededor de una plaza mayor, con calles rectas en damero. Desde la plaza se medía todo: la iglesia, el cabildo, los solares de las familias y, afuera, los ejidos y las tierras de labor.",
+  "fundacion": {
+    "radios": [
+      4,
+      6,
+      9,
+      99
+    ],
+    "libres": [
+      "cultivo",
+      "cafetal",
+      "mina",
+      "fundacion",
+      "acueducto",
+      "molino",
+      "puerto"
+    ],
+    "textos": {
+      "primero": "Primero levanta la plaza de fundación: marca el centro de tu pueblo.",
+      "solo": "La plaza de fundación se levanta una sola vez, al fundar.",
+      "fuera": "Fuera del casco urbano: queda a más de {r} casillas de la plaza. Las obras del pueblo van dentro del casco, que crece con cada etapa.",
+      "noDemoler": "La plaza de fundación no se puede demoler: es el corazón del pueblo.",
+      "meta": "Funda tu aldea: primero la plaza de fundación, luego {casas} y {fincas} (el oro ya lo tienes).",
+      "metaGuia": "Toca <b>Construir</b> y elige la <b>Plaza de fundación</b>: donde la pongas quedará el centro del pueblo. Junto al río la comida rinde más.",
+      "fundada": "Se levanta la cruz de fundación: aquí estará la plaza mayor del pueblo.",
+      "casco": "Casco urbano: {r} casillas alrededor de la plaza. Fincas, minas y obras del río pueden ir más lejos."
+    }
+  }
+}

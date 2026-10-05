@@ -131,6 +131,15 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 - **Fase 14 (aprobada en idea): territorios al azar.** Cinco tipos de territorio con relieve, colores y vegetación propios, que salen al azar en cada partida: valle del Magdalena, ladera cafetera, cañón del Combeima, alta montaña y páramo, sur seco.
 - **Fase 15 (aprobada en idea): la polis en el mundo.** El Tolima **sigue siendo una polis independiente**, nunca un departamento. Tres círculos: polis hermanas andinas (Antioquia con sus colonos y baldíos, Santafé, Huila, Quindío, Valle), regiones lejanas por rutas (Caribe, Pacífico, Llanos, Amazonía; río Magdalena, Camino del Quindío, ferrocarril, cable aéreo) y potencias por época (España, Inglaterra, Estados Unidos, Alemania, China, ONU). Pantalla «El mundo». Juan quiere ampliarlo aún más; con escenas de cine para caravanas, llegadas e invasiones.
 
+**Fase «El mapa cuenta la historia» (aprobada por Juan el 5 de octubre, antes de la fase 14):** las decisiones, leyes y desgracias dejan huellas físicas en el mapa, no solo números. Las huellas van alrededor del pueblo, lejos de las obras (0.76.1). Un paso publicable a la vez:
+
+0. **Plaza de fundación (publicado en 0.77.0):** primera obra de cada partida nueva (cruz de piedra y ceiba, Leyes de Indias); marca el centro y el casco urbano (4, 6 y 9 casillas por etapa; libre en Polis). Fincas, minas y obras del río pueden ir fuera del casco. No se demuele. Datos en `src/data/huellas.json`, lógica en `src/core/huellas.js`.
+1. **Desastres y muertes:** ruinas que cuestan oro al reconstruir; cementerio como edificio con su parcela, lejos de la plaza (mínimo 4 casillas; cédula de Carlos III, 1787), con tumbas que crecen con las muertes y más riesgo de epidemia sin él; luto en la plaza, campos secos, bandera amarilla en epidemias.
+2. **Barrio de invasión que crece** casilla por casilla, con informalidad, menos impuestos, enfermedad, deserción e inseguridad (legalizar, ignorar o desalojar); colonos que toman baldíos con ranchos y cercas en el borde.
+3. **Leyes que se ven:** cada ley con su señal en el mapa.
+4. **Guerra y conflicto:** casas quemadas y trincheras que sanan con los años.
+5. **Balance** con los robots.
+
 **Pendientes para después (no olvidar):**
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
 - **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.

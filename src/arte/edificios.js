@@ -364,6 +364,17 @@ function recetas() {
     for (let k = 0; k < 4; k++) blob(g, 14 + k * 2.5, 6 - k * 1.2, 2.6, 1.8, k % 2 ? '#8E8478' : '#A39C92', r, .9);
     g.strokeStyle = '#5A4A3A'; g.lineWidth = .8; g.beginPath(); g.moveTo(-2, 5); g.lineTo(16, 14); g.moveTo(2, 4); g.lineTo(20, 13); g.stroke();
   }]);
+  // Huellas, paso 0: la cruz de fundación, de piedra, sobre tres gradas.
+  L.push(['cruzFundacion', 44, 64, 22, 52, (g, r) => {
+    sombra(g, 14, 5, 4);
+    iso(g, .3, .3, 0, 3, '#C9BB9C', '#AE9F80', '#DCD0B4', r);
+    iso(g, .22, .22, 3, 3, '#C9BB9C', '#AE9F80', '#DCD0B4', r);
+    iso(g, .14, .14, 6, 3, '#C9BB9C', '#AE9F80', '#DCD0B4', r);
+    wash(g, [[-2.2, -9], [2.2, -9], [2.2, -44], [-2.2, -44]], '#D8CCB0', r, .98);
+    wash(g, [[-9, -33], [9, -33], [9, -37.5], [-9, -37.5]], '#D8CCB0', r, .98);
+    g.globalAlpha = .55; g.strokeStyle = FR.siena; g.lineWidth = .7; g.strokeRect(-2.2, -44, 4.4, 35); g.strokeRect(-9, -37.5, 18, 4.5); g.globalAlpha = 1;
+    for (const [x, c] of [[-6, FR.rojo], [5, FR.ocre]]) blob(g, x, -1, 2, 1.3, c, r, .85); // flores al pie
+  }]);
   L.push(['fuente', 44, 34, 22, 24, (g, r) => {
     sombra(g, 12, 3.5, 3); g.fillStyle = '#D8CCB2'; g.beginPath(); g.ellipse(0, -2, 12, 5, 0, 0, 7); g.fill(); g.fillStyle = '#BFB296'; g.fillRect(-12, -2, 24, 3); g.beginPath(); g.ellipse(0, 1, 12, 5, 0, 0, Math.PI); g.fill();
     g.fillStyle = '#86BDD2'; g.beginPath(); g.ellipse(0, -2.5, 9.5, 3.6, 0, 0, 7); g.fill(); g.fillStyle = '#D8CCB2'; g.fillRect(-1.5, -12, 3, 10); g.fillStyle = '#B9E0EC'; g.beginPath(); g.ellipse(0, -12, 3, 1.4, 0, 0, 7); g.fill();
@@ -472,6 +483,7 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'mercado': return [{ k: etapa >= 2 ? 'mercado2' : 'mercado0' }];
     case 'agora': return [{ k: 'sede-' + reg }];
     // Fase 8: parque ordenado: la fuente al centro, dos árboles a los lados y setos.
+    case 'fundacion': return [{ k: 'cruzFundacion', du: .06, dv: .06 }, { k: 'arbol', du: -.3, dv: -.28, s: 1.1, n: true }];
     case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.3, s: .9, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
     case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];

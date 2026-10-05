@@ -32,8 +32,9 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
   // primeras casas y fincas, con el oro que valían. La primera obra marca el centro del pueblo.
   if (opciones.fundar && mundo !== 'v9') {
     const F = C.FUNDACION || { casas: 2, fincas: 2 };
-    S.gold += F.casas * C.B.casa.cost + F.fincas * C.B.cultivo.cost;
-    S.fundando = { casas: F.casas, fincas: F.fincas };
+    S.gold += F.casas * C.B.casa.cost + F.fincas * C.B.cultivo.cost + (C.HUELLAS ? C.B.fundacion.cost : 0);
+    S.fundando = { casas: F.casas, fincas: F.fincas, ...(C.HUELLAS ? { plaza: 1 } : {}) }; // paso 0 de las huellas: primero la plaza
+    if (C.HUELLAS) S.casco = true;
     S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35;
     S.log.unshift({ y: 1, t: 'Quince personas buscan un lugar para fundar su aldea. Te eligen para gobernar.' });
     return S;
@@ -59,14 +60,16 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
 export function faltaFundar(S) {
   if (!S.fundando) return null;
   const casas = S.map.filter(x => x.b === 'casa').length, fincas = S.map.filter(x => x.b === 'cultivo' || x.b === 'cafetal').length;
-  return { casas: Math.max(0, S.fundando.casas - casas), fincas: Math.max(0, S.fundando.fincas - fincas), alguna: casas > 0 && fincas > 0 };
+  const plaza = S.fundando.plaza && !S.map.some(x => x.b === 'fundacion') ? 1 : 0;
+  return { plaza, casas: Math.max(0, S.fundando.casas - casas), fincas: Math.max(0, S.fundando.fincas - fincas), alguna: !plaza && casas > 0 && fincas > 0 };
 }
 // Tras cada obra durante la fundación: la primera marca el centro; con todas hechas, la aldea queda fundada.
 export function avanzarFundacion(S, i) {
   if (!S.fundando) return null;
-  if (S.centro === undefined) S.centro = i;
+  if (S.centro === undefined || S.map[i].b === 'fundacion') S.centro = i; // la plaza (o la primera obra) marca el centro
   const f = faltaFundar(S);
-  if (f.casas || f.fincas) return null;
+  if (S.map[i].b === 'fundacion') { S.fundando.plaza = 0; S.log.unshift({ y: S.year, t: C.HUELLAS.fundacion.textos.fundada }); }
+  if (f.plaza || f.casas || f.fincas) return null;
   delete S.fundando;
   S.log.unshift({ y: S.year, t: 'Fundaste la aldea: las primeras familias ya tienen casa y tierra.' });
   return 'Fundaste la aldea. Ahora termina el año para ver crecer a tu pueblo.';

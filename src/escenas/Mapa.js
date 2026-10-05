@@ -418,7 +418,7 @@ export class Mapa extends Phaser.Scene {
   terminarAnio() {
     const S = this.S;
     if (!this.listo || S.pend || S.over || this.ui.hayTarjeta() || this.cerrandoAnio || (this.cine && this.cine.activo)) return;
-    const ff = faltaFundar(S); if (ff && !ff.alguna) { this.ui.toast('Primero funda la aldea: construye al menos una casa y una finca (Construir).'); return; } // pedido de Juan: fundar a elección
+    const ff = faltaFundar(S); if (ff && !ff.alguna) { this.ui.toast(ff.plaza ? C.HUELLAS.fundacion.textos.primero : 'Primero funda la aldea: construye al menos una casa y una finca (Construir).'); return; } // pedido de Juan: fundar a elección
     this.ui.cerrarHojas(); this.ui.cerrarFicha();
     const g0 = S.gold, p0 = S.pop, f0 = S.food, t0 = S.tr, antes = S.map.map(x => this.huella(x)), desgaste0 = S.desgaste;
     const r = advance(S);
