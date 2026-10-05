@@ -54,9 +54,16 @@ export const Sonido = (() => {
     }
     if (ac.currentTime > birdT) { bird(ac.currentTime + .1); birdT = ac.currentTime + 4 + Math.random() * 9; }
   }
+  // iPhone: el audio de la página suena aunque el interruptor de silencio esté puesto (Safari 16.4+) y se
+  // «desbloquea» con un sonido mudo dentro del mismo toque.
+  function desbloquear() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* sin audioSession */ }
+    try { const b = ac.createBuffer(1, 1, 22050), s = ac.createBufferSource(); s.buffer = b; s.connect(ac.destination); s.start(0); } catch (e) { /* nada */ }
+    if (ac.state !== 'running') ac.resume().catch(() => {});
+  }
   function start() {
     try { if (!ac) init(); } catch (e) { console.warn('Sin sonido:', e); return; }
-    ac.resume(); on = true; next = Math.max(next, ac.currentTime + .1);
+    desbloquear(); on = true; next = Math.max(next, ac.currentTime + .1);
     master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(.55, ac.currentTime + 1.2);
     if (!timer) timer = setInterval(schedule, 200);
   }
@@ -105,5 +112,6 @@ export const Sonido = (() => {
   }
   function tap() { if (!on) return; pluck(NOTE(59), ac.currentTime, .25, .08); }
   function mode(r) { const m = MODES[r] || MODES.republica; SCALE = m.s; BASS = m.b; BEAT = m.beat; }
-  return { start, stop, chime, tap, prensa, carta, mode, get on() { return on; } };
+  function despertar() { if (ac && on && ac.state !== 'running') desbloquear(); }
+  return { start, stop, chime, tap, prensa, carta, mode, despertar, get on() { return on; } };
 })();

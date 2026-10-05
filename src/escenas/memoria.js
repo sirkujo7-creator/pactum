@@ -40,5 +40,5 @@ export function logrosGanados() {
 }
 export function guardarLogros(g) { escribir(LOGROS, JSON.stringify(g)); }
 
-export function quiereSonido() { return leer(SONIDO) === '1'; }
+export function quiereSonido() { return leer(SONIDO) !== '0'; } // con sonido salvo que el jugador lo apague
 export function guardarSonido(on) { escribir(SONIDO, on ? '1' : '0'); }
