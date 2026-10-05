@@ -20,7 +20,7 @@ import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
 // Huellas grandes que despejan la vegetación de su casilla (fase 6: megaproyectos e inventos).
-const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento']);
+const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento', 'colono', 'arriendo', 'sorteo']);
 const ZOOM_MAX = 2.6; // más cerca, el terreno pintado se vería pixelado
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
 

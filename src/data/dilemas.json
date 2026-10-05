@@ -1991,7 +1991,8 @@
         "despues": {
           "anios": 5,
           "id": "baldios_pleito"
-        }
+        },
+        "colonos": "colono"
       },
       {
         "texto": "Reconocer los títulos del hacendado",
@@ -2004,7 +2005,8 @@
         "filosofia": "real",
         "porque": "Mantener a los poderosos de tu lado da estabilidad, aunque concentra la tierra.",
         "aQuien": "El hacendado paga un tributo y arrienda la tierra a los colonos; ellos trabajan, pero no son dueños.",
-        "huella": "valla"
+        "huella": "valla",
+        "colonos": "arriendo"
       },
       {
         "texto": "Medir la tierra y repartirla por sorteo público",
@@ -2016,7 +2018,8 @@
         "filosofia": "deon",
         "porque": "Una regla igual para todos, aplicada a la vista de todos, es la base de la justicia.",
         "aQuien": "Medir cuesta oro, pero nadie puede decir que hubo trampa: la legitimidad sube.",
-        "huella": "placa"
+        "huella": "placa",
+        "colonos": "sorteo"
       }
     ]
   },

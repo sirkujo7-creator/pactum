@@ -206,6 +206,29 @@ function recetas() {
     const t = V2(.36, .05); g.strokeStyle = '#6B4F3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(t[0] - 8, t[1] - 6); g.lineTo(t[0] + 6, t[1] - 8); g.stroke();
     for (let k = 0; k < 3; k++) { g.fillStyle = ['#C0602A', '#5E8FB0', '#E7C76B'][k]; g.fillRect(t[0] - 6 + k * 4.5, t[1] - 6.8 - k * .5, 2.6, 3); }
   }]);
+  // Huellas, paso 2: ranchos de colonos en los baldíos (propios, arrendatarios o en parcela sorteada).
+  const rancho = (g, r, modo) => {
+    sombra(g, 24, 6, 4);
+    for (let a = 0; a < 3; a++) for (let b = 0; b < 4; b++) { const q = V2(-.32 + a * .1, .05 + b * .09); g.strokeStyle = b % 2 ? '#6E8A3A' : '#83A048'; g.lineWidth = 1; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0] + .6, q[1] - 7); g.stroke(); blob(g, q[0] + .8, q[1] - 7, 1.4, .8, '#D8B84A', r, .9); } // maíz
+    const q = V2(.12, -.12);
+    wash(g, [[q[0] - 9, q[1] + 1], [q[0] + 1, q[1] + 5], [q[0] + 1, q[1] - 5], [q[0] - 9, q[1] - 9]], '#C9A577', r, .97);  // bahareque
+    wash(g, [[q[0] + 1, q[1] + 5], [q[0] + 10, q[1]], [q[0] + 10, q[1] - 10], [q[0] + 1, q[1] - 5]], '#B08E62', r, .97);
+    wash(g, [[q[0] - 11, q[1] - 8], [q[0] + 1, q[1] - 3], [q[0] + 12, q[1] - 9], [q[0] + 2, q[1] - 19]], '#D9BE72', r, .98); // techo de paja
+    g.globalAlpha = .4; g.strokeStyle = '#8A6A30'; g.lineWidth = .5; for (let k = 0; k < 6; k++) { g.beginPath(); g.moveTo(q[0] - 9 + k * 3.5, q[1] - 7 + k * .9); g.lineTo(q[0] + 2, q[1] - 18); g.stroke(); } g.globalAlpha = 1;
+    g.fillStyle = '#3A2E24'; g.fillRect(q[0] + 4, q[1] - 5, 2.6, 5.5);
+    // Cerca: guadua (colonos), alambre (arriendo) o mojones blancos (sorteo).
+    const E = [V2(-.42, -.42), V2(.42, -.42), V2(.42, .42), V2(-.42, .42)];
+    if (modo === 'sorteo') for (const p of E) { g.fillStyle = '#F2ECDD'; g.fillRect(p[0] - 1.2, p[1] - 5, 2.4, 5); g.globalAlpha = .5; g.strokeStyle = FR.siena; g.lineWidth = .4; g.strokeRect(p[0] - 1.2, p[1] - 5, 2.4, 5); g.globalAlpha = 1; }
+    else {
+      const col = modo === 'arriendo' ? '#6E6A64' : '#9C8A4E';
+      for (const [p, q2] of [[E[3], E[2]], [E[2], E[1]]]) for (let k = 0; k <= 4; k++) { const x = p[0] + (q2[0] - p[0]) * k / 4, y = p[1] + (q2[1] - p[1]) * k / 4; g.strokeStyle = col; g.lineWidth = modo === 'arriendo' ? .9 : 1.4; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - 5); g.stroke(); }
+      g.strokeStyle = col; g.lineWidth = modo === 'arriendo' ? .4 : .9; for (const h of modo === 'arriendo' ? [2, 3.5, 4.8] : [2.5, 4.2]) { g.beginPath(); g.moveTo(E[3][0], E[3][1] - h); g.lineTo(E[2][0], E[2][1] - h); g.lineTo(E[1][0], E[1][1] - h); g.stroke(); }
+      if (modo === 'arriendo') { const p = V2(.42, .1); g.strokeStyle = '#5A4430'; g.lineWidth = .8; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0], p[1] - 11); g.stroke(); wash(g, [[p[0] - 6, p[1] - 15], [p[0] + 6, p[1] - 13], [p[0] + 6, p[1] - 9], [p[0] - 6, p[1] - 11]], FR.cal, r, .98); g.fillStyle = FR.rojo; g.fillRect(p[0] - 4, p[1] - 12.6, 8, 1); }
+    }
+  };
+  L.push(['m_colono', 64, 52, 32, 34, (g, r) => rancho(g, r, 'colono')]);
+  L.push(['m_arriendo', 64, 52, 32, 34, (g, r) => rancho(g, r, 'arriendo')]);
+  L.push(['m_sorteo', 64, 52, 32, 34, (g, r) => rancho(g, r, 'sorteo')]);
   // Fase 6: madrevieja, el humedal que deja el río cuando cambia de curso.
   L.push(['m_madrevieja', 64, 40, 32, 26, (g, r) => {
     const c = V2(0, 0);

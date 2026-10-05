@@ -135,7 +135,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 
 0. **Plaza de fundación (publicado en 0.77.0):** primera obra de cada partida nueva (cruz de piedra y ceiba, Leyes de Indias); marca el centro y el casco urbano (4, 6 y 9 casillas por etapa; libre en Polis). Fincas, minas y obras del río pueden ir fuera del casco. No se demuele. Datos en `src/data/huellas.json`, lógica en `src/core/huellas.js`.
 1. **Desastres y muertes (publicado en 0.78.0):** ruinas que cuestan oro al reconstruir; cementerio como edificio con su parcela, lejos de la plaza (mínimo 4 casillas; cédula de Carlos III, 1787), con tumbas que crecen con las muertes y más riesgo de epidemia sin él; luto en la plaza, campos secos, bandera amarilla en epidemias.
-2. **Barrio de invasión que crece** casilla por casilla, con informalidad, menos impuestos, enfermedad, deserción e inseguridad (legalizar, ignorar o desalojar); colonos que toman baldíos con ranchos y cercas en el borde.
+2. **Barrio de invasión que crece (publicado en 0.79.0)** casilla por casilla, con informalidad, menos impuestos, enfermedad, deserción e inseguridad (legalizar, ignorar o desalojar); colonos que toman baldíos con ranchos y cercas en el borde.
 3. **Leyes que se ven:** cada ley con su señal en el mapa.
 4. **Guerra y conflicto:** casas quemadas y trincheras que sanan con los años.
 5. **Balance** con los robots.

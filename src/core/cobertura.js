@@ -2,6 +2,7 @@
 // y fuera del alcance de una oficina de recaudo (o del centro del pueblo) parte de la gente evade impuestos.
 // Se abre en Pueblo, solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { evasionInformal } from './huellas.js';
 import { lado } from './mundo.js';
 import { climaActivo } from './clima.js';
 import { radioCalle, menosEvasion } from './calles.js';
@@ -73,7 +74,7 @@ export function ordenarSitios(S, servicio, candidatas, extra = () => 0) {
   return candidatas.map(i => [i, nota(i)]).sort((a, b) => a[1] - b[1]).map(x => x[0]);
 }
 // Parte de los impuestos que se pierde por evasión.
-export function evasion(S) { return coberturaActiva(S) ? K().evasion * (1 - cobertura(S).recaudo) * menosEvasion(S) : 0; } // fase 9: las casas sobre una calle evaden menos
+export function evasion(S) { return (coberturaActiva(S) ? K().evasion * (1 - cobertura(S).recaudo) * menosEvasion(S) : 0) + evasionInformal(S); } // huellas: en los ranchos nadie paga // fase 9: las casas sobre una calle evaden menos
 export function distanciaCentro(S, i) { const c = centroPueblo(S); return c < 0 ? 0 : dist(S, c, i); }
 // Función de distancia al centro (busca el centro una sola vez).
 export function medirDesdeCentro(S) { const c = centroPueblo(S); return i => c < 0 ? 0 : dist(S, c, i); }

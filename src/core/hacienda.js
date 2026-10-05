@@ -1,5 +1,6 @@
 // Hacienda: presupuesto, deuda, bonos, emisión, calificación de riesgo e impuestos.
 import { clamp } from './azar.js';
+import { comidaColonos } from './huellas.js';
 import { C } from './contenido.js';
 import { counts, RM, hasLaw } from './reglas.js';
 import { nearRiver } from './mundo.js';
@@ -59,7 +60,7 @@ export function finance(S) {
   let fcap = 0;
   S.map.forEach((x, i) => { if (finca) { if (x.b === 'cultivo') fcap += produccionFinca(S, i).comida; } else if (x.b === 'cultivo') fcap += (nearRiver(S, i) ? 16 : 12) * rindeObra(S, x); });
   if (climaActivo(S)) fcap *= factorCosecha(S); // fase 1: las lluvias del año
-  const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.ceil(S.pop * .5);
+  const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.max(0, Math.ceil(S.pop * .5) - comidaColonos(S)); // huellas: los colonos siembran su comida
   const post = { c: inc.c * (1 - S.tx.c / 100), a: inc.a * (1 - S.tx.a / 100), e: inc.e * (1 - S.tx.e / 100), u: inc.u };
   return { so, taxC, taxA, taxE, fee, up, admin, pensiones, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras, evadido, militar, calles };
 }

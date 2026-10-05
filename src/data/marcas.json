@@ -139,6 +139,24 @@
       "icono": "🚩",
       "anios": 999,
       "texto": "Un estandarte sobre su pedestal recuerda qué eligió ser el pueblo en una época."
+    },
+    "colono": {
+      "nombre": "Rancho de colonos",
+      "icono": "🪓",
+      "anios": 999,
+      "texto": "Una familia de colonos, dueña de la tierra que tumbó y trabaja: rancho de bahareque, maíz y cerca de guadua. Siembran su propia comida."
+    },
+    "arriendo": {
+      "nombre": "Colonos arrendatarios",
+      "icono": "🪓",
+      "anios": 999,
+      "texto": "Colonos que trabajan la tierra de un hacendado y le pagan arriendo: cerca de alambre y letrero de la hacienda."
+    },
+    "sorteo": {
+      "nombre": "Parcela sorteada",
+      "icono": "🪓",
+      "anios": 999,
+      "texto": "Parcela medida y sorteada a la vista de todos: mojones blancos en las esquinas."
     }
   },
   "porFilosofia": {

@@ -64,5 +64,38 @@
   "epidemia": {
     "anios": 2,
     "texto": "Banderas amarillas en las casas con enfermos, como se hacía con la fiebre amarilla."
+  },
+  "colonos": {
+    "epocas": [
+      "fundacion",
+      "cafe"
+    ],
+    "cada": 8,
+    "prob": 0.5,
+    "distancia": 5,
+    "comida": 2,
+    "capacidad": 4,
+    "maximo": 8,
+    "ambiente": -2,
+    "textos": {
+      "llega": "🪓 Colonos de Antioquia tumban monte y levantan su rancho en un baldío de la frontera agrícola.",
+      "dilema": "🪓 Llegan {n} familias de colonos a las tierras baldías: se ven sus ranchos en la frontera agrícola, lejos de la plaza.",
+      "bloquea": "Es la parcela de una familia de colonos: no se puede construir encima.",
+      "leccion": "La colonización antioqueña (siglo XIX) llevó miles de familias a las laderas del Tolima y el Quindío. Las leyes de baldíos decían que la tierra era de quien la trabajara; muchas veces los colonos chocaron con hacendados que tenían títulos y con indígenas que ya vivían ahí."
+    },
+    "modos": {
+      "colono": {
+        "nombre": "Rancho de colonos",
+        "texto": "Una familia de colonos, dueña de la tierra que tumbó y trabaja: rancho de bahareque, maíz y cerca de guadua. Siembran su propia comida."
+      },
+      "arriendo": {
+        "nombre": "Colonos arrendatarios",
+        "texto": "Colonos que trabajan la tierra de un hacendado y le pagan arriendo: cerca de alambre y letrero de la hacienda."
+      },
+      "sorteo": {
+        "nombre": "Parcela sorteada",
+        "texto": "Parcela medida y sorteada a la vista de todos: mojones blancos en las esquinas."
+      }
+    }
   }
 }

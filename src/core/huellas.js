@@ -6,6 +6,8 @@ import { C } from './contenido.js';
 import { lado } from './mundo.js';
 import { azar } from './azar.js';
 import { climaActivo } from './clima.js';
+import { epocaHistorica } from './reglas.js';
+import { marcarTala } from './suelo.js';
 
 const K = () => C.HUELLAS && C.HUELLAS.fundacion;
 const plazaPendiente = S => !!(S.fundando && S.fundando.plaza);
@@ -59,7 +61,11 @@ export function sinSepultura(S) {
   return m < C.HUELLAS.cementerio.desdeMuertos ? 0 : Math.max(0, m - capacidadCementerios(S));
 }
 export function animoSepultura(S) { return sinSepultura(S) > 0 ? C.HUELLAS.cementerio.animo : 0; }
-export function factorEpidemia(S) { return sinSepultura(S) > 0 ? C.HUELLAS.cementerio.epidemia : 1; }
+export function factorEpidemia(S) {
+  if (!huellasActivas(S)) return 1;
+  const A = C.BARRIOS && C.BARRIOS.asentamiento; // paso 2: los ranchos sin agua ni alcantarillado también propagan la enfermedad
+  return (sinSepultura(S) > 0 ? C.HUELLAS.cementerio.epidemia : 1) * (1 + (A && A.epidemia || 0) * totalRanchos(S));
+}
 // Tumbas de cada cementerio (se llenan en orden).
 export function tumbasDe(S, i) {
   const L = cementerios(S), k = L.indexOf(i), cap = C.HUELLAS.cementerio.capacidad;
@@ -83,3 +89,59 @@ export function dejarRuinas(S, tipo, dañadas) {
   return n;
 }
 export function noticiaRuinas(n) { return n ? C.HUELLAS.ruinas.textos.noticia.replace('{n}', n) : null; }
+
+// ---------- Paso 2: el barrio de invasión y los colonos ----------
+// Ranchos de un asentamiento informal (la casilla donde nació y las que se le sumaron).
+export function ranchos(a) { return [a.i, ...(a.t || [])]; }
+export function totalRanchos(S) { return (S.asent || []).reduce((s, a) => s + 1 + (a.t ? a.t.length : 0), 0); }
+// Evasión extra: en los ranchos nadie paga impuestos (se suma a la de la cobertura del recaudo).
+export function evasionInformal(S) {
+  const A = C.BARRIOS && C.BARRIOS.asentamiento;
+  return huellasActivas(S) && A && A.evasion ? Math.min(.2, A.evasion * totalRanchos(S)) : 0;
+}
+// Colonos: ranchos en los baldíos del borde (marcas colono, arriendo o sorteo). Viven de su propia comida.
+const MODOS = ['colono', 'arriendo', 'sorteo'];
+export function esColono(x) { return !!(x.mk && MODOS.includes(x.mk.t)); }
+export function colonosEnMapa(S) { let n = 0; for (const x of S.map) if (x.mk && MODOS.includes(x.mk.t)) n++; return n; }
+export function capacidadColonos(S) { return S.colUlt === undefined ? 0 : colonosEnMapa(S) * C.HUELLAS.colonos.capacidad; }
+export function comidaColonos(S) { return S.colUlt === undefined ? 0 : colonosEnMapa(S) * C.HUELLAS.colonos.comida; }
+// Un baldío: casilla libre de llano o bosque, lejos de la plaza; se prefieren las laderas y los bordes.
+function baldio(S, k) {
+  const N = lado(S), K2 = C.HUELLAS.colonos, L = [];
+  S.map.forEach((x, i) => {
+    if (x.b || x.mk || x.oc || (x.t !== 'llano' && x.t !== 'bosque')) return;
+    const d = distanciaPlaza(S, i);
+    if (d === null || d < K2.distancia) return;
+    const r = Math.floor(i / N), c = i % N, borde = Math.min(r, c, N - 1 - r, N - 1 - c);
+    L.push([i, -Math.abs(d - 9) * .5 - (borde < 2 ? 2 : 0) + Math.min(2, x.h || 0) * .6 + ((i * 7 + S.year * 3 + k) % 5) * .4]); // la frontera agrícola: ni pegados ni en la esquina
+  });
+  L.sort((a, b) => b[1] - a[1]);
+  return L.length ? L[0][0] : -1;
+}
+function ponerColono(S, modo, k) {
+  const i = baldio(S, k);
+  if (i < 0) return -1;
+  const x = S.map[i], K2 = C.HUELLAS.colonos;
+  if (x.t === 'bosque') { x.t = 'llano'; S.env = Math.max(0, Math.min(100, S.env + K2.ambiente)); marcarTala(S, i); } // tumban monte
+  x.mk = { t: modo, y: S.year, d: `Año ${S.year}: ${K2.modos[modo].texto}` };
+  if (S.colUlt === undefined) S.colUlt = -99;
+  return i;
+}
+// Desde un dilema (las tierras baldías): llegan varias familias a la vez.
+export function llegarColonos(S, modo, n = 3) {
+  if (!huellasActivas(S) || !C.HUELLAS.colonos || !MODOS.includes(modo)) return [];
+  const L = [];
+  for (let k = 0; k < n; k++) { const i = ponerColono(S, modo, k); if (i >= 0) L.push(i); }
+  if (L.length) S.colUlt = S.year;
+  return L;
+}
+// Cierre del año: en las primeras épocas, de vez en cuando llegan colonos por su cuenta.
+export function colonosDelAnio(S) {
+  if (!huellasActivas(S) || !C.HUELLAS.colonos) return [];
+  const K2 = C.HUELLAS.colonos, ep = epocaHistorica(S);
+  if (!ep || !K2.epocas.includes(ep) || S.fundando || S.year - (S.colUlt ?? -99) < K2.cada || colonosEnMapa(S) >= K2.maximo) return [];
+  if (azar() >= K2.prob) return [];
+  if (ponerColono(S, 'colono', 0) < 0) return [];
+  S.colUlt = S.year;
+  return [K2.textos.llega];
+}

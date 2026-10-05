@@ -43,7 +43,7 @@ export function botYear(S, strat, eth, op = {}) {
     }
   }
   // Fase 5: asentamientos informales: legalizar si sobra oro; si no, esperar.
-  if (prep && S.asent) for (const a of [...S.asent]) { if (S.gold > costoLegalizar(S) + 100) decidirAsentamiento(S, a.i, 'legalizar'); else if (a.nuevo) decidirAsentamiento(S, a.i, 'ignorar'); }
+  if (prep && S.asent) for (const a of [...S.asent]) { if (S.gold > costoLegalizar(S, a.i) + 100) decidirAsentamiento(S, a.i, 'legalizar'); else if (a.nuevo) decidirAsentamiento(S, a.i, 'ignorar'); }
   // Fase 6: inventos: regulados si sobra oro; si no, libres.
   if (prep && S.tec && S.tec.pendiente) { const id = S.tec.pendiente; decidirInvento(S, id, S.gold > 200 ? 'regulada' : 'libre'); }
   // Fase 7: ciclos de la economía: ahorrar la bonanza, subsidiar la crisis si alcanza, pensiones mixtas y renovar los

@@ -14,6 +14,7 @@ import { animoGrupo } from './grupos.js';
 import { contradecir } from './acta.js';
 import { reaccionar } from './figuras.js';
 import { dejarMarca } from './marcas.js';
+import { ranchos, totalRanchos } from './huellas.js';
 
 const K = () => C.BARRIOS;
 export function barriosActivos(S) { return climaActivo(S) && !!C.BARRIOS && S.stage >= K().desde.etapa; }
@@ -32,7 +33,7 @@ export function nombreBarrio(id) { return id === 'centro' ? K().nombres.centro :
 let _cache = null;
 export function barrios(S) {
   if (!barriosActivos(S)) return [];
-  const clave = S.year + '|' + S.map.map(x => x.b === 'casa' ? 1 : 0).join('') + '|' + (S.asent || []).length + '|' + JSON.stringify(S.prog || {}) + '|' + S.map.filter(x => x.b === 'biblioteca' || x.b === 'teatro' || x.b === 'cancha').length;
+  const clave = S.year + '|' + S.map.map(x => x.b === 'casa' ? 1 : 0).join('') + '|' + totalRanchos(S) + '|' + JSON.stringify(S.prog || {}) + '|' + S.map.filter(x => x.b === 'biblioteca' || x.b === 'teatro' || x.b === 'cancha').length;
   if (_cache && _cache.S === S && _cache.clave === clave) return _cache.lista;
   const N = lado(S), c = centroPueblo(S), B = {};
   S.map.forEach((x, i) => {
@@ -49,10 +50,10 @@ export function barrios(S) {
   S.map.forEach((x, i) => { if (x.b && !x.ob && CB[x.b]) { const o = cultBarrio[barrioDe(S, i)] || (cultBarrio[barrioDe(S, i)] = {}); for (const [k, v] of Object.entries(CB[x.b])) o[k] = (o[k] || 0) + v; } });
   const A = K().asentamiento, lista = Object.values(B).map(b => {
     const n = b.casas.length, f = k => b[k] / n, periferia = b.dist / n > 6 ? 1 : 0;
-    const asent = (S.asent || []).filter(a => barrioDe(S, a.i) === b.id).length;
+    const asent = (S.asent || []).reduce((s, a) => s + ranchos(a).filter(i => barrioDe(S, i) === b.id).length, 0); // huellas: cada rancho cuenta
     const prog = (S.prog && S.prog[b.id]) || {}, cul = cultBarrio[b.id] || {}, red = k => Object.entries(prog).filter(([, hasta]) => hasta >= S.year).reduce((s, [t]) => s + (K().programas[t].reduce[k] || 0), 0) + (cul[k] || 0);
     const p = {
-      desercion: 20 + (1 - f('esc')) * 45 + pobreza * .6 - (hasLaw(S, 'educacion') ? 10 : 0) - red('desercion'),
+      desercion: 20 + (1 - f('esc')) * 45 + pobreza * .6 - (hasLaw(S, 'educacion') ? 10 : 0) + asent * (A.desercion || 0) - red('desercion'),
       infantil: 8 + (1 - f('esc')) * 30 + rural * .8 + f('ribera') * 8 - (hasLaw(S, 'educacion') ? 8 : 0) - red('infantil'),
       violencia: ins * .8 + (1 - f('pol')) * 20 + periferia * 10 + asent * A.violencia - red('violencia'),
       genero: 45 - f('esc') * 15 - f('hosp') * 10 - counts(S).universidad * 5 + (S.reg === 'tirania' ? 5 : 0) + asent * A.genero - red('genero')
@@ -95,18 +96,25 @@ export function iniciarPrograma(S, id, t) {
 }
 
 // Asentamientos informales.
-export function costoLegalizar(S) { return Math.round(K().asentamiento.legalizar * S.price); }
+// Huellas, paso 2: el asentamiento crece rancho por rancho (a.t: casillas que se le suman).
+export function asentamientoDe(S, i) { return (S.asent || []).find(a => ranchos(a).includes(i)); }
+export function costoLegalizar(S, i) {
+  const a = i === undefined ? null : asentamientoDe(S, i), n = a ? ranchos(a).length : 1;
+  return Math.round(K().asentamiento.legalizar * (1 + (K().asentamiento.legalizarPorRancho || 0) * (n - 1)) * S.price);
+}
 export function decidirAsentamiento(S, i, accion) {
-  const a = (S.asent || []).find(x => x.i === i);
+  const a = asentamientoDe(S, i);
   if (!a) return null;
-  const A = K().asentamiento, x = S.map[i];
+  const A = K().asentamiento, x = S.map[a.i], todos = ranchos(a);
   if (accion === 'legalizar') {
-    if (S.gold < costoLegalizar(S)) return `Necesitas ${costoLegalizar(S)} de oro.`;
-    S.gold -= costoLegalizar(S); S.asent = S.asent.filter(z => z !== a); delete x.mk; x.b = 'casa';
+    const g = costoLegalizar(S, i);
+    if (S.gold < g) return `Necesitas ${g} de oro.`;
+    S.gold -= g; S.asent = S.asent.filter(z => z !== a);
+    for (const j of todos) { delete S.map[j].mk; S.map[j].b = 'casa'; S.map[j].ya = S.year; }
     S.tr = clamp(S.tr + 3, 0, 100); reaccionar(S, 'escuchar');
     dejarMarca(S, 'mural', `Año ${S.year}: se legalizó el asentamiento de ${nombreBarrio(barrioDe(S, i))}.`);
   } else if (accion === 'desalojar') {
-    S.asent = S.asent.filter(z => z !== a); delete x.mk;
+    S.asent = S.asent.filter(z => z !== a); for (const j of todos) delete S.map[j].mk;
     S.pop = Math.max(1, Math.min(S.pop, cap(S))); S.tr = clamp(S.tr - 6, 0, 100); S.sat.a = clamp(S.sat.a - 4, 0, 100);
     contradecir(S, 'fuerza'); reaccionar(S, 'fuerza');
     dejarMarca(S, 'reten', `Año ${S.year}: desalojo del asentamiento de ${nombreBarrio(barrioDe(S, i))}.`);
@@ -118,13 +126,38 @@ export function decidirAsentamiento(S, i, accion) {
 export function barriosDelAnio(S) {
   if (!barriosActivos(S)) return [];
   const A = K().asentamiento, L = S.asent || (S.asent = []), so = society(S);
-  if (L.length >= A.maximo || S.year - (S.asentUlt ?? -99) < A.aniosEntre) return [];
-  if (so.un < A.informales && S.pop < cap(S) - 2) return [];
-  const N = lado(S), c = centroPueblo(S); if (c < 0) return [];
+  const news = crecerAsentamientos(S, so);
+  if (L.length >= A.maximo || S.year - (S.asentUlt ?? -99) < A.aniosEntre) return news;
+  if (so.un < A.informales && S.pop < cap(S) - 2) return news;
+  const N = lado(S), c = centroPueblo(S); if (c < 0) return news;
   const cand = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; if (x.b || x.mk || x.t !== 'llano') return false; const d = Math.hypot(Math.floor(i / N) - Math.floor(c / N), i % N - c % N); return d >= 4 && d <= 8; });
-  if (!cand.length) return [];
+  if (!cand.length) return news;
   const i = cand[(S.year * 7) % cand.length];
   S.map[i].mk = { t: 'asentamiento', y: S.year, d: `Año ${S.year}: familias sin vivienda levantan ranchos en ${nombreBarrio(barrioDe(S, i))}.` };
   L.push({ i, anio: S.year, nuevo: true }); S.asentUlt = S.year;
-  return [`🏚️ Aparece un asentamiento informal en ${nombreBarrio(barrioDe(S, i))}.`];
+  return [...news, `🏚️ Aparece un asentamiento informal en ${nombreBarrio(barrioDe(S, i))}.`];
+}
+
+// Mientras nadie lo resuelva y falte vivienda o trabajo, cada asentamiento suma un rancho cada pocos años.
+function crecerAsentamientos(S, so) {
+  const A = K().asentamiento, N = lado(S), news = [];
+  if (!A.crecer) return news;
+  for (const a of S.asent || []) {
+    const R = ranchos(a);
+    if (R.length >= A.maxRanchos || S.year - (a.ult ?? a.anio) < A.crecer || a.nuevo) continue;
+    if (so.un < A.informales * .5 && S.pop < cap(S) - 2) continue;
+    const libres = [];
+    for (const i of R) for (const [dr, dc] of [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, -1], [1, -1], [-1, 1]]) {
+      const r = Math.floor(i / N) + dr, c = i % N + dc, j = r * N + c, x = S.map[j];
+      if (r < 0 || c < 0 || r >= N || c >= N || !x || x.b || x.mk || (x.t !== 'llano' && x.t !== 'bosque') || libres.includes(j)) continue;
+      libres.push(j);
+    }
+    if (!libres.length) continue;
+    const j = libres[(S.year * 5 + R.length) % libres.length], x = S.map[j];
+    if (x.t === 'bosque') x.t = 'llano';
+    x.mk = { t: 'asentamiento', y: S.year, d: S.map[a.i].mk ? S.map[a.i].mk.d : '' };
+    (a.t = a.t || []).push(j); a.ult = S.year;
+    news.push(A.crece.replace('{barrio}', nombreBarrio(barrioDe(S, a.i))).replace('{n}', R.length + 1));
+  }
+  return news;
 }
