@@ -3,7 +3,7 @@
 import {
   coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
   industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
-  civismoActivo, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
+  civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -122,7 +122,9 @@ export function botYear(S, strat, eth, op = {}) {
     // Fase 2: con cobertura por distancia, todo se construye cerca del centro, y los servicios donde cubren más casas.
     if (S.clima && t.length) {
       const dc = medirDesdeCentro(S), cerca = t.filter(i => dc(i) <= 12);
-      t = ordenarSitios(S, k, cerca.length ? cerca : t, i => (pref && !pref(i) ? 3 : 0));
+      // Vecindad: los parques donde hay casas alrededor; fábricas y cuarteles lejos de las casas.
+      const vec = !(prep && vecindadActiva(S)) ? () => 0 : k === 'parque' ? i => -obrasCerca(S, i, ['casa'], 1).length * 3 : k === 'taller' || k === 'cuartel' ? i => obrasCerca(S, i, ['casa'], 1).length * 6 : () => 0;
+      t = ordenarSitios(S, k, cerca.length ? cerca : t, i => (pref && !pref(i) ? 3 : 0) + vec(i));
     }
     if (!t.length) break;
     build(S, k, t[0]);
@@ -196,7 +198,7 @@ function robotIndustria(S) {
   }
   // Una fábrica nueva si hay materia prima sin usar.
   if (F.so.un >= 6 && c.taller < 6 && S.gold > cost(S, 'taller') + 160 && !obrasEnCurso(S).taller) {
-    const t = ordenarSitios(S, 'taller', freeTiles(S, 'taller').filter(i => !nearRiver(S, i)));
+    const t = ordenarSitios(S, 'taller', freeTiles(S, 'taller').filter(i => !nearRiver(S, i)), i => vecindadActiva(S) ? obrasCerca(S, i, ['casa'], 1).length * 6 : 0); // lejos de las casas
     if (t.length) {
       const i = t[0], pr = mejorProducto(S, i);
       if (pr !== 'artesanias' && insumoSi(S, i, pr) >= .66) { build(S, 'taller', i); if (S.map[i].b === 'taller') S.map[i].pr = pr; } // el primer producto va incluido

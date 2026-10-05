@@ -10,7 +10,7 @@ import {
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
-  rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
+  vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
 } from '../core/index.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
@@ -758,6 +758,13 @@ export class Interfaz {
         const sv = serviciosDeCasa(S, i), CS = C.COB.servicios;
         hijos.push(el('span', { text: `${C.COB.textos.fichaCasa} ${Object.keys(CS).map(s => `${sv[s] ? '✓' : '✗'} ${CS[s]}`).join(' · ')}` }));
       }
+      // Vecindad: parque cerca y molestias (casas); materia prima cerca (fábricas) y fincas cerca (mercado).
+      if (x.b === 'casa' && !x.ob && vecindadActiva(S)) {
+        const V = vecindarioDe(S, i), T = C.VECINDAD.textos, MI = { taller: '🏭', mina: '⛏️', cuartel: '🎖️' };
+        hijos.push(el('span', { style: 'grid-column:1/-1', html: `${T.ficha} ${V.parque ? `<span class="pos">${T.parque}</span>` : T.sinParque}${V.molestia ? ` · <span class="neg">${T.molestia.replace('{icono}', MI[V.molestia.k]).replace('{texto}', V.molestia.texto)} (${V.molestia.animo} de ánimo)</span>` : ''}.` }));
+      }
+      if (x.b === 'taller' && !x.ob && vecindadActiva(S) && industriaActiva(S)) { const b = bonoFabrica(S, i, datosProducto(productoDe(x)).insumo); if (b) hijos.push(el('span', { class: 'pos', style: 'grid-column:1/-1', text: C.VECINDAD.textos.fabricaCerca.replace('{pct}', Math.round(b * 100)) })); }
+      if (x.b === 'mercado' && !x.ob && bonoMercado(S, i)) hijos.push(el('span', { class: 'pos', style: 'grid-column:1/-1', text: C.VECINDAD.textos.mercadoCerca.replace('{pct}', Math.round(bonoMercado(S, i) * 100)) }));
       if (S.desgaste && nivelObra(x) > 0) { const e = estadoObra(x); hijos.push(el('span', { class: 'suelo', text: `${e.nombre}: ${C.DESGASTE.textos[e.id]}` })); }
       if (x.ob) {
         const T = C.OBRAS.textos, o = x.ob;
