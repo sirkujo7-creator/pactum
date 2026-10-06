@@ -4,6 +4,7 @@
 import { mulberry, shade, mix, poly, lienzo } from './acuarela.js';
 import { FR, pintar, ovalo, urlDe, RES_HOJA } from './fresco.js';
 import { templo } from './obras-fresco.js';
+import { recetasCasas } from './casas.js';
 
 // Pinceles del fresco con la misma firma de los de acuarela (así todas las obras cambian de estilo a la vez).
 function wash(g, pts, col, rng, al = .9) { g.save(); g.globalAlpha = Math.min(1, al + .05); pintar(g, pts, col, rng, { n: 2, al: .1, bw: .45, bal: .6 }); g.restore(); }
@@ -56,43 +57,10 @@ function ventanas(g, b, lado, n, z, h, col, rng, a = .1, w = .12) {
 function monedas(g, x, y) { for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#E2B24F' : '#C9962E'; g.beginPath(); g.ellipse(x, y - k * 2.2, 4.5, 1.8, 0, 0, 7); g.fill(); } }
 
 // ---------- Recetas: [clave, ancho, alto, anclaX, anclaY, pintura] ----------
-const ZOC = [FR.azul, FR.rojo, FR.verde, FR.ocre]; // zócalos de color, en los pigmentos del fresco
 function recetas() {
   const L = [];
-  // Casas de bahareque (Aldea y Pueblo), con zócalo de color.
-  ZOC.forEach((z, v) => L.push(['casa0-' + v, 70, 64, 35, 50, (g, r) => {
-    sombra(g, 20, 6, 8); const b = iso(g, .5, .4, 0, 15, '#F1EADB', '#DCD2BE', null, r);
-    wash(g, caraI(b, 0, 1, 0, 3.2), z, r, .95, .3); wash(g, caraD(b, 0, 1, 0, 3.2), shade(z, -.15), r, .95, .3);
-    wash(g, caraI(b, .38, .17, 0, 9), '#6B4A33', r, .97, .2); wash(g, caraI(b, .08, .2, 5, 5), shade(z, .15), r, .95, .2); wash(g, caraI(b, .7, .2, 5, 5), shade(z, .15), r, .95, .2); wash(g, caraD(b, .35, .3, 5, 5), shade(z, -.05), r, .95, .2);
-    techo(g, b, 4, 11, '#B5563A', '#DCD2BE', r); blob(g, -18, -2, 2.4, 2, '#C44A3A', r, .9); blob(g, -15, -1, 2, 1.6, '#5E8F4E', r, .9);
-  }]));
-  // Casas de dos pisos con balcón (desde Ciudad).
-  ZOC.forEach((z, v) => L.push(['casa2-' + v, 76, 80, 38, 60, (g, r) => {
-    sombra(g, 22, 6, 8); const b = iso(g, .54, .44, 0, 25, '#F4EEE2', '#DDD3C0', null, r);
-    wash(g, caraI(b, 0, 1, 0, 3.4), z, r, .95, .3); wash(g, caraD(b, 0, 1, 0, 3.4), shade(z, -.15), r, .95, .3);
-    wash(g, caraI(b, .4, .16, 0, 9.5), '#6B4A33', r, .97, .2);
-    ventanas(g, b, 'I', 3, 14, 6, shade(z, .1), r, .16, .14); ventanas(g, b, 'D', 2, 14, 6, shade(z, -.05), r, .25, .18);
-    wash(g, caraI(b, .02, .96, 12, 1.3), '#6B4A33', r, .97, .2);
-    for (let k = 0; k < 8; k++) borde(g, caraI(b, .04 + k * .125, .01, 12, 3.6), '#6B4A33', .9, .6);
-    for (let k = 0; k < 3; k++) blob(g, ...caraI(b, .14 + k * .32, .05, 13.5, 1)[3], 1.6, 1.2, '#C44A3A', r, .9);
-    techo(g, b, 4.5, 12, '#A94B32', '#DDD3C0', r);
-  }]));
-  // Fase 5: casas de ladrillo (época del ladrillo) y de concreto con terraza y tanque (época del concreto).
-  ZOC.forEach((z, v) => L.push(['casa3-' + v, 76, 82, 38, 62, (g, r) => {
-    sombra(g, 22, 6, 8); const b = iso(g, .54, .44, 0, 26, '#B8664A', '#9A5440', null, r);
-    for (let k = 0; k < 5; k++) { g.globalAlpha = .25; g.strokeStyle = '#7A3E2E'; g.lineWidth = .5; const L1 = caraI(b, 0, 1, 3 + k * 4.6, 0); g.beginPath(); g.moveTo(...L1[0]); g.lineTo(...L1[1]); g.stroke(); g.globalAlpha = 1; }
-    wash(g, caraI(b, .4, .16, 0, 9.5), '#5A4632', r, .97, .2);
-    ventanas(g, b, 'I', 3, 15, 6, '#F4F1E6', r, .16, .14); ventanas(g, b, 'D', 2, 15, 6, '#EDE8DC', r, .25, .18);
-    wash(g, caraI(b, .1, .8, 13, 1.2), z, r, .95, .2);
-    techo(g, b, 3.5, 9, '#8E3B2E', '#9A5440', r);
-  }]));
-  ZOC.forEach((z, v) => L.push(['casa4-' + v, 76, 92, 38, 72, (g, r) => {
-    sombra(g, 22, 6, 8); const b = iso(g, .56, .46, 0, 34, '#E4E1DA', '#C9C5BC', '#D6D2CA', r);
-    ventanas(g, b, 'I', 3, 8, 6, '#6E8FA6', r, .14, .13); ventanas(g, b, 'I', 3, 22, 6, '#6E8FA6', r, .14, .13); ventanas(g, b, 'D', 2, 8, 6, '#5E7F96', r, .22, .18); ventanas(g, b, 'D', 2, 22, 6, '#5E7F96', r, .22, .18);
-    wash(g, caraI(b, .4, .18, 0, 7.5), z, r, .97, .2); wash(g, caraI(b, 0, 1, 16, 1.4), z, r, .95, .2);
-    const t = b.up(V2(.12, -.1), 34); wash(g, [[t[0] - 4, t[1]], [t[0] + 4, t[1]], [t[0] + 4, t[1] - 6], [t[0] - 4, t[1] - 6]], '#3A4A5A', r, .97, .2); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(t[0], t[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
-    const an = b.up(V2(-.18, .05), 34); g.strokeStyle = '#4A4A4A'; g.lineWidth = .6; g.beginPath(); g.moveTo(an[0], an[1]); g.lineTo(an[0], an[1] - 9); g.moveTo(an[0] - 3, an[1] - 7); g.lineTo(an[0] + 3, an[1] - 7); g.stroke();
-  }]));
+  // Renovación colonial: casas de src/arte/casas.js (cuatro variantes distintas, cuatro épocas y la versión húmeda).
+  L.push(...recetasCasas());
   // Mercado de toldos (Aldea y Pueblo) y galería de mercado (desde Ciudad).
   // Fase 2: con la comida cara los puestos quedan vacíos (variante 'v', sin frutas y con cajas vacías).
   for (const vacio of [false, true]) L.push([vacio ? 'mercado0v' : 'mercado0', 78, 58, 39, 40, (g, r) => {
