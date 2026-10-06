@@ -137,8 +137,12 @@ function terraza(g, F, col) {
   const q = P(t + .14, b - .16, H + 2); rellena(g, [[q[0] - 4, q[1]], [q[0] + 4, q[1]], [q[0] + 4, q[1] - 6], [q[0] - 4, q[1] - 6]], '#3A4A5A'); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(q[0], q[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
   const an = P(t + .14, a + .14, H + 2); g.strokeStyle = '#4A4A4A'; g.lineWidth = .6; g.beginPath(); g.moveTo(an[0], an[1]); g.lineTo(an[0], an[1] - 9); g.moveTo(an[0] - 3, an[1] - 7); g.lineTo(an[0] + 3, an[1] - 7); g.stroke();
 }
+// Sombra de la obra en el suelo: cae abajo a la derecha (el sol de todo el mapa) con el borde difuso. Se dibuja con
+// el desenfoque del lienzo: la forma va lejos, fuera del cuadro, y aquí solo cae su sombra borrosa.
 function sombraCasa(g, F) {
-  g.save(); g.globalAlpha = .22; g.fillStyle = '#3A2A1C';
+  const m = g.getTransform(), e = Math.hypot(m.a, m.b) || 1, lejos = 4000;
+  g.save(); g.shadowColor = 'rgba(40,32,20,.3)'; g.shadowBlur = 4.5 * e; g.shadowOffsetX = lejos * m.a; g.shadowOffsetY = lejos * m.b;
+  g.translate(-lejos, 0); g.fillStyle = '#000';
   poli(g, [P(F.f, F.a), P(F.f + .22, F.a + .4), P(F.f + .22, F.b + .4), P(F.t + .3, F.b + .4), P(F.t, F.b)]); g.fill(); g.restore();
 }
 // Humedad: manchas oscuras que suben del suelo, chorreones bajo el alero y cal caída (deja ver el bahareque).
