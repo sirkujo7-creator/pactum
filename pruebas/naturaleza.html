@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba de naturaleza</title>
+<style>
+@font-face{font-family:"Alegreya";font-weight:700;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:400;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-400-normal.woff2) format("woff2")}
+:root{--cal:#F4EEE2;--verde:#41603D;--siena:#5B3423;--fondo:#EEE6D4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:#2E2723;font:16px/1.45 "Alegreya Sans",system-ui,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h1,h2{font-family:"Alegreya",Georgia,serif;color:var(--siena);margin:.3em 0}
+h1{font-size:26px}
+h2{font-size:20px;margin-top:24px;border-bottom:3px solid var(--verde);padding-bottom:4px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+figure{margin:0;background:var(--cal);border-radius:8px;padding:6px;text-align:center;box-shadow:0 1px 3px #5b342322}
+figure canvas{width:100%;display:block;border-radius:6px}
+figcaption{font-size:14px;color:#5a4636;line-height:1.25;margin-top:4px}
+figcaption small{display:block;color:#8a7660}
+.nota{font-size:15px;color:#5a4636;background:#F7F1E3;border-left:4px solid var(--verde);padding:8px 12px;border-radius:4px}
+#escena{width:100%;display:block;border-radius:8px;box-shadow:0 0 0 3px var(--cal),0 0 0 5px var(--verde)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Prueba: animales y vegetación del Tolima</h1>
+  <p class="nota">Esta página no cambia el juego. Animales y árboles en el estilo plano de los retratos y pobladores: color liso, una sola sombra de borde nítido y la luz siempre desde arriba a la izquierda (la sombra en el suelo cae hacia abajo a la derecha). Los animales se mueven como lo harían en el mapa.</p>
+  <h2>Todos juntos</h2>
+  <canvas id="escena" aria-label="Paisaje de muestra con animales y árboles"></canvas>
+  <h2>Animales</h2>
+  <div class="rejilla" id="animales"></div>
+  <h2>Árboles y plantas</h2>
+  <div class="rejilla" id="plantas"></div>
+</main>
+<script type="module" src="naturaleza.js"></script>
+</body>
+</html>
