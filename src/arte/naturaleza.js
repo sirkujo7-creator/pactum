@@ -45,14 +45,18 @@ export function colocarNaturaleza(T, mapa) {
     if (t.b === 'niebla' && m.t !== 'bosque') continue;
     const R = mulberry(T.seed * 7 + i * 131 + 9), p = R();
     const add = (k, n, sc = 1) => { for (let j = 0; j < n; j++) objs.push({ k, i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: sc * (.85 + R() * .3) }); };
+    // Renovación colonial: la vegetación va en grupos. Un ruido del mundo marca manchones que cruzan varias
+    // casillas: guaduales a lo largo del agua y palmas de cera en manchones de la ladera y el bosque de niebla.
+    const guadual = t.d < 3.5 && T.vary(t.c / 2.4 + 300, t.r / 2.4 + 300) > .56;
+    const palmar = T.vary(t.c / 2.8 + 150, t.r / 2.8 + 520) > .7;
+    const grupo = (k, n, sc = 1) => { const cr = t.r + .3 + R() * .4, cc = t.c + .3 + R() * .4; for (let j = 0; j < n; j++) objs.push({ k, i, r: cr + (R() - .5) * .45, c: cc + (R() - .5) * .45, s: sc * (.8 + R() * .35) }); };
     switch (t.b) {
-      // Fase 8: menos árboles (Juan los veía exagerados).
-      case 'galeria': if (p < .55) add('arbol', 1); else if (p < .72) add('guadua', 1); break;
+      case 'galeria': if (guadual) grupo('guadua', 2 + (p < .4 ? 1 : 0)); else if (p < .45) add('arbol', 1); break;
       case 'seco': if (p < .28) add('saman', 1); else if (p < .45) add(T.terr && T.terr.cardones ? 'cardon' : 'arbusto', 1); else if (T.terr && T.terr.cardones && p < .55) add('cardon', 1, .85); break; // fase 14: cardones en el sur seco
-      case 'potrero': if (p < .07) add(T.terr && T.terr.palmas ? 'palma' : 'arbol', 1); else if (p < .25) add('vaca', 1); break; // fase 14: palmas en el valle
+      case 'potrero': if (p < .07) add(T.terr && T.terr.palmas ? 'palma' : 'arbol', 1); else if (p < .25) add('vaca', 1); else if (guadual && p < .4) grupo('guadua', 2); break; // fase 14: palmas en el valle
       case 'arrozal': if (p < .15) add('garza', 1); break;
-      case 'ladera': if (p < .16) add('platano', 1); else if (p < .28) add('guadua', 1); else if (p < .34) add('palma', 1); else if (p < .44) add('arbol', 1, .9); break;
-      case 'niebla': add('arbolNiebla', p < .5 ? 2 : 1); if (p < .12) add('palma', 1, 1.1); break;
+      case 'ladera': if (palmar) grupo('palma', p < .5 ? 2 : 1); else if (guadual) grupo('guadua', 2); else if (p < .14) add('platano', 1); else if (p < .24) add('arbol', 1, .9); break;
+      case 'niebla': add('arbolNiebla', p < .5 ? 2 : 1); if (palmar) grupo('palma', 2, 1.1); break;
       case 'paramo': if (p < .6) add('frailejon', p < .3 ? 2 : 1); if (p > .9) add('piedra', 1); break;
       case 'roca': if (p < .35) add('piedra', 1); break;
     }
