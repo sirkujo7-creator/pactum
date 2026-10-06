@@ -131,10 +131,9 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
       g.fillStyle = cc; poly(g, sq.map(p => [s2[0] + (p[0] - s2[0]) * 1.06, s2[1] + (p[1] - s2[1]) * 1.06])); g.fill();
     }
     if (t.b === 'agua') pintarRio(g, T, qx, dry);
-    // Pinceladas según el entorno.
+    // Suelo natural (renovación colonial): manchas agrupadas de pasto seco, lodo y piedra, y pinceladas finas de pasto.
     const cx = qc[0], cy = qc[1];
-    g.globalAlpha = .28; g.strokeStyle = shade(col, -.25); g.lineWidth = .7;
-    if (['potrero', 'seco', 'paramo', 'ladera', 'galeria'].includes(t.b)) for (let j = 0; j < 4; j++) { const x = cx + (rng() - .5) * 38, y = cy + (rng() - .5) * 14; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 1.2, y - 3); g.stroke(); }
+    if (t.b !== 'agua' && t.b !== 'nieve') sueloNatural(g, T, t, col, dry, rng);
     if (t.b === 'roca') { g.globalAlpha = .35; for (let j = 0; j < 3; j++) { const x = cx + (rng() - .5) * 30, y = cy + (rng() - .5) * 10; g.beginPath(); g.moveTo(x - 6, y); g.lineTo(x, y - 2); g.lineTo(x + 7, y + 1); g.stroke(); } }
     g.globalAlpha = 1;
     if (t.b === 'paramo' && rng() < .08) blob(g, cx, cy + 1, 7, 3, '#8FB6C4', rng, .85); // lagunas de páramo
@@ -163,7 +162,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     g.save(); recortar();
     pintarSuelo(g, T, opciones.mapa, k, dry);
     pintarObras(g, T, opciones.mapa, k, dry, !!opciones.calles, opciones.anio);
-    if (opciones.calles) pintarCalles(g, T, opciones.calles, k);
+    if (opciones.calles) { pintarVeredas(g, T, opciones.mapa, opciones.calles, k); pintarCalles(g, T, opciones.calles, k); }
     g.restore();
   }
 
@@ -175,6 +174,85 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   g.fillRect(k.x, k.y, k.w, k.h);
   g.restore();
   return { canvas: cv, x: k.x, y: k.y, w: k.w, h: k.h, escala: esc };
+}
+
+// Mancha suave de bordes difusos (sin contorno), para que el suelo no parezca un mosaico.
+function mancha(g, x, y, rx, col, al) {
+  g.save(); g.translate(x, y); g.scale(1, .5);
+  const gr = g.createRadialGradient(0, 0, 0, 0, 0, rx);
+  gr.addColorStop(0, col); gr.addColorStop(.5, col); gr.addColorStop(1, col + '00');
+  g.globalAlpha = al; g.fillStyle = gr; g.beginPath(); g.arc(0, 0, rx, 0, 7); g.fill(); g.restore();
+}
+// Textura de cada casilla. El ruido es del mundo (no de la casilla), así las manchas se agrupan en manchones que
+// cruzan varias casillas: pasto seco en los potreros, lodo junto al río y piedras sueltas en las laderas.
+const HIERBA = new Set(['potrero', 'seco', 'ladera', 'galeria', 'paramo', 'niebla']);
+function sueloNatural(g, T, t, col, dry, rng) {
+  const pt = (u, v) => { const r = t.r + v, c = t.c + u; return P(r, c, T.hf(r, c)); };
+  const en = () => pt(.12 + rng() * .76, .12 + rng() * .76);
+  const nA = T.vary(t.c / 3.1 + 40, t.r / 3.1 + 40), nB = T.vary(t.c / 2.6 + 90, t.r / 2.6 + 12), nC = T.vary(t.c / 2.2 + 7, t.r / 2.2 + 70);
+  // Pasto seco: más con la sequía.
+  if (HIERBA.has(t.b) && t.b !== 'niebla') {
+    const f = clamp((nA - .56 + dry * .2) / .22, 0, 1);
+    if (f > 0) for (let j = 0; j < 3; j++) { const p = en(); mancha(g, p[0], p[1], 11 + rng() * 9, teñir(mix('#CDB57A', '#D9BE7E', dry)), .18 + .22 * f); }
+  }
+  // Lodo y charcos junto al río (en la sequía se agrieta y se aclara).
+  if (t.d < 2.6 && t.b !== 'arrozal' && nB > .55) {
+    const f = clamp((nB - .55) / .2, 0, 1);
+    for (let j = 0; j < 2; j++) { const p = en(); mancha(g, p[0], p[1], 8 + rng() * 7, mix('#86694A', '#B49A72', dry), .2 + .18 * f); }
+    if (nB > .72 && dry < .45) { const p = en(); g.globalAlpha = .55; g.fillStyle = '#8FB0B4'; g.beginPath(); g.ellipse(p[0], p[1], 3 + rng() * 2, 1.2 + rng() * .6, 0, 0, 7); g.fill(); g.globalAlpha = .5; g.fillStyle = '#DCE8E4'; g.beginPath(); g.ellipse(p[0] - 1, p[1] - .4, 1.4, .35, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
+  }
+  // Piedras sueltas: en roca y páramo casi siempre; en las laderas empinadas, en manchones.
+  const pedregal = t.b === 'roca' || t.b === 'paramo' ? nC > .38 : (t.slope > 1.1 && nC > .55) || nC > .78;
+  if (pedregal) {
+    const n = 2 + Math.floor(rng() * 5);
+    for (let j = 0; j < n; j++) {
+      const p = en(), w = 1 + rng() * 1.8, gris = mix('#A59B8C', '#8E8475', rng());
+      g.globalAlpha = .3; g.fillStyle = '#3A2E22'; g.beginPath(); g.ellipse(p[0] + .6, p[1] + .5, w * 1.1, w * .45, 0, 0, 7); g.fill();
+      g.globalAlpha = .95; g.fillStyle = gris; g.beginPath(); g.ellipse(p[0], p[1], w, w * .6, 0, 0, 7); g.fill();
+      g.globalAlpha = .6; g.fillStyle = '#D6CEC0'; g.beginPath(); g.ellipse(p[0] - w * .3, p[1] - w * .25, w * .45, w * .2, 0, 0, 7); g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  // Pinceladas finas de pasto, en tres tonos cercanos y en un solo trazo por tono (rápido de pintar).
+  if (!HIERBA.has(t.b)) return;
+  const tonos = t.b === 'paramo' ? ['#B5A66A', '#9E9A62', '#C9B880'] : t.b === 'seco' ? [shade(col, -.18), mix(col, '#B89A5E', .4), shade(col, .12)] : t.b === 'niebla' ? [shade(col, -.2), shade(col, .1)] : [shade(col, -.2), mix(col, '#6F8E4A', .35), shade(col, .14)];
+  const n = t.b === 'niebla' ? 10 : 30;
+  g.lineWidth = .6; g.lineCap = 'round';
+  tonos.forEach((tono, k) => {
+    g.globalAlpha = .42; g.strokeStyle = tono; g.beginPath();
+    for (let j = 0; j < n / tonos.length; j++) { const p = en(), L = 1.4 + rng() * 2.4; g.moveTo(p[0], p[1]); g.lineTo(p[0] + (rng() - .5) * 1.4, p[1] - L); }
+    g.stroke();
+  });
+  g.globalAlpha = 1;
+}
+
+// Veredas (renovación colonial): sendas curvas de tierra gastada que van de cada finca, mina o cementerio fuera
+// del damero a la esquina de calle más cercana. Curvas suaves, sin borde, como las que abre la gente al caminar.
+const VEREDA = new Set(['cultivo', 'cafetal', 'mina', 'cementerio']);
+function pintarVeredas(g, T, mapa, dib, k) {
+  const N = T.N, M = N + 1, vert = new Set();
+  for (const [a, b] of dib.tramos) { vert.add(a); vert.add(b); }
+  if (!vert.size) return;
+  const V = [...vert].map(e => [Math.floor(e / M), e % M]);
+  for (let i = 0; i < N * N; i++) {
+    if (!VEREDA.has(mapa[i].b)) continue;
+    const r = Math.floor(i / N) + .5, c = i % N + .5;
+    if (r < k.r0 - 4 || r > k.r1 + 4 || c < k.c0 - 4 || c > k.c1 + 4) continue;
+    let mejor = null, dm = 1e9;
+    for (const [vr, vc] of V) { const d = Math.hypot(vr - r, vc - c); if (d < dm) { dm = d; mejor = [vr, vc]; } }
+    if (!mejor || dm < .8 || dm > 3.2) continue; // junto a la calle no hace falta; muy lejos, no se abre
+    const R = mulberry(i * 53 + 7), lado = R() < .5 ? -1 : 1, mr = (r + mejor[0]) / 2, mc = (c + mejor[1]) / 2;
+    const kr = mr + lado * (mejor[1] - c) * .28, kc = mc - lado * (mejor[0] - r) * .28; // punto de control: la curva
+    const L = [];
+    for (let s = 0; s <= 14; s++) {
+      const f = s / 14, a = (1 - f) * (1 - f), b = 2 * f * (1 - f), d = f * f;
+      const rr = Math.min(N, Math.max(0, a * r + b * kr + d * mejor[0])), cc = Math.min(N, Math.max(0, a * c + b * kc + d * mejor[1]));
+      L.push(P(rr, cc, T.hf(rr, cc)));
+    }
+    const trazo = (w, col, al) => { g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); L.forEach((p, j) => j ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); };
+    trazo(3.6, '#B39A70', .16); trazo(2.2, '#C9B48A', .5); trazo(.8, '#DCCBA4', .45);
+    g.globalAlpha = 1;
+  }
 }
 
 // Cielo, cordillera lejana y nevado, detrás del diorama.
@@ -304,7 +382,12 @@ function pintarCalles(g, T, dib, k) {
   const pts = (a, b, agua) => {
     const [r1, c1] = rc(a), [r2, c2] = rc(b), L = [];
     if (agua) return [P(r1, c1, T.hv(r1, c1)), P(r2, c2, T.hv(r2, c2))];
-    for (let s2 = 0; s2 <= 4; s2++) { const f = s2 / 4, r = lerp(r1, r2, f), c = lerp(c1, c2, f); L.push(P(r, c, T.hf(Math.min(N, r), Math.min(N, c)))); }
+    // Renovación colonial: bordes imperfectos; el tramo se desvía un poco a un lado (fijo para cada tramo).
+    const R = mulberry(a * 131 + b * 7), dr = c2 - c1, dc = r1 - r2, a1 = (R() - .5) * .14, a2 = (R() - .5) * .06;
+    for (let s2 = 0; s2 <= 6; s2++) {
+      const f = s2 / 6, w = Math.sin(f * Math.PI) * a1 + Math.sin(f * Math.PI * 2) * a2, r = lerp(r1, r2, f) + dr * w, c = lerp(c1, c2, f) + dc * w;
+      L.push(P(r, c, T.hf(Math.min(N, Math.max(0, r)), Math.min(N, Math.max(0, c)))));
+    }
     return L;
   };
   const geo = tramos.map(([a, b, agua]) => ({ a, b, agua, L: pts(a, b, agua) }));
@@ -313,6 +396,20 @@ function pintarCalles(g, T, dib, k) {
   // Orilla difusa (sin línea de contorno), cuerpo semitransparente y un centro más gastado: no parece en relieve.
   capa(E.ancho + 3, E.borde, .14); capa(E.ancho + 1, E.color, .45); capa(E.ancho * .55, E.centro, .5);
   const enLinea = (L, t) => { const n = L.length - 1, x = Math.min(n - 1e-6, t * n), i = Math.floor(x), f = x - i; return [lerp(L[i][0], L[i + 1][0], f), lerp(L[i][1], L[i + 1][1], f)]; };
+  // Orillas gastadas: manchas de tierra que se salen del camino, huellas de ruedas y cascos, y piedras sueltas.
+  if (dib.era !== 'carretera') {
+    g.save();
+    for (const t of geo) {
+      if (t.agua) continue;
+      const R = mulberry(t.a * 17 + t.b * 3);
+      for (let j = 0; j < 4; j++) { const p = enLinea(t.L, R()); mancha(g, p[0] + (R() - .5) * E.ancho * 1.6, p[1] + (R() - .5) * E.ancho * .8, E.ancho * (.7 + R() * .6), E.color, .22); }
+      g.globalAlpha = .22; g.strokeStyle = shade(E.color, -.35); g.lineWidth = .45; g.setLineDash([3, 2.5]);
+      for (const lado of [-1, 1]) { g.beginPath(); t.L.forEach((p, j) => { const q = t.L[Math.min(t.L.length - 1, j + 1)], o = t.L[Math.max(0, j - 1)], dx = q[0] - o[0], dy = q[1] - o[1], n = Math.hypot(dx, dy) || 1, x = p[0] - dy / n * lado * E.ancho * .22, y = p[1] + dx / n * lado * E.ancho * .22; j ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); }
+      g.setLineDash([]);
+      for (let j = 0; j < 5; j++) { const p = enLinea(t.L, R()), x = p[0] + (R() < .5 ? -1 : 1) * E.ancho * (.5 + R() * .3), y = p[1] + (R() - .5) * 2, w = .7 + R() * .8; g.globalAlpha = .7; g.fillStyle = mix('#A59B8C', '#8E8475', R()); g.beginPath(); g.ellipse(x, y, w, w * .6, 0, 0, 7); g.fill(); }
+    }
+    g.restore();
+  }
   if (dib.era === 'empedrado') { g.save(); g.fillStyle = shade(E.color, -.25); g.globalAlpha = .55; for (const t of geo) { const R = mulberry(t.a * 31 + t.b); for (let j = 0; j < 16; j++) { const p = enLinea(t.L, R()); g.beginPath(); g.ellipse(p[0] + (R() - .5) * 4, p[1] + (R() - .5) * 2.4, 1, .65, 0, 0, 7); g.fill(); } } g.restore(); }
   if (dib.era === 'carretera') capa(.7, '#D9C9A0', .6, [4, 5]);
   if (dib.era === 'herradura') { g.save(); g.fillStyle = '#7A6447'; g.globalAlpha = .18; for (const t of geo) for (let j = 1; j < 6; j++) { const p = enLinea(t.L, j / 6); g.beginPath(); g.arc(p[0], p[1], .6, 0, 7); g.fill(); } g.restore(); }
