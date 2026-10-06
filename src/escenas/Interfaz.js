@@ -19,7 +19,7 @@ import { Sonido } from './sonido.js';
 import { partida } from './partida.js';
 import { iconoObra } from '../arte/edificios.js';
 import { iconoCalle } from '../arte/calles.js';
-import { retrato, retratoFig, EMB } from '../arte/retratos.js';
+import { retrato, retratoFig, gestoDe, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 import { ico as pintado } from '../arte/iconos.js';
@@ -370,7 +370,7 @@ export class Interfaz {
     this.sociedad.innerHTML = this.pleg('so-clases', cls.map(([n, k, v, sub, a]) => {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
-      return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
+      return `<div class="cls"><img src="${retrato(a, gestoDe(v))}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
     }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-seguridad', this.seccionSeguridad(), 'Seguridad') + this.pleg('so-conflicto', this.seccionConflicto(), 'Conflicto armado') + this.pleg('so-vecinos', this.seccionVecinos() + (exteriorActivo(this.S) ? `<button class="btn" data-mundo style="width:100%;margin:6px 0">🌎 ${C.EXT.textos.boton}</button>` : ''), 'Otras polis y el mundo') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
@@ -975,7 +975,7 @@ export class Interfaz {
 
   reacciones(fx) {
     const S = this.S;
-    const r = Object.keys(C.ADV).map(a => { const st = stance(a, fx); if (!st) return ''; const L = st > 0 ? C.ADV[a].pro : C.ADV[a].con; return `<div class="say ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt=""><div><b>${C.ADV[a].n}</b><span>“${L[S.year % L.length]}”</span></div></div>`; }).join('');
+    const r = Object.keys(C.ADV).map(a => { const st = stance(a, fx); if (!st) return ''; const L = st > 0 ? C.ADV[a].pro : C.ADV[a].con; return `<div class="say ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a, st > 0 ? 'feliz' : 'enojado')}" alt=""><div><b>${C.ADV[a].n}</b><span>“${L[S.year % L.length]}”</span></div></div>`; }).join('');
     return r ? `<div class="says">${r}</div>` : '';
   }
   // Dilema o consecuencia del año.
@@ -996,7 +996,7 @@ export class Interfaz {
     if (/escandalo/.test(ev.id || '') && this.escena('escandalo', ev, () => this.suceso(alTerminar))) return;
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
-      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a)}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
+      `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a, st > 0 ? 'feliz' : 'enojado')}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o);
       if (!o) { this.cerrarTarjeta(); return; } // el dilema ya se resolvió
@@ -1141,7 +1141,7 @@ export class Interfaz {
     if (!L || !L.length) { alTerminar(); return; }
     S.figEv = null;
     const F = C.FIG.figuras, filas = L.map(e => {
-      const f = F[e.id], img = `<img src="${retratoFig(e.id, f.retrato)}" alt="">`;
+      const f = F[e.id], img = `<img src="${retratoFig(e.id, f.retrato, gestoDe(estadoFig(S, e.id).rel))}" alt="">`;
       if (e.tipo === 'llega') { const m = misionDe(S, e.id); return `<div class="say pro"><div class="fig-r">${img}</div><div><b>${f.icono} Llega ${f.nombre}</b> <small>(${f.rol})</small><span>“${f.presentacion}”</span>${m ? `<small><b>Su misión:</b> ${m.texto} Plazo: año ${m.limite}.</small>` : ''}</div></div>`; }
       if (e.tipo === 'mision') { const m = misionDe(S, e.id); return `<div class="say pro"><div class="fig-r">${img}</div><div><b>${f.icono} ${f.nombre} te encarga una misión</b>${m ? `<span>${m.texto}</span><small>Plazo: año ${m.limite}.</small>` : ''}</div></div>`; }
       if (e.tipo === 'cumple') return `<div class="say pro"><div class="fig-r">${img}</div><div><b>✅ Cumpliste la misión de ${f.nombre}</b><span>${e.texto}</span><div class="chips">${this.chips(e.fx)}</div><small>Relación +${C.FIG.premioMision}.</small></div></div>`;
@@ -1158,7 +1158,7 @@ export class Interfaz {
     if (d.tipo !== 'alerta' && this.escena(d.tipo === 'erupcion' ? 'lahar' : 'terremoto', d, () => this.desastreAnio(alTerminar0))) return;
     d.nuevo = false;
     const VD = C.DESASTRES.volcan, Q = C.DESASTRES.terremoto;
-    const voz = () => { const f = C.FIG.figuras.vulcanologa; return S.fig && S.fig.vulcanologa && S.fig.vulcanologa.visto ? `<div class="say pro"><div class="fig-r"><img src="${retratoFig('vulcanologa', f.retrato)}" alt=""></div><div><b>${f.nombre}</b><span>“Alerta ${VD.niveles[d.nivel].nombre.toLowerCase()}. ${VD.niveles[d.nivel].texto}”</span></div></div>` : ''; };
+    const voz = () => { const f = C.FIG.figuras.vulcanologa; return S.fig && S.fig.vulcanologa && S.fig.vulcanologa.visto ? `<div class="say pro"><div class="fig-r"><img src="${retratoFig('vulcanologa', f.retrato, gestoDe(S.fig.vulcanologa.rel))}" alt=""></div><div><b>${f.nombre}</b><span>“Alerta ${VD.niveles[d.nivel].nombre.toLowerCase()}. ${VD.niveles[d.nivel].texto}”</span></div></div>` : ''; };
     if (d.tipo === 'alerta') {
       const no = puedePlan(S), N = VD.niveles[d.nivel];
       this.tarjeta(`<div class="big">🌋</div><h3>${VD.nombre}: alerta ${N.nombre.toLowerCase()} ${N.icono}</h3><p>${N.texto}</p>${voz()}
@@ -1539,13 +1539,13 @@ export class Interfaz {
     if (!P.length) return '';
     const filas = P.map(id => { const f = C.FIG.figuras[id], e = estadoFig(S, id), m = misionDe(S, id);
       return `<button class="sub fig" data-fig="${id}" aria-label="${f.nombre}: relación ${Math.round(e.rel)}. Ver más">
-        <span class="sn"><img src="${retratoFig(id, f.retrato)}" alt=""> ${f.nombre} <small>${m ? `misión hasta el año ${m.limite}` : f.rol}</small></span><span class="track"><span class="fill" style="width:${e.rel}%;background:${colorDe(e.rel)}"></span></span><b>${Math.round(e.rel)}</b></button>`; }).join('');
+        <span class="sn"><img src="${retratoFig(id, f.retrato, gestoDe(e.rel))}" alt=""> ${f.nombre} <small>${m ? `misión hasta el año ${m.limite}` : f.rol}</small></span><span class="track"><span class="fill" style="width:${e.rel}%;background:${colorDe(e.rel)}"></span></span><b>${Math.round(e.rel)}</b></button>`; }).join('');
     return `<div class="cls otros"><div><div class="lab"><span>Personajes</span></div><p class="small">Su relación contigo sube o baja según lo que haces. Con relación alta te ayudan; con relación baja, te complican.</p><div class="subs">${filas}</div></div></div>`;
   }
   explicarFigura(id) {
     const S = this.S, f = C.FIG.figuras[id], e = estadoFig(S, id), n = nivelRel(e.rel), m = misionDe(S, id), M = C.FIG.motivos;
     const gusta = Object.entries(f.reacciones).filter(([, v]) => v > 0).map(([k]) => M[k]), molesta = Object.entries(f.reacciones).filter(([, v]) => v < 0).map(([k]) => M[k]);
-    this.tarjeta(`<div class="fig-cab"><img src="${retratoFig(id, f.retrato)}" alt=""><div><h3>${f.nombre}</h3><p class="small">${f.rol} · relación ${Math.round(e.rel)} (${n})</p></div></div>
+    this.tarjeta(`<div class="fig-cab"><img src="${retratoFig(id, f.retrato, gestoDe(e.rel))}" alt=""><div><h3>${f.nombre}</h3><p class="small">${f.rol} · relación ${Math.round(e.rel)} (${n})</p></div></div>
       <p>“${f.presentacion}”</p>
       ${m ? `<div class="porque-afecta"><b>Misión:</b> ${m.texto} Plazo: año ${m.limite}. Cumplirla sube la relación ${C.FIG.premioMision}; fallarla la baja ${C.FIG.castigoMision}.</div>` : '<p class="small">Por ahora no tiene encargos para ti.</p>'}
       ${gusta.length ? `<p class="small"><b>Le agrada:</b> ${gusta.join('; ')}.</p>` : ''}${molesta.length ? `<p class="small"><b>Le molesta:</b> ${molesta.join('; ')}.</p>` : ''}

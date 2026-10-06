@@ -38,11 +38,16 @@ function pintarRetrato(g, R) {
   pol(g, cara, piel);
   pol(g, [[35.5, 12.8], [39, 14.6], [40.8, 22], [40.4, 30.5], [37.2, 37], [32.6, 39.5], [35.4, 33], [36.6, 24]], shade(piel, -.13));
   elip(g, 23.4, 27, 1.6, 2.4, shade(piel, -.08)); // oreja
-  // Cara mínima: cejas, ojos y la sombra de la nariz.
-  g.fillStyle = shade(pelo, .1); g.save(); g.translate(28.4, 23.6); g.rotate(-.08); g.fillRect(-2.4, -.6, 4.8, 1.3); g.restore(); g.save(); g.translate(35.6, 23.6); g.rotate(.08); g.fillRect(-2.4, -.6, 4.8, 1.3); g.restore();
-  elip(g, 28.4, 26.8, 1.05, 1.25, '#2A1E18'); elip(g, 35.6, 26.8, 1.05, 1.25, '#2A1E18');
+  // Cara mínima y sin boca (más misteriosa): el gesto está en las cejas y los ojos. feliz (relación alta): cejas altas
+  // y ojos cerrados en arco; preocupado (media): cejas que suben hacia el centro; enojado (baja): cejas que bajan hacia
+  // el centro y ojos entrecerrados. Sin gesto: cejas rectas.
+  const G = R.gesto, ceja = shade(pelo, .1), giro = { feliz: 0, preocupado: .32, enojado: -.36 }[G] || 0, yc = G === 'feliz' ? 22.8 : G === 'enojado' ? 24.4 : 23.6;
+  g.fillStyle = ceja;
+  g.save(); g.translate(28.4, yc); g.rotate(-.08 + giro); g.fillRect(-2.4, -.6, 4.8, 1.3); g.restore();
+  g.save(); g.translate(35.6, yc); g.rotate(.08 - giro); g.fillRect(-2.4, -.6, 4.8, 1.3); g.restore();
+  if (G === 'feliz') { g.strokeStyle = '#2A1E18'; g.lineWidth = 1.1; g.lineCap = 'round'; for (const x of [28.4, 35.6]) { g.beginPath(); g.arc(x, 27.6, 1.5, Math.PI * 1.1, Math.PI * 1.9); g.stroke(); } }
+  else { const ry = G === 'enojado' ? .75 : 1.25; elip(g, 28.4, 26.8, 1.05, ry, '#2A1E18'); elip(g, 35.6, 26.8, 1.05, ry, '#2A1E18'); }
   pol(g, [[32.2, 26.8], [34.2, 32.2], [31.2, 32.6]], shade(piel, -.22));
-  pol(g, [[30, 35.2], [34.4, 35.2], [33.8, 36], [30.6, 36]], shade(piel, -.3)); // boca
   if (d === 'gafas') { g.strokeStyle = '#2A1E18'; g.lineWidth = .9; g.beginPath(); g.arc(28.4, 26.8, 3, 0, 7); g.moveTo(38.6, 26.8); g.arc(35.6, 26.8, 3, 0, 7); g.moveTo(31.4, 26.6); g.lineTo(32.6, 26.6); g.stroke(); }
   if (!R.mujer && (d === 'aguadeno' || d === 'ruana')) pol(g, [[28.4, 33.4], [35.6, 33.4], [36.4, 35], [32, 34.2], [27.6, 35]], shade(pelo, .05)); // bigote
   // Pelo corto o el frente del pelo largo.
@@ -60,6 +65,7 @@ function pintarRetrato(g, R) {
   g.lineWidth = 1; g.strokeStyle = FR.ocre; g.beginPath(); g.arc(32, 32, 31.2, 0, Math.PI * 2); g.stroke();
 }
 function hacer(clave, spec, semilla) {
+  if (spec.gesto) clave += '-' + spec.gesto;
   if (CACHE[clave]) return CACHE[clave];
   const c = lienzo(128, 128), g = c.getContext('2d'); g.scale(2, 2);
   pintarRetrato(g, spec); void semilla;
@@ -72,7 +78,9 @@ const VOCES = {
   campesino: { fondo: '#CFD9B4', piel: '#B9845A', ropa: '#8E3B2A', pelo: '#2A2018', detalle: 'aguadeno' },
   aurelio: { fondo: '#D8CFDF', piel: '#E3B894', ropa: '#F4F1E8', manto: '#2E3440', pelo: '#9C958A', detalle: 'laurel' }
 };
-export function retrato(kind) { return hacer(kind, VOCES[kind] || VOCES.julian, kind.length * 31 + 7); }
+// gesto: 'feliz', 'preocupado' o 'enojado' (según la relación o el ánimo: verde, amarillo o rojo).
+export function retrato(kind, gesto) { return hacer(kind, { ...(VOCES[kind] || VOCES.julian), gesto }, kind.length * 31 + 7); }
+export const gestoDe = v => v >= 60 ? 'feliz' : v >= 35 ? 'preocupado' : 'enojado'; // los mismos cortes que los colores de las barras
 
 // Emblemas de los regímenes (de la versión 9).
 export const EMB = {
@@ -86,4 +94,4 @@ export const EMB = {
 
 // Fase 4: retratos de los personajes con papel propio, a partir de sus datos (fondo, piel, ropa, pelo y un detalle).
 const MUJERES = new Set(['empresaria', 'vulcanologa']);
-export function retratoFig(id, R) { return hacer('fig-' + id, { ...R, mujer: MUJERES.has(id) || R.mujer }, id.length * 47 + 11); }
+export function retratoFig(id, R, gesto) { return hacer('fig-' + id, { ...R, gesto, mujer: MUJERES.has(id) || R.mujer }, id.length * 47 + 11); }
