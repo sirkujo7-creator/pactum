@@ -54,3 +54,4 @@ export * from './civismo.js';
 export * from './familias.js';
 export * from './vecindad.js';
 export * from './huellas.js';
+export * from './exterior.js';

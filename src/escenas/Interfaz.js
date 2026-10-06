@@ -6,13 +6,14 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
 } from '../core/index.js';
+import { pintarMundo, fichaLugar, lugarEn } from './mundo.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
 import { partida } from './partida.js';
@@ -111,6 +112,7 @@ export class Interfaz {
         this.grupo = el('div', { class: 'grupo' }, [
         b('?', 'Cómo jugar', () => this.ayuda(false)),
         b('▤', 'Partidas y logros', () => this.menu()),
+        b('🌎', 'El mundo (m)', () => this.tarjetaMundo()),
         this.bSonido = b('🔇', 'Activar sonido', () => this.alternarSonido()),
         b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25)),
         b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25)),
@@ -359,7 +361,7 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionCultura() + this.seccionBarrios() + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionCultura() + this.seccionBarrios() + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + (exteriorActivo(this.S) ? `<button class="btn" data-mundo style="width:100%;margin:6px 0">🌎 ${C.EXT.textos.boton}</button>` : '') + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
@@ -367,6 +369,7 @@ export class Interfaz {
     const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
     this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
+    this.sociedad.querySelectorAll('[data-mundo]').forEach(b => b.onclick = () => this.tarjetaMundo());
     const fi = this.sociedad.querySelector('[data-fiesta]'); if (fi) fi.onclick = () => { if (organizarFiesta(this.S)) { this.toast(`🎉 ¡${fiestaDelPueblo(this.S).nombre}! La exigencia de sentido baja por dos años.`); this.mapa.cambio(true); this.render(); } };
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
@@ -1724,6 +1727,25 @@ export class Interfaz {
     this.boton('okB', () => { this.cerrarTarjeta(); if (primera && actaDisponible(S) && !S.acta) this.acta(); });
   }
   // Partidas (ranuras y código, como en la v9) y logros.
+  // Fase 15: la pantalla «El mundo».
+  tarjetaMundo(sel) {
+    const S = this.S, X = C.EXT;
+    if (!exteriorActivo(S)) { this.toast('El mundo se abre en las partidas en acuarela.'); return; }
+    const L = lugares(), visto = L.filter(l => relacionExterior(S, l.id));
+    sel = sel || (visto[0] || L[0]).id;
+    const fila = l => { const E = relacionExterior(S, l.id); return `<button class="sub${l.id === sel ? ' on' : ''}" data-lugar="${l.id}"><span class="sn">${l.icono} ${l.nombre} <small>${E ? `${nombreRegimen(E.reg)} · ${E.trato ? X.textos.trato[E.trato].toLowerCase() : 'relación ' + Math.round(E.rel)}` : X.textos.desconocida.toLowerCase()}</small></span></button>`; };
+    this.tarjeta(`<div class="big">🌎</div><h3>${X.titulo}</h3><p class="small">${X.textos.ayuda}</p>
+      <canvas class="mundo" aria-label="Mapa de tu polis y sus vecinos"></canvas>
+      <div class="ficha-lugar">${fichaLugar(S, sel)}</div>
+      <h3>${X.textos.hermanas}</h3><div class="subs">${L.filter(l => l.circulo === 'hermanas').map(fila).join('')}</div>
+      <h3>${X.textos.paises}</h3><div class="subs">${L.filter(l => l.circulo === 'paises').map(fila).join('')}</div>
+      <div class="phil"><b>Lo que enseña</b><br>${X.leccion}</div><button class="main" id="okB">Volver</button>`);
+    const cv = this.card.querySelector('canvas.mundo');
+    requestAnimationFrame(() => { const pos = pintarMundo(cv, S, sel); cv.onclick = ev => { const id = lugarEn(pos, cv, ev); if (id) this.tarjetaMundo(id); }; });
+    this.card.querySelectorAll('[data-lugar]').forEach(b => b.onclick = () => this.tarjetaMundo(b.dataset.lugar));
+    this.card.querySelectorAll('[data-ext]').forEach(b => b.onclick = () => { if (accionExterior(S, sel, b.dataset.ext)) { Sonido.tap && Sonido.tap(); this.render(); this.mapa.cambio(true); } this.tarjetaMundo(sel); });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
   menu() {
     const S = this.S, g = logrosGanados();
     this.tarjeta(`<h3>Partidas</h3><p class="small">La partida se guarda sola en este aparato. Código de este territorio: <b>${S.seed}</b>; úsalo al iniciar para repetir el mismo mapa.</p>
