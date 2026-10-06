@@ -148,6 +148,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
    5. **Edificios públicos coloniales (publicado en 0.89.0)** con silueta única cada uno.
    5b. **Iglesia e identidad de los edificios (publicado en 0.90.0)**, decisión de Juan del 6 de octubre: iglesia parroquial que se construye (una, junto a la plaza, crece con las épocas, campanas) y cada edificio con su material de techo, color, patio y tamaño. Juan permitió que un edificio ocupe más de una casilla si hace falta. En 0.91.0, cada obra pública cambia con las cuatro épocas, como la iglesia.
    6. **Íconos, retratos, viñetas y portada (publicado en 0.92.0)** en el estilo nuevo. La renovación visual queda terminada y espera la prueba de Juan.
+   7. **Retratos sin boca con tres gestos, pobladores planos en 12 cuadros (0.93.0), luz única y terreno liso (0.94.0), y animales y árboles del Tolima (0.95.0)** aprobados en `pruebas/naturaleza.html`: 12 cuadros al andar, sombras suaves de un solo sol (abajo a la derecha), frailejón redibujado. Juan arregla la portada él mismo: no tocarla.
    Archivos de imagen y un mapa de precarga solo si algún día se usan imágenes externas.
 
 **Fase «El mapa cuenta la historia» (aprobada por Juan el 5 de octubre, antes de la fase 14):** las decisiones, leyes y desgracias dejan huellas físicas en el mapa, no solo números. Las huellas van alrededor del pueblo, lejos de las obras (0.76.1). Un paso publicable a la vez:

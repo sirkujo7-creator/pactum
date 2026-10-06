@@ -468,9 +468,9 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'iglesia': { const e = era === undefined ? Math.min(etapa, 3) : era; return [{ k: 'iglesia' + e, s: [1.1, 1.2, 1.28, 1.28][e] }]; } // capilla, colonial, dos torres, restaurada: la más grande
     case 'agora': return [{ k: 'sede-' + reg, s: 1.12 }]; // las obras importantes se ven más grandes
     // Fase 8: parque ordenado: la fuente al centro, dos árboles a los lados y setos.
-    case 'fundacion': return [{ k: 'cruzFundacion', du: .06, dv: .06 }, { k: 'arbol', du: -.3, dv: -.28, s: 1.1, n: true }];
+    case 'fundacion': return [{ k: 'cruzFundacion', du: .06, dv: .06 }, { k: 'ceiba', du: -.3, dv: -.28, s: 1, n: true }];
     case 'cementerio': return [{ k: 'cementerio' }, { k: 'cipres', du: -.3, dv: -.32 }, { k: 'cipres', du: -.36, dv: .05, s: .85 }];
-    case 'parque': return [{ k: 'fuente' }, { k: 'arbol', du: -.3, dv: -.3, s: .9, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
+    case 'parque': return [{ k: 'fuente' }, { k: 'guayacan', du: -.3, dv: -.3, s: .85, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
     case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
     case 'cultivo': return [{ k: 'platano', du: .3, dv: -.3, s: .85, n: true }];
     case 'finca': return []; // fase 10: arroz, aguacate, algodón y ganadería sin sombrío

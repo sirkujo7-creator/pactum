@@ -51,14 +51,16 @@ export function colocarNaturaleza(T, mapa) {
     const guadual = t.d < 3.5 && T.vary(t.c / 2.4 + 300, t.r / 2.4 + 300) > .56;
     const palmar = T.vary(t.c / 2.8 + 150, t.r / 2.8 + 520) > .7;
     const grupo = (k, n, sc = 1) => { const cr = t.r + .3 + R() * .4, cc = t.c + .3 + R() * .4; for (let j = 0; j < n; j++) objs.push({ k, i, r: cr + (R() - .5) * .45, c: cc + (R() - .5) * .45, s: sc * (.8 + R() * .35) }); };
+    // Biodiversidad del Tolima por piso térmico (6 de octubre): cada entorno con sus árboles y sus animales.
+    const q = R();
     switch (t.b) {
-      case 'galeria': if (guadual) grupo('guadua', 2 + (p < .4 ? 1 : 0)); else if (p < .45) add('arbol', 1); break;
-      case 'seco': if (p < .28) add('saman', 1); else if (p < .45) add(T.terr && T.terr.cardones ? 'cardon' : 'arbusto', 1); else if (T.terr && T.terr.cardones && p < .55) add('cardon', 1, .85); break; // fase 14: cardones en el sur seco
-      case 'potrero': if (p < .07) add(T.terr && T.terr.palmas ? 'palma' : 'arbol', 1); else if (p < .25) add('vaca', 1); else if (guadual && p < .4) grupo('guadua', 2); break; // fase 14: palmas en el valle
+      case 'galeria': if (guadual) grupo('guadua', 2 + (p < .4 ? 1 : 0)); else if (p < .14) add('ceiba', 1, .95); else if (p < .3) add('arbol', 1); else if (p < .4) add('mango', 1); else if (p < .44) grupo('pato', 2); break;
+      case 'seco': if (p < .2) add('saman', 1); else if (p < .3) add('guayacan', 1, .9); else if (p < .45) add(T.terr && T.terr.cardones ? 'cardon' : 'arbusto', 1); else if (T.terr && T.terr.cardones && p < .55) add('cardon', 1, .85); else if (p > .9) add('chivo', 1); break; // fase 14: cardones en el sur seco
+      case 'potrero': if (p < .05) add(T.terr && T.terr.palmas ? 'palma' : 'saman', 1); else if (p < .08) add('guayacan', 1, .9); else if (p < .25) add(q < .45 ? 'cebu' : 'vaca', 1); else if (p < .29) add('caballo', 1); else if (guadual && p < .4) grupo('guadua', 2); break; // fase 14: palmas en el valle
       case 'arrozal': if (p < .15) add('garza', 1); break;
-      case 'ladera': if (palmar) grupo('palma', p < .5 ? 2 : 1); else if (guadual) grupo('guadua', 2); else if (p < .14) add('platano', 1); else if (p < .24) add('arbol', 1, .9); break;
-      case 'niebla': add('arbolNiebla', p < .5 ? 2 : 1); if (palmar) grupo('palma', 2, 1.1); break;
-      case 'paramo': if (p < .6) add('frailejon', p < .3 ? 2 : 1); if (p > .9) add('piedra', 1); break;
+      case 'ladera': if (palmar) grupo('palma', p < .5 ? 2 : 1); else if (guadual) grupo('guadua', 2); else if (p < .12) add('platano', 1); else if (p < .17) add('cambulo', 1); else if (p < .22) add('arbol', 1, .9); else if (p < .26) add('yarumo', 1); else if (p < .29) add('ocobo', 1, .9); break;
+      case 'niebla': add('arbolNiebla', p < .5 ? 2 : 1); if (palmar) grupo('palma', 2, 1.1); else if (q < .25) add('yarumo', 1, 1.05); break;
+      case 'paramo': if (p < .65) grupo('frailejon', p < .35 ? 3 : 2, .95); if (p > .9) add('piedra', 1); break;
       case 'roca': if (p < .35) add('piedra', 1); break;
     }
   }
@@ -69,7 +71,7 @@ export function colocarNaturaleza(T, mapa) {
 export function arbolesDeBosque(T, i) {
   const t = T.tiles[i], R = mulberry(T.seed * 11 + i * 173 + 5), alto = t.h > 4.4, objs = [];
   const add = (k, sc = 1) => objs.push({ k, i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: sc * (.85 + R() * .3) });
-  for (let j = 0, n = R() < .5 ? 2 : 1; j < n; j++) add(alto ? 'arbolNiebla' : 'arbol', alto ? 1 : .95);
+  for (let j = 0, n = R() < .5 ? 2 : 1; j < n; j++) add(alto ? 'arbolNiebla' : ['arbol', 'mango', 'cambulo'][Math.floor(R() * 3)], alto ? 1 : .95);
   if (!alto && R() < .3) add('guadua');
   return objs;
 }

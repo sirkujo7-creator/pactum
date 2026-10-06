@@ -5,6 +5,7 @@
 // ropa moderna (jean, camiseta, gorra) en las épocas del ladrillo y el concreto. Doce cuadros al caminar (antes
 // ocho): cada cuadro es el mismo dibujo en otro momento del paso, con los mismos colores, para que no salte.
 import { shade, lienzo, contorno, RES_HOJA } from './fresco.js';
+import { sombraSuave } from './plano.js';
 
 export const TIPOS_GENTE = {
   campesino: [['#8E3B2A', '#D9B54A'], ['#3F5E7A', '#C9A24A'], ['#5B4636', '#B84A3A']],
@@ -41,8 +42,8 @@ export function figura(g, tipo, vi, frente, paso, mod = false) {
   const V = TIPOS_GENTE[tipo][vi], piel = PIEL[vi % 3];
   const ph = FASE[paso] * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35;
   const nino = tipo === 'nino', E = nino ? .72 : 1, dir = frente ? 1 : -1;
-  // Sombra en el suelo.
-  g.save(); g.globalAlpha = .22; g.fillStyle = '#3A2A1C'; g.beginPath(); g.ellipse(.8, 0, 4.2 * E, 1.3 * E, 0, 0, 7); g.fill(); g.restore();
+  // Sombra suave en el suelo, del mismo sol que la de árboles y animales.
+  sombraSuave(g, 3.8 * E, 0, 3.8 * E, .28);
   g.save(); g.scale(E, E); g.translate(0, -alza);
   const falda = tipo === 'campesina' && !mod;
   const pantalon = mod ? (tipo === 'elite' ? '#3A3A44' : '#3F5872') : { campesino: '#EFE8D8', campesina: '#EFE8D8', artesano: '#5A4A3C', elite: '#2E2E34', nino: '#4A5A70' }[tipo];
