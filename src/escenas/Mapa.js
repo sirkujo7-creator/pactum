@@ -207,6 +207,7 @@ export class Mapa extends Phaser.Scene {
     for (const f of figurasDeObra(kObra, i, this.S.stage, this.S.reg, epocaVisual(this.S))) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
       if (vacio && f.k.startsWith('mercado')) f.k += 'v';
+      if (nivel >= 1 && x.b === 'casa' && /^casa\d-\d$/.test(f.k)) f.k += 'h'; // renovación colonial: casa gastada con humedad y cal caída
       const r = t.r + .5 + (f.dv || 0), c = t.c + .5 + (f.du || 0), h = f.n || deSuelo ? this.T.hf(r, c) : t.h;
       const img = this.figura(f.n ? 'naturaleza' : 'edificios', f.k, r, c, h, f.s || 1);
       if (f.z) img.y -= f.z;
