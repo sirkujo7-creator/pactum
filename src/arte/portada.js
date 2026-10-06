@@ -1,7 +1,9 @@
-// Portada al fresco (fase 8): el Nevado del Ruiz con su fumarola, tres capas de cordillera, la ladera cafetera,
-// el valle con el río Magdalena y un pueblo con su ágora de columnas. Se pinta una vez y luego solo se escala.
+// Portada (fase 8; renovación colonial, 6 de octubre): el Nevado del Ruiz con su fumarola, tres capas de cordillera,
+// la ladera cafetera, el valle con el río Magdalena y un pueblo colonial con su iglesia de espadaña, el cabildo de
+// portales y casas de cal y teja. Se pinta una vez y luego solo se escala.
 import { FR, mulberry, shade, mix, lienzo, pintar, ovalo, toques, texturaYeso } from './fresco.js';
-import { templo, casa } from './obras-fresco.js';
+import { casaColonial } from './casas.js';
+import { iglesiaEpoca, cabildo } from './publicos.js';
 import { recetasFlora } from './flora.js';
 
 // Cresta de montaña: puntos de izquierda a derecha.
@@ -51,15 +53,16 @@ export function pintarPortadaFresco(w = 1600, h = 1000, semilla = 7) {
   g.save(); g.strokeStyle = FR.cal; g.globalAlpha = .7; g.lineWidth = 2;
   for (let k = 0; k < 14; k++) { const t = k / 14, x = -20 + (w + 40) * t, y = h * (.9 - .06 * Math.sin(t * Math.PI * 1.3)) + 2; g.beginPath(); g.moveTo(x - 10, y); g.quadraticCurveTo(x, y - 4, x + 10, y); g.stroke(); }
   g.restore();
-  // Pueblo junto al río: ágora con columnas, casas de bahareque y palmas de cera.
+  // Pueblo colonial junto al río: iglesia con espadaña, cabildo de portales, casas de cal y teja y palmas de cera.
   const flora = Object.fromEntries(recetasFlora(0).map(x => [x[0], x[5]]));
   const pon = (x, y, s, f) => { g.save(); g.translate(x, y); g.scale(s, s); f(mulberry(Math.round(x * 3 + y))); g.restore(); };
   pon(w * .2, h * .7, 2.2, r => flora.palma(g, r)); pon(w * .82, h * .69, 2.4, r => flora.palma(g, r)); pon(w * .9, h * .72, 2, r => flora.palma(g, r));
-  pon(w * .3, h * .78, 2.4, r => casa(g, r, { zocalo: FR.azul }));
-  pon(w * .52, h * .79, 2.4, r => casa(g, r, { zocalo: FR.verde, pisos: 2 }));
-  pon(w * .41, h * .76, 2.6, r => templo(g, r, { col: FR.rojo, emblema: 'balanza' }));
-  pon(w * .62, h * .775, 2.3, r => casa(g, r, { zocalo: FR.ocre, muro: mix(FR.cal, FR.ocreClaro, .25) }));
-  pon(w * .14, h * .8, 2.2, r => flora.guadua(g, r)); pon(w * .72, h * .8, 2.2, r => flora.arbol(g, r));
+  pon(w * .63, h * .755, 2.5, () => iglesiaEpoca(g, 1));
+  pon(w * .3, h * .785, 2.4, () => casaColonial(g, 0, 0, false));
+  pon(w * .47, h * .775, 2.3, () => cabildo(g, 1));
+  pon(w * .37, h * .815, 2.4, () => casaColonial(g, 1, 2, false));
+  pon(w * .76, h * .81, 2.3, () => casaColonial(g, 0, 3, false));
+  pon(w * .14, h * .8, 2.2, r => flora.guadua(g, r)); pon(w * .86, h * .82, 2.2, r => flora.arbol(g, r));
   texturaYeso(g, 0, 0, w, h, .45);
   return c;
 }

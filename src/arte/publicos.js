@@ -634,3 +634,6 @@ export function recetasPublicos(e = 1) {
   // La iglesia: capilla de bahareque, iglesia colonial con espadaña, templo de dos torres y templo restaurado.
   return [...L, ...[0, 1, 2, 3].map(k => ['iglesia' + k, 110, 130, 55, 96, g => iglesiaEpoca(g, k)])];
 }
+
+// Para la portada: la iglesia y el cabildo pintados fuera del mapa.
+export { iglesiaEpoca, cabildo };
