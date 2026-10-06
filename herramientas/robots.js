@@ -98,6 +98,7 @@ export function botYear(S, strat, eth, op = {}) {
     else if (S.stage >= 1 && S.pop > waterCap(S, c2) - 15) k = 'acueducto';
     else if (S.stage >= 1 && c2.taller > energy(S, c2)) k = 'molino';
     else if (S.clima && sinSepultura(S) > 0 && !eo.cementerio && S.gold > cost(S, 'cementerio') + 30) k = 'cementerio'; // huellas: los muertos piden sepultura
+    else if (prep && S.clima && C.HUELLAS && C.HUELLAS.iglesia && !c2.iglesia && S.pop >= 30 && S.gold > cost(S, 'iglesia') + 40) k = 'iglesia'; // la iglesia frente a la plaza
     else if (S.pop >= c2.casa * 10 - 6) k = 'casa';
     else if (S.clima && F2.evadido >= 6 && S.gold > 60 && !eo.recaudo) k = 'recaudo'; // solo si la evasión cuesta más que la oficina
     else if (S.stage >= 2 && c2.agora < 1) k = 'agora';

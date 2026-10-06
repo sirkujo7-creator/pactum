@@ -131,7 +131,8 @@
         "escuchar": 8,
         "ignorar": -6,
         "laico": -20,
-        "paz": 15
+        "paz": 15,
+        "iglesia": 15
       },
       "alta": {
         "texto": "El párroco media en los conflictos: los movimientos crecen 30% más lento.",
@@ -350,6 +351,7 @@
     "tutela": "la acción de tutela",
     "sufragio": "el sufragio universal",
     "seguridadSocial": "la seguridad social",
-    "descentralizacion": "la descentralización"
+    "descentralizacion": "la descentralización",
+    "iglesia": "que se construya la iglesia"
   }
 }

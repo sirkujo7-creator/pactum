@@ -462,7 +462,8 @@ export function figurasDeObra(k, i, etapa, reg, era) {
       return f;
     }
     case 'mercado': return [{ k: etapa >= 2 ? 'mercado2' : 'mercado0' }];
-    case 'agora': return [{ k: 'sede-' + reg }];
+    case 'iglesia': { const e = era === undefined ? Math.min(etapa, 3) : era; return [{ k: 'iglesia' + e, s: [1.1, 1.2, 1.28, 1.28][e] }]; } // capilla, colonial, dos torres, restaurada: la más grande
+    case 'agora': return [{ k: 'sede-' + reg, s: 1.12 }]; // las obras importantes se ven más grandes
     // Fase 8: parque ordenado: la fuente al centro, dos árboles a los lados y setos.
     case 'fundacion': return [{ k: 'cruzFundacion', du: .06, dv: .06 }, { k: 'arbol', du: -.3, dv: -.28, s: 1.1, n: true }];
     case 'cementerio': return [{ k: 'cementerio' }, { k: 'cipres', du: -.3, dv: -.32 }, { k: 'cipres', du: -.36, dv: .05, s: .85 }];
@@ -480,7 +481,7 @@ export function figurasDeObra(k, i, etapa, reg, era) {
         if (pr !== 'artesanias') f.push({ k: 'carga-' + pr, du: .28, dv: .3 });
         return f;
       }
-      return [{ k }];
+      return [{ k, s: { universidad: 1.12, hospital: 1.08, teatro: 1.1, cuartel: 1.05 }[k] }];
   }
 }
 

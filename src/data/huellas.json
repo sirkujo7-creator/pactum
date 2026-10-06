@@ -251,5 +251,12 @@
       "quemada": "Quemada en el año {anio}: hollín en los muros. Se borra al repararla o con los años.",
       "trinchera": "🪖 Se cavan trincheras entre el pueblo y la frontera."
     }
+  },
+  "iglesia": {
+    "distanciaPlaza": 1.5,
+    "textos": {
+      "unica": "Ya hay una iglesia parroquial: el pueblo tiene una sola.",
+      "lejos": "La iglesia va frente a la plaza de fundación (en una casilla vecina), como mandaban las Leyes de Indias."
+    }
   }
 }

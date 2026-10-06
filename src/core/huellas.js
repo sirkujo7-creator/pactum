@@ -27,7 +27,8 @@ export function enCasco(S, i) {
 // Motivo por el que la plaza o el casco impiden construir k en i ('' si nada). Lo usa whyNot.
 export function motivoFundacion(S, k, i) {
   const F = K();
-  if (!F || !huellasActivas(S)) return k === 'fundacion' || k === 'cementerio' ? 'No disponible.' : '';
+  if (!F || !huellasActivas(S)) return k === 'fundacion' || k === 'cementerio' || k === 'iglesia' ? 'No disponible.' : '';
+  if (k === 'iglesia') { const M = C.HUELLAS.iglesia, d = distanciaPlaza(S, i); if (S.map.some(x => x.b === 'iglesia')) return M.textos.unica; if (plazaFundacion(S) >= 0 && (d === null || d > M.distanciaPlaza)) return M.textos.lejos; }
   if (k === 'cementerio') { const d = distanciaPlaza(S, i), M = C.HUELLAS.cementerio; if (d !== null && d < M.distancia) return M.textos.cerca.replace('{d}', M.distancia); }
   if (k === 'fundacion') return plazaPendiente(S) ? '' : F.textos.solo;
   if (plazaPendiente(S)) return F.textos.primero;
