@@ -112,9 +112,9 @@ export class Interfaz {
     this.brindis = el('div', { class: 'toast', role: 'status', 'aria-live': 'polite' });
     this.pasa = el('div', { class: 'anio-pasa', 'aria-hidden': 'true' });
     this.raiz = el('div', { class: 'mapa-ui' }, [
-      el('header', { class: 'arriba' }, [el('div', { class: 'fila1' }, [this.bReg, this.era]), this.hud, this.medidores]),
+      el('header', { class: 'arriba' }, [el('div', { class: 'fila1' }, [this.bReg, this.era]), this.hud, this.medidores,
+        el('div', { class: 'fila-pend' }, [this.bPend = b('📋', 'Pendientes (p)', () => this.tarjetaPendientes(), 'redondo pendb')])]),
       el('div', { class: 'controles' }, [
-        this.bPend = b('📋', 'Pendientes (p)', () => this.tarjetaPendientes()),
         this.bGrupo = b('☰', 'Menú', () => this.alternarGrupo()),
         this.grupo = el('div', { class: 'grupo' }, [
         b('?', 'Cómo jugar', () => this.ayuda(false)),
@@ -1760,7 +1760,8 @@ export class Interfaz {
   marcarPendientes() {
     if (!this.bPend) return;
     const L = pendientes(this.S), urg = L.some(p => p.nivel === 1);
-    this.bPend.dataset.n = L.length || ''; this.bPend.classList.toggle('urgente', urg); this.bPend.hidden = !L.length;
+    // Siempre a la vista: gris si no hay nada; con alerta roja y el número si algo espera una decisión.
+    this.bPend.dataset.n = L.length || ''; this.bPend.classList.toggle('urgente', urg); this.bPend.classList.toggle('vacio', !L.length);
     this.bPend.setAttribute('aria-label', `Pendientes: ${L.length}${urg ? ', hay algo urgente' : ''}`);
   }
   tarjetaPendientes() {
