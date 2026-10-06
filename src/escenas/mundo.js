@@ -46,7 +46,7 @@ export function pintarMundo(cv, S, sel) {
     const a = k / 3 * Math.PI * 2 + .5, x = TU.x + Math.cos(a) * .085, y = TU.y + Math.sin(a) * .1, r = S.vecinos[id] ? S.vecinos[id].rel : 50;
     g.fillStyle = r >= 65 ? '#6E9A58' : r <= 30 ? FR.rojo : '#C9A85E'; g.beginPath(); g.arc(X(x), Y(y), 4, 0, 7); g.fill();
   });
-  g.fillStyle = FR.rojo; g.strokeStyle = '#F7F1E3'; g.lineWidth = 2; g.beginPath();
+  g.fillStyle = '#A8573A'; g.strokeStyle = '#F7F1E3'; g.lineWidth = 2; g.beginPath();
   for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? 4.5 : 10; g.lineTo(X(TU.x) + Math.cos(a) * rr, Y(TU.y) + Math.sin(a) * rr); }
   g.closePath(); g.stroke(); g.fill();
   g.font = 'bold 11px Alegreya, Georgia, serif'; g.fillStyle = '#3A2A20'; g.fillText('Tu polis', X(TU.x) + 12, Y(TU.y) + 4);

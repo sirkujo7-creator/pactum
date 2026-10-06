@@ -23,7 +23,7 @@ import { retrato, retratoFig, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 import { ico as pintado } from '../arte/iconos.js';
-import { FR, lienzo, texturaYeso, greca, urlDe } from '../arte/fresco.js';
+import { FR, lienzo, texturaYeso, guarda, urlDe } from '../arte/fresco.js';
 
 // Fase 8: íconos pintados al fresco.
 export const IC = { gold: pintado('oro'), debt: pintado('deuda'), food: pintado('alimento'), pop: pintado('poblacion'), agua: pintado('agua'), energia: pintado('energia') };
@@ -31,8 +31,14 @@ export const IC = { gold: pintado('oro'), debt: pintado('deuda'), food: pintado(
 // color (sin modos de mezcla, que Safari en iPhone recalcula en toda la pantalla).
 (() => {
   const r = document.documentElement.style, muro = col => { const y = lienzo(220, 220), gy = y.getContext('2d'); gy.fillStyle = col; gy.fillRect(0, 0, 220, 220); texturaYeso(gy, 0, 0, 220, 220, .7); return urlDe(y); };
-  const gc = lienzo(64, 16), g = gc.getContext('2d'); greca(g, 0, 2, 64, 12, FR.rojo);
-  r.setProperty('--muro-cal', `url(${muro('#F7F1E3')})`); r.setProperty('--greca', `url(${urlDe(gc)})`);
+  // Guarda de rombos escalonados (cerámica pijao) en terracota con punto ocre, en vez de la greca griega.
+  const gc = lienzo(72, 16), g = gc.getContext('2d'); guarda(g, 0, 2, 72, 12, '#A8573A', '#C9973A');
+  // Papel viejo para El Pregonero: fondo de pergamino con manchas y fibras suaves.
+  const papel = () => { const c = lienzo(260, 260), gp = c.getContext('2d'); gp.fillStyle = '#F1E4C4'; gp.fillRect(0, 0, 260, 260); texturaYeso(gp, 0, 0, 260, 260, .45);
+    for (let k = 0; k < 26; k++) { const x = (k * 97) % 260, y = (k * 53) % 260, rr = 10 + (k * 37) % 30, gr = gp.createRadialGradient(x, y, 0, x, y, rr); gr.addColorStop(0, 'rgba(160,120,60,.09)'); gr.addColorStop(1, 'rgba(160,120,60,0)'); gp.fillStyle = gr; gp.fillRect(x - rr, y - rr, rr * 2, rr * 2); }
+    gp.strokeStyle = 'rgba(120,90,50,.08)'; gp.lineWidth = .6; for (let k = 0; k < 90; k++) { const x = (k * 71) % 260, y = (k * 29) % 260; gp.beginPath(); gp.moveTo(x, y); gp.lineTo(x + 6 + k % 9, y + (k % 3) - 1); gp.stroke(); }
+    return urlDe(c); };
+  r.setProperty('--muro-cal', `url(${muro('#F7F1E3')})`); r.setProperty('--greca', `url(${urlDe(gc)})`); r.setProperty('--papel-viejo', `url(${papel()})`);
 })();
 const BADUP = { d: 1, i: 1 };
 const signo = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(Math.round(v));

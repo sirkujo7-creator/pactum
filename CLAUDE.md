@@ -31,7 +31,7 @@ Simulador de gobierno para un jugador. Cada decisión enseña un concepto de fil
 ## Decisiones fijas
 
 - Nombre: **PACTUM: la nueva polis**.
-- Arte: **fresco pompeyano con el Tolima neoclásico** (decisión de Juan, 4 de octubre; reemplaza la acuarela y se aplica en la fase 8). Un solo estilo para todo: mapa, obras, gente, íconos y paneles, con paleta de pigmentos (rojo pompeyano, ocres, tierra verde, azul egipcio, blanco de cal), contorno siena y textura de muro. Se conservan el Nevado, el río, el café, la guadua y las casas de bahareque; los edificios públicos son neoclásicos (columnas y frontón, como la arquitectura republicana). Pinceles en `src/arte/fresco.js`. Sin paquetes de arte externos. El arte se hornea a texturas una vez; nada de redibujar formas complejas en cada cuadro.
+- Arte: **colonial colombiano** (decisión de Juan, 6 de octubre; reemplaza el fresco grecorromano). El mapa sigue la prueba aprobada `pruebas/colonial.html`: casas de cal y teja de barro con zócalos de color, balcones y postigos de madera, iglesia con espadaña, cabildo con portales, plaza con pila, calles empedradas, suelo natural sin cuadrícula, árboles y animales del Tolima bien dibujados. Los menús conservan su estética (muro de cal, versalitas, tarjetas) con detalles colombianos y sin recargar: verde cafetero en vez del rojo pompeyano y guarda de rombos escalonados de la cerámica pijao en vez de la greca. El Pregonero en papel viejo con letra de imprenta del siglo XIX (IM Fell, en `vendor/fuentes`). Ya se permite arte externo si Juan lo aprueba. El arte se hornea a texturas una vez; nada de redibujar formas complejas en cada cuadro.
 - Motor: **Phaser 3**, guardado en `vendor/` (no por CDN), para que funcione sin internet.
 - **Sin paso de compilación**: módulos ES nativos, se publica tal cual en GitHub Pages.
 - App instalable (PWA) con `manifest.webmanifest` y `sw.js`.
@@ -140,7 +140,14 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
 1. **Pendientes (publicado en 0.83.0):** botón 📋 (tecla p) con contador (rojo si hay algo urgente) y la lista de lo que espera una decisión (urgente, importante, sugerencias), cada uno con «Ir» al panel, la ficha o la casilla. Lógica en `src/core/pendientes.js`.
 2. **Pantallas desplegables (publicado en 0.84.0)** en Crónica, Sociedad, Hacienda y Leyes: cada sección cerrada con su título y un dato clave; se abre al tocarla y recuerda cómo la dejaste. Sin recortar textos (Juan no quiere textos «breves») y sin tarjeta resumen del año (descartada).
 3. **Vista de plano:** el mapa visto desde arriba, sin relieve, con colores por uso, río, caminos, casco y plaza; luego, construir tocando el plano.
-4. **Renovación visual** (Juan, 6 de octubre: el suelo, la vegetación y sobre todo los animales se ven mal; los edificios se parecen; ya no rige la regla de no usar arte externo). Los edificios siguen el estilo **griego** (no tolimense). Primero una prueba de estilo comparando arte propio rehecho con un paquete externo, y Juan decide.
+4. **Renovación visual colonial colombiana** (aprobada por Juan el 6 de octubre tras `pruebas/colonial.html`). Exigencias de Juan: **diferenciar al máximo los edificios**, **pulir al máximo animales y personajes** y animaciones suaves (sin movimientos raros ni cambios de color). Pasos publicables:
+   1. **Interfaz (publicado en 0.85.0):** misma estética, verde cafetero en vez de rojo, guarda pijao, El Pregonero en papel viejo con letra de imprenta.
+   2. **Terreno natural:** manchas agrupadas de pasto seco, lodo y piedra; vegetación en grupos (guaduales en las quebradas, palmas de cera en manchones); calles del damero con bordes imperfectos, huellas y piedras sueltas; veredas curvas hacia las fincas.
+   3. **Animales y personajes nuevos** con animación suave (más cuadros, sin parpadeos de color).
+   4. **Casas coloniales** con 4 variantes, fachada por época (bahareque, tapia, ladrillo, concreto) y capa de humedad y desgaste según el deterioro; dibujo por capas (explanada, estructura, elementos vivos como caballo amarrado, ropa tendida o materas, y efectos como humo o niebla).
+   5. **Edificios públicos coloniales** con silueta única cada uno.
+   6. **Íconos, retratos, viñetas y portada** en el estilo nuevo.
+   Archivos de imagen y un mapa de precarga solo si algún día se usan imágenes externas.
 
 **Fase «El mapa cuenta la historia» (aprobada por Juan el 5 de octubre, antes de la fase 14):** las decisiones, leyes y desgracias dejan huellas físicas en el mapa, no solo números. Las huellas van alrededor del pueblo, lejos de las obras (0.76.1). Un paso publicable a la vez:
 

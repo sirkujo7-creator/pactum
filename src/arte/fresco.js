@@ -91,6 +91,21 @@ export function texturaYeso(g, x, y, w, h, al = .55) {
 }
 
 // Greca (meandro griego) en una franja horizontal.
+// Guarda de rombos escalonados con un punto al centro, inspirada en la cerámica pijao del Tolima (reemplaza la greca).
+export function guarda(g, x, y, w, h, col, punto) {
+  const u = h / 4, paso = 6 * u;
+  g.save(); g.strokeStyle = col; g.lineWidth = Math.max(1, u * .7); g.lineJoin = 'miter';
+  for (let px = x; px < x + w; px += paso) {
+    const cx = px + paso / 2, cy = y + h / 2;
+    g.beginPath(); // rombo escalonado
+    g.moveTo(cx, y); g.lineTo(cx + u, y); g.lineTo(cx + u, y + u); g.lineTo(cx + 2 * u, y + u); g.lineTo(cx + 2 * u, y + 2 * u);
+    g.lineTo(cx + 2 * u, y + 3 * u); g.lineTo(cx + u, y + 3 * u); g.lineTo(cx + u, y + 4 * u); g.lineTo(cx - u, y + 4 * u); g.lineTo(cx - u, y + 3 * u);
+    g.lineTo(cx - 2 * u, y + 3 * u); g.lineTo(cx - 2 * u, y + u); g.lineTo(cx - u, y + u); g.lineTo(cx - u, y); g.closePath(); g.stroke();
+    g.beginPath(); g.moveTo(px, cy); g.lineTo(cx - 2 * u, cy); g.moveTo(cx + 2 * u, cy); g.lineTo(px + paso, cy); g.stroke();
+    g.fillStyle = punto || col; g.beginPath(); g.arc(cx, cy, u * .55, 0, 7); g.fill();
+  }
+  g.restore();
+}
 export function greca(g, x, y, w, h, col) {
   const u = h / 4;
   g.save(); g.strokeStyle = col; g.lineWidth = Math.max(1, u * .9); g.lineCap = 'square'; g.lineJoin = 'miter';
