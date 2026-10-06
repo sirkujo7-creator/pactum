@@ -125,7 +125,7 @@ export class Mapa extends Phaser.Scene {
 
   // ---------- Figuras: naturaleza y edificios ----------
   prepararHojas() {
-    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios();
+    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios(epocaVisual(this.S)); // las obras públicas de la época
     for (const [clave, h] of [['naturaleza', nat], ['edificios', edi]]) {
       // La textura usa su propio lienzo (una copia): así, al repintar la naturaleza por la sequía,
       // nunca se borra el lienzo guardado en la memoria de horneados (antes los árboles podían desaparecer).
@@ -134,7 +134,7 @@ export class Mapa extends Phaser.Scene {
         copia.getContext('2d').drawImage(h.canvas, 0, 0);
         const tx = this.textures.addCanvas(clave, copia);
         for (const [k, m] of Object.entries(h.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
-      } else if (clave === 'naturaleza') {
+      } else {
         const tx = this.textures.get(clave), cv = tx.getSourceImage(), g = cv.getContext('2d');
         if (cv !== h.canvas) { g.clearRect(0, 0, cv.width, cv.height); g.drawImage(h.canvas, 0, 0); tx.refresh(); }
       }
@@ -345,8 +345,12 @@ export class Mapa extends Phaser.Scene {
     if (vacio !== this.mercadoVacio) { this.mercadoVacio = vacio; this.S.map.forEach((x, i) => { if (x.b === 'mercado') this.ponerObra(i); }); }
     const era = epocaVisual(this.S);
     if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto && era === this.eraVista) return;
+    if (this.eraVista !== undefined && era !== this.eraVista) { // otra época: las obras públicas cambian de dibujo
+      const edi = hornearEdificios(era), tx = this.textures.get('edificios'), cv = tx.getSourceImage(), g = cv.getContext('2d');
+      g.clearRect(0, 0, cv.width, cv.height); g.drawImage(edi.canvas, 0, 0); tx.refresh(); this.hojas.edificios = edi;
+    }
     this.etapaVista = this.S.stage; this.regVisto = this.S.reg; this.eraVista = era;
-    this.S.map.forEach((x, i) => { if (['casa', 'mercado', 'agora'].includes(x.b)) this.ponerObra(i); });
+    this.S.map.forEach((x, i) => { if (x.b) this.ponerObra(i); });
   }
 
   // ---------- Construir ----------

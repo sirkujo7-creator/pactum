@@ -146,7 +146,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
    3. **Animales y personajes nuevos (publicado en 0.87.0)** con animación suave (más cuadros, sin parpadeos de color).
    4. **Casas coloniales (publicado en 0.88.0)** con 4 variantes, fachada por época (bahareque, tapia, ladrillo, concreto) y capa de humedad y desgaste según el deterioro; dibujo por capas (explanada, estructura, elementos vivos como caballo amarrado, ropa tendida o materas, y efectos como humo o niebla).
    5. **Edificios públicos coloniales (publicado en 0.89.0)** con silueta única cada uno.
-   5b. **Iglesia e identidad de los edificios (publicado en 0.90.0)**, decisión de Juan del 6 de octubre: iglesia parroquial que se construye (una, junto a la plaza, crece con las épocas, campanas) y cada edificio con su material de techo, color, patio y tamaño. Juan permitió que un edificio ocupe más de una casilla si hace falta.
+   5b. **Iglesia e identidad de los edificios (publicado en 0.90.0)**, decisión de Juan del 6 de octubre: iglesia parroquial que se construye (una, junto a la plaza, crece con las épocas, campanas) y cada edificio con su material de techo, color, patio y tamaño. Juan permitió que un edificio ocupe más de una casilla si hace falta. En 0.91.0, cada obra pública cambia con las cuatro épocas, como la iglesia.
    6. **Íconos, retratos, viñetas y portada** en el estilo nuevo.
    Archivos de imagen y un mapa de precarga solo si algún día se usan imágenes externas.
 
