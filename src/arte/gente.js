@@ -125,16 +125,17 @@ export function hornearGente() {
   if (HOJA) return HOJA;
   const E = Math.min(RES_HOJA, 3), w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
   for (const mod of ['', 'M']) for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 12; f++) claves.push([`${tipo}${mod}_${vi}_${fr}_${f}`, tipo, vi, fr, f, !!mod]);
-  const cols = 24, cv = lienzo(cols * W, Math.ceil(claves.length / cols) * H + H), g = cv.getContext('2d');
+  // Hoja de 2048 de ancho y hasta 2048 de alto (lados potencia de dos): la luz va en el hueco de la última fila.
+  const cols = Math.floor(2048 / W), filas = Math.ceil((claves.length + 1) / cols), cv = lienzo(cols * W, filas * H), g = cv.getContext('2d');
   claves.forEach(([k, tipo, vi, fr, f, mod], n) => {
     const x = (n % cols) * W, y = Math.floor(n / cols) * H;
     marcos[k] = { x, y, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E };
     g.save(); g.translate(x + w / 2 * E, y + (h - 3) * E); g.scale(E, E); figura(g, tipo, vi, !!fr, f, mod); g.restore();
   });
-  const y = Math.ceil(claves.length / cols) * H, gr = g.createRadialGradient(24, y + 24, 0, 24, y + 24, 24);
+  const n = claves.length, x0 = (n % cols) * W, y = Math.floor(n / cols) * H, gr = g.createRadialGradient(x0 + 24, y + 24, 0, x0 + 24, y + 24, 24);
   gr.addColorStop(0, 'rgba(255,226,150,1)'); gr.addColorStop(.25, 'rgba(255,216,138,.8)'); gr.addColorStop(1, 'rgba(255,216,138,0)');
-  g.fillStyle = gr; g.fillRect(0, y, 48, 48);
-  marcos.luz = { x: 0, y, w: 48, h: 48, ax: 24, ay: 24 };
+  g.fillStyle = gr; g.fillRect(x0, y, 48, 48);
+  marcos.luz = { x: x0, y, w: 48, h: 48, ax: 24, ay: 24 };
   return (HOJA = { canvas: cv, marcos, escala: E });
 }
 export { contorno };

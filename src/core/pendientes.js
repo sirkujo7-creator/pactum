@@ -1,7 +1,9 @@
 // Pendientes (pedido de Juan, 6 de octubre): las «misiones del momento» en una sola lista. Junta lo que espera una
 // decisión del jugador (misiones de los personajes, café sin renovar, asentamientos, muertos sin sepultura, ruinas,
 // fábricas paradas, agua, comida, leyes por abrir, tratados en riesgo, volcán, guerra…) y dice adónde ir.
-// Cada pendiente: { id, icono, texto, nivel (1 urgente, 2 importante, 3 sugerencia), ir }. ir: { hoja } | { casilla } |
+// Cada pendiente: { id, icono, texto, nivel (0 misión, 1 urgente, 2 importante, 3 sugerencia), ir, fija }. Las
+// misiones (pedido de Juan, 6 de octubre) van primero: la meta de la etapa, la guía y los encargos de los personajes.
+// La meta y la guía son fijas: siempre se ven en la lista, pero no encienden el contador. ir: { hoja } | { casilla } |
 // { mundo } | { tarjeta }. Lógica pura: la interfaz decide cómo mostrarlo.
 import { C } from './contenido.js';
 import { counts } from './reglas.js';
@@ -19,11 +21,18 @@ import { listaMovimientos } from './movimientos.js';
 import { exteriorActivo, datosLugar } from './exterior.js';
 import { nivelVolcan, volcan } from './desastres.js';
 import { nombreBarrio, barrioDe } from './barrios.js';
+import { reqEtapa, aniosPolis } from './reglas.js';
+import { faltaFundar } from './estado.js';
 
 export function pendientes(S) {
   if (!climaActivo(S) || S.over) return [];
-  const L = [], c = counts(S), add = (id, icono, texto, nivel, ir) => L.push({ id, icono, texto, nivel, ir });
+  const L = [], c = counts(S), add = (id, icono, texto, nivel, ir, fija = false) => L.push({ id, icono, texto, nivel, ir, fija });
   const F = finance(S);
+  // Misiones: la meta de la etapa (o la fundación) y el paso de la guía.
+  const ff = faltaFundar(S), nx = C.STAGES[S.stage + 1], plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  if (ff) add('meta', '🏛️', ff.plaza ? `Funda tu aldea: primero la plaza de fundación, luego ${plural(ff.casas, 'casa', 'casas')} y ${plural(ff.fincas, 'finca', 'fincas')}.` : `Funda tu aldea: faltan ${plural(ff.casas, 'casa', 'casas')} y ${plural(ff.fincas, 'finca', 'fincas')}.`, 0, { hoja: 'construir' }, true);
+  else if (!S.ganado) add('meta', '🏛️', nx ? `Meta: ${nx.n} (${reqEtapa(S, S.stage + 1)}).` : `Meta: sostener la Polis ${aniosPolis(S)} años (vas en ${S.polisYears || 0}).`, 0, { caminos: true }, true);
+  if (!ff && S.guide && C.GUIDE[S.gstep]) add('guia', '🧭', `Guía ${S.gstep + 1}/${C.GUIDE.length}: ${C.GUIDE[S.gstep].t}`, 0, { hoja: 'construir' }, true);
   // Lo urgente: comida, agua, oro.
   if (F.fprod - F.cons < 0 && S.food < 40) add('comida', '🌾', `Falta comida: se producen ${F.fprod} y se comen ${F.cons}. Construye fincas.`, 1, { hoja: 'construir' });
   if (S.stage >= 1 && S.pop > waterCap(S, c) - 5) add('agua', '💧', `El agua alcanza para ${waterCap(S, c)} personas y hay ${S.pop}. Construye un acueducto junto al río.`, 1, { hoja: 'construir' });
@@ -32,7 +41,7 @@ export function pendientes(S) {
   const V = desastresOk(S) ? nivelVolcan(S) : 0;
   if (V >= 2 && !volcan(S).plan) add('volcan', '🌋', 'El Nevado está en alerta y no hay plan de evacuación.', 1, { hoja: 'hacienda', seccion: 'h-riesgo' });
   // Misiones de los personajes.
-  for (const id of presentes(S)) { const m = misionDe(S, id); if (m) add('mision-' + id, C.FIG.figuras[id].icono || '🎯', `${C.FIG.figuras[id].nombre}: ${(m.texto || m.titulo || 'tiene una misión').replace(/\.$/, '')}${m.limite ? ` (hasta el año ${m.limite})` : ''}.`, 2, { hoja: 'sociedad', seccion: 'so-figuras' }); }
+  for (const id of presentes(S)) { const m = misionDe(S, id); if (m) add('mision-' + id, C.FIG.figuras[id].icono || '🎯', `${C.FIG.figuras[id].nombre}: ${(m.texto || m.titulo || 'tiene una misión').replace(/\.$/, '')}${m.limite ? ` (hasta el año ${m.limite})` : ''}.`, 0, { hoja: 'sociedad', seccion: 'so-figuras' }); }
   // Lo que se ve en el mapa.
   const sep = avisoSepultura(S); if (sep) add('sepultura', '🪦', sep, 2, { hoja: 'construir' });
   for (const a of S.asent || []) add('asent-' + a.i, '🏚️', `Asentamiento informal en ${nombreBarrio(barrioDe(S, a.i))}: legalizar, ignorar o desalojar.`, 2, { casilla: a.i });

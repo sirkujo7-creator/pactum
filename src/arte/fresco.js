@@ -4,6 +4,16 @@
 import { mulberry, clamp, shade, mix, lienzo, poly } from './acuarela.js';
 export { mulberry, clamp, shade, mix, lienzo, poly };
 
+// Copia de una hoja de dibujos en un lienzo de lados potencia de dos (256, 512, 1024, 2048…). Así la tarjeta de video
+// puede hacer versiones reducidas suaves (mipmaps) y lo que se mueve no chispea ni tiembla al verse pequeño
+// (pedido de Juan, 6 de octubre). Las coordenadas de los cuadros no cambian: el dibujo queda arriba a la izquierda.
+export function enPotencia(cv) {
+  const pot = n => 2 ** Math.ceil(Math.log2(Math.max(1, n))), w = pot(cv.width), h = pot(cv.height);
+  if (w === cv.width && h === cv.height) return cv;
+  if (w > 4096 || h > 4096) return cv; // demasiado grande para algunos celulares: se queda como está
+  const c = lienzo(w, h); c.getContext('2d').drawImage(cv, 0, 0); return c;
+}
+
 // Imagen de un lienzo como enlace corto (blob:) en vez de un texto gigante (data:). Safari en iPhone sufre con los
 // textos data: largos repetidos en el HTML y en el CSS; el enlace corto se crea una vez y se reutiliza.
 export function urlDe(c, tipo = 'image/png', calidad) {

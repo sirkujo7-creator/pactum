@@ -130,7 +130,9 @@ export class Mapa extends Phaser.Scene {
       // La textura usa su propio lienzo (una copia): así, al repintar la naturaleza por la sequía,
       // nunca se borra el lienzo guardado en la memoria de horneados (antes los árboles podían desaparecer).
       if (!this.textures.exists(clave)) {
-        const copia = lienzo(h.canvas.width, h.canvas.height);
+        // La naturaleza (con los animales que andan) va en un lienzo de lados potencia de dos: así tiene versiones
+        // reducidas suaves y no tiembla al moverse. Los edificios, quietos y en una hoja muy alta, quedan igual.
+        const pot = n => 2 ** Math.ceil(Math.log2(n)), copia = clave === 'naturaleza' && pot(h.canvas.height) <= 4096 ? lienzo(pot(h.canvas.width), pot(h.canvas.height)) : lienzo(h.canvas.width, h.canvas.height);
         copia.getContext('2d').drawImage(h.canvas, 0, 0);
         const tx = this.textures.addCanvas(clave, copia);
         for (const [k, m] of Object.entries(h.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);

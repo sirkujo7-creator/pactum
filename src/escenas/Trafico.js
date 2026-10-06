@@ -3,6 +3,7 @@
 // Con "reducir movimiento" quedan quietos.
 import { P } from '../arte/iso.js';
 import { hornearVehiculos } from '../arte/calles.js';
+import { enPotencia } from '../arte/fresco.js';
 import { listaCalles, eraCalle } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
 
@@ -11,7 +12,7 @@ export class Trafico {
     this.scene = scene;
     this.H = hornearVehiculos();
     if (!scene.textures.exists('vehiculos')) {
-      const tx = scene.textures.addCanvas('vehiculos', this.H.canvas);
+      const tx = scene.textures.addCanvas('vehiculos', enPotencia(this.H.canvas)); // lados potencia de dos: sin temblor al moverse
       for (const [k, m] of Object.entries(this.H.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
     }
     this.lista = []; this.reloj = 0;
