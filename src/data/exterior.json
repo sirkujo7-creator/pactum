@@ -1,0 +1,258 @@
+{
+  "leccion": "Ninguna polis vive sola. Aristóteles decía que la ciudad debe ser autosuficiente (autarquía), pero las polis griegas comerciaban, firmaban tratados y formaban ligas, como la de Delos. Tu territorio sigue siendo independiente: decide con quién se une, a qué precio y con qué gobiernos.",
+  "titulo": "El mundo",
+  "inicial": 45,
+  "deriva": 2,
+  "romper": 30,
+  "cambioRegimen": 0.04,
+  "autoritarios": [
+    "tirania",
+    "oligarquia",
+    "demagogia"
+  ],
+  "acciones": {
+    "embajada": {
+      "nombre": "Enviar una embajada",
+      "icono": "🕊️",
+      "costo": 25,
+      "relacion": 12,
+      "texto": "Una delegación lleva regalos y noticias: la relación mejora."
+    },
+    "comercio": {
+      "nombre": "Tratado de comercio",
+      "icono": "📜",
+      "costo": 45,
+      "relacion": 6,
+      "minimo": 55,
+      "texto": "Abre el comercio y trae lo que esa polis ofrece mientras la relación no se dañe."
+    },
+    "liga": {
+      "nombre": "Formar una liga",
+      "icono": "🤝",
+      "costo": 70,
+      "relacion": 8,
+      "minimo": 75,
+      "mantenimiento": 8,
+      "texto": "Una alianza más estrecha: más beneficios y un costo anual. Aliarse con un gobierno autoritario cuesta legitimidad."
+    }
+  },
+  "textos": {
+    "ayuda": "Tu polis es independiente: con cada vecino decides si envías embajadas, firmas un tratado de comercio o formas una liga.",
+    "desconocida": "Aún sin contacto",
+    "desde": "Contacto desde: {req}",
+    "relacion": "Relación {rel}",
+    "trato": {
+      "comercio": "Tratado de comercio",
+      "liga": "Liga"
+    },
+    "ofrece": "Con tratado",
+    "conLiga": "Con liga",
+    "autoritario": "Aliarse con un gobierno {reg} cuesta legitimidad (−{n}).",
+    "contacto": "🌎 Primer contacto con {nombre}: ya puedes enviarle embajadas (El mundo).",
+    "rompe": "💔 Se rompe el tratado con {nombre}: la relación se dañó.",
+    "cambia": "🏛️ En {nombre} cambia el gobierno: ahora es {reg}.",
+    "firmado": "Firmaste {trato} con {nombre}.",
+    "embajada": "Enviaste una embajada a {nombre}.",
+    "falta": "Necesitas una relación de {n} o más.",
+    "ya": "Ya hiciste eso.",
+    "anio": "Ya enviaste una embajada este año.",
+    "oro": "Necesitas {n} de oro.",
+    "vecinos": "Vecinos de frontera",
+    "hermanas": "Polis hermanas",
+    "paises": "Países vecinos",
+    "boton": "Ver el mundo"
+  },
+  "lugares": {
+    "antioquia": {
+      "nombre": "Antioquia",
+      "capital": "Medellín",
+      "icono": "⛏️",
+      "circulo": "hermanas",
+      "x": 0.36,
+      "y": 0.27,
+      "desde": {
+        "anio": 4
+      },
+      "regimenes": [
+        "republica",
+        "oligarquia",
+        "aristocracia"
+      ],
+      "texto": "Tierra de mineros de oro, arrieros y colonos. Sus familias bajan a las laderas del Tolima a tumbar monte y fundar pueblos; luego llegarían la industria textil y el café.",
+      "ofrece": {
+        "comercio": 0.018,
+        "fincas": 0.012
+      },
+      "liga": {
+        "comercio": 0.018
+      }
+    },
+    "santafe": {
+      "nombre": "Santafé",
+      "capital": "Bogotá",
+      "icono": "🏛️",
+      "circulo": "hermanas",
+      "x": 0.68,
+      "y": 0.42,
+      "desde": {
+        "etapa": 1
+      },
+      "regimenes": [
+        "republica",
+        "aristocracia",
+        "monarquia"
+      ],
+      "texto": "La vieja capital del altiplano: letrados, universidades, bancos y el peso de la burocracia. Tratar con ella da prestigio y saber, pero quiere mandar.",
+      "ofrece": {
+        "saber": 1,
+        "civismo": 0.12
+      },
+      "liga": {
+        "legitimidad": 1,
+        "civismo": 0.12
+      }
+    },
+    "huila": {
+      "nombre": "Huila",
+      "capital": "Neiva",
+      "icono": "🌵",
+      "circulo": "hermanas",
+      "x": 0.52,
+      "y": 0.72,
+      "desde": {
+        "etapa": 1
+      },
+      "regimenes": [
+        "republica",
+        "oligarquia",
+        "monarquia"
+      ],
+      "texto": "El alto Magdalena: ganado, arroz, el desierto de la Tatacoa y la cultura de San Agustín. Comparte el río y los pueblos pijao con el sur del Tolima.",
+      "ofrece": {
+        "fincas": 0.018
+      },
+      "liga": {
+        "conflicto": -2
+      }
+    },
+    "quindio": {
+      "nombre": "Quindío",
+      "capital": "Armenia",
+      "icono": "☕",
+      "circulo": "hermanas",
+      "x": 0.3,
+      "y": 0.5,
+      "desde": {
+        "etapa": 1,
+        "anio": 15
+      },
+      "regimenes": [
+        "republica",
+        "aristocracia",
+        "oligarquia"
+      ],
+      "texto": "Al otro lado de la cordillera, por el Camino del Quindío: tierra de café y guadua fundada por colonos. Socio natural y competidor en el café.",
+      "ofrece": {
+        "comercio": 0.018
+      },
+      "liga": {
+        "fincas": 0.018
+      }
+    },
+    "valle": {
+      "nombre": "Valle del Cauca",
+      "capital": "Cali",
+      "icono": "🚢",
+      "circulo": "hermanas",
+      "x": 0.18,
+      "y": 0.66,
+      "desde": {
+        "etapa": 2
+      },
+      "regimenes": [
+        "republica",
+        "oligarquia",
+        "aristocracia"
+      ],
+      "texto": "Caña de azúcar, ingenios y la salida al Pacífico por Buenaventura: puerta al comercio con el mundo.",
+      "ofrece": {
+        "comercio": 0.024,
+        "fabricas": 0.024
+      },
+      "liga": {
+        "comercio": 0.018
+      }
+    },
+    "venezuela": {
+      "nombre": "Venezuela",
+      "capital": "Caracas",
+      "icono": "⛽",
+      "circulo": "paises",
+      "x": 0.9,
+      "y": 0.18,
+      "desde": {
+        "etapa": 2,
+        "anio": 40
+      },
+      "regimenes": [
+        "republica",
+        "tirania",
+        "demagogia"
+      ],
+      "texto": "Hermana de la independencia (la Gran Colombia de Bolívar). Petróleo, migraciones de ida y vuelta y una frontera viva.",
+      "ofrece": {
+        "comercio": 0.018
+      },
+      "liga": {
+        "comercio": 0.018
+      }
+    },
+    "ecuador": {
+      "nombre": "Ecuador",
+      "capital": "Quito",
+      "icono": "🍌",
+      "circulo": "paises",
+      "x": 0.14,
+      "y": 0.92,
+      "desde": {
+        "etapa": 2,
+        "anio": 45
+      },
+      "regimenes": [
+        "republica",
+        "oligarquia",
+        "tirania"
+      ],
+      "texto": "Hermano andino del sur, también nacido de la Gran Colombia: banano, cacao y la cordillera que sigue.",
+      "ofrece": {
+        "fincas": 0.012
+      },
+      "liga": {
+        "civismo": 0.12
+      }
+    },
+    "panama": {
+      "nombre": "Panamá",
+      "capital": "Ciudad de Panamá",
+      "icono": "⚓",
+      "circulo": "paises",
+      "x": 0.08,
+      "y": 0.12,
+      "desde": {
+        "etapa": 2,
+        "anio": 50
+      },
+      "regimenes": [
+        "republica",
+        "oligarquia"
+      ],
+      "texto": "Fue parte de Colombia hasta 1903, cuando se separó con apoyo de Estados Unidos para construir el canal. Hoy el canal une dos océanos: comercio para quien sepa negociar.",
+      "ofrece": {
+        "comercio": 0.03
+      },
+      "liga": {
+        "comercio": 0.018
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  sinSepultura, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
+  sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
   industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
   civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
@@ -135,6 +135,7 @@ export function botYear(S, strat, eth, op = {}) {
   if (strat === 'fair' && !eth) for (const m of listaMovimientos(S)) if (m.f >= 70 && S.gold - costoDialogo(S, m.id) >= 80) dialogar(S, m.id);
   // Fase 12: la estrategia equilibrada desbloquea y promulga leyes del árbol de civismo.
   if (prep && civismoActivo(S) && op.civismo !== false) robotCivismo(S);
+  if (prep && exteriorActivo(S)) robotExterior(S); // fase 15: embajadas, tratados y ligas
   // Fase 12: el rasgo de la época (al azar entre los tres).
   const ep = rasgoPendiente(S); if (ep) { const L = opcionesRasgo(ep); elegirRasgo(S, L[rnd(L.length)].id); }
   const r = advance(S);
@@ -224,4 +225,17 @@ function robotCivismo(S) {
     if (hasLaw(S, id)) continue;
     if (!lawBlock(S, datosLey(id)) && S.gold > lawCostNow(S) + 150) { toggleLaw(S, id); break; }
   }
+}
+
+// Fase 15: la estrategia equilibrada cultiva relaciones con el mundo: una embajada al año al lugar más prometedor,
+// tratados de comercio cuando la relación alcanza y ligas solo con gobiernos no autoritarios.
+function robotExterior(S) {
+  const X = S.ext && S.ext.p; if (!X) return;
+  const ids = Object.keys(X).sort((a, b) => X[b].rel - X[a].rel);
+  for (const id of ids) {
+    if (!puedeExterior(S, id, 'comercio') && S.gold > costoExterior(S, 'comercio') + 60) { accionExterior(S, id, 'comercio'); return; }
+    if (!puedeExterior(S, id, 'liga') && !C.EXT.autoritarios.includes(X[id].reg) && S.gold > costoExterior(S, 'liga') + 120) { accionExterior(S, id, 'liga'); return; }
+  }
+  const obj = ids.find(id => !X[id].trato && X[id].rel < 55) || ids.find(id => X[id].trato === 'comercio' && X[id].rel < 75 && !C.EXT.autoritarios.includes(X[id].reg));
+  if (obj && !puedeExterior(S, obj, 'embajada') && S.gold > costoExterior(S, 'embajada') + 80) accionExterior(S, obj, 'embajada');
 }

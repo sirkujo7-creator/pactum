@@ -7,6 +7,7 @@ import { clamp } from './azar.js';
 import { climaActivo } from './clima.js';
 import { counts, hasLaw, epocaHistorica } from './reglas.js';
 import { dejarMarca } from './marcas.js';
+import { efectoExterior } from './exterior.js';
 
 const K = () => C.CIV;
 export function civismoActivo(S) { return climaActivo(S) && !!C.CIV; }
@@ -79,6 +80,7 @@ export function efectoLeyes(S, clave) {
   for (const l of C.LEYES_NUEVAS) if (hasLaw(S, l.id)) suma(l.efectos);
   for (const r of rasgosElegidos(S)) suma(r.efectos); // paso 2: los rasgos del pueblo usan las mismas claves
   const T = S.terr && C.TERR && C.TERR.territorios[S.terr]; if (T && T.efectos) suma(T.efectos); // fase 14: lo que da y lo que cuesta cada territorio
+  v += efectoExterior(S, k, sub); // fase 15: tratados y ligas con el mundo
   return v;
 }
 // Costo anual de las leyes nuevas (por habitante y fijo), antes de multiplicar por S.price.
