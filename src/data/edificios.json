@@ -76,7 +76,7 @@
     "articulo": "una iglesia parroquial",
     "descripcion": "El templo del pueblo, frente a la plaza como mandaban las Leyes de Indias. Da sentido y comunidad: misas, bautizos, fiestas patronales y campanas que marcan el día. Solo hay una, y crece con las épocas: capilla de bahareque, iglesia colonial con espadaña y templo de dos torres con cúpula.",
     "costo": 80,
-    "mantenimiento": 4,
+    "mantenimiento": 5,
     "etapa": 0,
     "terrenos": [
       "llano"
