@@ -43,6 +43,7 @@ export function colocarNaturaleza(T, mapa) {
     const i = t.r * T.N + t.c, m = mapa[i];
     if (m.b) continue;
     if (t.b === 'niebla' && m.t !== 'bosque') continue;
+    if (t.d < 1.05) continue; // pegado al río: nada de árboles encima del agua
     const R = mulberry(T.seed * 7 + i * 131 + 9), p = R();
     const add = (k, n, sc = 1) => { for (let j = 0; j < n; j++) objs.push({ k, i, r: t.r + .15 + R() * .7, c: t.c + .15 + R() * .7, s: sc * (.85 + R() * .3) }); };
     // Renovación colonial: la vegetación va en grupos. Un ruido del mundo marca manchones que cruzan varias

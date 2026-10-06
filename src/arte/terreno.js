@@ -56,10 +56,10 @@ export function caminoRio(T) {
   return pts;
 }
 
-function pintarRio(g, T, qx, dry) {
+function pintarRio(g, T, zona, dry) {
   if (!T._rio) T._rio = caminoRio(T).map(x => x.p);
   const pts = T._rio;
-  g.save(); poly(g, qx); g.clip();
+  g.save(); g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip();
   const st = (w, col, al) => {
     g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round';
     g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke();
@@ -79,6 +79,28 @@ export function cajaSector(T, sr, sc) {
   if (c1 === N) for (let r = r0; r <= r1; r++) ver(r, N, BASE);
   const m = 6; // margen para los bordes irregulares de la acuarela
   return { r0, c0, r1, c1, x: Math.floor(x0 - m), y: Math.floor(y0 - m), w: Math.ceil(x1 - x0 + 2 * m), h: Math.ceil(y1 - y0 + 2 * m) };
+}
+
+// Color y luz del terreno en una imagen pequeña del sector (S muestras por casilla, más una casilla de margen).
+// La luz viene siempre del mismo punto, arriba a la izquierda (la misma de las sombras de árboles y animales): las
+// laderas que miran hacia allá se aclaran y las otras se oscurecen, con un paso suave entre una y otra.
+function campoDeColor(T, k, dry, sub, S = 4) {
+  const N = T.N, r0 = k.r0 - 1, c0 = k.c0 - 1, filas = (k.r1 - k.r0 + 2) * S, cols = (k.c1 - k.c0 + 2) * S;
+  const cv = lienzo(cols, filas), g = cv.getContext('2d'), im = g.createImageData(cols, filas), d = im.data;
+  // Alturas de una sola vez (con un borde de una muestra) y pendientes por diferencias entre vecinas.
+  const W = cols + 2, alt = new Float32Array(W * (filas + 2));
+  for (let y = -1; y <= filas; y++) for (let x = -1; x <= cols; x++) alt[(y + 1) * W + x + 1] = T.hf(clamp(r0 + (y + .5) / S, 0, N), clamp(c0 + (x + .5) / S, 0, N));
+  const tono = (v, f) => f < 0 ? v * (1 + f) : v + (255 - v) * f; // como shade(), pero con números
+  for (let y = 0; y < filas; y++) for (let x = 0; x < cols; x++) {
+    const r = r0 + (y + .5) / S, c = c0 + (x + .5) / S, i = (y + 1) * W + x + 1, h = alt[i];
+    const hx = (alt[i + 1] - alt[i - 1]) * S / 2, hy = (alt[i + W] - alt[i - W]) * S / 2;
+    const Lq = clamp(1 + .24 * hx - .13 * hy, .6, 1.3), luz = Lq >= 1 ? (Lq - 1) * .8 : (Lq - 1) * .9;
+    const cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, Math.hypot(hx, hy), dry), vr = (T.vary(c / 4, r / 4) - .5) * .1, bruma = (1 - (r + c) / (2 * N)) * .2, o = (y * cols + x) * 4;
+    for (let j = 0; j < 3; j++) { const v = tono(tono(parseInt(cc.slice(1 + j * 2, 3 + j * 2), 16), vr), luz); d[o + j] = v + ([230, 226, 214][j] - v) * bruma; }
+    d[o + 3] = 255;
+  }
+  g.putImageData(im, 0, 0);
+  return { canvas: cv, r0, c0, S };
 }
 
 // Pinta un sector. opciones: { dry (0 lluvias a 1 sequía), escala (resolución) }.
@@ -109,6 +131,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   const tiles = [];
   for (let r = k.r0; r < k.r1; r++) for (let c = k.c0; c < k.c1; c++) tiles.push(T.tiles[r * N + c]);
   tiles.sort((a, b) => (a.r + a.c) - (b.r + b.c));
+  const campo = campoDeColor(T, k, dry, sub), rios = [];
   for (const t of tiles) {
     const rng = mulberry(t.r * 977 + t.c * 131 + T.seed);
     const q = [P(t.r, t.c, t.h00), P(t.r, t.c + 1, t.h01), P(t.r + 1, t.c + 1, t.h11), P(t.r + 1, t.c, t.h10)];
@@ -119,18 +142,17 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     col = shade(col, (T.vary(t.c / 4, t.r / 4) - .5) * .1);
     const L2 = light(t);
     col = L2 >= 1 ? shade(col, (L2 - 1) * .8) : shade(col, (L2 - 1) * .9);
-    const vary = (T.vary(t.c / 4, t.r / 4) - .5) * .1, far0 = 1 - (t.r + t.c) / (2 * N), SD = t.h > 4.4 ? 5 : 3; // fase 8: más fino en la montaña (sin mosaico en el nevado)
-    for (let a = 0; a < SD; a++) for (let b = 0; b < SD; b++) {
-      const r0 = t.r + a / SD, c0 = t.c + b / SD, r1 = r0 + 1 / SD, c1 = c0 + 1 / SD;
-      const z00 = T.hf(r0, c0), z01 = T.hf(r0, c1), z11 = T.hf(r1, c1), z10 = T.hf(r1, c0);
-      const sx = (z01 + z11 - z00 - z10) / 2 * SD, sy = (z10 + z11 - z00 - z01) / 2 * SD, Lq = clamp(1 + .2 * sx - .17 * sy, .62, 1.3);
-      let cc = shade(colorAt(T, r0 + .5 / SD, c0 + .5 / SD, (z00 + z01 + z11 + z10) / 4 - sub, Math.hypot(sx, sy), dry), vary);
-      cc = Lq >= 1 ? shade(cc, (Lq - 1) * .8) : shade(cc, (Lq - 1) * .9);
-      cc = mix(cc, '#E6E2D6', far0 * .2);
-      const sq = [P(r0, c0, z00), P(r0, c1, z01), P(r1, c1, z11), P(r1, c0, z10)], s2 = [(sq[0][0] + sq[2][0]) / 2, (sq[0][1] + sq[2][1]) / 2];
-      g.fillStyle = cc; poly(g, sq.map(p => [s2[0] + (p[0] - s2[0]) * 1.06, s2[1] + (p[1] - s2[1]) * 1.06])); g.fill();
-    }
-    if (t.b === 'agua') pintarRio(g, T, qx, dry);
+    // Relieve suave (pedido de Juan, 6 de octubre: el suelo se veía pixelado): el color y la luz se calculan en una
+    // imagen pequeña de todo el sector y cada casilla la pinta estirada y suavizada sobre su rombo, sin cuadritos.
+    g.save(); poly(g, qx); g.clip(); g.fillStyle = col; g.fill();
+    const ox = (t.c - campo.c0) * campo.S, oy = (t.r - campo.r0) * campo.S, S = campo.S;
+    const p00 = P(t.r, t.c, t.h00), p01 = P(t.r, t.c + 1, t.h01), p10 = P(t.r + 1, t.c, t.h10);
+    const ta = (p01[0] - p00[0]) / S, tb = (p01[1] - p00[1]) / S, tc = (p10[0] - p00[0]) / S, td = (p10[1] - p00[1]) / S;
+    g.transform(ta, tb, tc, td, p00[0] - ta * ox - tc * oy, p00[1] - tb * ox - td * oy);
+    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+    g.drawImage(campo.canvas, ox - 1.5, oy - 1.5, S + 3, S + 3, ox - 1.5, oy - 1.5, S + 3, S + 3);
+    g.restore();
+    if (t.b === 'agua') rios.push(qx); // el río se pinta al final: nada de la orilla se le monta encima
     // Suelo natural (renovación colonial): manchas agrupadas de pasto seco, lodo y piedra, y pinceladas finas de pasto.
     const cx = qc[0], cy = qc[1];
     if (t.b !== 'agua' && t.b !== 'nieve') sueloNatural(g, T, t, col, dry, rng);
@@ -138,6 +160,8 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     g.globalAlpha = 1;
     if (t.b === 'paramo' && rng() < .08) blob(g, cx, cy + 1, 7, 3, '#8FB6C4', rng, .85); // lagunas de páramo
   }
+
+  if (rios.length) pintarRio(g, T, zona, dry); // el río entero de una vez: orilla curva, sin escalones de casilla
 
   // Curvas de nivel suaves: ayudan a leer la altura.
   g.lineWidth = .7; g.strokeStyle = '#5E4B33';
@@ -169,7 +193,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   // Grano del papel, solo sobre lo pintado y alineado con el mundo para que no se noten las uniones.
   g.save();
   recortar();
-  g.globalCompositeOperation = 'multiply'; g.globalAlpha = .32;
+  g.globalCompositeOperation = 'multiply'; g.globalAlpha = .2; // grano suave (antes .32)
   g.fillStyle = g.createPattern(yeso(), 'repeat'); // fase 8: textura de muro del fresco
   g.fillRect(k.x, k.y, k.w, k.h);
   g.restore();
