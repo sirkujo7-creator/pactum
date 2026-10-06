@@ -296,8 +296,9 @@ export class Interfaz {
   renderHacienda(F, R) {
     const S = this.S, cb = canBorrow(S) && !S.over;
     const fila = (k, n) => `<div class="txrow"><span>${n}</span><input type="range" min="0" max="${k === 'e' ? 50 : 40}" value="${S.tx[k]}" data-tx="${k}" aria-label="Impuesto a ${n.toLowerCase()}"><strong>${S.tx[k]}%</strong></div>`;
-    this.cuentas.innerHTML = `
-      <h3>Impuestos</h3>${fila('c', 'Campesinos')}${fila('a', 'Artesanos')}${fila('e', 'Élite')}
+    const sec = (id, html, t, r) => this.pleg(id, html, t, r);
+    this.cuentas.innerHTML = this.pleg('h-cuentas', `
+      ${fila('c', 'Campesinos')}${fila('a', 'Artesanos')}${fila('e', 'Élite')}
       <div class="macro"><div><strong class="${S.infl > .06 ? 'neg' : ''}">${(S.infl * 100).toFixed(1)}%</strong><span>Inflación</span></div><div><strong>${S.price.toFixed(2)}</strong><span>Nivel de precios</span></div><div><strong class="r${R.l[0]}">${R.l}</strong><span>Calificación</span></div><div><strong>${Math.round(F.rate * 100)}%</strong><span>Tasa de interés</span></div></div>
       <div class="ledger"><table class="budget">
         <tr><td>Impuesto a campesinos</td><td>+${F.taxC}</td></tr><tr><td>Impuesto a artesanos</td><td>+${F.taxA}</td></tr><tr><td>Impuesto a la élite</td><td>+${F.taxE}</td></tr>
@@ -307,15 +308,16 @@ export class Interfaz {
         <tr class="tot"><td>Resultado del año</td><td class="${F.net < 0 ? 'neg' : ''}">${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}</td></tr></table></div>
       ${F.evadido ? `<p class="small">La evasión se llevó ${F.evadido} de oro: ${Math.round((1 - cobertura(S).recaudo) * 100)}% de las casas está lejos de una oficina de recaudo. ${C.COB.leccionRecaudo}</p>` : ''}
       <div class="cuatro"><button class="btn" data-a="prestamo" ${cb ? '' : 'disabled'}>Pedir préstamo</button><button class="btn" data-a="bono" ${cb ? '' : 'disabled'}>Emitir bono</button><button class="btn" data-a="imprimir" ${S.stage < 1 || S.over ? 'disabled' : ''}>Imprimir moneda</button><button class="btn" data-a="abonar" ${S.debt <= 0 || S.gold < 1 || S.over ? 'disabled' : ''}>Abonar 50</button></div>
-      <p class="small">${S.stage < 1 ? 'El crédito y la emisión se abren al llegar a Pueblo.' : R.l === 'CCC' ? 'Calificación CCC: nadie te presta. Reduce deuda y déficit.' : 'Préstamo: 150, se paga 15% por año. Bono: 200 a 5 años, interés más bajo, pagas todo al vencer.'}</p>
-      ${climaActivo(S) && S.stage >= 1 ? `<h3>${C.CLIMA.fondo.nombre}</h3>
+      <p class="small">${S.stage < 1 ? 'El crédito y la emisión se abren al llegar a Pueblo.' : R.l === 'CCC' ? 'Calificación CCC: nadie te presta. Reduce deuda y déficit.' : 'Préstamo: 150, se paga 15% por año. Bono: 200 a 5 años, interés más bajo, pagas todo al vencer.'}</p>`, 'Impuestos y cuentas', `Resultado del año: ${F.net >= 0 ? '+' : '−'}${Math.abs(F.net)}`, true) + `
+      ${climaActivo(S) && S.stage >= 1 ? sec('h-fondo', `<h3>${C.CLIMA.fondo.nombre}</h3>
         <div class="txrow"><span>Aporte</span><input type="range" min="0" max="${C.CLIMA.fondo.maximo}" value="${S.aporteFondo || 0}" data-fondo aria-label="Aporte al fondo de emergencias, porcentaje de los ingresos"><strong>${S.aporteFondo || 0}%</strong></div>
-        <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>` : ''}
-      ${this.seccionRiesgo()}${this.seccionMega()}
-      ${this.seccionEconomia()}${this.seccionCanasta()}${this.seccionIndustria()}${this.seccionClimaTerritorio()}${this.seccionCiclos()}
-      ${this.seccionEjercito()}
-      ${this.seccionMantenimiento()}
-      ${S.bonds.length ? `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>` : ''}`;
+        <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>`, null, `${Math.round(S.fondo || 0)} de oro`) : ''}
+      ${sec('h-riesgo', this.seccionRiesgo())}${sec('h-mega', this.seccionMega())}
+      ${sec('h-economia', this.seccionEconomia())}${sec('h-canasta', this.seccionCanasta(), 'Canasta del campo y la industria')}${sec('h-industria', this.seccionIndustria())}${sec('h-clima', this.seccionClimaTerritorio())}${sec('h-ciclos', this.seccionCiclos(), 'Ciclos: café, roya y pensiones')}
+      ${sec('h-ejercito', this.seccionEjercito())}
+      ${sec('h-mant', this.seccionMantenimiento())}
+      ${S.bonds.length ? sec('h-bonos', `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>`, 'Bonos', `${S.bonds.length}`) : ''}`;
+    this.activarPlegables(this.cuentas);
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {
       inp.oninput = () => {
         const k = inp.dataset.tx, want = +inp.value, v = taxLimit(S, k, want);
@@ -359,11 +361,11 @@ export class Interfaz {
     const S = this.S, TG = satTargets(S, c, false);
     const tr = (v, t) => { const d = Math.round(t - v); return Math.abs(d) < 2 ? 'estable' : d > 0 ? `sube hacia ${Math.round(clamp(t, 0, 100))}` : `baja hacia ${Math.round(clamp(t, 0, 100))}`; };
     const cls = [['Campesinos', so.camp, S.sat.c, `${so.camp} de ${so.jc} puestos. Ánimo ${tr(S.sat.c, TG.c)}`, 'rosa'], ['Artesanos', so.art, S.sat.a, `${so.art} de ${so.ja} puestos. Ánimo ${tr(S.sat.a, TG.a)}`, 'julian'], ['Élite', so.el, S.sat.e, `Dueños de comercio e industria. Ánimo ${tr(S.sat.e, TG.e)}`, 'aurelio']];
-    this.sociedad.innerHTML = cls.map(([n, k, v, sub, a]) => {
+    this.sociedad.innerHTML = this.pleg('so-clases', cls.map(([n, k, v, sub, a]) => {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a)}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join('') + this.seccionFiguras() + this.subgrupos('otros') + this.seccionCultura() + this.seccionBarrios() + this.seccionSeguridad() + this.seccionConflicto() + this.seccionVecinos() + (exteriorActivo(this.S) ? `<button class="btn" data-mundo style="width:100%;margin:6px 0">🌎 ${C.EXT.textos.boton}</button>` : '') + this.seccionMovimientos() + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-seguridad', this.seccionSeguridad(), 'Seguridad') + this.pleg('so-conflicto', this.seccionConflicto(), 'Conflicto armado') + this.pleg('so-vecinos', this.seccionVecinos() + (exteriorActivo(this.S) ? `<button class="btn" data-mundo style="width:100%;margin:6px 0">🌎 ${C.EXT.textos.boton}</button>` : ''), 'Otras polis y el mundo') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
@@ -372,6 +374,7 @@ export class Interfaz {
     this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
     this.sociedad.querySelectorAll('[data-mundo]').forEach(b => b.onclick = () => this.tarjetaMundo());
+    this.activarPlegables(this.sociedad);
     const fi = this.sociedad.querySelector('[data-fiesta]'); if (fi) fi.onclick = () => { if (organizarFiesta(this.S)) { this.toast(`🎉 ¡${fiestaDelPueblo(this.S).nombre}! La exigencia de sentido baja por dos años.`); this.mapa.cambio(true); this.render(); } };
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
   }
@@ -489,8 +492,9 @@ export class Interfaz {
   }
   renderArbol(n) {
     const S = this.S, T = C.CIV.textos, E = estadoCivismo(S), L = todasLasLeyes(S);
-    const ramas = Object.entries(C.CIV.ramas).map(([k, R]) => `<h3>${R.icono} ${R.nombre}</h3>${L.filter(l => ramaDe(l.id) === k).map(l => this.tarjetaLey(l)).join('')}${k === 'economia' ? `<p class="small"><i>${T.libreComercio}</i></p>` : ''}`).join('');
-    this.leyes.innerHTML = `<h3>🌳 ${T.titulo}</h3><p class="small">${T.ayuda}</p><p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}<p class="small"><i>${C.CIV.leccion}</i></p>` + this.seccionTecnologia();
+    const ramas = Object.entries(C.CIV.ramas).map(([k, R]) => { const LR = L.filter(l => ramaDe(l.id) === k), vig = LR.filter(l => hasLaw(S, l.id)).length; return this.pleg('ley-' + k, `${LR.map(l => this.tarjetaLey(l)).join('')}${k === 'economia' ? `<p class="small"><i>${T.libreComercio}</i></p>` : ''}`, `${R.icono} ${R.nombre}`, `${vig} vigente${vig === 1 ? '' : 's'} de ${LR.length}`); }).join('');
+    this.leyes.innerHTML = this.pleg('ley-ayuda', `<p class="small">${T.ayuda}</p><p class="small"><i>${C.CIV.leccion}</i></p>`, `🌳 ${T.titulo}`, 'cómo funciona') + `<p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}` + this.pleg('ley-tec', this.seccionTecnologia());
+    this.activarPlegables(this.leyes);
     this.leyes.querySelectorAll('[data-abrir]').forEach(bt => bt.onclick = () => {
       const id = bt.dataset.abrir, r = puedeAbrir(S, id);
       if (r) { this.toast(r); return; }
@@ -728,7 +732,8 @@ export class Interfaz {
     const ep = historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null, sig = ep && proximaEpoca(S);
     const epoca = ep ? `<h3>${ep.icono} Época: ${ep.nombre}</h3><p class="small">${ep.texto}${sig ? ` Hasta el año ${sig.desde}; luego, ${sig.nombre.toLowerCase()}.` : ''}</p>` : '';
     const T = S.terr && C.TERR && C.TERR.territorios[S.terr], terr = T ? `<h3>${T.icono} ${T.nombre}</h3><p class="small">${T.texto} ${C.TERR.leccion}</p>` : ''; // fase 14
-    this.cronica.innerHTML = `${terr}${epoca}${this.seccionIdentidad()}${this.seccionAlbum()}${this.seccionAvances()}${this.seccionLegado()}<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}<h3>Lo que ha pasado</h3><div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`;
+    this.cronica.innerHTML = this.pleg('c-terr', terr) + this.pleg('c-epoca', epoca, null, sig ? `hasta el año ${sig.desde}` : '') + this.pleg('c-identidad', this.seccionIdentidad()) + this.pleg('c-album', this.seccionAlbum()) + this.pleg('c-avances', this.seccionAvances()) + this.pleg('c-legado', this.seccionLegado()) + this.pleg('c-graficas', `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}`, '📈 Gráficas', G.n) + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
+    this.activarPlegables(this.cronica);
     this.cronica.querySelectorAll('[data-carta]').forEach(bt => bt.onclick = () => { const r = estadoFamilias(this.S).cartas.find(x => x.n === +bt.dataset.carta); if (r) this.tarjetaCarta(r, null, true); });
     this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
     this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
@@ -1729,6 +1734,22 @@ export class Interfaz {
     this.boton('okB', () => { this.cerrarTarjeta(); if (primera && actaDisponible(S) && !S.acta) this.acta(); });
   }
   // Partidas (ranuras y código, como en la v9) y logros.
+  // Pantallas desplegables (pedido de Juan): cada sección es un desplegable con su título y un dato clave.
+  // Recuerda en este aparato cuáles dejaste abiertas. El título sale del primer <h3> de la sección si no se da.
+  pleg(id, html, titulo, resumen = '', abierto = false) {
+    if (!html || !html.trim()) return '';
+    let cuerpo = html;
+    if (!titulo) { const m = html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/); if (m) { titulo = m[1].replace(/<[^>]+>/g, '').trim(); cuerpo = html.replace(m[0], ''); } }
+    if (!this._pleg) { try { this._pleg = JSON.parse(localStorage.getItem('pactum-plegables') || '{}'); } catch (e) { this._pleg = {}; } }
+    const on = this._pleg[id] ?? abierto;
+    return `<details class="pleg" data-pl="${id}"${on ? ' open' : ''}><summary><span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</summary><div class="pl-c">${cuerpo}</div></details>`;
+  }
+  activarPlegables(raiz) {
+    raiz.querySelectorAll('details.pleg').forEach(d => d.addEventListener('toggle', () => {
+      this._pleg = this._pleg || {}; this._pleg[d.dataset.pl] = d.open;
+      try { localStorage.setItem('pactum-plegables', JSON.stringify(this._pleg)); } catch (e) { /* sin almacenamiento: se olvida al recargar */ }
+    }));
+  }
   // Pendientes: las misiones del momento, con un botón para ir adonde hay que hacer algo.
   marcarPendientes() {
     if (!this.bPend) return;
@@ -1744,7 +1765,7 @@ export class Interfaz {
     this.card.querySelectorAll('[data-pend]').forEach(b => b.onclick = () => {
       const p = L.find(x => x.id === b.dataset.pend); if (!p) return;
       this.cerrarTarjeta();
-      if (p.ir.hoja) this.abrirHoja(p.ir.hoja);
+      if (p.ir.hoja) { this.abrirHoja(p.ir.hoja); if (p.ir.seccion) requestAnimationFrame(() => { const d = document.querySelector(`details.pleg[data-pl="${p.ir.seccion}"]`); if (d) { d.open = true; d.scrollIntoView({ block: 'start', behavior: 'smooth' }); } }); }
       else if (p.ir.mundo) this.tarjetaMundo(p.ir.mundo);
       else if (p.ir.casilla !== undefined) { this.mapa.enfocarCasilla(p.ir.casilla); this.abrirFicha(p.ir.casilla); }
     });

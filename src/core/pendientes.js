@@ -27,19 +27,19 @@ export function pendientes(S) {
   // Lo urgente: comida, agua, oro.
   if (F.fprod - F.cons < 0 && S.food < 40) add('comida', '🌾', `Falta comida: se producen ${F.fprod} y se comen ${F.cons}. Construye fincas.`, 1, { hoja: 'construir' });
   if (S.stage >= 1 && S.pop > waterCap(S, c) - 5) add('agua', '💧', `El agua alcanza para ${waterCap(S, c)} personas y hay ${S.pop}. Construye un acueducto junto al río.`, 1, { hoja: 'construir' });
-  if (S.gold < 0 || F.net < -15) add('oro', '💰', `Las cuentas están en rojo (${Math.round(F.net)} de oro al año). Revisa impuestos y gastos.`, 1, { hoja: 'hacienda' });
-  if (S.guerra && S.guerra.activa) add('guerra', '⚔️', 'Estás en guerra: refuerza la defensa o busca la paz.', 1, { hoja: 'sociedad' });
+  if (S.gold < 0 || F.net < -15) add('oro', '💰', `Las cuentas están en rojo (${Math.round(F.net)} de oro al año). Revisa impuestos y gastos.`, 1, { hoja: 'hacienda', seccion: 'h-cuentas' });
+  if (S.guerra && S.guerra.activa) add('guerra', '⚔️', 'Estás en guerra: refuerza la defensa o busca la paz.', 1, { hoja: 'sociedad', seccion: 'so-vecinos' });
   const V = desastresOk(S) ? nivelVolcan(S) : 0;
-  if (V >= 2 && !volcan(S).plan) add('volcan', '🌋', 'El Nevado está en alerta y no hay plan de evacuación.', 1, { hoja: 'sociedad' });
+  if (V >= 2 && !volcan(S).plan) add('volcan', '🌋', 'El Nevado está en alerta y no hay plan de evacuación.', 1, { hoja: 'hacienda', seccion: 'h-riesgo' });
   // Misiones de los personajes.
-  for (const id of presentes(S)) { const m = misionDe(S, id); if (m) add('mision-' + id, C.FIG.figuras[id].icono || '🎯', `${C.FIG.figuras[id].nombre}: ${(m.texto || m.titulo || 'tiene una misión').replace(/\.$/, '')}${m.limite ? ` (hasta el año ${m.limite})` : ''}.`, 2, { hoja: 'sociedad' }); }
+  for (const id of presentes(S)) { const m = misionDe(S, id); if (m) add('mision-' + id, C.FIG.figuras[id].icono || '🎯', `${C.FIG.figuras[id].nombre}: ${(m.texto || m.titulo || 'tiene una misión').replace(/\.$/, '')}${m.limite ? ` (hasta el año ${m.limite})` : ''}.`, 2, { hoja: 'sociedad', seccion: 'so-figuras' }); }
   // Lo que se ve en el mapa.
   const sep = avisoSepultura(S); if (sep) add('sepultura', '🪦', sep, 2, { hoja: 'construir' });
   for (const a of S.asent || []) add('asent-' + a.i, '🏚️', `Asentamiento informal en ${nombreBarrio(barrioDe(S, a.i))}: legalizar, ignorar o desalojar.`, 2, { casilla: a.i });
   const ruina = S.map.findIndex(x => x.b && x.ru); if (ruina >= 0) add('ruinas', '🏚️', `${S.map.filter(x => x.b && x.ru).length} obras en ruinas: reconstrúyelas desde su ficha.`, 2, { casilla: ruina });
   if (S.desgaste) { const ag = S.map.findIndex(x => x.b && !x.ru && x.u && nivelObra(x) >= 2); if (ag >= 0) add('grietas', '🧱', `${S.map.filter(x => x.b && !x.ru && x.u && nivelObra(x) >= 2).length} obras agrietadas o abandonadas: repáralas.`, 2, { casilla: ag }); }
   // Café y roya.
-  if (ciclosActivos(S) && c.cafetal && S.ciclo && !S.ciclo.resistente && S.year >= C.CICLOS.roya.desde - 5) add('cafe', '☕', `Renueva los cafetales contra la roya (${costoRenovar(S)} de oro).`, S.ciclo.roya ? 1 : 3, { hoja: 'hacienda' });
+  if (ciclosActivos(S) && c.cafetal && S.ciclo && !S.ciclo.resistente && S.year >= C.CICLOS.roya.desde - 5) add('cafe', '☕', `Renueva los cafetales contra la roya (${costoRenovar(S)} de oro).`, S.ciclo.roya ? 1 : 3, { hoja: 'hacienda', seccion: 'h-ciclos' });
   // Industria.
   if (industriaActiva(S)) {
     if (S.stage >= 1 && c.taller > energy(S, c)) add('energia', '⚡', `Hay ${c.taller} fábricas y energía para ${energy(S, c)}: construye molinos.`, 2, { hoja: 'construir' });
@@ -50,8 +50,8 @@ export function pendientes(S) {
   if (civismoActivo(S)) { const ab = todasLasLeyes(S).filter(l => l.nueva && !puedeAbrir(S, l.id)); if (ab.length) add('civismo', '📜', `Puedes desbloquear ${ab.length === 1 ? `la ley de ${ab[0].n.toLowerCase()}` : `${ab.length} leyes`} con ${Math.floor(estadoCivismo(S).p)} puntos de civismo.`, 3, { hoja: 'leyes' }); }
   const vig = Object.keys(S.laws || {}).length; if (vig < lawSlots(S) && S.stage >= 1) add('cupo', '⚖️', `Tienes ${lawSlots(S) - vig} ${lawSlots(S) - vig === 1 ? 'cupo libre' : 'cupos libres'} para promulgar leyes.`, 3, { hoja: 'leyes' });
   // Movimientos sociales y vecinos.
-  for (const m of listaMovimientos(S)) if (m.f >= 70) add('mov-' + m.id, m.icono || '✊', `${m.nombre} está movilizado (${m.f}): escúchalo o responde.`, 2, { hoja: 'sociedad' });
-  if (S.vecinos) for (const [id, v] of Object.entries(S.vecinos)) if (v.rel <= C.VECINOS.hostil) add('vecino-' + id, '🛡️', `${C.VECINOS.vecinos[id].nombre} está hostil (${Math.round(v.rel)}): una visita o un tratado pueden evitar la guerra.`, 2, { hoja: 'sociedad' });
+  for (const m of listaMovimientos(S)) if (m.f >= 70) add('mov-' + m.id, m.icono || '✊', `${m.nombre} está movilizado (${m.f}): escúchalo o responde.`, 2, { hoja: 'sociedad', seccion: 'so-mov' });
+  if (S.vecinos) for (const [id, v] of Object.entries(S.vecinos)) if (v.rel <= C.VECINOS.hostil) add('vecino-' + id, '🛡️', `${C.VECINOS.vecinos[id].nombre} está hostil (${Math.round(v.rel)}): una visita o un tratado pueden evitar la guerra.`, 2, { hoja: 'sociedad', seccion: 'so-vecinos' });
   if (exteriorActivo(S) && S.ext) for (const [id, E] of Object.entries(S.ext.p)) if (E.trato && E.rel < C.EXT.romper + 10) add('ext-' + id, '🌎', `El tratado con ${datosLugar(id).nombre} está por romperse (relación ${Math.round(E.rel)}).`, 2, { mundo: id });
   // Promesas.
   for (const p of S.promises || []) add('promesa-' + p.k + p.dl, '🤝', `Prometiste ${C.B[p.k].a} antes del año ${p.dl}.`, p.dl - S.year <= 2 ? 1 : 2, { hoja: 'construir' });
