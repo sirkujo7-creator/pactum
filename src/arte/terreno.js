@@ -406,12 +406,10 @@ function pintarCalles(g, T, dib, k) {
   const pts = (a, b, agua) => {
     const [r1, c1] = rc(a), [r2, c2] = rc(b), L = [];
     if (agua) return [P(r1, c1, T.hv(r1, c1)), P(r2, c2, T.hv(r2, c2))];
-    // Renovación colonial: bordes imperfectos; el tramo se desvía un poco a un lado (fijo para cada tramo).
-    const R = mulberry(a * 131 + b * 7), dr = c2 - c1, dc = r1 - r2, a1 = (R() - .5) * .14, a2 = (R() - .5) * .06;
-    for (let s2 = 0; s2 <= 6; s2++) {
-      const f = s2 / 6, w = Math.sin(f * Math.PI) * a1 + Math.sin(f * Math.PI * 2) * a2, r = lerp(r1, r2, f) + dr * w, c = lerp(c1, c2, f) + dc * w;
-      L.push(P(r, c, T.hf(Math.min(N, Math.max(0, r)), Math.min(N, Math.max(0, c)))));
-    }
+    // El camino va recto por el borde de las casillas, pegado al relieve, igual que las mulas y los carros que lo
+    // recorren (pedido de Juan, 6 de octubre: antes se desviaba a los lados y los vehículos parecían salirse).
+    // Lo imperfecto queda en las orillas: tierra gastada, huellas y piedras sueltas.
+    for (let s2 = 0; s2 <= 6; s2++) { const f = s2 / 6, r = lerp(r1, r2, f), c = lerp(c1, c2, f); L.push(P(r, c, T.hf(Math.min(N, r), Math.min(N, c)))); }
     return L;
   };
   const geo = tramos.map(([a, b, agua]) => ({ a, b, agua, L: pts(a, b, agua) }));
