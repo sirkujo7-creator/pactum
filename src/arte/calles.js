@@ -15,19 +15,35 @@ function rueda(g, p) { g.fillStyle = FR.carbon; g.beginPath(); g.ellipse(p[0], p
 const L = (p, s, f) => [p[0] + (s[0] - p[0]) * f, p[1] + (s[1] - p[1]) * f];
 function ruedas(g, B, up, fs) { for (const f of fs) { rueda(g, up(L(B.izq[0], B.izq[1], f))); rueda(g, up(L(B.der[0], B.der[1], f))); } }
 
+// Mula con enjalma y dos bultos de café (de la prueba colonial). paso 0..3: patas en diagonal al andar.
+function mula(g, paso) {
+  const grad = (y0, y1, c, s) => { const gr = g.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, mix(c, '#FFFFFF', .2)); gr.addColorStop(.6, c); gr.addColorStop(1, s); return gr; };
+  const cuerpo = (pts, c, s) => { g.beginPath(); g.moveTo(...pts[0]); for (let k = 1; k < pts.length; k += 2) { if (pts[k + 1]) g.quadraticCurveTo(...pts[k], ...pts[k + 1]); else g.lineTo(...pts[k]); } g.closePath(); const ys = pts.map(p => p[1]); g.fillStyle = grad(Math.min(...ys), Math.max(...ys), c, s); g.fill(); g.strokeStyle = 'rgba(70,45,30,.55)'; g.lineWidth = .5; g.stroke(); };
+  const pata = (x, w, col, dx) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, -8); g.quadraticCurveTo(x + dx * .3, -4, x + dx, -1); g.stroke(); g.strokeStyle = '#1E1A18'; g.beginPath(); g.moveTo(x + dx, -.8); g.lineTo(x + dx, 0); g.stroke(); };
+  const s = Math.sin(paso / 4 * Math.PI * 2) * 2;
+  g.save(); g.globalAlpha = .25; g.fillStyle = '#2A2A1E'; g.beginPath(); g.ellipse(1, 0, 12, 3.4, 0, 0, 7); g.fill(); g.restore();
+  pata(-6, 1.8, '#5A3A26', -s); pata(6, 1.8, '#5A3A26', s);
+  cuerpo([[-9, -14], [-1, -16], [6, -14.5], [9, -13], [9, -9.5], [8.5, -7], [2, -7], [-4, -7], [-9, -8], [-10.5, -11], [-9, -14]], '#7A5236', '#4E3322');
+  pata(-4, 1.8, '#6A452E', s); pata(8, 1.8, '#6A452E', -s);
+  cuerpo([[8, -13], [10, -18], [12.5, -21], [15, -20], [16.2, -17.5], [15.5, -16], [13, -16.5], [11, -13], [8, -13]], '#7A5236', '#4E3322');
+  g.fillStyle = '#4E3322'; g.beginPath(); g.ellipse(12.2, -22.6, .9, 2.6, -.3, 0, 7); g.fill(); g.beginPath(); g.ellipse(13.6, -22.4, .9, 2.4, .2, 0, 7); g.fill();
+  g.fillStyle = '#1E1A18'; g.beginPath(); g.arc(13.6, -19, .5, 0, 7); g.fill();
+  for (const [x, col] of [[-4, '#C9B48A'], [3, '#BFA87C']]) { cuerpo([[x - 4, -19], [x, -21], [x + 4, -19], [x + 4.5, -15], [x + 4, -11], [x, -10], [x - 4, -11], [x - 4.5, -15], [x - 4, -19]], col, mix(col, '#000000', .3)); g.strokeStyle = '#8A6A40'; g.lineWidth = .5; g.beginPath(); g.moveTo(x - 4, -15); g.lineTo(x + 4, -15); g.stroke(); }
+  g.strokeStyle = '#3A2A1E'; g.lineWidth = .8; g.beginPath(); g.moveTo(-9.5, -12); g.quadraticCurveTo(-12, -9 + s * .3, -11, -5); g.stroke();
+}
+
 // Dibuja un vehículo en el origen. eje 'c' o 'r'; dir +1 o −1; paso 0..3 (patas de la mula y del arriero).
 function vehiculo(g, era, eje, dir, paso, vi) {
   const rng = mulberry(7), adelante = (eje === 'c' ? [0, .14] : [.14, 0]).map(x => x * dir);
   if (era === 'herradura') {
-    const cuero = ['#7A5536', '#5E4129', '#8A6544'];
-    caja(g, 0, 0, eje, .2, .07, 5, 2.5, cuero, rng);
-    caja(g, adelante[0], adelante[1], eje, .06, .05, 3, 6, cuero, rng);
-    for (const s of [-1, 1]) caja(g, eje === 'c' ? s * .055 : 0, eje === 'r' ? s * .055 : 0, eje, .1, .04, 4, 4, [FR.cal, shade(FR.cal, -.15), FR.ocreClaro], rng);
-    g.save(); g.strokeStyle = '#4A3424'; g.lineWidth = .8; const pa = Math.sin(paso / 4 * Math.PI * 2) * 1.2;
-    for (const dx of [-3, 3]) { g.beginPath(); g.moveTo(dx, -2.5); g.lineTo(dx + pa * (dx > 0 ? 1 : -1), 0); g.stroke(); }
-    g.restore();
-    const G = hornearGente(), m = G.marcos[`campesino_${vi}_1_${paso}`], E2 = G.escala, q = P(eje === 'c' ? .12 : 0, eje === 'r' ? .12 : 0);
-    if (m) g.drawImage(G.canvas, m.x, m.y, m.w, m.h, q[0] - m.ax / E2 * .7, q[1] - m.ay / E2 * .7, m.w / E2 * .7, m.h / E2 * .7);
+    // Renovación colonial: mula de arriero dibujada (con sus patas al paso) y el arriero detrás, arreándola.
+    const derecha = (eje === 'c') === (dir > 0), atras = P(eje === 'r' ? -.14 * dir : 0, eje === 'c' ? -.14 * dir : 0);
+    const G = hornearGente(), m = G.marcos[`campesino_${vi}_${(eje === 'c' ? dir > 0 : dir > 0) ? 1 : 0}_${paso}`], E2 = G.escala;
+    const arriero = () => { if (m) { g.save(); g.translate(atras[0], atras[1]); if (!derecha) g.scale(-1, 1); g.drawImage(G.canvas, m.x, m.y, m.w, m.h, -m.ax / E2 * .7, -m.ay / E2 * .7, m.w / E2 * .7, m.h / E2 * .7); g.restore(); } };
+    const delante = dir > 0; // de frente al jugador: el arriero queda detrás de la mula
+    if (delante) arriero();
+    g.save(); if (!derecha) g.scale(-1, 1); g.scale(.6, .6); mula(g, paso); g.restore();
+    if (!delante) arriero();
   } else if (era === 'empedrado') {
     // Chiva: bus de madera pintado de colores, con carga en el techo.
     const { B, up } = caja(g, 0, 0, eje, .36, .16, 9, 2, [FR.ocre, shade(FR.ocre, -.15), FR.rojo], rng);

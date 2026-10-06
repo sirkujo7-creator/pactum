@@ -1,3 +1,3 @@
 // Versión visible del juego. Al publicar, cambiarla también en sw.js (CACHE).
-export const VERSION = '0.86.0';
-export const PASO = 'Terreno natural';
+export const VERSION = '0.87.0';
+export const PASO = 'Animales y pobladores';
