@@ -7,7 +7,10 @@ export { mulberry, clamp, shade, mix, lienzo, poly };
 // Copia de una hoja de dibujos en un lienzo de lados potencia de dos (256, 512, 1024, 2048…). Así la tarjeta de video
 // puede hacer versiones reducidas suaves (mipmaps) y lo que se mueve no chispea ni tiembla al verse pequeño
 // (pedido de Juan, 6 de octubre). Las coordenadas de los cuadros no cambian: el dibujo queda arriba a la izquierda.
+// En celular no se usa: allí los dibujos se ven casi a su tamaño (no chispean) y la memoria es poca (el iPhone
+// cerraba la página al empezar una partida nueva, 0.96.0).
 export function enPotencia(cv) {
+  if (ES_CELULAR) return cv;
   const pot = n => 2 ** Math.ceil(Math.log2(Math.max(1, n))), w = pot(cv.width), h = pot(cv.height);
   if (w === cv.width && h === cv.height) return cv;
   if (w > 4096 || h > 4096) return cv; // demasiado grande para algunos celulares: se queda como está
@@ -26,7 +29,9 @@ export function urlDe(c, tipo = 'image/png', calidad) {
 }
 
 // Resolución de las hojas de figuras: 4 en computador; 3 en celulares y tabletas (cuida la memoria del iPhone).
-export const RES_HOJA = typeof navigator !== 'undefined' && typeof screen !== 'undefined' && navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 900 ? 3 : 4;
+// Celular o tableta pequeña: pantalla táctil de menos de 900 px de lado corto.
+export const ES_CELULAR = typeof navigator !== 'undefined' && typeof screen !== 'undefined' && navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 900;
+export const RES_HOJA = ES_CELULAR ? 3 : 4;
 
 // Paleta de pigmentos.
 export const FR = {
