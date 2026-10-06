@@ -136,6 +136,12 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
   4. **Llegadas que se ven:** caravanas, misiones extranjeras, inmigrantes y delegaciones, con cine y huellas.
   5. **Balance** y revisión en celular y computador.
 
+**Reformas de claridad (pedidas por Juan el 6 de octubre, antes de seguir la fase 15):** Juan ya no quiere tanto texto a la vista ni buscar las tareas entre informes. Un paso publicable a la vez:
+1. **Pendientes (publicado en 0.83.0):** botón 📋 (tecla p) con contador (rojo si hay algo urgente) y la lista de lo que espera una decisión (urgente, importante, sugerencias), cada uno con «Ir» al panel, la ficha o la casilla. Lógica en `src/core/pendientes.js`.
+2. **Pantallas desplegables** en Crónica, Sociedad, Hacienda y Leyes: cada sección cerrada con su título y un dato clave; se abre al tocarla y recuerda cómo la dejaste. Sin recortar textos (Juan no quiere textos «breves») y sin tarjeta resumen del año (descartada).
+3. **Vista de plano:** el mapa visto desde arriba, sin relieve, con colores por uso, río, caminos, casco y plaza; luego, construir tocando el plano.
+4. **Renovación visual** (Juan, 6 de octubre: el suelo, la vegetación y sobre todo los animales se ven mal; los edificios se parecen; ya no rige la regla de no usar arte externo). Los edificios siguen el estilo **griego** (no tolimense). Primero una prueba de estilo comparando arte propio rehecho con un paquete externo, y Juan decide.
+
 **Fase «El mapa cuenta la historia» (aprobada por Juan el 5 de octubre, antes de la fase 14):** las decisiones, leyes y desgracias dejan huellas físicas en el mapa, no solo números. Las huellas van alrededor del pueblo, lejos de las obras (0.76.1). Un paso publicable a la vez:
 
 0. **Plaza de fundación (publicado en 0.77.0):** primera obra de cada partida nueva (cruz de piedra y ceiba, Leyes de Indias); marca el centro y el casco urbano (4, 6 y 9 casillas por etapa; libre en Polis). Fincas, minas y obras del río pueden ir fuera del casco. No se demuele. Datos en `src/data/huellas.json`, lógica en `src/core/huellas.js`.
