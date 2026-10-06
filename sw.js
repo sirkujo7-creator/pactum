@@ -1,6 +1,6 @@
 // Pactum: trabajador de servicio. Guarda el juego en el aparato para que funcione sin internet.
 // Al publicar una versión nueva, cambia CACHE: así los aparatos descargan los archivos nuevos.
-const CACHE = 'pactum-0.84.0';
+const CACHE = 'pactum-0.85.0';
 const ARCHIVOS = [
   './',
   'index.html',
@@ -159,6 +159,9 @@ const ARCHIVOS = [
   'vendor/fuentes/alegreya-sans-latin-500-normal.woff2',
   'vendor/fuentes/alegreya-sans-latin-700-normal.woff2',
   'vendor/fuentes/caveat-latin-700-normal.woff2',
+  'vendor/fuentes/im-fell-english-latin-400-italic.woff2',
+  'vendor/fuentes/im-fell-english-latin-400-normal.woff2',
+  'vendor/fuentes/im-fell-english-sc-latin-400-normal.woff2',
   'vendor/phaser.min.js',
   'iconos/icono-180.png',
   'iconos/icono-192.png',

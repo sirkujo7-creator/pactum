@@ -1,5 +1,5 @@
 // Retratos al fresco (fase 8): busto al estilo de los pobladores (cabeza pequeña, sin rasgos de caricatura, ropa en
-// dos tonos con pliegues y contorno siena) dentro de un tondo con aro rojo pompeyano y filo ocre. Sirven para las voces
+// dos tonos con pliegues y contorno siena) dentro de un tondo con aro verde cafetero y filo ocre. Sirven para las voces
 // del pueblo (Doña Rosa, Julián, Don Aurelio) y para los personajes con papel propio.
 import { mulberry, lienzo } from './acuarela.js';
 import { FR, shade, mix, pintar, ovalo, texturaYeso, urlDe } from './fresco.js';
@@ -40,7 +40,7 @@ function pintarRetrato(g, R, rng) {
   if (R.detalle === 'corona') { for (let k = 0; k < 5; k++) pintar(g, [[23.5 + k * 3.9, 21], [26.5 + k * 3.9, 21], [25 + k * 3.9 + (k % 2 ? 1 : -1), 10 + (k % 2) * 3]], [FR.verde, FR.ocre, FR.cal, FR.ocre, FR.verde][k], rng, { n: 0, bw: .45 }); pintar(g, [[22.5, 23.4], [41.5, 23.4], [41.5, 20.2], [22.5, 20.2]], FR.rojo, rng, { n: 0, bw: .5 }); }
   texturaYeso(g, 0, 0, 64, 64, .35);
   g.restore();
-  g.save(); g.lineWidth = 3.4; g.strokeStyle = FR.rojo; g.beginPath(); g.arc(32, 32, 29.6, 0, Math.PI * 2); g.stroke();
+  g.save(); g.lineWidth = 3.4; g.strokeStyle = '#41603D'; g.beginPath(); g.arc(32, 32, 29.6, 0, Math.PI * 2); g.stroke();
   g.lineWidth = 1; g.strokeStyle = FR.ocre; g.beginPath(); g.arc(32, 32, 31.2, 0, Math.PI * 2); g.stroke(); g.restore();
 }
 function hacer(clave, spec, semilla) {
