@@ -82,7 +82,9 @@ export class Vida {
     const v = Math.min(dist, vel * dt);
     a.r += dr / dist * v; a.c += dc / dist * v;
     if (Math.abs(dc - dr) > dist * .3) a.img.setFlipX((dc - dr) < 0); // sin voltearse de un lado al otro
-    a.paso = (a.paso || 0) + v * 34; a.bob = Math.abs(Math.sin(a.paso)) * .9; // un leve vaivén al andar (no se desliza)
+    // Renovación colonial: las patas se mueven en los cuadros del dibujo; el cuerpo apenas sube y baja.
+    a.paso = (a.paso || 0) + v * 34; a.bob = Math.abs(Math.sin(a.paso)) * (a.k === 'gallina' ? .6 : .25);
+    a.fase = (a.fase || 0) + v * (a.k === 'vaca' ? 26 : a.k === 'perro' ? 22 : 30); // avance de los cuadros según lo recorrido: sin patinar
     return v;
   }
   dibujar(a, alto = 0) {
@@ -91,10 +93,13 @@ export class Vida {
   }
   // Vaca: pasta con la cabeza abajo y de vez en cuando da unos pasos.
   vaca(a, dt) {
-    if (a.ruta) { this.mover(a, dt, .1); a.img.setFrame('vaca'); this.dibujar(a); return; }
+    if (a.ruta) { this.mover(a, dt, .1); a.img.setFrame('vacaA' + (Math.floor(a.fase) % 4)); this.dibujar(a); return; }
     a.espera -= dt;
+    // Quieta: casi siempre pastando; a ratos levanta la cabeza (cambio de postura pausado, no un parpadeo).
+    a.cabeza = (a.cabeza ?? azar(2, 6)) - dt;
+    if (a.cabeza <= 0) { a.alta = !a.alta; a.cabeza = a.alta ? azar(1.5, 3) : azar(4, 9); }
     if (a.espera <= 0) { a.ruta = { r: a.casa.r + azar(-.35, .35), c: a.casa.c + azar(-.35, .35) }; a.espera = azar(5, 14); }
-    else a.img.setFrame('vacaPasta');
+    else a.img.setFrame(a.alta ? 'vaca' : 'vacaPasta');
   }
   // Garza: camina despacio y a veces vuela a otra orilla.
   garza(a, dt, N, S) {
@@ -102,12 +107,14 @@ export class Vida {
       const v = a.vuela; v.t += dt / v.dur;
       const f = Math.min(1, v.t);
       a.r = v.r0 + (v.r1 - v.r0) * f; a.c = v.c0 + (v.c1 - v.c0) * f;
-      a.img.setFrame(f < 1 ? 'garzaVuela' : 'garza').setFlipX(v.c1 - v.r1 < v.c0 - v.r0);
+      v.ala = (v.ala || 0) + dt * 3.2; // aleteo lento de garza
+      a.img.setFrame(f < 1 ? (Math.floor(v.ala) % 2 ? 'garzaVuela1' : 'garzaVuela') : 'garza').setFlipX(v.c1 - v.r1 < v.c0 - v.r0);
       this.dibujar(a, Math.sin(f * Math.PI) * 40);
       if (f >= 1) { a.vuela = null; a.casa = { r: a.r, c: a.c }; a.espera = azar(8, 20); }
       return;
     }
-    if (a.ruta) { this.mover(a, dt, .08); this.dibujar(a); return; }
+    if (a.ruta) { this.mover(a, dt, .08); a.img.setFrame(a.ruta ? 'garzaA' + (Math.floor(a.fase) % 2) : 'garza'); this.dibujar(a); return; }
+    a.img.setFrame('garza');
     a.espera -= dt;
     if (a.espera > 0) return;
     if (Math.random() < .35) {
@@ -123,16 +130,17 @@ export class Vida {
   }
   // Gallina: picotea (cabeza arriba y abajo) y da saltitos cerca de la casa.
   gallina(a, dt) {
-    if (a.ruta) { this.mover(a, dt, .15); this.dibujar(a); return; }
+    if (a.ruta) { this.mover(a, dt, .15); a.img.setFrame('gallina' + a.var); this.dibujar(a); return; }
     a.espera -= dt;
-    a.pico = (a.pico || 0) + dt;
-    if (a.pico > azar(.3, .9)) { a.pico = 0; a.baja = !a.baja; a.img.setAngle(a.baja ? (a.img.flipX ? -18 : 18) : 0); }
+    // Picotea: la cabeza baja y sube en su propio cuadro (antes giraba todo el cuerpo, y se veía raro).
+    a.pico = (a.pico ?? azar(.3, 1)) - dt;
+    if (a.pico <= 0) { a.baja = !a.baja; a.pico = a.baja ? azar(.25, .45) : azar(.6, 1.8); a.img.setFrame('gallina' + a.var + (a.baja ? 'p' : '')); }
     if (a.espera <= 0) { a.ruta = { r: a.casa.r + azar(-.25, .25), c: a.casa.c + azar(-.3, .3) }; a.espera = azar(1.5, 4); }
   }
   // Perro: recorre el pueblo por casillas libres y se sienta a ratos.
   perro(a, dt, N, S) {
-    if (a.ruta) { const v = this.mover(a, dt, .5); a.fase += v * 18; a.img.setFrame('perro' + (Math.floor(a.fase) % 2)); this.dibujar(a); return; }
-    a.img.setFrame('perro0');
+    if (a.ruta) { this.mover(a, dt, .5); a.img.setFrame('perro' + (Math.floor(a.fase) % 4)); this.dibujar(a); return; }
+    a.img.setFrame('perroS'); // descansa sentado
     a.espera -= dt;
     if (a.espera > 0) return;
     for (let k = 0; k < 10; k++) {

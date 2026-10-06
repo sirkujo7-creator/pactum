@@ -5,7 +5,7 @@
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua } from '../core/index.js';
-import { hornearGente } from '../arte/gente.js';
+import { hornearGente, PASOS8 } from '../arte/gente.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
@@ -253,7 +253,7 @@ export class Pobladores {
   mirar(f, q) { const dr = q.r - f.r, dc = q.c - f.c; if (Math.abs(dr) + Math.abs(dc) < .01) return; f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0; }
 
   dibujar(f, andando, postura) {
-    const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? Math.floor(f.fase) % 4 : (postura || 0);
+    const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? PASOS8[Math.floor(f.fase * 2) % 8] : (postura || 0); // ocho cuadros: andar suave
     f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`).setPosition(p[0], p[1]).setFlipX(f.voltear)
       .setDepth(f.r + f.c + .01).setVisible(!f.oculto);
     // Fase 13: los miembros de las familias que escriben cartas llevan una marca roja sobre la cabeza.
