@@ -1,10 +1,9 @@
-// Pobladores del Tolima (renovación colonial, 6 de octubre; antes al fresco). Pedido de Juan: personajes pulidos y
-// animación suave, sin movimientos raros ni cambios de color. Figura de proporción natural en vista de tres cuartos,
-// pintada con luz de arriba (degradados suaves), contorno fino y sombra en el suelo; ropa del campo tolimense:
-// sombrero aguadeño y ruana del campesino, falda larga y pañolón de la campesina, delantal de cuero del artesano,
-// levita y sombrero de la élite. Ocho cuadros al caminar (antes cuatro): las piernas se doblan, el pie se levanta,
-// los brazos van al contrario y el cuerpo sube y baja muy poco. Todos los cuadros de una figura usan los mismos
-// colores. Ropa moderna (jean, camiseta, gorra) en las épocas del ladrillo y el concreto.
+// Pobladores del Tolima (renovación colonial, 6 de octubre). Pedido de Juan: silueta limpia y animación suave.
+// Estilo plano como los retratos (Reigns): color liso con una sola sombra de borde nítido a la derecha (la luz viene
+// de la izquierda), sin contornos ni degradados, y cara mínima. Ropa del campo tolimense: sombrero aguadeño y ruana
+// del campesino, falda larga y pañolón de la campesina, delantal de cuero del artesano, levita y sombrero de la élite;
+// ropa moderna (jean, camiseta, gorra) en las épocas del ladrillo y el concreto. Doce cuadros al caminar (antes
+// ocho): cada cuadro es el mismo dibujo en otro momento del paso, con los mismos colores, para que no salte.
 import { shade, lienzo, contorno, RES_HOJA } from './fresco.js';
 
 export const TIPOS_GENTE = {
@@ -14,31 +13,33 @@ export const TIPOS_GENTE = {
   elite: [['#2E3440'], ['#4A3B2E'], ['#3A4A40']],
   nino: [['#E0A030'], ['#3E8E7E'], ['#D0604A']]
 };
-const PIEL = ['#C98E62', '#E0B08A', '#A8734C'], CONT = 'rgba(60,38,26,.55)';
+const PIEL = ['#C98E62', '#E0B08A', '#A8734C'];
 
-// Figura rellena con luz de arriba: claro arriba, color al medio, sombra abajo; contorno fino.
-function forma(g, pts, col, curva = true, luz = .18, osc = -.22) {
-  const ys = pts.map(p => p[1]), y0 = Math.min(...ys), y1 = Math.max(...ys), gr = g.createLinearGradient(0, y0, 0, y1);
-  gr.addColorStop(0, shade(col, luz)); gr.addColorStop(.45, col); gr.addColorStop(1, shade(col, osc));
+// Figura plana: color liso y la sombra de la derecha con borde nítido (sin contorno).
+function forma(g, pts, col, curva = true) {
   g.beginPath(); g.moveTo(...pts[0]);
   if (curva) { for (let k = 1; k < pts.length; k++) { const p = pts[k], q = pts[(k + 1) % pts.length]; g.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); } }
   else pts.slice(1).forEach(p => g.lineTo(...p));
-  g.closePath(); g.fillStyle = gr; g.fill(); g.strokeStyle = CONT; g.lineWidth = .4; g.stroke();
+  g.closePath(); g.fillStyle = col; g.fill();
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs);
+  g.save(); g.clip(); g.fillStyle = shade(col, -.2); g.fillRect(x0 + (x1 - x0) * .62, Math.min(...ys) - 1, x1 - x0, Math.max(...ys) - Math.min(...ys) + 2); g.restore();
 }
-// Miembro (pierna o brazo) con codo o rodilla: de a a b pasando por m; grueso w.
+// Miembro (pierna o brazo) con codo o rodilla: de a a b pasando por m; grueso w; liso, sin contorno.
 function miembro(g, a, m, b, w, col) {
   g.lineCap = 'round'; g.lineJoin = 'round';
-  g.strokeStyle = CONT; g.lineWidth = w + .7; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo(...m, ...b); g.stroke();
   g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo(...m, ...b); g.stroke();
-  g.strokeStyle = shade(col, .2); g.lineWidth = w * .3; g.beginPath(); g.moveTo(a[0] - w * .2, a[1]); g.quadraticCurveTo(m[0] - w * .2, m[1], b[0] - w * .2, b[1]); g.stroke();
 }
 const elipse = (g, x, y, rx, ry, col, rot = 0) => { g.fillStyle = col; g.beginPath(); g.ellipse(x, y, rx, ry, rot, 0, 7); g.fill(); };
 
-// Dibuja una figura con los pies en (0, 0). frente: true de frente, false de espaldas. paso: 0 a 7 (0 a 3 son los
-// cuatro tiempos de antes; 4 a 7, los tiempos intermedios). mod: ropa moderna.
+// Momento del paso de cada cuadro (de 0 a 1). Los cuadros 0 a 3 son los cuatro tiempos de antes (0, ¼, ½ y ¾), así
+// las escenas que los usan siguen igual; del 4 al 11 son los tiempos intermedios.
+const FASE = [0, 3, 6, 9, 1, 2, 4, 5, 7, 8, 10, 11].map(k => k / 12);
+// Orden de los doce cuadros al caminar.
+export const PASOS12 = [0, 4, 5, 1, 6, 7, 2, 8, 9, 3, 10, 11];
+// Dibuja una figura con los pies en (0, 0). frente: true de frente, false de espaldas. paso: 0 a 11. mod: ropa moderna.
 export function figura(g, tipo, vi, frente, paso, mod = false) {
   const V = TIPOS_GENTE[tipo][vi], piel = PIEL[vi % 3];
-  const ph = (paso < 4 ? paso / 4 : (paso - 4 + .5) / 4) * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35;
+  const ph = FASE[paso] * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35;
   const nino = tipo === 'nino', E = nino ? .72 : 1, dir = frente ? 1 : -1;
   // Sombra en el suelo.
   g.save(); g.globalAlpha = .22; g.fillStyle = '#3A2A1C'; g.beginPath(); g.ellipse(.8, 0, 4.2 * E, 1.3 * E, 0, 0, 7); g.fill(); g.restore();
@@ -54,7 +55,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false) {
   const orden = sw >= 0 ? [1, 0] : [0, 1];
   for (const i of orden) {
     const [hx, hy, Pp] = caderas[i], x = hx + Pp.x;
-    if (!falda) miembro(g, [hx, hy], [hx + Pp.rod[0] * .5, Pp.rod[1]], [x, Pp.y - .8], 1.75, pantalon);
+    if (!falda) miembro(g, [hx, hy], [hx + Pp.rod[0] * .5, Pp.rod[1]], [x, Pp.y - .8], 1.75, i === orden[0] ? shade(pantalon, -.18) : pantalon); // la de atrás, en sombra
     elipse(g, x + .5 * dir, Pp.y - .4, 1.25, .65, zapato);
   }
   // Torso: camisa, blusa, chaleco o camiseta.
@@ -72,7 +73,6 @@ export function figura(g, tipo, vi, frente, paso, mod = false) {
     // Ruana de lana en dos colores, con franjas al ruedo.
     forma(g, [[-2.9, -21], [0, -21.6], [2.9, -21], [4.4, -15.6], [4.6, -14], [0, -12.4], [-4.6, -14], [-4.4, -15.6]], V[0]);
     g.save(); g.strokeStyle = V[1]; g.lineWidth = .5; g.globalAlpha = .9; for (const y of [-14.3, -15.2]) { g.beginPath(); g.moveTo(-4.3, y); g.quadraticCurveTo(0, y + 1.6, 4.3, y); g.stroke(); } g.restore();
-    if (frente) elipse(g, 0, -20.6, 1, .5, shade(V[0], -.3));
   }
   if (tipo === 'campesina' && !mod) forma(g, [[-2.9, -20.8], [0, -21.4], [2.9, -20.8], [3.2, -18.4], [0, -17.4], [-3.2, -18.4]], V[0] === '#B23A2E' ? '#E7C76B' : '#B23A2E'); // pañolón sobre los hombros
   if (tipo === 'artesano' && !mod && frente) forma(g, [[-1.9, -19], [1.9, -19], [2.3, -10.4], [-2.3, -10.4]], '#8A6A48', false); // delantal de cuero
@@ -92,15 +92,13 @@ export function figura(g, tipo, vi, frente, paso, mod = false) {
   if (tipo === 'campesino' && !mod) { g.strokeStyle = '#5A3A24'; g.lineWidth = .8; g.lineCap = 'round'; g.beginPath(); g.moveTo(-2.6, -12.2); g.quadraticCurveTo(-3.4, -10, -3.2, -8.2); g.stroke(); } // machete en su funda de cuero, al cinto
   // Cuello y cabeza en tres cuartos: la cara mira un poco a la derecha.
   elipse(g, 0, -21.4, .65, .9, shade(piel, -.1));
-  const cab = g.createRadialGradient(-.6, -24.4, .3, 0, -23.6, 2.4); cab.addColorStop(0, shade(piel, .15)); cab.addColorStop(.6, piel); cab.addColorStop(1, shade(piel, -.18));
-  g.fillStyle = cab; g.beginPath(); g.ellipse(0, -23.6, 1.9, 2.2, 0, 0, 7); g.fill(); g.strokeStyle = CONT; g.lineWidth = .35; g.stroke();
+  g.fillStyle = piel; g.beginPath(); g.ellipse(0, -23.6, 1.9, 2.2, 0, 0, 7); g.fill();
+  g.save(); g.clip(); g.fillStyle = shade(piel, -.16); g.fillRect(.7, -26, 2, 5); g.restore(); // sombra nítida de la cara
   const pelo = vi === 2 ? '#4A2E1E' : '#231C17';
   if (frente) {
     g.fillStyle = pelo; g.beginPath(); g.ellipse(-.2, -24.7, 2, 1.3, 0, Math.PI, Math.PI * 2); g.fill();
     if (tipo === 'campesina' || (tipo === 'nino' && vi === 1)) { g.beginPath(); g.ellipse(-1.8, -23.4, .6, 1.5, 0, 0, 7); g.fill(); }
-    g.fillStyle = 'rgba(30,20,15,.8)'; g.beginPath(); g.arc(.15, -23.5, .26, 0, 7); g.arc(1.25, -23.5, .24, 0, 7); g.fill(); // ojos
-    g.fillStyle = shade(piel, -.25); g.beginPath(); g.ellipse(1.75, -22.9, .3, .45, 0, 0, 7); g.fill(); // nariz de perfil
-    if (tipo === 'campesino' && vi !== 1) { g.fillStyle = 'rgba(35,28,23,.75)'; g.beginPath(); g.ellipse(.8, -22.25, .9, .3, 0, 0, 7); g.fill(); } // bigote
+    g.fillStyle = '#2A1E18'; g.beginPath(); g.arc(.15, -23.5, .26, 0, 7); g.arc(1.25, -23.5, .24, 0, 7); g.fill(); // ojos, nada más (cara mínima)
   } else {
     g.fillStyle = pelo; g.beginPath(); g.ellipse(0, -23.8, 2, 2.15, 0, 0, 7); g.fill();
     if (tipo === 'campesina') { g.beginPath(); g.ellipse(0, -21.3, .7, 1.8, 0, 0, 7); g.fill(); } // trenza
@@ -124,8 +122,8 @@ export function figura(g, tipo, vi, frente, paso, mod = false) {
 let HOJA = null;
 export function hornearGente() {
   if (HOJA) return HOJA;
-  const E = RES_HOJA, w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
-  for (const mod of ['', 'M']) for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 8; f++) claves.push([`${tipo}${mod}_${vi}_${fr}_${f}`, tipo, vi, fr, f, !!mod]);
+  const E = Math.min(RES_HOJA, 3), w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
+  for (const mod of ['', 'M']) for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 12; f++) claves.push([`${tipo}${mod}_${vi}_${fr}_${f}`, tipo, vi, fr, f, !!mod]);
   const cols = 24, cv = lienzo(cols * W, Math.ceil(claves.length / cols) * H + H), g = cv.getContext('2d');
   claves.forEach(([k, tipo, vi, fr, f, mod], n) => {
     const x = (n % cols) * W, y = Math.floor(n / cols) * H;
@@ -139,5 +137,4 @@ export function hornearGente() {
   return (HOJA = { canvas: cv, marcos, escala: E });
 }
 export { contorno };
-// Orden de los ocho cuadros al caminar (los tiempos intermedios entre los cuatro de antes).
-export const PASOS8 = [0, 4, 1, 5, 2, 6, 3, 7];
+
