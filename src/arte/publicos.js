@@ -5,7 +5,7 @@
 //   con rejas y balanza; biblioteca: casa de la cultura con linterna en el techo; teatro: fachada alta con tres
 //   arcos y pretil; policía: casa con garita y farol; cuartel: muralla con almenas y torreón; banco: esquina con
 //   cúpula; universidad: claustro con torre del reloj; acueducto: arcos de piedra con su canal; molino: casa de
-//   piedra con rueda hidráulica; puerto: bodega, muelle de madera y champán. La sede del gobierno cambia con el
+//   piedra con rueda hidráulica; puerto: bodega, muelle de madera y champán; mercado: toldos o plaza cubierta. La sede del gobierno cambia con el
 //   régimen: cabildo de portales (república), palacio con torreones (monarquía), casona con escudo (aristocracia),
 //   fortaleza (tiranía), casa de comercio de ladrillo (oligarquía) y tribuna popular (demagogia).
 import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, bancoMadera } from './casas.js';
@@ -609,6 +609,104 @@ function iglesiaEpoca(g, era) {
 
 // [clave, ancho, alto, anclaX, anclaY, pintura] de la época e (0 a 3). Las medidas no cambian con la época (caben
 // las cuatro versiones), así el mapa solo repinta la hoja al cambiar de época. La iglesia tiene sus cuatro a la vez.
+
+// ---------- Mercado (pedido de Juan, 6 de octubre: era el único que seguía al fresco) ----------
+// mercado0: plaza de toldos (Aldea y Pueblo): puestos de madera con toldo a rayas, canastos y bultos, sobre tierra,
+// empedrado, ladrillo o cemento según la época. mercado2: plaza cubierta (desde Ciudad): ramada de paja o de teja
+// sobre horcones, galería de ladrillo con arcos y mercado de cemento con cortinas metálicas. vacio: comida cara,
+// mesas sin nada y cajas vacías.
+const FRUTAS = ['#E0A030', '#7FA04A', '#C44A3A', '#E8C23A', '#D9822E', '#6E9A4A'];
+function canasto(g, x, y, k, vacio) {
+  if (vacio) { rellena(g, [[x - 2.2, y], [x + 2.2, y + 1], [x + 2.2, y - 1.4], [x - 2.2, y - 2.4]], '#9C7A52', K.contorno, .3); return; }
+  g.fillStyle = '#A8814E'; g.beginPath(); g.ellipse(x, y - 1, 2.6, 1.2, 0, 0, Math.PI); g.fill(); g.fillRect(x - 2.6, y - 1.8, 5.2, .9);
+  for (let j = 0; j < 4; j++) { g.fillStyle = FRUTAS[(k + j) % FRUTAS.length]; g.beginPath(); g.arc(x - 1.6 + j * 1.05, y - 2.1 - (j % 2) * .5, .85, 0, 7); g.fill(); }
+}
+function mesa(g, r, c, w, d, vacio, k) {
+  const M = caras(w, d, 3.6, r, c), z = 3.6;
+  rellena(g, M.izq, K.madera); rellena(g, M.der, K.maderaOsc); rellena(g, [P(M.f, M.a, z), P(M.f, M.b, z), P(M.t, M.b, z), P(M.t, M.a, z)], K.maderaLuz);
+  const n = Math.max(2, Math.round(w * 9));
+  for (let j = 0; j < n; j++) { const p = P((M.f + M.t) / 2, M.a + (j + .5) * (M.b - M.a) / n, z); canasto(g, p[0], p[1] + .8, k + j, vacio); }
+  return M;
+}
+// Letrero ancho sobre la fachada, con el nombre bien legible.
+function letreroAncho(g, F, u0, u1, z, col, texto) {
+  const a = F.en('izq', u0, z), b = F.en('izq', u1, z), h = 3.8;
+  rellena(g, [a, b, [b[0], b[1] - h], [a[0], a[1] - h]], col, K.contorno, .35);
+  g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - h / 2); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0);
+  g.fillStyle = '#F7F1E3'; g.font = 'bold 10px serif'; const L = Math.abs(b[0] - a[0]) * .86, t = Math.min(2.8, 10 * L / g.measureText(texto).width); g.font = `bold ${t}px serif`; // el texto cabe siempre en el letrero
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(texto, 0, .2); g.restore();
+}
+function horcon(g, r, c, h, col) { const p = P(r, c), q = P(r, c, h); g.strokeStyle = col; g.lineWidth = 1.1; g.lineCap = 'butt'; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
+// Puesto con toldo a rayas, inclinado hacia el frente.
+function puesto(g, r, c, cols, vacio, e, k) {
+  const w = .3, d = .2, a = c - w / 2, b = c + w / 2, f = r + d / 2, t = r - d / 2, Hp = 9, poste = e >= 2 ? '#5E5E5E' : K.maderaOsc;
+  horcon(g, t, a, Hp + 1.8, poste); horcon(g, t, b, Hp + 1.8, poste);
+  mesa(g, r, c, w, d, vacio, k);
+  horcon(g, f, a, Hp, poste); horcon(g, f, b, Hp, poste);
+  const n = 5, o = .04;
+  for (let j = 0; j < n; j++) {
+    const c0 = a - o + (b - a + 2 * o) * j / n, c1 = a - o + (b - a + 2 * o) * (j + 1) / n;
+    rellena(g, [P(f + .05, c0, Hp), P(f + .05, c1, Hp), P(t - .02, c1, Hp + 1.8), P(t - .02, c0, Hp + 1.8)], j % 2 ? cols[1] : cols[0], null);
+    const p = P(f + .05, c0, Hp), q = P(f + .05, c1, Hp); g.fillStyle = j % 2 ? cols[1] : cols[0]; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.lineTo((p[0] + q[0]) / 2, (p[1] + q[1]) / 2 + 1.6); g.fill(); // flecos
+  }
+  g.save(); g.strokeStyle = K.contorno; g.lineWidth = .4; poli(g, [P(f + .05, a - o, Hp), P(f + .05, b + o, Hp), P(t - .02, b + o, Hp + 1.8), P(t - .02, a - o, Hp + 1.8)]); g.stroke(); g.restore();
+}
+function pisoPlaza(g, F, e) {
+  const q = [P(F.f, F.a), P(F.f, F.b), P(F.t, F.b), P(F.t, F.a)];
+  rellena(g, q, ['#C9B48A', '#C2B9A7', '#B87A5E', '#C8C4BA'][e], null);
+  g.save(); poli(g, q); g.clip(); g.strokeStyle = ['rgba(120,95,60,.25)', 'rgba(90,80,65,.35)', 'rgba(120,60,40,.4)', 'rgba(110,105,95,.35)'][e]; g.lineWidth = .4;
+  if (e > 0) for (let u = 0; u <= 1; u += e === 1 ? .1 : .14) { g.beginPath(); g.moveTo(...P(F.f, F.a + (F.b - F.a) * u)); g.lineTo(...P(F.t, F.a + (F.b - F.a) * u)); g.stroke(); g.beginPath(); g.moveTo(...P(F.t + (F.f - F.t) * u, F.a)); g.lineTo(...P(F.t + (F.f - F.t) * u, F.b)); g.stroke(); }
+  g.restore();
+}
+const TOLDOS = [[['#C4513B', '#F4ECDB'], ['#2D6E5E', '#F4ECDB'], ['#C08A2A', '#F4ECDB']], [['#B9442F', '#F4ECDB'], ['#3E6B4A', '#F2E2A0'], ['#2F5D8A', '#F4ECDB']]];
+function mercadoToldos(g, e, vacio) {
+  const F = caras(.9, .72, 0);
+  pisoPlaza(g, F, e);
+  const cols = e === 0 ? [['#C9A86A', '#B08A50'], ['#BFA06A', '#A88850'], ['#C9A86A', '#B08A50']] : TOLDOS[e >= 2 ? 1 : 0];
+  sacos(g, ...P(-.28, .3)); // bultos de café y de maíz al fondo
+  for (const [r, c, k] of [[-.18, -.2, 0], [-.18, .22, 1], [.17, .02, 2]].sort((x, y) => (x[0] + x[1]) - (y[0] + y[1]))) puesto(g, r, c, cols[k], vacio, e, k * 3);
+  const p = P(.3, -.32); canasto(g, p[0], p[1], 4, vacio); canasto(g, p[0] + 5, p[1] + 2.5, 1, vacio);
+  if (!vacio) { const q = P(.32, .36); g.fillStyle = '#7FA04A'; for (let j = 0; j < 4; j++) { g.beginPath(); g.ellipse(q[0] + j * 1.2 - 2, q[1] - 1.4 - (j % 2), .7, 1.9, .4, 0, 7); g.fill(); } } // racimo de plátano
+  if (e >= 2) farol(g, ...P(.34, -.04), 12);
+}
+function mercadoCubierto(g, e, vacio) {
+  if (e <= 1) { // ramada sobre horcones: abierta por los lados, con mesas debajo
+    const F = caras(.92, .68, 14), poste = K.maderaOsc;
+    sombraCasa(g, F); pisoPlaza(g, F, e);
+    for (const u of [0, .5, 1]) horcon(g, F.t, F.a + (F.b - F.a) * u, 14, poste);
+    horcon(g, 0, F.a, 14, poste); horcon(g, -.02, F.b, 14, poste);
+    mesa(g, -.14, -.18, .3, .16, vacio, 0); mesa(g, -.14, .2, .3, .16, vacio, 3); mesa(g, .16, 0, .42, .16, vacio, 1);
+    for (const u of [0, .5, 1]) horcon(g, F.f, F.a + (F.b - F.a) * u, 14, poste);
+    cuatroAguas(g, F, 7, MAT[e === 0 ? 'paja' : 'tejaVieja']);
+    if (!vacio) { const q = F.en('izq', .25, 12); g.fillStyle = '#7FA04A'; for (let j = 0; j < 4; j++) { g.beginPath(); g.ellipse(q[0] + j * 1.2 - 2, q[1] + 3 - (j % 2), .7, 1.9, .4, 0, 7); g.fill(); } } // plátano colgado del alero
+    return;
+  }
+  const F = caras(.92, .68, 15);
+  sombraCasa(g, F);
+  if (e === 2) { // galería de ladrillo con arcos abiertos, como las plazas de mercado de comienzos del siglo XX
+    muros(g, F, K.ladrillo, '#5A3A2A', { ladrillo: true });
+    arcada(g, F, 'izq', 5, 0, 7, .04, .96, '#3A2A20'); arcada(g, F, 'der', 3, 0, 7, .06, .94, '#2E2018');
+    for (let k = 0; k < 5; k++) { const p = F.en('izq', .04 + (k + .5) * .184, 1.4); canasto(g, p[0], p[1], k, vacio); }
+    letreroAncho(g, F, .26, .74, 9.6, '#3E6B4A', 'MERCADO');
+    cuatroAguas(g, F, 8, MAT.tejaParda);
+    const m = P((F.f + F.t) / 2, (F.a + F.b) / 2, F.H + 8); rellena(g, [[m[0] - 4, m[1] + 1], [m[0] + 4, m[1] + 1], [m[0] + 4, m[1] - 3], [m[0] - 4, m[1] - 3]], K.cal); dosAguas(g, caras(.24, .12, 0, (F.f + F.t) / 2, (F.a + F.b) / 2, F.H + 11), 3, MAT.tejaParda); // linterna de ventilación
+    return;
+  }
+  // Cemento: cortinas metálicas a medio subir, puestos adentro, techo de zinc y toldos en la acera.
+  muros(g, F, '#E4DED2', '#8A8478');
+  for (let k = 0; k < 4; k++) {
+    const u0 = .06 + k * .225, u1 = u0 + .18;
+    hueco(g, F, 'izq', u0, u1, 0, 8, '#3A3430');
+    const p = F.en('izq', (u0 + u1) / 2, 1.2); canasto(g, p[0], p[1], k, vacio);
+    rellena(g, [F.en('izq', u0, 4.6), F.en('izq', u1, 4.6), F.en('izq', u1, 8), F.en('izq', u0, 8)], '#9AA0A4', K.contorno, .3);
+    g.strokeStyle = 'rgba(60,64,68,.5)'; g.lineWidth = .3; for (let z = 5.2; z < 8; z += .7) { g.beginPath(); g.moveTo(...F.en('izq', u0, z)); g.lineTo(...F.en('izq', u1, z)); g.stroke(); }
+  }
+  hueco(g, F, 'der', .3, .7, 0, 8, '#3A3430');
+  letreroAncho(g, F, .3, .7, 9.4, '#B9442F', 'MERCADO');
+  dosAguas(g, F, 6, MAT.zinc);
+  for (const [u, cols] of [[.18, TOLDOS[1][0]], [.82, TOLDOS[1][2]]]) { const a = F.en('izq', u - .1, 8.4), b = F.en('izq', u + .1, 8.4), a2 = P(F.f + .14, F.a + (F.b - F.a) * (u - .1), 6.6), b2 = P(F.f + .14, F.a + (F.b - F.a) * (u + .1), 6.6); rellena(g, [a, b, b2, a2], cols[0], K.contorno, .3); }
+}
+
 export function recetasPublicos(e = 1) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela],
@@ -629,7 +727,9 @@ export function recetasPublicos(e = 1) {
     ['sede-aristocracia', 104, 100, 52, 72, casona],
     ['sede-tirania', 100, 104, 50, 76, fortaleza],
     ['sede-oligarquia', 100, 100, 50, 70, comercio],
-    ['sede-demagogia', 100, 96, 50, 66, tribuna]
+    ['sede-demagogia', 100, 96, 50, 66, tribuna],
+    ['mercado0', 90, 76, 45, 52, g => mercadoToldos(g, e, false)], ['mercado0v', 90, 76, 45, 52, g => mercadoToldos(g, e, true)],
+    ['mercado2', 100, 96, 50, 68, g => mercadoCubierto(g, e, false)], ['mercado2v', 100, 96, 50, 68, g => mercadoCubierto(g, e, true)]
   ].map(([k, w, h, ax, ay, f]) => [k, w, h, ax, ay, g => f(g, e)]);
   // La iglesia: capilla de bahareque, iglesia colonial con espadaña, templo de dos torres y templo restaurado.
   return [...L, ...[0, 1, 2, 3].map(k => ['iglesia' + k, 110, 130, 55, 96, g => iglesiaEpoca(g, k)])];
