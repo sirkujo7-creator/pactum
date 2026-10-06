@@ -145,7 +145,7 @@ Fase 8 (siguiente): **el fresco**, un cambio visual completo con un solo estilo 
    2. **Terreno natural (publicado en 0.86.0):** manchas agrupadas de pasto seco, lodo y piedra; vegetación en grupos (guaduales en las quebradas, palmas de cera en manchones); calles del damero con bordes imperfectos, huellas y piedras sueltas; veredas curvas hacia las fincas.
    3. **Animales y personajes nuevos (publicado en 0.87.0)** con animación suave (más cuadros, sin parpadeos de color).
    4. **Casas coloniales (publicado en 0.88.0)** con 4 variantes, fachada por época (bahareque, tapia, ladrillo, concreto) y capa de humedad y desgaste según el deterioro; dibujo por capas (explanada, estructura, elementos vivos como caballo amarrado, ropa tendida o materas, y efectos como humo o niebla).
-   5. **Edificios públicos coloniales** con silueta única cada uno.
+   5. **Edificios públicos coloniales (publicado en 0.89.0)** con silueta única cada uno.
    6. **Íconos, retratos, viñetas y portada** en el estilo nuevo.
    Archivos de imagen y un mapa de precarga solo si algún día se usan imágenes externas.
 
