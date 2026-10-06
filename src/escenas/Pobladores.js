@@ -6,6 +6,7 @@
 // mercado y niños jugando en ronda.
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua } from '../core/index.js';
 import { hornearGente, PASOS12 } from '../arte/gente.js';
+import { enPotencia } from '../arte/fresco.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
@@ -20,7 +21,7 @@ export class Pobladores {
     this.scene = scene;
     this.H = hornearGente(); // fase 8: pobladores al fresco
     if (!scene.textures.exists('personas')) {
-      const tx = scene.textures.addCanvas('personas', this.H.canvas);
+      const tx = scene.textures.addCanvas('personas', enPotencia(this.H.canvas)); // lados potencia de dos: sin temblor al moverse
       for (const [k, m] of Object.entries(this.H.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
     }
     this.figuras = [];

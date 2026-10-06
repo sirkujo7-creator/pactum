@@ -453,3 +453,8 @@ details.pleg>summary .pl-r{font:600 12px/1.2 'Alegreya Sans',system-ui,sans-seri
 details.pleg>summary:focus-visible{outline:2px solid #B08E3A;outline-offset:2px;border-radius:10px}
 details.pleg>.pl-c{padding:0 12px 10px}
 @media (prefers-reduced-motion:reduce){details.pleg>summary::before{transition:none}}
+section.pleg.fija{border:1px solid rgba(160,140,110,.35);border-radius:10px;margin:8px 0;background:rgba(247,241,227,.5)}
+section.fija>.fj-h{display:flex;align-items:baseline;gap:8px;padding:10px 12px;font:700 15px/1.25 Alegreya,Georgia,serif;color:#5A2A20}
+section.fija>.fj-h .pl-t{flex:1}
+section.fija>.fj-h .pl-r{font:600 12px/1.2 'Alegreya Sans',system-ui,sans-serif;color:#7A6A58;text-align:right}
+section.fija>.pl-c{padding:0 12px 10px}

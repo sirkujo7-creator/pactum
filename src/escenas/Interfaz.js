@@ -498,8 +498,9 @@ export class Interfaz {
   }
   renderArbol(n) {
     const S = this.S, T = C.CIV.textos, E = estadoCivismo(S), L = todasLasLeyes(S);
-    const ramas = Object.entries(C.CIV.ramas).map(([k, R]) => { const LR = L.filter(l => ramaDe(l.id) === k), vig = LR.filter(l => hasLaw(S, l.id)).length; return this.pleg('ley-' + k, `${LR.map(l => this.tarjetaLey(l)).join('')}${k === 'economia' ? `<p class="small"><i>${T.libreComercio}</i></p>` : ''}`, `${R.icono} ${R.nombre}`, `${vig} vigente${vig === 1 ? '' : 's'} de ${LR.length}`); }).join('');
-    this.leyes.innerHTML = this.pleg('ley-ayuda', `<p class="small">${T.ayuda}</p><p class="small"><i>${C.CIV.leccion}</i></p>`, `🌳 ${T.titulo}`, 'cómo funciona') + `<p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}` + this.pleg('ley-tec', this.seccionTecnologia());
+    const ramas = Object.entries(C.CIV.ramas).map(([k, R]) => { const LR = L.filter(l => ramaDe(l.id) === k), vig = LR.filter(l => hasLaw(S, l.id)).length; return this.fija('ley-' + k, `${LR.map(l => this.tarjetaLey(l)).join('')}${k === 'economia' ? `<p class="small"><i>${T.libreComercio}</i></p>` : ''}`, `${R.icono} ${R.nombre}`, `${vig} vigente${vig === 1 ? '' : 's'} de ${LR.length}`); }).join('');
+    // El árbol de civismo queda siempre abierto (pedido de Juan, 6 de octubre).
+    this.leyes.innerHTML = this.fija('ley-ayuda', `<p class="small">${T.ayuda}</p><p class="small"><i>${C.CIV.leccion}</i></p>`, `🌳 ${T.titulo}`) + `<p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}` + this.pleg('ley-tec', this.seccionTecnologia());
     this.activarPlegables(this.leyes);
     this.leyes.querySelectorAll('[data-abrir]').forEach(bt => bt.onclick = () => {
       const id = bt.dataset.abrir, r = puedeAbrir(S, id);
@@ -738,7 +739,11 @@ export class Interfaz {
     const ep = historiaActiva(S) ? datosEpoca(epocaHistorica(S)) : null, sig = ep && proximaEpoca(S);
     const epoca = ep ? `<h3>${ep.icono} Época: ${ep.nombre}</h3><p class="small">${ep.texto}${sig ? ` Hasta el año ${sig.desde}; luego, ${sig.nombre.toLowerCase()}.` : ''}</p>` : '';
     const T = S.terr && C.TERR && C.TERR.territorios[S.terr], terr = T ? `<h3>${T.icono} ${T.nombre}</h3><p class="small">${T.texto} ${C.TERR.leccion}</p>` : ''; // fase 14
-    this.cronica.innerHTML = this.pleg('c-terr', terr) + this.pleg('c-epoca', epoca, null, sig ? `hasta el año ${sig.desde}` : '') + this.pleg('c-identidad', this.seccionIdentidad()) + this.pleg('c-album', this.seccionAlbum()) + this.pleg('c-avances', this.seccionAvances()) + this.pleg('c-legado', this.seccionLegado()) + this.pleg('c-graficas', `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}`, '📈 Gráficas', G.n) + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
+    // Orden pedido por Juan (6 de octubre): identidad, gráficas, álbum y legado siempre abiertos; territorio, época
+    // y camino de avances juntos en un solo desplegable; lo que ha pasado, al final y desplegable.
+    const contexto = terr + epoca + this.seccionAvances();
+    this.cronica.innerHTML = this.fija('c-identidad', this.seccionIdentidad()) + this.fija('c-graficas', `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}`, '📈 Gráficas', G.n) + this.fija('c-album', this.seccionAlbum()) + this.fija('c-legado', this.seccionLegado()) +
+      this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
     this.activarPlegables(this.cronica);
     this.cronica.querySelectorAll('[data-carta]').forEach(bt => bt.onclick = () => { const r = estadoFamilias(this.S).cartas.find(x => x.n === +bt.dataset.carta); if (r) this.tarjetaCarta(r, null, true); });
     this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
@@ -1750,6 +1755,13 @@ export class Interfaz {
     const on = this._pleg[id] ?? abierto;
     return `<details class="pleg" data-pl="${id}"${on ? ' open' : ''}><summary><span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</summary><div class="pl-c">${cuerpo}</div></details>`;
   }
+  // Secciones fijas (pedido de Juan, 6 de octubre): siempre abiertas, con el mismo marco que las desplegables.
+  fija(id, html, titulo, resumen = '') {
+    if (!html || !html.trim()) return '';
+    let cuerpo = html;
+    if (!titulo) { const m = html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/); if (m) { titulo = m[1].replace(/<[^>]+>/g, '').trim(); cuerpo = html.replace(m[0], ''); } }
+    return `<section class="pleg fija" data-pl="${id}"><div class="fj-h"><span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</div><div class="pl-c">${cuerpo}</div></section>`;
+  }
   activarPlegables(raiz) {
     raiz.querySelectorAll('details.pleg').forEach(d => d.addEventListener('toggle', () => {
       this._pleg = this._pleg || {}; this._pleg[d.dataset.pl] = d.open;
@@ -1759,21 +1771,22 @@ export class Interfaz {
   // Pendientes: las misiones del momento, con un botón para ir adonde hay que hacer algo.
   marcarPendientes() {
     if (!this.bPend) return;
-    const L = pendientes(this.S), urg = L.some(p => p.nivel === 1);
+    const L = pendientes(this.S).filter(p => !p.fija), urg = L.some(p => p.nivel === 1); // la meta y la guía no encienden el contador
     // Siempre a la vista: gris si no hay nada; con alerta roja y el número si algo espera una decisión.
     this.bPend.dataset.n = L.length || ''; this.bPend.classList.toggle('urgente', urg); this.bPend.classList.toggle('vacio', !L.length);
     this.bPend.setAttribute('aria-label', `Pendientes: ${L.length}${urg ? ', hay algo urgente' : ''}`);
   }
   tarjetaPendientes() {
-    const S = this.S, L = pendientes(S), T = { 1: '🔴 Urgente', 2: '🟡 Importante', 3: '🟢 Sugerencias' };
+    const S = this.S, L = pendientes(S), T = { 0: '🎯 Misiones', 1: '🔴 Urgente', 2: '🟡 Importante', 3: '🟢 Sugerencias' };
     if (!L.length) { this.toast('No hay pendientes: todo en orden.'); return; }
-    const grupos = [1, 2, 3].map(n => { const g = L.filter(p => p.nivel === n); return g.length ? `<h3>${T[n]}</h3>${g.map(p => `<div class="pend"><span class="pi">${p.icono}</span><span class="pt">${p.texto}</span><button class="btn" data-pend="${p.id}">Ir</button></div>`).join('')}` : ''; }).join('');
+    const grupos = [0, 1, 2, 3].map(n => { const g = L.filter(p => p.nivel === n); return g.length ? `<h3>${T[n]}</h3>${g.map(p => `<div class="pend"><span class="pi">${p.icono}</span><span class="pt">${p.texto}</span>${p.ir ? `<button class="btn" data-pend="${p.id}">Ir</button>` : ''}</div>`).join('')}` : ''; }).join('');
     this.tarjeta(`<div class="big">📋</div><h3>Pendientes</h3><p class="small">Lo que espera una decisión tuya este año. «Ir» te lleva al lugar.</p>${grupos}<button class="main" id="okB">Seguir gobernando</button>`);
     this.card.querySelectorAll('[data-pend]').forEach(b => b.onclick = () => {
       const p = L.find(x => x.id === b.dataset.pend); if (!p) return;
       this.cerrarTarjeta();
-      if (p.ir.hoja) { this.abrirHoja(p.ir.hoja); if (p.ir.seccion) requestAnimationFrame(() => { const d = document.querySelector(`details.pleg[data-pl="${p.ir.seccion}"]`); if (d) { d.open = true; d.scrollIntoView({ block: 'start', behavior: 'smooth' }); } }); }
+      if (p.ir.hoja) { this.abrirHoja(p.ir.hoja); if (p.ir.seccion) requestAnimationFrame(() => { const d = document.querySelector(`.pleg[data-pl="${p.ir.seccion}"]`); if (d) { if (d.tagName === 'DETAILS') d.open = true; d.scrollIntoView({ block: 'start', behavior: 'smooth' }); } }); }
       else if (p.ir.mundo) this.tarjetaMundo(p.ir.mundo);
+      else if (p.ir.caminos) this.caminosVictoria();
       else if (p.ir.casilla !== undefined) { this.mapa.enfocarCasilla(p.ir.casilla); this.abrirFicha(p.ir.casilla); }
     });
     this.boton('okB', () => this.cerrarTarjeta());

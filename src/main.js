@@ -21,7 +21,7 @@ const juego = new Phaser.Game({
   parent: 'juego',
   backgroundColor: '#ECEAE2',
   scale: { mode: Phaser.Scale.NONE, width: Math.round(window.innerWidth * DPR), height: Math.round(window.innerHeight * DPR), zoom: 1 / DPR },
-  render: { antialias: true, roundPixels: false, powerPreference: 'high-performance' },
+  render: { antialias: true, roundPixels: false, mipmapFilter: 'LINEAR_MIPMAP_LINEAR', powerPreference: 'high-performance' }, // mipmaps: figuras sin temblor al moverse
   input: { activePointers: 3 },
   banner: false,
   scene: [Arranque, Mapa]
