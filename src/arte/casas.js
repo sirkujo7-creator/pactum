@@ -277,3 +277,6 @@ export function recetasCasas() {
   });
   return L;
 }
+
+// Pinceles compartidos con los edificios públicos (src/arte/publicos.js).
+export { P, K, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera };
