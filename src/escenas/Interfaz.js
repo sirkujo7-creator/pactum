@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -108,6 +108,7 @@ export class Interfaz {
     this.raiz = el('div', { class: 'mapa-ui' }, [
       el('header', { class: 'arriba' }, [el('div', { class: 'fila1' }, [this.bReg, this.era]), this.hud, this.medidores]),
       el('div', { class: 'controles' }, [
+        this.bPend = b('📋', 'Pendientes (p)', () => this.tarjetaPendientes()),
         this.bGrupo = b('☰', 'Menú', () => this.alternarGrupo()),
         this.grupo = el('div', { class: 'grupo' }, [
         b('?', 'Cómo jugar', () => this.ayuda(false)),
@@ -231,6 +232,7 @@ export class Interfaz {
     if (oc) oc.onclick = e => { e.stopPropagation(); S.guide = false; this.render(); };
     // En computador los paneles van a un lado: la meta sigue visible. En celular la tapa el panel que sube.
     this.meta.hidden = (!!this.hojaAbierta() && !window.matchMedia('(min-width:760px)').matches) || S.over;
+    this.marcarPendientes(); // el contador de pendientes
     this.bFin.disabled = !!S.pend || S.over;
     this.bFin.innerHTML = S.over ? 'Fin' : `Año ${S.year}<br><small>terminar ▸</small>`;
     this.bFin.title = 'Terminar el año (barra espaciadora)';
@@ -1727,6 +1729,27 @@ export class Interfaz {
     this.boton('okB', () => { this.cerrarTarjeta(); if (primera && actaDisponible(S) && !S.acta) this.acta(); });
   }
   // Partidas (ranuras y código, como en la v9) y logros.
+  // Pendientes: las misiones del momento, con un botón para ir adonde hay que hacer algo.
+  marcarPendientes() {
+    if (!this.bPend) return;
+    const L = pendientes(this.S), urg = L.some(p => p.nivel === 1);
+    this.bPend.dataset.n = L.length || ''; this.bPend.classList.toggle('urgente', urg); this.bPend.hidden = !L.length;
+    this.bPend.setAttribute('aria-label', `Pendientes: ${L.length}${urg ? ', hay algo urgente' : ''}`);
+  }
+  tarjetaPendientes() {
+    const S = this.S, L = pendientes(S), T = { 1: '🔴 Urgente', 2: '🟡 Importante', 3: '🟢 Sugerencias' };
+    if (!L.length) { this.toast('No hay pendientes: todo en orden.'); return; }
+    const grupos = [1, 2, 3].map(n => { const g = L.filter(p => p.nivel === n); return g.length ? `<h3>${T[n]}</h3>${g.map(p => `<div class="pend"><span class="pi">${p.icono}</span><span class="pt">${p.texto}</span><button class="btn" data-pend="${p.id}">Ir</button></div>`).join('')}` : ''; }).join('');
+    this.tarjeta(`<div class="big">📋</div><h3>Pendientes</h3><p class="small">Lo que espera una decisión tuya este año. «Ir» te lleva al lugar.</p>${grupos}<button class="main" id="okB">Seguir gobernando</button>`);
+    this.card.querySelectorAll('[data-pend]').forEach(b => b.onclick = () => {
+      const p = L.find(x => x.id === b.dataset.pend); if (!p) return;
+      this.cerrarTarjeta();
+      if (p.ir.hoja) this.abrirHoja(p.ir.hoja);
+      else if (p.ir.mundo) this.tarjetaMundo(p.ir.mundo);
+      else if (p.ir.casilla !== undefined) { this.mapa.enfocarCasilla(p.ir.casilla); this.abrirFicha(p.ir.casilla); }
+    });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
   // Fase 15: la pantalla «El mundo».
   tarjetaMundo(sel) {
     const S = this.S, X = C.EXT;

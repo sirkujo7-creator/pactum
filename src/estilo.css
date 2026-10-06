@@ -422,3 +422,9 @@ canvas.mundo{display:block;width:100%;border-radius:10px;border:1px solid #CDBB9
 .ficha-lugar{background:rgba(232,220,196,.45);border-radius:10px;padding:8px 10px;margin-bottom:8px}
 .ficha-lugar h3{margin-top:0}
 .subs .sub.on{outline:2px solid #B08E3A}
+/* Pendientes: botón con contador y lista con «Ir» */
+.controles button[data-n]:not([data-n=""]){position:relative}
+.controles button[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#B08E3A;color:#fff;font:700 11px/18px 'Alegreya Sans',system-ui,sans-serif;text-align:center}
+.controles button.urgente::after{background:var(--rojo,#9E2B25)!important}
+.pend{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(160,140,110,.25)}
+.pend .pi{font-size:20px}.pend .pt{font-size:14px;line-height:1.3}
