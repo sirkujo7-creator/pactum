@@ -280,12 +280,17 @@ html,body{background:#E6DABF}
 @media (min-width:760px){.grupo{display:flex}.controles>.redondo:first-child{display:none}}
 /* Barra inferior con greca */
 .dock{background:var(--panel) var(--muro-cal);border-top:3px solid var(--rojo);backdrop-filter:none;-webkit-backdrop-filter:none}
-.dock::before{content:"";position:absolute;left:0;right:0;top:-13px;height:9px;background:var(--greca) repeat-x left/auto 9px;pointer-events:none}
+/* La guarda va dentro de la barra, nunca encima del panel, y con rombos enteros (round ajusta el ancho del dibujo). */
+.dock{padding-top:16px}
+.dock::before{content:"";position:absolute;left:6px;right:6px;top:4px;height:8px;background:var(--greca) round no-repeat;background-size:auto 8px;pointer-events:none}
+.hoja{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+.sh-head{padding-top:20px}
+.sh-head::before{content:"";position:absolute;left:0;right:0;top:6px;height:8px;background:var(--greca) round no-repeat;background-size:auto 8px;pointer-events:none}
 .dk{color:var(--siena);font-weight:600}
 .dk .di img{width:26px;height:26px;display:block}
 .dk.on{background:rgba(65,96,61,.12);color:var(--rojo)}
 .dock .fin{background:var(--rojo);border-radius:6px;box-shadow:inset 0 0 0 2px var(--ocre)}
-@media (min-width:760px){.dock{border:2px solid var(--rojo);border-radius:8px}.dock::before{left:8px;right:8px}}
+@media (min-width:760px){.dock{border:2px solid var(--rojo);border-radius:8px}.dock::before{left:10px;right:10px}.hoja{bottom:96px;top:calc(170px + env(safe-area-inset-top,0px))}}
 /* Paneles, fichas y tarjetas: cal con textura de muro */
 .hoja,.ficha,.card,.meta{background-color:var(--panel);background-image:var(--muro-cal);border-radius:6px;border:2px solid var(--rojo)}
 .hoja{border-top:3px solid var(--rojo);border-radius:8px 8px 0 0}
@@ -293,7 +298,7 @@ html,body{background:#E6DABF}
 .sh-head{background-color:var(--panel);background-image:var(--muro-cal)}
 .sh-head h2,.card h3,.hoja h3,.card h2{font-family:Alegreya,Georgia,serif;font-weight:800;font-variant:small-caps;letter-spacing:.02em;color:var(--siena)}
 .card{position:relative;padding-top:26px;box-shadow:0 0 0 2px var(--rojo),0 18px 40px rgba(40,20,10,.35);border:0}
-.card::before{content:"";position:absolute;left:12px;right:12px;top:8px;height:10px;background:var(--greca) repeat-x left/auto 10px;pointer-events:none}
+.card::before{content:"";position:absolute;left:12px;right:12px;top:8px;height:10px;background:var(--greca) round no-repeat;background-size:auto 10px;pointer-events:none}
 .velo{background:rgba(46,32,22,.5)}
 .opt,.btn,.tool,.tab,.sub,.camino,.law{border-radius:5px}
 .opt{background:var(--bg);border:0;border-left:5px solid var(--rojo);box-shadow:0 1px 0 rgba(91,52,35,.15)}
@@ -430,6 +435,11 @@ canvas.mundo{display:block;width:100%;border-radius:10px;border:1px solid #CDBB9
 .controles button[data-n]:not([data-n=""]){position:relative}
 .controles button[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#B08E3A;color:#fff;font:700 11px/18px 'Alegreya Sans',system-ui,sans-serif;text-align:center}
 .controles button.urgente::after{background:var(--bad)!important}
+/* Pendientes: siempre debajo de los indicadores; gris sin pendientes, alerta roja con ellos. */
+.fila-pend{display:flex}
+.pendb{position:relative;width:38px;height:38px;font-size:18px}
+.pendb.vacio{border-color:#9A9288;filter:grayscale(1);opacity:.75}
+.pendb[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px 'Alegreya Sans',system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px var(--panel)}
 .pend{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(160,140,110,.25)}
 .pend .pi{font-size:20px}.pend .pt{font-size:14px;line-height:1.3}
 /* Pantallas desplegables */
