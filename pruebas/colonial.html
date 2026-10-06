@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba de estilo colonial</title>
+<style>
+@font-face{font-family:"Alegreya";font-weight:700;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya";font-weight:800;font-display:swap;src:url(../vendor/fuentes/alegreya-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-weight:400;font-display:swap;src:url(../vendor/fuentes/alegreya-sans-latin-400-normal.woff2) format("woff2")}
+:root{--cal:#F4EEE2;--teja:#B9552F;--siena:#5B3423;--fondo:#EEE6D4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:#2E2723;font:16px/1.45 "Alegreya Sans",system-ui,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:"Alegreya",Georgia,serif;color:var(--siena);margin:.3em 0}
+h1{font-size:28px}
+h2{font-size:21px;margin-top:26px;border-bottom:3px solid var(--teja);padding-bottom:4px}
+h3{font-size:16px}
+canvas#aldea{width:100%;display:block;border-radius:8px;box-shadow:0 0 0 3px var(--cal),0 0 0 5px var(--teja),0 8px 24px #5b342333}
+#pares{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.par{background:var(--cal);border-radius:8px;padding:8px 10px;box-shadow:0 1px 3px #5b342322}
+.lado{display:flex;gap:8px;justify-content:center}
+figure{margin:0;text-align:center}
+figure canvas{border-radius:6px}
+figcaption{font-size:13px;color:#6a5440}
+.nota{font-size:15px;color:#5a4636;background:#F7F1E3;border-left:4px solid var(--teja);padding:8px 12px;border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Prueba de estilo: pueblo colonial</h1>
+  <p>Así se verían Pactum con arte <b>rehecho por nosotros</b> en estilo colonial: casas de cal y teja con zócalos de color, balcones de madera, iglesia con espadaña, cabildo con portales, plaza con pila, calles empedradas, suelo con textura de pinceladas finas, árboles del Tolima y animales dibujados de nuevo. Esta página no cambia el juego.</p>
+  <canvas id="aldea" aria-label="Pueblo colonial de muestra"></canvas>
+  <h2>Antes y ahora</h2>
+  <div id="pares"></div>
+  <h2>Opción B: paquete externo</h2>
+  <p class="nota">Para comparar con piezas de un paquete externo (Kenney, OpenGameArt o itch.io), el entorno de trabajo necesita permiso para descargar de esos sitios. Cuando se habilite, esta sección mostrará la misma aldea armada con esas piezas.</p>
+</main>
+<script type="module" src="colonial.js"></script>
+</body>
+</html>
