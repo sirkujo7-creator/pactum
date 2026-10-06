@@ -279,7 +279,7 @@ export function pintarFondo(T, escala = 1, glaciar = 1) {
 }
 
 // ---------- Obras pintadas en el suelo ----------
-const DE_PIE = new Set(['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'acueducto', 'molino', 'puerto', 'parque', 'fundacion', 'cementerio']);
+const DE_PIE = new Set(['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'acueducto', 'molino', 'puerto', 'parque', 'fundacion', 'cementerio', 'iglesia']);
 const conCamino = b => !!b && b !== 'mina';
 
 // Caminos entre obras vecinas y puentes cuando las separa una casilla de río (como en la versión 9).

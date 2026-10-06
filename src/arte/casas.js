@@ -20,6 +20,15 @@ const K = {
   contorno: 'rgba(70,45,30,.55)'
 };
 // Por variante: zócalo y carpintería (puertas, ventanas, balcones), como en los pueblos del Tolima.
+// Materiales de techo (renovación colonial, identidad de cada edificio): teja de barro en varios tonos, zinc (gris,
+// rojo, verde u oxidado), pizarra, teja vidriada y paja. Cada uno con su color, su luz, su sombra y sus líneas.
+const MAT = {
+  teja: {}, tejaVieja: { teja: '#A04A2E', luz: '#B85A38', osc: '#7A3220' }, tejaNueva: { teja: '#C8683A', luz: '#DA7E4A', osc: '#9A4A26' }, tejaParda: { teja: '#9E5A3C', luz: '#B46C48', osc: '#74402A' },
+  zinc: { teja: '#9AA4A8', luz: '#B8C0C2', osc: '#78828A', linea: '#5E686E' }, zincRojo: { teja: '#A8443A', luz: '#BE5A4C', osc: '#7E2E26', linea: '#6A2620' },
+  zincVerde: { teja: '#5E7A52', luz: '#76925E', osc: '#44583C', linea: '#344630' }, zincOxido: { teja: '#9C6A48', luz: '#B07E58', osc: '#744C32', linea: '#5E3A24' },
+  pizarra: { teja: '#5E646C', luz: '#747A82', osc: '#454A52', linea: '#2E3238' }, vidriada: { teja: '#3E7A5A', luz: '#58946E', osc: '#2C5A42', linea: '#204432' },
+  paja: { teja: '#C2A15E', luz: '#D6B874', osc: '#94763E', linea: '#7E6232' }
+};
 const ZOCALO = ['#2F5D8A', '#3E6B4A', '#8E2F22', '#B07A2A'], CARPINTERIA = ['#3E6B4A', '#8E2F22', '#2F5D8A', '#6E4529'];
 
 const mezcla = (a, b, t) => { const h = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16)); const A = h(a), B = h(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
@@ -242,7 +251,7 @@ function casa(g, era, v, hum) {
   if (era === 2 && v !== 1) balcon(g, F, .3, .7, 14.5, .1, '#2E2A28');
   if (era === 3) { const a = F.en('izq', 0, 12.5), b = F.en('izq', 1, 12.5); g.strokeStyle = mezcla(muro, '#000000', .25); g.lineWidth = 1.2; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
   // Capa 3: techo.
-  const teja = era === 2 ? { teja: '#A24A2E', luz: '#B85A38', osc: '#7A3220', hastial: K.ladrilloOsc } : { hastial: era === 3 ? muro : K.calSombra };
+  const teja = era === 2 ? { teja: '#A24A2E', luz: '#B85A38', osc: '#7A3220', hastial: K.ladrilloOsc } : { ...MAT[['teja', 'tejaVieja', 'tejaNueva', 'tejaParda'][v]], hastial: era === 3 ? muro : K.calSombra }; // cada variante con su tono de teja
   if (era === 3) terraza(g, F, muro);
   else if (v === 1) cuatroAguas(g, F, pisos === 1 ? 10 : 11, teja);
   else {
@@ -279,4 +288,4 @@ export function recetasCasas() {
 }
 
 // Pinceles compartidos con los edificios públicos (src/arte/publicos.js).
-export { P, K, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera };
+export { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera };

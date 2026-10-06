@@ -56,9 +56,9 @@ export function build(S, k, i, ofertaElegida) {
   const faltas = [...(k === 'mina' ? contradecir(S, 'mina') : []), ...(o && o.sob ? contradecir(S, 'soborno') : [])];
   if (faltas.length) S.undo[S.undo.length - 1].acta = faltas.length;
   // Fase 4: los personajes reaccionan (deshacer la obra deshace también su reacción).
-  if (k === 'policia' || k === 'mina' || (o && o.sob)) {
+  if (k === 'policia' || k === 'mina' || k === 'iglesia' || (o && o.sob)) {
     S.undo[S.undo.length - 1].rel = copiaRelaciones(S);
-    if (k === 'policia' || k === 'mina') reaccionar(S, k);
+    if (k === 'policia' || k === 'mina' || k === 'iglesia') reaccionar(S, k);
     if (o && o.sob) reaccionar(S, 'soborno');
   }
   const fm = avanzarFundacion(S, i); if (fm) msg = (msg ? msg + ' ' : '') + fm; // la misión de fundación

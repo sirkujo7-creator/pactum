@@ -8,7 +8,7 @@
 //   piedra con rueda hidráulica; puerto: bodega, muelle de madera y champán. La sede del gobierno cambia con el
 //   régimen: cabildo de portales (república), palacio con torreones (monarquía), casona con escudo (aristocracia),
 //   fortaleza (tiranía), casa de comercio de ladrillo (oligarquía) y tribuna popular (demagogia).
-import { P, K, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, dosAguas, cuatroAguas, sombraCasa, materas, bancoMadera } from './casas.js';
+import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, sombraCasa, materas, bancoMadera } from './casas.js';
 
 const PIEDRA = '#C9C0AE', PIEDRA_OSC = '#A39A88', OCRE = '#E2C17E', MADERA = K.madera;
 
@@ -41,9 +41,10 @@ function almenas(g, F, col, n = 7, alto = 2.6) {
 function azotea(g, F, col) { const z = F.z0 + F.H; rellena(g, [P(F.f, F.a, z), P(F.f, F.b, z), P(F.t, F.b, z), P(F.t, F.a, z)], col); }
 // Pirámide de teja (torres y garitas).
 function piramide(g, F, alto, teja = K.teja) {
+  const luz = teja === K.teja ? K.tejaLuz : mezcla(teja, '#FFFFFF', .18), osc = teja === K.teja ? K.tejaSombra : mezcla(teja, '#000000', .25);
   const z = F.z0 + F.H, o = .03, cr = (F.f + F.t) / 2, cc = (F.a + F.b) / 2, A = P(cr, cc, z + alto);
-  rellena(g, [P(F.f + o, F.a - o, z), P(F.f + o, F.b + o, z), A], grad(g, 0, A[1], 0, P(F.f, F.a, z)[1], [[0, K.tejaLuz], [1, teja]]));
-  rellena(g, [P(F.f + o, F.b + o, z), P(F.t - o, F.b + o, z), A], K.tejaSombra);
+  rellena(g, [P(F.f + o, F.a - o, z), P(F.f + o, F.b + o, z), A], grad(g, 0, A[1], 0, P(F.f, F.a, z)[1], [[0, luz], [1, teja]]));
+  rellena(g, [P(F.f + o, F.b + o, z), P(F.t - o, F.b + o, z), A], osc);
 }
 // Cúpula con linterna (biblioteca, banco, universidad).
 function cupula(g, x, y, rx, alto, col, linterna = true) {
@@ -102,14 +103,35 @@ function canoa(g, x, y) {
   g.strokeStyle = '#3A2A1E'; g.lineWidth = .7; g.beginPath(); g.moveTo(x + 9, y + 1); g.lineTo(x + 16, y - 10); g.stroke(); // pértiga del boga
 }
 
+// Patios y jardines (identidad de cada obra).
+function arbolito(g, x, y, s = 1, col = '#5E8B42') {
+  g.save(); g.globalAlpha = .2; g.fillStyle = '#2A3A1E'; g.beginPath(); g.ellipse(x + 3 * s, y + 1, 8 * s, 2.6 * s, 0, 0, 7); g.fill(); g.restore();
+  g.strokeStyle = '#6B4A33'; g.lineWidth = 1.6 * s; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - 9 * s); g.stroke();
+  for (const [dx, dy, r] of [[-3.5, -12, 4.6], [3.5, -12.5, 4.4], [0, -16, 5], [0, -11, 4.2]]) {
+    const gr = g.createRadialGradient(x + dx * s - 1.5, y + dy * s - 1.8, .5, x + dx * s, y + dy * s, r * s); gr.addColorStop(0, '#9BBE68'); gr.addColorStop(.5, col); gr.addColorStop(1, mezcla(col, '#1E2E18', .35));
+    g.fillStyle = gr; g.beginPath(); g.ellipse(x + dx * s, y + dy * s, r * s, r * .8 * s, 0, 0, 7); g.fill();
+  }
+}
+function rayuela(g, r, c) {
+  g.save(); g.strokeStyle = 'rgba(250,245,230,.85)'; g.lineWidth = .5;
+  for (let k = 0; k < 5; k++) { const q = [P(r, c + k * .05), P(r, c + (k + 1) * .05), P(r + .06, c + (k + 1) * .05), P(r + .06, c + k * .05)]; poli(g, q); g.stroke(); }
+  g.restore();
+}
+function jardin(g, F) {
+  rellena(g, [P(F.f + .04, F.a), P(F.f + .04, F.b), P(F.f + .14, F.b), P(F.f + .14, F.a)], '#8FAE6A', null);
+  for (let k = 0; k < 7; k++) { const p = P(F.f + .09, F.a + .06 + k * (F.b - F.a - .12) / 6); g.fillStyle = k % 2 ? '#4E7A3A' : '#5E8B42'; g.beginPath(); g.ellipse(p[0], p[1] - 1.6, 2.2, 1.6, 0, 0, 7); g.fill(); g.fillStyle = ['#D8433A', '#F4EFE4', '#E7B23C'][k % 3]; g.beginPath(); g.arc(p[0] - .5, p[1] - 2.6, .55, 0, 7); g.fill(); }
+}
+
 // ---------- Obras ----------
 function escuela(g) {
   const F = caras(.82, .44, 15, -.08);
-  sombraCasa(g, F); muros(g, F, K.cal, '#3E6B4A');
+  sombraCasa(g, F);
+  rayuela(g, F.f + .2, F.a + .55); arbolito(g, ...P(F.t + .05, F.a - .06), 1, '#4E7A3A'); // patio: rayuela y el mango de la escuela
+  muros(g, F, '#F3E2A0', '#3E6B4A');
   puerta(g, F, 'izq', .5, .14, 10, '#3E6B4A');
   for (const u of [.18, .32, .68, .82]) ventana(g, F, 'izq', u, 4, .08, 6, '#3E6B4A');
   ventana(g, F, 'der', .5, 4, .16, 6, '#3E6B4A');
-  dosAguas(g, F, 10, { sale: .2 });
+  dosAguas(g, F, 10, { sale: .2, ...MAT.zincRojo });
   g.strokeStyle = K.maderaOsc; g.lineWidth = 1.2; for (const u of [.03, .35, .65, .97]) { const c = F.a + (F.b - F.a) * u, p = P(F.f + .18, c, 0), q = P(F.f + .18, c, 13.2); g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
   // Espadaña con la campana sobre el hastial del costado.
   const e = P((F.f + F.t) / 2, F.b, 15 + 9); rellena(g, [[e[0] - 3.5, e[1] + 4], [e[0] + 3.5, e[1] + 4], [e[0] + 3.5, e[1] - 6], [e[0], e[1] - 10], [e[0] - 3.5, e[1] - 6]], K.cal);
@@ -120,11 +142,12 @@ function escuela(g) {
 }
 function hospital(g) {
   const F = caras(.86, .42, 24, -.06);
-  sombraCasa(g, F); muros(g, F, '#F2ECE0', '#2F5D8A');
+  sombraCasa(g, F); jardin(g, F);
+  muros(g, F, '#F7F4EC', '#2F5D8A');
   arcada(g, F, 'izq', 6, 0, 8.5, .04, .96, '#5A4A3C');
   for (let k = 0; k < 6; k++) ventana(g, F, 'izq', .04 + (k + .5) * .92 / 6, 14, .06, 6, '#2F5D8A');
   arcada(g, F, 'der', 2, 0, 8.5, .1, .9, '#4A3A2C'); ventana(g, F, 'der', .5, 14, .14, 6, '#2F5D8A');
-  dosAguas(g, F, 11);
+  dosAguas(g, F, 11, MAT.pizarra);
   // Capilla al centro: hastial con cruz y la cruz roja del hospital.
   const a = F.en('izq', .4, 24), b = F.en('izq', .6, 24), m = F.en('izq', .5, 34);
   rellena(g, [a, b, [b[0], b[1] - 3], m, [a[0], a[1] - 3]], K.cal); cruz(g, m[0], m[1], .8);
@@ -146,7 +169,7 @@ function taller(g) {
   for (const [dx, c] of [[-3, '#B5683A'], [0, '#C98A50'], [3, '#A55A30']]) { g.fillStyle = c; g.beginPath(); g.ellipse(bn[0] + dx, bn[1] - 5 + dx * .45, 1.3, 1.8, 0, 0, 7); g.fill(); } // vasijas
   const lena = P(R.f - .04, R.b + .06); for (let k = 0; k < 4; k++) { g.strokeStyle = k % 2 ? '#7A5536' : '#5E4129'; g.lineWidth = 1.3; g.beginPath(); g.moveTo(lena[0] - 4, lena[1] - k * 1.2); g.lineTo(lena[0] + 3, lena[1] - k * 1.2 + 2); g.stroke(); }
   for (const [r, c] of [[R.f, R.a], [R.f, R.b]]) { const p = P(r, c), q = P(r, c, 12); g.strokeStyle = K.maderaOsc; g.lineWidth = 1.3; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
-  const T = caras(.6, .44, 0, .12, -.1, 12); dosAguas(g, T, 7, { hastial: '#8A5A36' });
+  const T = caras(.6, .44, 0, .12, -.1, 12); dosAguas(g, T, 7, { hastial: '#8A5A36', ...MAT.zincOxido });
 }
 function recaudo(g) {
   const F = caras(.5, .5, 18, -.04);
@@ -155,7 +178,7 @@ function recaudo(g) {
   g.fillStyle = '#2E2420'; for (const z of [3, 6, 9]) { const a = F.en('izq', .41, z), b = F.en('izq', .59, z); g.fillRect(Math.min(a[0], b[0]), Math.min(a[1], b[1]) - .3, Math.abs(b[0] - a[0]), .6 + Math.abs(b[1] - a[1])); } // herrajes
   for (const u of [.17, .83]) ventana(g, F, 'izq', u, 7, .1, 6, '#3A3A3A', { postigos: false });
   ventana(g, F, 'der', .5, 7, .14, 6, '#3A3A3A', { postigos: false });
-  cuatroAguas(g, F, 9);
+  cuatroAguas(g, F, 9, MAT.tejaVieja);
   escudo(g, ...F.en('izq', .5, 15.2), .9);
   // Balanza de la Real Hacienda colgada de su soporte y cofres con sacos.
   const p = F.en('izq', .82, 13); g.strokeStyle = '#2E2A28'; g.lineWidth = .6; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0] + 5, p[1] + 2.5); g.moveTo(p[0] + 3.5, p[1] + 1.8); g.lineTo(p[0] + 3.5, p[1] + 4); g.moveTo(p[0] + 1.5, p[1] + 4); g.lineTo(p[0] + 5.5, p[1] + 4); g.stroke();
@@ -165,13 +188,14 @@ function recaudo(g) {
 }
 function biblioteca(g) {
   const F = caras(.62, .56, 24, -.04);
-  sombraCasa(g, F); muros(g, F, '#EDE3CC', '#8E2F22');
+  sombraCasa(g, F); arbolito(g, ...P(F.f + .16, F.b + .04), .85, '#5E8B42'); bancoMadera(g, ...P(F.f + .2, F.a + .2));
+  muros(g, F, '#E6BFB0', '#7A2A2A');
   hueco(g, F, 'izq', .4, .6, 0, 11, '#5A3A26', true);
   for (const u of [.15, .85]) hueco(g, F, 'izq', u - .06, u + .06, 3, 10, '#3A2A1E', true);
   for (const u of [.15, .5, .85]) hueco(g, F, 'izq', u - .06, u + .06, 14, 20, '#3A2A1E', true);
   for (const u of [.3, .7]) { hueco(g, F, 'der', u - .07, u + .07, 3, 10, '#3A2A1E', true); hueco(g, F, 'der', u - .07, u + .07, 14, 20, '#3A2A1E', true); }
   balcon(g, F, .38, .62, 13.5, .1, '#2E2A28');
-  cuatroAguas(g, F, 10);
+  cuatroAguas(g, F, 10, MAT.vidriada);
   // Linterna octogonal con su cupulita en lo alto del techo.
   const c = P(-.04, 0, 34); rellena(g, [[c[0] - 4, c[1] + 4], [c[0] + 4, c[1] + 4], [c[0] + 4, c[1] - 2], [c[0] - 4, c[1] - 2]], K.cal); for (const dx of [-2, 0, 2]) { g.fillStyle = '#3A2A1E'; g.fillRect(c[0] + dx - .5, c[1] - 1, 1, 3.4); }
   cupula(g, c[0], c[1] - 2, 4.6, 5, '#B9552F');
@@ -198,9 +222,10 @@ function teatro(g) {
 }
 function policia(g) {
   const F = caras(.6, .44, 15, -.08);
-  sombraCasa(g, F); muros(g, F, K.cal, '#4E5A34');
+  sombraCasa(g, F); muros(g, F, '#F4F1E8', '#4E5A34');
+  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 8), F.en(cara, 1, 8), F.en(cara, 1, 9.4), F.en(cara, 0, 9.4)], '#4E5A34', null); // franja verde de la policía
   puerta(g, F, 'izq', .4, .15, 10, '#2F5D8A'); ventana(g, F, 'izq', .78, 4, .1, 6, '#2F5D8A'); ventana(g, F, 'der', .5, 4, .16, 6, '#2F5D8A');
-  dosAguas(g, F, 9);
+  dosAguas(g, F, 9, MAT.zincVerde);
   letrero(g, F, .4, 11.5, '#2F5D8A', 'POLICÍA');
   // Garita del centinela en la esquina del frente.
   const G = caras(.13, .13, 12, F.f + .14, F.a - .02); muros(g, G, '#E8E2D2', '#4E5A34'); hueco(g, G, 'izq', .2, .8, 0, 8, '#3A2A1E'); piramide(g, G, 5, '#4E5A34');
@@ -236,11 +261,11 @@ function bancoEdificio(g) {
 }
 function universidad(g) {
   const F = caras(.92, .7, 24, -.04);
-  sombraCasa(g, F); muros(g, F, '#F2ECE0', '#8E2F22');
+  sombraCasa(g, F); muros(g, F, K.ladrillo, '#5A3A2A', { ladrillo: true });
   arcada(g, F, 'izq', 7, 0, 8.5, .03, .97, '#5A4A3C'); balcon(g, F, .03, .97, 12.5, .1);
   for (let k = 0; k < 7; k++) ventana(g, F, 'izq', .03 + (k + .5) * .94 / 7, 14, .05, 6, '#8E2F22');
-  arcada(g, F, 'der', 4, 0, 8.5, .05, .95, '#5A4A3C'); for (let k = 0; k < 4; k++) ventana(g, F, 'der', .05 + (k + .5) * .9 / 4, 14, .08, 6, '#8E2F22');
-  dosAguas(g, F, 12);
+  arcada(g, F, 'der', 4, 0, 8.5, .05, .95, '#5A4A3C'); for (let k = 0; k < 4; k++) ventana(g, F, 'der', .05 + (k + .5) * .9 / 4, 14, .08, 6, '#F4EEE2', { postigos: false, marco: '#F4EEE2' });
+  dosAguas(g, F, 12, MAT.tejaParda);
   // Torre del reloj al centro, con su cúpula: la silueta del claustro.
   const T = caras(.2, .2, 18, F.f - .12, 0, 24); muros(g, T, '#F2ECE0', null); reloj(g, ...T.en('izq', .5, 11), 3); hueco(g, T, 'der', .3, .7, 8, 14, '#3A2A1E', true);
   const c = P(F.f - .12, 0, 42); cupula(g, c[0], c[1] + 2, 6.6, 10, '#B9552F');
@@ -264,7 +289,7 @@ function molino(g) {
   const F = caras(.5, .46, 16, -.06, .1);
   sombraCasa(g, F); muros(g, F, PIEDRA, null); sillares(g, F);
   puerta(g, F, 'izq', .62, .2, 10, MADERA); ventana(g, F, 'der', .5, 7, .14, 5, MADERA);
-  dosAguas(g, F, 9);
+  dosAguas(g, F, 9, MAT.paja);
   // Canal de madera que trae el agua desde atrás y la rueda en el costado izquierdo (el del río).
   const a = P(F.t - .1, F.a - .12, 17), b = P(F.f - .14, F.a - .12, 17); g.strokeStyle = MADERA; g.lineWidth = 2.6; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); g.strokeStyle = '#7FB3C4'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
   const c = P(F.f - .12, F.a - .14, 9); rueda(g, c[0], c[1], 10);
@@ -307,8 +332,8 @@ function palacio(g) { // monarquía: palacio con dos torreones y portada de pied
   balcon(g, F, .4, .6, 14, .1, '#C9A24A');
   for (const u of [.24, .76]) { ventana(g, F, 'izq', u, 5, .07, 7, '#5A3A6A'); ventana(g, F, 'izq', u, 15, .07, 7, '#5A3A6A'); }
   ventana(g, F, 'der', .5, 5, .14, 7, '#5A3A6A'); ventana(g, F, 'der', .5, 15, .14, 7, '#5A3A6A');
-  cuatroAguas(g, F, 10);
-  for (const c of [F.a + .09, F.b - .09]) { const T = caras(.18, .18, 34, F.f - .08, c); muros(g, T, '#E6DCC6', '#5A3A6A'); ventana(g, T, 'izq', .5, 22, .3, 6, '#5A3A6A', { postigos: false }); piramide(g, T, 12); }
+  cuatroAguas(g, F, 10, MAT.pizarra);
+  for (const c of [F.a + .09, F.b - .09]) { const T = caras(.18, .18, 34, F.f - .08, c); muros(g, T, '#E6DCC6', '#5A3A6A'); ventana(g, T, 'izq', .5, 22, .3, 6, '#5A3A6A', { postigos: false }); piramide(g, T, 12, MAT.pizarra.teja); }
   const corona = F.en('izq', .5, 26.5); g.fillStyle = '#C9A24A'; g.beginPath(); g.moveTo(corona[0] - 3.5, corona[1]); g.lineTo(corona[0] - 3.5, corona[1] - 3); g.lineTo(corona[0] - 1.7, corona[1] - 1.6); g.lineTo(corona[0], corona[1] - 4); g.lineTo(corona[0] + 1.7, corona[1] - 1.6); g.lineTo(corona[0] + 3.5, corona[1] - 3); g.lineTo(corona[0] + 3.5, corona[1]); g.closePath(); g.fill();
   const f = P(F.f - .08, F.b - .09, 46); bandera(g, f[0], f[1], 12, ['#5A3A6A', '#C9A24A']);
 }
@@ -316,7 +341,7 @@ function casona(g) { // aristocracia: casona señorial en L con portón y escudo
   const F = caras(.62, .46, 25, -.1, -.12), W = caras(.3, .62, 15, -.02, .34);
   sombraCasa(g, F); sombraCasa(g, W);
   muros(g, W, K.cal, '#3E6B4A'); for (const u of [.3, .7]) ventana(g, W, 'der', u, 4, .12, 6, '#3E6B4A'); ventana(g, W, 'izq', .5, 4, .3, 6, '#3E6B4A'); dosAguas(g, { ...W, a: W.a, b: W.b }, 8);
-  muros(g, F, '#F4EEE2', '#3E6B4A');
+  muros(g, F, '#BFD3DC', '#3E6B4A'); // casona pintada de azul claro, como en Mompox
   rellena(g, [F.en('izq', .36, 0), F.en('izq', .64, 0), F.en('izq', .64, 13), F.en('izq', .36, 13)], PIEDRA); hueco(g, F, 'izq', .4, .6, 0, 11, '#4A2D1A', true);
   for (const u of [.15, .85]) ventana(g, F, 'izq', u, 4, .08, 6, '#3E6B4A');
   for (const u of [.2, .5, .8]) ventana(g, F, 'izq', u, 15, .08, 6.5, '#3E6B4A');
@@ -370,6 +395,97 @@ function tribuna(g) { // demagogia: tribuna popular con balcón grande, carteles
   for (let k = 1; k < 10; k++) { const t = k / 10, x = A[0] + (B[0] - A[0]) * t, y = A[1] + (B[1] - A[1]) * t - 8 + Math.sin(t * Math.PI) * 6; g.fillStyle = cols[k % 5]; g.beginPath(); g.moveTo(x - 1.4, y); g.lineTo(x + 1.4, y); g.lineTo(x, y + 2.8); g.fill(); }
 }
 
+// ---------- La iglesia parroquial (el edificio más detallado), una por época ----------
+// Techo de dos aguas con la cumbrera a lo largo de r: el hastial queda en la fachada (cara izq).
+function dosAguasR(g, F, rh, op = {}) {
+  const o = .06, a = F.a - o, b = F.b + o, f = F.f + o, t = F.t - o, mc = (F.a + F.b) / 2, H = F.z0 + F.H;
+  const teja = op.teja || K.teja, luz = op.luz || K.tejaLuz, osc = op.osc || K.tejaSombra;
+  rellena(g, [P(f, a, H), P(f, mc, H + rh), P(t, mc, H + rh), P(t, a, H)], osc);
+  const der = [P(f, b, H), P(t, b, H), P(t, mc, H + rh), P(f, mc, H + rh)];
+  rellena(g, der, grad(g, der[0][0], 0, der[3][0], 0, [[0, osc], [1, teja]]));
+  tejas(g, (u, v) => P(f + (t - f) * u, b + (mc - b) * v, H + rh * v), Math.round((f - t) * 10));
+  g.strokeStyle = mezcla(osc, '#000000', .2); g.lineWidth = 1; g.beginPath(); g.moveTo(...P(f, mc, H + rh)); g.lineTo(...P(t, mc, H + rh)); g.stroke();
+  rellena(g, [P(F.f, F.a, H), P(F.f, F.b, H), P(F.f, mc, H + rh * .95)], op.hastial || K.cal);
+  return P(F.f, mc, H + rh * .95);
+}
+function contrafuertes(g, F, n, col) {
+  for (let k = 0; k < n; k++) {
+    const u = (k + .5) / n, r = F.f + (F.t - F.f) * u, B = caras(.05, .05, F.H * .75, r, F.b + .025);
+    rellena(g, B.izq, col); rellena(g, B.der, mezcla(col, '#000000', .15));
+    rellena(g, [P(B.f, B.a, B.H), P(B.f, B.b, B.H), P(B.t, B.b, B.H), P(B.t, B.a, B.H)], mezcla(col, '#000000', .25), null);
+  }
+}
+// Torre campanario: cuerpo, campanario con arcos y campanas, y remate (cupulín o pirámide).
+function torre(g, r0, c0, lado, alto, col, op = {}) {
+  const T = caras(lado, lado, alto, r0, c0);
+  muros(g, T, col, null);
+  for (const z of [alto * .35, alto * .6]) { hueco(g, T, 'izq', .38, .62, z, z + 3, '#3A2A1E', true); }
+  const C = caras(lado * .92, lado * .92, 9, r0, c0, alto);
+  muros(g, C, col, null);
+  for (const cara of ['izq', 'der']) { hueco(g, C, cara, .2, .8, 1, 7, '#2E2420', true); const m = C.en(cara, .5, 3.4); g.fillStyle = '#C9A24A'; g.beginPath(); g.moveTo(m[0] - 1.5, m[1] + 1.6); g.quadraticCurveTo(m[0], m[1] - 2.4, m[0] + 1.5, m[1] + 1.6); g.fill(); }
+  const z = alto + 9; rellena(g, [P(C.f, C.a, z), P(C.f, C.b, z), P(C.f, C.b, z + 1.4), P(C.f, C.a, z + 1.4)], mezcla(col, '#FFFFFF', .2)); rellena(g, [P(C.f, C.b, z), P(C.t, C.b, z), P(C.t, C.b, z + 1.4), P(C.f, C.b, z + 1.4)], mezcla(col, '#000000', .15));
+  const top = P(r0, c0, z + 1.4);
+  if (op.piramide) { const F2 = caras(lado * .95, lado * .95, 0, r0, c0, z + 1.4); piramide(g, F2, 9, op.teja || K.teja); cruz(g, top[0], top[1] - 9, .6); }
+  else { cupula(g, top[0], top[1] + 1, lado * 24, 7, op.cupula || '#B9552F'); cruz(g, top[0], top[1] - 13.5, .6); }
+}
+function cruzAtrial(g, x, y, col = PIEDRA) {
+  rellena(g, [[x - 3, y], [x + 3, y + 1.5], [x + 3, y - .5], [x - 3, y - 2]], mezcla(col, '#000000', .1), K.contorno, .3);
+  rellena(g, [[x - .8, y - 1.5], [x + .8, y - 1.1], [x + .8, y - 13], [x - .8, y - 13.4]], col, K.contorno, .35);
+  rellena(g, [[x - 3.2, y - 10.6], [x + 3.2, y - 9.6], [x + 3.2, y - 8.4], [x - 3.2, y - 9.4]], col, K.contorno, .35);
+}
+function iglesiaEpoca(g, era) {
+  const capilla = era === 0, torres = era >= 2;
+  const F = capilla ? caras(.4, .7, 13, -.08) : caras(.48, era === 1 ? .84 : .9, era === 1 ? 20 : 24, -.06);
+  const muro = era === 3 ? '#EFDFAE' : K.cal, adorno = era === 3 ? '#F7F1E3' : era === 2 ? '#D9B878' : PIEDRA;
+  sombraCasa(g, F); g.save(); g.globalAlpha = .18; g.fillStyle = '#3A2A1C'; poli(g, [P(F.f, F.b), P(F.f + .1, F.b + .5), P(F.t + .1, F.b + .5), P(F.t, F.b)]); g.fill(); g.restore();
+  // Atrio: piso de piedra frente a la fachada.
+  rellena(g, [P(F.f, F.a - .1), P(F.f, F.b + .1), P(F.f + .14, F.b + .1), P(F.f + .14, F.a - .1)], capilla ? '#CDBB93' : '#C9C0AE', null);
+  muros(g, F, muro, capilla ? '#B07A2A' : era === 3 ? '#B07A2A' : PIEDRA_OSC);
+  if (!capilla) contrafuertes(g, F, era === 1 ? 3 : 4, muro);
+  // Ventanas altas del costado de la nave.
+  for (let k = 0; k < (capilla ? 2 : 4); k++) { const u = (k + .5) / (capilla ? 2 : 4); hueco(g, F, 'der', u - .05, u + .05, F.H * .45, F.H * .8, '#3A2A1E', true); }
+  if (!capilla) { // sacristía al costado
+    const Sx = caras(.2, .26, 11, F.t + .2, F.b + .12); muros(g, Sx, muro, PIEDRA_OSC); ventana(g, Sx, 'der', .5, 4, .2, 4, '#3E6B4A'); cuatroAguas(g, Sx, 5);
+  }
+  const cima = dosAguasR(g, F, capilla ? 9 : era === 1 ? 13 : 15, { hastial: muro });
+  // Fachada: portada, puerta, óculo o rosetón.
+  const fa = (u, z) => F.en('izq', u, z);
+  if (!capilla) {
+    rellena(g, [fa(.28, 0), fa(.72, 0), fa(.72, F.H * .72), fa(.5, F.H * .82), fa(.28, F.H * .72)], adorno);
+    for (const u of [.3, .7]) rellena(g, [fa(u - .03, 0), fa(u + .03, 0), fa(u + .03, F.H * .62), fa(u - .03, F.H * .62)], mezcla(adorno, '#FFFFFF', .25), K.contorno, .3); // pilastras
+  }
+  puerta(g, F, 'izq', .5, capilla ? .26 : .3, capilla ? 9 : 12, K.madera, true);
+  if (!capilla) { const o = fa(.5, F.H * .62); g.fillStyle = '#3A2A1E'; g.beginPath(); g.ellipse(o[0], o[1], 2.6, 2.6, 0, 0, 7); g.fill(); g.strokeStyle = adorno; g.lineWidth = .8; g.stroke(); g.strokeStyle = 'rgba(200,170,90,.8)'; g.lineWidth = .35; for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; g.beginPath(); g.moveTo(o[0], o[1]); g.lineTo(o[0] + Math.cos(a) * 2.4, o[1] + Math.sin(a) * 2.4); g.stroke(); } }
+  else { const o = fa(.5, 10.5); g.fillStyle = '#3A2A1E'; g.beginPath(); g.arc(o[0], o[1], 1.3, 0, 7); g.fill(); }
+  if (era === 3) { const r = fa(.5, F.H + 5); reloj(g, r[0], r[1], 2.6); }
+  // Remate: espadaña (capilla y colonial) o cúpula del crucero y dos torres (templo).
+  if (!torres) {
+    const n = capilla ? 1 : 3, w = capilla ? 4.5 : 9, alto = capilla ? 10 : 16, x = cima[0], y = cima[1] + 2;
+    rellena(g, [[x - w, y], [x + w, y], [x + w, y - alto * .65], [x, y - alto], [x - w, y - alto * .65]], muro);
+    const pos = capilla ? [[0, -5]] : [[-4.4, -5], [4.4, -5], [0, -11]];
+    for (const [dx, dy] of pos.slice(0, n)) { g.fillStyle = '#3A2A1E'; g.beginPath(); g.ellipse(x + dx, y + dy, 2.1, 2.9, 0, 0, 7); g.fill(); g.fillStyle = '#C9A24A'; g.beginPath(); g.moveTo(x + dx - 1.5, y + dy + 1.9); g.quadraticCurveTo(x + dx, y + dy - 2.6, x + dx + 1.5, y + dy + 1.9); g.fill(); }
+    cruz(g, x, y - alto - .5, .8);
+  } else {
+    const d = P(F.t + (F.f - F.t) * .3, (F.a + F.b) / 2, F.H + 15);
+    rellena(g, [[d[0] - 9, d[1] + 2], [d[0] + 9, d[1] + 2], [d[0] + 9, d[1] - 5], [d[0] - 9, d[1] - 5]], muro); // tambor
+    for (const dx of [-6, -2, 2, 6]) hueco(g, { en: (c, u, z) => [d[0] + dx + (u - .5) * 2.4, d[1] - z] }, 'izq', 0, 1, -1, 3.4, '#3A2A1E', true);
+    cupula(g, d[0], d[1] - 5, 9.6, 12, era === 3 ? '#B07A2A' : '#B9552F'); cruz(g, d[0], d[1] - 23, .8);
+    // Frontón entre las torres.
+    const x = cima[0], y = cima[1]; rellena(g, [[x - 10, y + 6], [x + 10, y + 6], [x, y - 4]], adorno);
+    torre(g, F.f - .08, F.a - .05, .15, F.H + 8, muro, { cupula: era === 3 ? '#B07A2A' : '#B9552F' });
+    torre(g, F.f - .08, F.b + .05, .15, F.H + 8, muro, { cupula: era === 3 ? '#B07A2A' : '#B9552F' });
+  }
+  // Atrio: cruz atrial, bancas, faroles y vida.
+  const ca = P(F.f + .32, F.a - .02); cruzAtrial(g, ca[0], ca[1], capilla ? K.madera : PIEDRA);
+  if (capilla) { const v = P(F.f + .2, F.b + .14); bancoMadera(g, v[0], v[1]); materas(g, [P(F.f + .08, F.b + .04)]); }
+  else {
+    const b0 = P(F.f + .1, F.a - .1, 0), b1 = P(F.f + .1, F.b + .1, 0); g.strokeStyle = mezcla(PIEDRA, '#000000', .25); g.lineWidth = 2.2; g.beginPath(); g.moveTo(b0[0], b0[1] - 1); g.lineTo(...P(F.f + .1, F.a + .12, 1)); g.moveTo(...P(F.f + .1, F.b - .12, 1)); g.lineTo(b1[0], b1[1] - 1); g.stroke(); // barda del atrio
+    for (const c of [F.a - .08, F.b + .08]) { const p = P(F.f + .22, c); farol(g, p[0], p[1], 12); }
+    if (era >= 2) { bancoMadera(g, ...P(F.f + .36, F.b + .02)); materas(g, [P(F.f + .04, F.a - .06), P(F.f + .04, F.b + .06)]); }
+    if (era === 3) { for (const c of [F.a + .1, F.b - .1]) { const p = P(F.f + .15, c); g.fillStyle = 'rgba(255,226,150,.35)'; g.beginPath(); g.ellipse(p[0], p[1] - 14, 5, 12, 0, 0, 7); g.fill(); } const pl = fa(.82, 5); rellena(g, [[pl[0] - 2, pl[1]], [pl[0] + 2, pl[1] + 1], [pl[0] + 2, pl[1] - 2], [pl[0] - 2, pl[1] - 3]], '#C9A24A', K.contorno, .3); } // reflectores y placa de patrimonio
+  }
+}
+
 // [clave, ancho, alto, anclaX, anclaY, pintura]: reemplazan a las obras griegas con las mismas claves.
 export function recetasPublicos() {
   return [
@@ -391,6 +507,8 @@ export function recetasPublicos() {
     ['sede-aristocracia', 100, 90, 50, 60, casona],
     ['sede-tirania', 100, 100, 50, 72, fortaleza],
     ['sede-oligarquia', 96, 92, 48, 62, comercio],
-    ['sede-demagogia', 96, 88, 48, 58, tribuna]
+    ['sede-demagogia', 96, 88, 48, 58, tribuna],
+    // La iglesia: capilla de bahareque, iglesia colonial con espadaña, templo de dos torres y templo restaurado.
+    ...[0, 1, 2, 3].map(e => ['iglesia' + e, 110, 130, 55, 96, g => iglesiaEpoca(g, e)])
   ];
 }

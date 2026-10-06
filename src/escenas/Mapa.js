@@ -214,6 +214,7 @@ export class Mapa extends Phaser.Scene {
       img.setDepth(t.r + t.c + 1 + (f.dv || 0) + (f.du || 0));
       // El puerto y el molino miran hacia el río: si el agua está al lado derecho, se voltea el dibujo.
       if ((x.b === 'puerto' || x.b === 'molino') && this.rioADerecha(i)) img.setFlipX(true).setOrigin(1 - img.originX, img.originY);
+      if (x.b === 'iglesia' && this.plazaADerecha(i)) img.setFlipX(true).setOrigin(1 - img.originX, img.originY); // la fachada mira a la plaza
       if (nivel) img.setTint(f.n ? [0, 0xF2EEDC, 0xE0D6B4, 0xC8B98A][nivel] : [0, 0xE6DCCB, 0xD2C6B2, 0xA0978B][nivel]);
       this.obras[i].push(img);
       if (nivel === 3) continue; // sin humo: nadie cocina en una obra abandonada
@@ -293,6 +294,8 @@ export class Mapa extends Phaser.Scene {
       this.obras[i].push(this.add.image(p[0], p[1], 'edificios', 'maleza').setOrigin(.5, 11 / 14).setScale((.5 + (k * 17 % 5) / 20) / H.escala).setDepth(r + c));
     }
   }
+  // La plaza de fundación queda en la casilla de la columna siguiente: la fachada de la iglesia se voltea hacia ella.
+  plazaADerecha(i) { const N = this.T.N, p = this.S.map.findIndex(x => x.b === 'fundacion'); return p >= 0 && Math.floor(p / N) === Math.floor(i / N) && p % N === i % N + 1; }
   rioADerecha(i) {
     const N = this.T.N, r = Math.floor(i / N), c = i % N, rio = (R, C) => R >= 0 && C >= 0 && R < N && C < N && this.S.map[R * N + C].t === 'rio';
     return !rio(r + 1, c) && (rio(r, c + 1) || rio(r - 1, c));
@@ -407,6 +410,7 @@ export class Mapa extends Phaser.Scene {
     this.refrescarCasilla(i);
     this.animarObra(i);
     Sonido.tap();
+    if (k === 'iglesia') setTimeout(() => Sonido.campanas(), 500); // las campanas de la iglesia nueva
     if (k === 'cultivo' && fincasActivas(this.S)) setTimeout(() => this.ui.tarjetaCultivo(i), 350); // fase 10: elegir qué sembrar
     if (k === 'taller' && industriaActiva(this.S)) setTimeout(() => this.ui.tarjetaProducto(i), 350); // fase 11: elegir qué producir
     this.ui.logros();
@@ -479,6 +483,7 @@ export class Mapa extends Phaser.Scene {
     const sg = v => (v >= 0 ? '+' : '−') + Math.abs(v);
     this.ui.pasoDelAnio('Año ' + S.year, `Oro ${sg(dg)}   ·   Habitantes ${sg(dp)}`);
     Sonido.chime();
+    if (S.map.some(x => x.b === 'iglesia' && !x.ob)) setTimeout(() => Sonido.campanas(), 900); // las campanas marcan el año nuevo
     guardarYa(S);
     this.efectos.cierre({ dg, dp, df: S.food - f0, hunger, bad: dg < 0 || hunger || S.tr < t0 - 5 || !!S.regChange });
     this.cerrandoAnio = true;

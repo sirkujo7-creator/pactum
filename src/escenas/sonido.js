@@ -110,8 +110,18 @@ export const Sonido = (() => {
     [0, .09, .2].forEach(d => { const s = ac.createBufferSource(), hp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = ruido; hp.type = 'highpass'; hp.frequency.value = 2500; g.gain.setValueAtTime(.06, t + d); g.gain.exponentialRampToValueAtTime(.001, t + d + .08); s.connect(hp); hp.connect(g); g.connect(master); s.start(t + d); });
     [[57, .45], [60, .8], [64, 1.15]].forEach(([n, d]) => pluck(NOTE(n), t + d, 2.4, .07));
   }
+  // Campanas de la iglesia: tres golpes graves de bronce, con sus armónicos y una cola larga.
+  function campanas() {
+    if (!on) return;
+    const t0 = ac.currentTime + .05;
+    [[0, 392], [.9, 330], [1.8, 392]].forEach(([d, f]) => [[1, .07], [2.4, .03], [3.9, .014], [.5, .04]].forEach(([m, v]) => {
+      const o = ac.createOscillator(), g = ac.createGain(), t = t0 + d; o.type = 'sine'; o.frequency.value = f * m;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .006); g.gain.exponentialRampToValueAtTime(.0004, t + 3.2);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + 3.3);
+    }));
+  }
   function tap() { if (!on) return; pluck(NOTE(59), ac.currentTime, .25, .08); }
   function mode(r) { const m = MODES[r] || MODES.republica; SCALE = m.s; BASS = m.b; BEAT = m.beat; }
   function despertar() { if (ac && on && ac.state !== 'running') desbloquear(); }
-  return { start, stop, chime, tap, prensa, carta, mode, despertar, get on() { return on; } };
+  return { start, stop, chime, tap, prensa, carta, campanas, mode, despertar, get on() { return on; } };
 })();
