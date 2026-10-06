@@ -6,6 +6,7 @@ import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } 
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
 import { pintarNiebla, lienzo } from '../arte/acuarela.js';
+import { ES_CELULAR } from '../arte/fresco.js';
 import { P, TW, casillaEn } from '../arte/iso.js';
 import { DPR, tam, reducirMovimiento } from './pantalla.js';
 import { partida, nuevaPartida } from './partida.js';
@@ -132,7 +133,7 @@ export class Mapa extends Phaser.Scene {
       if (!this.textures.exists(clave)) {
         // La naturaleza (con los animales que andan) va en un lienzo de lados potencia de dos: así tiene versiones
         // reducidas suaves y no tiembla al moverse. Los edificios, quietos y en una hoja muy alta, quedan igual.
-        const pot = n => 2 ** Math.ceil(Math.log2(n)), copia = clave === 'naturaleza' && pot(h.canvas.height) <= 4096 ? lienzo(pot(h.canvas.width), pot(h.canvas.height)) : lienzo(h.canvas.width, h.canvas.height);
+        const pot = n => 2 ** Math.ceil(Math.log2(n)), copia = clave === 'naturaleza' && !ES_CELULAR && pot(h.canvas.height) <= 4096 ? lienzo(pot(h.canvas.width), pot(h.canvas.height)) : lienzo(h.canvas.width, h.canvas.height);
         copia.getContext('2d').drawImage(h.canvas, 0, 0);
         const tx = this.textures.addCanvas(clave, copia);
         for (const [k, m] of Object.entries(h.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
