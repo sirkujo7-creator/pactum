@@ -236,7 +236,7 @@ export class Interfaz {
     if (unicos.length) setTimeout(() => this.toast(txt), 50);
     guardarLuego(S);
     setTimeout(() => this.novedades(), 300);
-    Sonido.mode(S.reg);
+    Sonido.mode(S.reg); Sonido.era(epocaHistorica(S)); // la música sigue al régimen y a la época
     this.bSonido.textContent = Sonido.on ? '🔊' : '🔇';
     this.bSonido.setAttribute('aria-label', Sonido.on ? 'Silenciar' : 'Activar sonido'); this.bSonido.title = this.bSonido.getAttribute('aria-label');
     this.bReg.innerHTML = `${EMB[S.reg]}<b>${rg.n.split(' ')[0]}</b>`;
