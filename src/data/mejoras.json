@@ -1,0 +1,49 @@
+{
+  "leccion": "Mejorar lo que ya existe suele rendir más que construir de nuevo: una casa de tapia se vuelve de ladrillo, un mercado gana un techo. Cuesta dinero y materiales ahora, y paga durante décadas.",
+  "maximo": 2,
+  "factorOro": 0.6,
+  "factorMateriales": 0.5,
+  "tipos": {
+    "casa": {
+      "cupos": 2,
+      "texto": "Más cuartos: cabe más gente."
+    },
+    "cultivo": {
+      "renta": 0.15,
+      "texto": "Mejores herramientas y riego: rinde más."
+    },
+    "mercado": {
+      "renta": 0.2,
+      "texto": "Techo y puestos: vende más."
+    },
+    "banco": {
+      "renta": 0.2,
+      "texto": "Bóvedas y más ventanillas: gana más."
+    },
+    "puerto": {
+      "renta": 0.2,
+      "texto": "Muelle más largo: mueve más carga."
+    },
+    "mina": {
+      "renta": 0.15,
+      "texto": "Socavones apuntalados: saca más."
+    },
+    "taller": {
+      "renta": 0.15,
+      "texto": "Mejores bancos y herramientas: produce más."
+    }
+  },
+  "nombres": [
+    "bahareque o madera",
+    "reforzada",
+    "de lujo"
+  ],
+  "textos": {
+    "boton": "Mejorar al nivel {n}",
+    "nivel": "Nivel {n} de {max}",
+    "maximo": "Ya está en su máximo nivel.",
+    "mejorada": "Mejoraste {obra}: nivel {n}.",
+    "pide": "Cuesta {oro} de oro{mat}.",
+    "faltan": "Te faltan {lista}."
+  }
+}

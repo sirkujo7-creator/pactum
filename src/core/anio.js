@@ -3,6 +3,7 @@
 import { azar, clamp } from './azar.js';
 import { registrarMuertes, colonosDelAnio, sincronizarLeyes } from './huellas.js';
 import { plazaOk } from './plaza.js';
+import { tarjetasDelAnio } from './tarjetas.js';
 import { materialesActivos, producirMat } from './materiales.js';
 import { exteriorDelAnio } from './exterior.js';
 import { C } from './contenido.js';
@@ -178,6 +179,7 @@ export function advance(S) {
   news.push(...movimientosDelAnio(S));
   news.push(...actaDelAnio(S));
   news.push(...sucesosDelAnio(S));
+  news.push(...tarjetasDelAnio(S)); // tarjetas rápidas
   news.push(...figurasDelAnio(S, inseguridad(S)));
   news.push(...desastresDelAnio(S));
   news.push(...conflictoDelAnio(S));

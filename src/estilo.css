@@ -471,3 +471,5 @@ section.fija>.pl-c{padding:0 12px 10px}
 @media (max-width:520px){.hudf{flex-wrap:nowrap}.hud{flex-direction:column}}
 .hito-tag{display:inline-block;background:#5B3423;color:#F7F1E3;font:700 11px/1 'Alegreya Sans',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:9px;margin:2px 0 4px}
 .historia-real{border-left:3px solid #B08E3A;background:rgba(176,142,58,.1);padding:6px 10px;margin:8px 0;font-size:.9rem;border-radius:0 8px 8px 0}.historia-real b{font-variant:small-caps;color:#5A2A20}
+.rapida-ic{font-size:2.6rem;text-align:center}.rapida-quien{text-align:center;font:700 .95rem 'Alegreya Sans',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#7A5A38;margin-bottom:4px}
+.rapida-texto{text-align:center;font-size:1.15rem;line-height:1.35;margin:8px 4px 14px}.rapida-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rapida-op{text-align:center;padding:14px 8px;min-height:64px}

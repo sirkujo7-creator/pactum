@@ -1,0 +1,843 @@
+{
+  "leccion": "La mayor parte de gobernar son decisiones pequeñas que nadie escribe en los libros: un préstamo, un permiso, un puente. Ninguna es la correcta, y todas dejan huella.",
+  "prob": 0.42,
+  "desde": 4,
+  "tarjetas": [
+    {
+      "id": "f1",
+      "epoca": "fundacion",
+      "icono": "🧑‍🌾",
+      "quien": "Un colono",
+      "texto": "Quiero quemar este monte para sembrar maíz. ¿Me deja?",
+      "opciones": [
+        {
+          "texto": "Permitirlo",
+          "efectos": {
+            "alimento": 12,
+            "ambiente": -3
+          }
+        },
+        {
+          "texto": "Negarlo",
+          "efectos": {
+            "animo": -3,
+            "ambiente": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "epoca": "fundacion",
+      "icono": "🪶",
+      "quien": "El cabildo pijao",
+      "texto": "Ese cerro es sagrado: por favor, que el camino no pase por ahí.",
+      "opciones": [
+        {
+          "texto": "Respetarlo",
+          "efectos": {
+            "confianza": 2,
+            "oro": -10
+          }
+        },
+        {
+          "texto": "Abrir el camino igual",
+          "efectos": {
+            "oro": 10,
+            "igualdad": -3,
+            "confianza": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "f3",
+      "epoca": "fundacion",
+      "icono": "⛪",
+      "quien": "El cura",
+      "texto": "Falta teja para la capilla. ¿Colaboramos entre todos?",
+      "opciones": [
+        {
+          "texto": "Dar la colecta",
+          "efectos": {
+            "oro": -15,
+            "animo": 3
+          }
+        },
+        {
+          "texto": "Que cada quien decida",
+          "efectos": {
+            "animo": -1,
+            "confianza": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "f4",
+      "epoca": "fundacion",
+      "icono": "🐂",
+      "quien": "Un hacendado",
+      "texto": "Le vendo el ganado fiado, para que coma la aldea.",
+      "opciones": [
+        {
+          "texto": "Aceptar",
+          "efectos": {
+            "alimento": 12,
+            "oro": -8
+          }
+        },
+        {
+          "texto": "No quedar debiendo",
+          "efectos": {
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "f5",
+      "epoca": "fundacion",
+      "icono": "🌧️",
+      "quien": "Los arrieros",
+      "texto": "Las lluvias tumbaron el camino de herradura.",
+      "opciones": [
+        {
+          "texto": "Arreglarlo ya",
+          "efectos": {
+            "oro": -18,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Esperar el verano",
+          "efectos": {
+            "animo": -3,
+            "alimento": -5
+          }
+        }
+      ]
+    },
+    {
+      "id": "f6",
+      "epoca": "fundacion",
+      "icono": "👶",
+      "quien": "Una partera",
+      "texto": "Las mujeres del caserío piden que me ayude a atender los partos.",
+      "opciones": [
+        {
+          "texto": "Pagarle",
+          "efectos": {
+            "oro": -8,
+            "habitantes": 2
+          }
+        },
+        {
+          "texto": "Que se arreglen solas",
+          "efectos": {
+            "habitantes": -1,
+            "confianza": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "c1",
+      "epoca": "cafe",
+      "icono": "☕",
+      "quien": "Un cafetero",
+      "texto": "Necesito plata para una despulpadora. ¿Me presta?",
+      "opciones": [
+        {
+          "texto": "Prestarle",
+          "efectos": {
+            "oro": -20,
+            "campesinos": 4
+          }
+        },
+        {
+          "texto": "Negarle el préstamo",
+          "efectos": {
+            "campesinos": -3,
+            "confianza": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "epoca": "cafe",
+      "icono": "🚂",
+      "quien": "Un ingeniero",
+      "texto": "Le tiendo un tramo de riel si me cede un lote junto al río.",
+      "opciones": [
+        {
+          "texto": "Ceder el lote",
+          "efectos": {
+            "oro": 15,
+            "ambiente": -2,
+            "elite": 2
+          }
+        },
+        {
+          "texto": "Rechazar",
+          "efectos": {
+            "elite": -2,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "epoca": "cafe",
+      "icono": "🧵",
+      "quien": "Las escogedoras",
+      "texto": "Pedimos un descanso a mediodía: los ojos ya no dan.",
+      "opciones": [
+        {
+          "texto": "Concederlo",
+          "efectos": {
+            "artesanos": 3,
+            "oro": -8
+          }
+        },
+        {
+          "texto": "Negarlo",
+          "efectos": {
+            "artesanos": -4,
+            "oro": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "epoca": "cafe",
+      "icono": "📰",
+      "quien": "Un periodista",
+      "texto": "Escribí que el gobierno gasta más de lo que dice.",
+      "opciones": [
+        {
+          "texto": "Dejarlo hablar",
+          "efectos": {
+            "confianza": 3,
+            "elite": -2
+          }
+        },
+        {
+          "texto": "Cerrarle el periódico",
+          "efectos": {
+            "confianza": -4,
+            "elite": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "epoca": "cafe",
+      "icono": "🎻",
+      "quien": "Un maestro de música",
+      "texto": "Con un local armo una banda para los muchachos.",
+      "opciones": [
+        {
+          "texto": "Cederle un local",
+          "efectos": {
+            "animo": 4,
+            "oro": -10
+          }
+        },
+        {
+          "texto": "No hay espacio",
+          "efectos": {
+            "animo": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "epoca": "cafe",
+      "icono": "🫏",
+      "quien": "Un arriero",
+      "texto": "El puente se está pudriendo y alguna mula va a caer.",
+      "opciones": [
+        {
+          "texto": "Repararlo",
+          "efectos": {
+            "oro": -14,
+            "campesinos": 2
+          }
+        },
+        {
+          "texto": "Posponerlo",
+          "efectos": {
+            "campesinos": -2,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "v1",
+      "epoca": "violencia",
+      "icono": "🕯️",
+      "quien": "Una viuda",
+      "texto": "Mataron a mi marido por ser de otro partido. Tengo miedo.",
+      "opciones": [
+        {
+          "texto": "Darle protección",
+          "efectos": {
+            "oro": -12,
+            "confianza": 2,
+            "elite": -1
+          }
+        },
+        {
+          "texto": "No intervenir",
+          "efectos": {
+            "confianza": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "epoca": "violencia",
+      "icono": "🎖️",
+      "quien": "Un oficial",
+      "texto": "Pongo una patrulla fija en el camino de El Alto.",
+      "opciones": [
+        {
+          "texto": "Aceptar",
+          "efectos": {
+            "oro": -16,
+            "confianza": 1,
+            "animo": -2
+          }
+        },
+        {
+          "texto": "Declinar",
+          "efectos": {
+            "animo": 1,
+            "confianza": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "v3",
+      "epoca": "violencia",
+      "icono": "📻",
+      "quien": "Una radio local",
+      "texto": "Hoy transmitimos arengas contra los del otro bando.",
+      "opciones": [
+        {
+          "texto": "Prohibirla",
+          "efectos": {
+            "confianza": -3,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Dejarla",
+          "efectos": {
+            "animo": -4,
+            "confianza": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "v4",
+      "epoca": "violencia",
+      "icono": "🧒",
+      "quien": "Una monja",
+      "texto": "Llegaron seis niños huérfanos de las veredas.",
+      "opciones": [
+        {
+          "texto": "Acogerlos",
+          "efectos": {
+            "oro": -15,
+            "animo": 4,
+            "habitantes": 3
+          }
+        },
+        {
+          "texto": "Mandarlos al otro pueblo",
+          "efectos": {
+            "animo": -4
+          }
+        }
+      ]
+    },
+    {
+      "id": "v5",
+      "epoca": "violencia",
+      "icono": "🌽",
+      "quien": "Una familia",
+      "texto": "Le damos la cosecha si nos garantiza que nadie nos toca.",
+      "opciones": [
+        {
+          "texto": "Aceptar el trato",
+          "efectos": {
+            "alimento": 14,
+            "confianza": -2
+          }
+        },
+        {
+          "texto": "Rechazarlo",
+          "efectos": {
+            "confianza": 1,
+            "animo": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "v6",
+      "epoca": "violencia",
+      "icono": "⚖️",
+      "quien": "Un juez",
+      "texto": "Tengo un detenido sin pruebas y muchos lo quieren linchar.",
+      "opciones": [
+        {
+          "texto": "Custodiarlo",
+          "efectos": {
+            "confianza": 3,
+            "oro": -6
+          }
+        },
+        {
+          "texto": "Dejarlo a su suerte",
+          "efectos": {
+            "confianza": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "m1",
+      "epoca": "modernizacion",
+      "icono": "📺",
+      "quien": "Un vendedor",
+      "texto": "Tengo televisores a plazos. Uno en la plaza sería la sensación.",
+      "opciones": [
+        {
+          "texto": "Comprar uno",
+          "efectos": {
+            "oro": -18,
+            "animo": 4
+          }
+        },
+        {
+          "texto": "No comprar",
+          "efectos": {
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "epoca": "modernizacion",
+      "icono": "🏭",
+      "quien": "Un empresario",
+      "texto": "Quiero ampliar mi fábrica junto al río.",
+      "opciones": [
+        {
+          "texto": "Permitirlo",
+          "efectos": {
+            "oro": 14,
+            "ambiente": -4,
+            "artesanos": 3
+          }
+        },
+        {
+          "texto": "Negarlo",
+          "efectos": {
+            "ambiente": 2,
+            "artesanos": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "epoca": "modernizacion",
+      "icono": "🎓",
+      "quien": "Una joven",
+      "texto": "Saqué el mejor puntaje. ¿Me ayudan a estudiar en Bogotá?",
+      "opciones": [
+        {
+          "texto": "Darle la beca",
+          "efectos": {
+            "oro": -14,
+            "igualdad": 3
+          }
+        },
+        {
+          "texto": "Que se las arregle",
+          "efectos": {
+            "igualdad": -2,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "epoca": "modernizacion",
+      "icono": "🏘️",
+      "quien": "Un líder barrial",
+      "texto": "Cuarenta familias del campo se instalaron en la loma.",
+      "opciones": [
+        {
+          "texto": "Darles agua y calles",
+          "efectos": {
+            "oro": -18,
+            "igualdad": 3,
+            "habitantes": 3
+          }
+        },
+        {
+          "texto": "Desalojarlas",
+          "efectos": {
+            "confianza": -4,
+            "igualdad": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "epoca": "modernizacion",
+      "icono": "🚌",
+      "quien": "Una empresa de buses",
+      "texto": "Queremos una ruta diaria hasta la plaza.",
+      "opciones": [
+        {
+          "texto": "Concederla",
+          "efectos": {
+            "oro": 10,
+            "ambiente": -2
+          }
+        },
+        {
+          "texto": "Negarla",
+          "efectos": {
+            "campesinos": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "m6",
+      "epoca": "modernizacion",
+      "icono": "🗳️",
+      "quien": "Un político",
+      "texto": "Si reparte cargos entre los míos, tiene los votos.",
+      "opciones": [
+        {
+          "texto": "Aceptar",
+          "efectos": {
+            "oro": 12,
+            "confianza": -4,
+            "igualdad": -2
+          }
+        },
+        {
+          "texto": "Rechazar",
+          "efectos": {
+            "confianza": 3,
+            "elite": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "p1",
+      "epoca": "paz",
+      "icono": "🕊️",
+      "quien": "Excombatientes",
+      "texto": "Pedimos un terreno para un proyecto de cacao.",
+      "opciones": [
+        {
+          "texto": "Dárselo",
+          "efectos": {
+            "oro": -12,
+            "igualdad": 3,
+            "confianza": 2
+          }
+        },
+        {
+          "texto": "Negárselo",
+          "efectos": {
+            "confianza": -2,
+            "animo": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "epoca": "paz",
+      "icono": "🌿",
+      "quien": "Campesinos de la ladera",
+      "texto": "Dejamos la coca si hay con qué vivir del plátano y el café.",
+      "opciones": [
+        {
+          "texto": "Apoyarlos",
+          "efectos": {
+            "oro": -16,
+            "ambiente": 3,
+            "campesinos": 3
+          }
+        },
+        {
+          "texto": "Fumigar",
+          "efectos": {
+            "ambiente": -4,
+            "campesinos": -4,
+            "oro": -5
+          }
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "epoca": "paz",
+      "icono": "🎤",
+      "quien": "Una asociación de víctimas",
+      "texto": "Pedimos un acto público que nombre a nuestros muertos.",
+      "opciones": [
+        {
+          "texto": "Hacerlo",
+          "efectos": {
+            "confianza": 4,
+            "elite": -2
+          }
+        },
+        {
+          "texto": "Posponerlo",
+          "efectos": {
+            "confianza": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "epoca": "paz",
+      "icono": "💼",
+      "quien": "Una multinacional",
+      "texto": "Le pagamos regalías por explorar la ladera.",
+      "opciones": [
+        {
+          "texto": "Aceptar",
+          "efectos": {
+            "oro": 25,
+            "ambiente": -5,
+            "confianza": -2
+          }
+        },
+        {
+          "texto": "Rechazar",
+          "efectos": {
+            "ambiente": 2,
+            "elite": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "epoca": "paz",
+      "icono": "📱",
+      "quien": "Un joven",
+      "texto": "En la vereda todavía no hay señal de celular.",
+      "opciones": [
+        {
+          "texto": "Subsidiar una antena",
+          "efectos": {
+            "oro": -14,
+            "animo": 3
+          }
+        },
+        {
+          "texto": "Esperar",
+          "efectos": {
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "epoca": "paz",
+      "icono": "🛡️",
+      "quien": "Un líder amenazado",
+      "texto": "Me dejaron un panfleto bajo la puerta. Necesito escolta.",
+      "opciones": [
+        {
+          "texto": "Darla",
+          "efectos": {
+            "oro": -10,
+            "confianza": 3
+          }
+        },
+        {
+          "texto": "No hay recursos",
+          "efectos": {
+            "confianza": -4
+          }
+        }
+      ]
+    },
+    {
+      "id": "d1",
+      "epoca": "digital",
+      "icono": "🤳",
+      "quien": "Una influencer",
+      "texto": "Puedo mostrar el pueblo a millones de seguidores.",
+      "opciones": [
+        {
+          "texto": "Pagarle",
+          "efectos": {
+            "oro": -12,
+            "habitantes": 3,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Ignorarla",
+          "efectos": {
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "d2",
+      "epoca": "digital",
+      "icono": "🌡️",
+      "quien": "Agricultores",
+      "texto": "La sequía se alarga: necesitamos riego.",
+      "opciones": [
+        {
+          "texto": "Financiarlo",
+          "efectos": {
+            "oro": -20,
+            "alimento": 14
+          }
+        },
+        {
+          "texto": "Esperar la lluvia",
+          "efectos": {
+            "alimento": -8,
+            "campesinos": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "d3",
+      "epoca": "digital",
+      "icono": "🧑‍💻",
+      "quien": "Una programadora",
+      "texto": "Sin internet barato no puedo trabajar desde la vereda.",
+      "opciones": [
+        {
+          "texto": "Subsidiarlo",
+          "efectos": {
+            "oro": -12,
+            "igualdad": 3
+          }
+        },
+        {
+          "texto": "Dejarlo al mercado",
+          "efectos": {
+            "igualdad": -2,
+            "oro": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "d4",
+      "epoca": "digital",
+      "icono": "🌲",
+      "quien": "Unos estudiantes",
+      "texto": "Queremos sembrar mil árboles en la ladera.",
+      "opciones": [
+        {
+          "texto": "Apoyarlos",
+          "efectos": {
+            "oro": -10,
+            "ambiente": 4,
+            "animo": 3
+          }
+        },
+        {
+          "texto": "Ignorarlos",
+          "efectos": {
+            "ambiente": -1,
+            "animo": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "d5",
+      "epoca": "digital",
+      "icono": "🛰️",
+      "quien": "Una empresa de datos",
+      "texto": "Instalamos cámaras en la plaza, gratis, y nos quedamos con las imágenes.",
+      "opciones": [
+        {
+          "texto": "Aceptar",
+          "efectos": {
+            "confianza": -2,
+            "animo": 1,
+            "oro": 8
+          }
+        },
+        {
+          "texto": "Rechazar",
+          "efectos": {
+            "confianza": 3,
+            "oro": -4
+          }
+        }
+      ]
+    },
+    {
+      "id": "d6",
+      "epoca": "digital",
+      "icono": "🛵",
+      "quien": "Unos domiciliarios",
+      "texto": "Trabajamos sin seguridad social. ¿Nos pueden ayudar?",
+      "opciones": [
+        {
+          "texto": "Concedérsela",
+          "efectos": {
+            "artesanos": 4,
+            "oro": -12
+          }
+        },
+        {
+          "texto": "Negarla",
+          "efectos": {
+            "artesanos": -4,
+            "oro": 6
+          }
+        }
+      ]
+    }
+  ],
+  "textos": {
+    "titulo": "Un asunto del pueblo",
+    "continuar": "Continuar"
+  }
+}
