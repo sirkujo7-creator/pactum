@@ -268,6 +268,23 @@ function recetas(era = 1) {
     const tw = V2(.3, .3); g.fillStyle = '#E4E1DA'; g.fillRect(tw[0] - 2, tw[1] - 22, 4, 22); wash(g, [[tw[0] - 5, tw[1] - 22], [tw[0] + 5, tw[1] - 22], [tw[0] + 4, tw[1] - 28], [tw[0] - 4, tw[1] - 28]], '#6E8FA6', r, .97, .2);
     const av = V2(-.2, -.05); g.fillStyle = '#F4F1E6'; g.beginPath(); g.ellipse(av[0], av[1] - 3, 7, 1.6, -.4, 0, 7); g.fill(); g.beginPath(); g.moveTo(av[0] - 2, av[1] - 3); g.lineTo(av[0] + 2, av[1] - 9); g.lineTo(av[0] + 4, av[1] - 3); g.fill();
   }]);
+  // Lugares de memoria (fase 16): un monumento de piedra con llama y un museo pequeño con portal y bandera.
+  L.push(['m_monumento', 52, 70, 26, 62, (g, r) => {
+    sombra(g, 16, 5, 4); const p = V2(0, 0);
+    wash(g, [[p[0] - 13, p[1] - 1], [p[0] + 13, p[1] - 1], [p[0] + 10, p[1] - 7], [p[0] - 10, p[1] - 7]], '#B9B1A2', r, .97, .3);
+    wash(g, [[p[0] - 9, p[1] - 7], [p[0] + 9, p[1] - 7], [p[0] + 7, p[1] - 13], [p[0] - 7, p[1] - 13]], '#CEC6B6', r, .97, .3);
+    wash(g, [[p[0] - 4.5, p[1] - 13], [p[0] + 4.5, p[1] - 13], [p[0] + 3, p[1] - 46], [p[0] - 3, p[1] - 46]], '#D8D1C2', r, .97, .3);
+    g.strokeStyle = '#6B6258'; g.lineWidth = .6; for (let k = 0; k < 5; k++) { g.beginPath(); g.moveTo(p[0] - 2.4, p[1] - 20 - k * 4.4); g.lineTo(p[0] + 2.4, p[1] - 20 - k * 4.4); g.stroke(); }
+    g.fillStyle = '#E7C76B'; g.beginPath(); g.moveTo(p[0], p[1] - 56); g.quadraticCurveTo(p[0] + 4.5, p[1] - 50, p[0], p[1] - 46); g.quadraticCurveTo(p[0] - 4.5, p[1] - 50, p[0], p[1] - 56); g.fill();
+    g.fillStyle = '#C0392B'; g.fillRect(p[0] - 1, p[1] - 52, 2, 4);
+  }]);
+  L.push(['m_museo', 90, 96, 45, 76, (g, r) => {
+    sombra(g, 28, 6, 5); const b = iso(g, .86, .62, 0, 22, '#EDE6D4', '#CFC7B3', null, r, 0, 0); techo(g, b, 5, 11, '#8E3B2E', '#B5543F', r);
+    wash(g, caraI(b, .38, .26, 0, 12), '#5A4632', r, .97, .2);
+    for (const k of [.08, .68]) wash(g, caraI(b, k, .22, 8, 7), '#6E8FA6', r, .95, .2);
+    const q = V2(-.2, .1, 34); g.strokeStyle = '#4A3A24'; g.lineWidth = .9; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0], q[1] - 20); g.stroke();
+    g.fillStyle = '#C0392B'; g.fillRect(q[0], q[1] - 20, 11, 4); g.fillStyle = '#E7C76B'; g.fillRect(q[0], q[1] - 16, 11, 3.5); g.fillStyle = '#2D5D72'; g.fillRect(q[0], q[1] - 12.5, 11, 3.5);
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);

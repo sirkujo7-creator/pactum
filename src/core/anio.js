@@ -8,6 +8,8 @@ import { materialesActivos, producirMat } from './materiales.js';
 import { exteriorDelAnio } from './exterior.js';
 import { mundoDelAnio } from './mundovivo.js';
 import { visitanteDelAnio } from './visitantes.js';
+import { polisDelAnio } from './entrepolis.js';
+import { comisionDelAnio } from './comision.js';
 import { C } from './contenido.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
@@ -195,6 +197,8 @@ export function advance(S) {
   news.push(...exteriorDelAnio(S)); // fase 15: la polis en el mundo
   news.push(...mundoDelAnio(S)); // fase 16: lo que pasa en las polis vecinas llega a tu plaza
   news.push(...visitanteDelAnio(S)); // fase 16: un visitante extranjero
+  news.push(...polisDelAnio(S)); // fase 16: pleitos entre polis vecinas
+  news.push(...comisionDelAnio(S)); // fase 16: la Comisión de la Verdad
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));

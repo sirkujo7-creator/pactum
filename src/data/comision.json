@@ -1,0 +1,28 @@
+{
+  "leccion": "Una comisión de la verdad no castiga: escucha. Reconocer lo que pasó, reparar a las víctimas y recordar a los muertos es la deuda que deja una guerra, y se paga con tiempo, dinero y valentía. Una sociedad que no la paga hereda el rencor.",
+  "abreCon": "h_reincorporacion",
+  "duracion": 9,
+  "textos": {
+    "titulo": "Comisión de la verdad",
+    "abre": "Se instala la Comisión de la Verdad en tu territorio: durante {n} años escuchará a las víctimas y a los responsables.",
+    "cierra": "La Comisión entrega su informe final.",
+    "victimas": "Víctimas anotadas en tu territorio: {n}.",
+    "verdad": "Verdad esclarecida: {n}%.",
+    "reparadas": "Familias reparadas: {n}.",
+    "memoria": "Lugares de memoria levantados: {n}.",
+    "acciones": { "escuchar": "Escuchar testimonios", "reparar": "Reparar a una familia", "perdon": "Pedir perdón en público" },
+    "ayudas": { "escuchar": "Un acto con víctimas y testigos. Duele, pero se sabe más.", "reparar": "Una indemnización, una casa o una beca para una familia víctima.", "perdon": "El gobierno reconoce su responsabilidad ante el pueblo (una sola vez)." },
+    "costo": "{n} de oro", "ya": "Ya lo hiciste este año.", "una": "Ya lo hiciste.", "oro": "Faltan {n} de oro.",
+    "final": { "alta": "La verdad se conoció y se reparó: el pueblo siente que la herida empieza a cerrar.", "media": "Se avanzó, aunque a muchas familias les falta respuesta y reparación.", "baja": "Se hizo poco: quedan muchas preguntas y la herida sigue abierta." }
+  },
+  "acciones": {
+    "escuchar": { "costo": 20, "verdad": 8, "efectos": { "confianza": 1, "animo": -1 } },
+    "reparar": { "costo": 40, "verdad": 3, "efectos": { "igualdad": 1, "animo": 1 } },
+    "perdon": { "costo": 0, "verdad": 10, "efectos": { "confianza": 2, "elite": -2 } }
+  },
+  "final": {
+    "alta": { "desde": 70, "efectos": { "confianza": 6, "igualdad": 3, "animo": 4 } },
+    "media": { "desde": 40, "efectos": { "confianza": 3, "animo": 2 } },
+    "baja": { "desde": 0, "efectos": { "confianza": -2, "animo": -2 } }
+  }
+}

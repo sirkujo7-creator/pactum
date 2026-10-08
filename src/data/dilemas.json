@@ -2562,7 +2562,7 @@
           "confianza": -8,
           "oro": -55,
           "igualdad": -4,
-          "animo": 21.4
+          "animo": 24.3
         },
         "filosofia": "real",
         "porque": "Ceder a la furia evita enfrentarla, pero desata una violencia difícil de parar.",
@@ -2635,7 +2635,7 @@
           "campesinos": -10,
           "igualdad": -8,
           "elite": 3,
-          "animo": 17.8
+          "animo": 20.3
         },
         "filosofia": "real",
         "porque": "Callar ante el crimen es ponerse del lado del más fuerte.",
@@ -3335,7 +3335,7 @@
         "efectos": {
           "oro": -30,
           "confianza": 3,
-          "animo": 2.0
+          "animo": 2
         },
         "filosofia": "deon",
         "porque": "Escuchar la verdad de las víctimas es una forma de justicia.",
@@ -3346,7 +3346,7 @@
         "texto": "Hacerlo en privado",
         "efectos": {
           "confianza": 1,
-          "animo": 5.0
+          "animo": 5
         },
         "filosofia": "util",
         "porque": "Proteger a quien habla también importa.",
@@ -3357,7 +3357,7 @@
         "efectos": {
           "confianza": -7,
           "elite": 2,
-          "animo": 5.0
+          "animo": 5
         },
         "filosofia": "real",
         "porque": "No remover el pasado parece cómodo para algunos.",
@@ -3517,7 +3517,7 @@
           "oro": 70,
           "ambiente": -11,
           "confianza": -6,
-          "animo": 17.1
+          "animo": 20.4
         },
         "filosofia": "util",
         "porque": "Las regalías pueden pagar muchas obras hoy.",
@@ -4403,5 +4403,659 @@
         "aQuien": "Llega algo de oro y la fiesta conserva su alma."
       }
     ]
+  },
+  {
+    "id": "h_independencia",
+    "etapa": 0,
+    "icono": "🔔",
+    "titulo": "El grito de independencia",
+    "texto": "Llegan noticias de Santafé: los criollos se alzaron contra el virrey. En tu plaza se discute si seguirlos o esperar a ver quién gana.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Convocar un cabildo abierto",
+        "efectos": {
+          "confianza": 3,
+          "igualdad": 2,
+          "oro": -20,
+          "animo": 0.5
+        },
+        "filosofia": "contr",
+        "porque": "Si la soberanía vuelve al pueblo, el pueblo debe poder hablar.",
+        "aQuien": "Todos opinan en la plaza; el pueblo se siente dueño de la decisión.",
+        "huella": "pancarta"
+      },
+      {
+        "texto": "Jurar con los criollos de la élite",
+        "efectos": {
+          "elite": 4,
+          "oro": 15,
+          "igualdad": -3,
+          "animo": 0.5
+        },
+        "filosofia": "real",
+        "porque": "Quien manda en la región suele decidir primero.",
+        "aQuien": "Las familias principales firman; el resto se entera después."
+      },
+      {
+        "texto": "Esperar a ver quién gana",
+        "efectos": {
+          "oro": 10,
+          "confianza": -3,
+          "animo": 0.5
+        },
+        "filosofia": "util",
+        "porque": "Esperar evita riesgos, pero no se gana respeto.",
+        "aQuien": "Nadie te reprocha, pero tampoco te siguen."
+      }
+    ],
+    "hito": {
+      "anio": 8,
+      "fecha": "20 de julio de 1810",
+      "nota": "El 20 de julio de 1810, en Santafé de Bogotá, un incidente por un florero prestado desató el levantamiento de los criollos contra las autoridades españolas. Fue el inicio de la independencia, que se consolidó en 1819 con la batalla de Boyacá.",
+      "escena": {
+        "tipo": "marcha",
+        "titulo": "El grito de independencia",
+        "texto": "Llegan las noticias de Santafé y la plaza se llena de gente que discute."
+      }
+    }
+  },
+  {
+    "id": "h_esclavitud",
+    "etapa": 0,
+    "icono": "⛓️",
+    "titulo": "La libertad de los esclavos",
+    "texto": "Una ley nacional declara libres a los esclavos. Algunos dueños de haciendas exigen indemnización; los libertos piden tierra para vivir.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "fundacion"
+    },
+    "opciones": [
+      {
+        "texto": "Dar libertad y un pedazo de tierra",
+        "efectos": {
+          "igualdad": 5,
+          "campesinos": 4,
+          "oro": -40,
+          "elite": -3,
+          "animo": 1
+        },
+        "filosofia": "contr",
+        "porque": "La libertad sin medios para vivir deja a la gente sujeta a otros.",
+        "aQuien": "Las familias libres trabajan su tierra; los dueños protestan.",
+        "huella": "vivero"
+      },
+      {
+        "texto": "Indemnizar a los antiguos dueños",
+        "efectos": {
+          "elite": 4,
+          "oro": -50,
+          "igualdad": -1,
+          "animo": 1
+        },
+        "filosofia": "util",
+        "porque": "Compensar evita pleitos, pero paga a quienes se beneficiaron.",
+        "aQuien": "Los dueños aceptan; los libertos siguen sin tierra."
+      },
+      {
+        "texto": "Aplicar la ley sin más",
+        "efectos": {
+          "oro": 5,
+          "igualdad": 2,
+          "campesinos": -3,
+          "animo": 1
+        },
+        "filosofia": "deon",
+        "porque": "La ley es la ley, aunque no resuelva todo.",
+        "aQuien": "La libertad es real, la miseria también."
+      }
+    ],
+    "hito": {
+      "anio": 12,
+      "fecha": "21 de mayo de 1851",
+      "nota": "La ley del 21 de mayo de 1851 decretó la libertad de los esclavos en Colombia, con efecto desde el 1 de enero de 1852. Quedaba pendiente la tierra y el trabajo digno para los antiguos esclavos y sus familias.",
+      "escena": {
+        "tipo": "paz",
+        "titulo": "La libertad de los esclavos",
+        "texto": "Las familias libertas se reúnen en la plaza para escuchar la lectura de la ley."
+      }
+    }
+  },
+  {
+    "id": "h_mildias",
+    "etapa": 0,
+    "icono": "⚔️",
+    "titulo": "La Guerra de los Mil Días",
+    "texto": "El país arde en una guerra entre liberales y conservadores. Llegan reclutadores a tu territorio y cada partido te pide hombres y dinero.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Negarse a mandar tropas",
+        "efectos": {
+          "confianza": 2,
+          "campesinos": 3,
+          "oro": -25,
+          "animo": 0.3
+        },
+        "filosofia": "virt",
+        "porque": "No toda causa merece la sangre de tu pueblo.",
+        "aQuien": "Los jóvenes se quedan; los dos bandos te miran con recelo."
+      },
+      {
+        "texto": "Apoyar al gobierno con hombres",
+        "efectos": {
+          "elite": 3,
+          "oro": 30,
+          "campesinos": -5,
+          "confianza": -2,
+          "animo": 0.3
+        },
+        "filosofia": "real",
+        "porque": "Un gobernante a veces debe elegir un lado para no ser aplastado.",
+        "aQuien": "Salen soldados del pueblo; algunos no vuelven.",
+        "huella": "reten"
+      },
+      {
+        "texto": "Proteger a los pueblos con una guardia local",
+        "efectos": {
+          "oro": -35,
+          "confianza": 3,
+          "campesinos": 2,
+          "animo": 0.3
+        },
+        "filosofia": "contr",
+        "porque": "Quien defiende a los suyos gana su lealtad.",
+        "aQuien": "Tu guardia evita saqueos, pero cuesta mantenerla."
+      }
+    ],
+    "hito": {
+      "anio": 20,
+      "fecha": "Octubre de 1899 a noviembre de 1902",
+      "nota": "La Guerra de los Mil Días enfrentó a liberales y conservadores entre 1899 y 1902. Dejó decenas de miles de muertos, campos arruinados y la pérdida de Panamá poco después, en 1903.",
+      "escena": {
+        "tipo": "desplazados",
+        "titulo": "La Guerra de los Mil Días",
+        "texto": "Familias salen de las veredas cargando lo que pueden mientras la guerra se acerca."
+      }
+    }
+  },
+  {
+    "id": "h_federacion",
+    "etapa": 0,
+    "icono": "☕",
+    "titulo": "La Federación de Cafeteros",
+    "texto": "Los caficultores del país se organizan para vender juntos y cobrar un aporte por cada carga. Los pequeños temen que mande el grande; los grandes temen que mande el gobierno.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Apoyar la federación con aporte parejo",
+        "efectos": {
+          "campesinos": 4,
+          "oro": -20,
+          "confianza": 2,
+          "elite": -2,
+          "animo": 0.5
+        },
+        "filosofia": "contr",
+        "porque": "Unidos, los pequeños tienen voz frente al mercado.",
+        "aQuien": "Los cafeteros comparan precios y exigen mejor trato.",
+        "huella": "valla"
+      },
+      {
+        "texto": "Dejar que cada finca venda por su cuenta",
+        "efectos": {
+          "elite": 4,
+          "igualdad": -3,
+          "oro": 15,
+          "animo": 0.5
+        },
+        "filosofia": "util",
+        "porque": "El mercado libre premia al que produce más.",
+        "aQuien": "Los grandes cierran buenos negocios; los pequeños venden barato."
+      },
+      {
+        "texto": "Crear una cooperativa solo en tu territorio",
+        "efectos": {
+          "campesinos": 3,
+          "oro": -30,
+          "artesanos": 2,
+          "animo": 0.5
+        },
+        "filosofia": "virt",
+        "porque": "La cooperación empieza por lo cercano.",
+        "aQuien": "Funciona, pero con menos poder de negociación."
+      }
+    ],
+    "hito": {
+      "anio": 24,
+      "fecha": "Junio de 1927",
+      "nota": "La Federación Nacional de Cafeteros se fundó en 1927 para defender los intereses de los productores y organizar la comercialización del café. Con el tiempo creó el Fondo Nacional del Café, y el grano llegó a ser el principal producto de exportación del país."
+    }
+  },
+  {
+    "id": "h_bananeras",
+    "etapa": 0,
+    "icono": "🍌",
+    "titulo": "La huelga de las bananeras",
+    "texto": "Cerca de aquí, los trabajadores de una compañía extranjera paran por mejores condiciones. Tus obreros quieren apoyarlos con un paro de solidaridad.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Permitir el paro y mediar",
+        "efectos": {
+          "igualdad": 3,
+          "confianza": 2,
+          "oro": -25,
+          "animo": 0.3
+        },
+        "filosofia": "contr",
+        "porque": "Escuchar al que trabaja evita que la rabia se vuelva violencia.",
+        "aQuien": "El paro es pacífico y se logra algo de diálogo."
+      },
+      {
+        "texto": "Prohibir el paro para no enfrentar a las empresas",
+        "efectos": {
+          "elite": 4,
+          "oro": 20,
+          "confianza": -4,
+          "igualdad": -3,
+          "animo": 0.3
+        },
+        "filosofia": "real",
+        "porque": "El orden y la inversión dependen de que los poderosos estén tranquilos.",
+        "aQuien": "Hay calma en la superficie y rabia por dentro.",
+        "huella": "reten"
+      },
+      {
+        "texto": "Ponerte del lado de los obreros con alimentos y refugio",
+        "efectos": {
+          "igualdad": 4,
+          "confianza": 1,
+          "alimento": -15,
+          "elite": -3,
+          "animo": 0.3
+        },
+        "filosofia": "virt",
+        "porque": "La solidaridad se prueba en los días difíciles.",
+        "aQuien": "Los obreros te recuerdan; los empresarios, también.",
+        "huella": "olla"
+      }
+    ],
+    "hito": {
+      "anio": 29,
+      "fecha": "Diciembre de 1928",
+      "nota": "La masacre de las bananeras ocurrió en diciembre de 1928 en la zona bananera de Ciénaga, Magdalena, cuando el ejército disparó contra trabajadores de la United Fruit Company que estaban en huelga. El hecho marcó la memoria del movimiento obrero colombiano.",
+      "escena": {
+        "tipo": "marcha",
+        "titulo": "La huelga de las bananeras",
+        "texto": "Obreros marchan a la plaza con pancartas, mientras la tropa vigila."
+      }
+    }
+  },
+  {
+    "id": "h_ley200",
+    "etapa": 0,
+    "icono": "🌾",
+    "titulo": "La ley de tierras",
+    "texto": "Una ley nacional dice que la tierra es para quien la trabaja. Los terratenientes se alarman y los colonos reclaman escrituras.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "cafe"
+    },
+    "opciones": [
+      {
+        "texto": "Aplicarla a fondo y titular a los colonos",
+        "efectos": {
+          "campesinos": 5,
+          "igualdad": 4,
+          "elite": -5,
+          "oro": -25,
+          "animo": 0.5
+        },
+        "filosofia": "contr",
+        "porque": "La tierra debe cumplir una función social.",
+        "aQuien": "Los colonos reciben escrituras; los grandes propietarios protestan.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Aplicarla despacio para no romper con los dueños",
+        "efectos": {
+          "elite": 2,
+          "campesinos": 1,
+          "oro": 10,
+          "animo": 0.5
+        },
+        "filosofia": "util",
+        "porque": "Los cambios graduales evitan conflictos mayores.",
+        "aQuien": "Se avanza poco; la tensión sigue."
+      },
+      {
+        "texto": "Ignorarla en tu territorio",
+        "efectos": {
+          "elite": 4,
+          "campesinos": -4,
+          "igualdad": -4,
+          "oro": 15,
+          "animo": 0.5
+        },
+        "filosofia": "real",
+        "porque": "Quien tiene el poder rara vez cede sus tierras.",
+        "aQuien": "Todo sigue igual, y los conflictos por tierra crecen."
+      }
+    ],
+    "hito": {
+      "anio": 33,
+      "fecha": "1936",
+      "nota": "La Ley 200 de 1936, durante el gobierno de Alfonso López Pumarejo, intentó ordenar la propiedad rural y reconoció derechos a quienes trabajaban la tierra. Su aplicación fue difícil y los conflictos por la tierra continuaron."
+    }
+  },
+  {
+    "id": "h_rojas",
+    "etapa": 0,
+    "icono": "🎖️",
+    "titulo": "El general y la amnistía",
+    "texto": "Un general toma el poder y ofrece amnistía a los alzados en armas. En las veredas hay guerrilleros liberales que dudan en entregarse.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "violencia"
+    },
+    "opciones": [
+      {
+        "texto": "Garantizar la entrega y proteger a quienes se acojan",
+        "efectos": {
+          "confianza": 4,
+          "campesinos": 3,
+          "oro": -30
+        },
+        "filosofia": "deon",
+        "porque": "Si se promete algo, hay que cumplirlo.",
+        "aQuien": "Muchos bajan de la montaña y la violencia se reduce un tiempo.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Aceptar la amnistía y vigilar a los entregados",
+        "efectos": {
+          "confianza": -1,
+          "elite": 3,
+          "oro": 10
+        },
+        "filosofia": "real",
+        "porque": "La paz sin vigilancia es una apuesta.",
+        "aQuien": "Se entregan menos hombres; la desconfianza continúa.",
+        "huella": "reten"
+      },
+      {
+        "texto": "No comprometerte con el nuevo gobierno",
+        "efectos": {
+          "confianza": 2,
+          "oro": -15,
+          "campesinos": -2
+        },
+        "filosofia": "virt",
+        "porque": "Un gobernante prudente no se fía de quien llega por la fuerza.",
+        "aQuien": "Mantienes distancia, pero sin protección ni aliados."
+      }
+    ],
+    "hito": {
+      "anio": 44,
+      "fecha": "13 de junio de 1953",
+      "nota": "El 13 de junio de 1953 el general Gustavo Rojas Pinilla asumió el poder tras un golpe de Estado. Ofreció una amnistía a los grupos armados y muchos guerrilleros liberales se entregaron, aunque la violencia volvió después.",
+      "escena": {
+        "tipo": "paz",
+        "titulo": "El general y la amnistía",
+        "texto": "Hombres de monte bajan hasta la plaza para entregar sus armas."
+      }
+    }
+  },
+  {
+    "id": "h_agraria",
+    "etapa": 0,
+    "icono": "🚜",
+    "titulo": "La reforma agraria",
+    "texto": "Una ley nacional crea un instituto para repartir tierras y organizar el campo. Los terratenientes se oponen; los campesinos esperan.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Impulsar el reparto de tierras en tu territorio",
+        "efectos": {
+          "campesinos": 5,
+          "igualdad": 4,
+          "elite": -5,
+          "oro": -30,
+          "animo": 1.4
+        },
+        "filosofia": "contr",
+        "porque": "La tierra concentrada en pocas manos es una fuente de injusticia.",
+        "aQuien": "Familias campesinas reciben parcelas; los grandes dueños presionan.",
+        "huella": "vivero"
+      },
+      {
+        "texto": "Comprar tierras a precio justo y repartirlas poco a poco",
+        "efectos": {
+          "campesinos": 3,
+          "igualdad": 2,
+          "oro": -50,
+          "animo": 1.4
+        },
+        "filosofia": "util",
+        "porque": "Pagar lo justo evita pleitos y reparte con orden.",
+        "aQuien": "El reparto avanza sin violencia, pero cuesta mucho."
+      },
+      {
+        "texto": "Dejar que el instituto trabaje solo",
+        "efectos": {
+          "oro": 10,
+          "campesinos": -2,
+          "confianza": -2,
+          "animo": 1.4
+        },
+        "filosofia": "deon",
+        "porque": "Cada institución debe hacer su trabajo.",
+        "aQuien": "El instituto avanza lento y nadie lo vigila."
+      }
+    ],
+    "hito": {
+      "anio": 58,
+      "fecha": "Ley 135 de 1961",
+      "nota": "La Ley 135 de 1961 creó el Instituto Colombiano de la Reforma Agraria (INCORA) y buscó redistribuir tierras y mejorar las condiciones del campo. Sus resultados fueron limitados frente al tamaño del problema."
+    }
+  },
+  {
+    "id": "h_marquetalia",
+    "etapa": 0,
+    "icono": "⛰️",
+    "titulo": "Marquetalia",
+    "texto": "En una vereda de Planadas hay campesinos organizados en autodefensas que el gobierno quiere desalojar. Te piden que tomes posición.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "modernizacion"
+    },
+    "opciones": [
+      {
+        "texto": "Pedir diálogo y presencia del Estado con obras",
+        "efectos": {
+          "confianza": 3,
+          "campesinos": 3,
+          "oro": -35
+        },
+        "filosofia": "contr",
+        "porque": "Sin escuela, camino y salud, la fuerza no resuelve nada.",
+        "aQuien": "Se abre una mesa y se promete una carretera; las promesas tardan.",
+        "huella": "placa"
+      },
+      {
+        "texto": "Apoyar la operación militar",
+        "efectos": {
+          "elite": 3,
+          "oro": 15,
+          "campesinos": -5,
+          "confianza": -3
+        },
+        "filosofia": "real",
+        "porque": "El Estado debe controlar todo su territorio.",
+        "aQuien": "Hay ataque; muchos campesinos huyen a la montaña.",
+        "huella": "reten"
+      },
+      {
+        "texto": "Declararte neutral y acoger a los desplazados",
+        "efectos": {
+          "habitantes": 3,
+          "alimento": -20,
+          "igualdad": 2,
+          "confianza": 1
+        },
+        "filosofia": "virt",
+        "porque": "Cuidar al que huye es lo mínimo que se debe hacer.",
+        "aQuien": "Llegan familias a tu territorio con hambre y miedo.",
+        "huella": "olla"
+      }
+    ],
+    "hito": {
+      "anio": 65,
+      "fecha": "Mayo de 1964",
+      "nota": "En mayo de 1964 el ejército atacó la región de Marquetalia, en Planadas (Tolima), donde campesinos organizados en autodefensas, liderados por Manuel Marulanda, resistían. De ese episodio se suele ubicar el origen de las FARC.",
+      "escena": {
+        "tipo": "desplazados",
+        "titulo": "Marquetalia",
+        "texto": "Familias salen de las veredas de Planadas con lo que pueden cargar."
+      }
+    }
+  },
+  {
+    "id": "h_armero",
+    "etapa": 0,
+    "icono": "🌋",
+    "titulo": "La noche de Armero",
+    "texto": "Una erupción del volcán Nevado del Ruiz derrite el hielo y una avalancha de lodo baja por el río Lagunillas. Armero, a pocos kilómetros, queda sepultada.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "paz"
+    },
+    "opciones": [
+      {
+        "texto": "Abrir albergues y recibir a los sobrevivientes",
+        "efectos": {
+          "habitantes": 4,
+          "alimento": -30,
+          "oro": -35,
+          "confianza": 3,
+          "igualdad": 2,
+          "animo": 0.3
+        },
+        "filosofia": "virt",
+        "porque": "El deber con el que sufre no admite excusas.",
+        "aQuien": "Tu pueblo recibe niños, ancianos y huérfanos; el esfuerzo se nota.",
+        "huella": "olla"
+      },
+      {
+        "texto": "Enviar rescatistas y dinero, sin recibir refugiados",
+        "efectos": {
+          "oro": -40,
+          "confianza": 1,
+          "habitantes": -1,
+          "animo": 0.3
+        },
+        "filosofia": "util",
+        "porque": "Ayudar a distancia permite sostener a todos.",
+        "aQuien": "Llega ayuda a la zona, pero tu pueblo no cambia."
+      },
+      {
+        "texto": "Reforzar la alerta y reubicar a quienes viven junto a los ríos",
+        "efectos": {
+          "oro": -45,
+          "ambiente": 2,
+          "confianza": 2,
+          "habitantes": 1,
+          "animo": 0.3
+        },
+        "filosofia": "deon",
+        "porque": "Prevenir es una obligación de quien gobierna.",
+        "aQuien": "Se evita otra tragedia; algunos se resisten a mudarse.",
+        "huella": "placa"
+      }
+    ],
+    "hito": {
+      "anio": 76,
+      "fecha": "13 de noviembre de 1985",
+      "nota": "El 13 de noviembre de 1985 una avalancha producida por la erupción del Nevado del Ruiz destruyó Armero, en el Tolima, y causó la muerte de más de veinte mil personas. Se habían emitido advertencias que no se atendieron a tiempo. Hoy el sitio es un lugar de memoria.",
+      "escena": {
+        "tipo": "procesion",
+        "titulo": "La noche de Armero",
+        "texto": "Una larga fila de velas recorre el pueblo en honor a las víctimas."
+      }
+    }
+  },
+  {
+    "id": "h_pandemia",
+    "etapa": 0,
+    "icono": "😷",
+    "titulo": "La cuarentena",
+    "texto": "Llega un virus nuevo que se contagia por el aire. Los médicos piden encerrar a la gente; los comerciantes y jornaleros no pueden dejar de trabajar.",
+    "condicion": {
+      "nuevo": true,
+      "epoca": "digital"
+    },
+    "opciones": [
+      {
+        "texto": "Cuarentena estricta con mercados a domicilio",
+        "efectos": {
+          "ambiente": 1,
+          "confianza": 2,
+          "oro": -50,
+          "habitantes": 2,
+          "animo": 1.6
+        },
+        "filosofia": "deon",
+        "porque": "Cuidar la vida es lo primero.",
+        "aQuien": "Se salvan muchas vidas; la economía sufre.",
+        "huella": "olla"
+      },
+      {
+        "texto": "Cuarentena parcial y apoyos a quienes no pueden parar",
+        "efectos": {
+          "oro": -35,
+          "igualdad": 2,
+          "campesinos": 2,
+          "confianza": 1,
+          "animo": 1.6
+        },
+        "filosofia": "util",
+        "porque": "Equilibrar salud y sustento reparte el sacrificio.",
+        "aQuien": "Muchos se protegen, otros se arriesgan por comer."
+      },
+      {
+        "texto": "Abrir todo con protocolos básicos",
+        "efectos": {
+          "oro": 15,
+          "confianza": -3,
+          "habitantes": -3,
+          "elite": 2,
+          "animo": 1.6
+        },
+        "filosofia": "real",
+        "porque": "La economía no puede detenerse.",
+        "aQuien": "Se reactiva el comercio; hay más contagios y desconfianza."
+      }
+    ],
+    "hito": {
+      "anio": 95,
+      "fecha": "Marzo de 2020",
+      "nota": "El primer caso de covid-19 en Colombia se confirmó el 6 de marzo de 2020 y el aislamiento obligatorio comenzó a finales de ese mes. La pandemia agravó la pobreza y mostró desigualdades en el acceso a salud, internet y educación."
+    }
   }
 ]
