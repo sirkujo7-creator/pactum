@@ -6,6 +6,7 @@ import { plazaOk } from './plaza.js';
 import { tarjetasDelAnio } from './tarjetas.js';
 import { materialesActivos, producirMat } from './materiales.js';
 import { exteriorDelAnio } from './exterior.js';
+import { mundoDelAnio } from './mundovivo.js';
 import { C } from './contenido.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
@@ -191,6 +192,7 @@ export function advance(S) {
   news.push(...colonosDelAnio(S)); // huellas: colonos en los baldíos
   sincronizarLeyes(S);
   news.push(...exteriorDelAnio(S)); // fase 15: la polis en el mundo
+  news.push(...mundoDelAnio(S)); // fase 16: lo que pasa en las polis vecinas llega a tu plaza
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));

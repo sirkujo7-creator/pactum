@@ -14,6 +14,7 @@ Estos archivos guardan todo el texto y los números del juego. Se pueden editar 
 | `mejoras.json` | Mejorar edificios por nivel: qué obras se pueden mejorar, cuánto cuesta y qué da cada nivel |
 | `placas.json` | La placa de cada edificio: lo que significaba en cada época de la historia (con hechos y fechas reales) |
 | `almanaque.json` | «Mientras tanto en Colombia y en el mundo»: hechos reales por época con su fecha verdadera y algún verso de dominio público (los marcados `revisar` esperan a Juan) |
+| `mundo_vivo.json` | Hechos reales de las polis vecinas por época que llegan a tu plaza; un tratado con la polis protagonista cambia el efecto (`conTrato`) |
 | `suelos.json` | La vocación del suelo: clases de suelo (vega, llanura, tierra seca, ladera) y qué tanto sirve cada una a cada cultivo |
 | `plaza.json` | La plaza por niveles: qué pide cada nivel, cuánto cuesta y los topes de obras |
 | `leyes.json` | Leyes y en qué etapa se abren |
