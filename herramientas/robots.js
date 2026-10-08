@@ -3,7 +3,7 @@
 import {
   sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
   industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
-  civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
+  plazaActiva, estadoPlaza, motivoMejora, mejorarPlaza, civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -26,6 +26,7 @@ export function botYear(S, strat, eth, op = {}) {
   if (want) ['c', 'a', 'e'].forEach(k => S.tx[k] = taxLimit(S, k, want[k]));
   // Fase 1: la estrategia equilibrada ahorra en el fondo de emergencias desde Pueblo, hasta tener lo que costaría
   // una emergencia hoy (o mientras haya un fenómeno anunciado).
+  if (plazaActiva(S) && !motivoMejora(S)) mejorarPlaza(S); // fase 17: mejoran la plaza en cuanto reúnen lo que pide
   if (S.clima) S.aporteFondo = prep && S.stage >= 1 && (S.fondo < fondoSugerido(S) * 1.2 || S.clima.pronostico) ? FONDO : 0;
   // Mantenimiento de las obras (MANT=0..100 para probar; por defecto 100%). La estrategia equilibrada repara lo agrietado.
   if (S.clima) { S.mant = MANT; if (prep) S.map.forEach((x, i) => { if (x.u >= 50) { const g = costoReparar(S, i); if (g && S.gold > g + 40) reparar(S, i); } }); }
@@ -93,6 +94,7 @@ export function botYear(S, strat, eth, op = {}) {
     for (const k in eo) c2[k] += eo[k];
     let k = null;
     if (F2.fprod - F2.cons < 4 && S.food < 40) k = 'cultivo';
+    // (los robots no persiguen los requisitos de la plaza: los cumplen al construir lo de siempre)
     else if (F2.so.un > 2 && F2.so.camp >= F2.so.jc && F2.fprod - F2.cons < 10) k = 'cultivo';
     else if (F2.so.un > 3) k = (S.stage >= 1 && strat !== 'fair' && c2.taller < 3) ? 'taller' : 'mercado';
     else if (S.stage >= 1 && S.pop > waterCap(S, c2) - 15) k = 'acueducto';
@@ -116,6 +118,8 @@ export function botYear(S, strat, eth, op = {}) {
     else if (S.stage >= 3 && S.expc > 4 && c2.universidad < 2 && S.gold > 300) k = 'universidad';
     else if (S.stage >= 3 && c2.universidad < 1) k = 'universidad';
     if (!k) break;
+    // Fase 17: si ya reúnen lo que pide la plaza, ahorran para mejorarla (salvo comida y agua, que no esperan).
+    if (prep && plazaActiva(S)) { const E = estadoPlaza(S); if (E && E.proximo && E.proximo.cumple && S.gold < E.proximo.costo + cost(S, k) && k !== 'cultivo' && k !== 'acueducto') break; }
     const pref = k === 'cultivo' ? (i => nearRiver(S, i)) : ['casa', 'mercado', 'escuela', 'hospital', 'policia', 'taller', 'agora', 'banco', 'universidad', 'parque'].includes(k) ? (i => !nearRiver(S, i)) : null;
     let t = freeTiles(S, k);
     if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));

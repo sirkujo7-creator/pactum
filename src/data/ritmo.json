@@ -11,17 +11,17 @@
     {
       "habitantes": 55,
       "anio": 12,
-      "requisito": "55 habitantes, desde el año 12"
+      "requisito": "55 habitantes, desde el año 12 y la plaza mayor"
     },
     {
       "habitantes": 130,
       "anio": 40,
-      "requisito": "130 habitantes, una escuela y un hospital, desde el año 40"
+      "requisito": "130 habitantes, una escuela y un hospital, desde el año 40 y la plaza cívica"
     },
     {
       "habitantes": 220,
       "anio": 68,
-      "requisito": "220 habitantes, un ágora y legitimidad de 55, desde el año 68"
+      "requisito": "220 habitantes, un ágora y legitimidad de 55, desde el año 68 y la plaza de la polis"
     }
   ],
   "personajes": {

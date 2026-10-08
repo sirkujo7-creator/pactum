@@ -25,6 +25,7 @@ export function whyNot(S, k, i) {
   if (!(finca && k === 'cultivo' ? ['llano', 'bosque'] : b.ok).includes(x.t)) return `${b.n}: ese terreno no sirve.`;
   if (b.hmin && (x.h || 0) < b.hmin) return `${b.n}: necesita ladera (terreno alto).`;
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;
+  const tp = motivoTope(S, k); if (tp) return tp; // fase 17: el tope de la plaza
   const pago = cuotaInicial(S, k, cost(S, k));
   if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
   return '';
@@ -103,6 +104,7 @@ import { esPatrimonio, recordar } from './memoria.js';
 import { industriaActiva } from './industria.js';
 import { avanzarFundacion } from './estado.js';
 import { motivoFundacion, esColono } from './huellas.js';
+import { motivoTope } from './plaza.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };

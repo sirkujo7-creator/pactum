@@ -2,7 +2,7 @@
 // meta y guía, barra inferior con Construir, Hacienda, Sociedad, Leyes, Crónica y Terminar el año,
 // paneles que suben desde abajo (a un lado en computador), fichas, tarjetas de dilemas y avisos.
 import {
-  C, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
+  C, topeDe, estadoPlaza, motivoMejora, mejorarPlaza, counts, finance, totDebt, cost, waterCap, energy, poweredT, whyNot, vistaPrevia, seatName, RG, RM, D,
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
@@ -253,14 +253,15 @@ export class Interfaz {
   renderConstruir() {
     const S = this.S;
     this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
-      const bloqueada = b.st > S.stage;
+      const tope = topeDe(S, k), cuantos = S.map.reduce((n, x) => n + (x.b === k ? 1 : 0), 0), alTope = tope !== Infinity && cuantos >= tope && b.st <= S.stage;
+      const bloqueada = b.st > S.stage || alTope;
       return el('button', {
         class: 'tool' + (this.herramienta === k ? ' on' : ''), 'aria-pressed': String(this.herramienta === k),
         ...(bloqueada ? { disabled: '' } : {}), on: { click: () => this.elegir(k) }
       }, [
-        bloqueada ? el('span', { class: 'candado', text: '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
+        bloqueada ? el('span', { class: 'candado', text: alTope ? '⛲' : '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
         this.nombre(k),
-        el('small', { html: bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}` })
+        el('small', { html: alTope ? `Tope ${tope}` : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}` })
       ]);
     }));
     // Fase 9: calles en damero (van por los bordes de las casillas); van primero para que se vean en el celular.
@@ -801,6 +802,7 @@ export class Interfaz {
       if (x.qm !== undefined && quemadaVisible(S, x)) hijos.push(el('span', { class: 'especial', text: C.HUELLAS.guerra.textos.quemada.replace('{anio}', x.qm) }));
       for (const id of this.mapa.leyesAqui ? this.mapa.leyesAqui(i, x) : []) hijos.push(el('span', { class: 'small', style: 'grid-column:1/-1', text: `⚖️ ${datosLey(id).n}: ${C.HUELLAS.leyes[id].texto}` })); // huellas: las leyes que se ven aquí
       if (x.b === 'fundacion') { const r = radioCasco(S); hijos.push(el('span', { class: 'small', text: (r ? C.HUELLAS.fundacion.textos.casco.replace('{r}', r) + ' ' : '') + C.HUELLAS.leccion })); }
+      if (x.b === 'fundacion' && estadoPlaza(S)) hijos.push(el('button', { class: 'btn', style: 'grid-column:1/-1;margin-top:6px', on: { click: () => { this.cerrarFicha(); this.tarjetaPlaza(); } } }, C.PLAZA.textos.mejorar + ` (${estadoPlaza(S).nombre})`));
       const g = x.ob ? devolucionObra(x) : Math.round(cost(S, x.b) * .3), rep = S.desgaste && !x.ob ? costoReparar(S, i) : 0;
       if (rep) hijos.push(el('button', { class: 'btn', style: 'grid-column:1/-1;margin-top:6px', ...(S.over || S.gold < rep ? { disabled: '' } : {}), on: { click: () => this.mapa.repararObra(i) } }, x.ru ? C.HUELLAS.ruinas.textos.boton.replace('{c}', rep) : `Reparar (−${rep} oro)`));
       hijos.push(el('div', { class: 'dos' }, [
@@ -1788,8 +1790,26 @@ export class Interfaz {
       if (p.ir.hoja) { this.abrirHoja(p.ir.hoja); if (p.ir.seccion) requestAnimationFrame(() => { const d = document.querySelector(`.pleg[data-pl="${p.ir.seccion}"]`); if (d) { if (d.tagName === 'DETAILS') d.open = true; d.scrollIntoView({ block: 'start', behavior: 'smooth' }); } }); }
       else if (p.ir.mundo) this.tarjetaMundo(p.ir.mundo);
       else if (p.ir.caminos) this.caminosVictoria();
+      else if (p.ir.plaza) this.tarjetaPlaza();
       else if (p.ir.casilla !== undefined) { this.mapa.enfocarCasilla(p.ir.casilla); this.abrirFicha(p.ir.casilla); }
     });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Fase 17: la plaza por niveles (nivel, topes de obras y lo que pide el siguiente nivel).
+  tarjetaPlaza() {
+    const S = this.S, E = estadoPlaza(S), T = C.PLAZA.textos;
+    if (!E) { this.toast('La plaza por niveles se abre en las partidas en acuarela.'); return; }
+    const pr = E.proximo, mot = motivoMejora(S);
+    const topes = E.topes.map(t => `<tr><td>${C.B[t.k].e} ${C.B[t.k].n}</td><td class="${t.tienes >= t.tope ? 'neg' : ''}">${t.tienes} de ${t.tope}</td></tr>`).join('');
+    this.tarjeta(`<div class="big">⛲</div><h3>${E.nombre}</h3><p>${E.texto}</p>
+      <div class="ledger"><table class="budget">${topes}</table></div>
+      <p class="small">Las casas, escuelas, hospitales y demás servicios no tienen tope.</p>
+      ${pr ? `<h3>Siguiente: ${pr.nombre}</h3><p class="small">${pr.texto}</p>
+        <div class="ledger"><table class="budget">${pr.filas.map(f => `<tr><td>${f.ok ? '✅' : '⬜'} ${f.texto}</td><td></td></tr>`).join('')}<tr><td>Costo</td><td class="${S.gold < pr.costo ? 'neg' : ''}">${pr.costo} de oro</td></tr></table></div>
+        <p class="small">Abre topes más altos: ${pr.topes.map(t => `${C.B[t.k].n.toLowerCase()} hasta ${t.tope}`).join(', ')}. ${pr.nivel <= 3 ? `Para subir a ${C.STAGES[pr.nivel] ? C.STAGES[pr.nivel].n : ''} hace falta tener esta plaza.` : ''}</p>
+        <button class="main" id="mejorarB" ${mot || S.over ? 'disabled' : ''}>${T.mejorar}</button>${mot ? `<p class="small neg">${mot}</p>` : ''}` : `<p class="small">${T.maximo}</p>`}
+      <div class="phil"><b>Lo que enseña</b><br>${C.PLAZA.leccion}</div><button class="main" id="okB">Cerrar</button>`);
+    this.boton('mejorarB', () => { const r = mejorarPlaza(S); if (r === true) { this.cerrarTarjeta(); this.toast(T.mejorada.replace('{nombre}', estadoPlaza(S).nombre)); this.mapa.cambio && this.mapa.cambio(true); this.render(); } else this.toast(r); });
     this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 15: la pantalla «El mundo».
