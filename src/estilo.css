@@ -465,3 +465,7 @@ section.fija>.pl-c{padding:0 12px 10px}
 .pleg.nuevo{border-color:#B6452C;box-shadow:0 0 0 1px rgba(182,69,44,.25)}
 .dk{position:relative}.dk.nuevo::after{content:'';position:absolute;top:4px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:#B6452C;box-shadow:0 0 0 2px var(--bg,#F7F1E3)}
 .pe-cifras{border-top:1.5px solid #2A221C;border-bottom:1.5px solid #2A221C;padding:6px 2px;margin:0 0 12px}.pe-cifras b{font-family:Alegreya,Georgia,serif;font-variant:small-caps}.pe-cifras ul{margin:4px 0 0;padding-left:0;list-style:none;font-size:.9rem}
+.hud{flex-direction:column;gap:3px}.hudf{display:flex;flex-wrap:wrap;gap:4px;width:100%}.hud>.pill{width:fit-content}
+.ic-mat{font-size:15px;line-height:1;width:21px;text-align:center}
+.mat-fila{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}.mat-fila small{color:var(--muted)}
+@media (max-width:520px){.hudf{flex-wrap:nowrap}.hud{flex-direction:column}}

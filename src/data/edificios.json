@@ -178,7 +178,7 @@
     "icono": "⛏️",
     "nombre": "Mina",
     "articulo": "una mina",
-    "descripcion": "Solo en montaña. Emplea 10 y paga 25 de regalías. Daña mucho el ambiente.",
+    "descripcion": "Solo en montaña. Emplea 10 y paga 25 de regalías. Daña mucho el ambiente. Da 4 de metal al año.",
     "costo": 120,
     "mantenimiento": 5,
     "etapa": 2,
@@ -375,5 +375,33 @@
       "bosque"
     ],
     "especial": "Da sepultura a 40 muertos. Las tumbas se ven crecer con cada muerte."
+  },
+  "aserradero": {
+    "icono": "🪵",
+    "nombre": "Aserradero",
+    "articulo": "un aserradero",
+    "descripcion": "Corta y asierra la madera que piden las obras. Da 8 de madera al año. En el bosque, talar cuesta ambiente.",
+    "costo": 25,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ],
+    "especial": "Produce madera para construir."
+  },
+  "cantera": {
+    "icono": "🪨",
+    "nombre": "Cantera",
+    "articulo": "una cantera",
+    "descripcion": "Saca la piedra que piden las obras. Da 7 de piedra al año.",
+    "costo": 30,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano",
+      "montana"
+    ],
+    "especial": "Produce piedra para construir."
   }
 }

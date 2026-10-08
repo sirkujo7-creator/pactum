@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -245,12 +245,16 @@ export class Interfaz {
     this.era.innerHTML = `${C.STAGES[S.stage].n}, año ${S.year}${S.stage === 3 ? `. Polis ${S.polisYears}/${aniosPolis(S)}` : ''}${L ? ` · ${L.icono}<span class="lluv-nom"> ${L.nombre.toLowerCase()}</span>` : ''}${economiaActiva(S) && S.eco.fase !== 'normal' ? ` · ${C.ECO.fases[S.eco.fase].icono}<span class="lluv-nom"> ${C.ECO.fases[S.eco.fase].nombre.toLowerCase()}</span>` : ''}`;
     this.era.title = L ? `${L.texto} ${C.CLIMA.leccion}${temp ? ` Ahora es temporada ${temp === 'lluvias' ? 'de lluvias' : 'seca'}.` : ''}` : '';
     const dfood = F.fprod - F.cons, pa = precioAlimento(S);
-    this.hud.innerHTML =
-      `<div class="pill" title="Oro">${IC.gold}<b class="${S.gold < 0 ? 'neg' : ''}">${Math.round(S.gold)}</b></div>` +
-      `<div class="pill" title="Deuda">${IC.debt}<b>${Math.round(totDebt(S))}</b></div>` +
-      `<div class="pill" title="Alimento${pa !== 1 ? '. ' + C.ECO.textos.pastilla.replace('{p}', pa.toLocaleString('es-CO')) : ''}">${IC.food}<b>${Math.round(S.food)}</b><small class="${dfood < 0 ? 'neg' : ''}">${dfood >= 0 ? '+' : '−'}${Math.abs(dfood)}</small>${pa >= 1.15 ? `<small class="precio neg" aria-label="precio alto">▲${pa.toLocaleString('es-CO')}</small>` : pa <= .85 ? `<small class="precio pos" aria-label="precio bajo">▼${pa.toLocaleString('es-CO')}</small>` : ''}</div>` +
-      `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>` +
-      (S.stage >= 1 ? `<div class="pill" title="Agua">${IC.agua}<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">${IC.energia}<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '');
+    const pOro = `<div class="pill" title="Oro">${IC.gold}<b class="${S.gold < 0 ? 'neg' : ''}">${Math.round(S.gold)}</b></div>`;
+    const pDeuda = `<div class="pill" title="Deuda">${IC.debt}<b>${Math.round(totDebt(S))}</b></div>`;
+    const pAli = `<div class="pill" title="Alimento${pa !== 1 ? '. ' + C.ECO.textos.pastilla.replace('{p}', pa.toLocaleString('es-CO')) : ''}">${IC.food}<b>${Math.round(S.food)}</b><small class="${dfood < 0 ? 'neg' : ''}">${dfood >= 0 ? '+' : '−'}${Math.abs(dfood)}</small>${pa >= 1.15 ? `<small class="precio neg" aria-label="precio alto">▲${pa.toLocaleString('es-CO')}</small>` : pa <= .85 ? `<small class="precio pos" aria-label="precio bajo">▼${pa.toLocaleString('es-CO')}</small>` : ''}</div>`;
+    const pPop = `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>`;
+    const pSer = S.stage >= 1 ? `<div class="pill" title="Agua">${IC.agua}<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">${IC.energia}<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '';
+    if (materialesActivos(S)) { // fase 17: servicios arriba; oro, alimento y materiales debajo
+      const prod = produccionMat(S, F.trab === undefined ? 1 : F.trab);
+      const pMat = MATERIALES.map(m => { const D = datosMaterial(m), n = Math.round(prod[m] || 0); return `<div class="pill" title="${D.nombre}: ${Math.floor(S.mat[m])}${n ? `, +${n} al año` : ''}"><span class="ic-mat" aria-hidden="true">${D.icono}</span><b>${Math.floor(S.mat[m])}</b>${n ? `<small>+${n}</small>` : ''}</div>`; }).join('');
+      this.hud.innerHTML = `<div class="hudf">${pDeuda}${pPop}${pSer}</div><div class="hudf">${pOro}${pAli}${pMat}</div>`;
+    } else this.hud.innerHTML = pOro + pDeuda + pAli + pPop + pSer;
     this.medidores.replaceChildren(
       ...[['Bienestar', pintado('bienestar', 'mi'), S.hap, 'hap'], ['Igualdad', pintado('igualdad', 'mi'), S.eq, 'eq'], ['Legitimidad', pintado('legitimidad', 'mi'), S.tr, 'tr'], ['Ambiente', pintado('ambiente', 'mi'), S.env, 'env']].map(([n, ico, v, k]) =>
         el('button', { class: 'medidor', title: `${n}: ${Math.round(v)} de 100. ${C.IND[k].que} Toca para ver por qué sube o baja.`, 'aria-label': `${n}: ${Math.round(v)} de 100. Ver por qué`, on: { click: () => this.explicar(k) }, html: `<div class="lab"><span><span class="ico" aria-hidden="true">${ico}</span><span class="nom">${n}</span></span><b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div>` })),
@@ -288,9 +292,15 @@ export class Interfaz {
     if (abierta === 'cronica') this.renderCronica();
   }
 
+  // Lo que pide una obra además del oro, en iconos (en rojo lo que falta).
+  textoMat(k) {
+    const S = this.S; if (!materialesActivos(S)) return '';
+    const f = faltanteMat(S, k), I = { alimento: '🌽', madera: '🪵', piedra: '🪨', metal: '⛓️' };
+    return Object.entries(costoMat(S, k)).map(([m, n]) => ` <span class="${f[m] ? 'neg' : ''}">${I[m]}${n}</span>`).join('');
+  }
   renderConstruir() {
     const S = this.S;
-    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
+    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S)) && ((k !== 'aserradero' && k !== 'cantera') || materialesActivos(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
       const tope = topeDe(S, k), cuantos = S.map.reduce((n, x) => n + (x.b === k ? 1 : 0), 0), alTope = tope !== Infinity && cuantos >= tope && b.st <= S.stage;
       const bloqueada = b.st > S.stage || alTope;
       return el('button', {
@@ -299,7 +309,7 @@ export class Interfaz {
       }, [
         bloqueada ? el('span', { class: 'candado', text: alTope ? '⛲' : '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
         this.nombre(k),
-        el('small', { html: alTope ? `Tope ${tope}` : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}` })
+        el('small', { html: alTope ? `Tope ${tope}` : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}${this.textoMat(k)}` })
       ]);
     }));
     // Fase 9: calles en damero (van por los bordes de las casillas); van primero para que se vean en el celular.
@@ -338,6 +348,13 @@ export class Interfaz {
     this.hoja.classList.toggle('mini', !!k);
   }
 
+  // El almacén (fase 17): lo que hay, lo que producen las obras y la compra a los vecinos.
+  seccionAlmacen() {
+    const S = this.S; if (!materialesActivos(S)) return '';
+    const T = C.MAT.textos, P = produccionMat(S, finance(S).trab);
+    const fila = m => { const D = datosMaterial(m), n = Math.round(P[m] || 0); return `<div class="mat-fila"><span>${D.icono} <b>${D.nombre}</b>: ${Math.floor(S.mat[m])} <small>${n ? `+${n} al año` : 'no produces'}</small></span><button class="btn" data-comprar="${m}" ${S.gold < precioCompra(S, m, C.MAT.compra.lote) ? 'disabled' : ''}>+${C.MAT.compra.lote} · ${precioCompra(S, m, C.MAT.compra.lote)} 💰</button></div>`; };
+    return `<p class="small">${T.ayuda}</p>${MATERIALES.map(fila).join('')}<p class="small"><i>${C.MAT.leccion}</i></p>`;
+  }
   renderHacienda(F, R) {
     const S = this.S, cb = canBorrow(S) && !S.over;
     const fila = (k, n) => `<div class="txrow"><span>${n}</span><input type="range" min="0" max="${k === 'e' ? 50 : 40}" value="${S.tx[k]}" data-tx="${k}" aria-label="Impuesto a ${n.toLowerCase()}"><strong>${S.tx[k]}%</strong></div>`;
@@ -360,10 +377,12 @@ export class Interfaz {
         <p class="small">Guardado: <b>${Math.round(S.fondo || 0)} de oro</b>. Una emergencia hoy costaría unos ${fondoSugerido(S)}. ${C.CLIMA.fondo.leccion}</p>`, null, `${Math.round(S.fondo || 0)} de oro`) : ''}
       ${sec('h-riesgo', this.seccionRiesgo())}${sec('h-mega', this.seccionMega())}
       ${sec('h-economia', this.seccionEconomia())}${sec('h-canasta', this.seccionCanasta(), 'Canasta del campo y la industria')}${sec('h-industria', this.seccionIndustria())}${sec('h-clima', this.seccionClimaTerritorio())}${sec('h-ciclos', this.seccionCiclos(), 'Ciclos: café, roya y pensiones')}
+      ${sec('h-almacen', this.seccionAlmacen(), '🪵 Almacén de materiales', materialesActivos(S) ? MATERIALES.map(m => `${datosMaterial(m).icono}${Math.floor(S.mat[m])}`).join(' ') : '')}
       ${sec('h-ejercito', this.seccionEjercito())}
       ${sec('h-mant', this.seccionMantenimiento())}
       ${S.bonds.length ? sec('h-bonos', `<p class="small">Bonos: ${S.bonds.map(b => `${b.amt} al ${Math.round(b.cpn * 100)}%, vence año ${b.due}`).join('; ')}.</p>`, 'Bonos', `${S.bonds.length}`) : ''}`;
     this.activarPlegables(this.cuentas);
+    this.cuentas.querySelectorAll('[data-comprar]').forEach(b => b.onclick = () => { const oro = comprarMat(S, b.dataset.comprar); if (oro) { Sonido.tap && Sonido.tap(); this.toast(C.MAT.textos.comprado.replace('{n}', C.MAT.compra.lote).replace('{mat}', datosMaterial(b.dataset.comprar).nombre.toLowerCase()).replace('{oro}', oro)); this.render(); } else this.toast(C.MAT.textos.sinOro); });
     this.cuentas.querySelectorAll('[data-tx]').forEach(inp => {
       inp.oninput = () => {
         const k = inp.dataset.tx, want = +inp.value, v = taxLimit(S, k, want);

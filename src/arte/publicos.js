@@ -707,6 +707,49 @@ function mercadoCubierto(g, e, vacio) {
   for (const [u, cols] of [[.18, TOLDOS[1][0]], [.82, TOLDOS[1][2]]]) { const a = F.en('izq', u - .1, 8.4), b = F.en('izq', u + .1, 8.4), a2 = P(F.f + .14, F.a + (F.b - F.a) * (u - .1), 6.6), b2 = P(F.f + .14, F.a + (F.b - F.a) * (u + .1), 6.6); rellena(g, [a, b, b2, a2], cols[0], K.contorno, .3); }
 }
 
+// ---------- Obras de materiales (fase 17) ----------
+// Caja plana con luz arriba a la izquierda: cara izquierda clara, derecha en sombra y tapa luminosa.
+function caja(g, w, d, h, r, c, z0, col) {
+  const B = caras(w, d, h, r, c, z0);
+  rellena(g, B.izq, col); rellena(g, B.der, mezcla(col, '#000000', .22));
+  const z = z0 + h; rellena(g, [P(B.f, B.a, z), P(B.f, B.b, z), P(B.t, B.b, z), P(B.t, B.a, z)], mezcla(col, '#FFFFFF', .2));
+  return B;
+}
+// Un rollizo tumbado: cuerpo y su corte circular al frente.
+function rollizo(g, x, y, largo, rad, col = '#8A5A36') {
+  g.fillStyle = mezcla(col, '#000000', .25); g.beginPath(); g.ellipse(x + largo, y + largo * .5, rad, rad * .8, 0, 0, 7); g.fill();
+  g.strokeStyle = col; g.lineWidth = rad * 1.9; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + largo, y + largo * .5); g.stroke();
+  g.fillStyle = '#E2C28A'; g.beginPath(); g.ellipse(x, y, rad * .8, rad, 0, 0, 7); g.fill(); g.strokeStyle = '#8A5A36'; g.lineWidth = .35; g.beginPath(); g.ellipse(x, y, rad * .45, rad * .55, 0, 0, 7); g.stroke();
+}
+function aserradero(g, e) {
+  // Ramada abierta con el banco de aserrar y un tronco a medio cortar; rollizos y tablas apilados al frente.
+  const R = caras(.64, .48, 12, .06, -.02), poste = e >= 2 ? '#4A4A4A' : K.maderaOsc;
+  sombraCasa(g, R);
+  rellena(g, [P(R.f, R.a), P(R.f, R.b), P(R.t, R.b), P(R.t, R.a)], e === 3 ? '#B8B2A6' : '#C9AE7C', null);
+  for (const [r, c] of [[R.t, R.a], [R.t, R.b]]) { const p = P(r, c), q = P(r, c, 12); g.strokeStyle = poste; g.lineWidth = 1.3; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
+  caja(g, .42, .13, 3.4, .08, -.1, 0, K.maderaLuz);
+  const bn = P(.08, -.1, 3.4); rollizo(g, bn[0] - 9, bn[1] - 4.8, 14, 2.4);
+  g.strokeStyle = '#6E7378'; g.lineWidth = .7; g.beginPath(); g.moveTo(bn[0] - 1, bn[1] - 11); g.lineTo(bn[0] + 3, bn[1] - 1.5); g.stroke(); g.fillStyle = '#6E7378'; g.fillRect(bn[0] - 3.5, bn[1] - 11.6, 5, 1.2);
+  for (const [r, c] of [[R.f, R.a], [R.f, R.b]]) { const p = P(r, c), q = P(r, c, 12); g.strokeStyle = poste; g.lineWidth = 1.4; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
+  const T = caras(.64, .48, 0, .06, -.02, 12); dosAguas(g, T, 7, { hastial: '#8A5A36', ...MAT[['paja', 'tejaVieja', 'zinc', 'zinc'][e]] });
+  const pila = P(R.f + .1, R.b + .1); for (let k = 0; k < 3; k++) rollizo(g, pila[0] - 7 + k * 1.6, pila[1] - k * 2.6 - 2, 13, 2.4, k % 2 ? '#7A5536' : '#8A5A36');
+  caja(g, .16, .34, 2.6, R.f + .02, R.a - .16, 0, '#D9B77E'); caja(g, .16, .3, 2.2, R.f + .02, R.a - .16, 2.6, '#E2C28A');
+}
+function cantera(g, e) {
+  // Frente de roca con sillares ya cortados, una grúa de palo con su polea y una carretilla.
+  const roca = e === 3 ? '#9AA0A4' : '#A39A88';
+  const B = caja(g, .5, .62, 15, -.18, -.3, 0, roca);
+  g.strokeStyle = 'rgba(60,54,44,.4)'; g.lineWidth = .5; for (const [a, b] of [[.2, 5], [.55, 9], [.8, 12]]) { g.beginPath(); g.moveTo(...B.en('izq', a, b - 3)); g.lineTo(...B.en('izq', a + .1, b)); g.stroke(); }
+  const cima = P(-.18, -.3, 15); // la cima del frente: peñascos sueltos y pasto seco
+  for (const [dx, dy, rx, ry, c] of [[-4, 6, 8, 4, '#B3AA98'], [8, 11, 7, 3.4, '#8E8672'], [-12, 12, 5, 2.6, '#C2B9A6'], [3, 3, 6, 2.6, '#9FA86A']]) { g.fillStyle = c; g.beginPath(); g.ellipse(cima[0] + dx, cima[1] + dy, rx, ry, 0, 0, 7); g.fill(); }
+  caja(g, .26, .3, 4.4, .16, -.04, 0, PIEDRA); caja(g, .26, .3, 4.4, .16, -.04, 4.4, '#D4CBB8'); caja(g, .22, .26, 4, .36, .12, 0, PIEDRA_OSC);
+  const base = P(.0, .34, 0), tope = P(.0, .34, 24); g.strokeStyle = K.maderaOsc; g.lineWidth = 1.5; g.beginPath(); g.moveTo(...base); g.lineTo(...tope); g.stroke();
+  g.lineWidth = 1.1; g.beginPath(); g.moveTo(tope[0], tope[1]); g.lineTo(tope[0] - 14, tope[1] + 3); g.moveTo(tope[0], tope[1] + 8); g.lineTo(tope[0] - 9, tope[1] + 3.4); g.stroke();
+  g.strokeStyle = '#4A4036'; g.lineWidth = .5; g.beginPath(); g.moveTo(tope[0] - 13, tope[1] + 3.2); g.lineTo(tope[0] - 13, tope[1] + 12); g.stroke(); rellena(g, [[tope[0] - 15, tope[1] + 12], [tope[0] - 11, tope[1] + 12], [tope[0] - 11, tope[1] + 15.4], [tope[0] - 15, tope[1] + 15.4]], '#CFC6B2', K.contorno, .3);
+  const ca = P(.34, -.1); rellena(g, [[ca[0] - 5, ca[1] - 1], [ca[0] + 5, ca[1] + 3.5], [ca[0] + 5, ca[1] - .5], [ca[0] - 5, ca[1] - 4.5]], K.madera, K.contorno, .3); g.fillStyle = '#5A5148'; g.beginPath(); g.arc(ca[0] + 1, ca[1] + 3.2, 1.7, 0, 7); g.fill();
+  for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#B9B09C' : '#C9C0AE'; g.beginPath(); g.ellipse(ca[0] - 3 + k * 2.5, ca[1] - 4.5 + k * .9, 2, 1.5, 0, 0, 7); g.fill(); }
+}
+
 export function recetasPublicos(e = 1) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela],
@@ -721,6 +764,8 @@ export function recetasPublicos(e = 1) {
     ['universidad', 108, 120, 54, 88, universidad],
     ['acueducto', 92, 72, 46, 48, acueducto],
     ['molino', 88, 74, 44, 54, molino],
+    ['aserradero', 92, 78, 46, 54, aserradero],
+    ['cantera', 96, 88, 48, 62, cantera],
     ['puerto', 96, 76, 48, 52, puerto],
     ['sede-republica', 104, 104, 52, 72, cabildo],
     ['sede-monarquia', 104, 112, 52, 78, palacio],
