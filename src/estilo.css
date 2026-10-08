@@ -460,3 +460,4 @@ section.fija>.fj-h{display:flex;align-items:baseline;gap:8px;padding:10px 12px;f
 section.fija>.fj-h .pl-t{flex:1}
 section.fija>.fj-h .pl-r{font:600 12px/1.2 'Alegreya Sans',system-ui,sans-serif;color:#7A6A58;text-align:right}
 section.fija>.pl-c{padding:0 12px 10px}
+.subs.capas{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.subs.capas .sub{display:block;width:auto;flex:0 0 auto;padding:4px 9px;font-size:.8rem}

@@ -11,7 +11,7 @@ export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
-export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
   'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias', 'vecindad', 'huellas', 'territorios', 'exterior'];
 
 function efectos(obj, donde) {
@@ -106,6 +106,7 @@ export function usarContenido(d) {
   C.CULTIVOS = d.cultivos;
   C.TRABAJO = d.trabajo || null; // fase 17: trabajadores
   C.PLAZA = d.plaza || null; // fase 17: la plaza por niveles
+  C.SUELOS = d.suelos || null; // fase 17, paso 3: la vocación del suelo
   C.BIOMAS = d.biomas;
   C.AVANCES = d.avances;
   C.INDUSTRIA = d.industria;

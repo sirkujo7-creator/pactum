@@ -1,0 +1,72 @@
+{
+  "leccion": "El suelo no se elige: se hereda. La vega del río perdona casi todo; la ladera premia al café y castiga al arroz. Quien siembra contra la vocación de la tierra paga con menos cosecha. Por eso importa diversificar: ninguna tierra sirve para todo, pero casi todas sirven para algo.",
+  "equivocado": 0.75,
+  "clases": {
+    "vega": {
+      "nombre": "vega del río",
+      "icono": "🏞️",
+      "color": "#6E9A58",
+      "texto": "Tierra aluvial, plana y húmeda junto al agua. Perdona casi todo; el arroz y el plátano se dan de maravilla.",
+      "biomas": [
+        "galeria",
+        "arrozal"
+      ],
+      "factores": {
+        "cafe": 0.95,
+        "aguacate": 0.95
+      }
+    },
+    "llanura": {
+      "nombre": "llanura de potreros",
+      "icono": "🌾",
+      "color": "#C9B96A",
+      "texto": "Tierra plana de pasto y maíz. Buena para ganado, maíz y plátano; el arroz pide agua cerca.",
+      "biomas": [
+        "potrero"
+      ],
+      "factores": {
+        "arroz": 0.95,
+        "cafe": 0.95
+      }
+    },
+    "seca": {
+      "nombre": "tierra seca",
+      "icono": "🌵",
+      "color": "#D2A15A",
+      "texto": "Poca agua y suelo pobre: el algodón y el ganado resisten; el arroz, el cacao y el café sufren.",
+      "biomas": [
+        "seco"
+      ],
+      "factores": {
+        "arroz": 0,
+        "pancoger": 0.95,
+        "platano": 0.9,
+        "cacao": 0.8,
+        "cafe": 0.85,
+        "aguacate": 0.9,
+        "ganaderia": 0.95
+      }
+    },
+    "ladera": {
+      "nombre": "ladera",
+      "icono": "⛰️",
+      "color": "#A98E5E",
+      "texto": "Pendiente con buen drenaje: la tierra del café, el plátano y el aguacate. El arroz no se sostiene en la pendiente.",
+      "biomas": [
+        "ladera"
+      ],
+      "factores": {
+        "arroz": 0,
+        "algodon": 0.8,
+        "pancoger": 1,
+        "cacao": 0.95,
+        "ganaderia": 1
+      }
+    }
+  },
+  "textos": {
+    "no_se_da": "No se da en {suelo}.",
+    "equivocada": "Esta finca está en suelo equivocado ({suelo}) y rinde un cuarto menos. Cambiar de cultivo la recupera.",
+    "suelo": "Suelo: {suelo}."
+  }
+}

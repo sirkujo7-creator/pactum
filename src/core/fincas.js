@@ -28,7 +28,7 @@ export function alturasTerreno(S) { return alturas(S); }
 function alturas(S) {
   const dv = (S.rio && S.rio.desvios) || [], clave = `${S.seed}|${lado(S)}|${dv.length}`;
   let a = ALTURAS.get(S);
-  if (!a || a.clave !== clave) { const T = terrenoDe(S, dv); a = { clave, h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d), pend: T.tiles.map(t => t.slope) }; ALTURAS.set(S, a); }
+  if (!a || a.clave !== clave) { const T = terrenoDe(S, dv); a = { clave, b: T.tiles.map(t => t.b), h: T.tiles.map(t => t.h), d: T.tiles.map(t => t.d), pend: T.tiles.map(t => t.slope) }; ALTURAS.set(S, a); }
   return a;
 }
 // Cuánto han subido los pisos térmicos (fase 10, paso 3: el cambio climático). Por ahora no se mueven.
@@ -40,13 +40,32 @@ export function pisoTermico(S, i) {
 export function nombrePiso(p) { return K().pisos.nombres[p]; }
 // Riego: junto al río o cerca de su cauce.
 export function tieneRiego(S, i) { return nearRiver(S, i) || alturas(S).d[i] < 3.2; }
-// Qué tan apto es el lugar para el cultivo (0 a 1): piso térmico y, para el arroz, riego.
-export function aptitud(S, i, cv) {
+// Suelo (fase 17, paso 3): cada casilla tiene una clase de suelo según su terreno, y cada clase sirve distinto a cada cultivo.
+export const suelosActivos = S => fincasActivas(S) && !!C.SUELOS;
+export function claseSuelo(S, i) {
+  if (!suelosActivos(S)) return null;
+  const b = alturas(S).b[i], Q = C.SUELOS.clases;
+  return Object.keys(Q).find(k => Q[k].biomas.includes(b)) || 'llanura';
+}
+export function datosSuelo(c) { return C.SUELOS.clases[c]; }
+// Cuánto sirve el suelo al cultivo (0 a 1; 0 = no se da en ese suelo).
+export function factorSuelo(S, i, cv) {
+  const c = claseSuelo(S, i);
+  if (!c) return 1;
+  const f = datosSuelo(c).factores[cv];
+  return f === undefined ? 1 : f;
+}
+// Qué tan apto es el lugar para el cultivo (0 a 1): piso térmico, riego (el arroz) y suelo.
+function aptitudBase(S, i, cv) {
   const D = datosCultivo(cv);
   let a = D.pisos[pisoTermico(S, i)] || 0;
   if (D.riego && !tieneRiego(S, i)) a *= .4;
   return a;
 }
+export function aptitud(S, i, cv) { return aptitudBase(S, i, cv) * factorSuelo(S, i, cv); }
+// Una finca ya sembrada en un suelo que no corresponde se conserva, con una penalización suave (pierde un cuarto).
+export function suelaEquivocada(S, i, cv) { return suelosActivos(S) && aptitudBase(S, i, cv) > 0 && factorSuelo(S, i, cv) === 0; }
+export function aptitudPuesta(S, i, cv) { return suelaEquivocada(S, i, cv) ? aptitudBase(S, i, cv) * C.SUELOS.equivocado : aptitud(S, i, cv); }
 // ¿Ya da cosecha? Los cultivos de tardío rendimiento esperan sus años desde la siembra.
 export function anioCosecha(S, x) { const D = datosCultivo(cultivoDe(x)); return x.cvDesde === undefined ? -999 : x.cvDesde + D.madura; }
 export function produce(S, x) { return S.year >= anioCosecha(S, x); }
@@ -61,7 +80,7 @@ export function fasePrecio(S, cv) { return S.precios && S.precios[cv] ? S.precio
 export function produccionFinca(S, i) {
   const x = S.map[i];
   if (!esFinca(x) || x.ob) return { comida: 0, renta: 0 };
-  const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * aptitud(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
+  const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * aptitudPuesta(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
   const riego = D.comida && nearRiver(S, i) ? K().riego : 0;
   return { comida: (D.comida + riego) * r, renta: D.renta * r * precioCultivo(S, cv) * (1 + efectoLeyes(S, 'fincas')) }; // fase 12: rasgos (colonos, cafeteros...)
 }
@@ -84,7 +103,8 @@ export function puedeSembrar(S, i, cv) {
   if (!datosCultivo(cv)) return 'Cultivo desconocido.';
   if (x.cv === cv) return 'Ya siembra eso.';
   if (x.ob) return 'La finca aún se está construyendo.';
-  if (!aptitud(S, i, cv)) return `No se da en tierra ${nombrePiso(pisoTermico(S, i))}.`;
+  if (!aptitudBase(S, i, cv)) return `No se da en tierra ${nombrePiso(pisoTermico(S, i))}.`;
+  if (!aptitud(S, i, cv)) return C.SUELOS.textos.no_se_da.replace('{suelo}', datosSuelo(claseSuelo(S, i)).nombre) + ' Prueba con otro cultivo.';
   if (!x.nueva && S.gold < costoSiembra(S, cv)) return `Necesitas ${costoSiembra(S, cv)} de oro.`;
   return null;
 }
