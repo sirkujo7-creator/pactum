@@ -793,6 +793,15 @@ export class Interfaz {
     });
   }
 
+  // Almanaque: hechos reales de Colombia y del mundo hasta la época actual, con su fecha verdadera y, a veces, un verso.
+  seccionAlmanaque() {
+    const S = this.S, A = C.ALM, ep = historiaActiva(S) ? epocaHistorica(S) : null; if (!A || !ep) return '';
+    const orden = C.HIST.epocas.map(e => e.id), hasta = orden.indexOf(ep);
+    return `<p class="small"><i>${A.nota}</i></p>` + orden.slice(0, hasta + 1).reverse().map(id => {
+      const a = A.epocas[id], e = datosEpoca(id); if (!a) return '';
+      return `<h3>${e.icono} ${e.nombre}</h3><ul class="alm">${a.items.map(x => `<li><b>${x.fecha}.</b> ${x.texto}</li>`).join('')}</ul>${a.verso ? `<blockquote class="verso">«${a.verso.texto}»<br><small>${a.verso.autor}, <i>${a.verso.obra}</i></small></blockquote>` : ''}`;
+    }).join('');
+  }
   renderCronica() {
     const S = this.S, h = S.hist, G = GRAFICAS[this.grafica];
     const tabs = Object.entries(GRAFICAS).map(([k, v]) => `<button class="tab${k === this.grafica ? ' on' : ''}" data-g="${k}">${v.n}</button>`).join('');
@@ -803,7 +812,7 @@ export class Interfaz {
     // y camino de avances juntos en un solo desplegable; lo que ha pasado, al final y desplegable.
     const contexto = terr + epoca + this.seccionAvances();
     this.cronica.innerHTML = this.fija('c-identidad', this.seccionIdentidad()) + this.fija('c-graficas', `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}`, '📈 Gráficas', G.n) + this.fija('c-album', this.seccionAlbum()) + this.fija('c-legado', this.seccionLegado()) +
-      this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
+      this.pleg('c-almanaque', this.seccionAlmanaque(), `🌍 ${C.ALM ? C.ALM.titulo : ''}`, ep ? ep.nombre : '') + this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
     this.activarPlegables(this.cronica);
     this.cronica.querySelectorAll('[data-carta]').forEach(bt => bt.onclick = () => { const r = estadoFamilias(this.S).cartas.find(x => x.n === +bt.dataset.carta); if (r) this.tarjetaCarta(r, null, true); });
     this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
