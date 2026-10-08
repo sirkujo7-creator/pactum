@@ -123,11 +123,11 @@ Terminado cuando:
 
 ## Forma de trabajar en cada fase
 
-**Pruebas cortas (pedido de Juan, 8 de octubre):** una sola corrida de balance por paso (100 partidas en Normal y 100 en Difícil) y solo si cambió la lógica; la equivalencia con la v9 se corre una vez, al final, y solo si se tocó `src/core`; pruebas de pantalla solo del cambio. Se amplían a 300 partidas únicamente si el resultado queda en el borde de la meta.
+**Primero se agrega, al final se balancea (pedido de Juan, 8 de octubre):** en cada paso solo hay una prueba rápida de que nada se rompió (unas 30 partidas de robots, errores en pantalla y, si se tocó `src/core`, la equivalencia con la v9). El balance completo (100 a 300 partidas en Normal y Difícil, regímenes y territorios) se hace **una sola vez al terminar un bloque grande** (hoy: al terminar la fase 17 y luego al terminar la fase 16), no en cada paso. Si una prueba rápida muestra un desastre (por ejemplo, victorias por debajo de 20%), se arregla en ese paso.
 
 1. Plan corto a Juan y espera su visto bueno.
 2. Implementa en pasos pequeños, con un commit por paso.
-3. Corre las simulaciones de balance cuando cambie la lógica.
+3. Corre la prueba rápida (el balance completo va al final del bloque).
 4. Revisa en tamaño celular y en tamaño computador.
 5. Push y publicación.
 6. Explícale a Juan qué cambió y cómo probarlo.
