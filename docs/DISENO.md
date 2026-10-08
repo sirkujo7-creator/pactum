@@ -14,7 +14,7 @@ Pactum es un simulador de gobierno para un jugador en el que cada decisión ense
 2. **Enseña un concepto nombrable.** Si no podemos decir qué concepto enseña, no entra.
 3. **Tiene costos y ganancias reales.** Ninguna opción, ley ni régimen es "la correcta"; el juego pregunta, no adoctrina.
 4. **No rompe el balance.** Cada sistema nuevo pasa por las simulaciones automáticas antes de publicarse.
-5. **Se entiende en una frase.** Si explicarlo requiere un párrafo, hay que simplificarlo.
+5. **Profundidad sin exceso de texto (reformada el 8 de octubre).** Un sistema puede ser profundo, pero lo que se ve en pantalla es poco y claro: en el celular siempre debe verse el terreno. El texto largo va en momentos de lectura (cartas, periódico, placas, fichas que el jugador abre); la pantalla principal no se llena de letra.
 
 ## Decisiones tomadas
 
