@@ -55,15 +55,20 @@ export function probViolencia(S) {
 function violenciaDelAnio(S) {
   const V = K().violencia, ep = epocaHistorica(S); if (!V || !ep) return null;
   if (S.year - (S.violenciaUlt ?? -99) < V.aniosEntre || !(azar() < probViolencia(S))) return null;
-  const L = Object.entries(K().sucesos).filter(([, q]) => q.violencia && q.epocas.includes(ep));
+  const L = Object.entries(K().sucesos).filter(([, q]) => q.violencia && q.epocas.includes(ep) && (!q.obras || S.map.some(x => q.obras.includes(x.b) && !x.ob)));
   if (!L.length) return null;
   let a = azar() * L.reduce((t, [, q]) => t + q.peso, 0), id = L[0][0];
   for (const [k, q] of L) { a -= q.peso; if (a < 0) { id = k; break; } }
   const q = K().sucesos[id], ev = { id, anio: S.year, nuevo: true, ins: Math.round(inseguridad(S)), texto: q.texto, fx: applyFx(S, q.fx) };
+  if (q.obras) { // hecho en un edificio: se ve en el mapa («Ver dónde fue»)
+    const cand = S.map.map((x, i) => i).filter(i => q.obras.includes(S.map[i].b) && !S.map[i].ob), i = cand[Math.floor(azar() * cand.length)], x = S.map[i];
+    ev.obra = i; ev.texto = q.texto.replace('{obra}', C.B[x.b].a);
+    if (q.dano) { x.u = Math.min(100, (x.u || 0) + q.dano); x.sin = S.year; }
+  }
   S.suceso = ev; S.violenciaUlt = S.year;
   if (q.muertes) registrarMuertes(S, q.muertes, 'violencia'); // los muertos piden sepultura y se ven en el cementerio
-  S.log.unshift({ y: S.year, t: `${q.titulo}. ${q.texto}` });
-  return [`${q.icono} ${q.titulo}: ${q.texto}`];
+  S.log.unshift({ y: S.year, t: `${q.titulo}. ${ev.texto}` });
+  return [`${q.icono} ${q.titulo}: ${ev.texto}`];
 }
 // Cierre del año: como mucho un suceso (se prueba del más grave al más leve). Devuelve las noticias.
 export function sucesosDelAnio(S) {

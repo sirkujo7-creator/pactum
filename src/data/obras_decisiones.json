@@ -1,0 +1,119 @@
+{
+  "titulo": "Decisión del edificio",
+  "boton": "Decidir sobre esta obra",
+  "hecha": "Ya decidiste sobre esta obra.",
+  "leccion": "Cada edificio guarda una discusión: quién lo maneja, para quién y con qué reglas. Una escuela, un hospital o un cuartel no son neutrales: educan, curan o mandan según lo que decidas.",
+  "obras": {
+    "escuela": {
+      "icono": "📖", "titulo": "¿Qué se enseña en esta escuela?",
+      "texto": "La maestra pide saber qué currículo seguirá la escuela: el catecismo, la ciencia, un oficio o la vida cívica.",
+      "opciones": [
+        { "texto": "Currículo religioso (catecismo)", "efectos": { "confianza": 3, "igualdad": -2, "animo": 1 } },
+        { "texto": "Escuela laica y científica", "efectos": { "igualdad": 3, "confianza": -2, "animo": 1 } },
+        { "texto": "Escuela técnica de oficios", "efectos": { "oro": 20, "igualdad": 1 } },
+        { "texto": "Educación cívica y democrática", "efectos": { "confianza": 2, "igualdad": 2, "oro": -10 } }
+      ]
+    },
+    "hospital": {
+      "icono": "🏥", "titulo": "¿Cómo funciona este hospital?",
+      "texto": "Los médicos piden reglas: ¿aislar a los enfermos, vacunar a todos o apoyar a las parteras del pueblo?",
+      "opciones": [
+        { "texto": "Lazareto: aislar a los contagiados", "efectos": { "animo": -2, "ambiente": 1, "confianza": 2 } },
+        { "texto": "Vacunación para todos", "efectos": { "oro": -25, "animo": 3, "habitantes": 3 } },
+        { "texto": "Apoyar a las parteras", "efectos": { "igualdad": 3, "habitantes": 2, "confianza": -1 } }
+      ]
+    },
+    "cuartel": {
+      "icono": "🎖️", "titulo": "¿Cómo se recluta?",
+      "texto": "El capitán necesita soldados. Hay que decidir cómo llegan a filas y qué fuero tienen.",
+      "opciones": [
+        { "texto": "Reclutamiento forzoso de los pobres", "efectos": { "oro": 25, "igualdad": -4, "animo": -3 } },
+        { "texto": "Voluntarios con buen sueldo", "efectos": { "oro": -25, "confianza": 3 } },
+        { "texto": "Servicio para todos, ricos y pobres", "efectos": { "igualdad": 3, "animo": -2, "confianza": 1 } }
+      ]
+    },
+    "policia": {
+      "icono": "🛡️", "titulo": "¿Cómo patrulla la policía?",
+      "texto": "Hay denuncias de abusos y también de robos. ¿Rondas, retenes o vigilancia comunitaria?",
+      "opciones": [
+        { "texto": "Retenes y mano dura", "efectos": { "confianza": -3, "animo": -2, "oro": 15 } },
+        { "texto": "Rondas con los vecinos", "efectos": { "confianza": 3, "oro": -15 } },
+        { "texto": "Dejarla sin reglas nuevas", "efectos": { "animo": -1 } }
+      ]
+    },
+    "teatro": {
+      "icono": "🎭", "titulo": "¿Qué se presenta en el teatro?",
+      "texto": "Una compañía quiere estrenar una obra que critica a los poderosos del pueblo.",
+      "opciones": [
+        { "texto": "Censurarla", "efectos": { "confianza": -3, "igualdad": -2, "animo": 1 } },
+        { "texto": "Permitir el estreno", "efectos": { "animo": 4, "confianza": 1, "igualdad": 1 } },
+        { "texto": "Cobrar más y que cada quien juzgue", "efectos": { "oro": 20, "animo": 1 } }
+      ]
+    },
+    "cementerio": {
+      "icono": "⚰️", "titulo": "¿Quién entierra a quién?",
+      "texto": "Hay quienes no son católicos y no tienen dónde enterrar a sus muertos.",
+      "opciones": [
+        { "texto": "Cementerio parroquial", "efectos": { "confianza": 2, "igualdad": -3 } },
+        { "texto": "Cementerio laico para todos", "efectos": { "igualdad": 3, "confianza": -1, "animo": 1 } }
+      ]
+    },
+    "taller": {
+      "icono": "🔨", "titulo": "Jornada y sindicato",
+      "texto": "Los obreros piden jornada más corta y quieren organizarse en sindicato.",
+      "opciones": [
+        { "texto": "Jornada larga, sin sindicato", "efectos": { "oro": 30, "igualdad": -4, "animo": -3 } },
+        { "texto": "Reconocer el sindicato", "efectos": { "igualdad": 3, "animo": 3, "oro": -20 } },
+        { "texto": "Negociar una jornada intermedia", "efectos": { "igualdad": 1, "animo": 1, "oro": 5 } }
+      ]
+    },
+    "iglesia": {
+      "icono": "⛪", "titulo": "El cura y la política",
+      "texto": "El párroco quiere hablar desde el púlpito sobre las próximas decisiones del gobierno.",
+      "opciones": [
+        { "texto": "Dejarlo hablar", "efectos": { "confianza": -2, "animo": 2, "igualdad": -1 } },
+        { "texto": "Pedirle que se limite a lo religioso", "efectos": { "confianza": 2, "animo": -2 } }
+      ]
+    },
+    "biblioteca": {
+      "icono": "📚", "titulo": "¿Qué libros hay en la biblioteca?",
+      "texto": "Llegan libros nuevos con ideas que incomodan a más de uno.",
+      "opciones": [
+        { "texto": "Abrirla a todos los libros", "efectos": { "igualdad": 2, "animo": 2, "confianza": -1 } },
+        { "texto": "Elegir solo lo recomendable", "efectos": { "confianza": 2, "igualdad": -2 } }
+      ]
+    },
+    "mercado": {
+      "icono": "🛒", "titulo": "Puestos en el mercado",
+      "texto": "Hay más vendedores que puestos. ¿Quién tiene derecho a vender en la plaza?",
+      "opciones": [
+        { "texto": "Subastar los puestos", "efectos": { "oro": 30, "igualdad": -3 } },
+        { "texto": "Sortearlos entre los vecinos", "efectos": { "igualdad": 3, "oro": -5, "animo": 1 } }
+      ]
+    },
+    "banco": {
+      "icono": "🏦", "titulo": "¿A quién presta el banco?",
+      "texto": "El gerente propone a quién dar crédito primero.",
+      "opciones": [
+        { "texto": "A los grandes terratenientes", "efectos": { "oro": 30, "igualdad": -4 } },
+        { "texto": "Microcrédito a pequeños campesinos", "efectos": { "igualdad": 3, "alimento": 10, "oro": -10 } }
+      ]
+    },
+    "universidad": {
+      "icono": "🎓", "titulo": "Libertad de cátedra",
+      "texto": "Los estudiantes quieren marchar y los profesores discuten abiertamente al gobierno.",
+      "opciones": [
+        { "texto": "Respetar la autonomía universitaria", "efectos": { "confianza": 2, "igualdad": 2, "animo": 1 } },
+        { "texto": "Intervenir y vigilar", "efectos": { "confianza": -3, "animo": -2, "oro": 10 } }
+      ]
+    },
+    "acueducto": {
+      "icono": "💧", "titulo": "Tarifa del agua",
+      "texto": "El acueducto necesita dinero para el mantenimiento. ¿Quién paga el agua?",
+      "opciones": [
+        { "texto": "Tarifa pareja para todos", "efectos": { "oro": 15, "igualdad": -2 } },
+        { "texto": "Quien más tiene, más paga", "efectos": { "igualdad": 3, "oro": 5, "confianza": -1 } }
+      ]
+    }
+  }
+}
