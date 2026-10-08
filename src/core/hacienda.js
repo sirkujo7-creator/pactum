@@ -4,7 +4,7 @@ import { comidaColonos } from './huellas.js';
 import { C } from './contenido.js';
 import { counts, RM, hasLaw } from './reglas.js';
 import { nearRiver } from './mundo.js';
-import { society } from './sociedad.js';
+import { society, factorTrabajo, daEmpleo } from './sociedad.js';
 import { factorCosecha, climaActivo, aporteFondo } from './clima.js';
 import { rindeObra, mantenimiento } from './desgaste.js';
 import { cuotasPendientes } from './construccion.js';
@@ -43,8 +43,8 @@ export function finance(S) {
   const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;
   let fee = 0, up = 0;
   // Fase 1: las obras agrietadas rinden menos y las abandonadas ni rinden ni se mantienen.
-  const finca = fincasActivas(S), fab = industriaActiva(S) ? rentaFabrica(S) : null; // fase 10: las fincas rinden según su cultivo; fase 11: las fábricas, según su producto
-  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (fab && x.b === 'taller' ? fab(i) : finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : x.b === 'mina' ? 1 + efectoLeyes(S, 'minas') : x.b === 'mercado' || x.b === 'puerto' ? 1 + efectoLeyes(S, 'comercio') + (x.b === 'mercado' ? bonoMercado(S, i) : 0) : 1)) * factorCalle(S, i); // fase 9: junto a una calle se vende más
+  const fT = factorTrabajo(S, so), finca = fincasActivas(S), fab = industriaActiva(S) ? rentaFabrica(S) : null; // fase 10: las fincas rinden según su cultivo; fase 11: las fábricas, según su producto
+  S.map.forEach((x, i) => { if (x.b && !x.ob) { const r = rindeObra(S, x); fee += (fab && x.b === 'taller' ? fab(i) : finca && (x.b === 'cultivo' || x.b === 'cafetal') ? produccionFinca(S, i).renta : (C.B[x.b].fee || 0) * r * (x.b === 'cafetal' ? precioCafe(S) * factorRoya(S) : x.b === 'mina' ? 1 + efectoLeyes(S, 'minas') : x.b === 'mercado' || x.b === 'puerto' ? 1 + efectoLeyes(S, 'comercio') + (x.b === 'mercado' ? bonoMercado(S, i) : 0) : 1)) * factorCalle(S, i) * (daEmpleo(x.b) ? fT : 1); // fase 9: junto a una calle se vende más; fase 17: sin gente que las trabaje, rinden menos
  if (r) up += C.B[x.b].up * (x.mt || 1); } });
   fee = Math.round(fee * S.price * (hasLaw(S, 'ambiente') ? .75 : 1) * (hasLaw(S, 'arancel') ? 1.2 : 1));
   up = Math.round(up * S.price * mantenimiento(S) / 100 * factorCostos(S)); // fase 7: los costos suben con cada época
@@ -62,7 +62,7 @@ export function finance(S) {
   if (climaActivo(S)) fcap *= factorCosecha(S); // fase 1: las lluvias del año
   const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.max(0, Math.ceil(S.pop * .5) - comidaColonos(S)); // huellas: los colonos siembran su comida
   const post = { c: inc.c * (1 - S.tx.c / 100), a: inc.a * (1 - S.tx.a / 100), e: inc.e * (1 - S.tx.e / 100), u: inc.u };
-  return { so, taxC, taxA, taxE, fee, up, admin, pensiones, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras, evadido, militar, calles };
+  return { so, taxC, taxA, taxE, fee, up, admin, pensiones, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras, evadido, militar, calles, trab: fT };
 }
 
 // Acciones financieras.

@@ -9,7 +9,7 @@ import { C } from './contenido.js';
 import { counts } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { finance } from './hacienda.js';
-import { waterCap, energy } from './sociedad.js';
+import { waterCap, energy, society } from './sociedad.js';
 import { presentes, misionDe } from './figuras.js';
 import { ciclosActivos, costoRenovar } from './ciclos.js';
 import { avisoSepultura } from './huellas.js';
@@ -40,6 +40,8 @@ export function pendientes(S) {
   if (S.guerra && S.guerra.activa) add('guerra', '⚔️', 'Estás en guerra: refuerza la defensa o busca la paz.', 1, { hoja: 'sociedad', seccion: 'so-vecinos' });
   const V = desastresOk(S) ? nivelVolcan(S) : 0;
   if (V >= 2 && !volcan(S).plan) add('volcan', '🌋', 'El Nevado está en alerta y no hay plan de evacuación.', 1, { hoja: 'hacienda', seccion: 'h-riesgo' });
+  // Trabajadores (fase 17): sin gente que las trabaje, las obras rinden menos.
+  if (C.TRABAJO) { const so = society(S), T = C.TRABAJO.textos, pct = Math.round(so.ocup * 100); if (so.ocup < .9 && so.jc + so.ja > 0) add('trabajo', '🧑‍🌾', (so.ocup < C.TRABAJO.minimo ? T.sinGente : T.faltan).replace('{puestos}', so.jc + so.ja).replace('{gente}', so.P - so.el).replace('{pct}', pct).replace('{min}', Math.round(C.TRABAJO.minimo * 100)), so.ocup < C.TRABAJO.minimo ? 1 : 2, { hoja: 'construir' }); }
   // Misiones de los personajes.
   for (const id of presentes(S)) { const m = misionDe(S, id); if (m) add('mision-' + id, C.FIG.figuras[id].icono || '🎯', `${C.FIG.figuras[id].nombre}: ${(m.texto || m.titulo || 'tiene una misión').replace(/\.$/, '')}${m.limite ? ` (hasta el año ${m.limite})` : ''}.`, 0, { hoja: 'sociedad', seccion: 'so-figuras' }); }
   // Lo que se ve en el mapa.

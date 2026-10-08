@@ -7,6 +7,7 @@ Estos archivos guardan todo el texto y los números del juego. Se pueden editar 
 | `dilemas.json` | Los dilemas del año, con sus opciones |
 | `consecuencias.json` | Lo que pasa años después de ciertas decisiones |
 | `edificios.json` | Obras: costo, mantenimiento, empleos, dónde se pueden construir |
+| `trabajo.json` | Trabajadores: el mínimo de puestos ocupados para que una obra produzca y sus textos |
 | `leyes.json` | Leyes y en qué etapa se abren |
 | `regimenes.json` | Las seis formas de gobierno y el ciclo de Polibio |
 | `etapas.json`, `guia.json`, `logros.json` | Etapas, metas de la guía y logros |

@@ -36,8 +36,17 @@ export function society(S) {
   let camp, art, un;
   if (W >= jc + ja) { camp = jc; art = ja; un = W - jc - ja; }
   else { const t = jc + ja; camp = t ? Math.round(W * jc / t) : 0; art = W - camp; un = 0; }
-  return { el, camp, art, un, jc, ja, P };
+  return { el, camp, art, un, jc, ja, P, ocup: jc + ja > 0 ? Math.min(1, W / (jc + ja)) : 1 }; // fase 17: ocup = parte de los puestos que la gente alcanza a ocupar
 }
+// Trabajadores (fase 17, paso 1; decisión de Juan): una obra sin gente no produce (por debajo del mínimo de puestos
+// cubiertos) y, si faltan trabajadores, rinde en proporción a los puestos que se ocupan. Solo en el terreno en
+// acuarela. Las obras que dan empleo son las fincas, las fábricas y las que tienen puestos de trabajo.
+export function factorTrabajo(S, so = society(S)) {
+  const T = C.TRABAJO;
+  if (!T || !climaActivo(S)) return 1;
+  return so.ocup < T.minimo ? 0 : so.ocup;
+}
+export function daEmpleo(k) { const b = C.B[k]; return k === 'cultivo' || k === 'cafetal' || k === 'taller' || !!(b && (b.jc || b.ja)); }
 
 // Aporte del bosque al ambiente. En la v9 (20×20) cada casilla de bosque daba 0,6: 2,4 por cada 1% del territorio.
 // En el terreno en acuarela el bosque cubre algo menos (12% frente a 15%), así que cada 1% vale 2,9.

@@ -12,6 +12,7 @@ import { precioCafe } from './economia.js';
 import { factorRoya } from './ciclos.js';
 import { azar, clamp } from './azar.js';
 import { efectoLeyes } from './civismo.js';
+import { factorTrabajo } from './sociedad.js';
 
 const K = () => C.CULTIVOS;
 export function fincasActivas(S) { return climaActivo(S) && !!C.CULTIVOS; }
@@ -154,7 +155,8 @@ export function preciosDelAnio(S) {
 // Canasta agrícola: oro de cada cultivo este año y su peso en el total.
 export function canastaOro(S) {
   const oro = Object.fromEntries(listaCultivos().map(k => [k, 0])), fincas = canasta(S);
-  S.map.forEach((x, i) => { if (esFinca(x) && !x.ob) oro[cultivoDe(x)] += produccionFinca(S, i).renta * S.price; });
+  const fT = factorTrabajo(S); // fase 17: sin gente que las trabaje, rinden menos
+  S.map.forEach((x, i) => { if (esFinca(x) && !x.ob) oro[cultivoDe(x)] += produccionFinca(S, i).renta * S.price * fT; });
   const total = Object.values(oro).reduce((a, b) => a + b, 0);
   const filas = listaCultivos().filter(k => fincas[k]).map(k => ({ cv: k, fincas: fincas[k], oro: Math.round(oro[k]), parte: total ? oro[k] / total : 0, precio: precioCultivo(S, k), fase: k === 'cafe' ? (S.ciclo && S.ciclo.cafe ? S.ciclo.cafe.tipo : 'normal') : fasePrecio(S, k) }));
   filas.sort((a, b) => b.oro - a.oro);
