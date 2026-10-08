@@ -14,6 +14,8 @@ import { efectoFig, reaccionar } from './figuras.js';
 import { applyFx } from './dilemas.js';
 import { efectoBarrios } from './barrios.js';
 import { efectoTec } from './tecnologia.js';
+import { epocaHistorica, hasLaw } from './reglas.js';
+import { registrarMuertes } from './huellas.js';
 
 const K = () => C.SUCESOS;
 export function sucesosActivos(S) { return climaActivo(S) && !!C.SUCESOS && S.stage >= K().desde.etapa; }
@@ -41,9 +43,32 @@ export function riesgos(S) {
   return r;
 }
 
+// Violencia que no se puede evitar del todo (pedido de Juan: partidas menos planas). Su probabilidad depende de la época y
+// baja con policía, legitimidad, cuartel y leyes de paz, pero nunca por debajo del piso.
+export function probViolencia(S) {
+  const V = K().violencia, ep = epocaHistorica(S); if (!V || !ep) return 0;
+  const c = counts(S), cob = cobertura(S), M = V.mitiga;
+  let mit = (c.policia > 0 ? cob.policia * M.policia : 0) + (S.tr / 100) * M.legitimidad + (c.cuartel > 0 ? M.cuartel : 0);
+  for (const [l, v] of Object.entries(M.leyes)) if (hasLaw(S, l)) mit += v;
+  return (V.base[ep] || 0) * Math.max(V.piso, 1 - mit);
+}
+function violenciaDelAnio(S) {
+  const V = K().violencia, ep = epocaHistorica(S); if (!V || !ep) return null;
+  if (S.year - (S.violenciaUlt ?? -99) < V.aniosEntre || !(azar() < probViolencia(S))) return null;
+  const L = Object.entries(K().sucesos).filter(([, q]) => q.violencia && q.epocas.includes(ep));
+  if (!L.length) return null;
+  let a = azar() * L.reduce((t, [, q]) => t + q.peso, 0), id = L[0][0];
+  for (const [k, q] of L) { a -= q.peso; if (a < 0) { id = k; break; } }
+  const q = K().sucesos[id], ev = { id, anio: S.year, nuevo: true, ins: Math.round(inseguridad(S)), texto: q.texto, fx: applyFx(S, q.fx) };
+  S.suceso = ev; S.violenciaUlt = S.year;
+  if (q.muertes) registrarMuertes(S, q.muertes, 'violencia'); // los muertos piden sepultura y se ven en el cementerio
+  S.log.unshift({ y: S.year, t: `${q.titulo}. ${q.texto}` });
+  return [`${q.icono} ${q.titulo}: ${q.texto}`];
+}
 // Cierre del año: como mucho un suceso (se prueba del más grave al más leve). Devuelve las noticias.
 export function sucesosDelAnio(S) {
   if (!sucesosActivos(S) || S.year < K().desde.anio) return [];
+  const vio = violenciaDelAnio(S); if (vio) return vio;
   const R = riesgos(S), Q = K().sucesos;
   const ult = S.sucesosUlt || (S.sucesosUlt = {});
   for (const id of ['atentado', 'abuso', 'brote', 'incendio', 'robo']) {

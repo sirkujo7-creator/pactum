@@ -1,6 +1,6 @@
 {
   "leccion": "La historia no la viven los gobiernos sino las familias. Lo que en el libro de historia es una cifra, en una casa es un nombre.",
-  "intervalo": 6,
+  "intervalo": 4,
   "textos": {
     "de": "Carta de {quien}",
     "anio": "Año {anio} del territorio",
@@ -65,6 +65,59 @@
       "miembros": [
         "Luz Lozano",
         "Andrés Lozano (hijo)"
+      ]
+    },
+    "cardenas": {
+      "nombre": "Los Cárdenas",
+      "icono": "📚",
+      "origen": "Una maestra rural, hija de arrieros, que abrió la escuela de la vereda.",
+      "clase": "a",
+      "miembros": [
+        "Elvira Cárdenas (maestra)",
+        "Tomás Cárdenas",
+        "Lucía Cárdenas (niña)"
+      ]
+    },
+    "bernal": {
+      "nombre": "Los Bernal",
+      "icono": "🫏",
+      "origen": "Arrieros de generaciones: cargan café, sal y noticias por el camino de herradura.",
+      "clase": "a",
+      "miembros": [
+        "Eusebio Bernal (arriero)",
+        "Aurelia Bernal",
+        "Jairo Bernal (hijo)"
+      ]
+    },
+    "pena": {
+      "nombre": "Los Peña",
+      "icono": "🎖️",
+      "origen": "Campesinos de una vereda en la que casi todos son del mismo partido.",
+      "clase": "c",
+      "miembros": [
+        "Cándida Peña (madre)",
+        "Julián Peña (recluta)"
+      ]
+    },
+    "vargas": {
+      "nombre": "Los Vargas",
+      "icono": "🧒",
+      "origen": "Una familia de la ladera y una niña que lo cuenta todo sin entenderlo del todo.",
+      "clase": "u",
+      "miembros": [
+        "Camila Vargas (niña)",
+        "Hernán Vargas",
+        "Rosalba Vargas"
+      ]
+    },
+    "murillo": {
+      "nombre": "Los Murillo",
+      "icono": "🧵",
+      "origen": "Obreros de la fábrica del pueblo, donde se oye la sirena todos los días.",
+      "clase": "a",
+      "miembros": [
+        "Ana Murillo (obrera)",
+        "Joaquín Murillo"
       ]
     }
   },
@@ -725,6 +778,395 @@
           "frase": "¿Es libre un trabajador que no tiene a quién reclamar?",
           "objeto": "celular",
           "resumen": "Daniel reparte domicilios sin salud ni pensión."
+        }
+      ]
+    },
+    {
+      "id": "cardenas1",
+      "familia": "cardenas",
+      "desde": 14,
+      "hasta": 32,
+      "de": "Elvira Cárdenas",
+      "escena": "maestros",
+      "variantes": [
+        {
+          "cuando": {
+            "ley": "educacionObligatoria"
+          },
+          "texto": "Señor gobernador: ya tengo cuarenta niños en un rancho que se llovía, y ahora llegan todos, porque a los padres les cae una multa si no los mandan. Algunos vienen con sombrero de papá y el machete atado a la espalda, porque saliendo de aquí se van a desyerbar. Les enseño a leer con la cartilla y con las coplas que me enseñó mi abuela.",
+          "frase": "¿Por qué una ley que obliga a ir a la escuela puede alegrar a la maestra y entristecer a la familia?",
+          "resumen": "Elvira Cárdenas tuvo cuarenta alumnos, pero muchos faltan en cosecha."
+        },
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: abrí la escuela con seis niños, y en tiempo de cosecha quedó con dos. No es que los padres no quieran: es que sin la mano del chico no se recoge el café, y un día sin recoger es un día sin comer. Yo le pido una pizarra y tiza, que aún las escribo con carbón.",
+          "frase": "¿Qué es más urgente para una familia pobre: que el niño aprenda hoy o que coma mañana?",
+          "resumen": "La escuela de Elvira Cárdenas quedó casi vacía en tiempo de cosecha."
+        }
+      ]
+    },
+    {
+      "id": "cardenas2",
+      "familia": "cardenas",
+      "desde": 38,
+      "hasta": 55,
+      "de": "Elvira Cárdenas",
+      "escena": "maestros",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: esta semana faltaron siete niños y nadie me dijo por qué. Los de la vereda de arriba ya no bajan por el camino de El Alto, y los hijos de los Peña no se sientan junto a los de los Rojas. Yo bajé la bandera del patio porque no supe de qué color era. El cura dijo misa casi en voz baja. Hoy enseñé historia de Colombia sin nombrar ningún partido.",
+          "frase": "Si la maestra no dice por qué faltan los niños, ¿qué puedes inferir de lo que pasa en las veredas?",
+          "resumen": "Elvira Cárdenas calló los nombres de los partidos en su escuela."
+        }
+      ]
+    },
+    {
+      "id": "cardenas3",
+      "familia": "cardenas",
+      "desde": 60,
+      "hasta": 88,
+      "de": "Lucía Cárdenas",
+      "escena": "maestros",
+      "variantes": [
+        {
+          "cuando": {
+            "edificios": {
+              "universidad": 1
+            }
+          },
+          "texto": "Señor gobernador: soy Lucía, la hija de Elvira. Me gradué de maestra en la universidad de nuestro pueblo, sin tener que irme a Bogotá como mi mamá soñaba que lo hiciera yo. Hoy enseño en la misma escuela, ahora de ladrillo. Mi madre se sienta al fondo y corrige mi letra.",
+          "frase": "¿Cuánto cambia la vida de una familia cuando la universidad queda cerca de la casa?",
+          "resumen": "Lucía Cárdenas estudió en la universidad del pueblo y volvió a la escuela de su madre."
+        },
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: soy Lucía, la hija de Elvira. Me fui a Bogotá a estudiar con una beca que se acabó en el segundo año; trabajé en una fábrica de zapatos y por la noche iba a clases. Cuando regrese, será con título. Mi mamá guarda mis cartas dentro de la cartilla.",
+          "frase": "¿Quién sale ganando cuando los jóvenes con talento tienen que irse del pueblo para estudiar?",
+          "resumen": "Lucía Cárdenas tuvo que irse a Bogotá a estudiar.",
+          "hechos": [
+            {
+              "t": "migra",
+              "quien": "Lucía Cárdenas"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cardenas4",
+      "familia": "cardenas",
+      "desde": 92,
+      "hasta": 140,
+      "de": "Lucía Cárdenas",
+      "escena": "maestros",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: los niños ya tienen pantalla en la escuela. Esta mañana uno me mostró un video donde decían que el agua del río estaba envenenada, y la mitad de la clase quiso dejar de bañarse. Luego nos pusimos a averiguar quién lo había hecho y para qué. Nadie lo supo. Hoy aprendimos a desconfiar de lo que se ve demasiado bien o demasiado terrible.",
+          "frase": "¿Qué habilidad necesita un niño para no creerse todo lo que ve en una pantalla?",
+          "resumen": "Lucía Cárdenas enseñó a sus alumnos a verificar lo que ven en internet."
+        }
+      ]
+    },
+    {
+      "id": "bernal1",
+      "familia": "bernal",
+      "desde": 16,
+      "hasta": 34,
+      "de": "Eusebio Bernal",
+      "escena": "sal",
+      "variantes": [
+        {
+          "cuando": {
+            "decidio": {
+              "h_cable": [
+                0,
+                1
+              ]
+            }
+          },
+          "texto": "Gobernador: las mulas se quedaron mirando hacia arriba, con las orejas paradas, cuando pasaron los baldes de café colgados del cable. Yo las llevé de vacío hasta la bodega. Antes tardaba cuatro días con ocho cargas y ahora el cable las pasa en horas. Dicen que es progreso, y tal vez lo sea, pero la fonda donde dormíamos ya no tiene a quien servir.",
+          "frase": "¿Qué pasa con las personas que viven del camino cuando llega una máquina que hace el mismo trabajo?",
+          "resumen": "Eusebio Bernal vio pasar el café por el cable mientras sus mulas iban vacías."
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: el camino de herradura se puso malo con las lluvias y perdí una mula en el barranco, de las que me dejó mi padre. Si el gobierno no arregla el paso del páramo, los arrieros vamos a tener que dejar el oficio, y a mí no me enseñaron otra cosa que cargar y callar.",
+          "frase": "¿Por qué un camino en mal estado afecta más a quienes viven de él que a quienes lo usan de vez en cuando?",
+          "resumen": "Eusebio Bernal perdió una mula en el camino y pidió arreglar el paso del páramo."
+        }
+      ]
+    },
+    {
+      "id": "bernal2",
+      "familia": "bernal",
+      "desde": 40,
+      "hasta": 62,
+      "de": "Jairo Bernal",
+      "escena": "migra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: le escribo yo, Jairo, porque a mi papá le tiembla la mano. Compré a plazos un camión usado y vendimos las mulas, menos una, que mi papá no quiso soltar. Llego a Ibagué en un día. Pero la carretera es la misma que caminaba mi papá, solo que ahora la pisamos con ruedas. Él dice que el camino nuevo se come al viejo.",
+          "frase": "¿Por qué algunos cambios se sienten a la vez como una ganancia y como una pérdida?",
+          "resumen": "Jairo Bernal compró un camión y su padre se quedó con una sola mula."
+        }
+      ]
+    },
+    {
+      "id": "bernal3",
+      "familia": "bernal",
+      "desde": 66,
+      "hasta": 100,
+      "de": "Jairo Bernal",
+      "escena": "precios",
+      "variantes": [
+        {
+          "cuando": {
+            "ley": "aperturaEconomica"
+          },
+          "texto": "Gobernador: con los fletes por el piso y los camiones que traen de afuera lo que antes subía de aquí, hoy trabajamos por menos. Pagué la cuota de abril con lo del arroz importado, que llegó más barato que el nuestro. Algunos compañeros bloquearon la vía dos días para que los escucharan.",
+          "frase": "¿Quién gana y quién pierde cuando entran productos más baratos desde otros países?",
+          "resumen": "Jairo Bernal vio caer sus fletes con la apertura económica."
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: el diésel sube, los peajes suben y el flete sigue igual. Si no me alcanza para pagar el seguro del camión, tendré que parquearlo. Mi hija pregunta cuándo vamos a volver a ser camioneros de los que viajan y no de los que deben.",
+          "frase": "¿Qué le pasa a quien trabaja con sus propias herramientas cuando todo lo que necesita se encarece menos de lo que él puede cobrar?",
+          "resumen": "Jairo Bernal casi pierde su camión por el precio del combustible."
+        }
+      ]
+    },
+    {
+      "id": "pena1",
+      "familia": "pena",
+      "desde": 36,
+      "hasta": 56,
+      "de": "Julián Peña",
+      "escena": "protesta",
+      "variantes": [
+        {
+          "cuando": {
+            "decidio": {
+              "h_9abril": [
+                0,
+                1,
+                2
+              ]
+            }
+          },
+          "texto": "Madre: me dieron un fusil, un uniforme que me queda grande y una orden de la que no entiendo ni la mitad. Dicen que el que nos manda es el gobierno, pero el sargento habla como se habla en Boyacá y nos trata como a bandidos a los de aquí. Mi compadre Aníbal está en la otra vereda, y usted me dijo que era liberal. No sé contra quién me van a mandar el sábado.",
+          "frase": "¿Qué puedes inferir de lo que siente un soldado cuando se le ordena actuar contra gente de su misma vereda?",
+          "resumen": "Julián Peña fue reclutado y teme tener que disparar contra su compadre."
+        }
+      ]
+    },
+    {
+      "id": "pena2",
+      "familia": "pena",
+      "desde": 58,
+      "hasta": 80,
+      "de": "Cándida Peña",
+      "escena": "protesta",
+      "variantes": [
+        {
+          "cuando": {
+            "conflicto": true
+          },
+          "texto": "Señor gobernador: me llegó una carta del cuartel que no me atreví a abrir. La dejé tres días encima del fogón. Mi vecina sabía leer pero le dije que no, que mejor no. Hoy la abrí yo sola. Pregunto por qué los hijos de los pobres son los que se van y se quedan en los potreros que nadie reclama. Les pido que me entreguen su cuerpo, si es que lo encuentran.",
+          "frase": "Si una madre no quiere abrir la carta, ¿qué es lo que ya sospecha?",
+          "resumen": "Julián Peña murió y su madre pidió que le entregaran el cuerpo.",
+          "hechos": [
+            {
+              "t": "muere",
+              "quien": "Julián Peña"
+            }
+          ]
+        },
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: mi hijo regresó, pero llegó callado. No habla de lo que vio. Come, trabaja la tierra y por las noches se despierta gritando nombres que yo no conozco. Le pregunté qué le pasó y me dijo que cuando se pueda me lo cuenta. Hace tres años que sigo esperando.",
+          "frase": "¿Por qué algunos silencios duran más que las guerras?",
+          "resumen": "Julián Peña volvió del servicio, pero no habla de lo que vivió.",
+          "hechos": [
+            {
+              "t": "vuelve",
+              "quien": "Julián Peña"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pena3",
+      "familia": "pena",
+      "desde": 80,
+      "hasta": 120,
+      "de": "Mateo Peña",
+      "escena": "protesta",
+      "variantes": [
+        {
+          "cuando": {
+            "decidio": {
+              "h_reincorporacion": [
+                0
+              ]
+            }
+          },
+          "texto": "Gobernador: soy Mateo, nieto de Cándida. Estuve cinco años en el monte y hoy trabajo en el vivero que ustedes abrieron. Aprendí a sembrar cacao y a decir mi nombre sin miedo. Algunos vecinos no me saludan. Otros me traen tinto por las tardes. Mi abuela no sabe qué pensar, pero me dejó entrar a la casa.",
+          "frase": "¿Por qué la reincorporación es tan difícil para quien regresa como para quien lo recibe?",
+          "resumen": "Mateo Peña dejó las armas y trabaja en un vivero."
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: soy Mateo, nieto de Cándida. Salí del monte hace tres años y no he conseguido trabajo. Sé disparar y sembrar, pero nadie me da empleo. Anoche me ofrecieron volver por un sueldo. Les dije que no, por ahora. Mi abuela me dijo que la paz también se firma con comida.",
+          "frase": "¿Qué hace falta, además de firmar un acuerdo, para que alguien deje de volver a la guerra?",
+          "resumen": "Mateo Peña salió del monte pero no encontró empleo."
+        }
+      ]
+    },
+    {
+      "id": "vargas1",
+      "familia": "vargas",
+      "desde": 40,
+      "hasta": 60,
+      "de": "Camila Vargas",
+      "escena": "migra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: me llamo Camila y tengo ocho años. Anoche salimos sin los marranos ni el loro. Mi papá no quiso decirnos por qué, solo dijo que nos callaramos y que camináramos pegados. Mi mamá lloraba bajito. En el camino una señora nos prestó una mula. Ahora dormimos en un galpón y yo no sé dónde dejó el loro mi papá.",
+          "frase": "¿Qué puedes saber de lo que pasó en la vereda, aunque la niña no lo diga?",
+          "resumen": "Los Vargas salieron de su vereda de noche, sin llevarse los animales.",
+          "hechos": [
+            {
+              "t": "migra",
+              "quien": "Hernán Vargas"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vargas2",
+      "familia": "vargas",
+      "desde": 60,
+      "hasta": 82,
+      "de": "Camila Vargas",
+      "escena": "migra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: ya tengo doce años y vendo chicles en la plaza, antes de ir a la escuela de la tarde. Vivimos en un rancho de tablas en la loma de arriba, donde no hay agua. Mi mamá dice que mientras no se pueda volver, aquí es lo mismo. Hoy una señora me preguntó de dónde era y le dije que de la vereda de arriba, que no era mentira.",
+          "frase": "¿Qué significa para una niña decir que es «de allá» si ya no puede volver?",
+          "resumen": "Camila Vargas vendía chicles en la plaza y vivía en un rancho sin agua."
+        }
+      ]
+    },
+    {
+      "id": "vargas3",
+      "familia": "vargas",
+      "desde": 85,
+      "hasta": 125,
+      "de": "Camila Vargas",
+      "escena": "tierras",
+      "variantes": [
+        {
+          "cuando": {
+            "decidio": {
+              "h_restitucion": [
+                0
+              ]
+            }
+          },
+          "texto": "Señor gobernador: hoy fuimos a ver la parcela. De la casa quedan los cimientos, pero el nogal sigue ahí, más grande que antes. Mi papá se arrodilló y no dijo nada. Yo planté con mis manos un frijol en el mismo lugar donde estaba la cocina. La fiscal dijo que el papel ya está firmado.",
+          "frase": "¿Qué diferencia hay entre recuperar un papel y recuperar un hogar?",
+          "resumen": "Los Vargas recuperaron su parcela y sembraron donde estuvo su cocina."
+        },
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: no volvimos. El señor que vive allá dice que la compró de buena fe y que no puede irse. Mi papá ya no pregunta. Yo estudio enfermería y a veces en sueños voy por el camino hasta el nogal. Cuando despierto, siempre estoy en otra parte.",
+          "frase": "¿Qué le debe un país a quienes perdieron su tierra aunque quien la tiene hoy la haya comprado legalmente?",
+          "resumen": "Los Vargas no pudieron regresar a su parcela."
+        }
+      ]
+    },
+    {
+      "id": "murillo1",
+      "familia": "murillo",
+      "desde": 22,
+      "hasta": 42,
+      "de": "Ana Murillo",
+      "escena": "huelga",
+      "variantes": [
+        {
+          "cuando": {
+            "ley": "jornada"
+          },
+          "texto": "Gobernador: antes de la jornada de ocho horas salíamos de noche y volvíamos de noche. Ahora todavía veo el sol por la tarde y puedo cocinar yo misma. En la fábrica las manos se me han llenado de callos y los jefes ya no gritan tanto. Pero el patrón dice que gana menos y que por eso hay menos puestos.",
+          "frase": "¿Qué gana y qué pierde un obrero cuando el patrón dice que la ley le cuesta dinero?",
+          "resumen": "Ana Murillo trabaja ocho horas desde que existe la jornada legal."
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: trabajamos de seis de la mañana a seis de la tarde, con media hora para almorzar. A Lucía, la de al lado, se le fueron cuatro dedos en la máquina y el patrón le pagó una semana de sueldo. Ya no la dejaron volver. Hoy suena la sirena y volvemos a empezar.",
+          "frase": "¿Por qué quien sufre un accidente en el trabajo puede quedar peor que el que no lo tuvo?",
+          "resumen": "Ana Murillo trabajaba doce horas y vio cómo una compañera perdía sus dedos."
+        }
+      ]
+    },
+    {
+      "id": "murillo2",
+      "familia": "murillo",
+      "desde": 50,
+      "hasta": 75,
+      "de": "Ana Murillo",
+      "escena": "huelga",
+      "variantes": [
+        {
+          "cuando": {
+            "ley": "sindicalismo"
+          },
+          "texto": "Gobernador: nos organizamos en el sindicato y ahora hay una carta de peticiones. Algunos tienen miedo, pero como hay ley, el patrón no puede despedirnos por ir a la asamblea. Esta tarde comimos todos juntos en el patio. Joaquín dice que nunca antes nos había visto reír.",
+          "frase": "¿Por qué unirse puede dar más fuerza que cada trabajador por separado?",
+          "resumen": "Ana Murillo ayudó a formar el sindicato de la fábrica."
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: a Joaquín lo despidieron anoche sin carta, por hablar en la asamblea. Me dijeron que si me quedaba callada podía seguir. Hoy me senté en la máquina y no sé si trabajar es lo mismo que obedecer. Mi hijo me pregunta qué es un sindicato y yo no sé si tengo derecho a decírselo.",
+          "frase": "¿Qué le pasa a un trabajador cuando no existe ninguna ley que lo proteja?",
+          "resumen": "Joaquín Murillo fue despedido por hablar en una asamblea."
+        }
+      ]
+    },
+    {
+      "id": "murillo3",
+      "familia": "murillo",
+      "desde": 78,
+      "hasta": 120,
+      "de": "Ana Murillo",
+      "escena": "precios",
+      "variantes": [
+        {
+          "cuando": {
+            "ley": "aperturaEconomica"
+          },
+          "texto": "Gobernador: hoy la fábrica cerró. Llegó una cadena de camisetas baratas de afuera y ya no nos compraron. En el portón dejaron un letrero con las gracias. Los jóvenes se ofrecieron como domiciliarios en moto y yo, a los cincuenta y ocho, no sé qué hacer con estas manos que solo saben coser.",
+          "frase": "¿Qué opciones tiene una persona de cincuenta años cuando se cierra la fábrica donde trabajó toda su vida?",
+          "resumen": "La fábrica de Ana Murillo cerró cuando llegaron productos importados.",
+          "hechos": [
+            {
+              "t": "migra",
+              "quien": "Joaquín Murillo"
+            }
+          ]
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: la fábrica sigue abierta, pero ya no hay tantos puestos porque compraron máquinas que hacen en una hora lo que hacíamos en un día. A mí me dejaron para vigilarlas. Los jóvenes que entran no conocen la sirena ni el sindicato, pero conocen el celular. Yo les enseño a coser, por si acaso.",
+          "frase": "¿Qué pasa con las personas cuando el trabajo cambia más rápido que sus oficios?",
+          "resumen": "Ana Murillo se quedó cuidando las máquinas que reemplazaron a sus compañeros."
         }
       ]
     }
