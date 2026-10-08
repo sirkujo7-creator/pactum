@@ -22,6 +22,7 @@ import { iconoObra } from '../arte/edificios.js';
 import { iconoCalle } from '../arte/calles.js';
 import { retrato, retratoFig, gestoDe, EMB } from '../arte/retratos.js';
 import { vineta } from '../arte/vinetas.js';
+import { grabado } from '../arte/grabados.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 import { ico as pintado } from '../arte/iconos.js';
 import { FR, lienzo, texturaYeso, guarda, urlDe } from '../arte/fresco.js';
@@ -1702,7 +1703,7 @@ export class Interfaz {
   }
   tarjetaCarta(r, alTerminar, reabrir) {
     const S = this.S, T = C.FAMILIAS.textos, c = cartaRecibida(r), F = datosFamilia(c.familia), O = c.objeto ? datosObjeto(c.objeto) : null;
-    this.tarjeta(`<img class="vig" src="${vineta(c.escena || 'default', S.reg, S.stage)}" alt="">
+    this.tarjeta(`<img class="vig vig-grabado" src="${grabado(c.escena || 'default')}" alt="">
       <div class="carta-cab"><span>${F.icono} ${F.nombre}</span><span>${T.anio.replace('{anio}', c.anio)}</span></div>
       <h3>${T.de.replace('{quien}', c.de)}</h3><div class="carta-texto"><p>${c.texto}</p><p class="firma">— ${c.de}</p></div>
       <div class="phil"><b>${T.pensar}</b><br>${c.frase}</div>

@@ -1,0 +1,4 @@
+<!doctype html><meta charset="utf-8"><title>Grabados</title><body style="background:#cdb98f;margin:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><script type="module">
+import { grabado, EMBLEMAS } from '../src/arte/grabados.js';
+for (const e of EMBLEMAS) { const i = new Image(); i.src = grabado(e); i.style.width = '100%'; document.body.append(i); }
+</script>
