@@ -119,6 +119,37 @@
         "Ana Murillo (obrera)",
         "Joaquín Murillo"
       ]
+    },
+    "cuellar": {
+      "nombre": "Los Cuéllar",
+      "icono": "☕",
+      "origen": "Cafeteros de una finca de ladera: de la cosecha depende todo lo demás.",
+      "clase": "c",
+      "miembros": [
+        "Abdón Cuéllar",
+        "Nelly Cuéllar (hija)",
+        "Sebastián Cuéllar (nieto)"
+      ]
+    },
+    "pardo": {
+      "nombre": "Los Pardo",
+      "icono": "👞",
+      "origen": "Una madre lavandera y su hijo, que lustra zapatos en la plaza.",
+      "clase": "u",
+      "miembros": [
+        "Ofelia Pardo (madre)",
+        "Lucas Pardo (hijo)"
+      ]
+    },
+    "almonacid": {
+      "nombre": "Los Almonacid",
+      "icono": "💉",
+      "origen": "Teresa, enfermera del hospital, y la partera Hilda, que atendía partos antes que ella.",
+      "clase": "a",
+      "miembros": [
+        "Teresa Almonacid (enfermera)",
+        "Hilda Almonacid (partera)"
+      ]
     }
   },
   "objetos": {
@@ -191,6 +222,21 @@
       "nombre": "El cuaderno de la lengua",
       "icono": "📓",
       "texto": "La lengua pijao casi desapareció; hoy las comunidades del sur del Tolima trabajan por recuperar sus palabras y su memoria."
+    },
+    "pocillo": {
+      "nombre": "El pocillo de Abdón",
+      "icono": "☕",
+      "texto": "Un pocillo de peltre para el tinto. En las fincas cafeteras se tomaba antes del amanecer y después de cada jornada."
+    },
+    "betun": {
+      "nombre": "El cajón de Lucas",
+      "icono": "🧰",
+      "texto": "El cajón de madera con betún y cepillos de los lustrabotas. Para muchos niños de las plazas fue su primer trabajo y su única escuela."
+    },
+    "jeringa": {
+      "nombre": "La jeringa de Teresa",
+      "icono": "💉",
+      "texto": "Jeringa de vidrio que se hervía antes de cada inyección. Las campañas de vacunación del siglo XX salvaron a millones de niños."
     }
   },
   "cartas": [
@@ -1167,6 +1213,189 @@
           "texto": "Gobernador: la fábrica sigue abierta, pero ya no hay tantos puestos porque compraron máquinas que hacen en una hora lo que hacíamos en un día. A mí me dejaron para vigilarlas. Los jóvenes que entran no conocen la sirena ni el sindicato, pero conocen el celular. Yo les enseño a coser, por si acaso.",
           "frase": "¿Qué pasa con las personas cuando el trabajo cambia más rápido que sus oficios?",
           "resumen": "Ana Murillo se quedó cuidando las máquinas que reemplazaron a sus compañeros."
+        }
+      ]
+    },
+    {
+      "id": "cuellar1",
+      "familia": "cuellar",
+      "desde": 16,
+      "hasta": 34,
+      "de": "Abdón Cuéllar",
+      "escena": "cafe",
+      "variantes": [
+        {
+          "cuando": {
+            "decidio": {
+              "h_federacion": [
+                0
+              ]
+            }
+          },
+          "texto": "Gobernador: la Federación nos compró el café a precio fijo y hoy pude pagar la deuda de la tienda. Mi hija Nelly aprendió a leer los números del recibo. Me dijeron que el precio en Nueva York bajó, pero a nosotros no nos tocó. Ya no pierdo el sueño cuando suena el teléfono del pueblo.",
+          "frase": "¿Quién carga con el riesgo del precio cuando los productores se juntan, y quién cuando están solos?",
+          "resumen": "Abdón Cuéllar pagó su deuda gracias a la compra de la Federación."
+        },
+        {
+          "cuando": {},
+          "texto": "Gobernador: este año la cosecha fue buena, como nunca. Los palos se doblaban de tanto grano. Y aun así vendí la vaca y le pedí fiado al tendero. El cura me preguntó si había sido mal año y le dije que no. Compré menos sal, y Nelly estrenó el vestido de su prima.",
+          "frase": "Si la cosecha fue buena y aun así la familia vende la vaca, ¿qué pudo haber pasado con el precio?",
+          "resumen": "Abdón Cuéllar tuvo buena cosecha y aun así tuvo que vender la vaca.",
+          "objeto": "pocillo"
+        }
+      ]
+    },
+    {
+      "id": "cuellar2",
+      "familia": "cuellar",
+      "desde": 36,
+      "hasta": 55,
+      "de": "Nelly Cuéllar",
+      "escena": "guerra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: este año cosechamos de noche, con las gallinas dentro de la casa y los perros sueltos. Don Hernán, el vecino de arriba, dejó las llaves de la finca en la puerta de la iglesia y se fue sin despedirse. Mi hermano no quiere salir al camino sin los dos perros. Papá dice que el café no se levanta solo, pero cada vez es más difícil ir a recogerlo.",
+          "frase": "Si el vecino deja las llaves y se va sin despedirse, ¿qué pudo haber pasado en la vereda?",
+          "resumen": "Nelly Cuéllar cosechó de noche y vio cómo un vecino abandonó su finca."
+        }
+      ]
+    },
+    {
+      "id": "cuellar3",
+      "familia": "cuellar",
+      "desde": 58,
+      "hasta": 85,
+      "de": "Abdón Cuéllar",
+      "escena": "cafe",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: cada tres meses viene un joven con corbata a medir la tierra y a decirnos cuánto abono ponerle al palo. Al principio nos reímos. Hoy la cosecha rinde un tercio más, y Nelly dice que ese muchacho debe de ser pariente de algún presidente. Sebastián, mi nieto, le sigue el paso y le hace preguntas hasta que anochece.",
+          "frase": "¿Qué cambia en una finca cuando alguien de afuera trae conocimiento nuevo, y qué podría perderse con él?",
+          "resumen": "Abdón Cuéllar mejoró su cosecha con la ayuda de un técnico."
+        }
+      ]
+    },
+    {
+      "id": "cuellar4",
+      "familia": "cuellar",
+      "desde": 88,
+      "hasta": 130,
+      "de": "Sebastián Cuéllar",
+      "escena": "cafe",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: vendo el café por internet. Un comprador de Japón me pregunta a cuántos metros sobre el mar está la finca; nadie me pregunta cuánto llovió este año. Mi abuelo decía que la lluvia se medía por el color de las hojas, y las hojas de hoy están amarillas antes de tiempo. Subí la siembra cien metros más arriba. Alguien tendrá que decirme hasta dónde se puede subir.",
+          "frase": "Si el cafetero siembra cada vez más arriba de la montaña, ¿qué cambió en su finca y qué podría pasar más adelante?",
+          "resumen": "Sebastián Cuéllar vende café por internet y siembra cada vez más arriba."
+        }
+      ]
+    },
+    {
+      "id": "pardo1",
+      "familia": "pardo",
+      "desde": 24,
+      "hasta": 45,
+      "de": "Lucas Pardo",
+      "escena": "calle",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: me llamo Lucas, tengo ocho años y lustro zapatos en la plaza. Los zapatos de los señores de la alcaldía brillan poco porque casi no caminan. Mi mamá lava ropa en el río y ya no habla fuerte de tanto toser. Hoy un señor me pagó con una moneda y me preguntó si sabía leer; le dije que sabía contar.",
+          "frase": "¿Por qué un niño dice que sabe contar cuando le preguntan si sabe leer?",
+          "resumen": "Lucas Pardo lustraba zapatos en la plaza porque su mamá estaba enferma.",
+          "objeto": "betun"
+        }
+      ]
+    },
+    {
+      "id": "pardo2",
+      "familia": "pardo",
+      "desde": 50,
+      "hasta": 72,
+      "de": "Lucas Pardo",
+      "escena": "huelga",
+      "variantes": [
+        {
+          "cuando": {
+            "ley": "educacionObligatoria"
+          },
+          "texto": "Señor gobernador: ahora tengo catorce años y voy a la escuela por la mañana. En la tarde lavo la maquinaria de la fábrica, porque mi mamá todavía tose y no puede trabajar. El jefe me preguntó la edad. Le dije que tenía dieciséis. Lo que no le dije es que esta noche tengo que hacer una tarea sobre los ríos de Colombia.",
+          "frase": "Si la ley obliga a ir a la escuela y también el trabajo reclama al niño, ¿quién debe resolver esa pelea?",
+          "resumen": "Lucas Pardo estudiaba y trabajaba a la vez en la fábrica."
+        },
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: ahora tengo catorce años y trabajo en la fábrica de al lado, lavando la maquinaria. El jefe me preguntó la edad. Le dije que tenía dieciséis. No me pidió papeles. Mi mamá tose menos desde que le compré la medicina, pero tampoco habla de la escuela. Ya olvidé cómo se escribía mi apellido con letra de cartilla.",
+          "frase": "¿Qué le pasa a un niño que no va a la escuela y qué le pasa al pueblo que lo deja trabajar?",
+          "resumen": "Lucas Pardo dejó la escuela para trabajar en la fábrica."
+        }
+      ]
+    },
+    {
+      "id": "pardo3",
+      "familia": "pardo",
+      "desde": 76,
+      "hasta": 110,
+      "de": "Lucas Pardo",
+      "escena": "calle",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Señor gobernador: ya soy adulto y tengo un puesto de minutos de celular en la plaza. También lustro zapatos los domingos por costumbre. Dicen que el comercio digital llegó a todas partes; a mi puesto llegó una pantalla que no sé usar. Mis hijos sí. Uno de ellos quiere ser ingeniero y me explicó cómo se hace un programa. Le pedí que me lo explicara otra vez.",
+          "frase": "¿Qué nos cuenta Lucas sobre quiénes se benefician cuando llega una tecnología nueva y quiénes quedan atrás?",
+          "resumen": "Lucas Pardo, ya adulto, vende minutos de celular y su hijo quiere ser ingeniero."
+        }
+      ]
+    },
+    {
+      "id": "almonacid1",
+      "familia": "almonacid",
+      "desde": 30,
+      "hasta": 50,
+      "de": "Teresa Almonacid",
+      "escena": "salud",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: en la sala del hospital hay cuatro camas y seis enfermos. A la señora de la vereda de arriba la acostamos en el piso con una cobija. La partera Hilda ya la había atendido antes de que llegara; yo no puedo escribir su nombre en el libro del parto porque no tiene título. Mi superior me dijo que lo que no está en el libro no ocurrió.",
+          "frase": "Si lo que no está en el libro no ocurrió, ¿qué cosas valiosas se quedan sin reconocimiento en un hospital?",
+          "resumen": "Teresa Almonacid atendió a una mujer en el piso del hospital; la partera Hilda no pudo figurar en el libro.",
+          "objeto": "jeringa"
+        }
+      ]
+    },
+    {
+      "id": "almonacid2",
+      "familia": "almonacid",
+      "desde": 56,
+      "hasta": 80,
+      "de": "Teresa Almonacid",
+      "escena": "salud",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: este año recorrimos las veredas en mula con una neverita de icopor y una lista de nombres. En cada casa me preguntaban por qué venía con una aguja y yo les decía que era para que los niños no se quedaran como Jacinto, el de la esquina, con la pierna arrastrada. Hubo casas donde nos cerraron la puerta. En la casa de Hilda hicieron fila.",
+          "frase": "¿Por qué algunos cierran la puerta y otros hacen fila cuando llega la brigada de salud?",
+          "resumen": "Teresa Almonacid recorrió las veredas con una brigada de vacunación."
+        }
+      ]
+    },
+    {
+      "id": "almonacid3",
+      "familia": "almonacid",
+      "desde": 88,
+      "hasta": 130,
+      "de": "Teresa Almonacid",
+      "escena": "salud",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: llevo una semana usando el mismo tapabocas y los pasillos del hospital están llenos de gente que ni conozco. La vecina de la tienda no me quiere abrir la puerta; me dice que yo traigo \"eso\" en la ropa. Hilda, que ya es muy anciana, se quedó encerrada en su casa y yo le dejo la comida en el portón. Hoy hablamos por la ventana, con la voz levantada.",
+          "frase": "¿Por qué a quien cuida a los enfermos a veces la gente le tiene miedo en lugar de agradecerle?",
+          "resumen": "Teresa Almonacid cuidó enfermos durante la pandemia y su vecina le cerró la puerta."
         }
       ]
     }
