@@ -47,8 +47,8 @@
       "etapa": 1,
       "habitantes": 60
     },
-    "probabilidadAnual": 0.22,
-    "respiro": 2,
+    "probabilidadAnual": 0.15,
+    "respiro": 3,
     "nino": {
       "nombre": "El Niño",
       "icono": "☀️",
