@@ -4,59 +4,192 @@
   "epocas": {
     "fundacion": {
       "items": [
-        { "fecha": "1550", "texto": "Se funda Ibagué, en el camino entre Santafé y el Pacífico." },
-        { "fecha": "1801", "texto": "Alexander von Humboldt cruza la cordillera Central por el paso de La Línea, camino a Quito." },
-        { "fecha": "1810", "texto": "El 20 de julio estalla en Santafé el grito de independencia." },
-        { "fecha": "1819", "texto": "La batalla de Boyacá, el 7 de agosto, abre el camino de la República." },
-        { "fecha": "1851", "texto": "Colombia abole la esclavitud." }
+        {
+          "fecha": "1550",
+          "texto": "Se funda Ibagué, en el camino entre Santafé y el Pacífico."
+        },
+        {
+          "fecha": "1801",
+          "texto": "Alexander von Humboldt cruza la cordillera Central por el paso de La Línea, camino a Quito."
+        },
+        {
+          "fecha": "1810",
+          "texto": "El 20 de julio estalla en Santafé el grito de independencia."
+        },
+        {
+          "fecha": "1819",
+          "texto": "La batalla de Boyacá, el 7 de agosto, abre el camino de la República."
+        },
+        {
+          "fecha": "1851",
+          "texto": "Colombia abole la esclavitud."
+        }
+      ],
+      "preguntas": [
+        "Si en esta edición se habla de tierras «sin dueño», ¿quién pudo vivir allí antes de que llegaran los colonos?",
+        "Un periódico cuenta lo que pasa en la plaza, no en la montaña. ¿Qué noticias podrían estar faltando en esta edición?",
+        "Si los colonos avanzan hacia el monte, ¿qué se pierde y quién lo pierde primero?"
       ]
     },
     "cafe": {
       "items": [
-        { "fecha": "1886", "texto": "Una nueva Constitución centraliza el país y le da un lugar privilegiado a la Iglesia." },
-        { "fecha": "1899–1902", "texto": "La Guerra de los Mil Días deja el país arruinado y miles de muertos." },
-        { "fecha": "1903", "texto": "Panamá se separa de Colombia." },
-        { "fecha": "1914–1918", "texto": "La Primera Guerra Mundial sacude los precios de lo que el mundo compra y vende." },
-        { "fecha": "1927", "texto": "Nace la Federación Nacional de Cafeteros." },
-        { "fecha": "1928", "texto": "Masacre de las bananeras, en Ciénaga: soldados disparan contra trabajadores en huelga." },
-        { "fecha": "1929", "texto": "La Gran Depresión hunde el precio del café." }
+        {
+          "fecha": "1886",
+          "texto": "Una nueva Constitución centraliza el país y le da un lugar privilegiado a la Iglesia."
+        },
+        {
+          "fecha": "1899–1902",
+          "texto": "La Guerra de los Mil Días deja el país arruinado y miles de muertos."
+        },
+        {
+          "fecha": "1903",
+          "texto": "Panamá se separa de Colombia."
+        },
+        {
+          "fecha": "1914–1918",
+          "texto": "La Primera Guerra Mundial sacude los precios de lo que el mundo compra y vende."
+        },
+        {
+          "fecha": "1927",
+          "texto": "Nace la Federación Nacional de Cafeteros."
+        },
+        {
+          "fecha": "1928",
+          "texto": "Masacre de las bananeras, en Ciénaga: soldados disparan contra trabajadores en huelga."
+        },
+        {
+          "fecha": "1929",
+          "texto": "La Gran Depresión hunde el precio del café."
+        }
       ],
-      "verso": { "texto": "Una noche, una noche toda llena de murmullos, de perfumes y de músicas de alas…", "autor": "José Asunción Silva", "obra": "Nocturno", "revisar": true }
+      "verso": {
+        "texto": "Una noche, una noche toda llena de murmullos, de perfumes y de músicas de alas…",
+        "autor": "José Asunción Silva",
+        "obra": "Nocturno",
+        "revisar": true
+      },
+      "preguntas": [
+        "Si el café sube de precio, ¿quién gana primero y quién tarda más en notarlo? Explica con lo que lees.",
+        "¿Por qué un periódico de la época habla más de los comerciantes que de los jornaleros? ¿Quién lo escribe y quién lo lee?",
+        "Si la noticia habla de una obra moderna, ¿a quién beneficia más: al que la paga o al que la usa?"
+      ]
     },
     "violencia": {
       "items": [
-        { "fecha": "1936", "texto": "La Ley 200 intenta ordenar la propiedad de la tierra." },
-        { "fecha": "1939–1945", "texto": "La Segunda Guerra Mundial cambia el mapa del mundo." },
-        { "fecha": "1948", "texto": "El 9 de abril es asesinado Jorge Eliécer Gaitán y estalla el Bogotazo; se firma la Declaración Universal de los Derechos Humanos." },
-        { "fecha": "1953", "texto": "El general Gustavo Rojas Pinilla toma el poder y ofrece una amnistía a los alzados en armas." },
-        { "fecha": "1957", "texto": "Un plebiscito aprueba el Frente Nacional y el voto de las mujeres." }
+        {
+          "fecha": "1936",
+          "texto": "La Ley 200 intenta ordenar la propiedad de la tierra."
+        },
+        {
+          "fecha": "1939–1945",
+          "texto": "La Segunda Guerra Mundial cambia el mapa del mundo."
+        },
+        {
+          "fecha": "1948",
+          "texto": "El 9 de abril es asesinado Jorge Eliécer Gaitán y estalla el Bogotazo; se firma la Declaración Universal de los Derechos Humanos."
+        },
+        {
+          "fecha": "1953",
+          "texto": "El general Gustavo Rojas Pinilla toma el poder y ofrece una amnistía a los alzados en armas."
+        },
+        {
+          "fecha": "1957",
+          "texto": "Un plebiscito aprueba el Frente Nacional y el voto de las mujeres."
+        }
       ],
-      "verso": { "texto": "Antes que me hubiera apoderado de la mujer, jugué mi corazón al azar y me lo ganó la Violencia.", "autor": "José Eustasio Rivera", "obra": "La vorágine", "revisar": true }
+      "verso": {
+        "texto": "Antes que me hubiera apoderado de la mujer, jugué mi corazón al azar y me lo ganó la Violencia.",
+        "autor": "José Eustasio Rivera",
+        "obra": "La vorágine",
+        "revisar": true
+      },
+      "preguntas": [
+        "Cuando un periódico usa la palabra «orden», ¿de quién habla y a quién deja por fuera?",
+        "Si hay noticias que casi no cuentan los hechos, ¿qué puedes inferir de lo que no se atreve a decir el periódico?",
+        "¿Qué diferencia hay entre una noticia sobre una muerte y una noticia sobre quién la ordenó?"
+      ]
     },
     "modernizacion": {
       "items": [
-        { "fecha": "1961", "texto": "La Ley 135 promete una reforma agraria." },
-        { "fecha": "1964", "texto": "Nacen las guerrillas de las FARC (tras Marquetalia) y del ELN." },
-        { "fecha": "1969", "texto": "Los primeros seres humanos pisan la Luna y la televisión lo muestra en vivo." },
-        { "fecha": "1970s", "texto": "El campo se vacía: miles de familias se van a las ciudades." },
-        { "fecha": "1982", "texto": "Gabriel García Márquez gana el Nobel de Literatura." }
+        {
+          "fecha": "1961",
+          "texto": "La Ley 135 promete una reforma agraria."
+        },
+        {
+          "fecha": "1964",
+          "texto": "Nacen las guerrillas de las FARC (tras Marquetalia) y del ELN."
+        },
+        {
+          "fecha": "1969",
+          "texto": "Los primeros seres humanos pisan la Luna y la televisión lo muestra en vivo."
+        },
+        {
+          "fecha": "1970s",
+          "texto": "El campo se vacía: miles de familias se van a las ciudades."
+        },
+        {
+          "fecha": "1982",
+          "texto": "Gabriel García Márquez gana el Nobel de Literatura."
+        }
+      ],
+      "preguntas": [
+        "Si la noticia habla de una nueva carretera, ¿qué se va a mover por ella: gente, café o ideas? ¿Cómo lo sabes?",
+        "Cuando el campo se vacía, ¿qué pasa con las veredas y qué pasa con las ciudades? Busca una pista en la edición.",
+        "¿Por qué una novedad tecnológica puede alegrar a unos y asustar a otros?"
       ]
     },
     "paz": {
       "items": [
-        { "fecha": "1985", "texto": "En noviembre, la toma del Palacio de Justicia y la tragedia de Armero ocurren con una semana de diferencia." },
-        { "fecha": "1989", "texto": "Cae el Muro de Berlín y termina la Guerra Fría." },
-        { "fecha": "1991", "texto": "Una nueva Constitución reconoce derechos, diversidad y autonomía a las regiones." },
-        { "fecha": "2016", "texto": "El gobierno y las FARC firman el acuerdo de paz; el presidente Santos recibe el Nobel de Paz." }
+        {
+          "fecha": "1985",
+          "texto": "En noviembre, la toma del Palacio de Justicia y la tragedia de Armero ocurren con una semana de diferencia."
+        },
+        {
+          "fecha": "1989",
+          "texto": "Cae el Muro de Berlín y termina la Guerra Fría."
+        },
+        {
+          "fecha": "1991",
+          "texto": "Una nueva Constitución reconoce derechos, diversidad y autonomía a las regiones."
+        },
+        {
+          "fecha": "2016",
+          "texto": "El gobierno y las FARC firman el acuerdo de paz; el presidente Santos recibe el Nobel de Paz."
+        }
+      ],
+      "preguntas": [
+        "Si un acuerdo se firma, ¿es lo mismo que si se cumple? ¿Qué pistas da la edición?",
+        "¿Qué diferencia hay entre recordar y olvidar lo que pasó, y quién gana con cada una?",
+        "Si el periódico habla de víctimas, ¿quién habla por ellas: el gobierno, los periodistas o ellas mismas?"
       ]
     },
     "digital": {
       "items": [
-        { "fecha": "2015", "texto": "El Acuerdo de París fija una meta mundial contra el calentamiento." },
-        { "fecha": "2018", "texto": "La Ley 1930 protege los páramos del país." },
-        { "fecha": "2020", "texto": "La pandemia de covid-19 llega a Colombia el 6 de marzo y encierra a medio mundo." },
-        { "fecha": "Hoy", "texto": "El internet llega a las veredas y el clima ya no es el de nuestros abuelos." }
+        {
+          "fecha": "2015",
+          "texto": "El Acuerdo de París fija una meta mundial contra el calentamiento."
+        },
+        {
+          "fecha": "2018",
+          "texto": "La Ley 1930 protege los páramos del país."
+        },
+        {
+          "fecha": "2020",
+          "texto": "La pandemia de covid-19 llega a Colombia el 6 de marzo y encierra a medio mundo."
+        },
+        {
+          "fecha": "Hoy",
+          "texto": "El internet llega a las veredas y el clima ya no es el de nuestros abuelos."
+        }
+      ],
+      "preguntas": [
+        "Si una noticia viaja más rápido que nunca, ¿cómo saber si es cierta? ¿Qué pistas buscarías en esta edición?",
+        "¿Quién decide qué noticia aparece primero cuando todos leen en una pantalla?",
+        "Si el clima cambia, ¿qué noticias de esta edición podrían estar conectadas entre sí?"
       ]
     }
+  },
+  "textos": {
+    "pensar": "Para pensar"
   }
 }

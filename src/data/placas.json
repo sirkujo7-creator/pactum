@@ -94,5 +94,70 @@
       "modernizacion": "Las minas dan empleo, pero pueden dañar el agua y la salud.",
       "paz": "En la consulta popular de Cajamarca (Tolima), en 2017, la gente dijo no a la minería de oro en su territorio."
     }
-  }
+  },
+  "versos": {
+    "escuela": {
+      "texto": "El hijo de rana, Rinrín Renacuajo, salió esta mañana muy tieso y muy majo…",
+      "autor": "Rafael Pombo",
+      "obra": "El renacuajo paseador",
+      "revisar": true
+    },
+    "mercado": {
+      "texto": "Érase una viejecita sin nadita qué comer, sino carnes, frutas, dulces, tortas, huevos y pastel.",
+      "autor": "Rafael Pombo",
+      "obra": "La pobre viejecita",
+      "revisar": true
+    },
+    "cementerio": {
+      "texto": "…y eran una sola sombra larga, y eran una sola sombra larga, y eran una sola sombra larga.",
+      "autor": "José Asunción Silva",
+      "obra": "Nocturno",
+      "revisar": true
+    }
+  },
+  "nombres": {
+    "fundacion": [
+      "Plaza de Bolívar"
+    ],
+    "parque": [
+      "Parque Murillo Toro",
+      "Parque Centenario"
+    ],
+    "iglesia": [
+      "Catedral de Ibagué"
+    ],
+    "escuela": [
+      "Escuela Normal Superior de Ibagué",
+      "Conservatorio del Tolima"
+    ],
+    "hospital": [
+      "Hospital Federico Lleras Acosta"
+    ],
+    "mercado": [
+      "Plaza de la 21"
+    ],
+    "teatro": [
+      "Teatro Tolima"
+    ],
+    "universidad": [
+      "Universidad del Tolima"
+    ],
+    "cuartel": [
+      "Batallón Rooke"
+    ],
+    "policia": [
+      "Panóptico de Ibagué"
+    ],
+    "estadio": [
+      "Estadio Manuel Murillo Toro"
+    ],
+    "banco": [
+      "Banco de la República"
+    ],
+    "cementerio": [
+      "Cementerio San Bernardo"
+    ]
+  },
+  "nombresTitulo": "Lo conocen como",
+  "nombresNota": "Nombres de lugares reales de Ibagué, por verificar."
 }

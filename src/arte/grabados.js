@@ -5,7 +5,7 @@ import { lienzo } from './acuarela.js';
 const TINTA = '#3b2c1d', PAPEL = '#e6d8b8', W = 320, H = 136;
 // Cada carta (por su `escena`) usa un emblema; lo que no está aquí usa el camino vacío.
 const EMBLEMA = { tierras: 'azadon', migra: 'maleta', maestros: 'libro', huelga: 'chimenea', protesta: 'pancarta', precios: 'balanza', semillas: 'saco', sal: 'saco',
-  elite: 'casona', festival: 'tiple', pet: 'carta', corrup: 'balanza', default: 'camino', luto: 'cruz', velorio: 'vela', soldado: 'silueta' };
+  elite: 'casona', festival: 'tiple', pet: 'carta', corrup: 'balanza', default: 'camino', cafe: 'saco', calle: 'silueta', salud: 'vela', guerra: 'cruz', luto: 'cruz', velorio: 'vela', soldado: 'silueta' };
 export const EMBLEMAS = ['camino', 'cruz', 'vela', 'silueta', 'azadon', 'maleta', 'libro', 'chimenea', 'pancarta', 'balanza', 'saco', 'casona', 'tiple', 'carta'];
 
 // Sombreado de rayas finas dentro de una figura (como el buril): se recorta con la figura y se rellenan líneas diagonales.
