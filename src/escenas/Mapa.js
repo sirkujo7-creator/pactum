@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -226,7 +226,7 @@ export class Mapa extends Phaser.Scene {
         const alto = this.S.stage >= 2 ? 30 : 22;
         this.humos[i] = this.add.particles(img.x + 7, img.y - alto, 'edificios', { frame: 'humo', lifespan: 2600, speedX: { min: 1, max: 4 }, speedY: { min: -7, max: -4 }, scale: { start: .06, end: .28 }, alpha: { start: .35, end: 0 }, frequency: 900, quantity: 1 }).setDepth(t.r + t.c + 1.5);
       }
-      if (f.humo && !reducirMovimiento()) {
+      if (f.humo && !reducirMovimiento() && this.fabricaViva(i, x)) {
         this.humos[i] = this.add.particles(img.x + f.humo[0], img.y + f.humo[1], 'edificios', {
           frame: 'humo', lifespan: 3400, speedX: { min: 2, max: 6 }, speedY: { min: -9, max: -6 }, scale: { start: .12, end: .45 },
           alpha: { start: .45, end: 0 }, frequency: 420, quantity: 1
@@ -236,8 +236,11 @@ export class Mapa extends Phaser.Scene {
     if (nivel >= 2) this.desgasteVisible(i, nivel);
     this.huellasDeObra(i, x, t);
   }
+  // Fase 17: una fábrica sin energía o sin materia prima no echa humo.
+  fabricaViva(i, x) { const S = this.S; if (x.b !== 'taller' || !industriaActiva(S)) return true; const P = produccionFabrica(S, i); return P.encendida && P.f > 0; }
   huellaExtra(x, i) {
     const S = this.S;
+    if (x.b === 'taller' && industriaActiva(S) && !this.fabricaViva(i, x)) return 'ap';
     if (!C.HUELLAS) return '';
     const ly = (x.b ? this.leyesAqui(i, x).join(',') : '') + (x.b && quemadaVisible(S, x) ? 'q' : '');
     if (x.b === 'cementerio') return 't' + Math.ceil(tumbasDe(S, i) * 12 / C.HUELLAS.cementerio.capacidad);

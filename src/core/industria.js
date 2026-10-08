@@ -60,12 +60,12 @@ export function elegirSalario(S, s) {
 export function produccionFabrica(S, i, en) {
   const x = S.map[i], pr = productoDe(x), D = datosProducto(pr), on = (en || encendidas(S)).has(i);
   if (!on) return { renta: 0, empleo: 0, ambiente: D.ambiente * K().minimo * (nearRiver(S, i) ? K().rio : 1) * datosNivel(nivelDe(x)).ambiente, f: 0, encendida: false };
-  const f = insumo(S, pr).f, m = K().minimo + (1 - K().minimo) * f, r = rindeObra(S, x);
+  const f = insumo(S, pr).f, m = f, r = rindeObra(S, x); // fase 17: sin materia prima no rinde nada ni emplea
   // La ganancia sigue a medias el precio de la materia prima: la industria amortigua las crisis del campo.
   const precio = D.insumo && D.insumo.cultivo ? .5 + .5 * precioCultivo(S, D.insumo.cultivo) : precioCiclo(S, pr);
   const rio = nearRiver(S, i) ? K().rio : 1; // paso 2: junto al río, sus desechos lo ensucian más
   const N = datosNivel(nivelDe(x)); // paso 3: con máquinas o automatizada, más ganancia y menos empleo
-  return { renta: D.renta * f * r * precio * salario(S).renta * N.renta * (1 + efectoLeyes(S, 'fabricas') + bonoFabrica(S, i, D.insumo)), empleo: Math.round(D.empleo * m * N.empleo * (r ? 1 : 0)), ambiente: D.ambiente * m * rio * N.ambiente, f, encendida: true };
+  return { renta: D.renta * K().rentabilidad * f * r * precio * salario(S).renta * N.renta * (1 + efectoLeyes(S, 'fabricas') + bonoFabrica(S, i, D.insumo)), empleo: Math.round(D.empleo * m * N.empleo * (r ? 1 : 0)), ambiente: D.ambiente * m * rio * N.ambiente, f, encendida: true };
 }
 // Para la hacienda: una función que da la ganancia de la fábrica en i (con las fábricas encendidas calculadas una vez).
 export function rentaFabrica(S) { const en = encendidas(S); return i => produccionFabrica(S, i, en).renta; }

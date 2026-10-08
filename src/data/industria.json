@@ -35,8 +35,8 @@
     "artesanias": {
       "nombre": "Artesanías",
       "icono": "🏺",
-      "texto": "Sombreros de iraca, ollas de barro y canastos. No necesita cosecha, pero casi no deja ganancia al tesoro.",
-      "renta": 0,
+      "texto": "Sombreros de iraca, ollas de barro y canastos. No necesita cosecha, pero deja poca ganancia al tesoro.",
+      "renta": 3,
       "empleo": 9,
       "ambiente": -7
     },
@@ -157,5 +157,6 @@
       "empleo": 0.4,
       "ambiente": 1.1
     }
-  ]
+  ],
+  "rentabilidad": 1.7
 }
