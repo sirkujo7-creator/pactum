@@ -475,3 +475,5 @@ section.fija>.pl-c{padding:0 12px 10px}
 .rapida-texto{text-align:center;font-size:1.15rem;line-height:1.35;margin:8px 4px 14px}.rapida-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rapida-op{text-align:center;padding:14px 8px;min-height:64px}
 .placa{display:block;border:1.5px solid #8C7A62;background:rgba(241,228,196,.55);border-radius:6px;padding:6px 10px;font-size:.88rem;line-height:1.35}.placa b{font-variant:small-caps;color:#5A2A20;margin-right:4px}
 .vig-grabado{border-radius:4px;filter:sepia(.15);box-shadow:0 1px 3px rgba(60,40,20,.35)}
+.alm{margin:4px 0 8px;padding-left:18px;font-size:.92em}.alm li{margin:3px 0}
+.verso{margin:6px 0 10px;padding:6px 12px;border-left:3px solid #8a6a3b;font-family:'IM Fell English','Alegreya',serif;font-style:italic;opacity:.9}
