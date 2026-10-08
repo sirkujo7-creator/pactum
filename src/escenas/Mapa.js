@@ -708,7 +708,7 @@ export class Mapa extends Phaser.Scene {
         ArrowLeft: () => this.mover(paso, 0), ArrowRight: () => this.mover(-paso, 0), ArrowUp: () => this.mover(0, paso), ArrowDown: () => this.mover(0, -paso),
         a: () => this.mover(paso, 0), d: () => this.mover(-paso, 0), w: () => this.mover(0, paso), s: () => this.mover(0, -paso),
         '+': () => this.zoomCentro(1.25), '=': () => this.zoomCentro(1.25), '-': () => this.zoomCentro(1 / 1.25),
-        '0': () => this.encuadrar(), c: () => this.alternarCobertura(), m: () => this.ui.tarjetaMundo(), p: () => this.ui.tarjetaPendientes(), b: () => this.ui.alternarHoja('construir'),
+        '0': () => this.encuadrar(), c: () => this.alternarCobertura(), m: () => this.ui.tarjetaMundo(), v: () => this.ui.tarjetaPlano(), p: () => this.ui.tarjetaPendientes(), b: () => this.ui.alternarHoja('construir'),
         '1': () => this.ui.alternarHoja('construir'), '2': () => this.ui.alternarHoja('hacienda'), '3': () => this.ui.alternarHoja('sociedad'),
         '4': () => this.ui.alternarHoja('leyes'), '5': () => this.ui.alternarHoja('cronica'), ' ': () => this.terminarAnio(),
         Escape: () => { if (this.ui.herramienta) this.ui.elegir(null); else if (this.ui.hojaAbierta()) this.ui.cerrarHojas(); else this.ui.cerrarFicha(); }
