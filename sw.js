@@ -1,6 +1,6 @@
 // Pactum: trabajador de servicio. Guarda el juego en el aparato para que funcione sin internet.
 // Al publicar una versión nueva, cambia CACHE: así los aparatos descargan los archivos nuevos.
-const CACHE = 'pactum-0.114.0';
+const CACHE = 'pactum-0.115.0';
 const ARCHIVOS = [
   './',
   'index.html',
@@ -168,6 +168,7 @@ const ARCHIVOS = [
   'src/escenas/Navegacion.js',
   'src/escenas/Pobladores.js',
   'src/escenas/Trafico.js',
+  'src/escenas/Transporte.js',
   'src/escenas/Vida.js',
   'src/escenas/memoria.js',
   'src/escenas/mundo.js',
