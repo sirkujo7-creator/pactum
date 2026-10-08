@@ -469,3 +469,5 @@ section.fija>.pl-c{padding:0 12px 10px}
 .ic-mat{font-size:15px;line-height:1;width:21px;text-align:center}
 .mat-fila{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}.mat-fila small{color:var(--muted)}
 @media (max-width:520px){.hudf{flex-wrap:nowrap}.hud{flex-direction:column}}
+.hito-tag{display:inline-block;background:#5B3423;color:#F7F1E3;font:700 11px/1 'Alegreya Sans',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:9px;margin:2px 0 4px}
+.historia-real{border-left:3px solid #B08E3A;background:rgba(176,142,58,.1);padding:6px 10px;margin:8px 0;font-size:.9rem;border-radius:0 8px 8px 0}.historia-real b{font-variant:small-caps;color:#5A2A20}

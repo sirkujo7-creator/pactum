@@ -55,14 +55,14 @@ export class Cine {
     if (!K || !K.escenas[tipo] || reducirMovimiento() || this.activo || !this.scene.listo) { luego(); return; }
     this.activo = true; this.luego = luego; this.t = 0; this.tipo = tipo; this.datos = datos || {};
     this.dur = K.duracion; this.inicio = performance.now();
-    const texto = K.escenas[tipo].texto.replace('{movimiento}', this.datos.movimiento || 'El movimiento').replace('{lider}', this.datos.lider || 'El líder').replace('{vecino}', this.datos.vecino || 'el vecino');
+    const texto = (this.datos.texto || K.escenas[tipo].texto).replace('{movimiento}', this.datos.movimiento || 'El movimiento').replace('{lider}', this.datos.lider || 'El líder').replace('{vecino}', this.datos.vecino || 'el vecino');
     // Franjas de cine con el texto; un toque las salta.
     const capa = capaUI();
     // La escena no se va sola: al acabar se queda quieta en pantalla hasta que se toca «Continuar».
     this.fin = false;
     this.boton = el('button', { class: 'cine-boton', type: 'button', text: K.saltar, on: { click: e => { e.stopPropagation(); this.terminar(); } } });
     this.velo = el('div', { class: 'cine vivo', role: 'dialog', 'aria-label': texto }, [
-      el('div', { class: 'cine-franja arriba' }, [el('h2', { text: K.escenas[tipo].titulo || '' })]),
+      el('div', { class: 'cine-franja arriba' }, [el('h2', { text: this.datos.titulo || K.escenas[tipo].titulo || '' })]),
       el('div', { class: 'cine-franja abajo' }, [el('p', { text: texto }), this.boton])
     ]);
     capa.append(this.velo); capa.classList.add('en-cine'); // la interfaz se esconde durante la escena
