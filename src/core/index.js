@@ -58,3 +58,4 @@ export * from './exterior.js';
 export * from './pendientes.js';
 export * from './plaza.js';
 export * from './materiales.js';
+export * from './subsuelo.js';

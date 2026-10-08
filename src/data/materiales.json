@@ -125,6 +125,10 @@
     },
     "cantera": {
       "madera": 2
+    },
+    "estudio": {
+      "madera": 2,
+      "metal": 1
     }
   },
   "produccion": {
