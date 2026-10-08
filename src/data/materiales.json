@@ -1,0 +1,156 @@
+{
+  "leccion": "Ninguna obra sale solo del dinero: hay que tener con qué construirla. La madera y la piedra salen de la tierra; el metal, de las minas o de los vecinos. Quien no produce un material lo compra, y quien compra depende de otros.",
+  "materiales": {
+    "madera": {
+      "nombre": "Madera",
+      "icono": "🪵",
+      "precio": 3
+    },
+    "piedra": {
+      "nombre": "Piedra",
+      "icono": "🪨",
+      "precio": 4
+    },
+    "metal": {
+      "nombre": "Metal",
+      "icono": "⛓️",
+      "precio": 5
+    }
+  },
+  "inicial": {
+    "madera": 30,
+    "piedra": 20,
+    "metal": 8
+  },
+  "costos": {
+    "fundacion": {
+      "piedra": 2
+    },
+    "casa": {
+      "madera": 2,
+      "piedra": 1
+    },
+    "cultivo": {
+      "madera": 1
+    },
+    "mercado": {
+      "madera": 2,
+      "piedra": 2
+    },
+    "parque": {
+      "madera": 1,
+      "piedra": 1
+    },
+    "iglesia": {
+      "piedra": 6,
+      "madera": 2
+    },
+    "cancha": {
+      "madera": 2
+    },
+    "escuela": {
+      "madera": 2,
+      "piedra": 2
+    },
+    "biblioteca": {
+      "piedra": 3,
+      "madera": 2
+    },
+    "hospital": {
+      "piedra": 3,
+      "madera": 2,
+      "metal": 1
+    },
+    "taller": {
+      "madera": 2,
+      "piedra": 2,
+      "metal": 2
+    },
+    "agora": {
+      "piedra": 6
+    },
+    "mina": {
+      "madera": 3,
+      "piedra": 2
+    },
+    "banco": {
+      "piedra": 5,
+      "metal": 3
+    },
+    "cuartel": {
+      "madera": 3,
+      "piedra": 3,
+      "metal": 2,
+      "alimento": 10
+    },
+    "acueducto": {
+      "piedra": 4
+    },
+    "recaudo": {
+      "madera": 1,
+      "piedra": 1
+    },
+    "policia": {
+      "madera": 2,
+      "metal": 1
+    },
+    "molino": {
+      "madera": 3,
+      "piedra": 2
+    },
+    "puerto": {
+      "madera": 5,
+      "metal": 3
+    },
+    "universidad": {
+      "piedra": 6,
+      "metal": 3,
+      "madera": 2
+    },
+    "teatro": {
+      "madera": 3,
+      "piedra": 3
+    },
+    "estadio": {
+      "piedra": 6,
+      "madera": 3,
+      "metal": 2
+    },
+    "cementerio": {
+      "piedra": 2
+    },
+    "aserradero": {
+      "madera": 2,
+      "piedra": 1
+    },
+    "cantera": {
+      "madera": 2
+    }
+  },
+  "produccion": {
+    "aserradero": {
+      "madera": 8
+    },
+    "cantera": {
+      "piedra": 7
+    },
+    "mina": {
+      "metal": 4
+    }
+  },
+  "compra": {
+    "lote": 5,
+    "recargo": 1.15
+  },
+  "textos": {
+    "faltan": "Faltan {lista}.",
+    "comprar": "Comprar a los vecinos",
+    "comprado": "Compraste {n} de {mat} por {oro} de oro.",
+    "ayuda": "Las obras piden materiales además de oro. Los producen el aserradero (madera), la cantera (piedra) y la mina (metal); lo que falte se compra a los vecinos, más caro.",
+    "almacen": "Almacén",
+    "produce": "Producen al año",
+    "costo": "Pide",
+    "sinOro": "No te alcanza el oro."
+  },
+  "descuentoOro": 0.88
+}

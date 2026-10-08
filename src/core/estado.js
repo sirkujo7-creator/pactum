@@ -36,7 +36,7 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
     S.gold += F.casas * C.B.casa.cost + F.fincas * C.B.cultivo.cost + (C.HUELLAS ? C.B.fundacion.cost : 0);
     S.fundando = { casas: F.casas, fincas: F.fincas, ...(C.HUELLAS ? { plaza: 1 } : {}) }; // paso 0 de las huellas: primero la plaza
     if (C.HUELLAS) S.casco = true;
-    S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35; S.plaza = { n: 0 };
+    S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35; S.plaza = { n: 0 }; if (C.MAT) S.mat = { ...C.MAT.inicial };
     S.log.unshift({ y: 1, t: 'Quince personas buscan un lugar para fundar su aldea. Te eligen para gobernar.' });
     return S;
   }
@@ -52,7 +52,7 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
       q.push(j);
     }
   }
-  if (mundo !== 'v9') { S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.centro = start; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35; S.plaza = { n: 0 }; }
+  if (mundo !== 'v9') { S.clima = climaInicial(); S.fondo = 0; S.aporteFondo = 0; S.mant = 100; S.desgaste = false; S.centro = start; S.eco = ecoInicial(); S.tierra = C.GRUPOS ? C.GRUPOS.tierraInicial : .35; S.plaza = { n: 0 }; if (C.MAT) S.mat = { ...C.MAT.inicial }; }
   S.log.unshift({ y: 1, t: 'Quince personas fundan una aldea junto al río. Te eligen para gobernar.' });
   return S;
 }

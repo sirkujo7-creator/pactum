@@ -9,6 +9,7 @@ import { nearRiver } from './mundo.js';
 import { marcarTala } from './suelo.js';
 import { cuotaInicial, empezarObra, devolucionObra, porEtapas, oferta, aplicarOferta } from './construccion.js';
 import { fincasActivas, mejorCultivo } from './fincas.js';
+import { materialesActivos, motivoMat, pagarMat, devolverMat } from './materiales.js';
 
 // Devuelve el motivo por el que no se puede construir k en la casilla i, o '' si se puede.
 export function whyNot(S, k, i) {
@@ -25,10 +26,11 @@ export function whyNot(S, k, i) {
   if (!(finca && k === 'cultivo' ? ['llano', 'bosque'] : b.ok).includes(x.t)) return `${b.n}: ese terreno no sirve.`;
   if (b.hmin && (x.h || 0) < b.hmin) return `${b.n}: necesita ladera (terreno alto).`;
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;
+  if ((k === 'aserradero' || k === 'cantera') && !materialesActivos(S)) return 'No disponible.';
   const tp = motivoTope(S, k); if (tp) return tp; // fase 17: el tope de la plaza
   const pago = cuotaInicial(S, k, cost(S, k));
   if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
-  return '';
+  return motivoMat(S, k); // fase 17: madera, piedra, metal
 }
 
 // Devuelve true, un mensaje (si taló bosque) o el motivo por el que no se pudo.
@@ -39,10 +41,11 @@ export function build(S, k, i, ofertaElegida) {
   const x = S.map[i], o = porEtapas(S, k) ? oferta(S, k, ofertaElegida, i) : null, total = o ? o.total : cost(S, k), pago = o ? o.cuota : cuotaInicial(S, k, total);
   if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
   S.gold -= pago; // fase 2: las obras grandes pagan solo su primera etapa
+  const pagoMat = pagarMat(S, k);
   let msg = '';
   const tl = x.tl;
   if (x.t === 'bosque') { x.t = 'llano'; S.env = clamp(S.env - 3, 0, 100); msg = 'Talaste bosque: el ambiente baja.'; marcarTala(S, i); }
-  S.undo.push({ i, k, paid: pago, forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
+  S.undo.push({ i, k, paid: pago, ...(pagoMat ? { mat: pagoMat } : {}), forest: x.t === 'llano' && !!msg, ...(msg && x.tl && !tl ? { tl: 1 } : {}) });
   x.b = k;
   if (x.mk) { S.undo[S.undo.length - 1].mk = x.mk; delete x.mk; } // fase 4: construir encima borra la huella
   if (climaActivo(S)) x.ya = S.year; // fase 5: año de construcción (las obras viejas son patrimonio)
@@ -70,7 +73,7 @@ export function undoBuild(S) {
   const u = S.undo.pop();
   if (!u) return null;
   const x = S.map[u.i];
-  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; delete x.nv; S.gold += u.paid;
+  x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; delete x.nv; S.gold += u.paid; devolverMat(S, u.mat);
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
   if (u.rel) restaurarRelaciones(S, u.rel);

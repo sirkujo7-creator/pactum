@@ -1,4 +1,5 @@
 // Consultas básicas del estado: dificultad, régimen, leyes y condiciones escritas en los datos.
+import { materialesActivos } from './materiales.js';
 import { C } from './contenido.js';
 import { totalRanchos, capacidadColonos } from './huellas.js';
 import { countT } from './mundo.js';
@@ -36,7 +37,7 @@ export function counts(S) {
   return c;
 }
 export function cap(S) { return counts(S).casa * 10 + (S.asent ? totalRanchos(S) * 6 : 0) + capacidadColonos(S); } // fase 5: los asentamientos informales también albergan gente
-export function cost(S, k) { return Math.round(C.B[k].cost * S.price * (1 - RM(S, 'obrasDescuento')) * (hasLaw(S, 'sismo') ? 1.1 : 1)); } // fase 4: el código sismorresistente encarece las obras
+export function cost(S, k) { return Math.round(C.B[k].cost * S.price * (1 - RM(S, 'obrasDescuento')) * (hasLaw(S, 'sismo') ? 1.1 : 1) * (materialesActivos(S) ? C.MAT.descuentoOro : 1)); } // fase 4: el código sismorresistente encarece las obras
 
 // Condiciones de los archivos de datos (dilemas y guía). Todas deben cumplirse.
 //   edificios: {cultivo: 2}      al menos 2 cultivos

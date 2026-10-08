@@ -3,6 +3,7 @@
 import { azar, clamp } from './azar.js';
 import { registrarMuertes, colonosDelAnio, sincronizarLeyes } from './huellas.js';
 import { plazaOk } from './plaza.js';
+import { materialesActivos, producirMat } from './materiales.js';
 import { exteriorDelAnio } from './exterior.js';
 import { C } from './contenido.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
@@ -56,6 +57,7 @@ export function advance(S) {
   news.push(...avanzarObras(S).news);
   if (climaActivo(S)) S.fondo = (S.fondo || 0) + F.fondo + interesFondo(S);
   S.food += F.fprod - F.cons;
+  if (materialesActivos(S)) producirMat(S, F.trab === undefined ? 1 : F.trab); // fase 17: aserraderos, canteras y minas
   let hunger = false;
   if (S.stage >= 1 && S.pop > waterCap(S, c)) news.push(`Falta agua: ${S.pop} habitantes y acueductos para ${waterCap(S, c)}.`);
   if (S.food < 0) { hunger = true; S.hungry = true; const mh = Math.ceil(S.pop * .12); S.pop -= mh; registrarMuertes(S, mh, 'hambre'); S.food = 0; news.push('Faltó alimento: hubo hambre y se perdieron vidas.'); }

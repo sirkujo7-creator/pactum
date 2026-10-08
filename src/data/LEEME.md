@@ -8,6 +8,7 @@ Estos archivos guardan todo el texto y los números del juego. Se pueden editar 
 | `consecuencias.json` | Lo que pasa años después de ciertas decisiones |
 | `edificios.json` | Obras: costo, mantenimiento, empleos, dónde se pueden construir |
 | `trabajo.json` | Trabajadores: el mínimo de puestos ocupados para que una obra produzca y sus textos |
+| `materiales.json` | Madera, piedra y metal: lo que pide cada obra además del oro, lo que producen el aserradero, la cantera y la mina, y el precio de comprarlos a los vecinos |
 | `suelos.json` | La vocación del suelo: clases de suelo (vega, llanura, tierra seca, ladera) y qué tanto sirve cada una a cada cultivo |
 | `plaza.json` | La plaza por niveles: qué pide cada nivel, cuánto cuesta y los topes de obras |
 | `leyes.json` | Leyes y en qué etapa se abren |

@@ -7,7 +7,7 @@ const TERRENO = { llano: '#D9D2A8', bosque: '#9DB083', montana: '#B8A88A', rio: 
 export const USOS = [
   { id: 'vivienda', nombre: 'Vivienda', col: '#C2603E', obras: ['casa'] },
   { id: 'campo', nombre: 'Campo', col: '#C9A93E', obras: ['cultivo', 'cafetal'] },
-  { id: 'industria', nombre: 'Industria y minas', col: '#6E6A78', obras: ['taller', 'molino', 'mina', 'puerto'] },
+  { id: 'industria', nombre: 'Industria y minas', col: '#6E6A78', obras: ['taller', 'molino', 'mina', 'puerto', 'aserradero', 'cantera'] },
   { id: 'comercio', nombre: 'Comercio y finanzas', col: '#D08A2E', obras: ['mercado', 'banco', 'recaudo'] },
   { id: 'servicios', nombre: 'Servicios y cultura', col: '#3E8A8C', obras: ['escuela', 'biblioteca', 'hospital', 'universidad', 'acueducto', 'parque', 'cancha', 'estadio', 'teatro'] },
   { id: 'culto', nombre: 'Culto y vida cívica', col: '#7C5A9E', obras: ['iglesia', 'agora', 'cementerio', 'fundacion'] },

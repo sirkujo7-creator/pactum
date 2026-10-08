@@ -3,7 +3,7 @@
 import {
   sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
   industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
-  plazaActiva, estadoPlaza, motivoMejora, mejorarPlaza, civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
+  materialesActivos, comprarMat, comprarFaltante, precioCompra, faltanteMat, plazaActiva, estadoPlaza, motivoMejora, mejorarPlaza, civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
 
 export const ESTRATEGIAS = ['pop', 'rich', 'fair', 'debt'];
@@ -13,8 +13,18 @@ const MANT = typeof process !== 'undefined' && process.env.MANT !== undefined ? 
 const FONDO = typeof process !== 'undefined' && process.env.FONDO !== undefined ? +process.env.FONDO : 5;
 
 // op.sinPrep: la estrategia equilibrada no se prepara (sin fondo, construye en cualquier parte, no repara).
+// Fase 17: los robots producen lo que pueden (un aserradero y una cantera, más si crece el pueblo) y compran el resto.
+function robotMateriales(S) {
+  const c = counts(S), eo = obrasEnCurso(S), N = Math.floor(S.pop / 70);
+  for (const [k, m] of [['aserradero', 'madera'], ['cantera', 'piedra']]) {
+    if (S.stage >= 1 && S.mat[m] < 40 && c[k] + (eo[k] || 0) < Math.min(3, 1 + N) && S.gold > cost(S, k) + 60) { const t = freeTiles(S, k); if (t.length) build(S, k, t[0]); }
+  }
+  const meta = { madera: 10 + Math.floor(S.pop / 8), piedra: 8 + Math.floor(S.pop / 10), metal: S.stage >= 1 ? 6 : 0 };
+  for (const [m, n] of Object.entries(meta)) { const falta = Math.ceil(n - S.mat[m]); if (falta > 0 && S.gold > precioCompra(S, m, falta) + 25) comprarMat(S, m, falta); }
+}
 export function botYear(S, strat, eth, op = {}) {
   const prep = strat === 'fair' && !op.sinPrep;
+  if (materialesActivos(S)) robotMateriales(S);
   const want = strat === 'pop' ? { c: 5, a: 6, e: 12 } : strat === 'rich' ? { c: 18, a: 20, e: 10 } : strat === 'fair' ? { c: 8, a: 10, e: 25 } : null;
   // Fase 7: en el terreno en acuarela, la estrategia equilibrada sube los impuestos poco a poco si hay déficit y le
   // falta oro, y los baja si le sobra (como haría un jugador sensato ante los costos que suben con cada época).
@@ -121,6 +131,7 @@ export function botYear(S, strat, eth, op = {}) {
     // Fase 17: si ya reúnen lo que pide la plaza, ahorran para mejorarla (salvo comida y agua, que no esperan).
     if (prep && plazaActiva(S)) { const E = estadoPlaza(S); if (E && E.proximo && E.proximo.cumple && S.gold < E.proximo.costo + cost(S, k) && k !== 'cultivo' && k !== 'acueducto') break; }
     const pref = k === 'cultivo' ? (i => nearRiver(S, i)) : ['casa', 'mercado', 'escuela', 'hospital', 'policia', 'taller', 'agora', 'banco', 'universidad', 'parque'].includes(k) ? (i => !nearRiver(S, i)) : null;
+    if (materialesActivos(S)) comprarFaltante(S, k);
     let t = freeTiles(S, k);
     if (pref) t = t.filter(pref).concat(t.filter(i => !pref(i)));
     // Fase 1: la estrategia equilibrada se prepara: no tala bosque ni construye en laderas erosionadas si hay otro sitio.
