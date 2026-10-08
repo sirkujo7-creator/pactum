@@ -64,3 +64,4 @@ export * from './mejoras.js';
 export * from './placas.js';
 export * from './decisionesObra.js';
 export * from './mundovivo.js';
+export * from './visitantes.js';

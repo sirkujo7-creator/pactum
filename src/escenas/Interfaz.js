@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, placaDe, decisionesObraActivas, puedeDecidirObra, datosDecisionObra, decidirObra, mejorasActivas, sePuedeMejorar, nivelMejora, datosMejora, costoMejora, motivoMejoraObra, mejorarObra, cuposMejora, tarjetasActivas, datosTarjeta, elegirTarjeta, subsueloActivo, estudioHecho, mineralDe, opcionesMineral, elegirMineral, datosMineral, minaDe, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, placaDe, decisionesObraActivas, puedeDecidirObra, datosDecisionObra, decidirObra, datosVisitante, mejorasActivas, sePuedeMejorar, nivelMejora, datosMejora, costoMejora, motivoMejoraObra, mejorarObra, cuposMejora, tarjetasActivas, datosTarjeta, elegirTarjeta, subsueloActivo, estudioHecho, mineralDe, opcionesMineral, elegirMineral, datosMineral, minaDe, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -639,6 +639,9 @@ export class Interfaz {
     const S = this.S, L = S.megaEv, alTerminar = () => this.rioAnio(alTerminar0);
     if (!L || !L.length || !megaActivos(S)) { alTerminar(); return; }
     S.megaEv = null;
+    // Primera llegada del tren o del avión: escena de cine antes de la tarjeta.
+    const lleg = L.find(e => e.tipo === 'termina' && (e.id === 'ferrocarril' || e.id === 'aeropuerto'));
+    if (lleg && this.escena(lleg.id === 'ferrocarril' ? 'llegadaTren' : 'llegadaAvion', 'mega-' + lleg.id + S.year, () => { S.megaEv = L; this.megaAnio(alTerminar0); })) return;
     const M = C.MEGA, txt = { consultaSi: M.textos.consultaSi, consultaNo: M.textos.consultaNo, termina: '' };
     this.tarjeta(`<div class="big">🏗️</div><h3>Megaproyectos</h3>${L.map(e => { const P = M.proyectos[e.id]; return `<p><b>${P.icono} ${P.nombre}:</b> ${e.tipo === 'termina' ? `¡terminado! Desde ahora deja ${evaluarMega(S, e.id).beneficio} de oro por año. ${P.impactos}` : txt[e.tipo]}</p>`; }).join('')}
       <p class="small">Revisa los proyectos en Hacienda → Megaproyectos.</p><div class="phil"><b>Consulta previa</b><br>${M.leccionConsulta}</div><button class="main" id="okB">Continuar</button>`);
@@ -1213,10 +1216,20 @@ export class Interfaz {
       this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); this.render(); this.mapa.cambio && this.mapa.cambio();
     });
   }
+  // Un visitante extranjero llega al pueblo: su frase, con su acento, y una pregunta para pensar.
+  visitanteAnio(alTerminar) {
+    const S = this.S, e = S.visitante;
+    if (!e || !e.nuevo || !C.VISIT) { alTerminar(); return; }
+    e.nuevo = false; const v = datosVisitante(e.id), T = C.VISIT.textos; if (!v) { alTerminar(); return; }
+    this.tarjeta(`<div class="big">${v.icono}</div><h3>${T.titulo}</h3><p class="small"><b>${v.nombre}</b> · ${T.de.replace('{lugar}', v.origen)}</p>
+      <blockquote class="verso">«${v.dialogo}»</blockquote><div class="chips">${this.chips(e.fx)}</div>
+      <div class="phil"><b>${T.pensar}</b><br>${v.pensar}</div><button class="main" id="okB">${T.continuar}</button>`);
+    this.alCerrar = alTerminar; this.boton('okB', () => { this.cerrarTarjeta(); this.mapa.cambio && this.mapa.cambio(); });
+  }
   sucesoAnio(alTerminar) {
     const S = this.S, ev = S.suceso, alTerminar0 = alTerminar;
     if (S.tarjetaRapida && tarjetasActivas(S)) { this.tarjetaRapida(() => this.sucesoAnio(alTerminar0)); return; }
-    alTerminar = () => this.figurasAnio(alTerminar0);
+    alTerminar = () => this.visitanteAnio(() => this.figurasAnio(alTerminar0));
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
     const q = C.SUCESOS.sucesos[ev.id];

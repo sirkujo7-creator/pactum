@@ -117,6 +117,19 @@ export class Cine {
       const q = this.punto(ini.r, ini.c);
       return [q[0], q[1] - 10];
     }
+    if (tipo === 'llegadaTren' || tipo === 'llegadaAvion') {
+      // La primera llegada: el vecindario sale de la plaza a recibir el tren (o el avión); el vehículo entra por el borde del mapa.
+      const f = sc.ferrovia; f.actualizar();
+      const T = this.T(), est = tipo === 'llegadaTren' ? f.estacion : f.tilePista, d = est ? { r: est.r + .5, c: est.c + .5 } : p, qs = this.punto(d.r, d.c);
+      if (tipo === 'llegadaTren') f.esperaTren = 0; else f.esperaAvion = 0;
+      for (let k = 0; k < 12; k++) {
+        const j = k % 6, a = { r: d.r + (j - 2.5) * .25 + (k > 5 ? .5 : -.5), c: d.c + (j - 2.5) * .22 + (k > 5 ? -.3 : .4) };
+        const x = this.caminante(k % 5 === 4 ? 'nino' : TIPOS[(k + 1) % 4], k % 3, p, [a], .5 + (k % 3) * .06, k * .12);
+        x.mira = d;
+        if (k % 4 === 0) x.extra = sc.add.image(0, 0, 'cineBandera').setScale(.3).setOrigin(.15, 1);
+      }
+      return [qs[0], qs[1] - 10];
+    }
     if (tipo === 'paz') {
       // Dos delegaciones llegan a la plaza desde lados opuestos, con banderas blancas, y se encuentran.
       for (let k = 0; k < 10; k++) {
