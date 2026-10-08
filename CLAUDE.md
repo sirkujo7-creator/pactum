@@ -121,6 +121,8 @@ Terminado cuando:
 
 ## Forma de trabajar en cada fase
 
+**Pruebas cortas (pedido de Juan, 8 de octubre):** una sola corrida de balance por paso (100 partidas en Normal y 100 en Difícil) y solo si cambió la lógica; la equivalencia con la v9 se corre una vez, al final, y solo si se tocó `src/core`; pruebas de pantalla solo del cambio. Se amplían a 300 partidas únicamente si el resultado queda en el borde de la meta.
+
 1. Plan corto a Juan y espera su visto bueno.
 2. Implementa en pasos pequeños, con un commit por paso.
 3. Corre las simulaciones de balance cuando cambie la lógica.
