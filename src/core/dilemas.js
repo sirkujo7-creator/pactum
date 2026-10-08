@@ -134,6 +134,7 @@ export function choose(S, i) {
   if (o.promise) S.promises.push({ k: o.promise, base: counts(S)[o.promise], dl: S.year + C.PET.plazo });
   if (o.later && (o.later[2] === undefined || azar() < o.later[2])) S.later.push({ y: S.year + o.later[0], id: o.later[1], from: S.year });
   S.log.unshift({ y: S.year, t: ev.followUp ? `${ev.title}.` : `${ev.title}. Decidiste: ${o.l.toLowerCase()}.` });
+  if (climaActivo(S) && !ev.followUp && ev.id) (S.decisiones = S.decisiones || {})[ev.id] = i; // las cartas de las familias recuerdan lo que decidiste
   S.pend = null;
   const extra = {};
   // Fase 4: algunas decisiones tienen riesgo: con cierta probabilidad salen mal (solo en el terreno en acuarela).

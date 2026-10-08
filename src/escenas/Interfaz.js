@@ -1063,7 +1063,7 @@ export class Interfaz {
     if (/escandalo/.test(ev.id || '') && this.escena('escandalo', ev, () => this.suceso(alTerminar))) return;
     if (ev.hito && ev.hito.escena && this.escena(ev.hito.escena.tipo, ev, () => this.suceso(alTerminar), { titulo: ev.hito.escena.titulo, texto: ev.hito.escena.texto })) return; // hitos de la historia real
     const img = `<img class="vig" src="${vineta(ev.id, S.reg, S.stage)}" alt="">`;
-    this.tarjeta(`${img}${ev.hito ? '<div class="hito-tag">📜 Hito de la historia</div>' : ''}<h3>${ev.title}</h3><p>${ev.text}</p>${ev.hito ? `<div class="historia-real"><b>Historia real · ${ev.hito.fecha}</b><br>${ev.hito.nota}</div>` : ''}${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
+    this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${ev.hito ? `<div class="historia-real"><b>📅 ${ev.hito.fecha}</b><br>${ev.hito.nota}</div>` : ''}${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
       `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a, st > 0 ? 'feliz' : 'enojado')}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${o.fx.t ? (o.fx.t > 0 ? '+' : '−') + Math.abs(o.fx.t) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o);
@@ -1194,9 +1194,9 @@ export class Interfaz {
     ev.nuevo = false;
     const q = C.SUCESOS.sucesos[ev.id];
     this.tarjeta(`<div class="big">${q.icono}</div><h3>${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>
-      <div class="porque-afecta"><b>¿Por qué pasó?</b><br>${q.causa} Inseguridad de este año: <b>${ev.ins}</b>.</div>
+      <div class="porque-afecta"><b>¿Por qué pasó?</b><br>${q.causa}${q.violencia ? '' : ` Inseguridad de este año: <b>${ev.ins}</b>.`}</div>
       <p class="small"><b>Cómo prevenirlo:</b> ${q.prevenir}</p>
-      <div class="phil"><b>Lo que enseña</b><br>${C.SUCESOS.leccion}</div>
+      <div class="phil"><b>Lo que enseña</b><br>${q.violencia ? C.SUCESOS.violencia.leccion : C.SUCESOS.leccion}</div>
       <div class="dos">${ev.obra !== undefined ? '<button class="btn" id="verObraB">Ver dónde fue</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
     this.boton('verObraB', () => { this.cerrarTarjeta(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(ev.obra); });

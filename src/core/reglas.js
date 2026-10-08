@@ -63,6 +63,8 @@ export function cumple(S, cond, c) {
     else if (k === 'productos') { if (Object.entries(v).some(([pr, n]) => fabricasDe(S, pr) < n)) return false; } // fase 11: la industria
     else if (k === 'rasgo') { if (!(S.rasgos && Object.values(S.rasgos).includes(v))) return false; } // fase 12: identidad del pueblo
     else if (k === 'ley') { if (!hasLaw(S, v)) return false; }
+    else if (k === 'decidio') { if (Object.entries(v).some(([id, o]) => !S.decisiones || S.decisiones[id] === undefined || ![].concat(o).includes(S.decisiones[id]))) return false; } // lo que decidiste en un suceso (índice de la opción)
+    else if (k === 'sinDecidio') { if (Object.entries(v).some(([id, o]) => S.decisiones && S.decisiones[id] !== undefined && [].concat(o).includes(S.decisiones[id]))) return false; }
     else if (k === 'nivelFabrica') { if (nivelMaximo(S) < v) return false; }
     else if (k === 'clima') { const f = S.clima && S.clima.fenomeno; if (v === 'crisis' ? !f : f !== v) return false; }
     else throw new Error(`Condición desconocida: ${k}`);

@@ -66,7 +66,7 @@ export function listaObjetos() { return Object.keys(K().objetos); }
 
 // ---------- Paso 3: en el mapa y al final ----------
 // Quién representa hoy a cada familia en el pueblo: quien escribió su última carta, si sigue vivo y en el pueblo.
-const CLASE = { tique: 'c', rojas: 'c', quintero: 'a', arango: 'e', lozano: 'u' };
+const CLASE = { tique: 'c', rojas: 'c', quintero: 'a', arango: 'e', lozano: 'u' }; // las familias nuevas traen su `clase` en familias.json
 export function representantes(S) {
   if (!familiasActivas(S) || !S.fam) return [];
   const R = cartasRecibidas(S), out = [];
@@ -75,7 +75,7 @@ export function representantes(S) {
     if (!mias.length) continue;
     const vivos = miembrosFamilia(S, f).filter(m => m.estado === 'vive').map(m => m.nombre.split(' (')[0]);
     const quien = [...mias].reverse().map(c => c.de).find(n => vivos.includes(n) || !miembrosFamilia(S, f).some(m => m.nombre.split(' (')[0] === n));
-    if (quien) out.push({ familia: f, nombre: quien, clase: CLASE[f], ultima: mias[mias.length - 1] });
+    if (quien) out.push({ familia: f, nombre: quien, clase: CLASE[f] || datosFamilia(f).clase || 'c', ultima: mias[mias.length - 1] });
   }
   return out;
 }

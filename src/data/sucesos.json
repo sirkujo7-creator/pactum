@@ -115,7 +115,149 @@
       "causa": "Una policía en un gobierno corrupto, sin control ciudadano.",
       "prevenir": "Baja la corrupción: actúa por el bien común, aprueba la libertad de prensa.",
       "aniosEntre": 8
+    },
+    "v_lider": {
+      "icono": "🕯️",
+      "titulo": "Asesinan a un líder",
+      "texto": "Un líder campesino apareció muerto en el camino a su vereda. Nadie vio nada y nadie quiere hablar.",
+      "efectos": {
+        "confianza": -3,
+        "campesinos": -4,
+        "animo": -2
+      },
+      "violencia": true,
+      "epocas": [
+        "violencia",
+        "modernizacion",
+        "paz",
+        "digital"
+      ],
+      "muertes": 1,
+      "peso": 2,
+      "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+    },
+    "v_plaza": {
+      "icono": "🔫",
+      "titulo": "Disparos en la plaza",
+      "texto": "Dos hombres dispararon contra la sede de un partido en plena plaza y huyeron a caballo. Hubo muertos entre los que salían de la misa.",
+      "efectos": {
+        "confianza": -4,
+        "animo": -3
+      },
+      "violencia": true,
+      "epocas": [
+        "cafe",
+        "violencia"
+      ],
+      "muertes": 2,
+      "peso": 2,
+      "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+    },
+    "v_emboscada": {
+      "icono": "🌄",
+      "titulo": "Emboscada en el camino",
+      "texto": "Una emboscada en el camino dejó tres arrieros muertos y la carga quemada. Los que sobrevivieron dicen que no vieron las caras.",
+      "efectos": {
+        "oro": -20,
+        "campesinos": -2,
+        "confianza": -2
+      },
+      "violencia": true,
+      "epocas": [
+        "cafe",
+        "violencia",
+        "paz"
+      ],
+      "muertes": 3,
+      "peso": 1,
+      "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+    },
+    "v_secuestro": {
+      "icono": "📜",
+      "titulo": "Secuestro de un finquero",
+      "texto": "Secuestraron a un finquero a la salida del pueblo. Su familia recibió una nota sin firma y pidió discreción.",
+      "efectos": {
+        "oro": -30,
+        "elite": -4,
+        "confianza": -3
+      },
+      "violencia": true,
+      "epocas": [
+        "modernizacion",
+        "paz"
+      ],
+      "muertes": 0,
+      "peso": 1,
+      "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+    },
+    "v_paro": {
+      "icono": "⛔",
+      "titulo": "Paro armado",
+      "texto": "Un paro armado cerró las veredas por tres días: nadie sembró, nadie bajó al mercado, y quien salió no volvió a hablar de ello.",
+      "efectos": {
+        "alimento": -15,
+        "animo": -3
+      },
+      "violencia": true,
+      "epocas": [
+        "paz",
+        "digital"
+      ],
+      "muertes": 0,
+      "peso": 1,
+      "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+    },
+    "v_finca": {
+      "icono": "🔥",
+      "titulo": "Queman una finca",
+      "texto": "Quemaron una finca de madrugada, con todo y cosecha. El dueño se fue esa misma noche con su familia.",
+      "efectos": {
+        "campesinos": -3,
+        "animo": -3,
+        "habitantes": -2
+      },
+      "violencia": true,
+      "epocas": [
+        "violencia",
+        "modernizacion"
+      ],
+      "muertes": 1,
+      "peso": 2,
+      "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
     }
   },
-  "aniosEntreIguales": 4
+  "aniosEntreIguales": 4,
+  "violencia": {
+    "leccion": "No toda violencia tiene una causa que se vea a tiempo. El odio heredado, las armas que sobran y la rabia entre partidos bastan para que ocurra. Un Estado puede reducirla con presencia, justicia y diálogo, pero nunca la lleva a cero. Max Weber decía que el Estado reclama el monopolio de la violencia legítima: donde no lo logra, otros la ejercen.",
+    "base": {
+      "fundacion": 0.02,
+      "cafe": 0.05,
+      "violencia": 0.26,
+      "modernizacion": 0.1,
+      "paz": 0.17,
+      "digital": 0.07
+    },
+    "piso": 0.35,
+    "aniosEntre": 3,
+    "mitiga": {
+      "policia": 0.25,
+      "legitimidad": 0.2,
+      "cuartel": 0.06,
+      "leyes": {
+        "paz": 0.15,
+        "justiciaTransicional": 0.15,
+        "restitucion": 0.06,
+        "reformaAgraria": 0.08,
+        "tutela": 0.04
+      }
+    },
+    "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
+    "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+  }
 }
