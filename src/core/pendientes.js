@@ -23,6 +23,7 @@ import { nivelVolcan, volcan } from './desastres.js';
 import { nombreBarrio, barrioDe } from './barrios.js';
 import { reqEtapa, aniosPolis } from './reglas.js';
 import { faltaFundar } from './estado.js';
+import { estadoPlaza } from './plaza.js';
 
 export function pendientes(S) {
   if (!climaActivo(S) || S.over) return [];
@@ -42,6 +43,13 @@ export function pendientes(S) {
   if (V >= 2 && !volcan(S).plan) add('volcan', '🌋', 'El Nevado está en alerta y no hay plan de evacuación.', 1, { hoja: 'hacienda', seccion: 'h-riesgo' });
   // Trabajadores (fase 17): sin gente que las trabaje, las obras rinden menos.
   if (C.TRABAJO) { const so = society(S), T = C.TRABAJO.textos, pct = Math.round(so.ocup * 100); if (so.ocup < .9 && so.jc + so.ja > 0) add('trabajo', '🧑‍🌾', (so.ocup < C.TRABAJO.minimo ? T.sinGente : T.faltan).replace('{puestos}', so.jc + so.ja).replace('{gente}', so.P - so.el).replace('{pct}', pct).replace('{min}', Math.round(C.TRABAJO.minimo * 100)), so.ocup < C.TRABAJO.minimo ? 1 : 2, { hoja: 'construir' }); }
+  // La plaza por niveles (fase 17): lo que pide el siguiente nivel, y cuándo se puede mejorar.
+  const PZ = estadoPlaza(S);
+  if (PZ && PZ.proximo) {
+    const T = C.PLAZA.textos, pr = PZ.proximo, etapa = C.STAGES[pr.nivel] ? C.STAGES[pr.nivel].n : '';
+    if (pr.cumple) add('plaza', '⛲', T.puede.replace('{nombre}', pr.nombre).replace('{costo}', pr.costo).replace('{etapa}', etapa), 2, { plaza: true });
+    else if (S.pop >= pr.habitantes * .6) add('plaza', '⛲', T.faltan.replace('{nombre}', pr.nombre).replace('{lista}', pr.filas.filter(f => !f.ok).map(f => f.texto).join(', ')), 3, { plaza: true });
+  }
   // Misiones de los personajes.
   for (const id of presentes(S)) { const m = misionDe(S, id); if (m) add('mision-' + id, C.FIG.figuras[id].icono || '🎯', `${C.FIG.figuras[id].nombre}: ${(m.texto || m.titulo || 'tiene una misión').replace(/\.$/, '')}${m.limite ? ` (hasta el año ${m.limite})` : ''}.`, 0, { hoja: 'sociedad', seccion: 'so-figuras' }); }
   // Lo que se ve en el mapa.

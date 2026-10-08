@@ -2,6 +2,7 @@
 // promesas, etapas, elecciones y rumbo del gobierno (corrupción, reforma y revolución).
 import { azar, clamp } from './azar.js';
 import { registrarMuertes, colonosDelAnio, sincronizarLeyes } from './huellas.js';
+import { plazaOk } from './plaza.js';
 import { exteriorDelAnio } from './exterior.js';
 import { C } from './contenido.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
@@ -129,7 +130,7 @@ export function advance(S) {
   // Etapas y elecciones.
   let stageUp = false;
   const ok = ETAPA_OK[S.stage + 1];
-  if (ok && ok(S, counts(S))) { S.stage++; stageUp = true; news.push(`El territorio ahora es ${STAGES[S.stage].n}.`); }
+  if (ok && ok(S, counts(S)) && plazaOk(S, S.stage + 1)) { S.stage++; stageUp = true; news.push(`El territorio ahora es ${STAGES[S.stage].n}.`); }
   if (RM(S, 'elect', false) && S.stage >= 1 && S.stage < 3 && S.year % 4 === 0) {
     const th = 34;
     if (S.tr < th) { S.log.unshift({ y: S.year, t: news.join(' ') }); return { end: { win: false, title: 'Perdiste las elecciones', text: `El pueblo votó por otro proyecto: la ${climaActivo(S) ? 'legitimidad' : 'confianza'} estaba en ${Math.round(S.tr)} y necesitabas ${th}.` } }; }

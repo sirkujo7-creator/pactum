@@ -1,0 +1,105 @@
+{
+  "leccion": "Las ciudades hispanoamericanas crecían alrededor de la plaza mayor (Ordenanzas de Felipe II, 1573): allí se levantaban la iglesia, el cabildo y el mercado, y a medida que el pueblo crecía, la plaza y lo que la rodeaba se ampliaban. Aquí, una plaza más grande y una población más numerosa permiten sostener más obras.",
+  "niveles": [
+    {
+      "nombre": "Plaza de fundación",
+      "texto": "Una plaza de tierra con la cruz y la ceiba. Da para un pueblo pequeño.",
+      "topes": {
+        "cultivo": 6,
+        "mercado": 10,
+        "taller": 0,
+        "mina": 0,
+        "puerto": 0,
+        "banco": 0,
+        "cuartel": 0,
+        "universidad": 0,
+        "estadio": 0
+      }
+    },
+    {
+      "nombre": "Plaza mayor",
+      "texto": "Plaza empedrada con mercado y portales. Sostiene un pueblo con talleres.",
+      "costo": 20,
+      "requisitos": {
+        "habitantes": 35,
+        "edificios": {
+          "mercado": 2,
+          "casa": 4
+        }
+      },
+      "topes": {
+        "cultivo": 18,
+        "mercado": 26,
+        "taller": 5,
+        "mina": 0,
+        "puerto": 0,
+        "banco": 0,
+        "cuartel": 0,
+        "universidad": 0,
+        "estadio": 0
+      }
+    },
+    {
+      "nombre": "Plaza cívica",
+      "texto": "Plaza con iglesia, cabildo, escuela y hospital alrededor. Sostiene una ciudad con minas, puertos y banco.",
+      "costo": 40,
+      "requisitos": {
+        "habitantes": 70,
+        "edificios": {
+          "iglesia": 1,
+          "escuela": 1,
+          "hospital": 1,
+          "acueducto": 1
+        }
+      },
+      "topes": {
+        "cultivo": 40,
+        "mercado": 40,
+        "taller": 12,
+        "mina": 3,
+        "puerto": 2,
+        "banco": 1,
+        "cuartel": 2,
+        "universidad": 1,
+        "estadio": 1
+      }
+    },
+    {
+      "nombre": "Plaza de la polis",
+      "texto": "Plaza monumental, centro de una polis con instituciones y universidad.",
+      "costo": 60,
+      "requisitos": {
+        "habitantes": 130,
+        "edificios": {
+          "agora": 1,
+          "escuela": 2,
+          "hospital": 1,
+          "acueducto": 1
+        }
+      },
+      "topes": {
+        "cultivo": 90,
+        "mercado": 70,
+        "taller": 30,
+        "mina": 8,
+        "puerto": 5,
+        "banco": 3,
+        "cuartel": 5,
+        "universidad": 3,
+        "estadio": 2
+      }
+    }
+  ],
+  "textos": {
+    "tope": "Tope de la {plaza}: solo {n} de este tipo (ya tienes {m}). Mejora la plaza para construir más.",
+    "sinPermiso": "La {plaza} todavía no admite este tipo de obra. Mejora la plaza.",
+    "titulo": "La plaza",
+    "mejorar": "Mejorar la plaza",
+    "maximo": "La plaza ya está en su nivel más alto.",
+    "faltan": "Para mejorar la plaza a «{nombre}» falta: {lista}.",
+    "lista": "Mejorar la plaza a «{nombre}» ({costo} de oro) para pasar a {etapa}.",
+    "puede": "Tu pueblo reúne lo que pide la plaza: mejórala a «{nombre}» ({costo} de oro). Es lo que falta para pasar a {etapa}.",
+    "mejorada": "La plaza mejora: ahora es la «{nombre}».",
+    "noOro": "Te faltan {n} de oro para mejorar la plaza."
+  }
+}
