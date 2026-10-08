@@ -474,3 +474,4 @@ section.fija>.pl-c{padding:0 12px 10px}
 .rapida-ic{font-size:2.6rem;text-align:center}.rapida-quien{text-align:center;font:700 .95rem 'Alegreya Sans',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#7A5A38;margin-bottom:4px}
 .rapida-texto{text-align:center;font-size:1.15rem;line-height:1.35;margin:8px 4px 14px}.rapida-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rapida-op{text-align:center;padding:14px 8px;min-height:64px}
 .placa{display:block;border:1.5px solid #8C7A62;background:rgba(241,228,196,.55);border-radius:6px;padding:6px 10px;font-size:.88rem;line-height:1.35}.placa b{font-variant:small-caps;color:#5A2A20;margin-right:4px}
+.vig-grabado{border-radius:4px;filter:sepia(.15);box-shadow:0 1px 3px rgba(60,40,20,.35)}
