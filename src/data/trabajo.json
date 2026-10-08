@@ -1,0 +1,12 @@
+{
+  "leccion": "Una obra sin gente que la trabaje no produce. El crecimiento de un pueblo lo limitan sus brazos y su tierra, no solo su oro: construir más de lo que la población puede atender es dinero tirado (factor trabajo en la economía clásica).",
+  "minimo": 0.25,
+  "textos": {
+    "faltan": "Faltan trabajadores: hay {puestos} puestos y solo {gente} personas para ocuparlos ({pct}%). Las obras rinden ese tanto. Construye casas y garantiza comida para que llegue más gente.",
+    "sinGente": "Casi no hay trabajadores ({pct}% de los puestos): por debajo del {min}% las obras no producen nada. Primero casas y comida.",
+    "hacienda": "Trabajadores: {gente} personas para {puestos} puestos ({pct}%). {efecto}",
+    "efectoPleno": "Todas las obras rinden al máximo.",
+    "efectoParcial": "Las obras que dan empleo rinden {pct}% de lo que podrían.",
+    "efectoNulo": "Las obras que dan empleo no producen nada."
+  }
+}
