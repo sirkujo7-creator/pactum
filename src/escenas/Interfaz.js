@@ -1232,7 +1232,7 @@ export class Interfaz {
     const S = this.S, ev = S.polisEv;
     if (!ev || !C.ENTRE) { alTerminar(); return; }
     const e = datosEntre(ev.id), T = C.ENTRE.textos, N = C.EXT.lugares; if (!e) { S.polisEv = null; alTerminar(); return; }
-    const cab = `<div class="big">${e.icono}</div><h3>${e.titulo}</h3><p class="small"><b>${N[e.a].nombre}</b> y <b>${N[e.b].nombre}</b></p>`;
+    const cab = `<div class="big">${e.icono}</div><h3>${e.titulo}</h3><p class="small"><b>${N[e.a].nombre}</b>${e.b ? ` y <b>${N[e.b].nombre}</b>` : ''}</p>`;
     this.tarjeta(`${cab}<p>${e.texto}</p><p class="small">${T.diplomatico}: <b>${e.diplomatico.icono} ${e.diplomatico.nombre}</b></p><blockquote class="verso">«${e.diplomatico.frase}»</blockquote>
       <div class="rapida-ops">${opcionesEntre(e).map(o => `<button class="opt rapida-op" data-e="${o.k}"><b>${o.texto}</b></button>`).join('')}</div>
       <div class="phil"><b>Para pensar</b><br>${e.pensar}</div>`, false);

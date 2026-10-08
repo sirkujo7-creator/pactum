@@ -3,51 +3,638 @@
   "prob": 0.17,
   "desde": 10,
   "aniosEntre": 6,
-  "textos": { "titulo": "Entre las polis", "mediar": "Mediar entre las dos", "apoyar": "Apoyar a {lugar}", "neutral": "Mantenerse al margen", "estado": { "amigas": "en buenos términos", "rivales": "enfrentadas", "aliadas": "aliadas" }, "diplomatico": "Su enviado" },
+  "textos": {
+    "titulo": "Entre las polis",
+    "mediar": "Mediar entre las dos",
+    "apoyar": "Apoyar a {lugar}",
+    "neutral": "Mantenerse al margen",
+    "estado": {
+      "amigas": "en buenos términos",
+      "rivales": "enfrentadas",
+      "aliadas": "aliadas"
+    },
+    "diplomatico": "Su enviado"
+  },
   "eventos": [
-    { "id": "ep_baldios_quindio", "epoca": "fundacion", "a": "antioquia", "b": "valle", "icono": "🗺️", "titulo": "Pleito por los baldíos del Quindío",
+    {
+      "id": "ep_baldios_quindio",
+      "epoca": "fundacion",
+      "a": "antioquia",
+      "b": "valle",
+      "icono": "🗺️",
+      "titulo": "Pleito por los baldíos del Quindío",
       "texto": "Antioquia y el Valle se disputan las tierras baldías que los colonos abren en el Quindío. Cada una dice que sus familias llegaron primero.",
-      "diplomatico": { "nombre": "Don Elías, enviado de Medellín", "icono": "🎩", "frase": "¡Ave María, señor gobernador! Esas tierras las abrimos nosotros con hacha y mula. Que no vengan los del Valle a decir lo contrario." },
-      "mediar": { "efectos": { "oro": -30, "confianza": 2 } }, "ventajaA": { "oro": 20, "habitantes": 2 }, "ventajaB": { "oro": 15, "alimento": 10 }, "pensar": "¿De quién es una tierra que nadie ha escriturado?" },
-    { "id": "ep_peaje_magdalena", "epoca": "fundacion", "a": "santafe", "b": "huila", "icono": "⛴️", "titulo": "El peaje del Magdalena",
+      "diplomatico": {
+        "nombre": "Don Elías, enviado de Medellín",
+        "icono": "🎩",
+        "frase": "¡Ave María, señor gobernador! Esas tierras las abrimos nosotros con hacha y mula. Que no vengan los del Valle a decir lo contrario."
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -30,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 20,
+        "habitantes": 2
+      },
+      "ventajaB": {
+        "oro": 15,
+        "alimento": 10
+      },
+      "pensar": "¿De quién es una tierra que nadie ha escriturado?"
+    },
+    {
+      "id": "ep_peaje_magdalena",
+      "epoca": "fundacion",
+      "a": "santafe",
+      "b": "huila",
+      "icono": "⛴️",
+      "titulo": "El peaje del Magdalena",
       "texto": "Santafé y el Huila discuten quién cobra el paso por el río. Los champaneros no saben a quién pagarle.",
-      "diplomatico": { "nombre": "Doctor Mosquera, abogado de Santafé", "icono": "📜", "frase": "Con todo respeto, la ley es clara: el río pertenece a la nación, y la nación somos nosotros." },
-      "mediar": { "efectos": { "oro": -25, "confianza": 2 } }, "ventajaA": { "oro": 25 }, "ventajaB": { "oro": 20, "animo": 1 }, "pensar": "¿Quién debe cobrar por el uso de un río?" },
-    { "id": "ep_mil_dias", "epoca": "cafe", "a": "antioquia", "b": "santafe", "icono": "⚔️", "titulo": "La Guerra de los Mil Días",
+      "diplomatico": {
+        "nombre": "Doctor Mosquera, abogado de Santafé",
+        "icono": "📜",
+        "frase": "Con todo respeto, la ley es clara: el río pertenece a la nación, y la nación somos nosotros."
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -25,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 25
+      },
+      "ventajaB": {
+        "oro": 20,
+        "animo": 1
+      },
+      "pensar": "¿Quién debe cobrar por el uso de un río?"
+    },
+    {
+      "id": "ep_mil_dias",
+      "epoca": "cafe",
+      "a": "antioquia",
+      "b": "santafe",
+      "icono": "⚔️",
+      "titulo": "La Guerra de los Mil Días",
       "texto": "Entre 1899 y 1902 liberales y conservadores se matan por todo el país. Antioquia y Santafé piden que declares de qué lado estás.",
-      "diplomatico": { "nombre": "El general Uribe, correo de guerra", "icono": "🎖️", "frase": "O está con el orden o está con los facciosos, gobernador. No hay terceras vías, ¡y menos con las balas pasando!" },
-      "mediar": { "efectos": { "oro": -40, "confianza": 3, "animo": -1 } }, "ventajaA": { "oro": 30, "confianza": -2 }, "ventajaB": { "oro": 25, "confianza": -1 }, "pensar": "¿Se puede ser neutral en una guerra civil?" },
-    { "id": "ep_ferrocarril_pacifico", "epoca": "cafe", "a": "valle", "b": "santafe", "icono": "🚂", "titulo": "Quién paga el ferrocarril al Pacífico",
+      "diplomatico": {
+        "nombre": "El general Uribe, correo de guerra",
+        "icono": "🎖️",
+        "frase": "O está con el orden o está con los facciosos, gobernador. No hay terceras vías, ¡y menos con las balas pasando!"
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -40,
+          "confianza": 3,
+          "animo": -1
+        }
+      },
+      "ventajaA": {
+        "oro": 30,
+        "confianza": -2
+      },
+      "ventajaB": {
+        "oro": 25,
+        "confianza": -1
+      },
+      "pensar": "¿Se puede ser neutral en una guerra civil?"
+    },
+    {
+      "id": "ep_ferrocarril_pacifico",
+      "epoca": "cafe",
+      "a": "valle",
+      "b": "santafe",
+      "icono": "🚂",
+      "titulo": "Quién paga el ferrocarril al Pacífico",
       "texto": "El Valle quiere el tren hasta Buenaventura y Santafé pide que todos los departamentos paguen. Te piden una cuota.",
-      "diplomatico": { "nombre": "Ingeniero Cabal, enviado de Cali", "icono": "📐", "frase": "Pague hoy su cuota y su café llegará al mar en horas, no en semanas. ¡Es la obra del siglo!" },
-      "mediar": { "efectos": { "oro": -35, "confianza": 2 } }, "ventajaA": { "oro": 35 }, "ventajaB": { "oro": 20, "confianza": 1 }, "pensar": "¿Quién debe pagar una obra que beneficia a muchos?" },
-    { "id": "ep_pajaros_frontera", "epoca": "violencia", "a": "valle", "b": "quindio", "icono": "🕯️", "titulo": "Refugiados entre el Valle y el Quindío",
+      "diplomatico": {
+        "nombre": "Ingeniero Cabal, enviado de Cali",
+        "icono": "📐",
+        "frase": "Pague hoy su cuota y su café llegará al mar en horas, no en semanas. ¡Es la obra del siglo!"
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -35,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 35
+      },
+      "ventajaB": {
+        "oro": 20,
+        "confianza": 1
+      },
+      "pensar": "¿Quién debe pagar una obra que beneficia a muchos?"
+    },
+    {
+      "id": "ep_pajaros_frontera",
+      "epoca": "violencia",
+      "a": "valle",
+      "b": "quindio",
+      "icono": "🕯️",
+      "titulo": "Refugiados entre el Valle y el Quindío",
       "texto": "Las bandas de los «pájaros» cruzan la frontera entre el Valle y el Quindío y cada gobierno acusa al otro de no pararlas.",
-      "diplomatico": { "nombre": "Padre Anselmo, mediador", "icono": "⛪", "frase": "Hijo, los muertos no entienden de fronteras. Que se hable antes de que se dispare." },
-      "mediar": { "efectos": { "oro": -30, "confianza": 3, "animo": 1 } }, "ventajaA": { "confianza": 2, "oro": 15 }, "ventajaB": { "confianza": 2, "oro": 15 }, "pensar": "¿Quién es responsable de la violencia que cruza una frontera?" },
-    { "id": "ep_rojas", "epoca": "violencia", "a": "santafe", "b": "antioquia", "icono": "🎖️", "titulo": "El general en el poder",
+      "diplomatico": {
+        "nombre": "Padre Anselmo, mediador",
+        "icono": "⛪",
+        "frase": "Hijo, los muertos no entienden de fronteras. Que se hable antes de que se dispare."
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -30,
+          "confianza": 3,
+          "animo": 1
+        }
+      },
+      "ventajaA": {
+        "confianza": 2,
+        "oro": 15
+      },
+      "ventajaB": {
+        "confianza": 2,
+        "oro": 15
+      },
+      "pensar": "¿Quién es responsable de la violencia que cruza una frontera?"
+    },
+    {
+      "id": "ep_rojas",
+      "epoca": "violencia",
+      "a": "santafe",
+      "b": "antioquia",
+      "icono": "🎖️",
+      "titulo": "El general en el poder",
       "texto": "Tras el golpe de 1953, Santafé pide que las polis se alineen con el nuevo gobierno. Antioquia duda.",
-      "diplomatico": { "nombre": "Capitán Rueda, edecán", "icono": "🧢", "frase": "El general trae orden y obras, señor. Usted verá si se queda en el desorden o en el progreso." },
-      "mediar": { "efectos": { "oro": -30, "confianza": 2 } }, "ventajaA": { "oro": 30, "confianza": -2, "igualdad": -1 }, "ventajaB": { "confianza": 2, "oro": 5 }, "pensar": "¿Se acepta el orden de un gobierno que no fue elegido?" },
-    { "id": "ep_frente_nacional", "epoca": "modernizacion", "a": "santafe", "b": "antioquia", "icono": "🤝", "titulo": "Alternarse el poder",
+      "diplomatico": {
+        "nombre": "Capitán Rueda, edecán",
+        "icono": "🧢",
+        "frase": "El general trae orden y obras, señor. Usted verá si se queda en el desorden o en el progreso."
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -30,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 30,
+        "confianza": -2,
+        "igualdad": -1
+      },
+      "ventajaB": {
+        "confianza": 2,
+        "oro": 5
+      },
+      "pensar": "¿Se acepta el orden de un gobierno que no fue elegido?"
+    },
+    {
+      "id": "ep_frente_nacional",
+      "epoca": "modernizacion",
+      "a": "santafe",
+      "b": "antioquia",
+      "icono": "🤝",
+      "titulo": "Alternarse el poder",
       "texto": "Los dos partidos acuerdan turnarse la presidencia durante 16 años. Las polis se pelean por los cargos que les tocan.",
-      "diplomatico": { "nombre": "Doctor Lleras, delegado", "icono": "🖋️", "frase": "Hay que apagar el incendio de la violencia, así sea con un pacto incómodo. ¿Usted qué cargo propone?" },
-      "mediar": { "efectos": { "oro": -25, "confianza": 2, "igualdad": 1 } }, "ventajaA": { "oro": 30, "igualdad": -2 }, "ventajaB": { "oro": 25, "igualdad": -1 }, "pensar": "¿Un pacto de élites puede traer paz sin traer justicia?" },
-    { "id": "ep_venezuela_frontera", "epoca": "paz", "a": "venezuela", "b": "santafe", "icono": "🛂", "titulo": "Roces en la frontera con Venezuela",
+      "diplomatico": {
+        "nombre": "Doctor Lleras, delegado",
+        "icono": "🖋️",
+        "frase": "Hay que apagar el incendio de la violencia, así sea con un pacto incómodo. ¿Usted qué cargo propone?"
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -25,
+          "confianza": 2,
+          "igualdad": 1
+        }
+      },
+      "ventajaA": {
+        "oro": 30,
+        "igualdad": -2
+      },
+      "ventajaB": {
+        "oro": 25,
+        "igualdad": -1
+      },
+      "pensar": "¿Un pacto de élites puede traer paz sin traer justicia?"
+    },
+    {
+      "id": "ep_venezuela_frontera",
+      "epoca": "paz",
+      "a": "venezuela",
+      "b": "santafe",
+      "icono": "🛂",
+      "titulo": "Roces en la frontera con Venezuela",
       "texto": "Venezuela y Santafé cierran el paso por incidentes en la frontera. Tus comerciantes quedan en medio.",
-      "diplomatico": { "nombre": "Cónsul Ramírez", "icono": "🛂", "frase": "Mire, pana, aquí nadie quiere pelea, pero hay que respetar la raya. ¿Cómo hacemos para que el comercio siga?" },
-      "mediar": { "efectos": { "oro": -30, "confianza": 2 } }, "ventajaA": { "oro": 30, "confianza": -1 }, "ventajaB": { "oro": 25, "confianza": 1 }, "pensar": "¿Qué pasa con la gente de frontera cuando los gobiernos se pelean?" },
-    { "id": "ep_bloque_cafe", "epoca": "paz", "a": "huila", "b": "quindio", "icono": "☕", "titulo": "Un bloque del café",
+      "diplomatico": {
+        "nombre": "Cónsul Ramírez",
+        "icono": "🛂",
+        "frase": "Mire, pana, aquí nadie quiere pelea, pero hay que respetar la raya. ¿Cómo hacemos para que el comercio siga?"
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -30,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 30,
+        "confianza": -1
+      },
+      "ventajaB": {
+        "oro": 25,
+        "confianza": 1
+      },
+      "pensar": "¿Qué pasa con la gente de frontera cuando los gobiernos se pelean?"
+    },
+    {
+      "id": "ep_bloque_cafe",
+      "epoca": "paz",
+      "a": "huila",
+      "b": "quindio",
+      "icono": "☕",
+      "titulo": "Un bloque del café",
       "texto": "El Huila y el Quindío proponen un bloque para vender café de origen y piden que te unas.",
-      "diplomatico": { "nombre": "Doña Marta, cafetera", "icono": "☕", "frase": "¡Eche, hermano! Si vendemos juntos, el mundo nos paga mejor. Venga, que aquí hay buen tinto." },
-      "mediar": { "efectos": { "oro": -20, "confianza": 2 } }, "ventajaA": { "oro": 30, "campesinos": 2 }, "ventajaB": { "oro": 30, "campesinos": 2 }, "pensar": "¿Cuándo es mejor competir y cuándo asociarse?" },
-    { "id": "ep_panama_venezuela", "epoca": "digital", "a": "panama", "b": "venezuela", "icono": "📵", "titulo": "Se rompen las relaciones entre Panamá y Venezuela",
+      "diplomatico": {
+        "nombre": "Doña Marta, cafetera",
+        "icono": "☕",
+        "frase": "¡Eche, hermano! Si vendemos juntos, el mundo nos paga mejor. Venga, que aquí hay buen tinto."
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -20,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 30,
+        "campesinos": 2
+      },
+      "ventajaB": {
+        "oro": 30,
+        "campesinos": 2
+      },
+      "pensar": "¿Cuándo es mejor competir y cuándo asociarse?"
+    },
+    {
+      "id": "ep_panama_venezuela",
+      "epoca": "digital",
+      "a": "panama",
+      "b": "venezuela",
+      "icono": "📵",
+      "titulo": "Se rompen las relaciones entre Panamá y Venezuela",
       "texto": "Panamá y Venezuela rompen relaciones y los vuelos y barcos se suspenden. Los migrantes buscan nuevas rutas.",
-      "diplomatico": { "nombre": "Embajador Pinzón", "icono": "🏛️", "frase": "Gobernador, le ruego discreción: esto es un asunto delicado. ¿Podemos contar con su neutralidad?" },
-      "mediar": { "efectos": { "oro": -30, "confianza": 2 } }, "ventajaA": { "oro": 25 }, "ventajaB": { "oro": 15, "habitantes": 2 }, "pensar": "¿Qué costo tiene romper relaciones con otro país?" },
-    { "id": "ep_pacifico", "epoca": "digital", "a": "valle", "b": "antioquia", "icono": "🚢", "titulo": "Un corredor hacia el Pacífico",
+      "diplomatico": {
+        "nombre": "Embajador Pinzón",
+        "icono": "🏛️",
+        "frase": "Gobernador, le ruego discreción: esto es un asunto delicado. ¿Podemos contar con su neutralidad?"
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -30,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 25
+      },
+      "ventajaB": {
+        "oro": 15,
+        "habitantes": 2
+      },
+      "pensar": "¿Qué costo tiene romper relaciones con otro país?"
+    },
+    {
+      "id": "ep_pacifico",
+      "epoca": "digital",
+      "a": "valle",
+      "b": "antioquia",
+      "icono": "🚢",
+      "titulo": "Un corredor hacia el Pacífico",
       "texto": "El Valle y Antioquia proponen un corredor de carga y piden que tu territorio ponga parte de las vías.",
-      "diplomatico": { "nombre": "Ing. Cuéllar", "icono": "🛣️", "frase": "Con su tramo, la carga llega al puerto en la mitad del tiempo. ¿Qué nos pide a cambio?" },
-      "mediar": { "efectos": { "oro": -35, "confianza": 2 } }, "ventajaA": { "oro": 35, "ambiente": -2 }, "ventajaB": { "oro": 30, "ambiente": -1 }, "pensar": "¿A quién benefician las carreteras que atraviesan un territorio?" }
+      "diplomatico": {
+        "nombre": "Ing. Cuéllar",
+        "icono": "🛣️",
+        "frase": "Con su tramo, la carga llega al puerto en la mitad del tiempo. ¿Qué nos pide a cambio?"
+      },
+      "mediar": {
+        "efectos": {
+          "oro": -35,
+          "confianza": 2
+        }
+      },
+      "ventajaA": {
+        "oro": 35,
+        "ambiente": -2
+      },
+      "ventajaB": {
+        "oro": 30,
+        "ambiente": -1
+      },
+      "pensar": "¿A quién benefician las carreteras que atraviesan un territorio?"
+    },
+    {
+      "id": "pd_agua",
+      "epoca": "modernizacion",
+      "a": "quindio",
+      "b": null,
+      "icono": "💧",
+      "titulo": "El agua que bajaba por tu río",
+      "texto": "El Quindío exige que no desvíes más agua del río que comparten: sus cultivos se secan cuando tú riegas. Hay quien habla de cerrar la frontera.",
+      "diplomatico": {
+        "nombre": "Ing. Giraldo, delegado del Quindío",
+        "icono": "📐",
+        "frase": "Mire, vecino: el río es de los dos y la sed también. ¿Nos sentamos o dejamos que se seque primero el que no tiene poder?"
+      },
+      "opciones": [
+        {
+          "texto": "Compartir el caudal con reglas claras",
+          "efectos": {
+            "oro": -30,
+            "ambiente": 2,
+            "confianza": 2
+          },
+          "rel": 3
+        },
+        {
+          "texto": "Negociar un tratado de aguas",
+          "efectos": {
+            "oro": -45,
+            "confianza": 3,
+            "ambiente": 2
+          },
+          "rel": 6
+        },
+        {
+          "texto": "Negarte: es tu río",
+          "efectos": {
+            "oro": 15,
+            "confianza": -2
+          },
+          "rel": -6
+        }
+      ],
+      "pensar": "¿De quién es el agua de un río que cruza varias fronteras?"
+    },
+    {
+      "id": "pd_oro",
+      "epoca": "cafe",
+      "a": "antioquia",
+      "b": null,
+      "icono": "⛏️",
+      "titulo": "Oro en el límite",
+      "texto": "Mineros de Antioquia quieren abrir una veta en el límite de tu territorio y piden que les dejes pasar. Ofrecen pagar por el paso.",
+      "diplomatico": {
+        "nombre": "Don Gonzalo, empresario minero",
+        "icono": "💼",
+        "frase": "El oro no espera, gobernador. Déjenos pasar y le dejo una parte; si no, pasamos por otro lado y no gana nada."
+      },
+      "opciones": [
+        {
+          "texto": "Dejarlos pasar y cobrar por ello",
+          "efectos": {
+            "oro": 40,
+            "ambiente": -2,
+            "igualdad": -1
+          },
+          "rel": 3
+        },
+        {
+          "texto": "Exigir que dejen empleo y reparen el daño",
+          "efectos": {
+            "oro": 15,
+            "ambiente": -1,
+            "campesinos": 2,
+            "confianza": 1
+          },
+          "rel": 0
+        },
+        {
+          "texto": "Negar el paso",
+          "efectos": {
+            "confianza": 1,
+            "ambiente": 1,
+            "oro": -10
+          },
+          "rel": -5
+        }
+      ],
+      "pensar": "¿Quién debe beneficiarse de la riqueza que está bajo la tierra?"
+    },
+    {
+      "id": "pd_puerto",
+      "epoca": "cafe",
+      "a": "panama",
+      "b": null,
+      "icono": "⚓",
+      "titulo": "Los comerciantes del puerto piden una tasa",
+      "texto": "Comerciantes de Panamá piden que cobres menos por el paso de sus mercancías por tu río y tu puerto; amenazan con irse a otro.",
+      "diplomatico": {
+        "nombre": "Capitán Arosemena, naviero",
+        "icono": "⚓",
+        "frase": "Con respeto, gobernador: un puerto sin barcos es un charco. Baje la tasa y vendrán más; súbala y se van."
+      },
+      "opciones": [
+        {
+          "texto": "Bajar la tasa y atraer más barcos",
+          "efectos": {
+            "oro": -20,
+            "elite": 2
+          },
+          "rel": 4
+        },
+        {
+          "texto": "Mantener la tasa",
+          "efectos": {
+            "oro": 15
+          },
+          "rel": -2
+        },
+        {
+          "texto": "Subir la tasa",
+          "efectos": {
+            "oro": 30,
+            "elite": -2
+          },
+          "rel": -5
+        }
+      ],
+      "pensar": "¿Cobrar más siempre significa ganar más?"
+    },
+    {
+      "id": "pd_venganza",
+      "epoca": "violencia",
+      "a": "valle",
+      "b": null,
+      "icono": "🗡️",
+      "titulo": "Los muertos del Valle piden cuentas",
+      "texto": "Una familia del norte del Valle acusa a gente de tu territorio de haber matado a los suyos, y su gobierno amenaza con venganza.",
+      "diplomatico": {
+        "nombre": "Don Heriberto, vocero del Valle",
+        "icono": "🎩",
+        "frase": "No queremos pelea, pero tampoco olvido. Entréguenos a los culpables o tendremos que buscarlos."
+      },
+      "opciones": [
+        {
+          "texto": "Investigar y juzgar aquí a los acusados",
+          "efectos": {
+            "oro": -35,
+            "confianza": 3,
+            "campesinos": -1
+          },
+          "rel": 3
+        },
+        {
+          "texto": "Entregar a los acusados al Valle",
+          "efectos": {
+            "confianza": -2,
+            "oro": -10
+          },
+          "rel": 5
+        },
+        {
+          "texto": "Negar todo y reforzar la frontera",
+          "efectos": {
+            "oro": -30,
+            "confianza": -1,
+            "animo": -2
+          },
+          "rel": -6
+        }
+      ],
+      "pensar": "¿Quién debe juzgar a quien comete un crimen: el pueblo donde ocurrió o aquel de donde viene?"
+    },
+    {
+      "id": "pd_potencia",
+      "epoca": "modernizacion",
+      "a": "venezuela",
+      "b": null,
+      "icono": "🛢️",
+      "titulo": "Una potencia pide una concesión",
+      "texto": "Una empresa extranjera con respaldo de su gobierno pide una concesión en tu territorio: explotar un yacimiento a cambio de inversión y empleos.",
+      "diplomatico": {
+        "nombre": "Mr. Collins, representante de la compañía",
+        "icono": "🧳",
+        "frase": "My government supports this project. Perdón: mi gobierno lo apoya. Es una gran oportunidad, señor gobernador; sería una pena que usted la dejara pasar."
+      },
+      "opciones": [
+        {
+          "texto": "Aceptar la concesión",
+          "efectos": {
+            "oro": 50,
+            "igualdad": -3,
+            "ambiente": -3,
+            "confianza": -1
+          },
+          "rel": 2
+        },
+        {
+          "texto": "Aceptar con condiciones: empleo y reparación",
+          "efectos": {
+            "oro": 25,
+            "igualdad": 1,
+            "ambiente": -1,
+            "confianza": 1
+          },
+          "rel": 0
+        },
+        {
+          "texto": "Rechazarla",
+          "efectos": {
+            "oro": -15,
+            "confianza": 3,
+            "igualdad": 1
+          },
+          "rel": -3
+        }
+      ],
+      "pensar": "¿Hasta dónde puede una potencia influir en las decisiones de un territorio más pequeño?"
+    },
+    {
+      "id": "pd_extradicion",
+      "epoca": "paz",
+      "a": "panama",
+      "b": null,
+      "icono": "🛂",
+      "titulo": "Piden que entregues a un fugitivo",
+      "texto": "Panamá pide la extradición de un banquero acusado de lavar dinero que se escondió en tu territorio. Hay quienes dicen que es un perseguido político.",
+      "diplomatico": {
+        "nombre": "Fiscal Vásquez, de Panamá",
+        "icono": "⚖️",
+        "frase": "Ese hombre está acusado de delitos graves. Si no lo entregan, será una afrenta, y nos veremos obligados a revisar nuestras relaciones."
+      },
+      "opciones": [
+        {
+          "texto": "Extraditarlo",
+          "efectos": {
+            "oro": -10,
+            "confianza": 2
+          },
+          "rel": 6
+        },
+        {
+          "texto": "Juzgarlo aquí",
+          "efectos": {
+            "oro": -30,
+            "confianza": 3
+          },
+          "rel": 0
+        },
+        {
+          "texto": "Darle asilo",
+          "efectos": {
+            "confianza": -2,
+            "oro": 20
+          },
+          "rel": -8
+        }
+      ],
+      "pensar": "¿Cuándo es justo entregar a una persona a otra jurisdicción?"
+    },
+    {
+      "id": "pd_distraccion",
+      "epoca": "digital",
+      "a": "venezuela",
+      "b": null,
+      "icono": "🪖",
+      "titulo": "Tropas en la frontera",
+      "texto": "En medio de una crisis interna, el gobierno de Venezuela mueve tropas cerca de tu frontera. Muchos creen que quiere distraer a su pueblo de sus problemas.",
+      "diplomatico": {
+        "nombre": "Cónsul Ramírez",
+        "icono": "🛂",
+        "frase": "No se alarme, gobernador: son ejercicios de rutina. Pero entienda que ahora todos estamos nerviosos."
+      },
+      "opciones": [
+        {
+          "texto": "Reforzar la frontera",
+          "efectos": {
+            "oro": -40,
+            "confianza": 1,
+            "animo": -1
+          },
+          "rel": -3
+        },
+        {
+          "texto": "Pedir diálogo con terceros países",
+          "efectos": {
+            "oro": -25,
+            "confianza": 3
+          },
+          "rel": 2
+        },
+        {
+          "texto": "Ignorar el movimiento",
+          "efectos": {
+            "animo": -2,
+            "confianza": -1
+          },
+          "rel": -1
+        }
+      ],
+      "pensar": "¿Por qué algunos gobiernos buscan un enemigo afuera cuando tienen problemas adentro?"
+    }
   ]
 }
