@@ -14,6 +14,7 @@ import {
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
 } from '../core/index.js';
 import { pintarMundo, fichaLugar, lugarEn } from './mundo.js';
+import { pintarPlano, casillaPlano, USOS, usoDe } from './plano.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
 import { partida } from './partida.js';
@@ -120,6 +121,7 @@ export class Interfaz {
         b('?', 'Cómo jugar', () => this.ayuda(false)),
         b('▤', 'Partidas y logros', () => this.menu()),
         b('🌎', 'El mundo (m)', () => this.tarjetaMundo()),
+        b('🗺️', 'Vista de plano (v)', () => this.tarjetaPlano()),
         this.bSonido = b('🔇', 'Activar sonido', () => this.alternarSonido()),
         b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25)),
         b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25)),
@@ -1810,6 +1812,24 @@ export class Interfaz {
         <button class="main" id="mejorarB" ${mot || S.over ? 'disabled' : ''}>${T.mejorar}</button>${mot ? `<p class="small neg">${mot}</p>` : ''}` : `<p class="small">${T.maximo}</p>`}
       <div class="phil"><b>Lo que enseña</b><br>${C.PLAZA.leccion}</div><button class="main" id="okB">Cerrar</button>`);
     this.boton('mejorarB', () => { const r = mejorarPlaza(S); if (r === true) { this.cerrarTarjeta(); this.toast(T.mejorada.replace('{nombre}', estadoPlaza(S).nombre)); this.mapa.cambio && this.mapa.cambio(true); this.render(); } else this.toast(r); });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Vista de plano: el territorio visto desde arriba, un color por uso. Tocar una casilla muestra qué hay.
+  tarjetaPlano(sel) {
+    const S = this.S, k = this.herramienta;
+    const x = sel !== undefined && sel !== null ? S.map[sel] : null;
+    const que = !x ? 'Toca una casilla para ver qué hay.' : x.b ? `<b>${usoDe(x.b).nombre}:</b> ${this.nombre(x.b)}${x.ob ? ' (en obra)' : ''}.` : `<b>${{ llano: 'Llano', bosque: 'Bosque', montana: 'Montaña', rio: 'Río' }[x.t] || 'Terreno'}</b>, sin obra.`;
+    const construir = x && k && k !== 'calle' && k !== 'quitarCalle' && !x.b ? `<button class="opt" id="planoC"><b>Construir aquí: ${this.nombre(k)}</b></button>` : '';
+    this.tarjeta(`<div class="big">🗺️</div><h3>Vista de plano</h3><p class="small">El territorio visto desde arriba: sin relieve, un color por uso. La línea punteada es el casco urbano; la estrella, la plaza.</p>
+      <canvas class="plano" aria-label="Plano del territorio"></canvas>
+      <div class="leyenda-plano">${USOS.map(u => `<span><i style="background:${u.col}"></i>${u.nombre}</span>`).join('')}</div>
+      <p class="small" id="planoQue">${que}</p>${construir}
+      ${x && x.b ? '<button class="opt" id="planoF"><b>Abrir la ficha de esta obra</b></button>' : ''}
+      <button class="main" id="okB">Volver al mapa</button>`);
+    const cv = this.card.querySelector('canvas.plano');
+    requestAnimationFrame(() => { pintarPlano(cv, S, sel); cv.onclick = ev => { const i = casillaPlano(cv, S, ev); if (i !== null) this.tarjetaPlano(i); }; });
+    this.boton('planoC', () => { this.cerrarTarjeta(); this.mapa.construir(k, sel); });
+    this.boton('planoF', () => { this.cerrarTarjeta(); this.abrirFicha(sel); });
     this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 15: la pantalla «El mundo».

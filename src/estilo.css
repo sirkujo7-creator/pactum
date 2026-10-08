@@ -427,6 +427,8 @@ details.familia summary{cursor:pointer;list-style-position:inside}
 .objeto small{font-size:.7rem;line-height:1.15;text-align:center}
 .objeto.falta{opacity:.45;border-style:dashed;cursor:default}
 /* Fase 15: la pantalla «El mundo» */
+canvas.plano{display:block;width:100%;border-radius:10px;border:1px solid #CDBB93;margin:6px 0 8px;cursor:pointer;touch-action:manipulation;image-rendering:auto}
+.leyenda-plano{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;margin:2px 0 6px}.leyenda-plano i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 canvas.mundo{display:block;width:100%;border-radius:10px;border:1px solid #CDBB93;margin:6px 0 8px;cursor:pointer;touch-action:manipulation}
 .ficha-lugar{background:rgba(232,220,196,.45);border-radius:10px;padding:8px 10px;margin-bottom:8px}
 .ficha-lugar h3{margin-top:0}
