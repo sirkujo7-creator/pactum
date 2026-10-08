@@ -31,6 +31,7 @@ const fincaDe = x => x.b === 'cultivo';
 for (let g = 0; g < NG; g++) {
   const S = freshState('normal', false, 1000 + g, REG);
   if (!climaActivo(S)) continue;
+  S.energiaGratis = true; // se mide la fábrica en sí; el molino que la alimenta es otra obra
   let anio = 0;
   for (const meta of ANIOS) {
     for (; S.year < meta && !S.over; ) { const r = botYear(S, 'fair', null); if (r.end) { S.over = true; break; } }
@@ -64,7 +65,9 @@ for (let g = 0; g < NG; g++) {
         for (const pr of listaProductos()) {
           const antes = { b: x.b, pr: x.pr }, tt = x.t;
           x.b = 'taller'; x.pr = pr; if (tt === 'bosque') x.t = 'llano';
+          const P = C.INDUSTRIA.productos[pr], ins = P.insumo; P.insumo = undefined; // se mide con la materia prima ya conseguida (sin ella no rinde nada)
           const F1 = finance(S);
+          P.insumo = ins;
           x.b = antes.b; x.pr = antes.pr; x.t = tt;
           anota('fábrica:' + pr, anio, { costo: C.B.taller.cost * S.price, dn: F1.net - F0.net, dj: (F1.so.jc + F1.so.ja) - (F0.so.jc + F0.so.ja), df: 0, mant: C.B.taller.up * S.price, fabricas: nT });
         }
