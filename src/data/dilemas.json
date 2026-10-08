@@ -2021,7 +2021,17 @@
         "huella": "placa",
         "colonos": "sorteo"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 5,
+      "fecha": "Ley 61 de 1874 y leyes siguientes",
+      "nota": "Desde el siglo XIX el Estado colombiano repartió tierras baldías (sin dueño) para poblar el territorio. La Ley 61 de 1874 y otras dieron título a quien las cultivaba, pero muchos grandes propietarios acapararon lo que los colonos habían abierto. De ahí nacen conflictos por la tierra que duran hasta hoy.",
+      "escena": {
+        "tipo": "desplazados",
+        "titulo": "Colonos en tierras baldías",
+        "texto": "Familias llegan con sus mulas a un monte sin dueño y empiezan a desmontar."
+      }
+    }
   },
   {
     "id": "h_camino",
@@ -2178,7 +2188,17 @@
         "porque": "Sin parroquia ni escuela el pueblo ahorra, pero se queda sin servicios.",
         "aQuien": "No se paga diezmo, pero tampoco hay escuela por ahora."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 10,
+      "fecha": "14 de octubre de 1550",
+      "nota": "San Bonifacio de Ibagué fue fundada por Andrés López de Galarza el 14 de octubre de 1550 y trasladada al sitio actual en 1551. Alrededor de la parroquia, la plaza y la iglesia ordenaban la vida del pueblo, como mandaban las Leyes de Indias.",
+      "escena": {
+        "tipo": "procesion",
+        "titulo": "La fundación de la parroquia",
+        "texto": "El pueblo sale en procesión con velas hacia el sitio donde se alzará la iglesia."
+      }
+    }
   },
   {
     "id": "h_quina",
@@ -2278,7 +2298,17 @@
         "aQuien": "El tesoro paga un fondo solidario; los arrieros se calman y vuelven al camino.",
         "huella": "olla"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 18,
+      "fecha": "Siglo XIX y comienzos del XX",
+      "nota": "Los arrieros llevaban café, sal y mercancías en mula por los caminos de herradura de la cordillera Central. Con el ferrocarril, los cables aéreos y las carreteras, su oficio perdió fuerza y muchos reclamaron por su sustento.",
+      "escena": {
+        "tipo": "marcha",
+        "titulo": "La huelga de los arrieros",
+        "texto": "Los arrieros llegan a la plaza con sus mulas y pancartas: piden que no los dejen sin camino."
+      }
+    }
   },
   {
     "id": "h_cable",
@@ -2328,7 +2358,12 @@
         "porque": "A veces la solución sencilla y cercana es la más sabia.",
         "aQuien": "Los caminos quedan mejor; el comercio sigue lento, pero nadie se endeuda."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 26,
+      "fecha": "1913 a 1922",
+      "nota": "El cable aéreo Manizales–Mariquita se construyó entre 1913 y 1922 y fue uno de los más largos del mundo: llevaba café y carga desde el occidente hasta el río Magdalena, pasando por el norte del Tolima."
+    }
   },
   {
     "id": "h_trilladora",
@@ -2540,7 +2575,17 @@
         "aQuien": "No hay incendios; la gente se siente vigilada y la tensión queda por dentro.",
         "huella": "reten"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 37,
+      "fecha": "9 de abril de 1948",
+      "nota": "Ese día fue asesinado en Bogotá el líder liberal Jorge Eliécer Gaitán. Las revueltas, conocidas como el Bogotazo, se extendieron a muchas ciudades, y en el Tolima desataron la violencia entre liberales y conservadores en el campo.",
+      "escena": {
+        "tipo": "marcha",
+        "titulo": "El 9 de abril",
+        "texto": "La noticia del asesinato de Gaitán llega por radio y la multitud sale a la plaza."
+      }
+    }
   },
   {
     "id": "h_pajaros",
@@ -2600,7 +2645,17 @@
         "aQuien": "Las familias se quedan en sus tierras con protección; cuesta oro y paciencia.",
         "huella": "olla"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 43,
+      "fecha": "Hacia 1949 a 1953 (años aproximados)",
+      "nota": "Los «pájaros» fueron asesinos a sueldo, sobre todo conservadores, que persiguieron a liberales en el Tolima, el Valle y Caldas durante La Violencia. Muchos campesinos se organizaron en guerrillas liberales de autodefensa.",
+      "escena": {
+        "tipo": "desplazados",
+        "titulo": "Huyen de los pájaros",
+        "texto": "Familias salen de las veredas de noche, con lo poco que pueden cargar."
+      }
+    }
   },
   {
     "id": "h_bandolero",
@@ -2759,7 +2814,17 @@
         "porque": "No se puede repartir el poder como un botín.",
         "aQuien": "Mantienes tu independencia; la violencia sigue en las veredas."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 48,
+      "fecha": "1 de diciembre de 1957",
+      "nota": "El Frente Nacional fue un pacto entre liberales y conservadores, aprobado en el plebiscito del 1 de diciembre de 1957, en el que las mujeres votaron por primera vez. Los dos partidos se turnaron el poder de 1958 a 1974 y repartieron los cargos: terminó La Violencia partidista, pero se cerró la puerta a otras fuerzas.",
+      "escena": {
+        "tipo": "paz",
+        "titulo": "El pacto entre partidos",
+        "texto": "Delegados liberales y conservadores se encuentran en la plaza y se dan la mano."
+      }
+    }
   },
   {
     "id": "h_exodo",
@@ -2806,7 +2871,17 @@
         "porque": "Sin política no hay costo, pero el campo pierde manos.",
         "aQuien": "Los jóvenes se van; la cosecha baja porque faltan brazos."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 62,
+      "fecha": "Décadas de 1950 a 1980",
+      "nota": "Entre 1950 y 1980 millones de colombianos dejaron el campo por la violencia y en busca de trabajo, y las ciudades crecieron sin plan. Ibagué recibió muchas familias campesinas del sur del Tolima.",
+      "escena": {
+        "tipo": "desplazados",
+        "titulo": "El éxodo del campo",
+        "texto": "Camino abajo, familias enteras llegan al pueblo con sus colchones y sus animales."
+      }
+    }
   },
   {
     "id": "h_riego",
@@ -3011,7 +3086,17 @@
         "porque": "El negocio paga la novedad.",
         "aQuien": "Los comerciantes cobran por ver; se llenan los bolsillos de pocos."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 54,
+      "fecha": "13 de junio de 1954",
+      "nota": "La televisión llegó a Colombia el 13 de junio de 1954, durante el gobierno del general Gustavo Rojas Pinilla. Al principio pocas familias tenían televisor: los vecinos se juntaban frente a uno solo para ver los programas.",
+      "escena": {
+        "tipo": "escandalo",
+        "titulo": "La televisión llega a la plaza",
+        "texto": "Medio pueblo se agolpa alrededor de una sola pantalla."
+      }
+    }
   },
   {
     "id": "h_constitucion",
@@ -3057,7 +3142,17 @@
         "aQuien": "Las víctimas encuentran a quién acudir; sube la legitimidad.",
         "huella": "placa"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 73,
+      "fecha": "4 de julio de 1991",
+      "nota": "La Asamblea Nacional Constituyente, elegida en diciembre de 1990, promulgó la nueva Constitución el 4 de julio de 1991. Creó la tutela, reconoció a Colombia como país pluriétnico y multicultural y dio más autonomía a los departamentos y municipios.",
+      "escena": {
+        "tipo": "paz",
+        "titulo": "La nueva Constitución",
+        "texto": "Representantes de todos los sectores se reúnen en la plaza a leer el nuevo texto."
+      }
+    }
   },
   {
     "id": "h_restitucion",
@@ -3114,7 +3209,17 @@
         "aQuien": "Los reclamantes siguen esperando; crece la desconfianza.",
         "huella": "pancarta"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 85,
+      "fecha": "10 de junio de 2011",
+      "nota": "La Ley 1448 de 2011, de Víctimas y Restitución de Tierras, se sancionó el 10 de junio de 2011. Busca devolver las tierras despojadas durante el conflicto armado y reparar a las víctimas.",
+      "escena": {
+        "tipo": "desplazados",
+        "titulo": "Vuelven a su tierra",
+        "texto": "Familias desplazadas regresan a la vereda que debieron abandonar."
+      }
+    }
   },
   {
     "id": "h_reincorporacion",
@@ -3172,7 +3277,17 @@
           "id": "acuerdo_incumplido"
         }
       }
-    ]
+    ],
+    "hito": {
+      "anio": 80,
+      "fecha": "24 de noviembre de 2016",
+      "nota": "El Acuerdo Final entre el Gobierno y las FARC-EP se firmó en el Teatro Colón de Bogotá el 24 de noviembre de 2016, después de que el plebiscito del 2 de octubre rechazara la primera versión. Miles de excombatientes empezaron a reincorporarse a la vida civil.",
+      "escena": {
+        "tipo": "paz",
+        "titulo": "La reincorporación",
+        "texto": "Excombatientes y vecinos se encuentran con banderas blancas en la plaza."
+      }
+    }
   },
   {
     "id": "h_verdad",
@@ -3216,7 +3331,17 @@
         "porque": "No remover el pasado parece cómodo para algunos.",
         "aQuien": "La Comisión se va con un vacío; las víctimas se sienten solas."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 89,
+      "fecha": "Noviembre de 2018 a junio de 2022",
+      "nota": "La Comisión para el Esclarecimiento de la Verdad, creada por el Acuerdo de Paz, empezó a trabajar en 2018 y entregó su informe final el 28 de junio de 2022, tras escuchar a miles de víctimas, testigos y responsables.",
+      "escena": {
+        "tipo": "procesion",
+        "titulo": "Las velas de la verdad",
+        "texto": "El pueblo sale con velas a nombrar a quienes se llevó la guerra."
+      }
+    }
   },
   {
     "id": "h_coca",
@@ -3379,7 +3504,12 @@
         "aQuien": "El pueblo vota; como en Cajamarca (Tolima, 2017), gana el no a la minería.",
         "huella": "acta"
       }
-    ]
+    ],
+    "hito": {
+      "anio": 97,
+      "fecha": "Ley 1930 de 2018",
+      "nota": "Los páramos producen buena parte del agua que beben las ciudades. La Ley 1930 de 2018 los declaró ecosistemas protegidos y limitó la minería y la agricultura intensiva en ellos."
+    }
   },
   {
     "id": "h_teletrabajo",
@@ -3472,7 +3602,12 @@
         "porque": "Lo que no se previene, se paga.",
         "aQuien": "La cosecha baja y algunos caficultores abandonan sus fincas."
       }
-    ]
+    ],
+    "hito": {
+      "anio": 93,
+      "fecha": "2015 y 2016",
+      "nota": "El fenómeno de El Niño de 2015-2016 fue de los más fuertes registrados y trajo sequía y temperaturas récord a Colombia. El IDEAM vigila cómo se retiran los glaciares de los nevados."
+    }
   },
   {
     "id": "h_migrantes",

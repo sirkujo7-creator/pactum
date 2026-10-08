@@ -309,6 +309,296 @@
       },
       "titular": "Se firma la paz: las víctimas serán reparadas",
       "leccion": "La justicia transicional busca verdad, reparación y no repetición más que castigo. Colombia aprobó la Ley de Víctimas en 2011 y firmó el Acuerdo de Paz en 2016; el Nobel de Paz de ese año reconoció el esfuerzo, aunque el plebiscito lo dividió."
+    },
+    {
+      "id": "bienesMujer",
+      "nombre": "Derechos de la mujer casada",
+      "rama": "derechos",
+      "icono": "👩",
+      "etapa": 1,
+      "epoca": "cafe",
+      "civismo": 5,
+      "pro": "La mujer administra sus bienes y firma contratos: más igualdad.",
+      "contra": "La élite tradicional y el párroco se molestan.",
+      "efectos": {
+        "igualdad": 3,
+        "legitimidad": 1,
+        "animo": {
+          "e": -2
+        }
+      },
+      "titular": "La mujer casada podrá administrar sus bienes",
+      "leccion": "La Ley 28 de 1932 permitió en Colombia que las mujeres casadas manejaran sus propios bienes. Hasta entonces, el marido administraba todo. Mary Wollstonecraft ya lo había reclamado en 1792."
+    },
+    {
+      "id": "sufragioFemenino",
+      "nombre": "Voto de las mujeres",
+      "rama": "derechos",
+      "icono": "🗳️",
+      "etapa": 1,
+      "epoca": "violencia",
+      "civismo": 7,
+      "requiere": [
+        "sufragio"
+      ],
+      "pro": "La mitad del pueblo entra a decidir: mucha legitimidad.",
+      "contra": "Los partidos tradicionales pierden su control de los votos.",
+      "efectos": {
+        "legitimidad": 4,
+        "igualdad": 3,
+        "animo": {
+          "c": 1,
+          "a": 2,
+          "e": -1
+        }
+      },
+      "titular": "Las mujeres votan por primera vez",
+      "leccion": "En Colombia las mujeres pudieron votar desde 1954 (acto legislativo) y lo hicieron por primera vez en el plebiscito del 1 de diciembre de 1957. Alfonso López Pumarejo había dado el primer paso en 1936 al permitirles ocupar cargos públicos."
+    },
+    {
+      "id": "educacionObligatoria",
+      "nombre": "Escuela obligatoria",
+      "rama": "derechos",
+      "icono": "📚",
+      "etapa": 1,
+      "epoca": "cafe",
+      "civismo": 6,
+      "pro": "Más niños aprenden a leer: sube el saber y la igualdad.",
+      "contra": "Cada habitante cuesta más al tesoro y los campesinos pierden brazos para el trabajo.",
+      "efectos": {
+        "saber": 1,
+        "igualdad": 2,
+        "costoHab": 0.06,
+        "animo": {
+          "c": -1
+        }
+      },
+      "titular": "Todos los niños deberán ir a la escuela",
+      "leccion": "Condorcet propuso en 1792 una instrucción pública para todos. En Colombia la instrucción primaria se hizo obligatoria por etapas desde 1870, pero hasta el siglo XX muchos niños campesinos nunca pisaron una escuela."
+    },
+    {
+      "id": "anticorrupcion",
+      "nombre": "Estatuto anticorrupción",
+      "rama": "derechos",
+      "icono": "🔍",
+      "etapa": 2,
+      "epoca": "modernizacion",
+      "civismo": 8,
+      "pro": "Controles y veedurías: el rumbo del gobierno se acerca al bien común.",
+      "contra": "Cuesta dinero vigilar y los contratistas amigos se quejan.",
+      "efectos": {
+        "rumbo": -1.0,
+        "legitimidad": 3,
+        "costoFijo": 8
+      },
+      "titular": "Se crean veedurías y controles para el dinero público",
+      "leccion": "Maquiavelo y Montesquieu insistían en que el poder debe frenar al poder. La Constitución de 1991 creó las veedurías ciudadanas y la Ley 190 de 1995 y el Estatuto Anticorrupción de 2011 endurecieron los controles."
+    },
+    {
+      "id": "sindicalismo",
+      "nombre": "Libertad sindical",
+      "rama": "economia",
+      "icono": "✊",
+      "etapa": 1,
+      "epoca": "cafe",
+      "civismo": 5,
+      "pro": "Los obreros pueden organizarse: mejor ánimo y legitimidad.",
+      "contra": "Las fábricas rinden menos y la élite se enoja.",
+      "efectos": {
+        "animo": {
+          "a": 4,
+          "e": -3
+        },
+        "fabricas": -0.05,
+        "legitimidad": 2
+      },
+      "titular": "Los obreros podrán organizarse en sindicatos",
+      "leccion": "Marx y los primeros sindicalistas ingleses mostraron que un obrero solo no negocia con el patrón. En Colombia la Ley 83 de 1931 reconoció a los sindicatos; la huelga de las bananeras de 1928 en Ciénaga había mostrado lo que pasa sin derechos laborales."
+    },
+    {
+      "id": "derechoTrabajo",
+      "nombre": "Código del trabajo",
+      "rama": "economia",
+      "icono": "📜",
+      "etapa": 2,
+      "epoca": "violencia",
+      "civismo": 7,
+      "requiere": [
+        "jornada"
+      ],
+      "pro": "Contratos, vacaciones y prestaciones: más igualdad y ánimo.",
+      "contra": "Contratar sale más caro y las fábricas ganan menos.",
+      "efectos": {
+        "animo": {
+          "a": 4,
+          "c": 2
+        },
+        "fabricas": -0.08,
+        "igualdad": 2
+      },
+      "titular": "El trabajo tendrá un código que lo protege",
+      "leccion": "El Código Sustantivo del Trabajo de 1950 reunió en Colombia los derechos de los trabajadores: jornada, cesantías, prima y despido. La Organización Internacional del Trabajo, creada en 1919, empujó este movimiento en el mundo."
+    },
+    {
+      "id": "cajaAgraria",
+      "nombre": "Caja de crédito agrario",
+      "rama": "economia",
+      "icono": "🏦",
+      "etapa": 1,
+      "epoca": "cafe",
+      "civismo": 6,
+      "pro": "Crédito barato para sembrar: las fincas rinden más.",
+      "contra": "Cuesta mantenerla y muchos préstamos no se pagan.",
+      "efectos": {
+        "fincas": 0.12,
+        "animo": {
+          "c": 3
+        },
+        "costoFijo": 8
+      },
+      "titular": "El campo tendrá su propio banco",
+      "leccion": "La Caja de Crédito Agrario, creada en 1931, llevó dinero a los campesinos de toda Colombia durante setenta años. Sin crédito, el pequeño productor depende del usurero y no puede mejorar su finca."
+    },
+    {
+      "id": "federacionCafetera",
+      "nombre": "Federación y fondo del café",
+      "rama": "economia",
+      "icono": "☕",
+      "etapa": 1,
+      "epoca": "cafe",
+      "civismo": 6,
+      "pro": "Los cafeteros se unen: mejores precios y más comercio.",
+      "contra": "Los aportes pesan y se depende de un solo cultivo.",
+      "efectos": {
+        "fincas": 0.08,
+        "comercio": 0.05,
+        "costoFijo": 5
+      },
+      "titular": "Los cafeteros fundan su federación",
+      "leccion": "La Federación Nacional de Cafeteros nació en 1927 en Bogotá: el pequeño caficultor, unido, pudo vender mejor frente a los exportadores. Es un ejemplo de lo que Tocqueville llamaba el arte de asociarse."
+    },
+    {
+      "id": "aperturaEconomica",
+      "nombre": "Apertura económica",
+      "rama": "economia",
+      "icono": "🚢",
+      "etapa": 2,
+      "epoca": "paz",
+      "civismo": 8,
+      "pro": "Entran productos y capital: mucho más comercio.",
+      "contra": "La industria local sufre y el campo pierde precios.",
+      "efectos": {
+        "comercio": 0.15,
+        "fabricas": -0.1,
+        "igualdad": -2,
+        "animo": {
+          "c": -2
+        }
+      },
+      "titular": "Se abren las fronteras al comercio mundial",
+      "leccion": "Adam Smith defendía el libre comercio; David Ricardo mostró sus ventajas. En Colombia, la apertura económica de 1990 bajó los aranceles y trajo importaciones baratas, pero golpeó a muchos agricultores e industriales."
+    },
+    {
+      "id": "transicionEnergetica",
+      "nombre": "Energías limpias",
+      "rama": "economia",
+      "icono": "☀️",
+      "etapa": 3,
+      "epoca": "digital",
+      "civismo": 9,
+      "pro": "Sol, viento y agua: el ambiente mejora y el saber crece.",
+      "contra": "Cuesta mucho al principio.",
+      "efectos": {
+        "ambiente": 4,
+        "saber": 1,
+        "costoFijo": 10,
+        "fabricas": -0.03
+      },
+      "titular": "El pueblo cambiará su energía por fuentes limpias",
+      "leccion": "La Ley 1715 de 2014 promovió las energías renovables en Colombia, un país que produce casi toda su electricidad con agua. Hans Jonas pidió actuar de modo que los efectos de nuestros actos sean compatibles con la vida futura."
+    },
+    {
+      "id": "parquesNaturales",
+      "nombre": "Parques naturales",
+      "rama": "territorio",
+      "icono": "🦜",
+      "etapa": 1,
+      "epoca": "modernizacion",
+      "civismo": 7,
+      "pro": "Páramos y bosques protegidos: sube el ambiente.",
+      "contra": "Hay menos tierra para minas y fincas.",
+      "efectos": {
+        "ambiente": 4,
+        "minas": -0.2,
+        "fincas": -0.03
+      },
+      "titular": "Los páramos y bosques serán parques",
+      "leccion": "El Parque Nacional Natural Los Nevados, en el límite del Tolima, se declaró en 1974. Colombia protege hoy su biodiversidad con un sistema de parques que los campesinos de páramo a veces sienten como un límite a su vida."
+    },
+    {
+      "id": "ordenamiento",
+      "nombre": "Ordenamiento territorial",
+      "rama": "territorio",
+      "icono": "🗺️",
+      "etapa": 2,
+      "epoca": "modernizacion",
+      "civismo": 7,
+      "pro": "Cada zona tiene su uso: menos desorden y más legitimidad.",
+      "contra": "Quien quería construir donde no se debe, protesta.",
+      "efectos": {
+        "ambiente": 2,
+        "legitimidad": 2,
+        "fincas": -0.04
+      },
+      "titular": "El territorio tendrá un plan de usos",
+      "leccion": "La Ley 388 de 1997 obligó a los municipios colombianos a planear dónde se construye, dónde se siembra y dónde se protege. Ordenar el territorio es repartir el espacio entre los intereses de todos."
+    },
+    {
+      "id": "restitucion",
+      "nombre": "Restitución de tierras",
+      "rama": "territorio",
+      "icono": "🏡",
+      "etapa": 2,
+      "epoca": "paz",
+      "civismo": 9,
+      "requiere": [
+        "reformaAgraria"
+      ],
+      "pro": "Los campesinos desplazados recuperan sus parcelas.",
+      "contra": "Cuesta mucho y los ocupantes de hoy se resisten.",
+      "efectos": {
+        "igualdad": 3,
+        "conflicto": -8,
+        "costoFijo": 14,
+        "animo": {
+          "c": 3,
+          "e": -2
+        }
+      },
+      "titular": "Los desplazados volverán a su tierra",
+      "leccion": "La Ley 1448 de 2011, de víctimas y restitución de tierras, buscó devolver millones de hectáreas despojadas durante el conflicto armado. Es justicia correctiva en el sentido de Aristóteles: reparar lo que se quitó."
+    },
+    {
+      "id": "justiciaTransicional",
+      "nombre": "Justicia transicional",
+      "rama": "territorio",
+      "icono": "🕯️",
+      "etapa": 2,
+      "epoca": "paz",
+      "civismo": 10,
+      "requiere": [
+        "paz"
+      ],
+      "pro": "Verdad y reparación: baja el conflicto y sube la legitimidad.",
+      "contra": "Los victimarios reciben penas menores y muchos lo rechazan.",
+      "efectos": {
+        "conflicto": -10,
+        "legitimidad": 3,
+        "costoFijo": 12,
+        "cultura": 1
+      },
+      "titular": "Habrá verdad antes que venganza",
+      "leccion": "El Acuerdo de Paz de 2016 creó la Jurisdicción Especial para la Paz y la Comisión de la Verdad (2018-2022). Hannah Arendt escribió que el perdón es la única forma de romper la cadena de venganzas: pero solo después de conocer la verdad."
     }
   ]
 }

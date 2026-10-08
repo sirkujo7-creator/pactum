@@ -42,7 +42,7 @@ export function usarContenido(d) {
   })]));
   C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
   C.EV = d.dilemas.map(e => sinVacios({
-    id: e.id, st: e.etapa, e: e.icono, title: e.titulo, text: e.texto, cond: e.condicion, bueno: e.tipo === 'bueno' || undefined,
+    id: e.id, st: e.etapa, e: e.icono, title: e.titulo, text: e.texto, cond: e.condicion, hito: e.hito, bueno: e.tipo === 'bueno' || undefined,
     opts: e.opciones.map((o, i) => opcion(o, `dilema ${e.id}, opción ${i + 1}`))
   }));
   C.LATER = Object.fromEntries(Object.entries(d.consecuencias).map(([k, l]) => [k, sinVacios({

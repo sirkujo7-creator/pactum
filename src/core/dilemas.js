@@ -42,8 +42,18 @@ export function applyFx(S, fx0) {
 // Claridad (decisión de Juan: menos rachas, igual exigencia): en el terreno en acuarela hay sucesos buenos y,
 // tras dos golpes seguidos (dilemas malos, consecuencias malas o crisis), el año siguiente trae un suceso bueno
 // o un año tranquilo; las consecuencias malas que venzan esperan un año. En el modo v9 todo queda igual.
+// El hito que toca este año (o uno atrasado): el de año más temprano que aún no ha salido.
+export function hitoDelAnio(S) {
+  if (!climaActivo(S)) return null;
+  const vistos = S.hitosVistos || [];
+  const L = C.EV.filter(e => e.hito && !vistos.includes(e.id) && S.year >= e.hito.anio && S.stage >= e.st).sort((a, b) => a.hito.anio - b.hito.anio);
+  return L[0] || null;
+}
 export function drawEvent(S) {
   if (!climaActivo(S)) return drawEventV9(S);
+  // Hitos de la historia real (pedido de Juan): llegan en su año, desplazan el azar y cada uno sale una sola vez.
+  const hito = hitoDelAnio(S);
+  if (hito) { S.hitosVistos = [...(S.hitosVistos || []), hito.id]; S.recent.push(hito.id); if (S.recent.length > 7) S.recent.shift(); return { id: hito.id, e: hito.e, title: hito.title, text: hito.text, opts: hito.opts, hito: hito.hito }; }
   const crisis = !!(S.clima.fenomeno || (S.eco && S.eco.fase === 'recesion')), racha = (S.racha || 0) + (crisis ? 1 : 0);
   // Fase 4 (más exigencia): la racha que corta depende de la dificultad, y el corte es un suceso bueno solo a veces;
   // si no, es un año tranquilo.
@@ -92,7 +102,7 @@ function drawEventV9(S, conBuenos = false) {
   if (S.stage >= 1 && S.promises.length === 0 && azar() < C.PET.prob) return petition(S);
   const c = counts(S);
   const vistos = S.histVistos || [];
-  const pool = C.EV.filter(e => (conBuenos || !e.bueno) && S.stage >= e.st && cumple(S, e.cond, c) && !S.recent.includes(e.id) && !(e.cond && e.cond.epoca && vistos.includes(e.id)));
+  const pool = C.EV.filter(e => !e.hito && (conBuenos || !e.bueno) && S.stage >= e.st && cumple(S, e.cond, c) && !S.recent.includes(e.id) && !(e.cond && e.cond.epoca && vistos.includes(e.id)));
   if (!pool.length) return null;
   // Fase 1: en un año de El Niño o La Niña, casi siempre sale un dilema del clima.
   const delClima = pool.filter(e => e.cond && e.cond.clima);

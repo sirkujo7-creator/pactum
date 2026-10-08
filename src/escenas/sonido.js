@@ -13,6 +13,18 @@ export const Sonido = (() => {
     oligarquia: { s: [65, 67, 69, 71, 72, 74, 77], b: [[41, 48], [43, 50], [41, 48], [36, 43]], beat: .64 },
     demagogia: { s: [60, 62, 64, 67, 69, 72, 74], b: [[36, 43], [41, 48], [43, 50], [36, 43]], beat: .5 }
   };
+  // La música cambia con la época de la historia del Tolima (pedido de Juan): cada una tiene su compás y su ritmo.
+  //   len: pasos por compás; paso: segundos por paso (a la velocidad de la república); p: [paso, 'b' bajo | 'c' acorde | 'a' los dos];
+  //   mel: probabilidad de una nota de melodía en cada paso; dur: duración de cada nota de melodía.
+  const RITMOS = {
+    fundacion: { len: 6, paso: .31, p: [[0, 'b'], [2, 'c'], [4, 'c']], mel: .5, dur: 1 },             // torbellino: rasgueo ligero a tres tiempos
+    cafe: { len: 6, paso: .3, p: [[0, 'b'], [2, 'c'], [3, 'b'], [4, 'c']], mel: .55, dur: 1.1 },       // bambuco: seis octavos con hemiola
+    violencia: { len: 6, paso: .5, p: [[0, 'b'], [3, 'c']], mel: .3, dur: 2.2 },                       // pasillo lento y triste
+    modernizacion: { len: 6, paso: .26, p: [[0, 'b'], [2, 'c'], [4, 'c']], mel: .65, dur: .8 },        // pasillo alegre, más ligero y rápido
+    paz: { len: 6, paso: .38, p: [[0, 'a'], [3, 'c']], mel: .4, dur: 1.8 },                             // bambuco sereno y abierto
+    digital: { len: 8, paso: .33, p: [[0, 'b'], [4, 'c']], mel: .35, dur: 2.4 }                       // pulso suave y espacioso
+  };
+  let RITMO = null;
   let SCALE = MODES.republica.s, BASS = MODES.republica.b, BEAT = .62;
   function init() {
     ac = new (window.AudioContext || window.webkitAudioContext)();
@@ -46,6 +58,17 @@ export const Sonido = (() => {
   function schedule() {
     while (next < ac.currentTime + .8) {
       const ch = BASS[bar % 4];
+      if (RITMO) {
+        const dt = RITMO.paso * (BEAT / .62);
+        for (const [k, tipo] of RITMO.p) {
+          const t = next + k * dt;
+          if (tipo === 'b' || tipo === 'a') pluck(NOTE(ch[0]), t, 1.7, .09);
+          if (tipo === 'c' || tipo === 'a') { pluck(NOTE(ch[1]), t, 1, .05); pluck(NOTE(ch[1] + 7), t + .012, .9, .03); }
+        }
+        if (Math.random() < .85) for (let k = 0; k < RITMO.len; k++) if (Math.random() < RITMO.mel / (k % 2 ? 1.6 : 1)) { deg = clamp(deg + Math.floor(Math.random() * 3) - 1, 0, SCALE.length - 1); pluck(NOTE(SCALE[deg]), next + k * dt, RITMO.dur, .06); }
+        next += dt * RITMO.len; bar++;
+        continue;
+      }
       pluck(NOTE(ch[0]), next, 1.6, .09); pluck(NOTE(ch[1]), next + BEAT, 1, .05); pluck(NOTE(ch[1]), next + BEAT * 2, 1, .05);
       if (Math.random() < .8) {
         [0, .5, 1, 1.5, 2, 2.5].filter(() => Math.random() < .55).forEach(s => { deg = clamp(deg + Math.floor(Math.random() * 3) - 1, 0, SCALE.length - 1); pluck(NOTE(SCALE[deg]), next + s * BEAT, 1.1, .06); });
@@ -121,7 +144,8 @@ export const Sonido = (() => {
     }));
   }
   function tap() { if (!on) return; pluck(NOTE(59), ac.currentTime, .25, .08); }
+  function era(id) { RITMO = RITMOS[id] || null; }
   function mode(r) { const m = MODES[r] || MODES.republica; SCALE = m.s; BASS = m.b; BEAT = m.beat; }
   function despertar() { if (ac && on && ac.state !== 'running') desbloquear(); }
-  return { start, stop, chime, tap, prensa, carta, campanas, mode, despertar, get on() { return on; } };
+  return { start, stop, chime, tap, prensa, carta, campanas, mode, era, despertar, get on() { return on; } };
 })();
