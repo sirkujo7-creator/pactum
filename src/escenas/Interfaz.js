@@ -1263,7 +1263,7 @@ export class Interfaz {
     if (!e || !e.nuevo || !C.VISIT) { alTerminar(); return; }
     e.nuevo = false; const v = datosVisitante(e.id), T = C.VISIT.textos; if (!v) { alTerminar(); return; }
     this.tarjeta(`<div class="big">${v.icono}</div><h3>${T.titulo}</h3><p class="small"><b>${v.nombre}</b> · ${T.de.replace('{lugar}', v.origen)}</p>
-      <blockquote class="verso">«${v.dialogo}»</blockquote><div class="chips">${this.chips(e.fx)}</div>
+      <blockquote class="verso">«${v.dialogo}»</blockquote>${v.nota ? `<p class="small">📅 ${v.nota}</p>` : ''}<div class="chips">${this.chips(e.fx)}</div>
       <div class="phil"><b>${T.pensar}</b><br>${v.pensar}</div><button class="main" id="okB">${T.continuar}</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => { this.cerrarTarjeta(); this.mapa.cambio && this.mapa.cambio(); });
   }
@@ -1273,6 +1273,10 @@ export class Interfaz {
     alTerminar = () => this.polisAnio(() => this.comisionAnio(() => this.visitanteAnio(() => this.figurasAnio(alTerminar0))));
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
+    const CINE = { v_procesion: ['procesion', 'La procesión sale de la iglesia', 'La gente sale de la iglesia con velas y rezos, en silencio.'], v_marcha: ['marcha', 'La marcha estudiantil', 'Estudiantes y profesores salen de la universidad con pancartas hacia la plaza.'], v_huelga: ['marcha', 'La huelga', 'Los obreros salen del taller y se plantan frente a la puerta.'], v_paro: ['marcha', 'El paro armado', 'Nadie sale a trabajar; la plaza queda llena de gente que espera.'] }; // hechos en edificios que se ven en el mapa
+    const cn = CINE[ev.id];
+    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2] })) return;
+    this._sucesoCine = false;
     const q = C.SUCESOS.sucesos[ev.id];
     this.tarjeta(`<div class="big">${q.icono}</div><h3>${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>
       <div class="porque-afecta"><b>¿Por qué pasó?</b><br>${q.causa}${q.violencia ? '' : ` Inseguridad de este año: <b>${ev.ins}</b>.`}</div>

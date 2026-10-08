@@ -834,6 +834,588 @@
           }
         }
       ]
+    },
+    {
+      "id": "f7",
+      "epoca": "fundacion",
+      "icono": "🪓",
+      "quien": "Un colono",
+      "texto": "Necesito un hacha nueva para abrir la ladera. ¿Me la fía?",
+      "opciones": [
+        {
+          "texto": "Fiársela",
+          "efectos": {
+            "oro": -10,
+            "campesinos": 3,
+            "alimento": 8
+          }
+        },
+        {
+          "texto": "Que la pague primero",
+          "efectos": {
+            "oro": 4,
+            "campesinos": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "f8",
+      "epoca": "fundacion",
+      "icono": "⛪",
+      "quien": "El cura",
+      "texto": "Quiero una campana para llamar a misa y a rebato. ¿La paga el pueblo?",
+      "opciones": [
+        {
+          "texto": "Pagarla entre todos",
+          "efectos": {
+            "oro": -15,
+            "confianza": 2,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Que la paguen los devotos",
+          "efectos": {
+            "oro": 3,
+            "confianza": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "f9",
+      "epoca": "fundacion",
+      "icono": "🗺️",
+      "quien": "Un agrimensor",
+      "texto": "Puedo medir las tierras y escriturar a los colonos, pero cobra.",
+      "opciones": [
+        {
+          "texto": "Contratarlo",
+          "efectos": {
+            "oro": -15,
+            "campesinos": 3,
+            "igualdad": 1
+          }
+        },
+        {
+          "texto": "Dejar que cada uno marque su lindero",
+          "efectos": {
+            "campesinos": -1,
+            "igualdad": -1,
+            "oro": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "f10",
+      "epoca": "fundacion",
+      "icono": "🐴",
+      "quien": "Un arriero",
+      "texto": "El camino a Honda se enlodó. ¿Lo arreglamos antes del invierno?",
+      "opciones": [
+        {
+          "texto": "Arreglarlo",
+          "efectos": {
+            "oro": -15,
+            "confianza": 1,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Esperar a que baje el agua",
+          "efectos": {
+            "oro": 4,
+            "animo": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "epoca": "cafe",
+      "icono": "📻",
+      "quien": "Un telegrafista",
+      "texto": "Llegó el telégrafo: puedo avisar el precio del café en Nueva York cada mañana.",
+      "opciones": [
+        {
+          "texto": "Pregonar el precio en la plaza",
+          "efectos": {
+            "campesinos": 3,
+            "elite": -1,
+            "animo": 1
+          }
+        },
+        {
+          "texto": "Dárselo solo a los compradores",
+          "efectos": {
+            "elite": 3,
+            "campesinos": -3,
+            "oro": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "epoca": "cafe",
+      "icono": "🚂",
+      "quien": "Un ingeniero",
+      "texto": "Piden terrenos para la vía del tren. Algunos no quieren vender.",
+      "opciones": [
+        {
+          "texto": "Expropiar con indemnización",
+          "efectos": {
+            "oro": -15,
+            "confianza": -1,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Cambiar el trazado",
+          "efectos": {
+            "oro": -5,
+            "campesinos": 2,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "epoca": "cafe",
+      "icono": "🏭",
+      "quien": "Una obrera",
+      "texto": "Las mujeres de la trilladora ganan la mitad que los hombres.",
+      "opciones": [
+        {
+          "texto": "Igualar los jornales",
+          "efectos": {
+            "oro": -15,
+            "igualdad": 3,
+            "animo": 2
+          }
+        },
+        {
+          "texto": "Dejarlo como está",
+          "efectos": {
+            "oro": 5,
+            "igualdad": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "epoca": "cafe",
+      "icono": "📜",
+      "quien": "Un maestro",
+      "texto": "Me piden enseñar solo catecismo y yo quiero enseñar a leer el periódico.",
+      "opciones": [
+        {
+          "texto": "Apoyar al maestro",
+          "efectos": {
+            "oro": -5,
+            "igualdad": 2,
+            "confianza": -1
+          }
+        },
+        {
+          "texto": "Pedirle que obedezca",
+          "efectos": {
+            "confianza": 1,
+            "igualdad": -2,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "v7",
+      "epoca": "violencia",
+      "icono": "🕯️",
+      "quien": "Una viuda",
+      "texto": "Me mataron al marido por ser de otro partido. Quiero que alguien lo anote.",
+      "opciones": [
+        {
+          "texto": "Dejar constancia en el cabildo",
+          "efectos": {
+            "confianza": 2,
+            "animo": -1
+          }
+        },
+        {
+          "texto": "Callar para evitar más venganzas",
+          "efectos": {
+            "animo": -2,
+            "confianza": -1,
+            "oro": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "v8",
+      "epoca": "violencia",
+      "icono": "🎖️",
+      "quien": "Un sargento",
+      "texto": "Me ordenan reclutar muchachos de la vereda. ¿Los dejo?",
+      "opciones": [
+        {
+          "texto": "Negarte a entregarlos",
+          "efectos": {
+            "campesinos": 3,
+            "confianza": -1
+          }
+        },
+        {
+          "texto": "Entregar a los voluntarios",
+          "efectos": {
+            "oro": 5,
+            "campesinos": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "v9",
+      "epoca": "violencia",
+      "icono": "📰",
+      "quien": "Un periodista",
+      "texto": "Tengo una noticia de unos muertos. El censor no deja publicarla.",
+      "opciones": [
+        {
+          "texto": "Dejarlo publicar",
+          "efectos": {
+            "confianza": 3,
+            "animo": -2
+          }
+        },
+        {
+          "texto": "Callarlo por orden público",
+          "efectos": {
+            "confianza": -3,
+            "elite": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "v10",
+      "epoca": "violencia",
+      "icono": "🍞",
+      "quien": "Un panadero",
+      "texto": "Varias familias llegaron huyendo y no tienen qué comer.",
+      "opciones": [
+        {
+          "texto": "Repartir pan del pueblo",
+          "efectos": {
+            "oro": -15,
+            "alimento": -8,
+            "animo": 3
+          }
+        },
+        {
+          "texto": "Que las ayude la caridad",
+          "efectos": {
+            "oro": 3,
+            "animo": -2,
+            "confianza": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "m7",
+      "epoca": "modernizacion",
+      "icono": "📺",
+      "quien": "Un niño",
+      "texto": "En la tienda hay un televisor. ¿Podemos ir a ver el fútbol toda la tarde?",
+      "opciones": [
+        {
+          "texto": "Dejarlos",
+          "efectos": {
+            "animo": 3,
+            "campesinos": -1
+          }
+        },
+        {
+          "texto": "Que vayan a la escuela",
+          "efectos": {
+            "igualdad": 1,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "m8",
+      "epoca": "modernizacion",
+      "icono": "🚌",
+      "quien": "Un conductor",
+      "texto": "La nueva carretera pasa por la finca de un vecino. Reclama que le paguen.",
+      "opciones": [
+        {
+          "texto": "Pagar la tierra",
+          "efectos": {
+            "oro": -20,
+            "campesinos": 3,
+            "confianza": 1
+          }
+        },
+        {
+          "texto": "Que la ceda por el progreso",
+          "efectos": {
+            "oro": 4,
+            "campesinos": -3,
+            "confianza": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "m9",
+      "epoca": "modernizacion",
+      "icono": "🎓",
+      "quien": "Una bachiller",
+      "texto": "Gané una beca para la universidad en la capital, pero mi familia me necesita.",
+      "opciones": [
+        {
+          "texto": "Apoyar que estudie",
+          "efectos": {
+            "oro": -10,
+            "igualdad": 2,
+            "habitantes": -1
+          }
+        },
+        {
+          "texto": "Que se quede ayudando",
+          "efectos": {
+            "oro": 3,
+            "igualdad": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "m10",
+      "epoca": "modernizacion",
+      "icono": "🏘️",
+      "quien": "Una vecina",
+      "texto": "Mi barrio no tiene agua ni luz. ¿Cuándo llegan?",
+      "opciones": [
+        {
+          "texto": "Prometer el acueducto primero",
+          "efectos": {
+            "oro": -15,
+            "confianza": 2,
+            "igualdad": 1
+          }
+        },
+        {
+          "texto": "Priorizar el centro",
+          "efectos": {
+            "oro": 5,
+            "igualdad": -2,
+            "confianza": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "epoca": "paz",
+      "icono": "🕊️",
+      "quien": "Una víctima",
+      "texto": "Quiero que me cuenten qué pasó con mi hijo desaparecido.",
+      "opciones": [
+        {
+          "texto": "Abrir la búsqueda",
+          "efectos": {
+            "oro": -15,
+            "confianza": 3,
+            "animo": -1
+          }
+        },
+        {
+          "texto": "Esperar la comisión nacional",
+          "efectos": {
+            "oro": 3,
+            "confianza": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "p8",
+      "epoca": "paz",
+      "icono": "🌱",
+      "quien": "Un excombatiente",
+      "texto": "Dejé las armas. ¿Hay trabajo para mí en el vivero?",
+      "opciones": [
+        {
+          "texto": "Contratarlo",
+          "efectos": {
+            "oro": -10,
+            "confianza": 2,
+            "campesinos": 2
+          }
+        },
+        {
+          "texto": "Que busque por su cuenta",
+          "efectos": {
+            "oro": 3,
+            "confianza": -2,
+            "animo": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "p9",
+      "epoca": "paz",
+      "icono": "📜",
+      "quien": "Un notario",
+      "texto": "Muchos campesinos no tienen escritura. Los pleitos de tierras no paran.",
+      "opciones": [
+        {
+          "texto": "Formalizar las escrituras",
+          "efectos": {
+            "oro": -15,
+            "campesinos": 3,
+            "igualdad": 1
+          }
+        },
+        {
+          "texto": "Dejar que se resuelva solo",
+          "efectos": {
+            "oro": 4,
+            "campesinos": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "p10",
+      "epoca": "paz",
+      "icono": "🏛️",
+      "quien": "Un alcalde vecino",
+      "texto": "Propone un convenio para tener un hospital entre los dos pueblos.",
+      "opciones": [
+        {
+          "texto": "Compartir el hospital",
+          "efectos": {
+            "oro": -15,
+            "animo": 2,
+            "confianza": 1
+          }
+        },
+        {
+          "texto": "Hacerlo por separado",
+          "efectos": {
+            "oro": -5,
+            "confianza": -1,
+            "animo": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "d7",
+      "epoca": "digital",
+      "icono": "📱",
+      "quien": "Una joven",
+      "texto": "Quiero montar una tienda por internet, pero el pueblo no tiene señal.",
+      "opciones": [
+        {
+          "texto": "Instalar una antena",
+          "efectos": {
+            "oro": -20,
+            "artesanos": 3,
+            "igualdad": 1
+          }
+        },
+        {
+          "texto": "Esperar a que llegue la empresa",
+          "efectos": {
+            "oro": 3,
+            "artesanos": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "d8",
+      "epoca": "digital",
+      "icono": "🌡️",
+      "quien": "Un campesino",
+      "texto": "Este año el calor secó las cosechas del lado de abajo.",
+      "opciones": [
+        {
+          "texto": "Dar semillas resistentes",
+          "efectos": {
+            "oro": -15,
+            "campesinos": 3,
+            "ambiente": 1
+          }
+        },
+        {
+          "texto": "Que se las arreglen",
+          "efectos": {
+            "oro": 4,
+            "campesinos": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "d9",
+      "epoca": "digital",
+      "icono": "🤖",
+      "quien": "Un obrero",
+      "texto": "La fábrica compró un robot. Dicen que despedirán a cuarenta.",
+      "opciones": [
+        {
+          "texto": "Exigir reentrenamiento",
+          "efectos": {
+            "oro": -15,
+            "artesanos": 3,
+            "elite": -1
+          }
+        },
+        {
+          "texto": "Dejar que la empresa decida",
+          "efectos": {
+            "oro": 5,
+            "artesanos": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "d10",
+      "epoca": "digital",
+      "icono": "🧑‍💻",
+      "quien": "Un trabajador remoto",
+      "texto": "Vivo aquí y trabajo para una empresa de otro país. ¿Pago impuestos aquí?",
+      "opciones": [
+        {
+          "texto": "Cobrarle un aporte",
+          "efectos": {
+            "oro": 10,
+            "confianza": -1
+          }
+        },
+        {
+          "texto": "Exonerarlo para que se quede",
+          "efectos": {
+            "oro": -4,
+            "habitantes": 1,
+            "animo": 1
+          }
+        }
+      ]
     }
   ],
   "textos": {
