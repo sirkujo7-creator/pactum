@@ -13,6 +13,7 @@ import { factorRoya } from './ciclos.js';
 import { azar, clamp } from './azar.js';
 import { efectoLeyes } from './civismo.js';
 import { factorTrabajo } from './sociedad.js';
+import { mejoraRenta } from './mejoras.js';
 
 const K = () => C.CULTIVOS;
 export function fincasActivas(S) { return climaActivo(S) && !!C.CULTIVOS; }
@@ -80,7 +81,7 @@ export function fasePrecio(S, cv) { return S.precios && S.precios[cv] ? S.precio
 export function produccionFinca(S, i) {
   const x = S.map[i];
   if (!esFinca(x) || x.ob) return { comida: 0, renta: 0 };
-  const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * aptitudPuesta(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
+  const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * (1 + mejoraRenta(x)) * aptitudPuesta(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
   const riego = D.comida && nearRiver(S, i) ? K().riego : 0;
   return { comida: (D.comida + riego) * r, renta: D.renta * r * precioCultivo(S, cv) * (1 + efectoLeyes(S, 'fincas')) }; // fase 12: rasgos (colonos, cafeteros...)
 }

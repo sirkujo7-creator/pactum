@@ -10,6 +10,8 @@ Estos archivos guardan todo el texto y los números del juego. Se pueden editar 
 | `trabajo.json` | Trabajadores: el mínimo de puestos ocupados para que una obra produzca y sus textos |
 | `materiales.json` | Madera, piedra y metal: lo que pide cada obra además del oro, lo que producen el aserradero, la cantera y la mina, y el precio de comprarlos a los vecinos |
 | `minerales.json` | El subsuelo: qué mineral puede haber en cada zona de montaña, qué da cada uno y cuánto pesa en cada territorio |
+| `tarjetas.json` | Tarjetas rápidas del año: una frase, dos respuestas y su efecto, por época |
+| `mejoras.json` | Mejorar edificios por nivel: qué obras se pueden mejorar, cuánto cuesta y qué da cada nivel |
 | `suelos.json` | La vocación del suelo: clases de suelo (vega, llanura, tierra seca, ladera) y qué tanto sirve cada una a cada cultivo |
 | `plaza.json` | La plaza por niveles: qué pide cada nivel, cuánto cuesta y los topes de obras |
 | `leyes.json` | Leyes y en qué etapa se abren |

@@ -11,7 +11,7 @@ export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
-export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
   'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias', 'vecindad', 'huellas', 'territorios', 'exterior'];
 
 function efectos(obj, donde) {
@@ -106,6 +106,8 @@ export function usarContenido(d) {
   C.CULTIVOS = d.cultivos;
   C.TRABAJO = d.trabajo || null; // fase 17: trabajadores
   C.PLAZA = d.plaza || null; // fase 17: la plaza por niveles
+  C.TARJETAS = d.tarjetas ? { ...d.tarjetas, tarjetas: d.tarjetas.tarjetas.map(t => ({ ...t, opciones: t.opciones.map(o => ({ ...o, fx: efectos(o.efectos, `tarjeta ${t.id}`) })) })) } : null; // tarjetas rápidas
+  C.MEJ = d.mejoras || null; // mejorar edificios por nivel
   C.MIN = d.minerales || null; // fase 17: el subsuelo
   C.MAT = d.materiales || null; // fase 17: madera, piedra y metal
   C.SUELOS = d.suelos || null; // fase 17, paso 3: la vocación del suelo

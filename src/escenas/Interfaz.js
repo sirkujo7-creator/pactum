@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, subsueloActivo, estudioHecho, mineralDe, opcionesMineral, elegirMineral, datosMineral, minaDe, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, mejorasActivas, sePuedeMejorar, nivelMejora, datosMejora, costoMejora, motivoMejoraObra, mejorarObra, cuposMejora, tarjetasActivas, datosTarjeta, elegirTarjeta, subsueloActivo, estudioHecho, mineralDe, opcionesMineral, elegirMineral, datosMineral, minaDe, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -248,7 +248,7 @@ export class Interfaz {
     const pOro = `<div class="pill" title="Oro">${IC.gold}<b class="${S.gold < 0 ? 'neg' : ''}">${Math.round(S.gold)}</b></div>`;
     const pDeuda = `<div class="pill" title="Deuda">${IC.debt}<b>${Math.round(totDebt(S))}</b></div>`;
     const pAli = `<div class="pill" title="Alimento${pa !== 1 ? '. ' + C.ECO.textos.pastilla.replace('{p}', pa.toLocaleString('es-CO')) : ''}">${IC.food}<b>${Math.round(S.food)}</b><small class="${dfood < 0 ? 'neg' : ''}">${dfood >= 0 ? '+' : '−'}${Math.abs(dfood)}</small>${pa >= 1.15 ? `<small class="precio neg" aria-label="precio alto">▲${pa.toLocaleString('es-CO')}</small>` : pa <= .85 ? `<small class="precio pos" aria-label="precio bajo">▼${pa.toLocaleString('es-CO')}</small>` : ''}</div>`;
-    const pPop = `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10}</small></div>`;
+    const pPop = `<div class="pill" title="Población">${IC.pop}<b>${S.pop}</b><small>/${c.casa * 10 + cuposMejora(S)}</small></div>`;
     const pSer = S.stage >= 1 ? `<div class="pill" title="Agua">${IC.agua}<b class="${S.pop > waterCap(S, c) ? 'neg' : ''}">${waterCap(S, c)}</b></div><div class="pill" title="Energía para talleres">${IC.energia}<b class="${c.taller > energy(S, c) ? 'neg' : ''}">${poweredT(S, c)}/${c.taller}</b></div>` : '';
     if (materialesActivos(S)) { // fase 17: servicios arriba; oro, alimento y materiales debajo
       const prod = produccionMat(S, F.trab === undefined ? 1 : F.trab);
@@ -833,6 +833,7 @@ export class Interfaz {
       if (ap) hijos.push(el('span', { class: 'aporte', html: `<b>Lo que aporta hoy</b> (se perdería si la demueles):${this.efectos(ap)}` }));
       if (x.b === 'cultivo' && fincasActivas(S) && !x.ob) hijos.push(this.fichaFinca(i)); // fase 10
       if (x.b === 'mina' && subsueloActivo(S) && !x.ob) hijos.push(this.fichaMina(i)); // fase 17: qué extrae
+      if (mejorasActivas(S) && sePuedeMejorar(x.b) && !x.ob) hijos.push(this.fichaMejora(i)); // mejorar por nivel
       if (x.b === 'taller' && industriaActiva(S) && !x.ob) hijos.push(this.fichaFabrica(i)); // fase 11
       const suelo = this.textoSuelo(i);
       if (suelo) hijos.push(el('span', { class: 'suelo', text: suelo }));
@@ -1187,8 +1188,22 @@ export class Interfaz {
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 4: suceso que llegó sin decisión (robo, atentado, incendio, brote, abuso): qué pasó, por qué y cómo prevenirlo.
+  // Tarjeta rápida del año (estilo Reigns): una frase y dos respuestas, sin avisos de lo que pasará.
+  tarjetaRapida(alTerminar) {
+    const S = this.S, e = S.tarjetaRapida;
+    if (!e || !tarjetasActivas(S)) { alTerminar(); return; }
+    const t = datosTarjeta(e.id), T = C.TARJETAS.textos;
+    this.tarjeta(`<div class="big rapida-ic">${t.icono}</div><div class="rapida-quien">${t.quien}</div><p class="rapida-texto">${t.texto}</p>
+      <div class="rapida-ops">${t.opciones.map((o, i) => `<button class="opt rapida-op" data-r="${i}"><b>${o.texto}</b></button>`).join('')}</div>`, false);
+    this.card.querySelectorAll('[data-r]').forEach(b => b.onclick = () => {
+      const r = elegirTarjeta(S, +b.dataset.r); if (!r) { this.cerrarTarjeta(); return; }
+      this.tarjeta(`<div class="big rapida-ic">${t.icono}</div><div class="rapida-quien">${t.quien}</div><p class="rapida-texto">${r.texto}.</p><div class="chips">${this.chips(r.fx)}</div><button class="main" id="okB">${T.continuar}</button>`);
+      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); this.render(); this.mapa.cambio && this.mapa.cambio();
+    });
+  }
   sucesoAnio(alTerminar) {
     const S = this.S, ev = S.suceso, alTerminar0 = alTerminar;
+    if (S.tarjetaRapida && tarjetasActivas(S)) { this.tarjetaRapida(() => this.sucesoAnio(alTerminar0)); return; }
     alTerminar = () => this.figurasAnio(alTerminar0);
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
@@ -1409,6 +1424,17 @@ export class Interfaz {
     const S = this.S; if (!suelosActivos(S)) return '';
     const c = claseSuelo(S, i), Q = datosSuelo(c), T = C.SUELOS.textos;
     return `<br>${Q.icono} <b>${mayus(Q.nombre)}.</b> ${Q.texto}${cv && suelaEquivocada(S, i, cv) ? ` <span class="neg">${T.equivocada.replace('{suelo}', Q.nombre)}</span>` : ''}`;
+  }
+  // Mejorar una obra por nivel: cuánto cuesta y qué da.
+  fichaMejora(i) {
+    const S = this.S, x = S.map[i], M = C.MEJ, T = M.textos, n = nivelMejora(x), D = datosMejora(x.b), base = cost(S, x.b);
+    if (n >= M.maximo) return el('div', { class: 'aporte', style: 'grid-column:1/-1', html: `<b>⭐ ${T.nivel.replace('{n}', n).replace('{max}', M.maximo)}.</b> ${T.maximo}` });
+    const c = costoMejora(S, i, base), no = motivoMejoraObra(S, i, base), I = { madera: '🪵', piedra: '🪨', metal: '⛓️' };
+    const mat = Object.entries(c.mat).map(([m, v]) => ` ${I[m]}${v}`).join('');
+    return el('div', { class: 'aporte', style: 'grid-column:1/-1' }, [
+      el('span', { html: `<b>⭐ ${T.nivel.replace('{n}', n).replace('{max}', M.maximo)}.</b> ${D.texto} ${T.pide.replace('{oro}', c.oro).replace('{mat}', mat ? ' y' + mat : '')}${no ? ` <span class="neg">${no}</span>` : ''}` }),
+      el('button', { class: 'btn', style: 'margin-top:6px', ...(no || S.over ? { disabled: '' } : {}), on: { click: () => { if (mejorarObra(S, i, base)) { this.toast(T.mejorada.replace('{obra}', this.nombre(x.b).toLowerCase()).replace('{n}', n + 1)); this.mapa.refrescarCasilla(i); this.render(); this.abrirFicha(i); } } } }, T.boton.replace('{n}', n + 1))
+    ]);
   }
   // Fase 17: la mina y su mineral (con estudio de suelos se puede cambiar lo que extrae).
   fichaMina(i) {
