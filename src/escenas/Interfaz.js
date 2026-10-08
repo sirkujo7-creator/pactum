@@ -165,9 +165,43 @@ export class Interfaz {
 
   // ---------- Paneles ----------
   hojaAbierta() { return Object.keys(this.hojas).find(k => !this.hojas[k].hidden) || null; }
+  // Señales de «Nuevo» (pedido de Juan, 8 de octubre): lo que se abre durante la partida se marca en su pestaña y en
+  // su sección hasta que cierras esa pantalla, y al terminar el año un aviso dice dónde apareció algo.
+  esNuevo(id) { const S = this.S; return !!(S && S.nv && S.nv.v[id] === undefined); }
+  novedades() {
+    const S = this.S; if (!S || this._nvBusy) return;
+    const clave = `${S.seed}|${S.year}`; if (this._nvClave === clave) return;
+    this._nvClave = clave; this._nvBusy = true;
+    try {
+      const F = finance(S), R = rating(S), so = F.so, c = counts(S);
+      const hojas = { hacienda: () => this.renderHacienda(F, R), sociedad: () => this.renderSociedad(so, c), leyes: () => this.renderLeyes(), cronica: () => this.renderCronica() };
+      const ids = {}, en = {};
+      for (const [h, f] of Object.entries(hojas)) {
+        f();
+        this[{ hacienda: 'cuentas', sociedad: 'sociedad', leyes: 'leyes', cronica: 'cronica' }[h]].querySelectorAll('.pleg[data-pl]').forEach(d => { ids[d.dataset.pl] = 1; (en[h] = en[h] || []).push([d.dataset.pl, (d.querySelector('.pl-t') || {}).textContent || '']); });
+      }
+      if (!S.nv) { S.nv = { v: { ...ids } }; return; } // primera vez: lo que ya existe no es nuevo
+      const avisos = [];
+      for (const [h, L] of Object.entries(en)) {
+        const nu = L.filter(([id]) => S.nv.v[id] === undefined);
+        const d = this.dock.querySelector(`.dk[data-hoja="${h}"]`); if (d) d.classList.toggle('nuevo', nu.length > 0);
+        if (nu.length && !this._nvAvisado) avisos.push(`${{ hacienda: 'Hacienda', sociedad: 'Sociedad', leyes: 'Leyes', cronica: 'Crónica' }[h]}: ${nu.map(x => x[1].replace(/^\P{L}+/u, '').trim()).join(', ')}`);
+      }
+      if (avisos.length && this._nvViejo !== undefined) setTimeout(() => this.toast(`Novedades: ${avisos.join(' · ')}.`), 900);
+      this._nvViejo = S.year;
+    } finally { this._nvBusy = false; }
+  }
+  // Al cerrar una pantalla, lo que tenía de nuevo pasa a «visto».
+  vistoNuevos(hoja) {
+    const S = this.S, raiz = { hacienda: this.cuentas, sociedad: this.sociedad, leyes: this.leyes, cronica: this.cronica }[hoja];
+    if (!S || !S.nv || !raiz) return;
+    raiz.querySelectorAll('.pleg.nuevo').forEach(d => { S.nv.v[d.dataset.pl] = 1; d.classList.remove('nuevo'); const n = d.querySelector('.pl-n'); if (n) n.remove(); });
+    const d = this.dock.querySelector(`.dk[data-hoja="${hoja}"]`); if (d) d.classList.remove('nuevo');
+  }
   alternarHoja(id) { this.hojaAbierta() === id ? this.cerrarHojas() : this.abrirHoja(id); }
   abrirHoja(id) {
     if (this.S.over && id === 'construir') return;
+    const antes = this.hojaAbierta(); if (antes && antes !== id) this.vistoNuevos(antes);
     this.cerrarFicha();
     for (const [k, h] of Object.entries(this.hojas)) h.hidden = k !== id;
     this.dock.querySelectorAll('.dk').forEach(d => { const on = d.dataset.hoja === id; d.classList.toggle('on', on); d.setAttribute('aria-expanded', String(on)); });
@@ -175,6 +209,7 @@ export class Interfaz {
     this.render();
   }
   cerrarHojas() {
+    const antes = this.hojaAbierta(); if (antes) this.vistoNuevos(antes);
     for (const h of Object.values(this.hojas)) h.hidden = true;
     this.dock.querySelectorAll('.dk').forEach(d => { d.classList.remove('on'); d.setAttribute('aria-expanded', 'false'); });
     this.elegir(null, true);
@@ -200,6 +235,7 @@ export class Interfaz {
     const unicos = [...new Set(faltas)], txt = unicos.slice(0, 3).join(' ') + (unicos.length > 3 ? ` (y ${unicos.length - 3} más)` : '');
     if (unicos.length) setTimeout(() => this.toast(txt), 50);
     guardarLuego(S);
+    setTimeout(() => this.novedades(), 300);
     Sonido.mode(S.reg);
     this.bSonido.textContent = Sonido.on ? '🔊' : '🔇';
     this.bSonido.setAttribute('aria-label', Sonido.on ? 'Silenciar' : 'Activar sonido'); this.bSonido.title = this.bSonido.getAttribute('aria-label');
@@ -1640,6 +1676,7 @@ export class Interfaz {
         ${obras.length ? `<div class="pe-obras"><b>${P.nuevasObras}:</b>${obras.map(k => `<span><img src="${this.icono(k)}" alt="">${this.nombre(k)}</span>`).join('')}</div>` : ''}
         ${a.tambien ? `<p class="pe-tambien"><b>${P.tambien}:</b> ${a.tambien.join('; ')}.</p>` : ''}</article>
       ${otros.length || breves ? `<div class="pe-cols">${otros.map(nota).join('')}${breves}</div>` : ''}
+      ${ed.cifras ? `<div class="pe-cifras"><b>${P.cifras}</b><ul>${ed.cifras.map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}
       <div class="pe-edit"><b>${P.editorial}</b><p>${leccion}</p></div>
       <button class="main" id="okB">${reabrir ? P.cerrar : P.seguir}</button>`, !!reabrir);
     this.card.classList.add('periodico'); this.velo.classList.add('con-periodico');
@@ -1765,14 +1802,14 @@ export class Interfaz {
     if (!titulo) { const m = html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/); if (m) { titulo = m[1].replace(/<[^>]+>/g, '').trim(); cuerpo = html.replace(m[0], ''); } }
     if (!this._pleg) { try { this._pleg = JSON.parse(localStorage.getItem('pactum-plegables') || '{}'); } catch (e) { this._pleg = {}; } }
     const on = this._pleg[id] ?? abierto;
-    return `<details class="pleg" data-pl="${id}"${on ? ' open' : ''}><summary><span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</summary><div class="pl-c">${cuerpo}</div></details>`;
+    return `<details class="pleg${this.esNuevo(id) ? ' nuevo' : ''}" data-pl="${id}"${on ? ' open' : ''}><summary>${this.esNuevo(id) ? '<span class="pl-n">Nuevo</span>' : ''}<span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</summary><div class="pl-c">${cuerpo}</div></details>`;
   }
   // Secciones fijas (pedido de Juan, 6 de octubre): siempre abiertas, con el mismo marco que las desplegables.
   fija(id, html, titulo, resumen = '') {
     if (!html || !html.trim()) return '';
     let cuerpo = html;
     if (!titulo) { const m = html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/); if (m) { titulo = m[1].replace(/<[^>]+>/g, '').trim(); cuerpo = html.replace(m[0], ''); } }
-    return `<section class="pleg fija" data-pl="${id}"><div class="fj-h"><span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</div><div class="pl-c">${cuerpo}</div></section>`;
+    return `<section class="pleg fija${this.esNuevo(id) ? ' nuevo' : ''}" data-pl="${id}"><div class="fj-h">${this.esNuevo(id) ? '<span class="pl-n">Nuevo</span>' : ''}<span class="pl-t">${titulo || ''}</span>${resumen ? `<span class="pl-r">${resumen}</span>` : ''}</div><div class="pl-c">${cuerpo}</div></section>`;
   }
   activarPlegables(raiz) {
     raiz.querySelectorAll('details.pleg').forEach(d => d.addEventListener('toggle', () => {

@@ -43,6 +43,16 @@ function empezar(S) {
   A.empezo = S.year;
   for (const a of listaAvances()) if (cumpleAvance(S, a)) A.vistos[a.id] = a.id === 'aldea' || !S.year ? 0 : -1;
 }
+// El año en cifras (El Pregonero más largo, pedido de Juan): lo que pasó con la gente, el dinero y el ánimo, en renglones cortos.
+function cifrasDelAnio(S) {
+  const T = K().periodico.cifrasLineas, h = S.hist || [], u = h[h.length - 1], a = u && u.y === S.year ? h[h.length - 2] : u;
+  const dif = (v, w) => w === undefined ? '' : v - w > 0 ? ` (+${Math.round(v - w)})` : v - w < 0 ? ` (${Math.round(v - w)})` : '';
+  return [
+    T.gente.replace('{n}', S.pop).replace('{d}', dif(S.pop, a && a.pop)),
+    T.oro.replace('{n}', Math.round(S.gold)).replace('{d}', dif(S.gold, a && a.gold)),
+    T.animo.replace('{b}', Math.round(S.hap)).replace('{i}', Math.round(S.eq)).replace('{l}', Math.round(S.tr)).replace('{a}', Math.round(S.env))
+  ];
+}
 // Cierre del año: los avances nuevos salen en una edición (S.avancesEv). `breves` son otras noticias del año.
 export function avancesDelAnio(S, breves = []) {
   if (!avancesActivos(S)) return [];
@@ -57,7 +67,7 @@ export function avancesDelAnio(S, breves = []) {
   const repetidas = ids.map(id => C.TEC && C.TEC.inventos[id] && C.TEC.inventos[id].texto).filter(Boolean);
   const conIcono = t => /^\P{L}/u.test(t) ? 0 : 1;
   const br = breves.filter(t => t && t.length <= 160 && !repetidas.some(x => t.includes(x)) && !/ya es Ciudad|los caminos se vuelven/.test(t)).sort((a, b) => conIcono(a) - conIcono(b));
-  const ed = { n: A.ediciones.length + 1, anio: S.year, ids, breves: br.slice(0, 3) };
+  const ed = { n: A.ediciones.length + 1, anio: S.year, ids, breves: br.slice(0, 5), cifras: cifrasDelAnio(S) };
   A.ediciones.push(ed);
   if (A.ediciones.length > 40) A.ediciones.shift();
   S.avancesEv = { ...ed, nuevo: true };

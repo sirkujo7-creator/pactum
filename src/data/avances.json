@@ -34,7 +34,13 @@
     "breves": "Breves del año",
     "editorial": "Editorial: lo que enseña",
     "seguir": "Seguir gobernando",
-    "cerrar": "Cerrar"
+    "cerrar": "Cerrar",
+    "cifras": "El año en cifras",
+    "cifrasLineas": {
+      "gente": "👥 Población: {n} personas{d}.",
+      "oro": "💰 Tesoro: {n} de oro{d}.",
+      "animo": "🧭 Ánimo del pueblo: bienestar {b}, igualdad {i}, legitimidad {l}, ambiente {a}."
+    }
   },
   "textos": {
     "titulo": "Camino de avances",

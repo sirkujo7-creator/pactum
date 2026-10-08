@@ -461,3 +461,7 @@ section.fija>.fj-h .pl-t{flex:1}
 section.fija>.fj-h .pl-r{font:600 12px/1.2 'Alegreya Sans',system-ui,sans-serif;color:#7A6A58;text-align:right}
 section.fija>.pl-c{padding:0 12px 10px}
 .subs.capas{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}.subs.capas .sub{display:block;width:auto;flex:0 0 auto;padding:4px 9px;font-size:.8rem}
+.pl-n{flex:none;background:#B6452C;color:#fff;font:700 10px/1 'Alegreya Sans',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:9px}
+.pleg.nuevo{border-color:#B6452C;box-shadow:0 0 0 1px rgba(182,69,44,.25)}
+.dk{position:relative}.dk.nuevo::after{content:'';position:absolute;top:4px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:#B6452C;box-shadow:0 0 0 2px var(--bg,#F7F1E3)}
+.pe-cifras{border-top:1.5px solid #2A221C;border-bottom:1.5px solid #2A221C;padding:6px 2px;margin:0 0 12px}.pe-cifras b{font-family:Alegreya,Georgia,serif;font-variant:small-caps}.pe-cifras ul{margin:4px 0 0;padding-left:0;list-style:none;font-size:.9rem}
