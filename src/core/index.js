@@ -61,3 +61,5 @@ export * from './materiales.js';
 export * from './subsuelo.js';
 export * from './tarjetas.js';
 export * from './mejoras.js';
+export * from './placas.js';
+export * from './decisionesObra.js';

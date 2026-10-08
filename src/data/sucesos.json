@@ -230,6 +230,123 @@
       "peso": 2,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
       "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+    },
+    "v_huelga": {
+      "violencia": true,
+      "muertes": 0,
+      "peso": 1.5,
+      "causa": "No toda la violencia es armada: también estalla donde se juntan la gente y el poder, en los edificios donde se decide la vida del pueblo. Se reduce con diálogo y justicia, pero nunca desaparece.",
+      "prevenir": "Policía cercana, legitimidad, sindicatos y universidades reconocidos y leyes de justicia reducen estos hechos; ninguna medida los elimina.",
+      "icono": "✊",
+      "titulo": "Huelga frente al taller",
+      "texto": "Los obreros pararon y se plantaron frente a {obra}. Nadie entra ni sale hasta que alguien los escuche.",
+      "efectos": {
+        "oro": -15,
+        "animo": -2,
+        "igualdad": 1
+      },
+      "obras": [
+        "taller"
+      ],
+      "epocas": [
+        "cafe",
+        "violencia",
+        "modernizacion",
+        "paz"
+      ],
+      "dano": 15
+    },
+    "v_marcha": {
+      "violencia": true,
+      "muertes": 0,
+      "peso": 1.5,
+      "causa": "No toda la violencia es armada: también estalla donde se juntan la gente y el poder, en los edificios donde se decide la vida del pueblo. Se reduce con diálogo y justicia, pero nunca desaparece.",
+      "prevenir": "Policía cercana, legitimidad, sindicatos y universidades reconocidos y leyes de justicia reducen estos hechos; ninguna medida los elimina.",
+      "icono": "📣",
+      "titulo": "Marcha estudiantil",
+      "texto": "Estudiantes y profesores salieron de {obra} con pancartas hasta la plaza. Piden libertades y la ciudad los mira.",
+      "efectos": {
+        "confianza": -2,
+        "igualdad": 1,
+        "animo": 1
+      },
+      "obras": [
+        "universidad"
+      ],
+      "epocas": [
+        "modernizacion",
+        "paz",
+        "digital"
+      ]
+    },
+    "v_teatro": {
+      "violencia": true,
+      "muertes": 0,
+      "peso": 1.5,
+      "causa": "No toda la violencia es armada: también estalla donde se juntan la gente y el poder, en los edificios donde se decide la vida del pueblo. Se reduce con diálogo y justicia, pero nunca desaparece.",
+      "prevenir": "Policía cercana, legitimidad, sindicatos y universidades reconocidos y leyes de justicia reducen estos hechos; ninguna medida los elimina.",
+      "icono": "🔥",
+      "titulo": "Incendio del teatro",
+      "texto": "Una noche de estreno ardió {obra}. Unos dicen que fue un accidente; otros, que alguien no quería esa obra.",
+      "efectos": {
+        "animo": -3,
+        "confianza": -2,
+        "oro": -20
+      },
+      "obras": [
+        "teatro"
+      ],
+      "epocas": [
+        "cafe",
+        "violencia",
+        "modernizacion"
+      ],
+      "dano": 45
+    },
+    "v_banco": {
+      "violencia": true,
+      "muertes": 1,
+      "peso": 1.5,
+      "causa": "No toda la violencia es armada: también estalla donde se juntan la gente y el poder, en los edificios donde se decide la vida del pueblo. Se reduce con diálogo y justicia, pero nunca desaparece.",
+      "prevenir": "Policía cercana, legitimidad, sindicatos y universidades reconocidos y leyes de justicia reducen estos hechos; ninguna medida los elimina.",
+      "icono": "💰",
+      "titulo": "Asalto al banco",
+      "texto": "Hombres armados entraron a {obra} a mediodía y salieron con el dinero de los ahorradores.",
+      "efectos": {
+        "oro": -40,
+        "confianza": -2,
+        "animo": -2
+      },
+      "obras": [
+        "banco"
+      ],
+      "epocas": [
+        "cafe",
+        "violencia",
+        "paz"
+      ],
+      "dano": 10
+    },
+    "v_procesion": {
+      "violencia": true,
+      "muertes": 0,
+      "peso": 1.2,
+      "causa": "No toda la violencia es armada: también estalla donde se juntan la gente y el poder, en los edificios donde se decide la vida del pueblo. Se reduce con diálogo y justicia, pero nunca desaparece.",
+      "prevenir": "Policía cercana, legitimidad, sindicatos y universidades reconocidos y leyes de justicia reducen estos hechos; ninguna medida los elimina.",
+      "icono": "🕯️",
+      "titulo": "Procesión desde la iglesia",
+      "texto": "Salió de {obra} una procesión larga: velas, rezos y un silencio que pesa. El pueblo honra a sus muertos y se pregunta quién sigue.",
+      "efectos": {
+        "confianza": 1,
+        "animo": -1
+      },
+      "obras": [
+        "iglesia"
+      ],
+      "epocas": [
+        "violencia",
+        "paz"
+      ]
     }
   },
   "aniosEntreIguales": 4,

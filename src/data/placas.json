@@ -1,0 +1,98 @@
+{
+  "titulo": "Placa",
+  "obras": {
+    "casa": {
+      "fundacion": "Bahareque: paredes de guadua y barro y techo de paja. Se levantaba en un día con la ayuda de los vecinos, en una minga.",
+      "cafe": "Con el café llegan la teja de barro y el balcón: la casa del caficultor se ve desde el camino.",
+      "modernizacion": "El ladrillo y el cemento reemplazan al bahareque, y la luz eléctrica llega a muchas casas.",
+      "digital": "Antenas, paneles solares y celulares: el techo ya produce energía y noticias."
+    },
+    "escuela": {
+      "fundacion": "Primeras letras: una maestra o el cura enseñaban a leer con la cartilla, en un rancho o en la casa cural.",
+      "cafe": "La Ley Orgánica de Instrucción Pública de 1903 organizó la educación del país. En Ibagué, el Colegio de San Simón, de 1822, formaba a los bachilleres del Tolima.",
+      "violencia": "En La Violencia cerraron muchas escuelas rurales: los maestros recibían amenazas y los niños faltaban semanas enteras.",
+      "modernizacion": "Crecen las escuelas rurales y las normales: la educación llega a las veredas, aunque no a todos.",
+      "paz": "La Constitución de 1991 declaró la educación un derecho y un servicio público.",
+      "digital": "Llegan computadores e internet a la escuela: el reto es distinguir lo cierto de lo falso."
+    },
+    "hospital": {
+      "fundacion": "Un rancho para enfermos. La quina y las plantas del monte eran la medicina, y las fiebres mataban a muchos.",
+      "cafe": "Los lazaretos aislaban a los enfermos de lepra y de fiebre amarilla, y la higiene empezó a enseñarse en las escuelas.",
+      "modernizacion": "Los hospitales de Ibagué, como el Federico Lleras Acosta, atienden a buena parte del Tolima.",
+      "paz": "La Ley 100 de 1993 creó el sistema de salud, con régimen contributivo y subsidiado.",
+      "digital": "La pandemia de COVID-19 (2020) puso a prueba a los hospitales y mostró que la salud es asunto de todos."
+    },
+    "iglesia": {
+      "fundacion": "La capilla de la parroquia: el cura bautizaba, casaba y enterraba, y el toque de campana ordenaba el día.",
+      "cafe": "El Concordato de 1887 entre Colombia y la Santa Sede dio a la Iglesia un papel central en la educación y en la vida civil.",
+      "violencia": "En La Violencia muchos sacerdotes tomaron partido: del púlpito salieron bendiciones y también condenas.",
+      "modernizacion": "El Concilio Vaticano II (1962-1965) cambió la misa y acercó la Iglesia a los pobres.",
+      "paz": "La Constitución de 1991 declaró la libertad de cultos: el Estado ya no tiene religión oficial.",
+      "digital": "La misa se transmite por internet, y los templos antiguos son también patrimonio."
+    },
+    "mercado": {
+      "fundacion": "Los sábados los campesinos bajan a vender maíz, panela y gallinas en la plaza.",
+      "cafe": "Con el café, los comerciantes y las casas de compra ganan fuerza: el mercado es también el centro de las noticias.",
+      "modernizacion": "Nacen las plazas de mercado cubiertas y llegan los primeros supermercados.",
+      "digital": "Las ferias campesinas se organizan por celular y el productor vende sin intermediarios."
+    },
+    "banco": {
+      "cafe": "El Banco de la República se creó en 1923; la Caja Agraria, en 1931, llevó crédito al campo.",
+      "modernizacion": "Las corporaciones de ahorro y vivienda (UPAC, 1972) financian casas, pero endeudan a mucha gente.",
+      "paz": "La Constitución de 1991 dio autonomía al Banco de la República para cuidar el valor de la moneda.",
+      "digital": "Los pagos se hacen por celular y el efectivo desaparece de muchos negocios."
+    },
+    "cuartel": {
+      "violencia": "Los reclutas, casi todos campesinos pobres, eran enviados a zonas lejanas; los ricos pagaban para librarse.",
+      "paz": "Desde 1991, un ministro de Defensa civil encabeza la fuerza pública."
+    },
+    "policia": {
+      "violencia": "Entre 1953 y 1991 la Policía dependió del Ministerio de Guerra y luego del de Defensa, junto con el Ejército.",
+      "paz": "Desde 1991 la Policía es una institución civil, y los ciudadanos exigen un trato respetuoso."
+    },
+    "teatro": {
+      "cafe": "Los teatros daban zarzuelas y obras de aficionados; luego, cine mudo.",
+      "modernizacion": "El cine sonoro y la televisión llenan y vacían las salas.",
+      "paz": "Los teatros se vuelven lugares de música y de memoria."
+    },
+    "universidad": {
+      "modernizacion": "La Universidad del Tolima nació en 1945, en Ibagué.",
+      "paz": "Las universidades públicas son espacios de debate y también de protesta estudiantil.",
+      "digital": "La pandemia obligó a enseñar por pantalla: aprender ya no es solo en el salón."
+    },
+    "biblioteca": {
+      "cafe": "Las bibliotecas populares eran escuelas para quien no podía pagarlas.",
+      "paz": "Las bibliotecas públicas se vuelven también puntos de internet."
+    },
+    "cementerio": {
+      "fundacion": "El cementerio de la parroquia: la Iglesia decidía quién se enterraba en tierra sagrada.",
+      "violencia": "Hubo tumbas sin nombre: muchos muertos de La Violencia fueron enterrados sin cruz.",
+      "paz": "Las víctimas del conflicto piden que se busque a los desaparecidos y se les dé sepultura."
+    },
+    "taller": {
+      "cafe": "Trilladoras y talleres: las manos de las mujeres escogían el grano.",
+      "modernizacion": "Nacen los sindicatos de la industria y las máquinas reducen el trabajo manual.",
+      "digital": "La automatización cambia los oficios: unos desaparecen y otros nacen."
+    },
+    "puerto": {
+      "cafe": "El puerto de Honda, en el Magdalena, fue por décadas la salida del café y la entrada de mercancías: champanes y vapores subían y bajaban el río.",
+      "modernizacion": "El ferrocarril y las carreteras reducen el comercio por el río."
+    },
+    "acueducto": {
+      "cafe": "Los acueductos de tubería llevaron agua limpia y bajaron las diarreas, que mataban a los niños.",
+      "digital": "El cambio climático y la sequía ponen en riesgo el agua de las ciudades."
+    },
+    "agora": {
+      "fundacion": "El cabildo: el alcalde y los concejales decidían por voto de los vecinos más importantes.",
+      "paz": "Desde 1988 los alcaldes se eligen por voto popular."
+    },
+    "molino": {
+      "cafe": "El molino de agua y el trapiche: panela, maíz y arroz.",
+      "paz": "La energía del agua sigue siendo clave: Colombia produce casi toda su electricidad con ríos."
+    },
+    "mina": {
+      "modernizacion": "Las minas dan empleo, pero pueden dañar el agua y la salud.",
+      "paz": "En la consulta popular de Cajamarca (Tolima), en 2017, la gente dijo no a la minería de oro en su territorio."
+    }
+  }
+}

@@ -1,6 +1,6 @@
 // Pactum: trabajador de servicio. Guarda el juego en el aparato para que funcione sin internet.
 // Al publicar una versión nueva, cambia CACHE: así los aparatos descargan los archivos nuevos.
-const CACHE = 'pactum-0.108.0';
+const CACHE = 'pactum-0.109.0';
 const ARCHIVOS = [
   './',
   'index.html',
@@ -41,6 +41,7 @@ const ARCHIVOS = [
   'src/core/construccion.js',
   'src/core/contenido.js',
   'src/core/cultura.js',
+  'src/core/decisionesObra.js',
   'src/core/desastres.js',
   'src/core/desgaste.js',
   'src/core/dilemas.js',
@@ -73,6 +74,7 @@ const ARCHIVOS = [
   'src/core/mundo.js',
   'src/core/obras.js',
   'src/core/pendientes.js',
+  'src/core/placas.js',
   'src/core/plaza.js',
   'src/core/pobladores.js',
   'src/core/reglas.js',
@@ -133,7 +135,9 @@ const ARCHIVOS = [
   'src/data/minerales.json',
   'src/data/movimientos.json',
   'src/data/obras.json',
+  'src/data/obras_decisiones.json',
   'src/data/personajes.json',
+  'src/data/placas.json',
   'src/data/plaza.json',
   'src/data/pobladores.json',
   'src/data/rasgos.json',
