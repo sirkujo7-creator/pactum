@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, placaDe, decisionesObraActivas, puedeDecidirObra, datosDecisionObra, decidirObra, datosVisitante, mejorasActivas, sePuedeMejorar, nivelMejora, datosMejora, costoMejora, motivoMejoraObra, mejorarObra, cuposMejora, tarjetasActivas, datosTarjeta, elegirTarjeta, subsueloActivo, estudioHecho, mineralDe, opcionesMineral, elegirMineral, datosMineral, minaDe, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, placaDe, decisionesObraActivas, puedeDecidirObra, datosDecisionObra, decidirObra, datosVisitante, datosEntre, opcionesEntre, elegirEntre, estadoEntre, comisionActiva, puntajeComision, puedeComision, accionComision, costoComision, memoriaLevantada, lugaresActivos, lugaresDisponibles, lugaresHechos, levantarLugar, puedeLevantar, costoLugar, mejorasActivas, sePuedeMejorar, nivelMejora, datosMejora, costoMejora, motivoMejoraObra, mejorarObra, cuposMejora, tarjetasActivas, datosTarjeta, elegirTarjeta, subsueloActivo, estudioHecho, mineralDe, opcionesMineral, elegirMineral, datosMineral, minaDe, materialesActivos, produccionMat, MATERIALES, datosMaterial, faltanteMat, costoMat, comprarMat, precioCompra, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -796,6 +796,14 @@ export class Interfaz {
     });
   }
 
+  // Lugares de memoria: monumentos y museos que puedes levantar tras cada hito de la historia.
+  seccionLugares() {
+    const S = this.S, K = C.LUGMEM; if (!K || !lugaresActivos(S)) return '';
+    const T = K.textos, hechos = lugaresHechos(S), disp = lugaresDisponibles(S);
+    const h = hechos.map(l => `<div class="lugar"><b>${l.tipo === 'museo' ? '🏛️' : '🕯️'} ${l.nombre}</b><p class="small">${l.texto}</p><p class="small"><i>${l.nota}</i></p><p class="small">${T.hecho.replace('{anio}', l.anio)}</p><button class="btn" data-lugver="${l.i}">${T.ver}</button></div>`).join('');
+    const d = disp.map(l => { const no = puedeLevantar(S, l); return `<div class="lugar"><b>${l.tipo === 'museo' ? '🏛️' : '🕯️'} ${l.nombre}</b><p class="small">${l.texto}</p><p class="small"><i>${l.nota}</i></p><button class="btn" data-lugar="${l.id}"${no ? ' disabled' : ''}>${T.levantar.replace('{costo}', costoLugar(S, l))}</button>${no ? `<p class="small neg">${no}</p>` : ''}</div>`; }).join('');
+    return (h + d || `<p class="small">${T.vacio}</p>`) + `<p class="small"><i>${K.leccion}</i></p>`;
+  }
   // Almanaque: hechos reales de Colombia y del mundo hasta la época actual, con su fecha verdadera y, a veces, un verso.
   seccionAlmanaque() {
     const S = this.S, A = C.ALM, ep = historiaActiva(S) ? epocaHistorica(S) : null; if (!A || !ep) return '';
@@ -815,8 +823,11 @@ export class Interfaz {
     // y camino de avances juntos en un solo desplegable; lo que ha pasado, al final y desplegable.
     const contexto = terr + epoca + this.seccionAvances();
     this.cronica.innerHTML = this.fija('c-identidad', this.seccionIdentidad()) + this.fija('c-graficas', `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}`, '📈 Gráficas', G.n) + this.fija('c-album', this.seccionAlbum()) + this.fija('c-legado', this.seccionLegado()) +
-      this.pleg('c-almanaque', this.seccionAlmanaque(), `🌍 ${C.ALM ? C.ALM.titulo : ''}`, ep ? ep.nombre : '') + this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
+      (S.comision ? this.pleg('c-comision', this.seccionComision(), `⚖️ ${C.COMISION.textos.titulo}`, S.comision.cerrada ? 'informe entregado' : `verdad ${S.comision.verdad}%`) : '') + this.pleg('c-lugares', this.seccionLugares(), `🕯️ ${C.LUGMEM ? C.LUGMEM.textos.titulo : ''}`, `${lugaresHechos(S).length} levantados`) + this.pleg('c-almanaque', this.seccionAlmanaque(), `🌍 ${C.ALM ? C.ALM.titulo : ''}`, ep ? ep.nombre : '') + this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
     this.activarPlegables(this.cronica);
+    this.cronica.querySelectorAll('[data-com]').forEach(bt => bt.onclick = () => { const fx = accionComision(this.S, bt.dataset.com); if (!fx) return; this.toast(`${C.COMISION.textos.acciones[bt.dataset.com]}: hecho.`); this.render(); this.renderCronica(); });
+    this.cronica.querySelectorAll('[data-lugar]').forEach(bt => bt.onclick = () => { const r = levantarLugar(this.S, bt.dataset.lugar); if (!r) return; if (r.error) { this.toast(r.error); return; } this.toast(`${r.l.nombre}: levantado.`); this.mapa.cambio && this.mapa.cambio(true); this.render(); this.renderCronica(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(r.i); });
+    this.cronica.querySelectorAll('[data-lugver]').forEach(bt => bt.onclick = () => { this.cerrarHojas(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(+bt.dataset.lugver); });
     this.cronica.querySelectorAll('[data-carta]').forEach(bt => bt.onclick = () => { const r = estadoFamilias(this.S).cartas.find(x => x.n === +bt.dataset.carta); if (r) this.tarjetaCarta(r, null, true); });
     this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
     this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
@@ -1216,6 +1227,36 @@ export class Interfaz {
       this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); this.render(); this.mapa.cambio && this.mapa.cambio();
     });
   }
+  // Dos polis vecinas se pelean y te piden tu palabra: un enviado, una frase y cuatro respuestas (sin avisos de efectos).
+  polisAnio(alTerminar) {
+    const S = this.S, ev = S.polisEv;
+    if (!ev || !C.ENTRE) { alTerminar(); return; }
+    const e = datosEntre(ev.id), T = C.ENTRE.textos, N = C.EXT.lugares; if (!e) { S.polisEv = null; alTerminar(); return; }
+    const cab = `<div class="big">${e.icono}</div><h3>${e.titulo}</h3><p class="small"><b>${N[e.a].nombre}</b> y <b>${N[e.b].nombre}</b></p>`;
+    this.tarjeta(`${cab}<p>${e.texto}</p><p class="small">${T.diplomatico}: <b>${e.diplomatico.icono} ${e.diplomatico.nombre}</b></p><blockquote class="verso">«${e.diplomatico.frase}»</blockquote>
+      <div class="rapida-ops">${opcionesEntre(e).map(o => `<button class="opt rapida-op" data-e="${o.k}"><b>${o.texto}</b></button>`).join('')}</div>
+      <div class="phil"><b>Para pensar</b><br>${e.pensar}</div>`, false);
+    this.card.querySelectorAll('[data-e]').forEach(b => b.onclick = () => {
+      const r = elegirEntre(S, b.dataset.e); if (!r) { this.cerrarTarjeta(); return; }
+      this.tarjeta(`${cab}<p>${r.texto}.</p><div class="chips">${this.chips(r.fx)}</div><div class="phil"><b>Lo que enseña</b><br>${C.ENTRE.leccion}</div><button class="main" id="okB">Continuar</button>`);
+      this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); this.render(); this.mapa.cambio && this.mapa.cambio();
+    });
+  }
+  // La Comisión de la Verdad: aviso de que se instala y, al terminar, el informe final.
+  comisionAnio(alTerminar) {
+    const S = this.S, c = S.comision, T = C.COMISION && C.COMISION.textos;
+    if (!c || !T) { alTerminar(); return; }
+    if (c.nuevo) { c.nuevo = false; this.tarjeta(`<div class="big">⚖️</div><h3>${T.titulo}</h3><p>${T.abre.replace('{n}', C.COMISION.duracion)}</p><p class="small">Puedes escuchar testimonios, reparar a familias y pedir perdón desde la Crónica.</p><div class="phil"><b>Lo que enseña</b><br>${C.COMISION.leccion}</div><button class="main" id="okB">Continuar</button>`); this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return; }
+    if (c.informe && c.informe.nuevo) { const I = c.informe; I.nuevo = false; this.tarjeta(`<div class="big">⚖️</div><h3>${T.cierra}</h3><p>${T.final[I.nivel]}</p><p class="small">${T.verdad.replace('{n}', c.verdad)} · ${T.reparadas.replace('{n}', c.reparadas)} · ${T.memoria.replace('{n}', memoriaLevantada(S))}</p><div class="chips">${this.chips(I.fx)}</div><div class="phil"><b>Lo que enseña</b><br>${C.COMISION.leccion}</div><button class="main" id="okB">Continuar</button>`); this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return; }
+    alTerminar();
+  }
+  // Sección de la Crónica: la Comisión de la Verdad.
+  seccionComision() {
+    const S = this.S, K = C.COMISION, c = S.comision; if (!K || !comisionActiva(S) || !c) return '';
+    const T = K.textos, fin = c.cerrada;
+    const acc = Object.keys(K.acciones).map(a => { const no = puedeComision(S, a); return `<div class="lugar"><button class="btn" data-com="${a}"${no || fin ? ' disabled' : ''}>${T.acciones[a]} (${K.acciones[a].costo ? T.costo.replace('{n}', costoComision(S, a)) : 'gratis'})</button><p class="small">${T.ayudas[a]}</p>${no && !fin ? `<p class="small neg">${no}</p>` : ''}</div>`; }).join('');
+    return `<p>${T.victimas.replace('{n}', S.muertos || 0)}</p><p><b>${T.verdad.replace('{n}', c.verdad)}</b> · ${T.reparadas.replace('{n}', c.reparadas)} · ${T.memoria.replace('{n}', memoriaLevantada(S))}</p>${fin ? `<p class="small"><i>${T.final[c.informe.nivel]}</i></p>` : `<p class="small">Hasta el año ${c.cierra}.</p>${acc}`}<p class="small"><i>${K.leccion}</i></p>`;
+  }
   // Un visitante extranjero llega al pueblo: su frase, con su acento, y una pregunta para pensar.
   visitanteAnio(alTerminar) {
     const S = this.S, e = S.visitante;
@@ -1229,7 +1270,7 @@ export class Interfaz {
   sucesoAnio(alTerminar) {
     const S = this.S, ev = S.suceso, alTerminar0 = alTerminar;
     if (S.tarjetaRapida && tarjetasActivas(S)) { this.tarjetaRapida(() => this.sucesoAnio(alTerminar0)); return; }
-    alTerminar = () => this.visitanteAnio(() => this.figurasAnio(alTerminar0));
+    alTerminar = () => this.polisAnio(() => this.comisionAnio(() => this.visitanteAnio(() => this.figurasAnio(alTerminar0))));
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
     const q = C.SUCESOS.sucesos[ev.id];
@@ -1979,6 +2020,11 @@ export class Interfaz {
   // Fase 15: la pantalla «El mundo».
   // Lo que pasó en las polis vecinas y llegó a tu plaza (mundo vivo).
   noticiasMundo() {
+    const S = this.S, E = C.ENTRE, est = Object.entries(S.ext && S.ext.entre || {});
+    const entre = E && est.length ? `<h3>🤝 ${E.textos.titulo}</h3><ul class="alm">${est.map(([k, v]) => { const [a, b] = k.split('|'); return `<li>${C.EXT.lugares[a].nombre} y ${C.EXT.lugares[b].nombre}: ${E.textos.estado[v]}</li>`; }).join('')}</ul>` : '';
+    return entre + this.noticiasMundo2();
+  }
+  noticiasMundo2() {
     const S = this.S, M = C.MUNDO, L = S.mundoHechos || []; if (!M || !L.length) return '';
     return `<h3>📰 ${M.textos.titulo}</h3><ul class="alm">${L.slice(0, 5).map(h => `<li><b>${h.lugar}, año ${h.anio}.</b> ${h.titulo} <small>(${h.fecha})</small><br><small>${(h.trato ? M.textos.conTrato : M.textos.sinTrato).replace('{nombre}', h.lugar)}</small><div class="chips">${this.chips(h.fx)}</div></li>`).join('')}</ul>`;
   }

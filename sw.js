@@ -1,6 +1,6 @@
 // Pactum: trabajador de servicio. Guarda el juego en el aparato para que funcione sin internet.
 // Al publicar una versión nueva, cambia CACHE: así los aparatos descargan los archivos nuevos.
-const CACHE = 'pactum-0.116.0';
+const CACHE = 'pactum-0.117.0';
 const ARCHIVOS = [
   './',
   'index.html',
@@ -38,6 +38,7 @@ const ARCHIVOS = [
   'src/core/civismo.js',
   'src/core/clima.js',
   'src/core/cobertura.js',
+  'src/core/comision.js',
   'src/core/conflicto.js',
   'src/core/construccion.js',
   'src/core/contenido.js',
@@ -48,6 +49,7 @@ const ARCHIVOS = [
   'src/core/dilemas.js',
   'src/core/economia.js',
   'src/core/ejercito.js',
+  'src/core/entrepolis.js',
   'src/core/epocas.js',
   'src/core/estado.js',
   'src/core/explicar.js',
@@ -66,6 +68,7 @@ const ARCHIVOS = [
   'src/core/industria.js',
   'src/core/leyes.js',
   'src/core/logros.js',
+  'src/core/lugaresmemoria.js',
   'src/core/marcas.js',
   'src/core/materiales.js',
   'src/core/megaproyectos.js',
@@ -104,6 +107,7 @@ const ARCHIVOS = [
   'src/data/civismo.json',
   'src/data/clima.json',
   'src/data/cobertura.json',
+  'src/data/comision.json',
   'src/data/conflicto.json',
   'src/data/consecuencias.json',
   'src/data/cultivos.json',
@@ -115,6 +119,7 @@ const ARCHIVOS = [
   'src/data/economia.json',
   'src/data/edificios.json',
   'src/data/ejercito.json',
+  'src/data/entre_polis.json',
   'src/data/epocas.json',
   'src/data/etapas.json',
   'src/data/exterior.json',
@@ -131,6 +136,7 @@ const ARCHIVOS = [
   'src/data/industria.json',
   'src/data/leyes.json',
   'src/data/logros.json',
+  'src/data/lugares_memoria.json',
   'src/data/marcas.json',
   'src/data/materiales.json',
   'src/data/megaproyectos.json',

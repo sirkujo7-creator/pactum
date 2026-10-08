@@ -169,6 +169,18 @@
       "icono": "🪖",
       "anios": 12,
       "texto": "Zanja con sacos de arena y alambre que se cavó durante la guerra. La tierra tarda años en cerrarla."
+    },
+    "monumento": {
+      "nombre": "Monumento de memoria",
+      "icono": "🕯️",
+      "anios": 999,
+      "texto": "Un monumento levantado para que el pueblo recuerde lo que pasó."
+    },
+    "museo": {
+      "nombre": "Museo de la memoria",
+      "icono": "🏛️",
+      "anios": 999,
+      "texto": "Una casa de memoria, con fotos, objetos y testimonios de lo que vivió la región."
     }
   },
   "porFilosofia": {

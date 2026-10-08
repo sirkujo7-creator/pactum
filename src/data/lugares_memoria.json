@@ -1,0 +1,129 @@
+{
+  "leccion": "Los pueblos que no recuerdan repiten lo que olvidaron. Un monumento o un museo no devuelven a los muertos, pero hacen que su historia no se pierda y que las próximas generaciones sepan qué ocurrió y qué se debe evitar.",
+  "textos": {
+    "titulo": "Lugares de memoria",
+    "vacio": "Cuando atravieses los grandes hitos de la historia, podrás levantar aquí monumentos y museos.",
+    "levantar": "Levantar ({costo} de oro)",
+    "ver": "Ver en el mapa",
+    "hecho": "Levantado en el año {anio}",
+    "sinSitio": "No hay un lugar libre cerca del pueblo.",
+    "sinOro": "Faltan {n} de oro."
+  },
+  "lugares": [
+    {
+      "id": "mem_independencia",
+      "hito": "h_independencia",
+      "tipo": "monumento",
+      "nombre": "Monumento al 20 de julio",
+      "costo": 60,
+      "recuerdo": "deber",
+      "texto": "Una columna sencilla con la fecha del grito de independencia, en el borde de la plaza.",
+      "nota": "El 20 de julio de 1810 se dio el grito de independencia en Santafé de Bogotá.",
+      "efectos": {
+        "confianza": 2,
+        "animo": 1
+      }
+    },
+    {
+      "id": "mem_libertad",
+      "hito": "h_esclavitud",
+      "tipo": "monumento",
+      "nombre": "Monumento a la libertad",
+      "costo": 60,
+      "recuerdo": "justicia",
+      "texto": "Un monumento a las familias que dejaron de ser esclavas, con la fecha de la ley: 21 de mayo de 1851.",
+      "nota": "La libertad de los esclavos se decretó por ley el 21 de mayo de 1851.",
+      "efectos": {
+        "igualdad": 2,
+        "confianza": 1,
+        "animo": 1
+      }
+    },
+    {
+      "id": "mem_bananeras",
+      "hito": "h_bananeras",
+      "tipo": "monumento",
+      "nombre": "Monumento a las víctimas de las bananeras",
+      "costo": 70,
+      "recuerdo": "justicia",
+      "texto": "Una piedra con una cruz y una frase: nunca más la fuerza contra quien reclama trabajo digno.",
+      "nota": "La masacre de las bananeras ocurrió en diciembre de 1928 en Ciénaga, Magdalena.",
+      "efectos": {
+        "igualdad": 2,
+        "confianza": 2
+      }
+    },
+    {
+      "id": "mem_gaitan",
+      "hito": "h_9abril",
+      "tipo": "museo",
+      "nombre": "Casa de la memoria del 9 de abril",
+      "costo": 100,
+      "recuerdo": "deber",
+      "texto": "Una casa con fotografías, periódicos de la época y testimonios de quienes vivieron el 9 de abril de 1948.",
+      "nota": "El 9 de abril de 1948 fue asesinado Jorge Eliécer Gaitán y estalló el Bogotazo.",
+      "efectos": {
+        "confianza": 3,
+        "animo": 1
+      }
+    },
+    {
+      "id": "mem_pajaros",
+      "hito": "h_pajaros",
+      "tipo": "monumento",
+      "nombre": "Monumento a las víctimas de la violencia partidista",
+      "costo": 80,
+      "recuerdo": "justicia",
+      "texto": "Una lista de nombres grabados en piedra: liberales y conservadores, todos muertos del mismo campo.",
+      "nota": "En las décadas de 1940 y 1950 la violencia entre partidos dejó cientos de miles de muertos.",
+      "efectos": {
+        "confianza": 2,
+        "animo": 2
+      }
+    },
+    {
+      "id": "mem_marquetalia",
+      "hito": "h_marquetalia",
+      "tipo": "museo",
+      "nombre": "Museo de la memoria del campo",
+      "costo": 100,
+      "recuerdo": "justicia",
+      "texto": "Un museo con objetos de las veredas: azadones, ollas, cartas y fotografías de campesinos que debieron salir de su tierra.",
+      "nota": "En 1964 el ejército atacó Marquetalia, en Planadas (Tolima).",
+      "efectos": {
+        "igualdad": 2,
+        "confianza": 2,
+        "campesinos": 2
+      }
+    },
+    {
+      "id": "mem_armero",
+      "hito": "h_armero",
+      "tipo": "monumento",
+      "nombre": "Camposanto memorial de Armero",
+      "costo": 110,
+      "recuerdo": "ayuda",
+      "texto": "Un camposanto con cruces y una placa con los nombres de las víctimas de la avalancha de Armero.",
+      "nota": "El 13 de noviembre de 1985 la avalancha del Nevado del Ruiz destruyó Armero.",
+      "efectos": {
+        "confianza": 3,
+        "animo": 2
+      }
+    },
+    {
+      "id": "mem_verdad",
+      "hito": "h_verdad",
+      "tipo": "museo",
+      "nombre": "Museo de la memoria y la verdad",
+      "costo": 140,
+      "recuerdo": "justicia",
+      "texto": "Un museo con testimonios de víctimas y victimarios, donde se escucha lo que antes no se podía decir.",
+      "nota": "La Comisión de la Verdad trabajó entre 2018 y 2022 y entregó su informe final en junio de 2022.",
+      "efectos": {
+        "confianza": 4,
+        "igualdad": 2,
+        "animo": 2
+      }
+    }
+  ]
+}

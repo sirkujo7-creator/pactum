@@ -11,7 +11,7 @@ export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
-export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'comision', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
   'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias', 'vecindad', 'huellas', 'territorios', 'exterior'];
 
 function efectos(obj, donde) {
@@ -110,6 +110,9 @@ export function usarContenido(d) {
   C.OBRADEC = d.obras_decisiones ? { ...d.obras_decisiones, obras: Object.fromEntries(Object.entries(d.obras_decisiones.obras).map(([b, o]) => [b, { ...o, opciones: o.opciones.map(p => ({ ...p, fx: efectos(p.efectos, `obra ${b}`) })) }])) } : null; // decisiones por edificio
   C.MUNDO = d.mundo_vivo ? { ...d.mundo_vivo, hechos: d.mundo_vivo.hechos.map(h => ({ ...h, efectos: efectos(h.efectos, `mundo ${h.id}`), conTrato: h.conTrato ? efectos(h.conTrato, `mundo ${h.id}`) : null })) } : null; // mundo vivo
   C.VISIT = d.visitantes ? { ...d.visitantes, visitantes: d.visitantes.visitantes.map(v => ({ ...v, efectos: efectos(v.efectos, `visitante ${v.id}`) })) } : null; // visitantes extranjeros
+  C.ENTRE = d.entre_polis ? { ...d.entre_polis, eventos: d.entre_polis.eventos.map(e => ({ ...e, mediar: { ...e.mediar, efectos: efectos(e.mediar.efectos, `entre ${e.id}`) }, ventajaA: efectos(e.ventajaA, `entre ${e.id}`), ventajaB: efectos(e.ventajaB, `entre ${e.id}`) })) } : null; // entre las polis
+  C.LUGMEM = d.lugares_memoria ? { ...d.lugares_memoria, lugares: d.lugares_memoria.lugares.map(l => ({ ...l, efectos: efectos(l.efectos, `lugar ${l.id}`) })) } : null; // lugares de memoria
+  C.COMISION = d.comision ? { ...d.comision, acciones: Object.fromEntries(Object.entries(d.comision.acciones).map(([k, a]) => [k, { ...a, efectos: efectos(a.efectos, `comisión ${k}`) }])), final: Object.fromEntries(Object.entries(d.comision.final).map(([k, a]) => [k, { ...a, efectos: efectos(a.efectos, `comisión final ${k}`) }])) } : null; // comisión de la verdad
   C.ALM = d.almanaque || null; // almanaque «Mientras tanto»
   C.PLACAS = d.placas || null; // placas de los edificios por época
   C.MEJ = d.mejoras || null; // mejorar edificios por nivel

@@ -65,3 +65,6 @@ export * from './placas.js';
 export * from './decisionesObra.js';
 export * from './mundovivo.js';
 export * from './visitantes.js';
+export * from './entrepolis.js';
+export * from './lugaresmemoria.js';
+export * from './comision.js';
