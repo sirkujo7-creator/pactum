@@ -3,6 +3,7 @@
 // Todo vive en S.mat y solo existe en las partidas en acuarela.
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
+import { minaDe } from './subsuelo.js';
 
 export const MATERIALES = ['madera', 'piedra', 'metal'];
 export const materialesActivos = S => climaActivo(S) && !!C.MAT && !!S.mat;
@@ -57,15 +58,15 @@ export function comprarFaltante(S, k) {
 // Producción de cada año: aserraderos, canteras y minas que ya funcionan, según sus trabajadores.
 export function produccionMat(S, fT = 1) {
   const P = {}; if (!materialesActivos(S)) return P;
-  for (const x of S.map) {
+  for (const [i, x] of S.map.entries()) {
     if (!x.b || x.ob) continue;
-    const q = C.MAT.produccion[x.b]; if (!q) continue;
+    const q = x.b === 'mina' ? minaDe(S, i).produce : C.MAT.produccion[x.b]; if (!q) continue;
     for (const [m, n] of Object.entries(q)) P[m] = (P[m] || 0) + n * fT;
   }
   return P;
 }
 export function producirMat(S, fT = 1) {
   const P = produccionMat(S, fT);
-  for (const [m, n] of Object.entries(P)) S.mat[m] += Math.round(n);
+  for (const [m, n] of Object.entries(P)) { if (m === 'alimento') S.food += Math.round(n); else S.mat[m] += Math.round(n); }
   return P;
 }

@@ -750,6 +750,19 @@ function cantera(g, e) {
   for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#B9B09C' : '#C9C0AE'; g.beginPath(); g.ellipse(ca[0] - 3 + k * 2.5, ca[1] - 4.5 + k * .9, 2, 1.5, 0, 0, 7); g.fill(); }
 }
 
+function estudio(g, e) {
+  // Caseta de campo con su teodolito sobre un trípode, una bandera de mira y un mapa extendido en una mesa.
+  const F = caras(.38, .36, 9, -.12, -.1);
+  sombraCasa(g, F);
+  muros(g, F, e === 2 ? K.ladrillo : e === 3 ? '#D6D2CA' : K.cal, null, { ladrillo: e === 2 });
+  puerta(g, F, 'izq', .6, .22, 7, MADERA); ventana(g, F, 'der', .5, 5, .16, 4, MADERA, e >= 2 ? { marco: '#F4EEE2' } : {});
+  dosAguas(g, F, 5.5, MAT[['paja', 'tejaVieja', 'zinc', 'zinc'][e]]);
+  const t = P(.3, .24); g.strokeStyle = K.maderaOsc; g.lineWidth = .8;
+  for (const dx of [-5, 0, 5]) { g.beginPath(); g.moveTo(t[0], t[1] - 9); g.lineTo(t[0] + dx, t[1] + 1.5 + Math.abs(dx) * .3); g.stroke(); }
+  rellena(g, [[t[0] - 2.4, t[1] - 9], [t[0] + 2.4, t[1] - 9], [t[0] + 2.4, t[1] - 13], [t[0] - 2.4, t[1] - 13]], '#3A4650', K.contorno, .3); g.fillStyle = '#C9A44A'; g.fillRect(t[0] + 2.4, t[1] - 12, 3.2, 1.2);
+  const b = P(.34, .5); g.strokeStyle = '#6A4A2E'; g.lineWidth = .9; g.beginPath(); g.moveTo(b[0], b[1]); g.lineTo(b[0], b[1] - 18); g.stroke(); rellena(g, [[b[0], b[1] - 18], [b[0] + 6, b[1] - 16], [b[0], b[1] - 13]], '#B9442F', K.contorno, .3);
+}
+
 export function recetasPublicos(e = 1) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela],
@@ -766,6 +779,7 @@ export function recetasPublicos(e = 1) {
     ['molino', 88, 74, 44, 54, molino],
     ['aserradero', 92, 78, 46, 54, aserradero],
     ['cantera', 96, 88, 48, 62, cantera],
+    ['estudio', 84, 84, 42, 56, estudio],
     ['puerto', 96, 76, 48, 52, puerto],
     ['sede-republica', 104, 104, 52, 72, cabildo],
     ['sede-monarquia', 104, 112, 52, 78, palacio],

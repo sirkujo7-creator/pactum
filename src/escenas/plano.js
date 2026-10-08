@@ -1,13 +1,13 @@
 // Vista de plano (reformas de claridad, paso 3): el territorio visto desde arriba, sin relieve, con un color por uso.
 // Es también el lugar donde se mostrarán después la vocación del suelo y el subsuelo (fase 17).
-import { C, dibujoCalles, rcEsquina, radioCasco, lado, suelosActivos, claseSuelo, datosSuelo, aptitud, listaCultivos, datosCultivo } from '../core/index.js';
+import { C, dibujoCalles, rcEsquina, radioCasco, lado, suelosActivos, claseSuelo, datosSuelo, aptitud, listaCultivos, datosCultivo, estudioHecho, mineralDe, datosMineral, listaMinerales } from '../core/index.js';
 
 // Colores del terreno y de cada grupo de obras (acuarela apagada, a juego con el resto).
 const TERRENO = { llano: '#D9D2A8', bosque: '#9DB083', montana: '#B8A88A', rio: '#8DB8C6' };
 export const USOS = [
   { id: 'vivienda', nombre: 'Vivienda', col: '#C2603E', obras: ['casa'] },
   { id: 'campo', nombre: 'Campo', col: '#C9A93E', obras: ['cultivo', 'cafetal'] },
-  { id: 'industria', nombre: 'Industria y minas', col: '#6E6A78', obras: ['taller', 'molino', 'mina', 'puerto', 'aserradero', 'cantera'] },
+  { id: 'industria', nombre: 'Industria y minas', col: '#6E6A78', obras: ['taller', 'molino', 'mina', 'puerto', 'aserradero', 'cantera', 'estudio'] },
   { id: 'comercio', nombre: 'Comercio y finanzas', col: '#D08A2E', obras: ['mercado', 'banco', 'recaudo'] },
   { id: 'servicios', nombre: 'Servicios y cultura', col: '#3E8A8C', obras: ['escuela', 'biblioteca', 'hospital', 'universidad', 'acueducto', 'parque', 'cancha', 'estadio', 'teatro'] },
   { id: 'culto', nombre: 'Culto y vida cívica', col: '#7C5A9E', obras: ['iglesia', 'agora', 'cementerio', 'fundacion'] },
@@ -20,12 +20,14 @@ export const usoDe = k => USO_DE[k] || { id: 'otro', nombre: 'Otras obras', col:
 // Capas del plano: el uso de las obras y, en las partidas con suelos, la clase de suelo y la aptitud para cada cultivo.
 export function capasPlano(S) {
   const L = [{ id: 'uso', nombre: 'Uso' }];
+  if (estudioHecho(S)) L.push({ id: 'subsuelo', nombre: '⛏️ Subsuelo' });
   if (suelosActivos(S)) { L.push({ id: 'suelo', nombre: 'Suelo' }); listaCultivos().forEach(cv => L.push({ id: cv, nombre: `${datosCultivo(cv).icono} ${datosCultivo(cv).nombre}` })); }
   return L;
 }
 const ESCALA = [{ col: '#4F8A43', nombre: 'Excelente' }, { col: '#9CB84A', nombre: 'Buena' }, { col: '#E0B83E', nombre: 'Regular' }, { col: '#D2753A', nombre: 'Mala' }, { col: '#A8A29A', nombre: 'No se da' }];
 const nivelApto = a => a >= 1 ? 0 : a >= .75 ? 1 : a >= .4 ? 2 : a > 0 ? 3 : 4;
 export function leyendaPlano(S, capa) {
+  if (capa === 'subsuelo') return listaMinerales().map(m => ({ col: datosMineral(m).color, nombre: datosMineral(m).nombre }));
   if (capa === 'suelo') return Object.values(C.SUELOS.clases).map(q => ({ col: q.color, nombre: q.nombre }));
   if (capa !== 'uso') return ESCALA;
   return USOS.map(u => ({ col: u.col, nombre: u.nombre }));
@@ -41,7 +43,8 @@ export function pintarPlano(cv, S, sel, capa = 'uso') {
     if (x.h > 0 && x.t !== 'rio') { g.fillStyle = `rgba(90,70,40,${.07 * x.h})`; g.fillRect(c * q, r * q, q + .5, q + .5); }
   }
   // Capas de suelo: solo se colorea la tierra que admite fincas.
-  if (capa !== 'uso') for (let i = 0; i < N * N; i++) {
+  if (capa === 'subsuelo') for (let i = 0; i < N * N; i++) { const x = S.map[i]; if (x.t !== 'montana') continue; g.fillStyle = datosMineral(mineralDe(S, i)).color; g.fillRect((i % N) * q, Math.floor(i / N) * q, q + .5, q + .5); }
+  else if (capa !== 'uso') for (let i = 0; i < N * N; i++) {
     const x = S.map[i]; if (x.t !== 'llano') continue;
     const r = Math.floor(i / N), c = i % N;
     g.fillStyle = capa === 'suelo' ? datosSuelo(claseSuelo(S, i)).color : ESCALA[nivelApto(aptitud(S, i, capa))].col;

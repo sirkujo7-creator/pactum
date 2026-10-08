@@ -1,0 +1,112 @@
+{
+  "leccion": "Lo que hay bajo la tierra no se elige: se descubre. Un estudio de suelos cuesta, pero evita abrir minas a ciegas. Cada mineral sirve a algo distinto: el hierro y el carbón, a las fraguas; la caliza, a la construcción; la sal, a la mesa; el oro, a las arcas. Y lo que no extraes, lo compras a los vecinos.",
+  "minerales": {
+    "oro": {
+      "nombre": "Oro",
+      "icono": "🥇",
+      "color": "#D4A72C",
+      "renta": 1.0,
+      "produce": {
+        "metal": 1
+      },
+      "texto": "La mina que más paga en oro; da poco metal."
+    },
+    "hierro": {
+      "nombre": "Hierro",
+      "icono": "🔩",
+      "color": "#7A6A62",
+      "renta": 0.35,
+      "produce": {
+        "metal": 6
+      },
+      "texto": "La base del acero: mucho metal para las obras y la industria, poco oro."
+    },
+    "carbon": {
+      "nombre": "Carbón",
+      "icono": "⚫",
+      "color": "#3E3A3A",
+      "renta": 0.6,
+      "produce": {
+        "metal": 3
+      },
+      "texto": "Alimenta fraguas y hornos: algo de metal y de oro."
+    },
+    "caliza": {
+      "nombre": "Caliza",
+      "icono": "🧱",
+      "color": "#C9C0AE",
+      "renta": 0.3,
+      "produce": {
+        "piedra": 8
+      },
+      "texto": "Cal y cemento para construir: mucha piedra, poco oro."
+    },
+    "sal": {
+      "nombre": "Sal",
+      "icono": "🧂",
+      "color": "#E8E4DA",
+      "renta": 0.7,
+      "produce": {
+        "alimento": 6
+      },
+      "texto": "Conserva la comida: da alimento y algo de oro."
+    }
+  },
+  "pesos": {
+    "defecto": {
+      "oro": 2,
+      "hierro": 2,
+      "carbon": 2,
+      "caliza": 2,
+      "sal": 1
+    },
+    "valle": {
+      "oro": 1,
+      "hierro": 2,
+      "carbon": 2,
+      "caliza": 2,
+      "sal": 3
+    },
+    "ladera": {
+      "oro": 2,
+      "hierro": 2,
+      "carbon": 2,
+      "caliza": 2,
+      "sal": 1
+    },
+    "canon": {
+      "oro": 2,
+      "hierro": 3,
+      "carbon": 2,
+      "caliza": 3,
+      "sal": 1
+    },
+    "montana": {
+      "oro": 4,
+      "hierro": 2,
+      "carbon": 2,
+      "caliza": 1,
+      "sal": 1
+    },
+    "sur": {
+      "oro": 1,
+      "hierro": 1,
+      "carbon": 2,
+      "caliza": 3,
+      "sal": 3
+    }
+  },
+  "sinEstudio": 0.8,
+  "textos": {
+    "ficha": "Veta de {mineral}.",
+    "aCiegas": "Sin estudio de suelos solo se explota la veta que haya, y a ciegas rinde un 20% menos.",
+    "opcion": "También hay {mineral} en esta zona: puedes cambiar lo que extraes.",
+    "extrae": "Extrae",
+    "cambiar": "Extraer {mineral}",
+    "cambiado": "La mina ahora extrae {mineral}.",
+    "yaHay": "Ya hay un estudio de suelos: con uno basta.",
+    "capa": "Subsuelo",
+    "sinCapa": "Construye un estudio de suelos para ver qué hay bajo la tierra.",
+    "ayudaEstudio": "El estudio revela qué mineral hay en cada zona de montaña y deja elegir qué extraer."
+  }
+}

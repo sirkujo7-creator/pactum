@@ -380,7 +380,7 @@
     "icono": "🪵",
     "nombre": "Aserradero",
     "articulo": "un aserradero",
-    "descripcion": "Corta y asierra la madera que piden las obras. Da 8 de madera al año. En el bosque, talar cuesta ambiente.",
+    "descripcion": "Corta y asierra la madera que piden las obras. Da 8 de madera al año y emplea a 1 leñador. En el bosque, talar cuesta ambiente.",
     "costo": 25,
     "mantenimiento": 1,
     "etapa": 0,
@@ -388,13 +388,14 @@
       "llano",
       "bosque"
     ],
-    "especial": "Produce madera para construir."
+    "especial": "Produce madera para construir.",
+    "empleosArtesanos": 1
   },
   "cantera": {
     "icono": "🪨",
     "nombre": "Cantera",
     "articulo": "una cantera",
-    "descripcion": "Saca la piedra que piden las obras. Da 7 de piedra al año.",
+    "descripcion": "Saca la piedra que piden las obras. Da 7 de piedra al año y emplea a 2 canteros.",
     "costo": 30,
     "mantenimiento": 1,
     "etapa": 0,
@@ -402,6 +403,22 @@
       "llano",
       "montana"
     ],
-    "especial": "Produce piedra para construir."
+    "especial": "Produce piedra para construir.",
+    "empleosArtesanos": 2
+  },
+  "estudio": {
+    "icono": "🧭",
+    "nombre": "Estudio de suelos",
+    "articulo": "un estudio de suelos",
+    "descripcion": "Revela qué minerales hay bajo las montañas y deja elegir qué extraer. Con uno basta. Las minas sin estudio rinden un 20% menos.",
+    "costo": 40,
+    "mantenimiento": 2,
+    "etapa": 1,
+    "terrenos": [
+      "llano",
+      "montana"
+    ],
+    "aniosDeObra": 1,
+    "especial": "Muestra el subsuelo en el plano."
   }
 }
