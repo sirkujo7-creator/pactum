@@ -1964,6 +1964,11 @@ export class Interfaz {
     this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 15: la pantalla «El mundo».
+  // Lo que pasó en las polis vecinas y llegó a tu plaza (mundo vivo).
+  noticiasMundo() {
+    const S = this.S, M = C.MUNDO, L = S.mundoHechos || []; if (!M || !L.length) return '';
+    return `<h3>📰 ${M.textos.titulo}</h3><ul class="alm">${L.slice(0, 5).map(h => `<li><b>${h.lugar}, año ${h.anio}.</b> ${h.titulo} <small>(${h.fecha})</small><br><small>${(h.trato ? M.textos.conTrato : M.textos.sinTrato).replace('{nombre}', h.lugar)}</small><div class="chips">${this.chips(h.fx)}</div></li>`).join('')}</ul>`;
+  }
   tarjetaMundo(sel) {
     const S = this.S, X = C.EXT;
     if (!exteriorActivo(S)) { this.toast('El mundo se abre en las partidas en acuarela.'); return; }
@@ -1973,6 +1978,7 @@ export class Interfaz {
     this.tarjeta(`<div class="big">🌎</div><h3>${X.titulo}</h3><p class="small">${X.textos.ayuda}</p>
       <canvas class="mundo" aria-label="Mapa de tu polis y sus vecinos"></canvas>
       <div class="ficha-lugar">${fichaLugar(S, sel)}</div>
+      ${this.noticiasMundo()}
       <h3>${X.textos.hermanas}</h3><div class="subs">${L.filter(l => l.circulo === 'hermanas').map(fila).join('')}</div>
       <h3>${X.textos.paises}</h3><div class="subs">${L.filter(l => l.circulo === 'paises').map(fila).join('')}</div>
       <div class="phil"><b>Lo que enseña</b><br>${X.leccion}</div><button class="main" id="okB">Volver</button>`);
