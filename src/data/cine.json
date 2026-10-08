@@ -46,6 +46,14 @@
     "paz": {
       "titulo": "La firma de la paz",
       "texto": "Las delegaciones se encuentran en la plaza para firmar la paz con {vecino}."
+    },
+    "llegadaTren": {
+      "titulo": "Llega el primer tren",
+      "texto": "El pueblo entero sale a la estación. Nadie había visto una locomotora: el humo, el silbato y los vagones que traen el mundo."
+    },
+    "llegadaAvion": {
+      "titulo": "Aterriza el primer avión",
+      "texto": "Un ruido nuevo cruza el cielo y los niños corren a la pista. Desde hoy, el mundo queda a unas horas."
     }
   },
   "seguir": "Continuar ▸"
