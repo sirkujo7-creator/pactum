@@ -8,6 +8,7 @@ Estos archivos guardan todo el texto y los números del juego. Se pueden editar 
 | `consecuencias.json` | Lo que pasa años después de ciertas decisiones |
 | `edificios.json` | Obras: costo, mantenimiento, empleos, dónde se pueden construir |
 | `trabajo.json` | Trabajadores: el mínimo de puestos ocupados para que una obra produzca y sus textos |
+| `suelos.json` | La vocación del suelo: clases de suelo (vega, llanura, tierra seca, ladera) y qué tanto sirve cada una a cada cultivo |
 | `plaza.json` | La plaza por niveles: qué pide cada nivel, cuánto cuesta y los topes de obras |
 | `leyes.json` | Leyes y en qué etapa se abren |
 | `regimenes.json` | Las seis formas de gobierno y el ciclo de Polibio |

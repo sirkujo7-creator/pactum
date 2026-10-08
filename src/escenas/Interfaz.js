@@ -6,7 +6,7 @@ import {
   BIOMA, metros, nearRiver, pensamiento, rating, canBorrow, takeLoan, issueBond, printMoney, payDebt, loanRate,
   amenazasActivas, factorClimatico, tipoEpidemia, perdidaEpidemia, costoVigilancia, puedeVigilancia, comprarVigilancia, probAvenida, riesgoLaderas, ciclosActivos, factorCostos, factorRoya, costoPensiones, vejez, elegirPension, bonoBonanza, decidirBonanza, costoSubsidio, decidirCrisis, costoRenovar, puedeRenovar, renovarCafetales, tasaMigracion, historiaActiva, datosEpoca, proximaEpoca, epocaHistorica, rioActivo, probCambio, estadoOrillas, listaPerdidas, megaActivos, estadoMega, evaluarMega, probConsulta, costoConsulta, puedeConsultar, consultar, puedeIniciar, iniciarMega, cancelarMega, tecActiva, estadoTec, saberAnual, proximoInvento, anioInvento, aniosPolis, reqEtapa, decidirInvento, costoTecAnual, epocaVisual, memoriaActiva, recuerdos, balanceMemoria, generacion, proximaGeneracion, esPatrimonio, juicioHistoria, culturaActiva, culturaTotal, costoFiesta, puedeFiesta, organizarFiesta, barriosActivos, barrios, barrioDe, nombreBarrio, costoPrograma, puedePrograma, iniciarPrograma, costoLegalizar, decidirAsentamiento, victoriasActivas, caminos, vecinosActivos, promedioRel, aislado, nivelVecino, factorVecinos, costoAccion, puedeAccion, accionVecino, tensiones, conflictoActivo, conflicto, hayGrupo, partesConflicto, metaConflicto, puedeEstrategia, elegirEstrategia, desastresActivos, volcan, nivelVolcan, costoPlan, puedePlan, comprarPlan, presentes, estadoFig, nivelRel, misionDe, avisosFiguras, sucesosActivos, inseguridad, partesInseguridad, riesgos, actaDisponible, actaActiva, firmarActa, faltasNuevas, contradiria, cumplidos, listaMovimientos, fuerzaMov, nombreEstado, dialogar, puedeDialogar, costoDialogo, fuerzaActiva, nivelLegitimidad, ejercitoActivo, ejercito, metaEjercito, partesEjercito, gruposActivos, panorama, animoGrupo, aporteObra, society, desgloseIndicador, desgloseClase, economiaActiva, precioAlimento, precioCafe, coberturaActiva, serviciosDeCasa, cobertura, evaluarProyecto, ofertas, porEtapas, etapaDe, devolucionObra, fondoSugerido, lluvias, climaActivo, estadoSuelo, nivelObra, estadoObra, costoReparar, reparar, taxLimit, satTargets, lawSlots, lawCostNow, lawBlock, hasLaw, toggleLaw, stance, topPhil, clamp, logrosNuevos, aCodigo, desdeCodigo, callesActivas, eraCalle, conectada, factorCalle, radioCalle,
   guerraActiva, estadoGuerra, enGuerra, partesFuerza, fuerzaPropia, fuerzaVecino, costoRespuesta, puedeResponder, responder, costoDeclarar, puedeDeclarar, declararGuerra, opcionesTratado, costoTratado, firmarTratado, costoRecuperar, puedeRecuperar, recuperarTierras, ocupadasPor,
-  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos,
+  fincasActivas, cultivoDe, datosCultivo, listaCultivos, pisoTermico, nombrePiso, aptitud, tieneRiego, produccionFinca, anioCosecha, produce, costoSiembra, puedeSembrar, sembrar, mejorCultivo, canastaOro, pendientes, exteriorActivo, lugares, relacionExterior, accionExterior, nombreRegimen, faltaFundar, ofrecerPlaza, radioCasco, datosLey, quemadaVisible, huellasActivas, tumbasDe, avisoSepultura, esColono, asentamientoDe, ranchos, biomasActivos, glaciar, paramoQueda, factorAguaClima, subidaPisos, suelosActivos, claseSuelo, datosSuelo, suelaEquivocada,
   avancesActivos, datosAvance, obrasDeEtapa, caminoAvances, requisitoAvance, estadoAvances, cabecera,
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
@@ -14,7 +14,7 @@ import {
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
 } from '../core/index.js';
 import { pintarMundo, fichaLugar, lugarEn } from './mundo.js';
-import { pintarPlano, casillaPlano, USOS, usoDe } from './plano.js';
+import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
 import { partida } from './partida.js';
@@ -768,6 +768,7 @@ export class Interfaz {
         el('span', { class: 'small', style: G, text: esColono(x) ? C.HUELLAS.colonos.textos.bloquea + ' ' + C.HUELLAS.colonos.textos.leccion : `${x.mk.t === 'acta' ? 'Permanece mientras gobiernes.' : `Se borrará hacia el año ${x.mk.y + M.anios}.`} Si construyes aquí, la huella desaparece. ${C.MARCAS.leccion}` }));
     }
     if (x.oc && C.GUERRA) hijos.push(el('span', { class: 'neg', style: 'grid-column:1/-1', text: C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre) })); // fase 9
+    if (!x.b && x.t === 'llano' && suelosActivos(S)) hijos.push(el('span', { class: 'especial', style: 'grid-column:1/-1', html: this.notaSuelo(i).replace(/^<br>/, '') }));
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: this.descripcion(x.b) }),
         ...(C.B[x.b].es && climaActivo(S) && !(x.b === 'cultivo' && fincasActivas(S)) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
@@ -1342,9 +1343,15 @@ export class Interfaz {
     const S = this.S, x = S.map[i], cv = cultivoDe(x), D = datosCultivo(cv), p = produccionFinca(S, i), piso = nombrePiso(pisoTermico(S, i));
     const estado = produce(S, x) ? `Da ${Math.round(p.comida)} de alimento y ${Math.round(p.renta * S.price)} de oro al año.` : C.CULTIVOS.textos.madurando.replace('{anio}', anioCosecha(S, x));
     return el('div', { class: 'aporte', style: 'grid-column:1/-1' }, [
-      el('span', { html: `<b>${D.icono} ${D.nombre}</b> en tierra ${piso}${tieneRiego(S, i) ? ', con riego' : ''}. ${estado} ` }),
+      el('span', { html: `<b>${D.icono} ${D.nombre}</b> en tierra ${piso}${tieneRiego(S, i) ? ', con riego' : ''}. ${estado} ${this.notaSuelo(i, cv)}` }),
       el('button', { class: 'btn', style: 'margin-top:6px', ...(S.over ? { disabled: '' } : {}), on: { click: () => this.tarjetaCultivo(i) } }, 'Cambiar de cultivo')
     ]);
+  }
+  // El suelo de una casilla, en una frase (y el aviso si la finca está en suelo equivocado).
+  notaSuelo(i, cv) {
+    const S = this.S; if (!suelosActivos(S)) return '';
+    const c = claseSuelo(S, i), Q = datosSuelo(c), T = C.SUELOS.textos;
+    return `<br>${Q.icono} <b>${mayus(Q.nombre)}.</b> ${Q.texto}${cv && suelaEquivocada(S, i, cv) ? ` <span class="neg">${T.equivocada.replace('{suelo}', Q.nombre)}</span>` : ''}`;
   }
   // Elegir qué sembrar: cada cultivo con su aptitud aquí, lo que da y lo que cuesta.
   tarjetaCultivo(i, alTerminar) {
@@ -1358,7 +1365,7 @@ export class Interfaz {
         <small>${x.nueva ? 'La siembra va incluida en la finca nueva.' : `Sembrar cuesta ${costoSiembra(S, cv)} de oro.`}${no && !actual ? ` <span class="neg">${no}</span>` : ''}</small></button>`;
     };
     const orden = listaCultivos().sort((a, b) => aptitud(S, i, b) - aptitud(S, i, a));
-    this.tarjeta(`<div class="big">🌱</div><h3>${K.textos.elegir}</h3><p class="small">Tierra ${nombrePiso(piso)}${tieneRiego(S, i) ? ', con riego' : ''}. ${K.textos.ayuda} Para ganar dinero, aquí rinde más: <b>${datosCultivo(sug).nombre.toLowerCase()}</b>.</p>
+    this.tarjeta(`<div class="big">🌱</div><h3>${K.textos.elegir}</h3><p class="small">Tierra ${nombrePiso(piso)}${tieneRiego(S, i) ? ', con riego' : ''}. ${K.textos.ayuda} Para ganar dinero, aquí rinde más: <b>${datosCultivo(sug).nombre.toLowerCase()}</b>.${this.notaSuelo(i, x.cv)}</p>
       ${orden.map(fila).join('')}<div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">${x.nueva ? `Dejar ${datosCultivo(cultivoDe(x)).nombre.toLowerCase()}` : 'Cerrar'}</button>`);
     this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
     this.card.querySelectorAll('[data-cv]').forEach(b => b.onclick = () => {
@@ -1815,19 +1822,24 @@ export class Interfaz {
     this.boton('okB', () => this.cerrarTarjeta());
   }
   // Vista de plano: el territorio visto desde arriba, un color por uso. Tocar una casilla muestra qué hay.
-  tarjetaPlano(sel) {
+  tarjetaPlano(sel, capa) {
     const S = this.S, k = this.herramienta;
+    if (capa) this.capaPlano = capa; else if (!this.capaPlano || (this.capaPlano === 'uso' && k === 'cultivo' && suelosActivos(S))) this.capaPlano = k === 'cultivo' && suelosActivos(S) ? 'suelo' : (this.capaPlano || 'uso');
+    capa = this.capaPlano;
     const x = sel !== undefined && sel !== null ? S.map[sel] : null;
-    const que = !x ? 'Toca una casilla para ver qué hay.' : x.b ? `<b>${usoDe(x.b).nombre}:</b> ${this.nombre(x.b)}${x.ob ? ' (en obra)' : ''}.` : `<b>${{ llano: 'Llano', bosque: 'Bosque', montana: 'Montaña', rio: 'Río' }[x.t] || 'Terreno'}</b>, sin obra.`;
+    const suelo = x && x.t === 'llano' && suelosActivos(S) ? ` ${datosSuelo(claseSuelo(S, sel)).icono} Suelo: ${datosSuelo(claseSuelo(S, sel)).nombre}.` : '';
+    const que = (!x ? 'Toca una casilla para ver qué hay.' : x.b ? `<b>${usoDe(x.b).nombre}:</b> ${this.nombre(x.b)}${x.ob ? ' (en obra)' : ''}.` : `<b>${{ llano: 'Llano', bosque: 'Bosque', montana: 'Montaña', rio: 'Río' }[x.t] || 'Terreno'}</b>, sin obra.`) + suelo;
     const construir = x && k && k !== 'calle' && k !== 'quitarCalle' && !x.b ? `<button class="opt" id="planoC"><b>Construir aquí: ${this.nombre(k)}</b></button>` : '';
     this.tarjeta(`<div class="big">🗺️</div><h3>Vista de plano</h3><p class="small">El territorio visto desde arriba: sin relieve, un color por uso. La línea punteada es el casco urbano; la estrella, la plaza.</p>
       <canvas class="plano" aria-label="Plano del territorio"></canvas>
-      <div class="leyenda-plano">${USOS.map(u => `<span><i style="background:${u.col}"></i>${u.nombre}</span>`).join('')}</div>
+      <div class="subs capas">${capasPlano(S).map(c => `<button class="sub${c.id === capa ? ' on' : ''}" data-capa="${c.id}"><span class="sn">${c.nombre}</span></button>`).join('')}</div>
+      <div class="leyenda-plano">${leyendaPlano(S, capa).map(u => `<span><i style="background:${u.col}"></i>${u.nombre}</span>`).join('')}</div>
       <p class="small" id="planoQue">${que}</p>${construir}
       ${x && x.b ? '<button class="opt" id="planoF"><b>Abrir la ficha de esta obra</b></button>' : ''}
       <button class="main" id="okB">Volver al mapa</button>`);
     const cv = this.card.querySelector('canvas.plano');
-    requestAnimationFrame(() => { pintarPlano(cv, S, sel); cv.onclick = ev => { const i = casillaPlano(cv, S, ev); if (i !== null) this.tarjetaPlano(i); }; });
+    requestAnimationFrame(() => { pintarPlano(cv, S, sel, capa); cv.onclick = ev => { const i = casillaPlano(cv, S, ev); if (i !== null) this.tarjetaPlano(i); }; });
+    this.card.querySelectorAll('[data-capa]').forEach(b => b.onclick = () => this.tarjetaPlano(sel, b.dataset.capa));
     this.boton('planoC', () => { this.cerrarTarjeta(); this.mapa.construir(k, sel); });
     this.boton('planoF', () => { this.cerrarTarjeta(); this.abrirFicha(sel); });
     this.boton('okB', () => this.cerrarTarjeta());
