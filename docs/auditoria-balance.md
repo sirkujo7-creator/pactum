@@ -1,130 +1,59 @@
 # Auditoría de balance
 
-Generado con `node herramientas/auditoria.js` (6 partidas de la estrategia equilibrada, República, años 20, 45, 70). No cambia el juego.
+Generado con `node herramientas/auditoria.js` (2 partidas de la estrategia equilibrada, República, años 20, 45, 70). No cambia el juego.
 
 ## Parte A. Rentabilidad de cada edificio
 
 Mide lo que cambia **al construir uno más hoy**: `Ganancia` = oro por año después de mantenimiento; `Retorno` = años para recuperar el costo (costo ÷ ganancia); `Empleos` = puestos que crea; `Comida` = comida por año. Valores medianos de las partidas medidas. Retorno «—» = nunca se paga solo con oro (puede dar servicio, ánimo o legitimidad).
 
-### Hacia el año 20
-
-| Edificio | Costo | Ganancia/año | Retorno (años) | Empleos | Comida | Partidas |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| finca:algodon | 58 | 5 | 11.6 | 7 | -4 | 6 |
-| finca:ganaderia | 61 | 4 | 15.3 | 2 | 7 | 6 |
-| finca:aguacate | 73 | 2 | 36.6 | 4 | 0 | 6 |
-| mercado | 78 | 2 | 39 | 5 | -4 | 5 |
-| casa | 39 | -5 | — | 0 | 0 | 6 |
-| parque | 39 | -3 | — | 0 | 0 | 6 |
-| cancha | 33 | -2 | — | 0 | 0 | 6 |
-| biblioteca | 72 | -5 | — | 2 | -2 | 5 |
-| hospital | 131 | -17 | — | 3 | -2 | 6 |
-| agora | 196 | -35 | — | 1 | 0 | 5 |
-| acueducto | 91 | -6 | — | 2 | -2 | 5 |
-| recaudo | 65 | -5 | — | 2 | 0 | 6 |
-| policia | 78 | -7 | — | 3 | -2 | 5 |
-| cementerio | 46 | -2 | — | 0 | 0 | 6 |
-| aserradero | 33 | -2 | — | 1 | 0 | 6 |
-| cantera | 39 | -2 | — | 2 | 0 | 6 |
-| estudio | 52 | -3 | — | 0 | 0 | 6 |
-| finca:pancoger | 49 | -10 | — | 7 | 10 | 6 |
-| finca:arroz | 55 | -7 | — | 6 | 9 | 6 |
-| finca:cafe | 67 | -3 | — | 6 | -3 | 6 |
-| finca:platano | 52 | -2 | — | 5 | 7 | 6 |
-| finca:cacao | 64 | -1 | — | 6 | -3 | 6 |
-| escuela | 103 | -13 | — | 3 | -2 | 2 |
-| molino | 103 | -5 | — | 2 | 0 | 2 |
-
 ### Hacia el año 45
 
 | Edificio | Costo | Ganancia/año | Retorno (años) | Empleos | Comida | Partidas |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| puerto | 255 | 81 | 3.1 | 5 | -2 | 5 |
-| fábrica:fundicion | 237 | 73 | 3.2 | 10 | 0 | 6 |
-| fábrica:chocolate | 237 | 61 | 3.9 | 9 | 0 | 6 |
-| finca:cafe | 119 | 30 | 4 | 6 | 0 | 6 |
-| fábrica:textiles | 237 | 59 | 4 | 12 | 0 | 6 |
-| finca:algodon | 103 | 25 | 4.1 | 7 | 0 | 6 |
-| fábrica:trilladora | 237 | 56 | 4.2 | 9 | 0 | 6 |
-| finca:cacao | 113 | 26 | 4.3 | 6 | 0 | 6 |
-| mercado | 139 | 28 | 5 | 5 | 0 | 6 |
-| mina | 278 | 55 | 5.1 | 10 | -5 | 5 |
-| fábrica:molino | 237 | 44 | 5.4 | 8 | 0 | 6 |
-| fábrica:artesanias | 237 | 40 | 5.9 | 9 | 0 | 6 |
-| finca:ganaderia | 108 | 15 | 7.2 | 2 | 7 | 6 |
-| finca:platano | 92 | 12 | 7.7 | 5 | 9 | 6 |
-| finca:aguacate | 129 | 15 | 8.6 | 4 | 1 | 6 |
-| banco | 464 | 38 | 12.2 | 2 | 0 | 5 |
-| finca:arroz | 98 | 5 | 19.6 | 6 | 13 | 6 |
-| finca:pancoger | 87 | 2 | 43.4 | 7 | 13 | 6 |
-| cantera | 70 | 1 | 70 | 2 | 0 | 6 |
-| casa | 70 | -10 | — | 0 | 0 | 6 |
-| parque | 70 | -5 | — | 0 | 0 | 6 |
-| cancha | 58 | -3 | — | 0 | 0 | 6 |
-| biblioteca | 127 | -5 | — | 2 | 0 | 6 |
-| hospital | 232 | -24 | — | 3 | 0 | 6 |
-| agora | 348 | -117 | — | 1 | 0 | 6 |
-| acueducto | 162 | -8 | — | 2 | 0 | 6 |
-| recaudo | 116 | -5 | — | 2 | 0 | 6 |
-| policia | 139 | -6 | — | 3 | 0 | 6 |
-| cementerio | 81 | -3 | — | 0 | 0 | 6 |
-| aserradero | 58 | -1 | — | 1 | 0 | 6 |
-| estudio | 93 | -5 | — | 0 | 0 | 6 |
-| escuela | 185 | -18 | — | 3 | 0 | 6 |
-| cuartel | 278 | -59 | — | 4 | 0 | 5 |
-| molino | 185 | -5 | — | 2 | 0 | 6 |
-| universidad | 579 | -2 | — | 5 | 0 | 5 |
-| teatro | 209 | -6 | — | 3 | 0 | 6 |
-| estadio | 394 | -17 | — | 4 | 0 | 5 |
-
-### Hacia el año 70
-
-| Edificio | Costo | Ganancia/año | Retorno (años) | Empleos | Comida | Partidas |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| puerto | 448 | 89 | 5 | 5 | -2 | 2 |
-| fábrica:fundicion | 416 | 76 | 5.5 | 10 | 0 | 2 |
-| mina | 488 | 48 | 10.2 | 10 | -5 | 2 |
-| finca:cacao | 189 | 18 | 10.5 | 6 | -2 | 4 |
-| fábrica:chocolate | 416 | 32 | 13 | 9 | 0 | 2 |
-| finca:cafe | 198 | 14 | 14.2 | 6 | -2 | 4 |
-| fábrica:textiles | 416 | 28 | 14.9 | 12 | 0 | 2 |
-| banco | 814 | 52 | 15.7 | 2 | -2 | 2 |
-| universidad | 1018 | 62 | 16.4 | 5 | -1 | 2 |
-| fábrica:trilladora | 416 | 21 | 19.8 | 9 | 0 | 2 |
-| finca:ganaderia | 180 | 9 | 20 | 2 | 9 | 4 |
-| finca:aguacate | 216 | 7 | 30.9 | 4 | 1 | 4 |
-| fábrica:molino | 416 | 13 | 32 | 8 | 0 | 2 |
-| mercado | 244 | 3 | 81.3 | 5 | -1 | 2 |
-| fábrica:artesanias | 416 | 1 | 416.3 | 9 | 0 | 2 |
-| casa | 116 | -13 | — | 0 | 0 | 4 |
-| parque | 116 | -8 | — | 0 | 0 | 4 |
-| cancha | 97 | -4 | — | 0 | 0 | 4 |
-| biblioteca | 224 | -23 | — | 2 | 0 | 2 |
-| hospital | 407 | -56 | — | 3 | -1 | 2 |
-| agora | 611 | -276 | — | 1 | 0 | 2 |
-| acueducto | 285 | -28 | — | 2 | 0 | 2 |
-| recaudo | 204 | -23 | — | 2 | 0 | 2 |
-| policia | 244 | -29 | — | 3 | -1 | 2 |
-| cementerio | 136 | -4 | — | 0 | 0 | 4 |
-| aserradero | 97 | -7 | — | 1 | 0 | 4 |
-| cantera | 116 | -11 | — | 2 | 0 | 4 |
-| estudio | 155 | -10 | — | 0 | 0 | 3 |
-| finca:pancoger | 145 | -39 | — | 7 | 13 | 4 |
-| finca:arroz | 163 | -32 | — | 6 | 13 | 4 |
-| finca:platano | 154 | -15 | — | 5 | 9 | 4 |
-| finca:algodon | 172 | -23 | — | 7 | -3 | 4 |
-| escuela | 326 | -47 | — | 3 | -1 | 2 |
-| cuartel | 488 | -181 | — | 4 | -1 | 2 |
-| molino | 326 | -23 | — | 2 | 0 | 2 |
-| teatro | 366 | -29 | — | 3 | -1 | 2 |
-| estadio | 692 | -51 | — | 4 | -1 | 2 |
+| finca:cacao | 112 | 50 | 2.2 | 6 | 0 | 2 |
+| puerto | 250 | 95 | 2.6 | 5 | 0 | 2 |
+| finca:algodon | 101 | 37 | 2.7 | 7 | 0 | 2 |
+| mercado | 136 | 46 | 3 | 5 | 0 | 2 |
+| fábrica:fundicion | 233 | 72 | 3.2 | 10 | 0 | 2 |
+| fábrica:chocolate | 233 | 62 | 3.8 | 9 | 0 | 2 |
+| fábrica:textiles | 233 | 59 | 3.9 | 12 | 0 | 2 |
+| fábrica:trilladora | 233 | 58 | 4 | 9 | 0 | 2 |
+| mina | 273 | 62 | 4.4 | 10 | -2 | 2 |
+| fábrica:molino | 233 | 52 | 4.5 | 8 | 0 | 2 |
+| finca:cafe | 117 | 26 | 4.5 | 6 | 0 | 2 |
+| finca:ganaderia | 106 | 22 | 4.8 | 2 | 10 | 2 |
+| fábrica:artesanias | 233 | 45 | 5.2 | 9 | 0 | 2 |
+| finca:platano | 91 | 16 | 5.7 | 5 | 12 | 2 |
+| banco | 455 | 46 | 9.9 | 2 | 0 | 2 |
+| finca:aguacate | 127 | 12 | 10.5 | 4 | 2 | 2 |
+| finca:arroz | 96 | 7 | 13.7 | 6 | 17 | 2 |
+| universidad | 568 | 24 | 23.7 | 5 | 0 | 2 |
+| finca:pancoger | 86 | 3 | 28.5 | 7 | 17 | 2 |
+| cantera | 68 | 2 | 34 | 2 | 0 | 2 |
+| casa | 68 | -10 | — | 0 | 0 | 2 |
+| parque | 68 | -5 | — | 0 | 0 | 2 |
+| cancha | 57 | -2 | — | 0 | 0 | 2 |
+| cementerio | 80 | -2 | — | 0 | 0 | 2 |
+| aserradero | 57 | 0 | — | 1 | 0 | 2 |
+| escuela | 182 | -14 | — | 3 | 0 | 2 |
+| biblioteca | 125 | -4 | — | 2 | 0 | 2 |
+| hospital | 227 | -19 | — | 3 | 0 | 2 |
+| agora | 341 | -93 | — | 1 | 0 | 2 |
+| cuartel | 273 | -47 | — | 4 | 0 | 2 |
+| acueducto | 159 | -6 | — | 2 | 0 | 2 |
+| recaudo | 114 | -4 | — | 2 | 0 | 2 |
+| policia | 136 | -3 | — | 3 | 0 | 2 |
+| molino | 182 | -4 | — | 2 | 0 | 2 |
+| teatro | 205 | -3 | — | 3 | 0 | 2 |
+| estadio | 386 | -11 | — | 4 | 0 | 2 |
+| estudio | 91 | -5 | — | 0 | 0 | 2 |
 
 ### Fincas contra fábricas (todas las épocas medidas)
 
-- Mejor finca: **cafe**, se paga en 5.7 años (4 de oro por año).
-- Peor finca: pancoger, se paga en 40.5 años.
-- Mejor fábrica: **fundicion**, se paga en 4.4 años (72 de oro por año).
-- Peor fábrica: trilladora, se paga en 8.9 años.
+- Mejor finca: **cacao**, se paga en 3.2 años (50 de oro por año).
+- Peor finca: pancoger, se paga en 27.8 años.
+- Mejor fábrica: **fundicion**, se paga en 3.8 años (72 de oro por año).
+- Peor fábrica: artesanias, se paga en 6.5 años.
 - Fábricas que dan ganancia: 6 de 6 productos.
 
 ## Parte B. Peso de las decisiones

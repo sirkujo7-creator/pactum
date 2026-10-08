@@ -28,8 +28,8 @@
         "palmas": true
       },
       "efectos": {
-        "fincas": 0.12,
-        "comercio": 0.08
+        "fincas": 0.03,
+        "comercio": 0.02
       }
     },
     "ladera": {
@@ -71,7 +71,7 @@
         }
       },
       "efectos": {
-        "costoHab": 0.12
+        "costoHab": 0.06
       }
     },
     "montana": {

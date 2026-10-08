@@ -236,12 +236,12 @@
   "violencia": {
     "leccion": "No toda violencia tiene una causa que se vea a tiempo. El odio heredado, las armas que sobran y la rabia entre partidos bastan para que ocurra. Un Estado puede reducirla con presencia, justicia y diálogo, pero nunca la lleva a cero. Max Weber decía que el Estado reclama el monopolio de la violencia legítima: donde no lo logra, otros la ejercen.",
     "base": {
-      "fundacion": 0.02,
-      "cafe": 0.05,
-      "violencia": 0.26,
-      "modernizacion": 0.1,
-      "paz": 0.17,
-      "digital": 0.07
+      "fundacion": 0.012,
+      "cafe": 0.03,
+      "violencia": 0.156,
+      "modernizacion": 0.06,
+      "paz": 0.102,
+      "digital": 0.042
     },
     "piso": 0.35,
     "aniosEntre": 3,

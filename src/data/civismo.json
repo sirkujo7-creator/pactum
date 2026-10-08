@@ -368,7 +368,7 @@
       "efectos": {
         "saber": 1,
         "igualdad": 2,
-        "costoHab": 0.06,
+        "costoHab": 0.03,
         "animo": {
           "c": -1
         }
@@ -389,7 +389,7 @@
       "efectos": {
         "rumbo": -1.0,
         "legitimidad": 3,
-        "costoFijo": 8
+        "costoFijo": 4
       },
       "titular": "Se crean veedurías y controles para el dinero público",
       "leccion": "Maquiavelo y Montesquieu insistían en que el poder debe frenar al poder. La Constitución de 1991 creó las veedurías ciudadanas y la Ley 190 de 1995 y el Estatuto Anticorrupción de 2011 endurecieron los controles."
@@ -454,7 +454,7 @@
         "animo": {
           "c": 3
         },
-        "costoFijo": 8
+        "costoFijo": 4
       },
       "titular": "El campo tendrá su propio banco",
       "leccion": "La Caja de Crédito Agrario, creada en 1931, llevó dinero a los campesinos de toda Colombia durante setenta años. Sin crédito, el pequeño productor depende del usurero y no puede mejorar su finca."
@@ -472,7 +472,7 @@
       "efectos": {
         "fincas": 0.08,
         "comercio": 0.05,
-        "costoFijo": 5
+        "costoFijo": 2
       },
       "titular": "Los cafeteros fundan su federación",
       "leccion": "La Federación Nacional de Cafeteros nació en 1927 en Bogotá: el pequeño caficultor, unido, pudo vender mejor frente a los exportadores. Es un ejemplo de lo que Tocqueville llamaba el arte de asociarse."
@@ -511,7 +511,7 @@
       "efectos": {
         "ambiente": 4,
         "saber": 1,
-        "costoFijo": 10,
+        "costoFijo": 5,
         "fabricas": -0.03
       },
       "titular": "El pueblo cambiará su energía por fuentes limpias",
@@ -569,7 +569,7 @@
       "efectos": {
         "igualdad": 3,
         "conflicto": -8,
-        "costoFijo": 14,
+        "costoFijo": 7,
         "animo": {
           "c": 3,
           "e": -2
@@ -594,7 +594,7 @@
       "efectos": {
         "conflicto": -10,
         "legitimidad": 3,
-        "costoFijo": 12,
+        "costoFijo": 6,
         "cultura": 1
       },
       "titular": "Habrá verdad antes que venganza",

@@ -1982,7 +1982,8 @@
         "efectos": {
           "campesinos": 7,
           "elite": -8,
-          "igualdad": 5
+          "igualdad": 5,
+          "animo": 3.6
         },
         "filosofia": "contr",
         "porque": "La tierra es de quien la trabaja: una idea que defendieron las leyes de baldíos del siglo XIX.",
@@ -2000,7 +2001,8 @@
           "elite": 7,
           "campesinos": -8,
           "igualdad": -7,
-          "oro": 30
+          "oro": 30,
+          "animo": 3.6
         },
         "filosofia": "real",
         "porque": "Mantener a los poderosos de tu lado da estabilidad, aunque concentra la tierra.",
@@ -2013,7 +2015,8 @@
         "efectos": {
           "oro": -40,
           "confianza": 3,
-          "campesinos": 3
+          "campesinos": 3,
+          "animo": 3.6
         },
         "filosofia": "deon",
         "porque": "Una regla igual para todos, aplicada a la vista de todos, es la base de la justicia.",
@@ -2158,7 +2161,7 @@
         "texto": "Aceptar: escuela y parroquia",
         "efectos": {
           "campesinos": -4,
-          "animo": 5,
+          "animo": 6.5,
           "igualdad": 3
         },
         "filosofia": "util",
@@ -2172,7 +2175,8 @@
           "oro": -55,
           "igualdad": 5,
           "confianza": 2,
-          "elite": -3
+          "elite": -3,
+          "animo": 1.5
         },
         "filosofia": "contr",
         "porque": "La educación pública y laica fue una bandera del liberalismo radical en Colombia (1863).",
@@ -2182,7 +2186,7 @@
       {
         "texto": "Rechazar la oferta",
         "efectos": {
-          "animo": -4
+          "animo": -2.5
         },
         "filosofia": "real",
         "porque": "Sin parroquia ni escuela el pueblo ahorra, pero se queda sin servicios.",
@@ -2267,7 +2271,8 @@
         "efectos": {
           "artesanos": 5,
           "elite": -4,
-          "confianza": 2
+          "confianza": 2,
+          "animo": 1.5
         },
         "filosofia": "contr",
         "porque": "Un pago justo para el trabajo más duro es una exigencia de la justicia.",
@@ -2279,7 +2284,8 @@
         "efectos": {
           "artesanos": -7,
           "elite": 4,
-          "oro": 15
+          "oro": 15,
+          "animo": 1.5
         },
         "filosofia": "real",
         "porque": "Sin intervención el comercio sigue, pero el más débil pone la carga.",
@@ -2291,7 +2297,7 @@
         "efectos": {
           "oro": -50,
           "artesanos": 4,
-          "animo": 3
+          "animo": 4.5
         },
         "filosofia": "virt",
         "porque": "Cuidar a quien trabaja es parte de la vida buena en comunidad.",
@@ -2326,7 +2332,8 @@
         "efectos": {
           "oro": -85,
           "elite": 5,
-          "artesanos": 3
+          "artesanos": 3,
+          "animo": 8.9
         },
         "filosofia": "util",
         "porque": "Una obra moderna puede multiplicar el comercio de toda la región.",
@@ -2341,7 +2348,8 @@
         "efectos": {
           "oro": -125,
           "confianza": 2,
-          "igualdad": 2
+          "igualdad": 2,
+          "animo": 8.9
         },
         "filosofia": "contr",
         "porque": "Si la obra es de todos, las ganancias también deben serlo.",
@@ -2352,7 +2360,8 @@
         "texto": "Mejor arreglar los caminos de siempre",
         "efectos": {
           "oro": -35,
-          "campesinos": 3
+          "campesinos": 3,
+          "animo": 8.9
         },
         "filosofia": "virt",
         "porque": "A veces la solución sencilla y cercana es la más sabia.",
@@ -2532,7 +2541,7 @@
         "texto": "Llamar a la calma y proteger ambas sedes",
         "efectos": {
           "confianza": 2,
-          "animo": -4
+          "animo": 11.7
         },
         "filosofia": "deon",
         "porque": "El deber del gobernante es proteger a todos, también a sus adversarios.",
@@ -2552,7 +2561,8 @@
         "efectos": {
           "confianza": -8,
           "oro": -55,
-          "igualdad": -4
+          "igualdad": -4,
+          "animo": 21.4
         },
         "filosofia": "real",
         "porque": "Ceder a la furia evita enfrentarla, pero desata una violencia difícil de parar.",
@@ -2568,7 +2578,8 @@
         "efectos": {
           "confianza": -4,
           "elite": 4,
-          "campesinos": -4
+          "campesinos": -4,
+          "animo": 15.7
         },
         "filosofia": "real",
         "porque": "El orden por la fuerza calma la calle, pero no la herida.",
@@ -2603,7 +2614,8 @@
         "efectos": {
           "oro": -40,
           "confianza": 2,
-          "elite": -6
+          "elite": -6,
+          "animo": 12.9
         },
         "filosofia": "deon",
         "porque": "La ley debe valer igual para todos, también para los del partido de gobierno.",
@@ -2622,7 +2634,8 @@
         "efectos": {
           "campesinos": -10,
           "igualdad": -8,
-          "elite": 3
+          "elite": 3,
+          "animo": 17.8
         },
         "filosofia": "real",
         "porque": "Callar ante el crimen es ponerse del lado del más fuerte.",
@@ -2638,7 +2651,8 @@
         "efectos": {
           "oro": -55,
           "campesinos": 5,
-          "confianza": 2
+          "confianza": 2,
+          "animo": 12.9
         },
         "filosofia": "contr",
         "porque": "Primero los más vulnerables: la justicia empieza por proteger la vida.",
@@ -2775,7 +2789,8 @@
         "efectos": {
           "confianza": 2,
           "elite": 4,
-          "igualdad": -4
+          "igualdad": -4,
+          "animo": 7.7
         },
         "filosofia": "util",
         "porque": "La paz entre los dos partidos salva vidas, aunque cierra el paso a otros.",
@@ -2790,7 +2805,7 @@
         "efectos": {
           "confianza": 2,
           "elite": -4,
-          "animo": 2
+          "animo": 9.7
         },
         "filosofia": "contr",
         "porque": "La paz es más justa si nadie queda por fuera.",
@@ -2808,7 +2823,8 @@
         "texto": "Rechazarlo",
         "efectos": {
           "confianza": -6,
-          "campesinos": -4
+          "campesinos": -4,
+          "animo": 7.7
         },
         "filosofia": "deon",
         "porque": "No se puede repartir el poder como un botín.",
@@ -2842,7 +2858,8 @@
         "efectos": {
           "oro": -70,
           "campesinos": 6,
-          "igualdad": 4
+          "igualdad": 4,
+          "animo": 2.8
         },
         "filosofia": "contr",
         "porque": "Que nadie tenga que irse para tener oportunidades.",
@@ -2854,7 +2871,8 @@
         "efectos": {
           "oro": -55,
           "artesanos": 4,
-          "habitantes": 5
+          "habitantes": 5,
+          "animo": 2.8
         },
         "filosofia": "util",
         "porque": "La ciudad crece de todos modos: mejor planearla.",
@@ -2865,7 +2883,8 @@
         "texto": "Dejar que cada uno decida",
         "efectos": {
           "campesinos": -6,
-          "alimento": -21
+          "alimento": -21,
+          "animo": 2.8
         },
         "filosofia": "real",
         "porque": "Sin política no hay costo, pero el campo pierde manos.",
@@ -3058,7 +3077,8 @@
         "efectos": {
           "oro": -35,
           "igualdad": 4,
-          "campesinos": 3
+          "campesinos": 3,
+          "animo": 1.5
         },
         "filosofia": "contr",
         "porque": "La técnica al servicio de quien más lo necesita, como hizo Radio Sutatenza.",
@@ -3068,7 +3088,7 @@
       {
         "texto": "Fútbol y novelas para todos",
         "efectos": {
-          "animo": 6,
+          "animo": 7.5,
           "confianza": 1
         },
         "filosofia": "util",
@@ -3080,7 +3100,8 @@
         "efectos": {
           "oro": 20,
           "elite": 3,
-          "igualdad": -3
+          "igualdad": -3,
+          "animo": 1.5
         },
         "filosofia": "real",
         "porque": "El negocio paga la novedad.",
@@ -3114,7 +3135,8 @@
         "efectos": {
           "oro": -40,
           "confianza": 4,
-          "elite": -4
+          "elite": -4,
+          "animo": 3.7
         },
         "filosofia": "contr",
         "porque": "La democracia participativa reparte el poder de decidir.",
@@ -3124,7 +3146,8 @@
       {
         "texto": "Cumplir lo mínimo que exige la ley",
         "efectos": {
-          "confianza": -3
+          "confianza": -3,
+          "animo": 3.7
         },
         "filosofia": "real",
         "porque": "Lo justo para no tener problemas, sin cambiar nada de fondo.",
@@ -3135,7 +3158,8 @@
         "efectos": {
           "oro": -50,
           "confianza": 2,
-          "igualdad": 3
+          "igualdad": 3,
+          "animo": 3.7
         },
         "filosofia": "deon",
         "porque": "Los derechos fundamentales deben tener quien los defienda.",
@@ -3171,7 +3195,8 @@
           "oro": -40,
           "campesinos": 5,
           "igualdad": 5,
-          "elite": -7
+          "elite": -7,
+          "animo": 9.2
         },
         "filosofia": "deon",
         "porque": "Lo quitado por la violencia debe volver a sus dueños.",
@@ -3191,7 +3216,8 @@
         "efectos": {
           "oro": -70,
           "campesinos": 2,
-          "confianza": 1
+          "confianza": 1,
+          "animo": 9.2
         },
         "filosofia": "util",
         "porque": "Una solución que no saca a nadie, aunque no repara del todo.",
@@ -3202,7 +3228,8 @@
         "efectos": {
           "campesinos": -7,
           "igualdad": -6,
-          "confianza": -6
+          "confianza": -6,
+          "animo": 9.2
         },
         "filosofia": "real",
         "porque": "Evitar el conflicto con los poderosos tiene un precio moral.",
@@ -3237,7 +3264,8 @@
         "efectos": {
           "oro": -55,
           "confianza": 2,
-          "elite": -4
+          "elite": -4,
+          "animo": 7.8
         },
         "filosofia": "util",
         "porque": "Una paz con trabajo evita que vuelvan a las armas.",
@@ -3256,7 +3284,8 @@
         "efectos": {
           "oro": -70,
           "confianza": 3,
-          "igualdad": 3
+          "igualdad": 3,
+          "animo": 7.8
         },
         "filosofia": "contr",
         "porque": "No hay paz sin las víctimas en el centro.",
@@ -3267,7 +3296,8 @@
         "texto": "Negarse",
         "efectos": {
           "elite": 3,
-          "confianza": -6
+          "confianza": -6,
+          "animo": 7.8
         },
         "filosofia": "real",
         "porque": "Desconfiar es comprensible, pero cerrar la puerta también tiene costos.",
@@ -3305,7 +3335,7 @@
         "efectos": {
           "oro": -30,
           "confianza": 3,
-          "animo": -3
+          "animo": 2.0
         },
         "filosofia": "deon",
         "porque": "Escuchar la verdad de las víctimas es una forma de justicia.",
@@ -3315,7 +3345,8 @@
       {
         "texto": "Hacerlo en privado",
         "efectos": {
-          "confianza": 1
+          "confianza": 1,
+          "animo": 5.0
         },
         "filosofia": "util",
         "porque": "Proteger a quien habla también importa.",
@@ -3325,7 +3356,8 @@
         "texto": "No participar",
         "efectos": {
           "confianza": -7,
-          "elite": 2
+          "elite": 2,
+          "animo": 5.0
         },
         "filosofia": "real",
         "porque": "No remover el pasado parece cómodo para algunos.",
@@ -3471,7 +3503,8 @@
         "efectos": {
           "ambiente": 6,
           "oro": -15,
-          "elite": -6
+          "elite": -6,
+          "animo": 10.5
         },
         "filosofia": "deon",
         "porque": "El agua es un bien común: los páramos colombianos están protegidos por ley.",
@@ -3483,7 +3516,8 @@
         "efectos": {
           "oro": 70,
           "ambiente": -11,
-          "confianza": -6
+          "confianza": -6,
+          "animo": 17.1
         },
         "filosofia": "util",
         "porque": "Las regalías pueden pagar muchas obras hoy.",
@@ -3497,7 +3531,8 @@
         "texto": "Consulta popular",
         "efectos": {
           "oro": -30,
-          "confianza": 3
+          "confianza": 3,
+          "animo": 10.5
         },
         "filosofia": "contr",
         "porque": "Que decida la gente que vive del agua.",
@@ -3574,7 +3609,8 @@
         "efectos": {
           "oro": -55,
           "campesinos": 4,
-          "ambiente": 3
+          "ambiente": 3,
+          "animo": 4.5
         },
         "filosofia": "util",
         "porque": "Prepararse con ciencia protege a la mayoría.",
@@ -3586,7 +3622,7 @@
         "efectos": {
           "oro": -65,
           "campesinos": 5,
-          "animo": 2
+          "animo": 6.5
         },
         "filosofia": "contr",
         "porque": "Primero los que más pierden.",
@@ -3596,7 +3632,8 @@
         "texto": "No hacer nada: es el clima",
         "efectos": {
           "campesinos": -7,
-          "alimento": -28
+          "alimento": -28,
+          "animo": 4.5
         },
         "filosofia": "real",
         "porque": "Lo que no se previene, se paga.",
