@@ -4,8 +4,11 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
 import { reducirMovimiento } from './pantalla.js';
+import { ACCIONES } from '../arte/gente.js';
 
 const E = 3;
+// Cada oficio usa un ciclo de cuadros de la hoja de acciones (con la herramienta en la mano).
+const ACCION = { azadon: 'sembrar', pico: 'picar', sierra: 'aserrar', martillo: 'martillar', bulto: 'cargar' };
 const OFICIO = { cultivo: 'azadon', cafetal: 'azadon', mina: 'pico', cantera: 'pico', aserradero: 'sierra', taller: 'martillo', molino: 'martillo', puerto: 'bulto' };
 function hornear(tx) {
   const dibujar = (k, fn) => { if (tx.exists(k)) return; const c = lienzo(20 * E, 20 * E), g = c.getContext('2d'); g.scale(E, E); g.lineCap = 'round'; fn(g); tx.addCanvas(k, c); };
@@ -43,7 +46,9 @@ export class Oficios {
   poner(w, a) {
     const T = this.scene.T, p = P(w.r, w.c, alturaEn(T, w.r, w.c)), bob = w.o === 'pastor' ? 0 : Math.abs(Math.sin(a)) * -.8;
     let paso = 0; if (w.o === 'pastor' && w.andando) paso = Math.floor(w.fasePaso) % 4;
-    const f = `${w.tipo}${w.ropa}_${w.vi}_${w.frente ?? 1}_${paso}`; if (this.scene.pob.H.marcos[f]) w.img.setFrame(f);
+    const acc = ACCION[w.o], A = this.scene.pob.A, N = acc && ACCIONES[w.tipo] && ACCIONES[w.tipo][acc], kA = N ? `${w.tipo}_${w.vi}_${acc}_${Math.floor(((a / (Math.PI * 2)) % 1 + 1) % 1 * N)}` : null;
+    if (kA && A && A.marcos[kA] && this.scene.textures.exists('acciones')) { if (w.tex !== 'a') { w.img.setTexture('acciones'); w.tex = 'a'; } w.img.setFrame(kA); if (w.herr) w.herr.setVisible(false); w.img.setPosition(p[0], p[1]).setFlipX(!!w.voltear).setDepth(w.r + w.c + .02); return; }
+    const f = `${w.tipo}${w.ropa}_${w.vi}_${w.frente ?? 1}_${paso}`; if (this.scene.pob.H.marcos[f]) { if (w.tex === 'a') { w.img.setTexture('personas'); w.tex = 'p'; } w.img.setFrame(f); }
     w.img.setPosition(p[0], p[1] + bob).setFlipX(!!w.voltear).setDepth(w.r + w.c + .02);
     if (w.herr) {
       const dx = w.o === 'sierra' ? 5 : 4, rot = w.o === 'azadon' ? -.9 + Math.sin(a) * .9 : w.o === 'pico' ? -1 + Math.sin(a) * 1.0 : w.o === 'martillo' ? -.7 + Math.sin(a) * .8 : w.o === 'bulto' ? 0 : Math.sin(a) * .15;

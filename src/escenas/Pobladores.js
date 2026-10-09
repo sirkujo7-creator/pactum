@@ -5,7 +5,7 @@
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua } from '../core/index.js';
-import { hornearGente, PASOS12 } from '../arte/gente.js';
+import { hornearGente, PASOS12, hornearAcciones, ACCIONES } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
@@ -34,10 +34,31 @@ export class Pobladores {
     this.planear();
   }
 
+  // Hoja de acciones de oficio (sembrar, picar, vender…): se hornea con la ropa de la época y se refresca si cambia.
+  ponerAcciones() {
+    const A = hornearAcciones(!!this.ropa), tx = this.scene.textures;
+    if (!tx.exists('acciones')) { const t = tx.addCanvas('acciones', A.canvas); for (const [k, m] of Object.entries(A.marcos)) t.add(k, 0, m.x, m.y, m.w, m.h); }
+    else if (this.accModa !== !!this.ropa) tx.get('acciones').refresh();
+    this.accModa = !!this.ropa; this.A = A;
+  }
+  // Qué hace quien espera en su lugar, según el edificio (o el corrillo, o el juego). Devuelve el nombre de la acción.
+  accionDe(f) {
+    const p = f.p, tipo = p.tipo, tiene = k => ACCIONES[tipo] && ACCIONES[tipo][k];
+    const b = f.destino === 'trabajo' && p.trabajo !== null ? this.scene.S.map[p.trabajo].b : null;
+    if (f.mira && tiene('conversar')) return 'conversar';
+    const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
+    const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'], hospital: ['saludar'], teatro: ['saludar'] }[b];
+    if (por) { const k = por[u % por.length]; if (tiene(k)) return k; }
+    if (tipo === 'campesina' && b === null && f.destino === 'trabajo') return 'barrer';
+    if (f.destino === 'plaza' && tiene('saludar')) return u === 0 ? 'saludar' : 'conversar';
+    return null;
+  }
+
   // Vuelve a repartir casas y trabajos (tras construir, demoler o terminar el año).
   planear() {
     const { S, T } = this.scene, plan = planearPobladores(S);
     this.ropa = ropaModerna(S) ? 'M' : ''; // fase 5: desde la época del ladrillo, ropa moderna
+    this.ponerAcciones();
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     this.rejilla();
     while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.marca) f.marca.destroy(); }
@@ -213,12 +234,10 @@ export class Pobladores {
           this.dibujar(f, true);
           continue;
         }
-        // En el campo, los campesinos trabajan la tierra mientras esperan (se agachan y se levantan).
-        const b = f.destino === 'trabajo' && f.p.trabajo !== null ? this.scene.S.map[f.p.trabajo].b : null;
-        if (b === 'cultivo' || b === 'cafetal') { f.fase += dt * 2.4; this.dibujar(f, false, (Math.floor(f.fase) % 2) * 2); }
-        // En el corrillo conversan: miran al centro y de vez en cuando gesticulan.
-        else if (f.mira) { this.mirar(f, f.mira); this.dibujar(f, false, Math.floor((this.t + f.p.semilla * 9) * 1.4) % 6 === 0 ? 1 : 0); }
-        else this.dibujar(f, false);
+        // Cada quien hace lo suyo mientras espera: siembra, pica, vende, conversa… (acciones de oficio).
+        if (f.mira) this.mirar(f, f.mira);
+        else if (f.destino === 'trabajo') f.voltear = f.p.semilla < .5;
+        this.dibujar(f, false, 0, this.accionDe(f));
         continue;
       }
       if (!f.ruta.length) {
@@ -253,10 +272,12 @@ export class Pobladores {
   }
   mirar(f, q) { const dr = q.r - f.r, dc = q.c - f.c; if (Math.abs(dr) + Math.abs(dc) < .01) return; f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0; }
 
-  dibujar(f, andando, postura) {
+  dibujar(f, andando, postura, accion) {
     const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? PASOS12[Math.floor(f.fase * 3) % 12] : (postura || 0); // doce cuadros: andar suave
-    f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`).setPosition(p[0], p[1]).setFlipX(f.voltear)
-      .setDepth(f.r + f.c + .01).setVisible(!f.oculto);
+    const N = accion && ACCIONES[f.p.tipo][accion], clave = N ? `${f.p.tipo}_${f.p.vi}_${accion}_${Math.floor(((this.t * (accion === 'rezar' ? .6 : 1.5) + f.p.semilla * 7) % 1) * N)}` : null;
+    if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
+    else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
+    f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);
     // Fase 13: los miembros de las familias que escriben cartas llevan una marca roja sobre la cabeza.
     if (f.p.familia && !f.marca) f.marca = this.scene.add.circle(0, 0, 1.7, 0x9C2F25).setStrokeStyle(.6, 0xD4A24C);
     if (f.marca) f.marca.setPosition(p[0], p[1] - f.img.displayHeight - 2.5).setDepth(f.r + f.c + .02).setVisible(!!f.p.familia && !f.oculto);
