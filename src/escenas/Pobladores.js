@@ -36,13 +36,16 @@ export class Pobladores {
 
   // Hoja de acciones de oficio (sembrar, picar, vender…): se hornea con la ropa de la época y se refresca si cambia.
   ponerAcciones() {
-    const A = hornearAcciones(!!this.ropa), tx = this.scene.textures;
-    if (!tx.exists('acciones')) { const t = tx.addCanvas('acciones', A.canvas); for (const [k, m] of Object.entries(A.marcos)) t.add(k, 0, m.x, m.y, m.w, m.h); }
-    else if (this.accModa !== !!this.ropa) tx.get('acciones').refresh();
-    this.accModa = !!this.ropa; this.A = A;
+    try { // si algo falla (poca memoria), el juego sigue sin las acciones de oficio
+      const A = hornearAcciones(!!this.ropa), tx = this.scene.textures;
+      if (!tx.exists('acciones')) { const t = tx.addCanvas('acciones', A.canvas); for (const [k, m] of Object.entries(A.marcos)) t.add(k, 0, m.x, m.y, m.w, m.h); }
+      else if (this.accModa !== !!this.ropa) tx.get('acciones').refresh();
+      this.accModa = !!this.ropa; this.A = A;
+    } catch (e) { this.A = null; console.warn('Acciones de oficio desactivadas:', e); }
   }
   // Qué hace quien espera en su lugar, según el edificio (o el corrillo, o el juego). Devuelve el nombre de la acción.
   accionDe(f) {
+    if (!this.A) return null;
     const p = f.p, tipo = p.tipo, tiene = k => ACCIONES[tipo] && ACCIONES[tipo][k];
     const b = f.destino === 'trabajo' && p.trabajo !== null ? this.scene.S.map[p.trabajo].b : null;
     if (f.destino === 'luto' && tiene('rezar')) return 'rezar'; // velorio: cabeza baja y manos juntas
@@ -280,7 +283,7 @@ export class Pobladores {
 
   dibujar(f, andando, postura, accion) {
     const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? PASOS12[Math.floor(f.fase * 3) % 12] : (postura || 0); // doce cuadros: andar suave
-    const N = accion && ACCIONES[f.p.tipo][accion], clave = N ? `${f.p.tipo}_${f.p.vi}_${accion}_${Math.floor(((this.t * (accion === 'rezar' ? .6 : 1.5) + f.p.semilla * 7) % 1) * N)}` : null;
+    const N = accion && this.A && ACCIONES[f.p.tipo][accion], clave = N ? `${f.p.tipo}_${f.p.vi}_${accion}_${Math.floor(((this.t * (accion === 'rezar' ? .6 : 1.5) + f.p.semilla * 7) % 1) * N)}` : null;
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
     f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);

@@ -4,7 +4,7 @@
 // del campesino, falda larga y pañolón de la campesina, delantal de cuero del artesano, levita y sombrero de la élite;
 // ropa moderna (jean, camiseta, gorra) en las épocas del ladrillo y el concreto. Doce cuadros al caminar (antes
 // ocho): cada cuadro es el mismo dibujo en otro momento del paso, con los mismos colores, para que no salte.
-import { shade, lienzo, contorno, RES_HOJA } from './fresco.js';
+import { shade, lienzo, contorno, RES_HOJA, ES_CELULAR } from './fresco.js';
 import { sombraSuave } from './plano.js';
 
 export const TIPOS_GENTE = {
@@ -199,7 +199,7 @@ function brazosAccion(g, pz, manga, piel) {
 // Hoja de acciones: se hornea con la ropa de la época (mod) y se vuelve a pintar sobre el mismo lienzo si cambia.
 let HOJA_A = null;
 export function hornearAcciones(mod) {
-  const E = 3, w = 22, h = 34, W = w * E, H = h * E, claves = [];
+  const E = ES_CELULAR ? 2 : 3, w = 22, h = 34, W = w * E, H = h * E, claves = []; // en celular, a menor resolución (cuida la memoria)
   for (const tipo in ACCIONES) for (let vi = 0; vi < 3; vi++) for (const [acc, N] of Object.entries(ACCIONES[tipo])) for (let n = 0; n < N; n++) claves.push([`${tipo}_${vi}_${acc}_${n}`, tipo, vi, acc, n, N]);
   if (!HOJA_A) {
     const cols = Math.floor(2048 / W), filas = Math.ceil(claves.length / cols), marcos = {};
