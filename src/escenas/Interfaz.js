@@ -1283,18 +1283,17 @@ export class Interfaz {
     alTerminar = () => this.polisAnio(() => this.comisionAnio(() => this.visitanteAnio(() => this.figurasAnio(alTerminar0))));
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
-    const CINE = { v_procesion: ['procesion', 'La procesión sale de la iglesia', 'La gente sale de la iglesia con velas y rezos, en silencio.'], v_marcha: ['marcha', 'La marcha estudiantil', 'Estudiantes y profesores salen de la universidad con pancartas hacia la plaza.'], v_huelga: ['marcha', 'La huelga', 'Los obreros salen del taller y se plantan frente a la puerta.'], v_paro: ['marcha', 'El paro armado', 'Nadie sale a trabajar; la plaza queda llena de gente que espera.'] }; // hechos en edificios que se ven en el mapa
-    const cn = CINE[ev.id];
-    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2] })) return;
+    const cn = (C.SUCESOS.sucesos[ev.id] || {}).cine; // lo que pasó se ve en el mapa (sucesos.json: cine)
+    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2], obra: ev.obra })) return;
     this._sucesoCine = false;
     const q = C.SUCESOS.sucesos[ev.id];
     this.tarjeta(`${fotoHtml(imagenDe(q.titulo, ev.texto, ev.fx, S))}<h3>${q.icono} ${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>
       <div class="porque-afecta"><b>¿Por qué pasó?</b><br>${q.causa}${q.violencia ? '' : ` Inseguridad de este año: <b>${ev.ins}</b>.`}</div>
       <p class="small"><b>Cómo prevenirlo:</b> ${q.prevenir}</p>
       <div class="phil"><b>Lo que enseña</b><br>${q.violencia ? C.SUCESOS.violencia.leccion : C.SUCESOS.leccion}</div>
-      <div class="dos">${ev.obra !== undefined ? '<button class="btn" id="verObraB">Ver dónde fue</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
+      <div class="dos">${(ev.obra ?? ev.marca) !== undefined ? '<button class="btn" id="verObraB">Ver dónde fue</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
-    this.boton('verObraB', () => { this.cerrarTarjeta(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(ev.obra); });
+    this.boton('verObraB', () => { this.cerrarTarjeta(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(ev.obra ?? ev.marca); });
   }
   // Fase 4: personajes con papel propio. Llegadas y misiones del año, en una sola tarjeta.
   figurasAnio(alTerminar0) {

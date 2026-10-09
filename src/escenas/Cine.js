@@ -162,6 +162,17 @@ export class Cine {
       this.fogonazos = { cada: .22, prox: .4, centro: p };
       return [pz[0], pz[1] - 10];
     }
+    if (tipo === 'incendio') {
+      // Una obra arde: llamas y humo negro sobre ella; los vecinos llegan corriendo y se quedan mirando (o con baldes).
+      const N = this.T().N, i = this.datos.obra, d = i !== undefined ? { r: Math.floor(i / N) + .5, c: i % N + .5 } : p, q = this.punto(d.r, d.c);
+      this.objetos.push(sc.add.particles(q[0], q[1] - 6, 'edificios', { frame: 'humo', x: { min: -12, max: 12 }, lifespan: 900, speedY: { min: -46, max: -22 }, speedX: { min: -8, max: 8 }, scale: { start: .3, end: .05 }, alpha: { start: .75, end: 0 }, tint: [0xE8742A, 0xF0A040, 0xC8401E], blendMode: 'ADD', frequency: 55 }).setDepth(d.r + d.c + 2));
+      this.objetos.push(sc.add.particles(q[0], q[1] - 22, 'edificios', { frame: 'humo', x: { min: -10, max: 10 }, lifespan: 3400, speedY: { min: -32, max: -16 }, speedX: { min: -3, max: 9 }, scale: { start: .45, end: 1.7 }, alpha: { start: .75, end: 0 }, tint: 0x3A322C, frequency: 100 }).setDepth(40000 - 2));
+      for (let k = 0; k < 9; k++) {
+        const an = k / 9 * Math.PI * 2, de = this.origen(3), a = { r: d.r + Math.cos(an) * 1.3, c: d.c + Math.sin(an) * 1.3 };
+        const x = this.caminante(TIPOS[k % 5], k % 3, de, [a], .95, .2 + (k % 4) * .25); x.mira = d;
+      }
+      return [q[0], q[1] - 14];
+    }
     if (tipo === 'terremoto') {
       sc.cameras.main.shake(5200, .007);
       const obras = S.map.map((x, i) => x.b && x.b !== 'cultivo' && x.b !== 'cafetal' ? i : -1).filter(i => i >= 0), N = this.T().N;

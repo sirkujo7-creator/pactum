@@ -4,7 +4,7 @@
 // Fase 9: caminan por una rejilla de medias casillas (centros, bordes y esquinas) y prefieren las calles; doblan
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
-import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, epidemiaVisible } from '../core/index.js';
+import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, epidemiaVisible, movilizados } from '../core/index.js';
 import { hornearGente, PASOS12, hornearAcciones, ACCIONES } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { caminos } from '../arte/terreno.js';
@@ -50,6 +50,7 @@ export class Pobladores {
     const b = f.destino === 'trabajo' && p.trabajo !== null ? this.scene.S.map[p.trabajo].b : null;
     if (f.destino === 'luto' && tiene('rezar')) return 'rezar'; // velorio: cabeza baja y manos juntas
     if (f.destino === 'enfermo' && tiene('rezar')) return 'rezar';
+    if (f.destino === 'protesta' && tiene('saludar')) return 'saludar'; // brazo en alto
     if (f.mira && tiene('conversar')) return 'conversar';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
     const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'], hospital: ['saludar'], teatro: ['saludar'] }[b];
@@ -66,7 +67,7 @@ export class Pobladores {
     this.ponerAcciones();
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     this.rejilla();
-    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.marca) f.marca.destroy(); }
+    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.marca) f.marca.destroy(); if (f.pancarta) f.pancarta.destroy(); }
     plan.forEach((p, k) => {
       let f = this.figuras[k];
       if (!f) {
@@ -114,6 +115,10 @@ export class Pobladores {
     if (d > .8 || d < .08) return { ...this.centro(p.casa, .2), casa: true };
     // Reacciones a lo que pasa (animación, tanda 2): luto en la plaza y gente que acude al hospital en una epidemia.
     const S = this.scene.S;
+    // Tanda 3: con el aguacero de La Niña o el año de un terremoto o una erupción, muchos corren a refugiarse en casa.
+    if (this.peligro() && p.semilla < .7 && Math.random() < .8) return { ...this.centro(p.casa, .2), casa: true, prisa: true };
+    // Tanda 3: si un movimiento social está movilizado, parte de los adultos protesta en la plaza con pancartas.
+    if (p.tipo !== 'nino' && p.plaza >= 0 && p.semilla > .25 && p.semilla < .6 && this.protesta() && Math.random() < .8) return { ...this.alCorrillo(f), lugar: 'protesta' };
     if (p.tipo !== 'nino' && lutoVisible(S) && p.plaza >= 0 && p.semilla < .55 && Math.random() < .75) return { ...this.alCorrillo(f), lugar: 'luto' };
     if (epidemiaVisible(S) && p.semilla > .6 && Math.random() < .6) { const h = S.map.findIndex(x => x.b === 'hospital' && !x.ob); if (h >= 0) return { ...this.centro(h, .5), lugar: 'enfermo' }; }
     // Los niños sin escuela (o de tarde) juegan en ronda cerca de la plaza.
@@ -132,6 +137,13 @@ export class Pobladores {
     const g = G[f.p.id % G.length], an = f.p.semilla * Math.PI * 2 + Math.random() * .6, rad = .17 + Math.random() * .08;
     return { r: g.r + Math.cos(an) * rad, c: g.c + Math.sin(an) * rad, lugar: 'plaza', mira: g };
   }
+  // ¿Hay que correr a refugiarse? Aguacero de La Niña (cuando llueve en el mapa) o terremoto o erupción este año.
+  peligro() {
+    const S = this.scene.S, D = S.desastre, ef = this.scene.efectos;
+    if (D && D.anio === S.year && (D.tipo === 'terremoto' || D.tipo === 'erupcion')) return true;
+    return !!(S.clima && S.clima.fenomeno === 'nina' && ef && ef.lluvia && ef.lluvia.length);
+  }
+  protesta() { const S = this.scene.S; return movilizados(S).length > 0; }
   puntoRonda(f) { const R = this.ronda, an = f.p.semilla * Math.PI * 2; return { r: R.r + Math.cos(an) * .25, c: R.c + Math.sin(an) * .25 }; }
 
   // ---------- Rejilla para caminar (fase 9) ----------
@@ -230,6 +242,10 @@ export class Pobladores {
     const quieto = reducirMovimiento();
     if (!quieto) { const r = this.reloj + dt / DURACION_DIA; if (r >= 1) this.dias = (this.dias || 0) + 1; this.reloj = r % 1; }
     this.t = (this.t || 0) + dt;
+    // Tanda 3: cuando empieza el peligro (aguacero, temblor), quien está afuera deja lo que hace y corre a su casa.
+    const peligro = !quieto && this.peligro();
+    if (peligro && !this._peligro) for (const f of this.figuras) if (!f.oculto && f.p.semilla < .7) { f.espera = 0; f.ruta = []; }
+    this._peligro = peligro;
     for (const f of this.figuras) {
       if (quieto) { f.oculto = false; this.dibujar(f, false); continue; }
       if (f.espera > 0) {
@@ -252,7 +268,7 @@ export class Pobladores {
       if (!f.ruta.length) {
         const d = this.siguiente(f), r = this.ruta(f, d);
         if (!r) { f.espera = 3 + Math.random() * 4; continue; }
-        f.ruta = r; f.aCasa = !!d.casa; f.destino = d.lugar; f.mira = null; f.miraLuego = d.mira || null; f.oculto = false; f.andado = 0;
+        f.ruta = r; f.aCasa = !!d.casa; f.prisa = !!d.prisa; f.destino = d.lugar; f.mira = null; f.miraLuego = d.mira || null; f.oculto = false; f.andado = 0;
       }
       const d = f.ruta[0], dr = d.r - f.r, dc = d.c - f.c, dist = Math.hypot(dr, dc);
       if (dist < .02) {
@@ -260,7 +276,7 @@ export class Pobladores {
         // Al llegar se queda un buen rato: así hay menos gente andando a la vez y más quieta con sentido.
         if (!f.ruta.length) {
           const b = f.destino === 'trabajo' && f.p.trabajo !== null ? this.scene.S.map[f.p.trabajo].b : null;
-          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : f.destino === 'luto' || f.destino === 'enfermo' ? 30 + Math.random() * 25 : 3 + Math.random() * 5;
+          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : f.destino === 'luto' || f.destino === 'enfermo' || f.destino === 'protesta' ? 30 + Math.random() * 25 : 3 + Math.random() * 5;
           f.mira = f.miraLuego;
           if (b === 'mercado') { f.frente = 1; f.voltear = f.p.semilla < .5; } // el vendedor mira a la calle
           if (f.aCasa) f.oculto = true;
@@ -270,7 +286,7 @@ export class Pobladores {
       }
       // Arranca suave y anda a paso parejo; el paso va con la distancia recorrida (los pies no resbalan).
       f.andado += dt;
-      const v = Math.min(dist, f.vel * dt * Math.min(1, .45 + f.andado * 1.4));
+      const v = Math.min(dist, f.vel * (f.prisa ? 2.3 : 1) * dt * Math.min(1, .45 + f.andado * 1.4));
       f.r += dr / dist * v; f.c += dc / dist * v; f.fase += v * 13;
       // Solo gira si la dirección cambia de verdad (en las esquinas suavizadas no se voltea de un lado al otro).
       if (Math.abs(dc + dr) > dist * .3) f.frente = (dc + dr) >= 0 ? 1 : 0;
@@ -287,6 +303,10 @@ export class Pobladores {
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
     f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);
+    // Tanda 3: quien protesta lleva una pancarta (también mientras camina a la plaza).
+    const conPancarta = f.destino === 'protesta' && !f.oculto && f.p.semilla < .45 && this.scene.textures.exists('cinePancarta');
+    if (conPancarta && !f.pancarta) f.pancarta = this.scene.add.image(0, 0, 'cinePancarta').setScale(.3).setOrigin(.5, 1);
+    if (f.pancarta) { f.pancarta.setVisible(conPancarta); if (conPancarta) f.pancarta.setPosition(p[0] + (f.voltear ? -3 : 3), p[1] - 12).setDepth(f.r + f.c + .015); }
     // Fase 13: los miembros de las familias que escriben cartas llevan una marca roja sobre la cabeza.
     if (f.p.familia && !f.marca) f.marca = this.scene.add.circle(0, 0, 1.7, 0x9C2F25).setStrokeStyle(.6, 0xD4A24C);
     if (f.marca) f.marca.setPosition(p[0], p[1] - f.img.displayHeight - 2.5).setDepth(f.r + f.c + .02).setVisible(!!f.p.familia && !f.oculto);
@@ -330,5 +350,5 @@ export class Pobladores {
     this.esNoche = noche > .5;
   }
 
-  destruir() { this.figuras.forEach(f => f.img.destroy()); this.luces.forEach(l => l.destroy()); this.noche.destroy(); this.ocaso.destroy(); }
+  destruir() { this.figuras.forEach(f => { f.img.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); this.ocaso.destroy(); }
 }

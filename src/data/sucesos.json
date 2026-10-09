@@ -41,7 +41,13 @@
         "banco"
       ],
       "causa": "Inseguridad alta y un gobierno con poca legitimidad: quien no cree en las instituciones las ataca.",
-      "prevenir": "Recupera la legitimidad, reduce el desempleo y la desigualdad, y extiende la cobertura de la policía."
+      "prevenir": "Recupera la legitimidad, reduce el desempleo y la desigualdad, y extiende la cobertura de la policía.",
+      "quema": true,
+      "cine": [
+        "incendio",
+        "El atentado",
+        "Una explosión sacude la madrugada; el humo sale de la obra y los vecinos corren a ver."
+      ]
     },
     "robo": {
       "icono": "🕵️",
@@ -84,7 +90,13 @@
         "cafetal"
       ],
       "causa": "Obras viejas o sin mantenimiento, y sequía.",
-      "prevenir": "Mantén las obras en buen estado (Hacienda) y prepárate para El Niño."
+      "prevenir": "Mantén las obras en buen estado (Hacienda) y prepárate para El Niño.",
+      "quema": true,
+      "cine": [
+        "incendio",
+        "El incendio",
+        "El fuego prende en la obra; los vecinos forman una cadena con baldes de agua."
+      ]
     },
     "brote": {
       "icono": "🦠",
@@ -114,7 +126,8 @@
       "fuerzaMovimiento": 12,
       "causa": "Una policía en un gobierno corrupto, sin control ciudadano.",
       "prevenir": "Baja la corrupción: actúa por el bien común, aprueba la libertad de prensa.",
-      "aniosEntre": 8
+      "aniosEntre": 8,
+      "marca": "reten"
     },
     "v_lider": {
       "icono": "🕯️",
@@ -135,7 +148,13 @@
       "muertes": 1,
       "peso": 2,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
-      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
+      "marca": "cruz",
+      "cine": [
+        "procesion",
+        "El entierro del líder",
+        "El pueblo acompaña el ataúd con velas, en silencio. Nadie dice el nombre de los asesinos."
+      ]
     },
     "v_plaza": {
       "icono": "🔫",
@@ -153,7 +172,12 @@
       "muertes": 2,
       "peso": 2,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
-      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
+      "cine": [
+        "toma",
+        "Disparos en la plaza",
+        "Dos jinetes disparan a la salida de la misa; la gente corre a esconderse."
+      ]
     },
     "v_emboscada": {
       "icono": "🌄",
@@ -173,7 +197,8 @@
       "muertes": 3,
       "peso": 1,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
-      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
+      "marca": "cruz"
     },
     "v_secuestro": {
       "icono": "📜",
@@ -192,7 +217,8 @@
       "muertes": 0,
       "peso": 1,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
-      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
+      "marca": "pancarta"
     },
     "v_paro": {
       "icono": "⛔",
@@ -210,7 +236,12 @@
       "muertes": 0,
       "peso": 1,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
-      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
+      "cine": [
+        "marcha",
+        "El paro armado",
+        "Nadie sale a trabajar; la plaza queda llena de gente que espera."
+      ]
     },
     "v_finca": {
       "icono": "🔥",
@@ -229,7 +260,17 @@
       "muertes": 1,
       "peso": 2,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
-      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina."
+      "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
+      "obras": [
+        "cultivo",
+        "cafetal"
+      ],
+      "quema": true,
+      "cine": [
+        "incendio",
+        "Queman una finca",
+        "El humo de la finca se ve desde la plaza. Nadie se atreve a acercarse antes del amanecer."
+      ]
     },
     "v_huelga": {
       "violencia": true,
@@ -254,7 +295,12 @@
         "modernizacion",
         "paz"
       ],
-      "dano": 15
+      "dano": 15,
+      "cine": [
+        "marcha",
+        "La huelga",
+        "Los obreros salen del taller y se plantan frente a la puerta."
+      ]
     },
     "v_marcha": {
       "violencia": true,
@@ -277,6 +323,11 @@
         "modernizacion",
         "paz",
         "digital"
+      ],
+      "cine": [
+        "marcha",
+        "La marcha estudiantil",
+        "Estudiantes y profesores salen de la universidad con pancartas hacia la plaza."
       ]
     },
     "v_teatro": {
@@ -301,7 +352,13 @@
         "violencia",
         "modernizacion"
       ],
-      "dano": 45
+      "dano": 45,
+      "quema": true,
+      "cine": [
+        "incendio",
+        "Arde el teatro",
+        "Una noche de estreno el teatro se llena de humo; el público sale corriendo."
+      ]
     },
     "v_banco": {
       "violencia": true,
@@ -325,7 +382,12 @@
         "violencia",
         "paz"
       ],
-      "dano": 10
+      "dano": 10,
+      "cine": [
+        "toma",
+        "Asalto al banco",
+        "Hombres armados salen del banco a mediodía; suenan disparos y la calle se vacía."
+      ]
     },
     "v_procesion": {
       "violencia": true,
@@ -346,6 +408,11 @@
       "epocas": [
         "violencia",
         "paz"
+      ],
+      "cine": [
+        "procesion",
+        "La procesión sale de la iglesia",
+        "La gente sale de la iglesia con velas y rezos, en silencio."
       ]
     }
   },

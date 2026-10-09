@@ -45,6 +45,12 @@ export class Vida {
       a.img = this.figura(o.k, o.r, o.c, o.s);
       this.animales.push(a);
     }
+    // Tanda 3: algunas vacas, cebúes y caballos tienen su cría, que las sigue de cerca.
+    this.animales.filter(a => a.k === 'vaca' || a.k === 'cebu' || a.k === 'caballo').forEach((m, k) => {
+      if (k % 3) return;
+      const a = { k: 'cria', madre: m, r: m.r + .18, c: m.c + .12, s: m.s * .58, espera: azar(0, 2), ruta: null, lado: azar(-.2, .2) };
+      a.img = this.figura(m.k, a.r, a.c, a.s); this.animales.push(a);
+    });
     // Gallinas junto a algunas casas y perros por el pueblo.
     const casas = S.map.map((x, i) => x.b === 'casa' && !(x.u >= 80) ? i : -1).filter(i => i >= 0);
     casas.forEach((i, k) => {
@@ -52,6 +58,11 @@ export class Vida {
       if (k % 2 === 0) for (let j = 0; j < 2; j++) {
         const a = { k: 'gallina', casa: { r, c: c + j * .3 }, r, c: c + j * .3, s: 1, espera: azar(0, 2), var: (k + j) % 2 };
         a.img = this.figura('gallina' + a.var, a.r, a.c); this.animales.push(a);
+        // Tanda 3: pollitos amarillos detrás de la primera gallina.
+        if (j === 0 && k % 4 === 0) for (let q = 0; q < 3; q++) {
+          const b = { k: 'pollito', madre: a, r, c: c + .1 * q, s: .42, espera: azar(0, 1), ruta: null, lado: (q - 1) * .09 };
+          b.img = this.figura('gallina0', b.r, b.c, b.s).setTint(0xF2D27A); this.animales.push(b);
+        }
       }
       if (k % 4 === 1 && this.animales.filter(x => x.k === 'perro').length < 6) {
         const a = { k: 'perro', casa: { r, c }, r, c, s: 1, espera: azar(1, 4), fase: 0 };
@@ -96,6 +107,7 @@ export class Vida {
       else if (a.k === 'cerdo') this.cerdo(a, dt);
       else if (a.k === 'gato') this.gato(a, dt);
       else if (a.k === 'chulo') this.chulo(a, dt);
+      else if (a.k === 'cria' || a.k === 'pollito') this.cria(a, dt);
     }
     this.aves(dt);
     this.viento(t);
@@ -123,8 +135,36 @@ export class Vida {
     // Quieta: casi siempre pastando; a ratos levanta la cabeza (cambio de postura pausado, no un parpadeo).
     a.cabeza = (a.cabeza ?? azar(2, 6)) - dt;
     if (a.cabeza <= 0) { a.alta = !a.alta; a.cabeza = a.alta ? azar(1.5, 3) : azar(4, 9); }
-    if (a.espera <= 0) { a.ruta = { r: a.casa.r + azar(-.35, .35), c: a.casa.c + azar(-.35, .35) }; a.espera = azar(5, 14); }
-    else a.img.setFrame(a.alta ? a.k : a.k + 'Pasta');
+    if (a.espera <= 0) {
+      // Tanda 3: a ratos baja a beber al río (si queda cerca) y luego vuelve a su potrero.
+      const agua = !a.bebiendo && Math.random() < .3 ? this.orilla(a) : null;
+      if (agua) { a.ruta = agua; a.bebiendo = true; a.alta = false; a.espera = azar(8, 14); }
+      else { a.bebiendo = false; a.ruta = { r: a.casa.r + azar(-.35, .35), c: a.casa.c + azar(-.35, .35) }; a.espera = azar(5, 14); }
+    }
+    else a.img.setFrame(a.alta && !a.bebiendo ? a.k : a.k + 'Pasta');
+  }
+  // Punto en la orilla del río más cercana al potrero (a tres casillas como máximo), o null.
+  orilla(a) {
+    const { S, T } = this.scene, N = T.N, r0 = Math.floor(a.casa.r), c0 = Math.floor(a.casa.c);
+    let mejor = null, dm = 9;
+    for (let r = Math.max(0, r0 - 3); r <= Math.min(N - 1, r0 + 3); r++) for (let c = Math.max(0, c0 - 3); c <= Math.min(N - 1, c0 + 3); c++) {
+      const x = S.map[r * N + c]; if (x.t === 'rio' || x.b) continue;
+      for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const r2 = r + dr, c2 = c + dc; if (r2 < 0 || c2 < 0 || r2 >= N || c2 >= N || S.map[r2 * N + c2].t !== 'rio') continue;
+        const d = Math.hypot(r - r0, c - c0); if (d < dm) { dm = d; mejor = { r: r + .5 + dr * .38, c: c + .5 + dc * .38 }; }
+      }
+    }
+    return mejor;
+  }
+  // Cría (ternero, potro) o pollito: sigue a su madre a unos pasos y se detiene cuando ella se detiene.
+  cria(a, dt) {
+    const m = a.madre, o = { r: m.r + .16 + a.lado * .5, c: m.c + .1 + a.lado }, lejos = Math.hypot(o.r - a.r, o.c - a.c);
+    if (!a.ruta && lejos > .12) a.ruta = o;
+    if (a.ruta) { a.ruta = o; this.mover(a, dt, a.k === 'pollito' ? .2 : .14); }
+    if (a.k === 'pollito') a.img.setFrame(a.ruta || Math.sin(this.scene.time.now / 300 + a.lado * 9) > .3 ? 'gallina0' : 'gallina0p');
+    else a.img.setFrame(a.ruta ? m.k + 'A' + (Math.floor(a.fase) % 12) : (m.bebiendo || !m.alta ? m.k + 'Pasta' : m.k));
+    if (!a.ruta && m.img.flipX !== a.img.flipX) a.img.setFlipX(m.img.flipX);
+    this.dibujar(a);
   }
   // Garza: camina despacio y a veces vuela a otra orilla.
   garza(a, dt, N, S) {
@@ -236,10 +276,13 @@ export class Vida {
   }
   // Viento: los árboles se mecen apenas y despacio, con ráfagas que recorren el territorio.
   viento(t) {
-    const plantas = this.scene.plantas;
+    const plantas = this.scene.plantas, ef = this.scene.efectos;
+    // Tanda 3: con aguacero los árboles se mecen más (el doble), y vuelven poco a poco a la calma.
+    const meta = ef && ef.lluvia && ef.lluvia.length ? 2.1 : 1;
+    this.fuerza = (this.fuerza || 1) + (meta - (this.fuerza || 1)) * .02; const fuerza = this.fuerza;
     for (const k in plantas) for (const img of plantas[k]) {
       if (!img.getData('arbol')) continue;
-      const x = img.x, rafaga = .55 + .45 * Math.sin(t * .35 - x * .004);
+      const x = img.x, rafaga = (.55 + .45 * Math.sin(t * .35 - x * .004)) * fuerza;
       img.setAngle(Math.sin(t * 1.1 + x * .05 + img.y * .03) * img.getData('arbol') * rafaga);
     }
   }
