@@ -4,7 +4,7 @@
 // Fase 9: caminan por una rejilla de medias casillas (centros, bordes y esquinas) y prefieren las calles; doblan
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
-import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua } from '../core/index.js';
+import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, epidemiaVisible } from '../core/index.js';
 import { hornearGente, PASOS12, hornearAcciones, ACCIONES } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { caminos } from '../arte/terreno.js';
@@ -45,6 +45,8 @@ export class Pobladores {
   accionDe(f) {
     const p = f.p, tipo = p.tipo, tiene = k => ACCIONES[tipo] && ACCIONES[tipo][k];
     const b = f.destino === 'trabajo' && p.trabajo !== null ? this.scene.S.map[p.trabajo].b : null;
+    if (f.destino === 'luto' && tiene('rezar')) return 'rezar'; // velorio: cabeza baja y manos juntas
+    if (f.destino === 'enfermo' && tiene('rezar')) return 'rezar';
     if (f.mira && tiene('conversar')) return 'conversar';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
     const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'], hospital: ['saludar'], teatro: ['saludar'] }[b];
@@ -107,6 +109,10 @@ export class Pobladores {
     const d = this.reloj, p = f.p;
     const a = (q, lugar) => ({ ...q, lugar });
     if (d > .8 || d < .08) return { ...this.centro(p.casa, .2), casa: true };
+    // Reacciones a lo que pasa (animación, tanda 2): luto en la plaza y gente que acude al hospital en una epidemia.
+    const S = this.scene.S;
+    if (p.tipo !== 'nino' && lutoVisible(S) && p.plaza >= 0 && p.semilla < .55 && Math.random() < .75) return { ...this.alCorrillo(f), lugar: 'luto' };
+    if (epidemiaVisible(S) && p.semilla > .6 && Math.random() < .6) { const h = S.map.findIndex(x => x.b === 'hospital' && !x.ob); if (h >= 0) return { ...this.centro(h, .5), lugar: 'enfermo' }; }
     // Los niños sin escuela (o de tarde) juegan en ronda cerca de la plaza.
     if (p.tipo === 'nino' && this.ronda && (p.trabajo === null || d > .55) && Math.random() < .7) return a(this.puntoRonda(f), 'juego');
     if (d > .55 && Math.random() < .6 && p.plaza >= 0) return this.alCorrillo(f);
@@ -251,7 +257,7 @@ export class Pobladores {
         // Al llegar se queda un buen rato: así hay menos gente andando a la vez y más quieta con sentido.
         if (!f.ruta.length) {
           const b = f.destino === 'trabajo' && f.p.trabajo !== null ? this.scene.S.map[f.p.trabajo].b : null;
-          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : 3 + Math.random() * 5;
+          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : f.destino === 'luto' || f.destino === 'enfermo' ? 30 + Math.random() * 25 : 3 + Math.random() * 5;
           f.mira = f.miraLuego;
           if (b === 'mercado') { f.frente = 1; f.voltear = f.p.semilla < .5; } // el vendedor mira a la calle
           if (f.aCasa) f.oculto = true;
