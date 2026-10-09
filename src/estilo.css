@@ -492,3 +492,4 @@ section.fija>.pl-c{padding:0 12px 10px}
   .phil,.historia-real,.porque-afecta{font-size:1.02rem}
   .chip{font-size:.95rem}
 }
+.vig-foto{display:block;width:100%;aspect-ratio:900/330;object-fit:cover;border-radius:12px;margin:0 0 8px;box-shadow:0 2px 8px rgba(40,25,10,.25);background:#e6d8b8}

@@ -7,7 +7,7 @@ const raiz = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const lista = ['./', 'index.html', 'manifest.webmanifest'];
 const recorrer = (dir, filtro) => fs.readdirSync(path.join(raiz, dir), { withFileTypes: true }).flatMap(e =>
   e.isDirectory() ? recorrer(path.join(dir, e.name), filtro) : filtro.test(e.name) ? [path.join(dir, e.name).split(path.sep).join('/')] : []);
-lista.push(...recorrer('src', /\.(js|css|json)$/).sort());
+lista.push(...recorrer('src', /\.(js|css|json|jpg)$/).sort());
 lista.push(...recorrer('vendor', /\.(js|woff2)$/).sort());
 lista.push(...recorrer('iconos', /\.png$/).sort());
 const sw = path.join(raiz, 'sw.js');
