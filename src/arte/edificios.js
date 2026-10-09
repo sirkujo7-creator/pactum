@@ -314,15 +314,6 @@ function recetas(era = 1) {
     blob(g, p[0] + 8, p[1] - 1, 3, 2.5, '#5E8A4D', r, .9);
   }]);
   // Cultura y deporte (fase 5): cancha y estadio (la biblioteca y el teatro están en publicos.js).
-  L.push(['cancha', 92, 56, 46, 32, (g, r) => {
-    const b = iso(g, .92, .7, 0, 1.5, '#7FA35C', '#6A8C4A', '#8CB466', r);
-    g.strokeStyle = '#F4F1E6'; g.lineWidth = .8; const L1 = [V2(-.4, -.3, 1.5), V2(.4, -.3, 1.5), V2(.4, .3, 1.5), V2(-.4, .3, 1.5)];
-    g.beginPath(); g.moveTo(...L1[0]); for (const q of L1.slice(1)) g.lineTo(...q); g.closePath(); g.stroke();
-    const m1 = V2(0, -.3, 1.5), m2 = V2(0, .3, 1.5); g.beginPath(); g.moveTo(...m1); g.lineTo(...m2); g.stroke(); const cc = V2(0, 0, 1.5); g.beginPath(); g.ellipse(cc[0], cc[1], 6, 3, 0, 0, 7); g.stroke();
-    for (const u of [-.4, .4]) { const q = V2(u, 0, 1.5); g.strokeStyle = '#E8E4DA'; g.lineWidth = .9; g.beginPath(); g.moveTo(q[0] - 3, q[1] + 1.5); g.lineTo(q[0] - 3, q[1] - 6); g.lineTo(q[0] + 3, q[1] - 7.5); g.lineTo(q[0] + 3, q[1]); g.stroke(); }
-    for (const [u, v, col] of [[-.15, -.1, '#C0392B'], [.12, .08, '#2D5D72'], [.22, -.15, '#C0392B']]) { const q = V2(u, v, 1.5); g.fillStyle = col; g.fillRect(q[0] - 1, q[1] - 5, 2, 3.4); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(q[0], q[1] - 6, 1.1, 0, 7); g.fill(); }
-    const pel = V2(.02, -.02, 1.5); g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(pel[0], pel[1] - 1, .9, 0, 7); g.fill();
-  }]);
   L.push(['mina', 64, 50, 32, 36, (g, r) => {
     sombra(g, 16, 5, 4);
     wash(g, [[-12, 4], [-9, -9], [0, -13], [9, -9], [12, 4]], '#6E6358', r, .95, .4);
