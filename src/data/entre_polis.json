@@ -142,7 +142,8 @@
       "diplomatico": {
         "nombre": "Padre Anselmo, mediador",
         "icono": "⛪",
-        "frase": "Hijo, los muertos no entienden de fronteras. Que se hable antes de que se dispare."
+        "frase": "Hijo, los muertos no entienden de fronteras. Que se hable antes de que se dispare.",
+        "neutral": true
       },
       "mediar": {
         "efectos": {
@@ -636,5 +637,47 @@
       ],
       "pensar": "¿Por qué algunos gobiernos buscan un enemigo afuera cuando tienen problemas adentro?"
     }
-  ]
+  ],
+  "diplomaticos": {
+    "antioquia": {
+      "nombre": "Don Elías Restrepo",
+      "icono": "🎩",
+      "rol": "enviado de Medellín"
+    },
+    "santafe": {
+      "nombre": "Doctor Mosquera",
+      "icono": "📜",
+      "rol": "abogado de Santafé"
+    },
+    "huila": {
+      "nombre": "Doña Marta Perdomo",
+      "icono": "☕",
+      "rol": "delegada del Huila"
+    },
+    "quindio": {
+      "nombre": "Ingeniero Giraldo",
+      "icono": "📐",
+      "rol": "delegado del Quindío"
+    },
+    "valle": {
+      "nombre": "Don Heriberto Cabal",
+      "icono": "🎷",
+      "rol": "vocero del Valle"
+    },
+    "venezuela": {
+      "nombre": "Cónsul Ramírez",
+      "icono": "🛂",
+      "rol": "cónsul de Venezuela"
+    },
+    "ecuador": {
+      "nombre": "Don Segundo Quispe",
+      "icono": "👒",
+      "rol": "representante de Ecuador"
+    },
+    "panama": {
+      "nombre": "Capitán Arosemena",
+      "icono": "⚓",
+      "rol": "naviero y enviado de Panamá"
+    }
+  }
 }
