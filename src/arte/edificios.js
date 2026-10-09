@@ -278,13 +278,6 @@ function recetas(era = 1) {
     g.fillStyle = '#E7C76B'; g.beginPath(); g.moveTo(p[0], p[1] - 56); g.quadraticCurveTo(p[0] + 4.5, p[1] - 50, p[0], p[1] - 46); g.quadraticCurveTo(p[0] - 4.5, p[1] - 50, p[0], p[1] - 56); g.fill();
     g.fillStyle = '#C0392B'; g.fillRect(p[0] - 1, p[1] - 52, 2, 4);
   }]);
-  L.push(['m_museo', 90, 96, 45, 76, (g, r) => {
-    sombra(g, 28, 6, 5); const b = iso(g, .86, .62, 0, 22, '#EDE6D4', '#CFC7B3', null, r, 0, 0); techo(g, b, 5, 11, '#8E3B2E', '#B5543F', r);
-    wash(g, caraI(b, .38, .26, 0, 12), '#5A4632', r, .97, .2);
-    for (const k of [.08, .68]) wash(g, caraI(b, k, .22, 8, 7), '#6E8FA6', r, .95, .2);
-    const q = V2(-.2, .1, 34); g.strokeStyle = '#4A3A24'; g.lineWidth = .9; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0], q[1] - 20); g.stroke();
-    g.fillStyle = '#C0392B'; g.fillRect(q[0], q[1] - 20, 11, 4); g.fillStyle = '#E7C76B'; g.fillRect(q[0], q[1] - 16, 11, 3.5); g.fillStyle = '#2D5D72'; g.fillRect(q[0], q[1] - 12.5, 11, 3.5);
-  }]);
   // Maravillas (fase 17): jardín botánico, conservatorio, túnel de La Línea y parque de Los Nevados.
   L.push(['m_mv_jardin', 100, 80, 50, 62, (g, r) => {
     sombra(g, 34, 6, 5); const b = iso(g, .9, .64, 0, 14, '#DDE6DA', '#B7C6B5', null, r, 0, 0);
@@ -321,23 +314,6 @@ function recetas(era = 1) {
     blob(g, p[0] + 8, p[1] - 1, 3, 2.5, '#5E8A4D', r, .9);
   }]);
   // Cultura y deporte (fase 5): cancha y estadio (la biblioteca y el teatro están en publicos.js).
-  L.push(['cancha', 92, 56, 46, 32, (g, r) => {
-    const b = iso(g, .92, .7, 0, 1.5, '#7FA35C', '#6A8C4A', '#8CB466', r);
-    g.strokeStyle = '#F4F1E6'; g.lineWidth = .8; const L1 = [V2(-.4, -.3, 1.5), V2(.4, -.3, 1.5), V2(.4, .3, 1.5), V2(-.4, .3, 1.5)];
-    g.beginPath(); g.moveTo(...L1[0]); for (const q of L1.slice(1)) g.lineTo(...q); g.closePath(); g.stroke();
-    const m1 = V2(0, -.3, 1.5), m2 = V2(0, .3, 1.5); g.beginPath(); g.moveTo(...m1); g.lineTo(...m2); g.stroke(); const cc = V2(0, 0, 1.5); g.beginPath(); g.ellipse(cc[0], cc[1], 6, 3, 0, 0, 7); g.stroke();
-    for (const u of [-.4, .4]) { const q = V2(u, 0, 1.5); g.strokeStyle = '#E8E4DA'; g.lineWidth = .9; g.beginPath(); g.moveTo(q[0] - 3, q[1] + 1.5); g.lineTo(q[0] - 3, q[1] - 6); g.lineTo(q[0] + 3, q[1] - 7.5); g.lineTo(q[0] + 3, q[1]); g.stroke(); }
-    for (const [u, v, col] of [[-.15, -.1, '#C0392B'], [.12, .08, '#2D5D72'], [.22, -.15, '#C0392B']]) { const q = V2(u, v, 1.5); g.fillStyle = col; g.fillRect(q[0] - 1, q[1] - 5, 2, 3.4); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(q[0], q[1] - 6, 1.1, 0, 7); g.fill(); }
-    const pel = V2(.02, -.02, 1.5); g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(pel[0], pel[1] - 1, .9, 0, 7); g.fill();
-  }]);
-  L.push(['estadio', 112, 84, 56, 58, (g, r) => {
-    sombra(g, 36, 8, 8);
-    const b = iso(g, .96, .8, 0, 12, '#CFC8B6', '#B3AB97', null, r);
-    const c0 = V2(0, 0, 12); g.fillStyle = '#7FA35C'; g.beginPath(); g.ellipse(c0[0], c0[1], 26, 13, 0, 0, 7); g.fill();
-    g.strokeStyle = '#F4F1E6'; g.lineWidth = .7; g.beginPath(); g.ellipse(c0[0], c0[1], 10, 5, 0, 0, 7); g.stroke();
-    for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; g.fillStyle = ['#C0392B', '#E7C76B', '#2D5D72', '#F4F1E6'][k % 4]; g.beginPath(); g.arc(c0[0] + Math.cos(a) * 31, c0[1] + Math.sin(a) * 15.5, 1.3, 0, 7); g.fill(); }
-    for (const u of [-.46, .46]) { const q = V2(u, -.38, 12); g.fillStyle = '#6B6258'; g.fillRect(q[0] - .6, q[1] - 22, 1.2, 22); g.fillStyle = '#F6E3A0'; g.fillRect(q[0] - 3, q[1] - 24, 6, 2.6); }
-  }]);
   L.push(['mina', 64, 50, 32, 36, (g, r) => {
     sombra(g, 16, 5, 4);
     wash(g, [[-12, 4], [-9, -9], [0, -13], [9, -9], [12, 4]], '#6E6358', r, .95, .4);
@@ -493,7 +469,7 @@ export function figurasDeObra(k, i, etapa, reg, era) {
     case 'iglesia': { const e = era === undefined ? Math.min(etapa, 3) : era; return [{ k: 'iglesia' + e, s: [1.1, 1.2, 1.28, 1.28][e] }]; } // capilla, colonial, dos torres, restaurada: la más grande
     case 'agora': return [{ k: 'sede-' + reg, s: 1.12 }]; // las obras importantes se ven más grandes
     // Fase 8: parque ordenado: la fuente al centro, dos árboles a los lados y setos.
-    case 'fundacion': return [{ k: 'cruzFundacion', du: .06, dv: .06 }, { k: 'ceiba', du: -.3, dv: -.28, s: 1, n: true }];
+    case 'fundacion': return [{ k: 'plaza' + Math.max(0, Math.min(3, etapa | 0)), du: 0, dv: 0 }]; // la plaza crece con la etapa (pedido de Juan)
     case 'cementerio': return [{ k: 'cementerio' }, { k: 'cipres', du: -.3, dv: -.32 }, { k: 'cipres', du: -.36, dv: .05, s: .85 }];
     case 'parque': return [{ k: 'fuente' }, { k: 'guayacan', du: -.3, dv: -.3, s: .85, n: true }, { k: 'arbol', du: .3, dv: .3, s: .9, n: true }, { k: 'arbusto', du: .3, dv: -.3, s: .9, n: true }, { k: 'arbusto', du: -.3, dv: .3, s: .9, n: true }];
     case 'cafetal': return [{ k: 'platano', du: -.3, dv: -.3, s: .95, n: true }, { k: 'platano', du: .32, dv: .1, s: .85, n: true }];
