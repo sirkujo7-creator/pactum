@@ -32,3 +32,12 @@ export function imagenDe(titulo, texto, fx, S) { return imagenTema(temaDeTexto(t
 // Las cartas se ilustran por su escena (lo que cuenta la carta) y, si no, por el tema del texto.
 export function imagenCarta(escena, familia, texto, S) { return imagenTema(POR_ESCENA[escena] || temaDeTexto('', texto, null), S); }
 export const html = (src, alt = '') => `<img class="vig-foto" src="${src}" alt="${alt}" loading="lazy" decoding="async">`;
+
+// Ilustraciones en acuarela de las cartas (hechas por Juan con Canva/Dream Lab): cuántas hay por escena en
+// src/imagenes/cartas/<escena>-<n>.jpg. Si una escena no tiene, la carta usa una foto del mapa.
+export const CARTAS_ACUARELA = { tierras: 2 };
+export function imagenCartaAcuarela(escena, id) {
+  const n = CARTAS_ACUARELA[escena]; if (!n) return null;
+  let h = 0; for (const ch of String(id || '')) h = (h * 31 + ch.charCodeAt(0)) % 997;
+  return `src/imagenes/cartas/${escena}-${h % n + 1}.jpg`;
+}
