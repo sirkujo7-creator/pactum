@@ -150,6 +150,25 @@
         "Teresa Almonacid (enfermera)",
         "Hilda Almonacid (partera)"
       ]
+    },
+    "penaloza": {
+      "nombre": "Los Peñaloza",
+      "icono": "🎖️",
+      "origen": "Un soldado raso que volvió al pueblo y no supo dónde ponerse.",
+      "clase": "c",
+      "miembros": [
+        "Eliseo Peñaloza (soldado)",
+        "Rubiela Peñaloza (nieta)"
+      ]
+    },
+    "mireya": {
+      "nombre": "Mireya y la emisora",
+      "icono": "📻",
+      "origen": "La voz de la emisora local, que lee las noticias, los avisos y los nombres de los muertos.",
+      "clase": "a",
+      "miembros": [
+        "Mireya Salcedo (locutora)"
+      ]
     }
   },
   "objetos": {
@@ -1396,6 +1415,104 @@
           "texto": "Gobernador: llevo una semana usando el mismo tapabocas y los pasillos del hospital están llenos de gente que ni conozco. La vecina de la tienda no me quiere abrir la puerta; me dice que yo traigo \"eso\" en la ropa. Hilda, que ya es muy anciana, se quedó encerrada en su casa y yo le dejo la comida en el portón. Hoy hablamos por la ventana, con la voz levantada.",
           "frase": "¿Por qué a quien cuida a los enfermos a veces la gente le tiene miedo en lugar de agradecerle?",
           "resumen": "Teresa Almonacid cuidó enfermos durante la pandemia y su vecina le cerró la puerta."
+        }
+      ]
+    },
+    {
+      "id": "penaloza1",
+      "familia": "penaloza",
+      "desde": 38,
+      "hasta": 58,
+      "de": "Eliseo Peñaloza",
+      "escena": "guerra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: me licenciaron y volví a la vereda con un uniforme que ya no me queda. Cuando paso por la tienda, las mujeres cierran las ventanas y los niños me gritan un apodo que no entiendo. Yo solo cumplí órdenes y dormí tres años en una carpa. Mi madre me sirvió la comida y no me preguntó nada.",
+          "frase": "Si un soldado que cumplió órdenes es tratado con miedo, ¿qué pudo haber hecho el ejército en esa vereda antes de que él llegara?",
+          "resumen": "Eliseo Peñaloza volvió a la vereda y encontró ventanas cerradas."
+        }
+      ]
+    },
+    {
+      "id": "penaloza2",
+      "familia": "penaloza",
+      "desde": 60,
+      "hasta": 85,
+      "de": "Eliseo Peñaloza",
+      "escena": "guerra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: volví de Corea con tres medallas y la rodilla mala. Nadie en el pueblo sabe dónde queda Corea. El alcalde prometió conseguirme empleo de celador y llevo cuatro años esperando la carta. Mi nieta Rubiela me pide que le cuente cómo era el frío allá; yo le cuento del frío y no del resto.",
+          "frase": "¿Por qué un país puede mandar soldados lejos y olvidarse de ellos cuando vuelven?",
+          "resumen": "Eliseo Peñaloza, veterano de Corea, sigue esperando el empleo que le prometieron."
+        }
+      ]
+    },
+    {
+      "id": "penaloza3",
+      "familia": "penaloza",
+      "desde": 86,
+      "hasta": 130,
+      "de": "Rubiela Peñaloza",
+      "escena": "guerra",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: soy Rubiela, la nieta de Eliseo. Mi abuelo murió el invierno pasado y entre sus cosas encontré una libreta con nombres de gente que nunca me mencionó. Fui a preguntar al pueblo y nadie quiere decirme de quién eran. Una señora me dijo: «Eso no se pregunta». Tengo la libreta en la mesa y no sé a quién entregársela.",
+          "frase": "¿Qué hacemos con los nombres que algunos prefieren olvidar, y quién tiene derecho a decidirlo?",
+          "resumen": "Rubiela Peñaloza encontró una libreta con nombres que nadie quiere nombrar.",
+          "objeto": "foto"
+        }
+      ]
+    },
+    {
+      "id": "mireya1",
+      "familia": "mireya",
+      "desde": 46,
+      "hasta": 70,
+      "de": "Mireya Salcedo",
+      "escena": "radio",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: leo las noticias en la emisora a las seis y a las doce. Esta semana tuve que leer cinco avisos de entierro y dos de misas. Los avisos de los entierros me los traen escritos a mano y sin causa. Cuando pregunto de qué murieron, el sacerdote mira al suelo y el alcalde cambia de tema. La gente cree que yo sé más de lo que digo.",
+          "frase": "Si en la radio solo se leen avisos de entierro sin decir la causa, ¿qué puedes inferir de lo que pasa en el pueblo?",
+          "resumen": "Mireya Salcedo leyó en la emisora avisos de entierro sin poder decir la causa.",
+          "objeto": "radio"
+        }
+      ]
+    },
+    {
+      "id": "mireya2",
+      "familia": "mireya",
+      "desde": 72,
+      "hasta": 95,
+      "de": "Mireya Salcedo",
+      "escena": "radio",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: hoy me pidieron leer un aviso que no es un aviso: es un anuncio de la campaña, pero con voz de noticia. Si no lo leo, me quitan la hora de la tarde. Si lo leo, mañana mis oyentes no me creerán. Esta noche la gente me llamó para preguntar por qué cambié de voz.",
+          "frase": "¿Cómo se distingue una noticia de un anuncio cuando los dos se leen con la misma voz?",
+          "resumen": "Mireya Salcedo tuvo que elegir entre leer un anuncio disfrazado de noticia o perder su programa."
+        }
+      ]
+    },
+    {
+      "id": "mireya3",
+      "familia": "mireya",
+      "desde": 96,
+      "hasta": 130,
+      "de": "Mireya Salcedo",
+      "escena": "radio",
+      "variantes": [
+        {
+          "cuando": {},
+          "texto": "Gobernador: ahora tengo un programa en internet y me escuchan en Cúcuta, en Madrid y en un pueblo de Huila que no conocía. Pero ayer circuló un audio con mi voz diciendo cosas que yo nunca dije. Lo hicieron con una máquina. Mis vecinos me pararon en la plaza para preguntarme si era cierto y no supe cómo probarles que no.",
+          "frase": "¿Cómo se prueba que una voz es verdadera cuando una máquina puede copiarla?",
+          "resumen": "Mireya Salcedo vio circular un audio falso con su voz y no supo cómo desmentirlo."
         }
       ]
     }

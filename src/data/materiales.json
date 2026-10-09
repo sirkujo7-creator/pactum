@@ -144,7 +144,8 @@
   },
   "compra": {
     "lote": 5,
-    "recargo": 1.15
+    "recargo": 1.15,
+    "bloqueoMetal": 30
   },
   "textos": {
     "faltan": "Faltan {lista}.",
@@ -154,7 +155,8 @@
     "almacen": "Almacén",
     "produce": "Producen al año",
     "costo": "Pide",
-    "sinOro": "No te alcanza el oro."
+    "sinOro": "No te alcanza el oro.",
+    "bloqueoMetal": "Las polis que venden metal te cerraron el comercio: mejora tu relación con ellas (embajada, tratado de comercio o liga en 🌎 El mundo) o abre tu propia mina."
   },
   "descuentoOro": 0.88
 }

@@ -10,6 +10,7 @@ import { mundoDelAnio } from './mundovivo.js';
 import { visitanteDelAnio } from './visitantes.js';
 import { polisDelAnio } from './entrepolis.js';
 import { comisionDelAnio } from './comision.js';
+import { maravillasDelAnio } from './maravillas.js';
 import { C } from './contenido.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
@@ -199,6 +200,7 @@ export function advance(S) {
   news.push(...visitanteDelAnio(S)); // fase 16: un visitante extranjero
   news.push(...polisDelAnio(S)); // fase 16: pleitos entre polis vecinas
   news.push(...comisionDelAnio(S)); // fase 16: la Comisión de la Verdad
+  news.push(...maravillasDelAnio(S)); // fase 17: las maravillas dejan oro
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));

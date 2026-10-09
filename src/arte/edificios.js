@@ -285,6 +285,35 @@ function recetas(era = 1) {
     const q = V2(-.2, .1, 34); g.strokeStyle = '#4A3A24'; g.lineWidth = .9; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0], q[1] - 20); g.stroke();
     g.fillStyle = '#C0392B'; g.fillRect(q[0], q[1] - 20, 11, 4); g.fillStyle = '#E7C76B'; g.fillRect(q[0], q[1] - 16, 11, 3.5); g.fillStyle = '#2D5D72'; g.fillRect(q[0], q[1] - 12.5, 11, 3.5);
   }]);
+  // Maravillas (fase 17): jardín botánico, conservatorio, túnel de La Línea y parque de Los Nevados.
+  L.push(['m_mv_jardin', 100, 80, 50, 62, (g, r) => {
+    sombra(g, 34, 6, 5); const b = iso(g, .9, .64, 0, 14, '#DDE6DA', '#B7C6B5', null, r, 0, 0);
+    wash(g, caraI(b, .08, .84, 3, 10), '#9FD0C0', r, .8, .15); // vidrio
+    const t = V2(0, 0, 14); wash(g, [[t[0] - 30, t[1] + 2], [t[0], t[1] - 22], [t[0] + 30, t[1] + 2], [t[0], t[1] + 14]], '#A9D8C8', r, .85, .2);
+    g.strokeStyle = '#5E7A68'; g.lineWidth = .7; for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(t[0] + k * 10, t[1] - 10 + Math.abs(k) * 4); g.lineTo(t[0] + k * 10, t[1] + 6 - Math.abs(k) * 2); g.stroke(); }
+    blob(g, t[0] - 5, t[1] - 8, 6, 5, '#4F8A43', r, .9); blob(g, t[0] + 9, t[1] - 4, 5, 4, '#6FA24F', r, .9);
+    const f = V2(.5, .45); blob(g, f[0], f[1] - 4, 5, 4, '#E2A93B', r, .9); blob(g, f[0] + 8, f[1] - 2, 4, 3, '#C0392B', r, .9);
+  }]);
+  L.push(['m_mv_conservatorio', 100, 90, 50, 76, (g, r) => {
+    sombra(g, 34, 6, 5); const b = iso(g, .92, .64, 0, 24, '#F2EBDA', '#D3CBB6', null, r, 0, 0); techo(g, b, 5, 12, '#8E3B2E', '#B5543F', r);
+    wash(g, caraI(b, .38, .26, 0, 15), '#5A4632', r, .97, .2);
+    for (const k of [.06, .72]) wash(g, caraI(b, k, .2, 9, 9), '#6E8FA6', r, .95, .2);
+    const q = V2(0, .12, 40); g.strokeStyle = '#B08E3A'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(q[0] - 4, q[1] + 8); g.quadraticCurveTo(q[0] - 7, q[1] - 3, q[0] - 2, q[1] - 7); g.moveTo(q[0] + 4, q[1] + 8); g.quadraticCurveTo(q[0] + 7, q[1] - 3, q[0] + 2, q[1] - 7); g.stroke();
+    g.beginPath(); g.moveTo(q[0] - 3, q[1] + 4); g.lineTo(q[0] + 3, q[1] + 4); g.stroke();
+  }]);
+  L.push(['m_mv_tunel', 110, 84, 55, 58, (g, r) => {
+    sombra(g, 36, 6, 6); wash(g, [[-40, 6], [-30, -22], [-8, -38], [14, -34], [34, -16], [42, 6]], '#8C8070', r, .96, .4);
+    wash(g, [[-26, 6], [-24, -10], [-14, -22], [0, -26], [14, -22], [22, -10], [24, 6]], '#B9B1A2', r, .97, .3);
+    g.fillStyle = '#1F1812'; g.beginPath(); g.moveTo(-17, 6); g.lineTo(-17, -8); g.quadraticCurveTo(0, -28, 17, -8); g.lineTo(17, 6); g.closePath(); g.fill();
+    g.strokeStyle = '#E7C76B'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(-17, 6); g.lineTo(-17, -8); g.quadraticCurveTo(0, -28, 17, -8); g.lineTo(17, 6); g.stroke();
+    g.strokeStyle = '#6B6258'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-17, 6); g.lineTo(-40, 14); g.moveTo(17, 6); g.lineTo(42, 14); g.stroke();
+    g.fillStyle = '#F2D98A'; for (const x of [-8, 0, 8]) { g.beginPath(); g.arc(x, -12 + Math.abs(x) * .3, 1.2, 0, 7); g.fill(); }
+  }]);
+  L.push(['m_mv_parque', 100, 80, 50, 62, (g, r) => {
+    sombra(g, 34, 6, 5); wash(g, [[-36, 4], [-22, -14], [0, -22], [24, -12], [38, 4]], '#A9B79A', r, .9, .4);
+    for (const [x, y, h] of [[-18, -2, 24], [-6, 2, 30], [8, -4, 26], [20, 1, 20], [0, -10, 22]]) { g.strokeStyle = '#6E6A50'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - h * .55); g.stroke(); blob(g, x, y - h * .62, 6.5, 5, '#8FB07A', r, .95); g.strokeStyle = '#D7DFC9'; g.lineWidth = .8; for (let k = -3; k <= 3; k++) { g.beginPath(); g.moveTo(x, y - h * .62); g.lineTo(x + k * 2.2, y - h * .62 - 7); g.stroke(); } }
+    const q = V2(.4, .3); g.strokeStyle = '#6B4A2B'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0], q[1] - 16); g.stroke(); g.fillStyle = '#A5774A'; g.fillRect(q[0] - 9, q[1] - 20, 18, 9); g.fillStyle = '#F2EBDA'; g.fillRect(q[0] - 6, q[1] - 17, 12, 1.4); g.fillRect(q[0] - 6, q[1] - 14.5, 9, 1.4);
+  }]);
   L.push(['m_acta', 44, 46, 22, 36, (g, r) => {
     sombra(g, 14, 4, 3); const p = V2(0, 0);
     blob(g, p[0], p[1] - 9, 11, 10, '#B9B1A2', r, .97); blob(g, p[0] - 2, p[1] - 12, 7, 5, '#CEC6B6', r, .8);
