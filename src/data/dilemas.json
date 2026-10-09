@@ -4421,7 +4421,7 @@
           "confianza": 3,
           "igualdad": 2,
           "oro": -20,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "contr",
         "porque": "Si la soberanía vuelve al pueblo, el pueblo debe poder hablar.",
@@ -4434,7 +4434,7 @@
           "elite": 4,
           "oro": 15,
           "igualdad": -3,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "real",
         "porque": "Quien manda en la región suele decidir primero.",
@@ -4445,7 +4445,7 @@
         "efectos": {
           "oro": 10,
           "confianza": -3,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "util",
         "porque": "Esperar evita riesgos, pero no se gana respeto.",
@@ -4481,7 +4481,7 @@
           "campesinos": 4,
           "oro": -40,
           "elite": -3,
-          "animo": 1
+          "animo": 0
         },
         "filosofia": "contr",
         "porque": "La libertad sin medios para vivir deja a la gente sujeta a otros.",
@@ -4494,7 +4494,7 @@
           "elite": 4,
           "oro": -50,
           "igualdad": -1,
-          "animo": 1
+          "animo": 0
         },
         "filosofia": "util",
         "porque": "Compensar evita pleitos, pero paga a quienes se beneficiaron.",
@@ -4506,7 +4506,7 @@
           "oro": 5,
           "igualdad": 2,
           "campesinos": -3,
-          "animo": 1
+          "animo": 0
         },
         "filosofia": "deon",
         "porque": "La ley es la ley, aunque no resuelva todo.",
@@ -4541,7 +4541,7 @@
           "confianza": 2,
           "campesinos": 3,
           "oro": -25,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "virt",
         "porque": "No toda causa merece la sangre de tu pueblo.",
@@ -4554,7 +4554,7 @@
           "oro": 30,
           "campesinos": -5,
           "confianza": -2,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "real",
         "porque": "Un gobernante a veces debe elegir un lado para no ser aplastado.",
@@ -4567,7 +4567,7 @@
           "oro": -35,
           "confianza": 3,
           "campesinos": 2,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "contr",
         "porque": "Quien defiende a los suyos gana su lealtad.",
@@ -4603,7 +4603,7 @@
           "oro": -20,
           "confianza": 2,
           "elite": -2,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "contr",
         "porque": "Unidos, los pequeños tienen voz frente al mercado.",
@@ -4616,7 +4616,7 @@
           "elite": 4,
           "igualdad": -3,
           "oro": 15,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "util",
         "porque": "El mercado libre premia al que produce más.",
@@ -4628,7 +4628,7 @@
           "campesinos": 3,
           "oro": -30,
           "artesanos": 2,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "virt",
         "porque": "La cooperación empieza por lo cercano.",
@@ -4658,7 +4658,7 @@
           "igualdad": 3,
           "confianza": 2,
           "oro": -25,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "contr",
         "porque": "Escuchar al que trabaja evita que la rabia se vuelva violencia.",
@@ -4671,7 +4671,7 @@
           "oro": 20,
           "confianza": -4,
           "igualdad": -3,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "real",
         "porque": "El orden y la inversión dependen de que los poderosos estén tranquilos.",
@@ -4685,7 +4685,7 @@
           "confianza": 1,
           "alimento": -15,
           "elite": -3,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "virt",
         "porque": "La solidaridad se prueba en los días difíciles.",
@@ -4722,7 +4722,7 @@
           "igualdad": 4,
           "elite": -5,
           "oro": -25,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "contr",
         "porque": "La tierra debe cumplir una función social.",
@@ -4735,7 +4735,7 @@
           "elite": 2,
           "campesinos": 1,
           "oro": 10,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "util",
         "porque": "Los cambios graduales evitan conflictos mayores.",
@@ -4748,7 +4748,7 @@
           "campesinos": -4,
           "igualdad": -4,
           "oro": 15,
-          "animo": 0.5
+          "animo": -0.5
         },
         "filosofia": "real",
         "porque": "Quien tiene el poder rara vez cede sus tierras.",
@@ -4777,7 +4777,8 @@
         "efectos": {
           "confianza": 4,
           "campesinos": 3,
-          "oro": -30
+          "oro": -30,
+          "animo": -1.4
         },
         "filosofia": "deon",
         "porque": "Si se promete algo, hay que cumplirlo.",
@@ -4789,7 +4790,8 @@
         "efectos": {
           "confianza": -1,
           "elite": 3,
-          "oro": 10
+          "oro": 10,
+          "animo": -1.4
         },
         "filosofia": "real",
         "porque": "La paz sin vigilancia es una apuesta.",
@@ -4801,7 +4803,8 @@
         "efectos": {
           "confianza": 2,
           "oro": -15,
-          "campesinos": -2
+          "campesinos": -2,
+          "animo": -1.4
         },
         "filosofia": "virt",
         "porque": "Un gobernante prudente no se fía de quien llega por la fuerza.",
@@ -4837,7 +4840,7 @@
           "igualdad": 4,
           "elite": -5,
           "oro": -30,
-          "animo": 1.4
+          "animo": 0.4
         },
         "filosofia": "contr",
         "porque": "La tierra concentrada en pocas manos es una fuente de injusticia.",
@@ -4850,7 +4853,7 @@
           "campesinos": 3,
           "igualdad": 2,
           "oro": -50,
-          "animo": 1.4
+          "animo": 0.4
         },
         "filosofia": "util",
         "porque": "Pagar lo justo evita pleitos y reparte con orden.",
@@ -4862,7 +4865,7 @@
           "oro": 10,
           "campesinos": -2,
           "confianza": -2,
-          "animo": 1.4
+          "animo": 0.4
         },
         "filosofia": "deon",
         "porque": "Cada institución debe hacer su trabajo.",
@@ -4891,7 +4894,8 @@
         "efectos": {
           "confianza": 3,
           "campesinos": 3,
-          "oro": -35
+          "oro": -35,
+          "animo": -1.2
         },
         "filosofia": "contr",
         "porque": "Sin escuela, camino y salud, la fuerza no resuelve nada.",
@@ -4904,7 +4908,8 @@
           "elite": 3,
           "oro": 15,
           "campesinos": -5,
-          "confianza": -3
+          "confianza": -3,
+          "animo": -1.2
         },
         "filosofia": "real",
         "porque": "El Estado debe controlar todo su territorio.",
@@ -4917,7 +4922,8 @@
           "habitantes": 3,
           "alimento": -20,
           "igualdad": 2,
-          "confianza": 1
+          "confianza": 1,
+          "animo": -1.2
         },
         "filosofia": "virt",
         "porque": "Cuidar al que huye es lo mínimo que se debe hacer.",
@@ -4955,7 +4961,7 @@
           "oro": -35,
           "confianza": 3,
           "igualdad": 2,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "virt",
         "porque": "El deber con el que sufre no admite excusas.",
@@ -4968,7 +4974,7 @@
           "oro": -40,
           "confianza": 1,
           "habitantes": -1,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "util",
         "porque": "Ayudar a distancia permite sostener a todos.",
@@ -4981,7 +4987,7 @@
           "ambiente": 2,
           "confianza": 2,
           "habitantes": 1,
-          "animo": 0.3
+          "animo": -0.7
         },
         "filosofia": "deon",
         "porque": "Prevenir es una obligación de quien gobierna.",
@@ -5018,7 +5024,7 @@
           "confianza": 2,
           "oro": -50,
           "habitantes": 2,
-          "animo": 1.6
+          "animo": 0.6
         },
         "filosofia": "deon",
         "porque": "Cuidar la vida es lo primero.",
@@ -5032,7 +5038,7 @@
           "igualdad": 2,
           "campesinos": 2,
           "confianza": 1,
-          "animo": 1.6
+          "animo": 0.6
         },
         "filosofia": "util",
         "porque": "Equilibrar salud y sustento reparte el sacrificio.",
@@ -5045,7 +5051,7 @@
           "confianza": -3,
           "habitantes": -3,
           "elite": 2,
-          "animo": 1.6
+          "animo": 0.6
         },
         "filosofia": "real",
         "porque": "La economía no puede detenerse.",
