@@ -2,7 +2,7 @@
 // copias. Fase 8: pintados al fresco (color plano de pigmento, manchas de muro y contorno siena); los edificios
 // públicos son neoclásicos, con podio, columnas, friso, frontón y un emblema que dice qué es cada uno.
 import { mulberry, shade, mix, poly, lienzo } from './acuarela.js';
-import { FR, pintar, ovalo, urlDe, RES_HOJA } from './fresco.js';
+import { FR, pintar, ovalo, urlDe, RES_HOJA, ES_CELULAR } from './fresco.js';
 import { recetasCasas } from './casas.js';
 import { recetasPublicos } from './publicos.js';
 
@@ -11,7 +11,7 @@ function wash(g, pts, col, rng, al = .9) { g.save(); g.globalAlpha = Math.min(1,
 function blob(g, x, y, rx, ry, col, rng, al = .9) { g.save(); g.globalAlpha = al; ovalo(g, x, y, rx, ry, col, rng, { n: 1, bw: .35, bal: .45 }); g.restore(); }
 import { TW, TH } from './iso.js';
 
-const ESCALA = RES_HOJA; // resolución del horneado (fase 8: 3 en celulares, 4 en computador)
+const ESCALA = ES_CELULAR ? 2.5 : RES_HOJA; // resolución del horneado: 4 en computador; 2,5 en celular (la hoja de edificios debe quedar por debajo de 4096 px y cuidar la memoria)
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // ---------- Pinceles de construcción ----------
