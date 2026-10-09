@@ -126,7 +126,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
 let HOJA = null;
 export function hornearGente() {
   if (HOJA) return HOJA;
-  const E = Math.min(RES_HOJA, 3), w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
+  const E = ES_CELULAR ? 2 : Math.min(RES_HOJA, 3), w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
   for (const mod of ['', 'M']) for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 12; f++) claves.push([`${tipo}${mod}_${vi}_${fr}_${f}`, tipo, vi, fr, f, !!mod]);
   // Hoja de 2048 de ancho y hasta 2048 de alto (lados potencia de dos): la luz va en el hueco de la última fila.
   const cols = Math.floor(2048 / W), filas = Math.ceil((claves.length + 1) / cols), cv = lienzo(cols * W, filas * H), g = cv.getContext('2d');
