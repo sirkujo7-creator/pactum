@@ -1,0 +1,25 @@
+{
+  "nota": "Foto del mapa que acompaña cada decisión (tema = archivo src/imagenes/<tema>-a o -b.jpg). Elegida a mano; si una decisión no está aquí, se adivina por palabras.",
+  "dilemas": {
+    "crecida": "rio", "festival": "teatro", "sal": "mercado", "sequia": "finca", "migra": "casas", "donante": "banco",
+    "plaga": "cafetal", "evasion": "banco", "tierras": "finca", "maestros": "escuela", "huelga": "taller", "humo": "taller",
+    "corrup": "banco", "epidemia": "hospital", "elite": "banco", "precios": "mercado", "oro": "mina", "protesta": "plaza",
+    "prestamo": "banco", "alianza": "mercado", "progresivo": "banco", "especulacion": "mercado", "culpar": "plaza",
+    "ayuda": "plaza", "reubicar": "casas", "semillas": "finca", "aguaabajo": "rio", "cosecha": "cafetal", "viajeros": "calle",
+    "minga": "plaza", "sanpedro": "teatro", "paisano": "plaza", "inventora": "taller", "voluntarios": "hospital",
+    "cafepremio": "cafetal", "retorno": "casas", "premio": "plaza", "panycirco": "teatro",
+    "h_baldios": "finca", "h_camino": "calle", "h_pijao": "bosque", "h_parroquia": "iglesia", "h_quina": "hospital",
+    "h_arrieros": "calle", "h_cable": "rio", "h_trilladora": "taller", "h_honda": "rio", "h_banda": "teatro",
+    "h_9abril": "plaza", "h_pajaros": "cuartel", "h_bandolero": "calle", "h_comision": "cementerio", "h_frente": "plaza",
+    "h_exodo": "calle", "h_riego": "finca", "h_carretera": "calle", "h_sindicato": "taller", "h_tv": "teatro",
+    "h_constitucion": "plaza", "h_restitucion": "finca", "h_reincorporacion": "plaza", "h_verdad": "cementerio",
+    "h_coca": "finca", "h_desinfo": "teatro", "h_paramo": "bosque", "h_teletrabajo": "casas", "h_calor": "finca",
+    "h_migrantes": "calle", "h_mineria_paramo": "mina", "h_cafe_sube": "cafetal", "h_glaciar": "bosque",
+    "h_ganaderia": "finca", "h_guardianes": "bosque",
+    "i_ninos_fabrica": "taller", "i_aguas_mieles": "cafetal", "i_huelga_textil": "taller", "i_aranceles": "mercado", "i_robots": "taller",
+    "c_lengua": "escuela", "c_monumento": "cementerio", "c_musica": "teatro", "c_procesion": "iglesia", "c_turismo": "teatro",
+    "h_independencia": "plaza", "h_esclavitud": "finca", "h_mildias": "cuartel", "h_federacion": "cafetal", "h_bananeras": "taller",
+    "h_ley200": "finca", "h_rojas": "plaza", "h_agraria": "finca", "h_marquetalia": "cuartel", "h_armero": "cementerio",
+    "h_pandemia": "hospital", "h_cajamarca": "mina"
+  }
+}
