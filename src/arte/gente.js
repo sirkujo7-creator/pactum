@@ -146,9 +146,9 @@ export function hornearGente() {
 // Cada acción es un ciclo de cuadros con la herramienta dibujada en la mano. Se hornean aparte (hoja «acciones»), solo
 // con la ropa de la época actual, y de frente (la figura se voltea de lado a lado con el espejo).
 export const ACCIONES = {
-  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, saludar: 6, conversar: 8 },
+  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, saludar: 6, conversar: 8, rezar: 4 },
   campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, saludar: 6, conversar: 8, rezar: 4 },
-  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, saludar: 6, conversar: 8 },
+  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, saludar: 6, conversar: 8, rezar: 4 },
   elite: { leer: 4, saludar: 6, conversar: 8, rezar: 4 },
   nino: { saltar: 6, saludar: 6, leer: 4, conversar: 8 }
 };
