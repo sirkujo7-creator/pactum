@@ -16,7 +16,69 @@
       "El campo está cansado de promesas.",
       "Vamos bien, pero cuide la cosecha.",
       "El campo está contento con usted."
-    ]
+    ],
+    "temas": {
+      "dinero": {
+        "pro": [
+          "Si el oro llega a las veredas, el campo respira.",
+          "Plata bien repartida: eso sí se agradece en el campo."
+        ],
+        "con": [
+          "Con las arcas así, otra vez nos toca apretarnos el cinturón.",
+          "Cuando falta plata en el pueblo, primero se olvida la vereda."
+        ]
+      },
+      "tierra": {
+        "pro": [
+          "Tierra y comida para quien la trabaja: esa es la palabra.",
+          "Esa decisión huele a cosecha buena."
+        ],
+        "con": [
+          "Quitarle tierra al que la siembra es quitarle el pan a sus hijos.",
+          "El hambre del campo no se arregla con discursos."
+        ]
+      },
+      "ambiente": {
+        "pro": [
+          "Cuidar el monte es cuidar el agua de nuestros hijos.",
+          "El río y la ladera se lo agradecen."
+        ],
+        "con": [
+          "Con el monte talado y el río sucio, la finca se seca.",
+          "El que daña la tierra no sabe que de ella comemos."
+        ]
+      },
+      "igualdad": {
+        "pro": [
+          "Por fin un gobernante que mira parejo.",
+          "Que a los de abajo también nos toque algo."
+        ],
+        "con": [
+          "Siempre favorecen a los mismos, y los de la vereda al final.",
+          "Esto aumenta la brecha: el campo lo va a sentir."
+        ]
+      },
+      "poder": {
+        "pro": [
+          "Un gobierno que cumple se gana el respeto del campo.",
+          "Cuando usted da la cara, la gente confía."
+        ],
+        "con": [
+          "Palabra que no se cumple, confianza que se pierde.",
+          "Aquí en la vereda ya no creemos en promesas."
+        ]
+      },
+      "gente": {
+        "pro": [
+          "Más gente y más comida: el pueblo se levanta.",
+          "Así da gusto: las mesas llenas."
+        ],
+        "con": [
+          "Menos gente y menos comida: se siente en cada casa.",
+          "El pueblo se vacía y el campo queda solo."
+        ]
+      }
+    }
   },
   "julian": {
     "nombre": "Julián",
@@ -35,7 +97,69 @@
       "En los talleres se habla de huelga.",
       "Hay trabajo, pero la plata no rinde.",
       "Da gusto trabajar en este pueblo."
-    ]
+    ],
+    "temas": {
+      "dinero": {
+        "pro": [
+          "Buenas cuentas: ahora sí se puede invertir en el taller.",
+          "Si hay oro en caja, hay trabajo para los artesanos."
+        ],
+        "con": [
+          "Con ese gasto, los talleres vamos a pagar la cuenta.",
+          "Más impuestos y menos clientes: no cuadra."
+        ]
+      },
+      "tierra": {
+        "pro": [
+          "Si el campo produce, el taller tiene materia prima.",
+          "Bien: más cosecha, más oficios."
+        ],
+        "con": [
+          "Sin cosecha no hay trueque ni oficio que aguante.",
+          "El campo golpeado nos golpea a todos en el mercado."
+        ]
+      },
+      "ambiente": {
+        "pro": [
+          "Madera y agua limpias: el taller trabaja mejor.",
+          "Cuidar el entorno también es cuidar el oficio."
+        ],
+        "con": [
+          "Talar sin medida acaba con la madera del mañana.",
+          "Un río sucio no mueve ningún molino."
+        ]
+      },
+      "igualdad": {
+        "pro": [
+          "Una ley pareja ayuda al que trabaja con las manos.",
+          "Ahora sí tenemos un lugar en la mesa."
+        ],
+        "con": [
+          "Siempre privilegian a los grandes, y los pequeños pagan.",
+          "Así nos dejan solos entre la élite y el campo."
+        ]
+      },
+      "poder": {
+        "pro": [
+          "Gobierno claro, negocios tranquilos.",
+          "Con confianza, el crédito sale y la obra avanza."
+        ],
+        "con": [
+          "Sin confianza, nadie contrata ni presta.",
+          "Un gobierno que cambia de rumbo asusta a los clientes."
+        ]
+      },
+      "gente": {
+        "pro": [
+          "Más gente, más clientes en el taller.",
+          "Pueblo grande, mercado grande."
+        ],
+        "con": [
+          "Con menos gente baja la venta del día.",
+          "Pueblo vacío, taller sin encargos."
+        ]
+      }
+    }
   },
   "aurelio": {
     "nombre": "Don Aurelio",
@@ -54,6 +178,68 @@
       "Estoy pensando seriamente en irme.",
       "Los negocios van, sin más.",
       "Excelente clima para invertir."
-    ]
+    ],
+    "temas": {
+      "dinero": {
+        "pro": [
+          "Esa es una cifra que se puede defender en cualquier junta.",
+          "Finanzas sanas: lo que se necesita para invertir."
+        ],
+        "con": [
+          "Esa política le costará caro a las arcas.",
+          "Impuestos así espantan a quien genera riqueza."
+        ]
+      },
+      "tierra": {
+        "pro": [
+          "Respeto a la propiedad, base de todo progreso.",
+          "Un campo ordenado produce más: bien."
+        ],
+        "con": [
+          "Tocar la propiedad desanima a los inversionistas.",
+          "Con medidas así, el capital se va a otra polis."
+        ]
+      },
+      "ambiente": {
+        "pro": [
+          "Un entorno sano también es un buen negocio.",
+          "Cuidar los recursos asegura la renta del futuro."
+        ],
+        "con": [
+          "Demasiadas trabas al aprovechamiento de los recursos.",
+          "Con tantas restricciones nadie invierte."
+        ]
+      },
+      "igualdad": {
+        "pro": [
+          "Algo de equidad evita revueltas, y las revueltas cuestan.",
+          "Estabilidad social: eso también protege los negocios."
+        ],
+        "con": [
+          "Se está confundiendo justicia con reparto.",
+          "Con estas medidas, el mérito se castiga."
+        ]
+      },
+      "poder": {
+        "pro": [
+          "Un gobierno firme da seguridad a los negocios.",
+          "Instituciones fuertes: así se hacen contratos."
+        ],
+        "con": [
+          "Sin autoridad, los negocios se vuelven inciertos.",
+          "Un gobierno débil es mal socio."
+        ]
+      },
+      "gente": {
+        "pro": [
+          "Más habitantes, más consumo y más mano de obra.",
+          "Crecer es lo que corresponde a un pueblo con futuro."
+        ],
+        "con": [
+          "El pueblo se achica y la renta baja con él.",
+          "Menos gente, menos mercado: mal asunto."
+        ]
+      }
+    }
   }
 }

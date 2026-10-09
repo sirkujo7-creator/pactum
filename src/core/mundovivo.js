@@ -8,17 +8,17 @@ import { applyFx } from './dilemas.js';
 
 const K = () => C.MUNDO;
 export const mundoVivoActivo = S => exteriorActivo(S) && !!C.MUNDO;
+// Los hechos reales pasan en su año del juego (fijos), con efectos suaves para que no cambien la partida.
+const suave = (fx, e) => Object.fromEntries(Object.entries(fx || {}).map(([k, v]) => [k, Math.round(v * e) || Math.sign(v)]));
 export function mundoDelAnio(S) {
-  if (!mundoVivoActivo(S) || S.year < K().desde || S.year - (S.mundoUlt ?? -99) < K().aniosEntre || !(azar() < K().prob)) return [];
-  const ep = epocaHistorica(S), vistos = S.mundoVistos || [];
-  const L = K().hechos.filter(h => h.epoca === ep && !vistos.includes(h.id) && relacionExterior(S, h.lugar));
-  if (!L.length) return [];
-  const h = L[Math.floor(azar() * L.length)], E = relacionExterior(S, h.lugar), lugar = C.EXT.lugares[h.lugar];
-  const trato = !!E.trato, fx = applyFx(S, trato && h.conTrato ? h.conTrato : h.efectos);
-  E.rel = clamp(E.rel + (h.relacion || 0), 0, 100);
+  if (!mundoVivoActivo(S)) return [];
+  const vistos = S.mundoVistos || [], h = K().hechos.filter(x => x.anio !== undefined && S.year >= x.anio && !vistos.includes(x.id)).sort((a, b) => a.anio - b.anio)[0];
+  if (!h) return [];
+  const E = relacionExterior(S, h.lugar), lugar = C.EXT.lugares[h.lugar], trato = !!(E && E.trato), fx = applyFx(S, suave(trato && h.conTrato ? h.conTrato : h.efectos, K().escalaFija || .6));
+  if (E) E.rel = clamp(E.rel + (h.relacion || 0), 0, 100);
   S.mundoVistos = [...vistos, h.id]; S.mundoUlt = S.year;
   const ev = { id: h.id, anio: S.year, titulo: h.titulo, texto: h.texto, fecha: h.fecha, lugar: lugar.nombre, trato, fx };
   S.mundoHechos = [ev, ...(S.mundoHechos || [])].slice(0, 12);
-  S.log.unshift({ y: S.year, t: `${lugar.nombre}: ${h.titulo}. ${h.texto}` });
+  S.log.unshift({ y: S.year, t: `${lugar.nombre}: ${h.titulo} (${h.fecha}). ${h.texto}` });
   return [`🌎 ${lugar.nombre}: ${h.titulo} (${h.fecha}).`];
 }

@@ -1,5 +1,5 @@
 {
-  "leccion": "Ninguna polis vive sola: lo que pasa en una frontera, un puerto o una capital llega tarde o temprano a tu plaza. Un tratado o una liga no evitan las crisis de los vecinos, pero amortiguan sus golpes y comparten sus beneficios.",
+  "leccion": "Ninguna polis vive sola: lo que pasa en una frontera, un puerto o una capital llega tarde o temprano a tu plaza. Un tratado o una liga no evitan las crisis de los vecinos, pero amortiguan sus golpes y comparten sus beneficios. Estos hechos pasan en su fecha, aunque no los provoques: la historia también te ocurre.",
   "prob": 0.14,
   "desde": 6,
   "aniosEntre": 3,
@@ -24,7 +24,8 @@
         "habitantes": 6,
         "igualdad": -1
       },
-      "relacion": 4
+      "relacion": 4,
+      "anio": 11
     },
     {
       "id": "mv_humboldt",
@@ -41,7 +42,8 @@
         "confianza": 3,
         "oro": 20
       },
-      "relacion": 3
+      "relacion": 3,
+      "anio": 6
     },
     {
       "id": "mv_cuentas",
@@ -56,7 +58,8 @@
       "conTrato": {
         "oro": -8
       },
-      "relacion": -3
+      "relacion": -3,
+      "anio": 13
     },
     {
       "id": "mv_panama",
@@ -73,7 +76,8 @@
         "oro": -10,
         "confianza": -1
       },
-      "relacion": -5
+      "relacion": -5,
+      "anio": 21
     },
     {
       "id": "mv_valle_tren",
@@ -88,7 +92,8 @@
       "conTrato": {
         "oro": 40
       },
-      "relacion": 4
+      "relacion": 4,
+      "anio": 23
     },
     {
       "id": "mv_depresion",
@@ -105,7 +110,8 @@
         "oro": -15,
         "animo": -2
       },
-      "relacion": -2
+      "relacion": -2,
+      "anio": 30
     },
     {
       "id": "mv_bogotazo",
@@ -124,7 +130,8 @@
         "alimento": -8,
         "animo": -1
       },
-      "relacion": 2
+      "relacion": 2,
+      "anio": 38
     },
     {
       "id": "mv_valle_pajaros",
@@ -141,7 +148,8 @@
         "confianza": -2,
         "animo": -1
       },
-      "relacion": -4
+      "relacion": -4,
+      "anio": 45
     },
     {
       "id": "mv_venezuela_dic",
@@ -159,7 +167,8 @@
         "confianza": 3,
         "igualdad": 2
       },
-      "relacion": 3
+      "relacion": 3,
+      "anio": 46
     },
     {
       "id": "mv_petroleo",
@@ -176,7 +185,8 @@
         "habitantes": -3,
         "oro": 40
       },
-      "relacion": 3
+      "relacion": 3,
+      "anio": 55
     },
     {
       "id": "mv_panamericanos",
@@ -193,7 +203,8 @@
         "animo": 4,
         "oro": 25
       },
-      "relacion": 4
+      "relacion": 4,
+      "anio": 56
     },
     {
       "id": "mv_huila_agraria",
@@ -210,7 +221,8 @@
         "igualdad": 3,
         "confianza": -1
       },
-      "relacion": 2
+      "relacion": 2,
+      "anio": 59
     },
     {
       "id": "mv_armero",
@@ -229,7 +241,8 @@
         "alimento": -10,
         "animo": -1
       },
-      "relacion": 3
+      "relacion": 3,
+      "anio": 75
     },
     {
       "id": "mv_dolar",
@@ -244,7 +257,8 @@
       "conTrato": {
         "oro": 15
       },
-      "relacion": 0
+      "relacion": 0,
+      "anio": 82
     },
     {
       "id": "mv_quindio",
@@ -263,7 +277,8 @@
         "alimento": -8,
         "confianza": 2
       },
-      "relacion": 4
+      "relacion": 4,
+      "anio": 81
     },
     {
       "id": "mv_migrantes",
@@ -282,7 +297,8 @@
         "alimento": -10,
         "igualdad": 0
       },
-      "relacion": 0
+      "relacion": 0,
+      "anio": 92
     },
     {
       "id": "mv_paro",
@@ -299,7 +315,8 @@
         "oro": -12,
         "animo": -1
       },
-      "relacion": -2
+      "relacion": -2,
+      "anio": 96
     },
     {
       "id": "mv_canal",
@@ -314,7 +331,8 @@
       "conTrato": {
         "oro": 40
       },
-      "relacion": 3
+      "relacion": 3,
+      "anio": 91
     },
     {
       "id": "mv_hidroituango",
@@ -331,7 +349,8 @@
         "oro": -5,
         "confianza": 0
       },
-      "relacion": -1
+      "relacion": -1,
+      "anio": 94
     },
     {
       "id": "mv_bolivar",
@@ -348,7 +367,8 @@
         "confianza": -1,
         "animo": 0
       },
-      "relacion": -1
+      "relacion": -1,
+      "anio": 10
     },
     {
       "id": "mv_canal1914",
@@ -363,7 +383,8 @@
       "conTrato": {
         "oro": 35
       },
-      "relacion": 3
+      "relacion": 3,
+      "anio": 22
     },
     {
       "id": "mv_olaya",
@@ -381,7 +402,8 @@
         "confianza": 2,
         "animo": 3
       },
-      "relacion": 2
+      "relacion": 2,
+      "anio": 31
     },
     {
       "id": "mv_leticia",
@@ -400,7 +422,8 @@
         "animo": 3,
         "confianza": 2
       },
-      "relacion": 1
+      "relacion": 1,
+      "anio": 32
     },
     {
       "id": "mv_panamericana",
@@ -417,7 +440,8 @@
         "confianza": -1,
         "animo": -1
       },
-      "relacion": -1
+      "relacion": -1,
+      "anio": 36
     },
     {
       "id": "mv_corea",
@@ -434,7 +458,8 @@
         "habitantes": -1,
         "oro": 25
       },
-      "relacion": 1
+      "relacion": 1,
+      "anio": 41
     },
     {
       "id": "mv_voto",
@@ -451,7 +476,8 @@
         "igualdad": 3,
         "animo": 3
       },
-      "relacion": 2
+      "relacion": 2,
+      "anio": 49
     },
     {
       "id": "mv_celam",
@@ -469,7 +495,8 @@
         "igualdad": 3,
         "confianza": 2
       },
-      "relacion": 2
+      "relacion": 2,
+      "anio": 60
     },
     {
       "id": "mv_papa",
@@ -486,7 +513,8 @@
         "animo": 4,
         "oro": 0
       },
-      "relacion": 1
+      "relacion": 1,
+      "anio": 77
     },
     {
       "id": "mv_plebiscito",
@@ -503,7 +531,8 @@
         "confianza": -1,
         "animo": -1
       },
-      "relacion": -1
+      "relacion": -1,
+      "anio": 79
     },
     {
       "id": "mv_francia",
@@ -520,7 +549,9 @@
         "igualdad": 3,
         "animo": 3
       },
-      "relacion": 2
+      "relacion": 2,
+      "anio": 98
     }
-  ]
+  ],
+  "escalaFija": 0.6
 }

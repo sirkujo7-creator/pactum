@@ -76,7 +76,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 /* Ficha de una casilla */
 .ficha{pointer-events:auto;position:absolute;left:10px;right:10px;bottom:calc(72px + env(safe-area-inset-bottom,0px));max-width:420px;margin:0 auto;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 97%,transparent);box-shadow:0 4px 14px rgba(40,40,30,.15);display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:.95rem;line-height:1.35}
 .ficha .suelo{color:var(--bad);font-weight:600}
-.ficha img{grid-row:span 4;width:84px;height:70px}
+.ficha img{grid-row:span 2;width:84px;height:70px}
+.ficha>*{grid-column:1/-1}
+.ficha>img{grid-column:1}
+.ficha>img+b,.ficha>img+b+span{grid-column:2}
+.ficha>*{min-width:0;overflow-wrap:anywhere}
 .ficha b{font-family:Alegreya,Georgia,serif;font-size:1.15rem}
 .ficha .dos{grid-column:1/-1}
 .toast{position:absolute;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:8px 14px;border-radius:10px;font-size:.95rem;opacity:0;transition:opacity .25s;max-width:90vw;text-align:center}
@@ -478,3 +482,13 @@ section.fija>.pl-c{padding:0 12px 10px}
 .alm{margin:4px 0 8px;padding-left:18px;font-size:.92em}.alm li{margin:3px 0}
 .verso{margin:6px 0 10px;padding:6px 12px;border-left:3px solid #8a6a3b;font-family:'IM Fell English','Alegreya',serif;font-style:italic;opacity:.9}
 .verso-placa{display:block;margin-top:4px;font-size:.92em;opacity:.85}
+/* Letra más grande en el celular (pedido de Juan): textos de las tarjetas, opciones y notas. */
+@media (max-width:520px){
+  .card{font-size:1.1rem;line-height:1.4}
+  .card .small,.small{font-size:.98rem}
+  .opt{font-size:1.08rem}.opt small{font-size:.95rem}
+  .ficha{font-size:1.02rem}.ficha .aporte,.ficha .especial{font-size:.98rem}
+  .carta-texto,.rapida-texto,.verso{font-size:1.1rem}
+  .phil,.historia-real,.porque-afecta{font-size:1.02rem}
+  .chip{font-size:.95rem}
+}

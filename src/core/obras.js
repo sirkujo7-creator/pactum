@@ -5,7 +5,7 @@ import { contradecir, deshacerFaltas } from './acta.js';
 import { reaccionar, copiaRelaciones, restaurarRelaciones } from './figuras.js';
 import { climaActivo } from './clima.js';
 import { cap, cost } from './reglas.js';
-import { nearRiver } from './mundo.js';
+import { nearRiver, lado } from './mundo.js';
 import { marcarTala } from './suelo.js';
 import { cuotaInicial, empezarObra, devolucionObra, porEtapas, oferta, aplicarOferta } from './construccion.js';
 import { fincasActivas, mejorCultivo } from './fincas.js';
@@ -27,6 +27,7 @@ export function whyNot(S, k, i) {
   if (b.hmin && (x.h || 0) < b.hmin) return `${b.n}: necesita ladera (terreno alto).`;
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;
   if ((k === 'aserradero' || k === 'cantera' || k === 'estudio') && !materialesActivos(S)) return 'No disponible.';
+  if ((k === 'aserradero' || k === 'cantera') && !cercaDeMateria(S, k, i)) return k === 'aserradero' ? 'El aserradero va junto al bosque (a dos casillas como máximo).' : 'La cantera va junto a la montaña (a dos casillas como máximo).';
   if (k === 'estudio' && S.map.some(y => y.b === 'estudio')) return C.MIN.textos.yaHay;
   const tp = motivoTope(S, k); if (tp) return tp; // fase 17: el tope de la plaza
   const pago = cuotaInicial(S, k, cost(S, k));
@@ -34,6 +35,12 @@ export function whyNot(S, k, i) {
   return motivoMat(S, k); // fase 17: madera, piedra, metal
 }
 
+// Aserradero y cantera tienen sentido junto a su materia prima: el bosque o la montaña, a dos casillas como máximo.
+function cercaDeMateria(S, k, i) {
+  const N = lado(S), r0 = Math.floor(i / N), c0 = i % N, t = k === 'aserradero' ? 'bosque' : 'montana';
+  for (let r = Math.max(0, r0 - 2); r <= Math.min(N - 1, r0 + 2); r++) for (let c = Math.max(0, c0 - 2); c <= Math.min(N - 1, c0 + 2); c++) if (S.map[r * N + c].t === t) return true;
+  return false;
+}
 // Devuelve true, un mensaje (si taló bosque) o el motivo por el que no se pudo.
 // ofertaElegida (fase 2): contratista de la licitación; sin ella, la oferta de buena reputación.
 export function build(S, k, i, ofertaElegida) {
