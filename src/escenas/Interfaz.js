@@ -21,8 +21,7 @@ import { partida } from './partida.js';
 import { iconoObra } from '../arte/edificios.js';
 import { iconoCalle } from '../arte/calles.js';
 import { retrato, retratoFig, gestoDe, EMB } from '../arte/retratos.js';
-import { vineta } from '../arte/vinetas.js';
-import { grabado } from '../arte/grabados.js';
+import { imagenDe, imagenCarta, imagenTema, html as fotoHtml } from '../arte/imagenesTema.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 import { ico as pintado } from '../arte/iconos.js';
 import { FR, lienzo, texturaYeso, guarda, urlDe } from '../arte/fresco.js';
@@ -1099,7 +1098,7 @@ export class Interfaz {
     }
     if (/escandalo/.test(ev.id || '') && this.escena('escandalo', ev, () => this.suceso(alTerminar))) return;
     if (ev.hito && ev.hito.escena && this.escena(ev.hito.escena.tipo, ev, () => this.suceso(alTerminar), { titulo: ev.hito.escena.titulo, texto: ev.hito.escena.texto })) return; // hitos de la historia real
-    const img = ''; // Juan: las viñetas de arriba se quitaron (no tenían la calidad del mapa)
+    const img = fotoHtml(imagenDe(`${ev.title}`, ev.text, ev.opts && ev.opts[0] && ev.opts[0].fx, S)); // foto del propio mapa según el tema
     this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${ev.hito ? `<div class="historia-real"><b>📅 ${ev.hito.fecha}</b><br>${ev.hito.nota}</div>` : ''}${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
       `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a, st > 0 ? 'feliz' : 'enojado')}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${oroPrevisto(S, o.fx) ? (oroPrevisto(S, o.fx) > 0 ? '+' : '−') + Math.abs(oroPrevisto(S, o.fx)) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
@@ -1243,7 +1242,7 @@ export class Interfaz {
     if (!ev || !C.ENTRE) { alTerminar(); return; }
     const e = datosEntre(ev.id), T = C.ENTRE.textos, N = C.EXT.lugares; if (!e) { S.polisEv = null; alTerminar(); return; }
     const dip = !e.diplomatico.neutral && C.ENTRE.diplomaticos[e.a] ? C.ENTRE.diplomaticos[e.a] : e.diplomatico;
-    const cab = `<div class="big">${e.icono}</div><h3>${e.titulo}</h3><p class="small"><b>${N[e.a].nombre}</b>${e.b ? ` y <b>${N[e.b].nombre}</b>` : ''}</p>`;
+    const cab = `${fotoHtml(imagenDe(e.titulo, e.texto, null, S))}<h3>${e.icono} ${e.titulo}</h3><p class="small"><b>${N[e.a].nombre}</b>${e.b ? ` y <b>${N[e.b].nombre}</b>` : ''}</p>`;
     this.tarjeta(`${cab}<p>${e.texto}</p><p class="small">${T.diplomatico}: <b>${dip.icono} ${dip.nombre}</b>${dip.rol ? `, ${dip.rol}` : ''}</p><blockquote class="verso">«${e.diplomatico.frase}»</blockquote>
       <div class="rapida-ops">${opcionesEntre(e).map(o => `<button class="opt rapida-op" data-e="${o.k}"><b>${o.texto}</b></button>`).join('')}</div>
       <div class="phil"><b>Para pensar</b><br>${e.pensar}</div>`, false);
@@ -1289,7 +1288,7 @@ export class Interfaz {
     if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2] })) return;
     this._sucesoCine = false;
     const q = C.SUCESOS.sucesos[ev.id];
-    this.tarjeta(`<div class="big">${q.icono}</div><h3>${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>
+    this.tarjeta(`${fotoHtml(imagenDe(q.titulo, ev.texto, ev.fx, S))}<h3>${q.icono} ${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>
       <div class="porque-afecta"><b>¿Por qué pasó?</b><br>${q.causa}${q.violencia ? '' : ` Inseguridad de este año: <b>${ev.ins}</b>.`}</div>
       <p class="small"><b>Cómo prevenirlo:</b> ${q.prevenir}</p>
       <div class="phil"><b>Lo que enseña</b><br>${q.violencia ? C.SUCESOS.violencia.leccion : C.SUCESOS.leccion}</div>
@@ -1781,7 +1780,7 @@ export class Interfaz {
   }
   tarjetaCarta(r, alTerminar, reabrir) {
     const S = this.S, T = C.FAMILIAS.textos, c = cartaRecibida(r), F = datosFamilia(c.familia), O = c.objeto ? datosObjeto(c.objeto) : null;
-    this.tarjeta(`<div class="big carta-ic" aria-hidden="true">${F.icono}</div>
+    this.tarjeta(`${fotoHtml(imagenCarta(c.escena, c.familia, c.texto, S))}
       <div class="carta-cab"><span>${F.icono} ${F.nombre}</span><span>${T.anio.replace('{anio}', c.anio)}</span></div>
       <h3>${T.de.replace('{quien}', c.de)}</h3><div class="carta-texto"><p>${c.texto}</p><p class="firma">— ${c.de}</p></div>
       <div class="phil"><b>${T.pensar}</b><br>${c.frase}</div>
