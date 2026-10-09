@@ -1,176 +1,284 @@
-# 56 prompts para las cartas (uno por carta)
+# Prompts para las cartas (desde quintero2)
 
-Cada carta tiene su archivo: `src/imagenes/cartas/<id>.jpg`. Pásame cada imagen diciendo el id (por ejemplo «rojas1»).
+Cada prompt ya trae tu estilo y **una sola escena**, la más emotiva de la carta, para que la IA no se disperse. Copia el bloque completo en Dream Lab y, cuando tengas la imagen, mándala con el id (por ejemplo «quintero2»). Se instala como `src/imagenes/cartas/<id>.jpg`.
 
-## Estilo base (el tuyo, para pegar al inicio de cada uno)
+Ya están hechas las 10 primeras: rojas1, arango1, tique1, rojas2, quintero1, tique2, arango2, tique3, rojas3, arango3.
 
-Pintura en acuarela muy artística, menos pulida y más expresiva, tonalidad algo oscura y apagada, que juegue con los degradés y las manchas de agua. Formato horizontal 2:1. Sin texto ni letras. Historia del Tolima, Colombia. Escena:
+Si una carta tiene dos versiones con tono distinto, la escena elegida sirve para las dos.
 
-### rojas1 — Rosa Rojas (escena: tierras)
-Señor gobernador: llegamos de Boyacá con dos gallinas, un azadón y tres hijos. Nos dijeron que la ladera era baldía, que el que la trabajara se volvía dueño. Pedro tumba monte desde que sale el sol. Yo cargo agua del río. Si Dios quiere, el año que viene ya cosechamos maíz.
+### 1. quintero2 — Marta Quintero
 
-### arango1 — Efraín Arango (escena: festival)
-Le escribe Efraín Arango, el de la tienda de la plaza. Aquí se vende de todo: sal, panela, velas, machetes. La gente paga cuando cosecha, y yo anoto en la libreta. Unos dicen que soy usurero; yo digo que sin mi fiado más de uno ya se habría muerto de hambre.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una joven tejedora de pie, de brazos cruzados frente a un telar de madera detenido, mirando de frente y con firmeza a un capataz de sombrero que queda de espaldas; otras obreras difusas detrás. Fábrica textil de mediados del siglo XX, luz polvorienta que entra por altas ventanas.
+```
 
-### tique1 — Mercedes Tique (escena: tierras)
-Hijo del gobierno: los colonos llegaron con sus hachas y nosotros con nuestra minga. Les enseñamos dónde no inunda el río y ellos nos prestaron su mula. Mi abuela decía que la tierra no es de nadie, que uno es de la tierra. Por ahora vivimos juntos.
+### 2. rojas4 — Elvira Rojas
 
-### rojas2 — Pedro Rojas (escena: semillas)
-Gobernador: ya tenemos café. La primera cosecha la bajamos en mula hasta el pueblo y el señor Arango nos la compró, aunque barata. Rosa compró tela para vestidos y yo un radio de pilas que todavía no sé prender. Dicen que el café se vende hasta en Nueva York.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una anciana campesina llorando con la escritura de una parcela apretada entre las manos, de pie frente a un terreno de ladera con surcos recién sembrados; ruana oscura, sombrero de paja, luz dorada de amanecer.
+```
 
-### quintero1 — Jacinto Quintero (escena: huelga)
-Señor: trabajo en la trilladora, escogiendo café de seis de la mañana a seis de la tarde. El polvo de la cáscara se mete en el pecho y por las noches toso. Las escogedoras son casi todas mujeres y les pagan menos. Si alguien se queja, hay diez esperando su puesto.
+### 3. rojas5 — Elvira Rojas
 
-### tique2 — Manuel Tique (escena: semillas)
-Le escribe Manuel, hijo de Mercedes. Ahora somos jornaleros en tierra que fue nuestra. El mayordomo nos llama «indios» como si fuera insulto. Mi madre dice que Quintín Lame también fue terrajero y aprendió a leer las leyes de los blancos para defendernos con ellas. Yo estoy aprendiendo a leer.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una joven campesina con un vestido blanco de primera comunión que ya le queda estrecho, sosteniendo con orgullo su cédula en la mano, a la entrada de una escuela rural convertida en puesto de votación; al fondo, desenfocada, una mujer mayor de luto que la mira desde la puerta.
+```
 
-### arango2 — Efraín Arango (escena: sal)
-Gobernador: mis mulas bajan el café hasta Honda y suben sal, telas y hasta pianos para las casas ricas de Ibagué. Ocho días de camino de herradura, con barro hasta la rodilla. Cada arriero es un poeta, un comerciante y un cartero. Le mando este carriel de recuerdo, que ya me queda viejo.
+### 4. arango4 — Beatriz Arango
 
-### tique3 — Mercedes Tique (escena: migra)
-Hijo: a Ignacio lo mataron en el camino de Ortega. Lo pararon unos hombres y le pidieron la cédula para ver de qué partido era. Nosotros no éramos ni rojos ni azules, éramos indios. Lo mataron igual. Lo enterramos sin cura porque el cura no quiso subir. Le escribo para que alguien lo sepa.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una empresaria elegante de mediados del siglo XX, de pie junto a una ventana, mirando pensativa una tiendita humilde de esquina al otro lado de la calle; a sus pies, una maleta de viaje cerrada. Luz gris de tarde.
+```
 
-### rojas3 — Rosa Rojas (escena: migra)
-Señor gobernador: a Pedro lo sacaron de la casa una noche de diciembre. Eran «pájaros», los asesinos a sueldo que mandan los de la ciudad. Lo encontramos tres días después en el río, con las manos amarradas. Vendimos la finca por lo que nos quisieron dar y nos fuimos a Ibagué con los niños. Le dejo esta foto, que es lo único que…
+### 5. quintero3 — Marta Quintero
 
-### arango3 — Hernán Arango (escena: elite)
-Gobernador, le escribe el hijo de Efraín. Mi padre está comprando las fincas de los que se van huyendo. Las paga a la cuarta parte de lo que valen y dice que es un favor, que si no las compra él las roban. Ayer le compró a la viuda Rojas. Yo firmé como testigo y desde entonces no duermo.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un obrero de cuarenta años parado solo en el portón de una fábrica con una carta de despido arrugada en la mano y la lonchera en la otra, mirando hacia atrás unas máquinas enormes que trabajan solas; pueblo del Tolima, atardecer sombrío.
+```
 
-### quintero2 — Marta Quintero (escena: huelga)
-Soy Marta Quintero, tejedora. En la fábrica nos pagan tan poco que las compañeras no alcanzan a pagar el arriendo. Mañana paramos los telares. Fundamos el sindicato aunque el capataz dice que nos van a echar a todas. Mi papá me dio su bendición: él nunca pudo.
+### 6. lozano1 — Luz Lozano
 
-### rojas4 — Elvira Rojas (escena: tierras)
-Le escribe Elvira, la hija de Rosa y Pedro. Volvimos al campo. Con la reforma agraria nos titularon una parcela, no la nuestra, que esa ya tiene dueño, pero una parcela. Mi mamá lloró con la escritura en la mano. Dice que mi papá estaría contento.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una mujer campesina con ruana y tres niños pequeños sentados sobre una maleta de cartón frente a un rancho de tablas a la orilla de un pueblo, al anochecer; ella mira hacia atrás, hacia el camino por donde vinieron. Rostros cansados, tonos oscuros.
+```
 
-### rojas5 — Elvira Rojas (escena: pet)
-Gobernador: hoy voté por primera vez en mi vida. Me puse el vestido de la primera comunión, que ya no me cierra. Mi mamá no quiso ir: dice que votar fue lo que mató a mi papá. Yo le dije que justamente por eso. Le mando la cédula para que vea que es verdad.
+### 7. tique4 — Saúl Tique
 
-### arango4 — Beatriz Arango (escena: elite)
-Gobernador: le escribe Beatriz Arango. Con su impuesto progresivo pago tres veces lo que paga la tienda de la esquina. Lo entiendo, pero no me gusta. Estoy pensando en llevar parte del negocio a Bogotá. Mi abuelo Efraín decía que el dinero es cobarde: se va a donde no lo molestan.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un anciano indígena pijao de espaldas, con la mano levantada, frente a una máquina amarilla de obra que se detiene al pie de un cerro verde y brumoso donde descansan sus ancestros; a su lado una niña con un cuaderno. Luz de neblina.
+```
 
-### quintero3 — Marta Quintero (escena: huelga)
-Gobernador, ya estoy vieja y le escribo por mi hijo Daniel. Trabajó veinte años en la fábrica. La semana pasada llegaron las máquinas que hacen solas lo que hacían cuarenta obreros, y lo despidieron con una carta y un apretón de manos. Dice el gerente que es el progreso. ¿Progreso para quién?
+### 8. arango5 — Beatriz Arango
 
-### lozano1 — Luz Lozano (escena: migra)
-Señor gobernador: llegamos con tres niños y esta maleta. En la vereda nos dieron dos días para irnos; al vecino que no quiso irse lo mataron delante de su familia. No sabemos si fueron guerrilleros o paramilitares; los dos mandan de noche. Ahora vivimos en un rancho de plástico en la orilla del pueblo. Le pido que no nos saquen …
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una empresaria de mediana edad sola de noche en la oficina de su fábrica, con un sobre de dinero sobre el escritorio, mirando por la ventana dos faros de camioneta que esperan afuera en la oscuridad; tensión silenciosa, luz de una lámpara.
+```
 
-### tique4 — Saúl Tique (escena: tierras)
-Gobernador: soy Saúl, nieto de Mercedes. Por primera vez el Estado nos preguntó antes de meter una obra en el resguardo. Dijimos que el cerro no, que ahí están los abuelos, y nos escucharon. Mi abuela no alcanzó a verlo. Ahora mi hija está escribiendo un cuaderno con las palabras de la lengua que todavía recordamos.
+### 9. rojas6 — Camilo Rojas
 
-### arango5 — Beatriz Arango (escena: corrup)
-Gobernador, esto se lo digo en confianza. Pagamos «vacuna» cada mes: una parte a la guerrilla y otra a los paramilitares. Si no pagamos, queman la fábrica o se llevan a alguien. La plata que les damos compra las balas que matan a los vecinos. No sé cómo salir de esto sin poner muertos.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una mujer de edad mayor, de rostro firme, sosteniendo contra el pecho una fotografía en blanco y negro de un campesino, con una vela encendida delante; detrás, difusas, otras personas con fotos de desaparecidos en una sala de audiencia. Solemne.
+```
 
-### rojas6 — Camilo Rojas (escena: protesta)
-Gobernador, soy Camilo, el nieto de Pedro Rojas. Fui a la audiencia de la Comisión de la Verdad. Un hombre muy viejo, que fue «pájaro» en los años de La Violencia, pidió perdón a las familias. Dijo el nombre de mi abuelo. Mi tía Elvira se levantó y le dio la mano. Yo no pude. Pero por fin sabemos.
+### 10. lozano2 — Luz Lozano
 
-### lozano2 — Luz Lozano (escena: maestros)
-Gobernador: le escribo con orgullo. Andrés, mi hijo mayor, se graduó del colegio público, el primero de la familia. Quiere estudiar para maestro. Cuando llegamos no tenía zapatos; hoy da clases de refuerzo a los niños del asentamiento.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un joven de dieciséis años con uniforme de colegio y un morral al hombro, de pie en el umbral de un rancho, mirando hacia el camino donde espera un hombre en moto; su madre, detrás de él, con las manos sobre la boca. Luz de amanecer fría.
+```
 
-### guerra1 — Jacinto Quintero (escena: protesta)
-Gobernador: a mi sobrino lo mandaron al frente, contra la polis vecina. Tiene diecinueve años y nunca había salido del pueblo. Escribe que allá los soldados del otro lado también son campesinos, que hablan como nosotros y tienen las mismas manos. Dice que no entiende por qué se están disparando.
+### 11. guerra1 — Jacinto Quintero
 
-### tique5 — Yuli Tique (escena: maestros)
-Hola, gobernador. Soy Yuli, la bisnieta de Mercedes. Estudio en la universidad y tengo un canal donde enseño palabras de nuestra lengua. Tiene más seguidores en otros países que en el pueblo. Mi abuelo Saúl dice que la abuela Mercedes no lo creería: la lengua que les quitaron vuelve por un teléfono.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un joven soldado campesino de diecinueve años sentado en una trinchera al amanecer, mirando una fotografía arrugada, con el fusil a un lado; al otro lado del campo, borrosa, una figura de soldado muy parecida a él.
+```
 
-### lozano3 — Luz Lozano (escena: tierras)
-Gobernador: volvimos a la vereda. Con la ley de víctimas un juez nos devolvió la finca. La casa estaba en el suelo y el monte se comió los cafetales, pero es nuestra. Mis nietos nacieron en el pueblo y no conocen las gallinas. Les estoy enseñando.
+### 12. tique5 — Yuli Tique
 
-### quintero4 — Daniel Quintero (escena: precios)
-Gobernador: soy Daniel, el hijo de Marta. Ahora reparto domicilios con una aplicación. Gano por pedido, sin jefe y sin horario. Al menos con la seguridad social tengo salud: el mes pasado me caí de la moto y no me cobraron la cirugía. Mi mamá dice que eso lo ganaron los sindicatos de su tiempo.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una joven indígena universitaria sentada en un corredor de casa campesina, sosteniendo con ambas manos el chumbe (faja tejida) antiguo de su abuela; a su lado un libro de derecho, una mochila y un teléfono celular. Montañas y cafetales al fondo.
+```
 
-### cardenas1 — Elvira Cárdenas (escena: maestros)
-Señor gobernador: ya tengo cuarenta niños en un rancho que se llovía, y ahora llegan todos, porque a los padres les cae una multa si no los mandan. Algunos vienen con sombrero de papá y el machete atado a la espalda, porque saliendo de aquí se van a desyerbar. Les enseño a leer con la cartilla y con las coplas que me enseñó mi a…
+### 13. lozano3 — Luz Lozano
 
-### cardenas2 — Elvira Cárdenas (escena: maestros)
-Gobernador: esta semana faltaron siete niños y nadie me dijo por qué. Los de la vereda de arriba ya no bajan por el camino de El Alto, y los hijos de los Peña no se sientan junto a los de los Rojas. Yo bajé la bandera del patio porque no supe de qué color era. El cura dijo misa casi en voz baja. Hoy enseñé historia de Colombia s…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una mujer campesina mayor de pie ante las ruinas de su antigua casa, con los muros caídos y el monte creciendo adentro, sosteniendo en la mano una llave de hierro oxidada; cafetales invadidos de maleza. Luz de tarde.
+```
 
-### cardenas3 — Lucía Cárdenas (escena: maestros)
-Señor gobernador: soy Lucía, la hija de Elvira. Me gradué de maestra en la universidad de nuestro pueblo, sin tener que irme a Bogotá como mi mamá soñaba que lo hiciera yo. Hoy enseño en la misma escuela, ahora de ladrillo. Mi madre se sienta al fondo y corrige mi letra.
+### 14. quintero4 — Daniel Quintero
 
-### cardenas4 — Lucía Cárdenas (escena: maestros)
-Gobernador: los niños ya tienen pantalla en la escuela. Esta mañana uno me mostró un video donde decían que el agua del río estaba envenenada, y la mitad de la clase quiso dejar de bañarse. Luego nos pusimos a averiguar quién lo había hecho y para qué. Nadie lo supo. Hoy aprendimos a desconfiar de lo que se ve demasiado bien o d…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un joven repartidor en moto, con la caja de domicilios a la espalda, detenido bajo la lluvia en una calle nocturna de una ciudad intermedia, mirando la pantalla de su celular; luces de neón difusas reflejadas en el pavimento mojado.
+```
 
-### bernal1 — Eusebio Bernal (escena: sal)
-Gobernador: las mulas se quedaron mirando hacia arriba, con las orejas paradas, cuando pasaron los baldes de café colgados del cable. Yo las llevé de vacío hasta la bodega. Antes tardaba cuatro días con ocho cargas y ahora el cable las pasa en horas. Dicen que es progreso, y tal vez lo sea, pero la fonda donde dormíamos ya no ti…
+### 15. cardenas1 — Elvira Cárdenas
 
-### bernal2 — Jairo Bernal (escena: migra)
-Señor gobernador: le escribo yo, Jairo, porque a mi papá le tiembla la mano. Compré a plazos un camión usado y vendimos las mulas, menos una, que mi papá no quiso soltar. Llego a Ibagué en un día. Pero la carretera es la misma que caminaba mi papá, solo que ahora la pisamos con ruedas. Él dice que el camino nuevo se come al viej…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un niño campesino descalzo, con un sombrero de adulto demasiado grande y un machete atado a la espalda, sentado en el banco de una escuela rústica con una pizarra pequeña en las manos; al fondo la maestra, difusa. Principios del siglo XX.
+```
 
-### bernal3 — Jairo Bernal (escena: precios)
-Gobernador: con los fletes por el piso y los camiones que traen de afuera lo que antes subía de aquí, hoy trabajamos por menos. Pagué la cuota de abril con lo del arroz importado, que llegó más barato que el nuestro. Algunos compañeros bloquearon la vía dos días para que los escucharan.
+### 16. cardenas2 — Elvira Cárdenas
 
-### pena1 — Julián Peña (escena: protesta)
-Madre: me dieron un fusil, un uniforme que me queda grande y una orden de la que no entiendo ni la mitad. Dicen que el que nos manda es el gobierno, pero el sargento habla como se habla en Boyacá y nos trata como a bandidos a los de aquí. Mi compadre Aníbal está en la otra vereda, y usted me dijo que era liberal. No sé contra qu…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una maestra rural sola en el patio de una escuela, bajando con las manos una bandera de la que no se distingue el color; pupitres vacíos al fondo y un camino de montaña vacío. Años de guerra de partidos, luz triste.
+```
 
-### pena2 — Cándida Peña (escena: protesta)
-Señor gobernador: me llegó una carta del cuartel que no me atreví a abrir. La dejé tres días encima del fogón. Mi vecina sabía leer pero le dije que no, que mejor no. Hoy la abrí yo sola. Pregunto por qué los hijos de los pobres son los que se van y se quedan en los potreros que nadie reclama. Les pido que me entreguen su cuerpo…
+### 17. cardenas3 — Lucía Cárdenas
 
-### pena3 — Mateo Peña (escena: protesta)
-Gobernador: soy Mateo, nieto de Cándida. Estuve cinco años en el monte y hoy trabajo en el vivero que ustedes abrieron. Aprendí a sembrar cacao y a decir mi nombre sin miedo. Algunos vecinos no me saludan. Otros me traen tinto por las tardes. Mi abuela no sabe qué pensar, pero me dejó entrar a la casa.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Las manos de una mujer mayor atando con un cordón un manojo de cartas dentro de una vieja cartilla escolar, sobre una mesa de madera junto a una ventana luminosa; una pizarra pequeña y tiza a un lado.
+```
 
-### vargas1 — Camila Vargas (escena: migra)
-Señor gobernador: me llamo Camila y tengo ocho años. Anoche salimos sin los marranos ni el loro. Mi papá no quiso decirnos por qué, solo dijo que nos callaramos y que camináramos pegados. Mi mamá lloraba bajito. En el camino una señora nos prestó una mula. Ahora dormimos en un galpón y yo no sé dónde dejó el loro mi papá.
+### 18. cardenas4 — Lucía Cárdenas
 
-### vargas2 — Camila Vargas (escena: migra)
-Gobernador: ya tengo doce años y vendo chicles en la plaza, antes de ir a la escuela de la tarde. Vivimos en un rancho de tablas en la loma de arriba, donde no hay agua. Mi mamá dice que mientras no se pueda volver, aquí es lo mismo. Hoy una señora me preguntó de dónde era y le dije que de la vereda de arriba, que no era mentira…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un grupo de niños campesinos con los rostros iluminados por la luz azul de una pantalla en un salón de escuela rural; una maestra detrás con la mano en el hombro de uno de ellos, y por la ventana un río y montañas.
+```
 
-### vargas3 — Camila Vargas (escena: tierras)
-Señor gobernador: hoy fuimos a ver la parcela. De la casa quedan los cimientos, pero el nogal sigue ahí, más grande que antes. Mi papá se arrodilló y no dijo nada. Yo planté con mis manos un frijol en el mismo lugar donde estaba la cocina. La fiscal dijo que el papel ya está firmado.
+### 19. bernal1 — Eusebio Bernal
 
-### murillo1 — Ana Murillo (escena: huelga)
-Gobernador: antes de la jornada de ocho horas salíamos de noche y volvíamos de noche. Ahora todavía veo el sol por la tarde y puedo cocinar yo misma. En la fábrica las manos se me han llenado de callos y los jefes ya no gritan tanto. Pero el patrón dice que gana menos y que por eso hay menos puestos.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un arriero con ruana y sombrero acariciando el cuello de su mula, ambos mirando hacia arriba con asombro un cable aéreo con baldes de café que cruza el cielo sobre un valle; camino de herradura en primer plano.
+```
 
-### murillo2 — Ana Murillo (escena: huelga)
-Gobernador: nos organizamos en el sindicato y ahora hay una carta de peticiones. Algunos tienen miedo, pero como hay ley, el patrón no puede despedirnos por ir a la asamblea. Esta tarde comimos todos juntos en el patio. Joaquín dice que nunca antes nos había visto reír.
+### 20. bernal2 — Jairo Bernal
 
-### murillo3 — Ana Murillo (escena: precios)
-Gobernador: hoy la fábrica cerró. Llegó una cadena de camisetas baratas de afuera y ya no nos compraron. En el portón dejaron un letrero con las gracias. Los jóvenes se ofrecieron como domiciliarios en moto y yo, a los cincuenta y ocho, no sé qué hacer con estas manos que solo saben coser.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un arriero anciano sentado junto a una mula vieja atada a un poste, sin soltar el cabestro, mientras al fondo un camión polvoriento arranca llevándose la carga por una carretera de tierra. Tarde ocre.
+```
 
-### cuellar1 — Abdón Cuéllar (escena: cafe)
-Gobernador: la Federación nos compró el café a precio fijo y hoy pude pagar la deuda de la tienda. Mi hija Nelly aprendió a leer los números del recibo. Me dijeron que el precio en Nueva York bajó, pero a nosotros no nos tocó. Ya no pierdo el sueño cuando suena el teléfono del pueblo.
+### 21. bernal3 — Jairo Bernal
 
-### cuellar2 — Nelly Cuéllar (escena: guerra)
-Gobernador: este año cosechamos de noche, con las gallinas dentro de la casa y los perros sueltos. Don Hernán, el vecino de arriba, dejó las llaves de la finca en la puerta de la iglesia y se fue sin despedirse. Mi hermano no quiere salir al camino sin los dos perros. Papá dice que el café no se levanta solo, pero cada vez es má…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un camionero con las manos en el volante de un camión estacionado en una carretera vacía, la mirada perdida bajo un atardecer; su hija pequeña sentada a su lado en la cabina, mirándolo.
+```
 
-### cuellar3 — Abdón Cuéllar (escena: cafe)
-Gobernador: cada tres meses viene un joven con corbata a medir la tierra y a decirnos cuánto abono ponerle al palo. Al principio nos reímos. Hoy la cosecha rinde un tercio más, y Nelly dice que ese muchacho debe de ser pariente de algún presidente. Sebastián, mi nieto, le sigue el paso y le hace preguntas hasta que anochece.
+### 22. pena1 — Julián Peña
 
-### cuellar4 — Sebastián Cuéllar (escena: cafe)
-Gobernador: vendo el café por internet. Un comprador de Japón me pregunta a cuántos metros sobre el mar está la finca; nadie me pregunta cuánto llovió este año. Mi abuelo decía que la lluvia se medía por el color de las hojas, y las hojas de hoy están amarillas antes de tiempo. Subí la siembra cien metros más arriba. Alguien ten…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un joven recluta campesino con un uniforme que le queda grande, sentado solo en un banco de un cuartel de madera, con el fusil entre las rodillas y una carta en las manos; luz tenue de una ventana.
+```
 
-### pardo1 — Lucas Pardo (escena: calle)
-Señor gobernador: me llamo Lucas, tengo ocho años y lustro zapatos en la plaza. Los zapatos de los señores de la alcaldía brillan poco porque casi no caminan. Mi mamá lava ropa en el río y ya no habla fuerte de tanto toser. Hoy un señor me pagó con una moneda y me preguntó si sabía leer; le dije que sabía contar.
+### 23. pena2 — Cándida Peña
 
-### pardo2 — Lucas Pardo (escena: huelga)
-Señor gobernador: ahora tengo catorce años y voy a la escuela por la mañana. En la tarde lavo la maquinaria de la fábrica, porque mi mamá todavía tose y no puede trabajar. El jefe me preguntó la edad. Le dije que tenía dieciséis. Lo que no le dije es que esta noche tengo que hacer una tarea sobre los ríos de Colombia.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una mujer campesina de edad mirando una carta cerrada puesta sobre el fogón de una cocina de leña con humo, sin atreverse a abrirla; sus manos tiemblan, rostro curtido, olla de barro y paredes ahumadas.
+```
 
-### pardo3 — Lucas Pardo (escena: calle)
-Señor gobernador: ya soy adulto y tengo un puesto de minutos de celular en la plaza. También lustro zapatos los domingos por costumbre. Dicen que el comercio digital llegó a todas partes; a mi puesto llegó una pantalla que no sé usar. Mis hijos sí. Uno de ellos quiere ser ingeniero y me explicó cómo se hace un programa. Le pedí …
+### 24. pena3 — Mateo Peña
 
-### almonacid1 — Teresa Almonacid (escena: salud)
-Gobernador: en la sala del hospital hay cuatro camas y seis enfermos. A la señora de la vereda de arriba la acostamos en el piso con una cobija. La partera Hilda ya la había atendido antes de que llegara; yo no puedo escribir su nombre en el libro del parto porque no tiene título. Mi superior me dijo que lo que no está en el lib…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un joven excombatiente con ropa de campo sembrando una plántula de cacao en un vivero; una mano de vecino le ofrece desde un lado una taza de tinto humeante. Luz suave de tarde, aire de reconciliación incierta.
+```
 
-### almonacid2 — Teresa Almonacid (escena: salud)
-Gobernador: este año recorrimos las veredas en mula con una neverita de icopor y una lista de nombres. En cada casa me preguntaban por qué venía con una aguja y yo les decía que era para que los niños no se quedaran como Jacinto, el de la esquina, con la pierna arrastrada. Hubo casas donde nos cerraron la puerta. En la casa de H…
+### 25. vargas1 — Camila Vargas
 
-### almonacid3 — Teresa Almonacid (escena: salud)
-Gobernador: llevo una semana usando el mismo tapabocas y los pasillos del hospital están llenos de gente que ni conozco. La vecina de la tienda no me quiere abrir la puerta; me dice que yo traigo "eso" en la ropa. Hilda, que ya es muy anciana, se quedó encerrada en su casa y yo le dejo la comida en el portón. Hoy hablamos por la…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una niña de ocho años agarrada de la falda de su madre, que llora bajito, caminando de noche por un camino de montaña con una mula prestada; ojos muy abiertos de la niña, luna entre nubes. Familia huyendo.
+```
 
-### penaloza1 — Eliseo Peñaloza (escena: guerra)
-Gobernador: me licenciaron y volví a la vereda con un uniforme que ya no me queda. Cuando paso por la tienda, las mujeres cierran las ventanas y los niños me gritan un apodo que no entiendo. Yo solo cumplí órdenes y dormí tres años en una carpa. Mi madre me sirvió la comida y no me preguntó nada.
+### 26. vargas2 — Camila Vargas
 
-### penaloza2 — Eliseo Peñaloza (escena: guerra)
-Gobernador: volví de Corea con tres medallas y la rodilla mala. Nadie en el pueblo sabe dónde queda Corea. El alcalde prometió conseguirme empleo de celador y llevo cuatro años esperando la carta. Mi nieta Rubiela me pide que le cuente cómo era el frío allá; yo le cuento del frío y no del resto.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una niña de doce años con una caja de cartón de chicles colgada al cuello, de pie en una plaza de pueblo, mirando hacia arriba a una señora elegante que le pregunta algo; al fondo, una loma de ranchos de tablas.
+```
 
-### penaloza3 — Rubiela Peñaloza (escena: guerra)
-Gobernador: soy Rubiela, la nieta de Eliseo. Mi abuelo murió el invierno pasado y entre sus cosas encontré una libreta con nombres de gente que nunca me mencionó. Fui a preguntar al pueblo y nadie quiere decirme de quién eran. Una señora me dijo: «Eso no se pregunta». Tengo la libreta en la mesa y no sé a quién entregársela.
+### 27. vargas3 — Camila Vargas
 
-### mireya1 — Mireya Salcedo (escena: radio)
-Gobernador: leo las noticias en la emisora a las seis y a las doce. Esta semana tuve que leer cinco avisos de entierro y dos de misas. Los avisos de los entierros me los traen escritos a mano y sin causa. Cuando pregunto de qué murieron, el sacerdote mira al suelo y el alcalde cambia de tema. La gente cree que yo sé más de lo qu…
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una joven de rodillas sembrando un frijol en la tierra entre los cimientos de una casa vieja, con un enorme nogal detrás; a su lado un hombre mayor arrodillado en silencio con las manos sobre la tierra.
+```
 
-### mireya2 — Mireya Salcedo (escena: radio)
-Gobernador: hoy me pidieron leer un aviso que no es un aviso: es un anuncio de la campaña, pero con voz de noticia. Si no lo leo, me quitan la hora de la tarde. Si lo leo, mañana mis oyentes no me creerán. Esta noche la gente me llamó para preguntar por qué cambié de voz.
+### 28. murillo1 — Ana Murillo
 
-### mireya3 — Mireya Salcedo (escena: radio)
-Gobernador: ahora tengo un programa en internet y me escuchan en Cúcuta, en Madrid y en un pueblo de Huila que no conocía. Pero ayer circuló un audio con mi voz diciendo cosas que yo nunca dije. Lo hicieron con una máquina. Mis vecinos me pararon en la plaza para preguntarme si era cierto y no supe cómo probarles que no.
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Las manos callosas de una obrera con pañuelo en la cabeza, en primer plano, saliendo al sol de la tarde por el portón de una fábrica de principios del siglo XX; fondo de rostros difusos y luz cálida de ocaso.
+```
+
+### 29. murillo2 — Ana Murillo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una obrera sentada frente a su máquina industrial vacía con la mirada baja y las manos sobre el regazo; al fondo, borroso, un grupo de obreros reunido en asamblea en el patio de la fábrica.
+```
+
+### 30. murillo3 — Ana Murillo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una obrera de cincuenta y ocho años de pie ante el portón cerrado de una fábrica con un letrero pegado, abrazando su bolso; jóvenes en moto pasan detrás, borrosos. Luz gris de mañana.
+```
+
+### 31. cuellar1 — Abdón Cuéllar
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un campesino cafetero con el recibo de compra del café en la mano y su hija pequeña a su lado, señalando los números con el dedo; cafetal con granos rojos al fondo y una tienda de pueblo.
+```
+
+### 32. cuellar2 — Nelly Cuéllar
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un manojo de llaves de hierro colgado de la manija de la puerta de madera de una iglesia rural, al amanecer, con un camino vacío que se aleja hacia el cafetal y una finca abandonada al fondo.
+```
+
+### 33. cuellar3 — Abdón Cuéllar
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un joven técnico agrónomo de corbata y libreta midiendo una rama de cafeto cargada de granos, bajo la mirada escéptica de un campesino viejo con sombrero y machete; cafetal de ladera.
+```
+
+### 34. cuellar4 — Sebastián Cuéllar
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un campesino cafetero mirando una hoja de cafeto amarilla y marchita sobre su palma, mientras en la otra mano sostiene un celular con la pantalla encendida; cafetal seco y cielo caluroso detrás.
+```
+
+### 35. pardo1 — Lucas Pardo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un niño de ocho años lustrabotas, descalzo, con su cajón de betún, sentado en el borde de una plaza colonial con una moneda en la mano, mirando los zapatos de un señor que pasa; palomas y campanario al fondo.
+```
+
+### 36. pardo2 — Lucas Pardo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un adolescente de catorce años con overol grande lavando una máquina de fábrica con una manguera, con un cuaderno escolar asomando del bolsillo; a su espalda un jefe de brazos cruzados que lo observa.
+```
+
+### 37. pardo3 — Lucas Pardo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un hombre de mediana edad en un puesto de venta de minutos de celular en una plaza, con un cajón de betún a un lado, mirando una pantalla táctil que no comprende, mientras su hijo adolescente se la señala sonriendo.
+```
+
+### 38. almonacid1 — Teresa Almonacid
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una enfermera joven con cofia, arrodillada en el piso de un pasillo de hospital sobre una cobija junto a una mujer campesina que yace allí; al fondo, borrosa, una anciana partera con pañolón. Camas llenas, luz de ventana.
+```
+
+### 39. almonacid2 — Teresa Almonacid
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una enfermera a lomo de mula en un camino de montaña con una neverita de icopor atada a la silla; una niña campesina le extiende el brazo para la vacuna, con la madre al lado. Casa de bahareque al fondo.
+```
+
+### 40. almonacid3 — Teresa Almonacid
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una enfermera exhausta con tapabocas sentada en el suelo de un pasillo de hospital, con las manos en la cara y la bata arrugada; luz fría y pasillo largo vacío. Época de la pandemia.
+```
+
+### 41. penaloza1 — Eliseo Peñaloza
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un soldado licenciado con un uniforme viejo que le queda grande, caminando solo por la calle de tierra de una vereda, con las ventanas cerradas y rostros de mujeres que lo miran por las rendijas; un niño señalándolo a lo lejos.
+```
+
+### 42. penaloza2 — Eliseo Peñaloza
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Un veterano de la guerra de Corea con tres medallas en la solapa y la rodilla vendada, sentado en un banco frente a la puerta de una alcaldía, esperando; una niña pequeña a su lado lo mira con curiosidad.
+```
+
+### 43. penaloza3 — Rubiela Peñaloza
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una joven con una libreta vieja de tapas oscuras abierta, llena de nombres escritos a mano, parada ante la puerta de una casa de pueblo que una señora le cierra en la cara; calle empedrada y luz de mediodía.
+```
+
+### 44. mireya1 — Mireya Salcedo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una locutora de radio joven en un pequeño estudio con micrófono antiguo, leyendo un papel escrito a mano con la mirada tensa y la mandíbula apretada; luz de una sola bombilla, paredes de corcho. Años de La Violencia.
+```
+
+### 45. mireya2 — Mireya Salcedo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una locutora delante de un micrófono con la mano apretando una hoja de papel, mientras dos hombres de traje oscuro, de pie detrás de ella, la miran fijamente; ambiente de presión, luz tenue.
+```
+
+### 46. mireya3 — Mireya Salcedo
+
+```
+Pintura en acuarela muy artística, expresiva y menos pulida, con manchas de agua, degradés y bordes sueltos sobre papel envejecido, tonalidad algo oscura y apagada, ambientada en el Tolima, Colombia, época antigua, con personalidad propia y nada genérica, sin texto ni letras, formato horizontal 16:9. Escena (un solo foco): Una locutora con audífonos frente a una pantalla de computador donde las ondas de su voz aparecen retorcidas y distorsionadas; afuera, por la ventana, un vecino con celular en la mano mira hacia adentro.
+```
 
