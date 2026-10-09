@@ -37,7 +37,7 @@ export const html = (src, alt = '') => `<img class="vig-foto" src="${src}" alt="
 // src/imagenes/cartas/<escena>-<n>.jpg. Si una escena no tiene, la carta usa una foto del mapa.
 export const CARTAS_ACUARELA = { tierras: 2 };
 // Una acuarela propia por carta: ids con archivo src/imagenes/cartas/<id>.jpg
-export const CARTAS_UNICAS = ['tique1', 'arango1', 'quintero1', 'rojas1', 'rojas2', 'tique2', 'arango2', 'tique3', 'rojas3', 'arango3', 'quintero2', 'rojas4', 'rojas5', 'arango4', 'quintero3', 'lozano1', 'tique4', 'arango5', 'rojas6', 'lozano2', 'guerra1', 'tique5', 'lozano3', 'quintero4', 'cardenas1', 'cardenas2', 'cardenas3', 'cardenas4', 'bernal1', 'bernal2', 'bernal3', 'pena1', 'pena2', 'pena3', 'vargas1', 'vargas2', 'vargas3', 'murillo1', 'murillo2', 'murillo3'];
+export const CARTAS_UNICAS = ['tique1', 'arango1', 'quintero1', 'rojas1', 'rojas2', 'tique2', 'arango2', 'tique3', 'rojas3', 'arango3', 'quintero2', 'rojas4', 'rojas5', 'arango4', 'quintero3', 'lozano1', 'tique4', 'arango5', 'rojas6', 'lozano2', 'guerra1', 'tique5', 'lozano3', 'quintero4', 'cardenas1', 'cardenas2', 'cardenas3', 'cardenas4', 'bernal1', 'bernal2', 'bernal3', 'pena1', 'pena2', 'pena3', 'vargas1', 'vargas2', 'vargas3', 'murillo1', 'murillo2', 'murillo3', 'cuellar1', 'cuellar2', 'cuellar3', 'cuellar4', 'pardo1'];
 export function imagenCartaAcuarela(escena, id) {
   if (CARTAS_UNICAS.includes(id)) return `src/imagenes/cartas/${id}.jpg`;
   const n = CARTAS_ACUARELA[escena]; if (!n) return null;

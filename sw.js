@@ -1,6 +1,6 @@
 // Pactum: trabajador de servicio. Guarda el juego en el aparato para que funcione sin internet.
 // Al publicar una versión nueva, cambia CACHE: así los aparatos descargan los archivos nuevos.
-const CACHE = 'pactum-0.134.0';
+const CACHE = 'pactum-0.135.0';
 const ARCHIVOS = [
   './',
   'index.html',
@@ -211,6 +211,10 @@ const ARCHIVOS = [
   'src/imagenes/cartas/cardenas2.jpg',
   'src/imagenes/cartas/cardenas3.jpg',
   'src/imagenes/cartas/cardenas4.jpg',
+  'src/imagenes/cartas/cuellar1.jpg',
+  'src/imagenes/cartas/cuellar2.jpg',
+  'src/imagenes/cartas/cuellar3.jpg',
+  'src/imagenes/cartas/cuellar4.jpg',
   'src/imagenes/cartas/guerra1.jpg',
   'src/imagenes/cartas/lozano1.jpg',
   'src/imagenes/cartas/lozano2.jpg',
@@ -218,6 +222,7 @@ const ARCHIVOS = [
   'src/imagenes/cartas/murillo1.jpg',
   'src/imagenes/cartas/murillo2.jpg',
   'src/imagenes/cartas/murillo3.jpg',
+  'src/imagenes/cartas/pardo1.jpg',
   'src/imagenes/cartas/pena1.jpg',
   'src/imagenes/cartas/pena2.jpg',
   'src/imagenes/cartas/pena3.jpg',
