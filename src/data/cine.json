@@ -54,6 +54,10 @@
     "llegadaAvion": {
       "titulo": "Aterriza el primer avión",
       "texto": "Un ruido nuevo cruza el cielo y los niños corren a la pista. Desde hoy, el mundo queda a unas horas."
+    },
+    "incendio": {
+      "titulo": "El incendio",
+      "texto": "El fuego prende en la obra y los vecinos corren a apagarlo."
     }
   },
   "seguir": "Continuar ▸"

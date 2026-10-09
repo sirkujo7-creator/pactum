@@ -106,6 +106,15 @@ function recetas(era = 1) {
     for (let k = 0; k < 9; k++) { const q = b.up(V2(-.22 + (k % 3) * .22, -.14 + Math.floor(k / 3) * .14), 2); blob(g, q[0], q[1] - 2, 2.2, 2.6, k % 2 ? '#5E8A4D' : '#7FA35C', r, .95); }
     const q = V2(.3, .25); persona(g, q[0], q[1], '#2D6E5E', '#E7C76B');
   }]);
+  // Cruz del camino: cruz de madera con flores al pie y una vela, donde mataron a alguien (violencia).
+  L.push(['m_cruz', 40, 52, 20, 42, (g, r) => {
+    sombra(g, 10, 3, 2); const p = V2(0, 0);
+    blob(g, p[0], p[1] - 1, 7, 2.6, '#8C7A5E', r, .9);
+    g.fillStyle = '#5B4330'; g.fillRect(p[0] - 1, p[1] - 26, 2.2, 25); g.fillRect(p[0] - 6.5, p[1] - 20, 13, 2);
+    g.fillStyle = '#7A5A3E'; g.fillRect(p[0] - .4, p[1] - 26, .8, 25);
+    for (const [dx, col] of [[-4, '#F4F1E6'], [-2, '#C0392B'], [3, '#E7C76B'], [5, '#F4F1E6']]) { g.fillStyle = '#5E8A4D'; g.fillRect(p[0] + dx, p[1] - 4, .6, 3); g.fillStyle = col; g.beginPath(); g.arc(p[0] + dx + .3, p[1] - 4.4, 1.3, 0, 7); g.fill(); }
+    g.fillStyle = '#F4EEDC'; g.fillRect(p[0] + 7, p[1] - 4, 1.8, 3.4); g.fillStyle = '#FFC25A'; g.beginPath(); g.arc(p[0] + 7.9, p[1] - 5.2, .9, 0, 7); g.fill();
+  }]);
   L.push(['m_campamento', 60, 46, 30, 36, (g, r) => {
     sombra(g, 20, 5, 4);
     for (const [u, v, col] of [[-.25, -.05, '#4E5A3A'], [.18, .12, '#5E6A44']]) { const q = V2(u, v); wash(g, [[q[0] - 9, q[1]], [q[0] + 9, q[1]], [q[0], q[1] - 12]], col, r, .97, .3); wash(g, [[q[0] - 2, q[1]], [q[0] + 2, q[1]], [q[0], q[1] - 5]], '#2A2A22', r, .95, .2); }

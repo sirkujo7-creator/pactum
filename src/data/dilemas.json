@@ -1069,7 +1069,8 @@
         },
         "filosofia": "util",
         "porque": "Liquidez inmediata. Revisa si tu flujo de caja soporta la cuota.",
-        "aQuien": "Entra oro hoy, pero la deuda crece más de lo que recibes: la pagarás con intereses."
+        "aQuien": "Entra oro hoy, pero la deuda crece más de lo que recibes: la pagarás con intereses.",
+        "huella": "valla"
       },
       {
         "texto": "Rechazar",
@@ -1258,7 +1259,8 @@
         },
         "filosofia": "deon",
         "porque": "Rendir cuentas es un deber, aunque exponga al gobernante.",
-        "aQuien": "Asumir errores gana legitimidad; a la élite no le gusta que se revisen las obras mal hechas."
+        "aQuien": "Asumir errores gana legitimidad; a la élite no le gusta que se revisen las obras mal hechas.",
+        "huella": "placa"
       },
       {
         "texto": "Culpar al clima",
@@ -1290,7 +1292,8 @@
           "efectos": {
             "confianza": -6
           }
-        }
+        },
+        "huella": "pancarta"
       }
     ]
   },
@@ -1552,7 +1555,8 @@
         },
         "filosofia": "contr",
         "porque": "Compartir la abundancia fortalece los lazos de la comunidad.",
-        "aQuien": "Todos comen y celebran: sube el ánimo general y la gente agradece al gobierno."
+        "aQuien": "Todos comen y celebran: sube el ánimo general y la gente agradece al gobierno.",
+        "vista": "festival"
       }
     ]
   },
@@ -1587,7 +1591,8 @@
         },
         "filosofia": "real",
         "porque": "Quien usa el camino ayuda a pagarlo.",
-        "aQuien": "El tesoro gana más de una vez; la élite, dueña de los caminos, lo celebra."
+        "aQuien": "El tesoro gana más de una vez; la élite, dueña de los caminos, lo celebra.",
+        "huella": "reten"
       },
       {
         "texto": "Invitarlos a quedarse a vivir",
@@ -1618,7 +1623,8 @@
         },
         "filosofia": "virt",
         "porque": "La virtud cívica se practica trabajando juntos.",
-        "aQuien": "Campesinos y artesanos mejoran su entorno con sus manos y confían más en su gobierno."
+        "aQuien": "Campesinos y artesanos mejoran su entorno con sus manos y confían más en su gobierno.",
+        "huella": "placa"
       },
       {
         "texto": "Sembrar árboles en las laderas",
@@ -1628,7 +1634,8 @@
         },
         "filosofia": "deon",
         "porque": "Cuidar la tierra es un deber con quienes vendrán.",
-        "aQuien": "Las laderas ganan árboles: sube el ambiente y los campesinos protegen sus tierras de la erosión."
+        "aQuien": "Las laderas ganan árboles: sube el ambiente y los campesinos protegen sus tierras de la erosión.",
+        "huella": "vivero"
       },
       {
         "texto": "Agradecer y dejarlos descansar",
@@ -1661,7 +1668,8 @@
         },
         "filosofia": "virt",
         "porque": "La vida buena también se construye celebrando en comunidad.",
-        "aQuien": "Con poco gasto el gobierno se suma a la fiesta: sube el ánimo y la gente siente que su gobierno es de ellos."
+        "aQuien": "Con poco gasto el gobierno se suma a la fiesta: sube el ánimo y la gente siente que su gobierno es de ellos.",
+        "vista": "festival"
       },
       {
         "texto": "Dejar que el pueblo la organice",
@@ -1670,7 +1678,8 @@
         },
         "filosofia": "contr",
         "porque": "La cultura es del pueblo, no del gobierno.",
-        "aQuien": "La fiesta es de todos y nadie paga de más: sube el ánimo."
+        "aQuien": "La fiesta es de todos y nadie paga de más: sube el ánimo.",
+        "vista": "festival"
       },
       {
         "texto": "Aprovechar para anunciar obras",
@@ -1680,7 +1689,8 @@
         },
         "filosofia": "real",
         "porque": "El poder también se ejerce en la plaza pública.",
-        "aQuien": "El anuncio gana apoyo y a la élite le gusta la promesa de obras; ojo: el pueblo recordará lo prometido."
+        "aQuien": "El anuncio gana apoyo y a la élite le gusta la promesa de obras; ojo: el pueblo recordará lo prometido.",
+        "huella": "valla"
       }
     ]
   },
@@ -1701,7 +1711,8 @@
         },
         "filosofia": "contr",
         "porque": "La educación es la vía para que los menos favorecidos mejoren su lugar.",
-        "aQuien": "Parte del dinero se invierte en educación: sube la igualdad y el pueblo agradece."
+        "aQuien": "Parte del dinero se invierte en educación: sube la igualdad y el pueblo agradece.",
+        "huella": "mural"
       },
       {
         "texto": "Que su aporte vaya al tesoro",
@@ -1721,7 +1732,8 @@
         },
         "filosofia": "real",
         "porque": "Reconocer a los benefactores atrae a otros.",
-        "aQuien": "La fiesta alegra al pueblo y la élite se siente reconocida."
+        "aQuien": "La fiesta alegra al pueblo y la élite se siente reconocida.",
+        "vista": "festival"
       }
     ]
   },
@@ -1751,7 +1763,8 @@
           "anios": 4,
           "id": "invento_exito",
           "probabilidad": 0.8
-        }
+        },
+        "huella": "placa"
       },
       {
         "texto": "Dejar que lo venda a los dueños de talleres",
@@ -1761,7 +1774,8 @@
         },
         "filosofia": "real",
         "porque": "El mercado sabrá premiar la buena idea.",
-        "aQuien": "La élite compra el invento y lo aprovecha; el tesoro cobra el impuesto de la venta."
+        "aQuien": "La élite compra el invento y lo aprovecha; el tesoro cobra el impuesto de la venta.",
+        "huella": "valla"
       },
       {
         "texto": "Nombrarla maestra de oficios",
@@ -1771,7 +1785,8 @@
         },
         "filosofia": "contr",
         "porque": "El saber compartido reduce las brechas.",
-        "aQuien": "Enseña a otros artesanos: se reparte el conocimiento y sube la igualdad."
+        "aQuien": "Enseña a otros artesanos: se reparte el conocimiento y sube la igualdad.",
+        "huella": "mural"
       }
     ]
   },
@@ -1791,7 +1806,8 @@
         },
         "filosofia": "contr",
         "porque": "Las desigualdades solo se justifican si benefician a los peores situados.",
-        "aQuien": "Atienden a quienes menos tienen: sube la igualdad y el ánimo de los campesinos."
+        "aQuien": "Atienden a quienes menos tienen: sube la igualdad y el ánimo de los campesinos.",
+        "huella": "olla"
       },
       {
         "texto": "Ubicarlos en el centro, donde vive más gente",
@@ -1801,7 +1817,8 @@
         },
         "filosofia": "util",
         "porque": "Atender al mayor número posible.",
-        "aQuien": "Atienden a más personas en el centro, donde viven muchos artesanos."
+        "aQuien": "Atienden a más personas en el centro, donde viven muchos artesanos.",
+        "huella": "placa"
       }
     ]
   },
@@ -1826,7 +1843,8 @@
         },
         "filosofia": "util",
         "porque": "Aprovechar la oportunidad trae recursos para todos.",
-        "aQuien": "El tesoro y los comerciantes (élite) ganan con el mejor precio."
+        "aQuien": "El tesoro y los comerciantes (élite) ganan con el mejor precio.",
+        "huella": "valla"
       },
       {
         "texto": "Crear una cooperativa campesina",
@@ -1838,7 +1856,8 @@
         },
         "filosofia": "contr",
         "porque": "Que el valor llegue a quien siembra.",
-        "aQuien": "Los caficultores se quedan con más de lo que produce su café: sube su ánimo y la igualdad."
+        "aQuien": "Los caficultores se quedan con más de lo que produce su café: sube su ánimo y la igualdad.",
+        "huella": "mural"
       }
     ]
   },
@@ -1860,7 +1879,8 @@
         },
         "filosofia": "deon",
         "porque": "Toda persona merece un lugar donde empezar de nuevo.",
-        "aQuien": "Vuelven con tierra para trabajar: llegan habitantes y los campesinos lo celebran."
+        "aQuien": "Vuelven con tierra para trabajar: llegan habitantes y los campesinos lo celebran.",
+        "huella": "olla"
       },
       {
         "texto": "Recibirlas sin más",
@@ -1889,7 +1909,8 @@
         },
         "filosofia": "util",
         "porque": "Que el premio siga trabajando para todos.",
-        "aQuien": "El dinero llega al tesoro y el pueblo se enorgullece."
+        "aQuien": "El dinero llega al tesoro y el pueblo se enorgullece.",
+        "huella": "placa"
       },
       {
         "texto": "Destinarlo a becas",
@@ -1900,7 +1921,8 @@
         },
         "filosofia": "contr",
         "porque": "La educación abre oportunidades a quien no las tiene.",
-        "aQuien": "Más jóvenes pobres estudian: sube la igualdad."
+        "aQuien": "Más jóvenes pobres estudian: sube la igualdad.",
+        "huella": "mural"
       }
     ]
   },
@@ -3784,7 +3806,8 @@
         },
         "filosofia": "util",
         "porque": "Adaptarse con ciencia (como Cenicafé) protege el ingreso sin tumbar el bosque.",
-        "aQuien": "Cuesta oro, pero el café aguanta en su sitio y el bosque se queda."
+        "aQuien": "Cuesta oro, pero el café aguanta en su sitio y el bosque se queda.",
+        "huella": "vivero"
       },
       {
         "texto": "Ayudarlos a cambiar a cacao en las tierras bajas",
@@ -3796,7 +3819,8 @@
         },
         "filosofia": "virt",
         "porque": "La prudencia: no pelear contra el clima sino cambiar con él.",
-        "aQuien": "Algunos cafeteros se resisten; los que cambian ganan un cultivo nuevo."
+        "aQuien": "Algunos cafeteros se resisten; los que cambian ganan un cultivo nuevo.",
+        "huella": "vivero"
       }
     ]
   },
@@ -3821,7 +3845,8 @@
         },
         "filosofia": "deon",
         "porque": "Gobernar es pensar en quienes vendrán: el agua de mañana se guarda hoy.",
-        "aQuien": "Cuesta oro, pero el pueblo tendrá agua cuando el glaciar falte."
+        "aQuien": "Cuesta oro, pero el pueblo tendrá agua cuando el glaciar falte.",
+        "huella": "placa"
       },
       {
         "texto": "Aprovechar el agua extra ahora",
@@ -3848,7 +3873,8 @@
         },
         "filosofia": "contr",
         "porque": "Nombrar el problema en público obliga a todos a responder.",
-        "aQuien": "La élite se queja de las restricciones; el pueblo valora la honestidad."
+        "aQuien": "La élite se queja de las restricciones; el pueblo valora la honestidad.",
+        "huella": "pancarta"
       }
     ]
   },
@@ -3883,7 +3909,8 @@
         },
         "filosofia": "virt",
         "porque": "Árboles y ganado juntos: menos erosión, sombra para las vacas y más agua en el suelo.",
-        "aQuien": "Cuesta oro enseñar el método; las laderas siguen verdes."
+        "aQuien": "Cuesta oro enseñar el método; las laderas siguen verdes.",
+        "huella": "vivero"
       },
       {
         "texto": "Negar el permiso",
@@ -3919,7 +3946,8 @@
         },
         "filosofia": "contr",
         "porque": "Pagar por servicios ambientales reconoce que el agua limpia tiene un costo para quien la cuida.",
-        "aQuien": "Las familias del páramo viven de protegerlo; el agua mejora."
+        "aQuien": "Las familias del páramo viven de protegerlo; el agua mejora.",
+        "huella": "vivero"
       },
       {
         "texto": "Mejor sacarlas del páramo",
@@ -3930,7 +3958,8 @@
         },
         "filosofia": "real",
         "porque": "Sin gente, el páramo se recupera solo.",
-        "aQuien": "Las familias pierden su tierra y su forma de vida; el pueblo lo ve como un desalojo."
+        "aQuien": "Las familias pierden su tierra y su forma de vida; el pueblo lo ve como un desalojo.",
+        "huella": "reten"
       },
       {
         "texto": "No hacer nada por ahora",
@@ -3966,7 +3995,8 @@
         },
         "filosofia": "deon",
         "porque": "Un niño no es un medio para producir: tiene derecho a la infancia y a estudiar.",
-        "aQuien": "Los dueños pierden mano de obra barata y algunas familias, un ingreso; los niños vuelven al aula."
+        "aQuien": "Los dueños pierden mano de obra barata y algunas familias, un ingreso; los niños vuelven al aula.",
+        "huella": "placa"
       },
       {
         "texto": "Escuela obligatoria con almuerzo gratis",
@@ -3978,7 +4008,8 @@
         },
         "filosofia": "virt",
         "porque": "Si la escuela alimenta, la familia no pierde nada al mandar al niño a estudiar.",
-        "aQuien": "El tesoro paga los almuerzos; las familias y los niños ganan."
+        "aQuien": "El tesoro paga los almuerzos; las familias y los niños ganan.",
+        "huella": "mural"
       },
       {
         "texto": "Dejarlo así: es costumbre",
@@ -4015,7 +4046,8 @@
         },
         "filosofia": "deon",
         "porque": "Quien contamina debe pagar por limpiar: el río es de todos.",
-        "aQuien": "La trilladora gasta en tanques; el río se recupera."
+        "aQuien": "La trilladora gasta en tanques; el río se recupera.",
+        "huella": "placa"
       },
       {
         "texto": "Cobrar una multa cada año",
@@ -4026,7 +4058,8 @@
         },
         "filosofia": "util",
         "porque": "La multa obliga al dueño a pensar en el costo que causa (Arthur Pigou).",
-        "aQuien": "El tesoro recibe la multa; el río mejora poco."
+        "aQuien": "El tesoro recibe la multa; el río mejora poco.",
+        "huella": "valla"
       },
       {
         "texto": "Dejarla trabajar: da empleo",
@@ -4036,7 +4069,8 @@
         },
         "filosofia": "real",
         "porque": "El café es la riqueza del territorio y no conviene frenarlo.",
-        "aQuien": "La trilladora sigue igual; la quebrada se pudre."
+        "aQuien": "La trilladora sigue igual; la quebrada se pudre.",
+        "vista": "smog"
       }
     ]
   },
@@ -4063,7 +4097,8 @@
         },
         "filosofia": "contr",
         "porque": "Un acuerdo entre las partes es más justo y más duradero que una imposición.",
-        "aQuien": "Los dueños ceden algo; las tejedoras ganan derechos."
+        "aQuien": "Los dueños ceden algo; las tejedoras ganan derechos.",
+        "huella": "placa"
       },
       {
         "texto": "Proteger por ley a las madres trabajadoras",
@@ -4074,7 +4109,8 @@
         },
         "filosofia": "deon",
         "porque": "Nadie debe perder su trabajo por ser madre.",
-        "aQuien": "Las tejedoras ganan; los dueños se quejan del costo."
+        "aQuien": "Las tejedoras ganan; los dueños se quejan del costo.",
+        "huella": "mural"
       },
       {
         "texto": "Enviar la policía a abrir la fábrica",
@@ -4085,7 +4121,8 @@
         },
         "filosofia": "real",
         "porque": "El orden y la producción primero.",
-        "aQuien": "Los telares vuelven a sonar; las obreras guardan rencor."
+        "aQuien": "Los telares vuelven a sonar; las obreras guardan rencor.",
+        "huella": "reten"
       }
     ]
   },
@@ -4113,7 +4150,8 @@
         },
         "filosofia": "real",
         "porque": "Sustituir importaciones: así crecieron las industrias de América Latina (CEPAL).",
-        "aQuien": "Las fábricas respiran y dan empleo; todo cuesta un poco más."
+        "aQuien": "Las fábricas respiran y dan empleo; todo cuesta un poco más.",
+        "huella": "valla"
       },
       {
         "texto": "Abrir el comercio",
@@ -4159,7 +4197,8 @@
         },
         "filosofia": "virt",
         "porque": "Destrucción creativa (Schumpeter): el oficio viejo muere, hay que preparar a la gente para el nuevo.",
-        "aQuien": "El tesoro paga los cursos; los obreros se reinventan."
+        "aQuien": "El tesoro paga los cursos; los obreros se reinventan.",
+        "huella": "mural"
       },
       {
         "texto": "Cobrar un impuesto a los robots",
@@ -4181,7 +4220,8 @@
         },
         "filosofia": "real",
         "porque": "Toda revolución industrial destruye empleos y luego crea otros.",
-        "aQuien": "Los dueños ganan; los despedidos se las arreglan solos."
+        "aQuien": "Los dueños ganan; los despedidos se las arreglan solos.",
+        "huella": "pancarta"
       }
     ]
   },
@@ -4205,7 +4245,8 @@
         },
         "filosofia": "virt",
         "porque": "Una lengua guarda una forma de ver el mundo: enseñarla es cuidar ese saber.",
-        "aQuien": "El tesoro paga maestros; los niños pijao aprenden su lengua y el español."
+        "aQuien": "El tesoro paga maestros; los niños pijao aprenden su lengua y el español.",
+        "huella": "mural"
       },
       {
         "texto": "Un museo y un diccionario",
@@ -4215,7 +4256,8 @@
         },
         "filosofia": "util",
         "porque": "Lo que se registra no se pierde del todo, y cuesta menos.",
-        "aQuien": "Se salva la memoria, aunque la lengua se siga hablando poco."
+        "aQuien": "Se salva la memoria, aunque la lengua se siga hablando poco.",
+        "huella": "placa"
       },
       {
         "texto": "Que cada familia decida",
@@ -4249,7 +4291,8 @@
         },
         "filosofia": "deon",
         "porque": "Las víctimas tienen derecho a la verdad y a ser recordadas.",
-        "aQuien": "Las familias encuentran un lugar para su duelo; algunos poderosos se incomodan."
+        "aQuien": "Las familias encuentran un lugar para su duelo; algunos poderosos se incomodan.",
+        "huella": "placa"
       },
       {
         "texto": "Crear una comisión que escriba la historia",
@@ -4259,7 +4302,8 @@
         },
         "filosofia": "contr",
         "porque": "Un relato acordado entre todos sirve más que una piedra.",
-        "aQuien": "Se escucha a todas las partes, aunque tarda años."
+        "aQuien": "Se escucha a todas las partes, aunque tarda años.",
+        "huella": "mural"
       },
       {
         "texto": "Pasar la página",
@@ -4292,7 +4336,8 @@
         },
         "filosofia": "deon",
         "porque": "La cultura propia merece un espacio garantizado, como dice la Constitución.",
-        "aQuien": "Los músicos del Tolima suenan más; a los jóvenes no les gusta que les impongan qué oír."
+        "aQuien": "Los músicos del Tolima suenan más; a los jóvenes no les gusta que les impongan qué oír.",
+        "vista": "festival"
       },
       {
         "texto": "Escuelas de música gratuitas",
@@ -4303,7 +4348,8 @@
         },
         "filosofia": "virt",
         "porque": "Si los jóvenes aprenden a tocar, la tradición se renueva desde adentro.",
-        "aQuien": "El tesoro paga; aparecen bandas que mezclan el bambuco con lo nuevo."
+        "aQuien": "El tesoro paga; aparecen bandas que mezclan el bambuco con lo nuevo.",
+        "huella": "mural"
       },
       {
         "texto": "Que cada quien oiga lo que quiera",
@@ -4335,7 +4381,8 @@
         },
         "filosofia": "real",
         "porque": "La procesión también es patrimonio cultural y atrae visitantes.",
-        "aQuien": "El párroco queda conforme; algunos critican la incoherencia."
+        "aQuien": "El párroco queda conforme; algunos critican la incoherencia.",
+        "vista": "festival"
       },
       {
         "texto": "No pagarla: el Estado es laico",
@@ -4356,7 +4403,8 @@
         },
         "filosofia": "contr",
         "porque": "Tratar a todas las creencias por igual, sin excluir a ninguna.",
-        "aQuien": "Cuesta más; nadie queda por fuera."
+        "aQuien": "Cuesta más; nadie queda por fuera.",
+        "vista": "festival"
       }
     ]
   },
@@ -4380,7 +4428,8 @@
         },
         "filosofia": "util",
         "porque": "Más visitantes, más empleo y más oro para el tesoro.",
-        "aQuien": "Entra el oro; la gente del pueblo tiene que pagar para entrar a su propia fiesta."
+        "aQuien": "Entra el oro; la gente del pueblo tiene que pagar para entrar a su propia fiesta.",
+        "huella": "valla"
       },
       {
         "texto": "Mantenerla comunitaria y gratuita",
@@ -4390,7 +4439,8 @@
         },
         "filosofia": "virt",
         "porque": "Una fiesta es de quien la hace, no se vende.",
-        "aQuien": "No llega oro; la fiesta sigue siendo del pueblo."
+        "aQuien": "No llega oro; la fiesta sigue siendo del pueblo.",
+        "vista": "festival"
       },
       {
         "texto": "Alianza: la comunidad decide y la empresa promociona",
@@ -4400,7 +4450,8 @@
         },
         "filosofia": "contr",
         "porque": "Un acuerdo que respeta la tradición y aprovecha el turismo.",
-        "aQuien": "Llega algo de oro y la fiesta conserva su alma."
+        "aQuien": "Llega algo de oro y la fiesta conserva su alma.",
+        "vista": "festival"
       }
     ]
   },

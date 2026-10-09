@@ -15,7 +15,8 @@ import { applyFx } from './dilemas.js';
 import { efectoBarrios } from './barrios.js';
 import { efectoTec } from './tecnologia.js';
 import { epocaHistorica, hasLaw } from './reglas.js';
-import { registrarMuertes } from './huellas.js';
+import { registrarMuertes, quemar } from './huellas.js';
+import { dejarMarca } from './marcas.js';
 
 const K = () => C.SUCESOS;
 export function sucesosActivos(S) { return climaActivo(S) && !!C.SUCESOS && S.stage >= K().desde.etapa; }
@@ -65,10 +66,15 @@ function violenciaDelAnio(S) {
     ev.obra = i; ev.texto = q.texto.replace('{obra}', C.B[x.b].a);
     if (q.dano) { x.u = Math.min(100, (x.u || 0) + q.dano); x.sin = S.year; }
   }
-  S.suceso = ev; S.violenciaUlt = S.year;
+  S.suceso = ev; S.violenciaUlt = S.year; huellaSuceso(S, q, ev);
   if (q.muertes) registrarMuertes(S, q.muertes, 'violencia'); // los muertos piden sepultura y se ven en el cementerio
   S.log.unshift({ y: S.year, t: `${q.titulo}. ${ev.texto}` });
   return [`${q.icono} ${q.titulo}: ${ev.texto}`];
+}
+// Lo que el suceso deja en el mapa: hollín en la obra quemada y una marca (cruz del camino, retén, pancartas).
+function huellaSuceso(S, q, ev) {
+  if (q.quema && ev.obra !== undefined) quemar(S, [ev.obra]);
+  if (q.marca) { const i = dejarMarca(S, q.marca, `Año ${S.year}: ${q.titulo.toLowerCase()}.`); if (i >= 0) ev.marca = i; }
 }
 // Cierre del año: como mucho un suceso (se prueba del más grave al más leve). Devuelve las noticias.
 export function sucesosDelAnio(S) {
@@ -92,7 +98,7 @@ export function sucesosDelAnio(S) {
     if (q.oroFraccion) { const o = Math.round(clamp(S.gold * q.oroFraccion, q.oroMinimo, q.oroMaximo)); fx.t = (fx.t || 0) - o; texto = texto.replace('{oro}', o); }
     ev.fx = applyFx(S, fx);
     if (q.movimiento && S.mov && S.mov[q.movimiento]) S.mov[q.movimiento].f = clamp(S.mov[q.movimiento].f + q.fuerzaMovimiento, 0, 100);
-    ev.texto = texto; S.suceso = ev; ult[id] = S.year;
+    ev.texto = texto; S.suceso = ev; ult[id] = S.year; huellaSuceso(S, q, ev);
     if (id === 'abuso') reaccionar(S, 'abuso');
     return [`${q.icono} ${q.titulo}: ${texto}`];
   }
