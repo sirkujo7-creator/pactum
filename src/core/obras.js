@@ -8,7 +8,7 @@ import { cap, cost } from './reglas.js';
 import { nearRiver, lado } from './mundo.js';
 import { marcarTala } from './suelo.js';
 import { cuotaInicial, empezarObra, devolucionObra, porEtapas, oferta, aplicarOferta } from './construccion.js';
-import { fincasActivas, mejorCultivo } from './fincas.js';
+import { fincasActivas, mejorCultivo, alturasTerreno } from './fincas.js';
 import { materialesActivos, motivoMat, pagarMat, devolverMat } from './materiales.js';
 
 // Devuelve el motivo por el que no se puede construir k en la casilla i, o '' si se puede.
@@ -37,9 +37,16 @@ export function whyNot(S, k, i) {
 }
 
 // Aserradero y cantera tienen sentido junto a su materia prima: el bosque o la montaña, a dos casillas como máximo.
+// Para el aserradero también cuentan el bosque de galería (junto al río) y el bosque seco que se ven en el mapa, si no se talaron.
+const BOSQUE_VISTO = new Set(['galeria', 'seco', 'niebla']);
 function cercaDeMateria(S, k, i) {
   const N = lado(S), r0 = Math.floor(i / N), c0 = i % N, t = k === 'aserradero' ? 'bosque' : 'montana';
-  for (let r = Math.max(0, r0 - 2); r <= Math.min(N - 1, r0 + 2); r++) for (let c = Math.max(0, c0 - 2); c <= Math.min(N - 1, c0 + 2); c++) if (S.map[r * N + c].t === t) return true;
+  const bio = k === 'aserradero' && S.mundo !== 'v9' ? alturasTerreno(S).b : null;
+  for (let r = Math.max(0, r0 - 2); r <= Math.min(N - 1, r0 + 2); r++) for (let c = Math.max(0, c0 - 2); c <= Math.min(N - 1, c0 + 2); c++) {
+    const j = r * N + c, y = S.map[j];
+    if (y.t === t) return true;
+    if (bio && j !== i && !y.b && !y.tl && y.t !== 'rio' && BOSQUE_VISTO.has(bio[j])) return true;
+  }
   return false;
 }
 // Devuelve true, un mensaje (si taló bosque) o el motivo por el que no se pudo.
