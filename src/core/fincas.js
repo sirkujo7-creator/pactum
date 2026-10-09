@@ -45,8 +45,15 @@ export function tieneRiego(S, i) { return nearRiver(S, i) || alturas(S).d[i] < 3
 export const suelosActivos = S => fincasActivas(S) && !!C.SUELOS;
 export function claseSuelo(S, i) {
   if (!suelosActivos(S)) return null;
-  const b = alturas(S).b[i], Q = C.SUELOS.clases;
-  return Object.keys(Q).find(k => Q[k].biomas.includes(b)) || 'llanura';
+  const b = alturas(S).b[i], Q = C.SUELOS.clases, base = Object.keys(Q).find(k => Q[k].biomas.includes(b)) || 'llanura';
+  return base === 'llanura' && secadaPorClima(S, i) ? 'seca' : base;
+}
+// Cambio climático (fase 17): cuando suben los pisos térmicos, los potreros lejos del agua se vuelven tierra seca.
+export function secadaPorClima(S, i) {
+  if (!subidaPisos(S)) return false;
+  const N = lado(S), r0 = Math.floor(i / N), c0 = i % N;
+  for (let r = Math.max(0, r0 - 2); r <= Math.min(N - 1, r0 + 2); r++) for (let c = Math.max(0, c0 - 2); c <= Math.min(N - 1, c0 + 2); c++) if (S.map[r * N + c].t === 'rio') return false;
+  return true;
 }
 export function datosSuelo(c) { return C.SUELOS.clases[c]; }
 // Cuánto sirve el suelo al cultivo (0 a 1; 0 = no se da en ese suelo).

@@ -1,0 +1,99 @@
+{
+  "leccion": "Las grandes obras de una región cuentan su historia y marcan su carácter: un jardín, un conservatorio, un túnel o un parque no son solo cemento y piedra; se convierten en motivo de orgullo, atraen visitantes y dejan algo a las generaciones que vienen. Cuestan mucho y, una vez hechas, son de todos.",
+  "textos": {
+    "titulo": "Maravillas",
+    "hecha": "Levantada en el año {anio}",
+    "levantar": "Levantar ({costo} de oro)",
+    "requisito": "Requisito: {r}",
+    "vacio": "Cuando tu territorio crezca, podrás levantar aquí sus grandes obras.",
+    "ver": "Ver en el mapa",
+    "sinSitio": "No hay un lugar libre cerca del pueblo.",
+    "sinOro": "Faltan {n} de oro.",
+    "anual": "Deja {n} de oro al año."
+  },
+  "maravillas": [
+    {
+      "id": "mv_jardin",
+      "tipo": "mv_jardin",
+      "nombre": "Jardín Botánico Mutis",
+      "icono": "🌿",
+      "costo": 220,
+      "mat": {
+        "madera": 20,
+        "piedra": 10
+      },
+      "etapa": 2,
+      "obras": [
+        "universidad"
+      ],
+      "oroAnual": 8,
+      "efectos": {
+        "ambiente": 4,
+        "confianza": 2,
+        "animo": 2
+      },
+      "texto": "Un invernadero de vidrio y hierro con las plantas del Tolima: quina, frailejón, orquídeas y café.",
+      "nota": "José Celestino Mutis dirigió la Expedición Botánica del Nuevo Reino de Granada, que tuvo sede en Mariquita (Tolima) entre 1783 y 1791."
+    },
+    {
+      "id": "mv_conservatorio",
+      "tipo": "mv_conservatorio",
+      "nombre": "Conservatorio del Tolima",
+      "icono": "🎼",
+      "costo": 200,
+      "mat": {
+        "piedra": 20
+      },
+      "etapa": 2,
+      "obras": [
+        "teatro"
+      ],
+      "oroAnual": 10,
+      "efectos": {
+        "animo": 4,
+        "confianza": 2
+      },
+      "texto": "Una escuela de música con salón de conciertos: bambucos, pasillos y torbellinos se aprenden y se tocan aquí.",
+      "nota": "Ibagué es conocida como la «ciudad musical de Colombia»; el Conservatorio del Tolima es una de sus instituciones más antiguas."
+    },
+    {
+      "id": "mv_tunel",
+      "tipo": "mv_tunel",
+      "nombre": "Túnel de La Línea",
+      "icono": "🚇",
+      "costo": 420,
+      "mat": {
+        "piedra": 30,
+        "metal": 15
+      },
+      "etapa": 3,
+      "obras": [],
+      "oroAnual": 30,
+      "efectos": {
+        "confianza": 2
+      },
+      "texto": "Un túnel que atraviesa la cordillera Central y acorta el viaje hacia el Quindío y el Pacífico.",
+      "nota": "El Túnel de La Línea, entre Cajamarca (Tolima) y Calarcá (Quindío), fue inaugurado en 2020 y es uno de los más largos de América Latina."
+    },
+    {
+      "id": "mv_parque",
+      "tipo": "mv_parque",
+      "nombre": "Parque Natural de Los Nevados",
+      "icono": "🏔️",
+      "costo": 150,
+      "mat": {
+        "madera": 10
+      },
+      "etapa": 2,
+      "obras": [],
+      "ambienteMin": 70,
+      "oroAnual": 8,
+      "efectos": {
+        "ambiente": 6,
+        "confianza": 2
+      },
+      "texto": "Un parque protegido de páramo y frailejones, con senderos y un centro de visitantes bajo los nevados.",
+      "nota": "El Parque Nacional Natural Los Nevados, creado en 1974, protege páramos y glaciares, entre ellos el Nevado del Tolima."
+    }
+  ]
+}

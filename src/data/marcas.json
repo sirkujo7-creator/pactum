@@ -181,6 +181,30 @@
       "icono": "🏛️",
       "anios": 999,
       "texto": "Una casa de memoria, con fotos, objetos y testimonios de lo que vivió la región."
+    },
+    "mv_jardin": {
+      "nombre": "Jardín Botánico Mutis",
+      "icono": "🌿",
+      "anios": 999,
+      "texto": "Una de las grandes obras de tu territorio."
+    },
+    "mv_conservatorio": {
+      "nombre": "Conservatorio del Tolima",
+      "icono": "🎼",
+      "anios": 999,
+      "texto": "Una de las grandes obras de tu territorio."
+    },
+    "mv_tunel": {
+      "nombre": "Túnel de La Línea",
+      "icono": "🚇",
+      "anios": 999,
+      "texto": "Una de las grandes obras de tu territorio."
+    },
+    "mv_parque": {
+      "nombre": "Parque Natural de Los Nevados",
+      "icono": "🏔️",
+      "anios": 999,
+      "texto": "Una de las grandes obras de tu territorio."
     }
   },
   "porFilosofia": {

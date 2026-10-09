@@ -68,3 +68,4 @@ export * from './visitantes.js';
 export * from './entrepolis.js';
 export * from './lugaresmemoria.js';
 export * from './comision.js';
+export * from './maravillas.js';

@@ -28,6 +28,7 @@ export function whyNot(S, k, i) {
   if (b.river && !nearRiver(S, i)) return `${b.n}: debe estar junto al río.`;
   if ((k === 'aserradero' || k === 'cantera' || k === 'estudio') && !materialesActivos(S)) return 'No disponible.';
   if ((k === 'aserradero' || k === 'cantera') && !cercaDeMateria(S, k, i)) return k === 'aserradero' ? 'El aserradero va junto al bosque (a dos casillas como máximo).' : 'La cantera va junto a la montaña (a dos casillas como máximo).';
+  if (k === 'mina' && climaActivo(S) && S.decisiones && S.decisiones.h_cajamarca === 0) return 'Una consulta popular prohibió la minería de metales en tu territorio.';
   if (k === 'estudio' && S.map.some(y => y.b === 'estudio')) return C.MIN.textos.yaHay;
   const tp = motivoTope(S, k); if (tp) return tp; // fase 17: el tope de la plaza
   const pago = cuotaInicial(S, k, cost(S, k));

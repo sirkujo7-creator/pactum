@@ -36,9 +36,19 @@ export function devolverMat(S, pago) {
   for (const [m, n] of Object.entries(pago)) { if (m === 'alimento') S.food += n; else S.mat[m] += n; }
 }
 // Precio de comprar n unidades a los vecinos (con el nivel de precios del territorio y un recargo).
-export function precioCompra(S, m, n = 1) { return Math.round(datosMaterial(m).precio * Math.sqrt(S.price) * C.MAT.compra.recargo * n); }
+// El metal se compra a las polis con las que te llevas mejor: con buenas relaciones es más barato y con malas se bloquea
+// (diplomacia y comercio: eje Dinero). Si aún no conoces ninguna polis, no hay efecto.
+export function relacionMetal(S) {
+  const R = Object.values((S.ext && S.ext.p) || {}); if (!R.length) return null;
+  const mejor = Math.max(...R.map(x => x.rel)), liga = R.some(x => x.trato === 'liga'), trato = R.some(x => x.trato);
+  return { mejor, liga, trato };
+}
+export function metalBloqueado(S) { const r = materialesActivos(S) && relacionMetal(S); return !!r && r.mejor < (C.MAT.compra.bloqueoMetal || 30); }
+function factorMetal(S) { const r = relacionMetal(S); if (!r) return 1; return Math.min(1.5, Math.max(.8, 1 + (50 - r.mejor) / 100)) * (r.liga ? .9 : r.trato ? .95 : 1); }
+export function precioCompra(S, m, n = 1) { return Math.round(datosMaterial(m).precio * Math.sqrt(S.price) * C.MAT.compra.recargo * (m === 'metal' ? factorMetal(S) : 1) * n); }
 export function comprarMat(S, m, n = C.MAT.compra.lote) {
   if (!materialesActivos(S) || !MATERIALES.includes(m)) return false;
+  if (m === 'metal' && metalBloqueado(S)) return false; // bloqueo: te llevas mal con las polis que lo venden
   const oro = precioCompra(S, m, n);
   if (S.gold < oro) return false;
   S.gold -= oro; S.mat[m] += n; S.matGasto = (S.matGasto || 0) + oro;
@@ -48,6 +58,7 @@ export function comprarMat(S, m, n = C.MAT.compra.lote) {
 export function comprarFaltante(S, k) {
   const f = faltanteMat(S, k);
   if (f.alimento) return false; // el alimento no se compra aquí
+  if (f.metal && metalBloqueado(S)) return false;
   const total = Object.entries(f).reduce((t, [m, n]) => t + precioCompra(S, m, n), 0);
   if (!total) return 0;
   if (S.gold < total) return false;
@@ -70,3 +81,10 @@ export function producirMat(S, fT = 1) {
   for (const [m, n] of Object.entries(P)) { if (m === 'alimento') S.food += Math.round(n); else S.mat[m] += Math.round(n); }
   return P;
 }
+
+// Para las maravillas: lo que falta de una lista { madera: n, ... } (texto) o null si alcanza; y pagarla.
+export function faltanteMatCosto(S, costo) {
+  const L = Object.entries(costo || {}).filter(([m, n]) => tiene(S, m) < n); if (!L.length) return null;
+  return C.MAT.textos.faltan.replace('{lista}', L.map(([m, n]) => `${n - tiene(S, m)} de ${nombreDe(m)}`).join(', '));
+}
+export function pagarMatCosto(S, costo) { for (const [m, n] of Object.entries(costo || {})) S.mat[m] -= n; }

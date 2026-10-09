@@ -17,6 +17,7 @@ Estos archivos guardan todo el texto y los números del juego. Se pueden editar 
 | `mundo_vivo.json` | Hechos reales de las polis vecinas por época que llegan a tu plaza; un tratado con la polis protagonista cambia el efecto (`conTrato`) |
 | `visitantes.json` | Visitantes extranjeros por época, cada uno con su acento, su frase y una pregunta para pensar |
 | `entre_polis.json` | Pleitos entre polis vecinas por época: enviado, frase y cuatro respuestas (mediar, apoyar a una u otra, callar) |
+| `maravillas.json` | Grandes obras únicas (jardín botánico, conservatorio, túnel de La Línea, parque de Los Nevados): requisitos, costo y beneficios |
 | `lugares_memoria.json` | Monumentos y museos que se pueden levantar después de cada hito de la historia |
 | `comision.json` | La Comisión de la Verdad como mecánica: acciones, duración e informe final |
 | `suelos.json` | La vocación del suelo: clases de suelo (vega, llanura, tierra seca, ladera) y qué tanto sirve cada una a cada cultivo |
