@@ -1,3 +1,3 @@
 // Versión visible del juego. Al publicar, cambiarla también en sw.js (CACHE).
-export const VERSION = '0.137.0';
-export const PASO = 'Acuarelas propias en 55 cartas';
+export const VERSION = '0.138.0';
+export const PASO = 'Las 56 cartas con su acuarela propia';
