@@ -435,7 +435,7 @@ let HOJA = null;
 export function hornearEdificios(era) {
   if (era === undefined) era = HOJA ? HOJA.era : 1;
   if (HOJA && HOJA.era === era) return HOJA;
-  const lista = recetas(era), sep = 4, anchoHoja = 2048, marcos = {};
+  const lista = recetas(era).sort((a, b) => b[2] - a[2]), sep = 4, anchoHoja = 2048, marcos = {}; // de mayor a menor alto: la hoja queda más compacta (menos memoria en el celular)
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
     const W = Math.ceil(w * ESCALA), H = Math.ceil(h * ESCALA);
