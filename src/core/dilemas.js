@@ -12,6 +12,12 @@ import { reaccionar, reaccionarMovimiento } from './figuras.js';
 import { marcaDeOpcion, dejarMarca } from './marcas.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
+// Lo que valdría el efecto en oro de una opción, con los mismos multiplicadores de dificultad que se aplican al decidir
+// (así el aviso de antes coincide con lo que pasa después).
+export function oroPrevisto(S, fx0) {
+  const v = (fx0 && fx0.t) || 0; if (!v) return 0;
+  return Math.round(v * (v < 0 ? (climaActivo(S) && D(S).badSR ? D(S).badSR : D(S).bad) : D(S).good));
+}
 export function applyFx(S, fx0) {
   const fx = {};
   for (const [k, v] of Object.entries(fx0)) {
@@ -169,4 +175,17 @@ export function choose(S, i) {
 export function stance(a, fx) {
   const v = (fx[C.ADV[a].k] || 0) + (fx.h || 0) + (a === 'aurelio' && fx.txe ? -fx.txe : 0);
   return v > 1 ? 1 : v < -1 ? -1 : 0;
+}
+
+// Tema de una decisión (según el efecto que más pesa) para que los personajes respondan distinto a cada tipo de decisión.
+const TEMA = { t: 'dinero', d: 'dinero', txe: 'dinero', i: 'dinero', f: 'gente', p: 'gente', ti: 'tierra', a: 'ambiente', e: 'igualdad', c: 'poder' };
+export function temaDe(fx, excluir) {
+  let mejor = null, mv = 0;
+  for (const [k, v] of Object.entries(fx || {})) { if (k === excluir || !TEMA[k]) continue; const w = Math.abs(v) * (k === 't' ? 1 / 12 : k === 'f' ? 1 / 15 : k === 'd' ? 1 / 12 : 1); if (w > mv) { mv = w; mejor = TEMA[k]; } }
+  return mejor;
+}
+// Frase del personaje ante una decisión: por tema si hay, y si no la de siempre; varía con la decisión y el año.
+export function fraseDe(a, st, fx, semilla = 0) {
+  const A = C.ADV[a], tema = temaDe(fx, A.k), L = A.temas && A.temas[tema] && A.temas[tema][st > 0 ? 'pro' : 'con'], base = st > 0 ? A.pro : A.con, lista = L && L.length ? L : base;
+  return lista[Math.abs(semilla) % lista.length];
 }

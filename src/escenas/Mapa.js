@@ -22,6 +22,7 @@ import { Navegacion } from './Navegacion.js';
 import { Transporte } from './Transporte.js';
 import { Visitas } from './Visitas.js';
 import { Patrullas } from './Patrullas.js';
+import { Oficios } from './Oficios.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
@@ -100,6 +101,7 @@ export class Mapa extends Phaser.Scene {
     this.transporte = new Transporte(this); // camiones y cable aéreo
     this.visitas = new Visitas(this); // visitante extranjero
     this.patrullas = new Patrullas(this); // policía y ejército
+    this.oficios = new Oficios(this); // trabajadores con su oficio
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.capaCob = this.add.graphics().setDepth(PROF_POSIBLES - .5); // fase 2: capa de cobertura
@@ -549,6 +551,7 @@ export class Mapa extends Phaser.Scene {
     if (this.transporte) this.transporte.actualizar();
     if (this.visitas) this.visitas.actualizar();
     if (this.patrullas) this.patrullas.actualizar();
+    if (this.oficios) this.oficios.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
     // Fase 10: si los pisos térmicos subieron lo suficiente, se repinta el terreno (y el Nevado si perdió hielo).
@@ -610,6 +613,7 @@ export class Mapa extends Phaser.Scene {
     this.transporte.update(Math.min(.05, delta / 1000));
     this.visitas.update(Math.min(.05, delta / 1000));
     this.patrullas.update(Math.min(.05, delta / 1000));
+    this.oficios.update(Math.min(.05, delta / 1000));
     this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).
     const m = this.pob.manana(), a = .2 + .3 * m;

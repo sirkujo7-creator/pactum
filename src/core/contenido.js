@@ -60,7 +60,7 @@ export function usarContenido(d) {
   C.LAWS = d.leyes.map(l => sinVacios({ id: l.id, n: l.nombre, d: l.descripcion, st: l.etapa, no: l.prohibidaEn }));
   C.ACH = d.logros.map(a => ({ id: a.id, n: a.nombre, d: a.descripcion }));
   C.ADV = Object.fromEntries(Object.entries(d.personajes).map(([k, a]) => [k, {
-    n: a.nombre, r: a.rol, k: EFECTOS[a.efecto], sat: a.clase, pro: a.aFavor, con: a.enContra, mood: a.animo
+    n: a.nombre, r: a.rol, k: EFECTOS[a.efecto], sat: a.clase, pro: a.aFavor, con: a.enContra, mood: a.animo, temas: a.temas
   }]));
   C.PH = Object.fromEntries(Object.entries(d.filosofias).map(([k, p]) => [k, { n: p.nombre, a: p.autor }]));
   C.PROFILE = Object.fromEntries(Object.entries(d.filosofias).map(([k, p]) => [k, p.perfil]));
