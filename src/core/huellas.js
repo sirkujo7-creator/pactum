@@ -12,12 +12,9 @@ import { marcarTala } from './suelo.js';
 const K = () => C.HUELLAS && C.HUELLAS.fundacion;
 const plazaPendiente = S => !!(S.fundando && S.fundando.plaza);
 export function plazaFundacion(S) { return S.map.findIndex(x => x.b === 'fundacion'); }
-// Radio del casco urbano en la etapa actual (null si la partida no tiene casco).
-export function radioCasco(S) {
-  if (!S.casco || !K()) return null;
-  const r = K().radios[Math.min(S.stage, K().radios.length - 1)];
-  return r >= 99 ? null : r;
-}
+// Radio del casco urbano: pedido de Juan (9 de octubre): ya no hay bloqueo de casillas lejos de la plaza; solo la iglesia
+// debe quedar junto a la plaza (y el cementerio lejos). Se deja la función para las partidas y pantallas que la consultan.
+export function radioCasco(S) { return null; }
 export function enCasco(S, i) {
   const r = radioCasco(S), c = S.centro;
   if (r === null || c === undefined) return true;

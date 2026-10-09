@@ -1113,6 +1113,50 @@ function cuartelExtra(g, e) {
   const sc = P(.38, -.18, 0); for (let k = 0; k < 3; k++) { g.fillStyle = k % 2 ? '#B8A27A' : '#C9B48A'; g.beginPath(); g.ellipse(sc[0] + k * 4, sc[1] + k * 2 - 1, 2.8, 1.8, .15, 0, 7); g.fill(); g.strokeStyle = 'rgba(90,60,35,.5)'; g.lineWidth = .3; g.stroke(); }
 }
 
+// ---------- Vida del mercado: vendedores, compradores, una mula con costales, gallinas y banderines ----------
+function personaM(g, x, y, ropa, sombrero, piel = '#C98E62', canasta = false, delantal = null) {
+  g.save(); g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(x + 1.5, y + .5, 3, 1.1, 0, 0, 7); g.fill(); g.restore();
+  g.fillStyle = mezcla(ropa, '#000000', .25); g.fillRect(x - 1.5, y - 3, 1.3, 3); g.fillRect(x + .2, y - 3, 1.3, 3); // piernas
+  g.fillStyle = ropa; g.beginPath(); g.moveTo(x - 2.2, y - 3); g.lineTo(x - 1.8, y - 8.4); g.lineTo(x + 1.8, y - 8.4); g.lineTo(x + 2.2, y - 3); g.closePath(); g.fill();
+  if (delantal) { g.fillStyle = delantal; g.fillRect(x - 1.6, y - 6.6, 3.2, 3.6); }
+  g.fillStyle = piel; g.beginPath(); g.arc(x, y - 9.8, 1.5, 0, 7); g.fill();
+  if (sombrero) { g.fillStyle = sombrero; g.beginPath(); g.ellipse(x, y - 11, 3, 1, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(x, y - 11.7, 1.5, 1, 0, Math.PI, 0); g.fill(); }
+  else { g.fillStyle = '#2A1E16'; g.beginPath(); g.ellipse(x, y - 10.7, 1.6, .9, 0, Math.PI, 0); g.fill(); }
+  if (canasta) { g.fillStyle = '#B58A4E'; g.beginPath(); g.ellipse(x + 3, y - 4.2, 1.8, 1.2, 0, 0, 7); g.fill(); g.fillStyle = '#C0392B'; g.beginPath(); g.arc(x + 2.4, y - 5, .7, 0, 7); g.arc(x + 3.6, y - 5, .7, 0, 7); g.fill(); }
+}
+function mulaCarga(g, x, y) {
+  g.save(); g.globalAlpha = .2; g.fillStyle = '#26301E'; g.beginPath(); g.ellipse(x + 2, y + 1, 8, 2.2, 0, 0, 7); g.fill(); g.restore();
+  g.fillStyle = '#8A5A3A'; g.beginPath(); g.ellipse(x, y - 6, 6.2, 3, -.08, 0, 7); g.fill();
+  g.fillRect(x - 5, y - 4.6, 1.2, 4.6); g.fillRect(x - 2, y - 4.4, 1.2, 4.4); g.fillRect(x + 2, y - 4.4, 1.2, 4.4); g.fillRect(x + 4.4, y - 4.6, 1.2, 4.6);
+  g.beginPath(); g.moveTo(x + 5, y - 7.5); g.lineTo(x + 8.6, y - 10.6); g.lineTo(x + 9.8, y - 9); g.lineTo(x + 6, y - 5); g.closePath(); g.fill(); g.beginPath(); g.moveTo(x + 8.6, y - 10.6); g.lineTo(x + 8.2, y - 13.2); g.lineTo(x + 9.4, y - 11); g.fill(); // cabeza y oreja
+  for (const [dx, col] of [[-2.4, '#C9B48A'], [1.8, '#BFA87C']]) { g.fillStyle = col; g.beginPath(); g.ellipse(x + dx, y - 10, 3.2, 2.6, .1, 0, 7); g.fill(); g.strokeStyle = 'rgba(90,60,35,.5)'; g.lineWidth = .35; g.stroke(); }
+}
+function gallinas(g, x, y) { for (const [dx, dy, c] of [[0, 0, '#F4ECDB'], [3.6, 1.2, '#B9654A']]) { g.fillStyle = c; g.beginPath(); g.ellipse(x + dx, y + dy - 1.8, 1.9, 1.3, 0, 0, 7); g.fill(); g.beginPath(); g.arc(x + dx + 1.5, y + dy - 3.4, .8, 0, 7); g.fill(); g.fillStyle = '#C0392B'; g.fillRect(x + dx + 1.4, y + dy - 4.4, .6, .8); } }
+function frutas(g, x, y, col, n = 5) { for (let k = 0; k < n; k++) { g.fillStyle = k % 2 ? mezcla(col, '#FFFFFF', .2) : col; g.beginPath(); g.arc(x + (k % 3) * 1.8 - 1.8 + (k > 2 ? .9 : 0), y - (k > 2 ? 1.8 : 0), 1, 0, 7); g.fill(); } }
+function banderinesM(g, a, b) {
+  g.strokeStyle = '#6B4F3A'; g.lineWidth = .4; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 5, ...b); g.stroke();
+  const cols = ['#C0602A', '#E7C76B', '#2D6E5E', '#C4513B', '#F4ECDB'];
+  for (let k = 1; k < 10; k++) { const f = k / 10, x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f + Math.sin(f * Math.PI) * 4.8; g.fillStyle = cols[k % 5]; g.beginPath(); g.moveTo(x - 1.4, y); g.lineTo(x + 1.4, y); g.lineTo(x, y + 2.8); g.fill(); }
+}
+function vidaMercado(g, e, cubierto) {
+  const ropas = [['#2F5D8A', '#C9A86A'], ['#B9442F', '#F4ECDB'], ['#3E6B4A', '#2E2A28'], ['#C08A2A', '#6E4529'], ['#6A4A86', '#F4ECDB']];
+  const pers = (r, c, k, canasta, delantal) => { const q = P(r, c), [ro, so] = ropas[k % 5]; personaM(g, q[0], q[1], e >= 3 ? ['#3A6EA5', '#C0392B', '#2E7D4F'][k % 3] : ro, e >= 2 && k % 2 ? null : so, ['#C98E62', '#A8704A', '#D8A07A', '#8A5A3A'][k % 4], canasta, delantal); };
+  if (!cubierto) {
+    const a = P(-.4, -.44, 20), b = P(-.4, .44, 20); for (const q of [a, b]) { const base = [q[0], q[1] + 20]; g.strokeStyle = K.maderaOsc; g.lineWidth = 1.2; g.beginPath(); g.moveTo(...base); g.lineTo(...q); g.stroke(); }
+    banderinesM(g, a, b);
+    mulaCarga(g, ...P(-.3, -.4));
+    pers(-.28, -.2, 0, false, '#F4ECDB'); pers(-.28, .22, 1, false, '#F4ECDB'); pers(.02, .02, 2, false, '#F4ECDB'); // vendedores detrás de sus puestos
+    pers(.3, .12, 3, true); pers(.06, -.34, 4, true); pers(.34, .36, 1, false);
+    const f = P(.3, -.18); frutas(g, f[0], f[1], '#E2832B'); gallinas(g, ...P(.4, .0));
+  } else if (e <= 1) {
+    pers(-.28, -.18, 0, false, '#F4ECDB'); pers(-.28, .2, 1, false, '#F4ECDB'); pers(.3, -.2, 3, true); pers(.36, .2, 4, true);
+    mulaCarga(g, ...P(.4, -.4)); gallinas(g, ...P(.42, .0));
+  } else {
+    pers(.44, -.26, 3, true); pers(.46, .1, 4, false); pers(.42, .36, 0, true); gallinas(g, ...P(.5, -.04));
+    const f = P(.48, .22); frutas(g, f[0], f[1], '#C0392B');
+  }
+}
+
 export function recetasPublicos(e = 1) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela],
@@ -1141,8 +1185,8 @@ export function recetasPublicos(e = 1) {
     ['sede-tirania', 100, 104, 50, 76, fortaleza],
     ['sede-oligarquia', 100, 100, 50, 70, comercio],
     ['sede-demagogia', 100, 96, 50, 66, tribuna],
-    ['mercado0', 90, 76, 45, 52, g => mercadoToldos(g, e, false)], ['mercado0v', 90, 76, 45, 52, g => mercadoToldos(g, e, true)],
-    ['mercado2', 100, 96, 50, 68, g => mercadoCubierto(g, e, false)], ['mercado2v', 100, 96, 50, 68, g => mercadoCubierto(g, e, true)]
+    ['mercado0', 104, 100, 52, 74, g => { mercadoToldos(g, e, false); vidaMercado(g, e, false); }], ['mercado0v', 90, 76, 45, 52, g => mercadoToldos(g, e, true)],
+    ['mercado2', 112, 110, 56, 76, g => { mercadoCubierto(g, e, false); vidaMercado(g, e, true); }], ['mercado2v', 100, 96, 50, 68, g => mercadoCubierto(g, e, true)]
   ].map(([k, w, h, ax, ay, f]) => [k, w, h, ax, ay, g => f(g, e)]);
   // La iglesia: capilla de bahareque, iglesia colonial con espadaña, templo de dos torres y templo restaurado.
   return [...L, ...[0, 1, 2, 3].map(k => ['iglesia' + k, 110, 130, 55, 96, g => iglesiaEpoca(g, k)])];
