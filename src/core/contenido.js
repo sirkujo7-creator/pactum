@@ -11,7 +11,7 @@ export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
-export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'maravillas', 'comision', 'etapas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'maravillas', 'comision', 'etapas', 'imagenes_dilemas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
   'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias', 'vecindad', 'huellas', 'territorios', 'exterior'];
 
 function efectos(obj, donde) {
@@ -116,6 +116,7 @@ export function usarContenido(d) {
   C.MARAV = d.maravillas ? { ...d.maravillas, maravillas: d.maravillas.maravillas.map(m => ({ ...m, efectos: efectos(m.efectos, `maravilla ${m.id}`) })) } : null; // maravillas
   C.ALM = d.almanaque || null; // almanaque «Mientras tanto»
   C.PLACAS = d.placas || null; // placas de los edificios por época
+  C.IMAGENES = d.imagenes_dilemas || { dilemas: {} }; // foto del mapa por decisión (elegida a mano)
   C.MEJ = d.mejoras || null; // mejorar edificios por nivel
   C.MIN = d.minerales || null; // fase 17: el subsuelo
   C.MAT = d.materiales || null; // fase 17: madera, piedra y metal
