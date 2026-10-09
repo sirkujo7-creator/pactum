@@ -76,6 +76,7 @@ export function fichaLugar(S, id) {
     <p class="small">Gobierno: <b>${nombreRegimen(E.reg)}</b>${E.trato ? ` · <b>${T.trato[E.trato]}</b> desde el año ${E.desde}` : ''}</p>
     <div class="track" style="margin:4px 0"><div class="fill" style="width:${E.rel}%;background:${col}"></div></div><p class="small">${T.relacion.replace('{rel}', Math.round(E.rel))}</p>
     <p class="small">${L.texto}</p>
+    ${C.ENTRE && C.ENTRE.diplomaticos[id] ? `<p class="small">${C.ENTRE.diplomaticos[id].icono} <b>${C.ENTRE.textos.diplomatico}:</b> ${C.ENTRE.diplomaticos[id].nombre}, ${C.ENTRE.diplomaticos[id].rol}.</p>` : ''}
     <p class="small">📜 <b>${T.ofrece}:</b> ${efectosEnPalabras(L.ofrece)}. 🤝 <b>${T.conLiga}:</b> además ${efectosEnPalabras(L.liga)}.${aut ? ` <span class="neg">${T.autoritario.replace('{reg}', nombreRegimen(E.reg)).replace('{n}', 3)}</span>` : ''}</p>
     ${acciones}`;
 }
