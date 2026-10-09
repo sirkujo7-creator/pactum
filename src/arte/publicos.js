@@ -1157,18 +1157,70 @@ function vidaMercado(g, e, cubierto) {
   }
 }
 
+// ---------- Vida de banco, biblioteca y cuartel: guardias, lectores, biblioburro, camión blindado, formación ----------
+function soldadoM(g, x, y, fusil = true, lanza = false) {
+  personaM(g, x, y, '#4E5A34', '#3A3A2A', '#C98E62');
+  g.strokeStyle = '#2E2A28'; g.lineWidth = .7; if (fusil) { g.beginPath(); g.moveTo(x + 2.2, y - 1.6); g.lineTo(x + 2.2, y - 11.4); g.stroke(); }
+  if (lanza) { g.strokeStyle = K.maderaOsc; g.beginPath(); g.moveTo(x + 2.4, y); g.lineTo(x + 2.4, y - 15); g.stroke(); g.fillStyle = '#9AA0A4'; g.beginPath(); g.moveTo(x + 2.4, y - 15); g.lineTo(x + 3.4, y - 17.6); g.lineTo(x + 1.4, y - 17.6); g.fill(); }
+}
+function bancoVida(g, e) {
+  if (e === 0) {
+    const m = P(.36, .34, 0), t = P(.36, .34, 24); g.strokeStyle = K.maderaOsc; g.lineWidth = 1.2; g.beginPath(); g.moveTo(...m); g.lineTo(...t); g.stroke(); // cartel colgante con la moneda
+    rellena(g, [[t[0], t[1]], [t[0] + 12, t[1] + 3], [t[0] + 12, t[1] + 12], [t[0], t[1] + 9]], '#4A3A2C', K.contorno, .4); g.fillStyle = '#E7C76B'; g.beginPath(); g.ellipse(t[0] + 6, t[1] + 7.2, 3.1, 3.4, 0, 0, 7); g.fill(); g.fillStyle = '#8A6A2A'; g.font = 'bold 4px serif'; g.textAlign = 'center'; g.fillText('$', t[0] + 6, t[1] + 8.6);
+    const c = P(.38, -.2, 0); caja(g, .1, .07, 3.6, .38, -.2, 0, '#6E4529'); g.fillStyle = '#C9A24A'; const q = P(.38, -.2, 3.6); g.fillRect(q[0] - 3, q[1] - 1.8, 6, 1); void c; // cofre
+    soldadoM(g, ...P(.42, .0));
+  } else if (e === 3) {
+    carro(g, ...P(.42, .24), '#9AA0A4', '#2E3A44'); // camión blindado
+    const B = caras(.1, .08, 8, .32, -.3); muros(g, B, '#2E3A44', null); rellena(g, [B.en('izq', .15, 4), B.en('izq', .85, 4), B.en('izq', .85, 7), B.en('izq', .15, 7)], '#8FD0A0', K.contorno, .3); // cajero
+    personaM(g, ...P(.44, -.3), '#2F5D8A', null, '#A8704A');
+  } else {
+    soldadoM(g, ...P(.46, -.24)); soldadoM(g, ...P(.46, .26));
+    if (e === 2) carro(g, ...P(.5, .0), '#2E2A28', '#C9A24A');
+    else { const a = P(.46, .0); caja(g, .14, .09, 4, .46, .0, 0, '#6E4529'); g.fillStyle = '#C9A24A'; const q = P(.46, .0, 4); g.fillRect(q[0] - 3, q[1] - 1.8, 6, 1); void a; }
+  }
+}
+function libros(g, x, y, ancho = 7, filas = 2) {
+  const cols = ['#B9442F', '#2F5D8A', '#E7C76B', '#3E6B4A', '#6A4A86'];
+  for (let f = 0; f < filas; f++) for (let k = 0; k < ancho; k++) { g.fillStyle = cols[(k + f * 2) % 5]; g.fillRect(x + k * 1.2, y - f * 3 - 3, 1.1, 2.8 + (k % 2) * .5); }
+}
+function bibliotecaVida(g, e) {
+  // Mesa de lectura y lectores al frente.
+  caja(g, .18, .1, 3, .46, -.04, 0, K.madera);
+  const mq = P(.46, -.04, 3); g.fillStyle = '#F4EEE2'; g.fillRect(mq[0] - 3, mq[1] - 1.6, 3, 1.4); g.fillRect(mq[0] + .4, mq[1] - 1, 3, 1.4); g.strokeStyle = '#3A2A1E'; g.lineWidth = .3; g.strokeRect(mq[0] - 3, mq[1] - 1.6, 3, 1.4);
+  personaM(g, ...P(.5, -.22), '#B9442F', null, '#A8704A'); personaM(g, ...P(.46, .12), '#2F5D8A', '#C9A86A', '#C98E62');
+  // Biblioburro (épocas de tierra y tapia) o bibliobús (ladrillo y concreto).
+  if (e <= 1) { const x = P(.44, .34); mulaCarga(g, x[0], x[1]); libros(g, x[0] - 4, x[1] - 9, 7, 2); }
+  else { const x = P(.46, .34); carro(g, x[0], x[1], '#E7C76B', '#2F5D8A'); libros(g, x[0] - 3, x[1] - 6, 5, 1); }
+}
+function cuartelVida(g, e) {
+  if (e === 0) { // campamento: lanceros y una fogata
+    soldadoM(g, ...P(.36, -.16), false, true); soldadoM(g, ...P(.38, .1), false, true);
+    const f = P(.34, .34); g.fillStyle = '#4A3A2C'; for (const [dx, dy] of [[-2, 0], [2, .6], [0, -1.4]]) { g.beginPath(); g.ellipse(f[0] + dx, f[1] + dy, 2, .6, .3, 0, 7); g.fill(); }
+    g.fillStyle = '#E8A93A'; g.beginPath(); g.moveTo(f[0], f[1] - 7); g.quadraticCurveTo(f[0] + 3, f[1] - 3, f[0], f[1] - 1); g.quadraticCurveTo(f[0] - 3, f[1] - 3, f[0], f[1] - 7); g.fill(); g.fillStyle = '#F6E3A0'; g.beginPath(); g.ellipse(f[0], f[1] - 3, 1, 1.8, 0, 0, 7); g.fill();
+    return;
+  }
+  // Formación de cinco soldados con su oficial al frente.
+  for (let k = 0; k < 5; k++) soldadoM(g, ...P(.46, -.34 + k * .15));
+  personaM(g, ...P(.56, .0), '#2F3E24', '#2E2A28', '#C98E62'); g.strokeStyle = '#C9C9C9'; g.lineWidth = .6; { const o = P(.56, .0); g.beginPath(); g.moveTo(o[0] + 2, o[1] - 3); g.lineTo(o[0] + 6, o[1] - 8); g.stroke(); } // oficial con sable
+  if (e <= 2) for (const c of [-.46, .46]) { const q = P(.2, c, 0); g.strokeStyle = '#2E2A28'; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(q[0] - 5, q[1] - 2); g.lineTo(q[0] + 4, q[1] - 5.4); g.stroke(); g.fillStyle = '#3A2A1C'; g.beginPath(); g.arc(q[0] - 2, q[1] + .6, 2.2, 0, 7); g.fill(); } // cañones
+  else { // helipuerto con helicóptero
+    const h = P(.12, .5, 0); g.fillStyle = '#6E7378'; g.beginPath(); g.ellipse(h[0], h[1], 11, 5.4, 0, 0, 7); g.fill(); g.strokeStyle = '#F4F1E8'; g.lineWidth = .8; g.beginPath(); g.ellipse(h[0], h[1], 8.4, 4, 0, 0, 7); g.stroke(); g.fillStyle = '#F4F1E8'; g.font = 'bold 6px sans-serif'; g.textAlign = 'center'; g.fillText('H', h[0], h[1] + 2.2);
+    g.fillStyle = '#4E5A34'; g.beginPath(); g.ellipse(h[0], h[1] - 7, 5.4, 2.8, 0, 0, 7); g.fill(); g.strokeStyle = '#4E5A34'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(h[0] - 4, h[1] - 6); g.lineTo(h[0] - 13, h[1] - 8); g.stroke(); g.strokeStyle = '#2E2A28'; g.lineWidth = .6; g.beginPath(); g.moveTo(h[0] - 10, h[1] - 12.4); g.lineTo(h[0] + 10, h[1] - 12.4); g.moveTo(h[0], h[1] - 9.8); g.lineTo(h[0], h[1] - 12.4); g.stroke();
+  }
+}
+
 export function recetasPublicos(e = 1) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela],
     ['hospital', 104, 112, 52, 82, (g, e) => { hospital(g, e); hospitalExtra(g, e); }],
     ['taller', 84, 82, 42, 60, taller],
     ['recaudo', 84, 84, 42, 62, recaudo],
-    ['biblioteca', 96, 108, 48, 80, (g, e) => { biblioteca(g, e); bibliotecaExtra(g, e); }],
+    ['biblioteca', 120, 116, 60, 84, (g, e) => { biblioteca(g, e); bibliotecaExtra(g, e); bibliotecaVida(g, e); }],
     ['teatro', 138, 122, 69, 92, teatroN],
     ['cancha', 108, 74, 54, 44, g => canchaN(g)],
     ['policia', 88, 92, 44, 70, policia],
-    ['cuartel', 112, 112, 56, 82, (g, e) => { cuartel(g, e); cuartelExtra(g, e); }],
-    ['banco', 124, 140, 62, 108, (g, e) => { if (e === 1 || e === 2) { g.save(); g.scale(1.18, 1.18); bancoClasico(g, e); g.restore(); } else bancoEdificio(g, e); }],
+    ['cuartel', 136, 124, 68, 92, (g, e) => { cuartel(g, e); cuartelExtra(g, e); cuartelVida(g, e); }],
+    ['banco', 124, 140, 62, 108, (g, e) => { if (e === 1 || e === 2) { g.save(); g.scale(1.18, 1.18); bancoClasico(g, e); bancoVida(g, e); g.restore(); } else { bancoEdificio(g, e); bancoVida(g, e); } }],
     ['universidad', 108, 120, 54, 88, universidad],
     ['acueducto', 92, 72, 46, 48, acueducto],
     ['plaza0', 100, 80, 50, 56, g => plazaN(g, 0)], ['plaza1', 100, 82, 50, 58, g => plazaN(g, 1)], ['plaza2', 100, 84, 50, 60, g => plazaN(g, 2)], ['plaza3', 100, 90, 50, 66, g => plazaN(g, 3)],
