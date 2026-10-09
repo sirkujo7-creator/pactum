@@ -21,7 +21,7 @@ import { partida } from './partida.js';
 import { iconoObra } from '../arte/edificios.js';
 import { iconoCalle } from '../arte/calles.js';
 import { retrato, retratoFig, gestoDe, EMB } from '../arte/retratos.js';
-import { imagenDe, imagenCarta, imagenTema, html as fotoHtml } from '../arte/imagenesTema.js';
+import { imagenDe, imagenCarta, imagenCartaAcuarela, imagenTema, html as fotoHtml } from '../arte/imagenesTema.js';
 import { capaUI, el, reducirMovimiento } from './pantalla.js';
 import { ico as pintado } from '../arte/iconos.js';
 import { FR, lienzo, texturaYeso, guarda, urlDe } from '../arte/fresco.js';
@@ -1780,7 +1780,7 @@ export class Interfaz {
   }
   tarjetaCarta(r, alTerminar, reabrir) {
     const S = this.S, T = C.FAMILIAS.textos, c = cartaRecibida(r), F = datosFamilia(c.familia), O = c.objeto ? datosObjeto(c.objeto) : null;
-    this.tarjeta(`${fotoHtml(imagenCarta(c.escena, c.familia, c.texto, S))}
+    this.tarjeta(`${imagenCartaAcuarela(c.escena, r.id) ? fotoHtml(imagenCartaAcuarela(c.escena, r.id)).replace('vig-foto', 'vig-foto vig-carta') : fotoHtml(imagenCarta(c.escena, c.familia, c.texto, S))}
       <div class="carta-cab"><span>${F.icono} ${F.nombre}</span><span>${T.anio.replace('{anio}', c.anio)}</span></div>
       <h3>${T.de.replace('{quien}', c.de)}</h3><div class="carta-texto"><p>${c.texto}</p><p class="firma">— ${c.de}</p></div>
       <div class="phil"><b>${T.pensar}</b><br>${c.frase}</div>
