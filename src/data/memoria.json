@@ -4,7 +4,7 @@
   "maximoJuicio": 6,
   "patrimonio": 30,
   "demolerPatrimonio": 4,
-  "porMarca": { "mural": "justicia", "olla": "ayuda", "placa": "deber", "acta": "deber", "reten": "manoDura", "valla": "negocios", "pancarta": "abandono", "vivero": "ambiente", "tratado": "paz" },
+  "porMarca": { "mural": "justicia", "olla": "ayuda", "placa": "deber", "acta": "deber", "reten": "manoDura", "valla": "negocios", "pancarta": "abandono", "vivero": "ambiente", "tratado": "paz", "dique": "deber", "reservorio": "deber", "granero": "ayuda", "cooperativa": "justicia", "tanques": "deber", "parcela": "ayuda", "escuelita": "justicia", "monumentoD": "deber", "museoD": "deber", "arboleda": "ambiente" },
   "categorias": {
     "justicia": { "nombre": "Justicia social", "icono": "🎨", "peso": 1, "titulo": "el gobierno de la justicia", "recuerdo": "los murales de la reforma y de los derechos" },
     "ayuda": { "nombre": "Ayuda a quien lo necesitaba", "icono": "🍲", "peso": 1, "titulo": "el gobierno que no dejó a nadie solo", "recuerdo": "las ollas comunitarias de los años duros" },

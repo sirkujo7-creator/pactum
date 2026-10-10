@@ -20,7 +20,7 @@
         },
         "vista": "flood",
         "aQuien": "Los diques cuestan mucho oro, pero la gente ve que el gobierno la protege: por eso sube la legitimidad.",
-        "huella": "placa"
+        "huella": "dique"
       },
       {
         "texto": "Reubicar a las familias ribereñas",
@@ -1398,7 +1398,7 @@
         "filosofia": "deon",
         "porque": "Proteger la vida de cada familia sin arrancarla de su tierra, aunque cueste más.",
         "aQuien": "La solución más cara protege a las familias sin sacarlas de su tierra: los campesinos y el pueblo lo valoran.",
-        "huella": "placa"
+        "huella": "dique"
       }
     ]
   },
@@ -1534,7 +1534,8 @@
         },
         "filosofia": "virt",
         "porque": "La prudencia guarda en la abundancia para los años de escasez.",
-        "aQuien": "La comida de más queda de reserva: protege al pueblo en una sequía o una mala cosecha."
+        "aQuien": "La comida de más queda de reserva: protege al pueblo en una sequía o una mala cosecha.",
+        "huella": "granero"
       },
       {
         "texto": "Vender el excedente",
@@ -1635,7 +1636,7 @@
         "filosofia": "deon",
         "porque": "Cuidar la tierra es un deber con quienes vendrán.",
         "aQuien": "Las laderas ganan árboles: sube el ambiente y los campesinos protegen sus tierras de la erosión.",
-        "huella": "vivero"
+        "huella": "arboleda"
       },
       {
         "texto": "Agradecer y dejarlos descansar",
@@ -1857,7 +1858,7 @@
         "filosofia": "contr",
         "porque": "Que el valor llegue a quien siembra.",
         "aQuien": "Los caficultores se quedan con más de lo que produce su café: sube su ánimo y la igualdad.",
-        "huella": "mural"
+        "huella": "cooperativa"
       }
     ]
   },
@@ -1880,7 +1881,7 @@
         "filosofia": "deon",
         "porque": "Toda persona merece un lugar donde empezar de nuevo.",
         "aQuien": "Vuelven con tierra para trabajar: llegan habitantes y los campesinos lo celebran.",
-        "huella": "olla"
+        "huella": "parcela"
       },
       {
         "texto": "Recibirlas sin más",
@@ -2203,7 +2204,7 @@
         "filosofia": "contr",
         "porque": "La educación pública y laica fue una bandera del liberalismo radical en Colombia (1863).",
         "aQuien": "El tesoro paga la escuela y nadie paga diezmo; a los conservadores y a la élite no les gusta.",
-        "huella": "mural"
+        "huella": "escuelita"
       },
       {
         "texto": "Rechazar la oferta",
@@ -2886,7 +2887,7 @@
         "filosofia": "contr",
         "porque": "Que nadie tenga que irse para tener oportunidades.",
         "aQuien": "El campo se vuelve atractivo para algunos jóvenes; cuesta oro y años.",
-        "huella": "mural"
+        "huella": "escuelita"
       },
       {
         "texto": "Preparar la ciudad para recibirlos",
@@ -3846,7 +3847,7 @@
         "filosofia": "deon",
         "porque": "Gobernar es pensar en quienes vendrán: el agua de mañana se guarda hoy.",
         "aQuien": "Cuesta oro, pero el pueblo tendrá agua cuando el glaciar falte.",
-        "huella": "placa"
+        "huella": "reservorio"
       },
       {
         "texto": "Aprovechar el agua extra ahora",
@@ -4047,7 +4048,7 @@
         "filosofia": "deon",
         "porque": "Quien contamina debe pagar por limpiar: el río es de todos.",
         "aQuien": "La trilladora gasta en tanques; el río se recupera.",
-        "huella": "placa"
+        "huella": "tanques"
       },
       {
         "texto": "Cobrar una multa cada año",
@@ -4246,7 +4247,7 @@
         "filosofia": "virt",
         "porque": "Una lengua guarda una forma de ver el mundo: enseñarla es cuidar ese saber.",
         "aQuien": "El tesoro paga maestros; los niños pijao aprenden su lengua y el español.",
-        "huella": "mural"
+        "huella": "escuelita"
       },
       {
         "texto": "Un museo y un diccionario",
@@ -4257,7 +4258,7 @@
         "filosofia": "util",
         "porque": "Lo que se registra no se pierde del todo, y cuesta menos.",
         "aQuien": "Se salva la memoria, aunque la lengua se siga hablando poco.",
-        "huella": "placa"
+        "huella": "museoD"
       },
       {
         "texto": "Que cada familia decida",
@@ -4292,7 +4293,7 @@
         "filosofia": "deon",
         "porque": "Las víctimas tienen derecho a la verdad y a ser recordadas.",
         "aQuien": "Las familias encuentran un lugar para su duelo; algunos poderosos se incomodan.",
-        "huella": "placa"
+        "huella": "monumentoD"
       },
       {
         "texto": "Crear una comisión que escriba la historia",
@@ -4349,7 +4350,7 @@
         "filosofia": "virt",
         "porque": "Si los jóvenes aprenden a tocar, la tradición se renueva desde adentro.",
         "aQuien": "El tesoro paga; aparecen bandas que mezclan el bambuco con lo nuevo.",
-        "huella": "mural"
+        "huella": "escuelita"
       },
       {
         "texto": "Que cada quien oiga lo que quiera",
@@ -4683,7 +4684,8 @@
         },
         "filosofia": "virt",
         "porque": "La cooperación empieza por lo cercano.",
-        "aQuien": "Funciona, pero con menos poder de negociación."
+        "aQuien": "Funciona, pero con menos poder de negociación.",
+        "huella": "cooperativa"
       }
     ],
     "hito": {

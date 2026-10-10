@@ -211,6 +211,74 @@
       "icono": "✝️",
       "anios": 20,
       "texto": "Una cruz de madera con flores y una vela recuerda a quien murió en este camino."
+    },
+    "dique": {
+      "nombre": "Dique",
+      "icono": "🧱",
+      "anios": 999,
+      "lugar": "rio",
+      "texto": "Un dique de piedra y sacos de arena protege las casas de la orilla."
+    },
+    "reservorio": {
+      "nombre": "Reservorio",
+      "icono": "💧",
+      "anios": 999,
+      "lugar": "ladera",
+      "texto": "Un reservorio en la ladera guarda el agua de las lluvias para los años secos."
+    },
+    "granero": {
+      "nombre": "Granero comunal",
+      "icono": "🌾",
+      "anios": 999,
+      "texto": "El granero comunal guarda la cosecha para los años malos."
+    },
+    "cooperativa": {
+      "nombre": "Cooperativa campesina",
+      "icono": "🤝",
+      "anios": 999,
+      "texto": "La cooperativa campesina: báscula, sacos de café y una junta que decide entre todos."
+    },
+    "tanques": {
+      "nombre": "Tanques de tratamiento",
+      "icono": "🛢️",
+      "anios": 999,
+      "lugar": "rio",
+      "texto": "Tanques que limpian las aguas mieles antes de que lleguen a la quebrada."
+    },
+    "parcela": {
+      "nombre": "Parcela de retorno",
+      "icono": "🏡",
+      "anios": 999,
+      "lugar": "vereda",
+      "texto": "La parcela de una familia que volvió: rancho nuevo y huerta."
+    },
+    "escuelita": {
+      "nombre": "Escuela rural",
+      "icono": "🏫",
+      "anios": 999,
+      "lugar": "vereda",
+      "texto": "Una escuela rural en la vereda, con su bandera y su campana."
+    },
+    "monumentoD": {
+      "nombre": "Monumento con los nombres",
+      "icono": "🕯️",
+      "anios": 999,
+      "arte": "monumento",
+      "texto": "Un monumento con los nombres de las víctimas, para que nadie los olvide."
+    },
+    "museoD": {
+      "nombre": "Casa de la lengua",
+      "icono": "📖",
+      "anios": 999,
+      "arte": "museo",
+      "texto": "Una casa con el diccionario y las grabaciones de la lengua de los abuelos."
+    },
+    "arboleda": {
+      "nombre": "Árboles sembrados",
+      "icono": "🌳",
+      "anios": 999,
+      "reforesta": 4,
+      "texto": "Árboles sembrados en la ladera por la minga: el bosque vuelve a crecer."
     }
   },
   "porFilosofia": {
