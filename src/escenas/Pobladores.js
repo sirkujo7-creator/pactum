@@ -337,6 +337,15 @@ export class Pobladores {
         this.luces.push(this.scene.add.image(img.x + w * fx, img.y + h * fy, 'personas', 'luz').setScale(.28).setAlpha(0).setDepth(40001).setData('fase', Math.random() * 6));
       }
     }
+    // Faroles de la plaza (desde la plaza mayor): cuatro luces cálidas en las esquinas que se encienden de noche.
+    const { S, T } = this.scene, pz = plazaDe(S);
+    if (pz >= 0 && S.stage >= 1) {
+      const N = T.N, r = Math.floor(pz / N), c = pz % N;
+      for (const [dr, dc] of [[.08, .08], [.08, .92], [.92, .08], [.92, .92]]) {
+        const q = P(r + dr, c + dc, T.hf(r + dr, c + dc));
+        this.luces.push(this.scene.add.image(q[0], q[1] - 13, 'personas', 'luz').setScale(.42).setAlpha(0).setDepth(40001).setData('fase', Math.random() * 6));
+      }
+    }
   }
   luzDelDia() {
     const d = this.reloj, noche = d > .8 ? smooth(clamp((d - .8) / .06, 0, 1)) : d < .1 ? smooth(clamp((.1 - d) / .06, 0, 1)) : 0;

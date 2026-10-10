@@ -58,6 +58,10 @@
     "incendio": {
       "titulo": "El incendio",
       "texto": "El fuego prende en la obra y los vecinos corren a apagarlo."
+    },
+    "curiosos": {
+      "titulo": "Los curiosos",
+      "texto": "Los vecinos se juntan frente a la obra a ver qué pasó."
     }
   },
   "seguir": "Continuar ▸"

@@ -5,6 +5,7 @@ import { azar } from './azar.js';
 import { climaActivo } from './clima.js';
 import { epocaHistorica } from './reglas.js';
 import { applyFx } from './dilemas.js';
+import { dejarMarca } from './marcas.js';
 
 export const tarjetasActivas = S => climaActivo(S) && !!C.TARJETAS;
 export function datosTarjeta(id) { return C.TARJETAS.tarjetas.find(t => t.id === id); }
@@ -25,5 +26,8 @@ export function elegirTarjeta(S, i) {
   const fx = applyFx(S, o.fx);
   S.log.unshift({ y: S.year, t: `${t.quien}: ${t.texto} Respondiste: ${o.texto.toLowerCase()}.` });
   S.tarjetaRapida = null;
+  // Lo respondido también se ve en el mapa: una huella (placa, retén, vivero…) o una vista del año (fiesta, humo).
+  if (o.huella) dejarMarca(S, o.huella, `Año ${S.year}: ${t.quien.toLowerCase()} — ${o.texto.toLowerCase()}.`);
+  if (o.vista) S.vis = { k: o.vista, y: S.year };
   return { ...o, fx };
 }

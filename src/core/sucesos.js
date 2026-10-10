@@ -15,7 +15,7 @@ import { applyFx } from './dilemas.js';
 import { efectoBarrios } from './barrios.js';
 import { efectoTec } from './tecnologia.js';
 import { epocaHistorica, hasLaw } from './reglas.js';
-import { registrarMuertes, quemar } from './huellas.js';
+import { registrarMuertes, quemar, huellasActivas } from './huellas.js';
 import { dejarMarca } from './marcas.js';
 
 const K = () => C.SUCESOS;
@@ -74,6 +74,7 @@ function violenciaDelAnio(S) {
 // Lo que el suceso deja en el mapa: hollín en la obra quemada y una marca (cruz del camino, retén, pancartas).
 function huellaSuceso(S, q, ev) {
   if (q.quema && ev.obra !== undefined) quemar(S, [ev.obra]);
+  if (q.epidemia && huellasActivas(S)) S.epiVis = S.year; // los enfermos se ven ir al hospital
   if (q.marca) { const i = dejarMarca(S, q.marca, `Año ${S.year}: ${q.titulo.toLowerCase()}.`); if (i >= 0) ev.marca = i; }
 }
 // Cierre del año: como mucho un suceso (se prueba del más grave al más leve). Devuelve las noticias.
