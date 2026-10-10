@@ -17,7 +17,8 @@ export function mundoDelAnio(S) {
   const E = relacionExterior(S, h.lugar), lugar = C.EXT.lugares[h.lugar], trato = !!(E && E.trato), fx = applyFx(S, suave(trato && h.conTrato ? h.conTrato : h.efectos, K().escalaFija || .6));
   if (E) E.rel = clamp(E.rel + (h.relacion || 0), 0, 100);
   S.mundoVistos = [...vistos, h.id]; S.mundoUlt = S.year;
-  const ev = { id: h.id, anio: S.year, titulo: h.titulo, texto: h.texto, fecha: h.fecha, lugar: lugar.nombre, trato, fx };
+  const ev = { id: h.id, anio: S.year, titulo: h.titulo, texto: h.texto, fecha: h.fecha, lugar: lugar.nombre, trato, fx, ...(h.cine ? { cine: h.cine, nuevo: true } : {}) };
+  if (h.vista) S.vis = { k: h.vista, y: S.year }; // también se ve en el mapa: fiesta o multitud en la plaza
   S.mundoHechos = [ev, ...(S.mundoHechos || [])].slice(0, 12);
   S.log.unshift({ y: S.year, t: `${lugar.nombre}: ${h.titulo} (${h.fecha}). ${h.texto}` });
   return [`🌎 ${lugar.nombre}: ${h.titulo} (${h.fecha}).`];

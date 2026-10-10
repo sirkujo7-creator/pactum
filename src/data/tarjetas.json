@@ -62,7 +62,8 @@
           "efectos": {
             "oro": -15,
             "animo": 3
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Que cada quien decida",
@@ -107,7 +108,8 @@
           "efectos": {
             "oro": -18,
             "animo": 2
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Esperar el verano",
@@ -153,7 +155,8 @@
           "efectos": {
             "oro": -20,
             "campesinos": 4
-          }
+          },
+          "huella": "valla"
         },
         {
           "texto": "Negarle el préstamo",
@@ -177,7 +180,8 @@
             "oro": 15,
             "ambiente": -2,
             "elite": 2
-          }
+          },
+          "huella": "valla"
         },
         {
           "texto": "Rechazar",
@@ -230,7 +234,8 @@
           "efectos": {
             "confianza": -4,
             "elite": 2
-          }
+          },
+          "huella": "pancarta"
         }
       ]
     },
@@ -246,7 +251,8 @@
           "efectos": {
             "animo": 4,
             "oro": -10
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "No hay espacio",
@@ -268,7 +274,8 @@
           "efectos": {
             "oro": -14,
             "campesinos": 2
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Posponerlo",
@@ -292,7 +299,8 @@
             "oro": -12,
             "confianza": 2,
             "elite": -1
-          }
+          },
+          "huella": "reten"
         },
         {
           "texto": "No intervenir",
@@ -315,7 +323,8 @@
             "oro": -16,
             "confianza": 1,
             "animo": -2
-          }
+          },
+          "huella": "reten"
         },
         {
           "texto": "Declinar",
@@ -345,7 +354,8 @@
           "efectos": {
             "animo": -4,
             "confianza": 1
-          }
+          },
+          "huella": "pancarta"
         }
       ]
     },
@@ -362,7 +372,8 @@
             "oro": -15,
             "animo": 4,
             "habitantes": 3
-          }
+          },
+          "huella": "olla"
         },
         {
           "texto": "Mandarlos al otro pueblo",
@@ -413,7 +424,8 @@
           "texto": "Dejarlo a su suerte",
           "efectos": {
             "confianza": -3
-          }
+          },
+          "huella": "cruz"
         }
       ]
     },
@@ -429,7 +441,8 @@
           "efectos": {
             "oro": -18,
             "animo": 4
-          }
+          },
+          "vista": "festival"
         },
         {
           "texto": "No comprar",
@@ -452,7 +465,8 @@
             "oro": 14,
             "ambiente": -4,
             "artesanos": 3
-          }
+          },
+          "vista": "smog"
         },
         {
           "texto": "Negarlo",
@@ -499,14 +513,16 @@
             "oro": -18,
             "igualdad": 3,
             "habitantes": 3
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "Desalojarlas",
           "efectos": {
             "confianza": -4,
             "igualdad": -3
-          }
+          },
+          "huella": "reten"
         }
       ]
     },
@@ -545,7 +561,8 @@
             "oro": 12,
             "confianza": -4,
             "igualdad": -2
-          }
+          },
+          "huella": "valla"
         },
         {
           "texto": "Rechazar",
@@ -569,7 +586,8 @@
             "oro": -12,
             "igualdad": 3,
             "confianza": 2
-          }
+          },
+          "huella": "cooperativa"
         },
         {
           "texto": "Negárselo",
@@ -593,7 +611,8 @@
             "oro": -16,
             "ambiente": 3,
             "campesinos": 3
-          }
+          },
+          "huella": "vivero"
         },
         {
           "texto": "Fumigar",
@@ -601,7 +620,8 @@
             "ambiente": -4,
             "campesinos": -4,
             "oro": -5
-          }
+          },
+          "vista": "smog"
         }
       ]
     },
@@ -617,7 +637,8 @@
           "efectos": {
             "confianza": 4,
             "elite": -2
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Posponerlo",
@@ -640,7 +661,8 @@
             "oro": 25,
             "ambiente": -5,
             "confianza": -2
-          }
+          },
+          "huella": "valla"
         },
         {
           "texto": "Rechazar",
@@ -730,7 +752,8 @@
           "efectos": {
             "oro": -20,
             "alimento": 14
-          }
+          },
+          "huella": "reservorio"
         },
         {
           "texto": "Esperar la lluvia",
@@ -777,7 +800,8 @@
             "oro": -10,
             "ambiente": 4,
             "animo": 3
-          }
+          },
+          "huella": "arboleda"
         },
         {
           "texto": "Ignorarlos",
@@ -801,7 +825,8 @@
             "confianza": -2,
             "animo": 1,
             "oro": 8
-          }
+          },
+          "huella": "reten"
         },
         {
           "texto": "Rechazar",
@@ -872,7 +897,8 @@
             "oro": -15,
             "confianza": 2,
             "animo": 2
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Que la paguen los devotos",
@@ -896,7 +922,8 @@
             "oro": -15,
             "campesinos": 3,
             "igualdad": 1
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Dejar que cada uno marque su lindero",
@@ -921,7 +948,8 @@
             "oro": -15,
             "confianza": 1,
             "animo": 2
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Esperar a que baje el agua",
@@ -970,7 +998,8 @@
             "oro": -15,
             "confianza": -1,
             "animo": 2
-          }
+          },
+          "huella": "valla"
         },
         {
           "texto": "Cambiar el trazado",
@@ -995,7 +1024,8 @@
             "oro": -15,
             "igualdad": 3,
             "animo": 2
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "Dejarlo como está",
@@ -1019,7 +1049,8 @@
             "oro": -5,
             "igualdad": 2,
             "confianza": -1
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "Pedirle que obedezca",
@@ -1043,7 +1074,8 @@
           "efectos": {
             "confianza": 2,
             "animo": -1
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Callar para evitar más venganzas",
@@ -1090,7 +1122,8 @@
           "efectos": {
             "confianza": 3,
             "animo": -2
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "Callarlo por orden público",
@@ -1114,7 +1147,8 @@
             "oro": -15,
             "alimento": -8,
             "animo": 3
-          }
+          },
+          "huella": "olla"
         },
         {
           "texto": "Que las ayude la caridad",
@@ -1162,7 +1196,8 @@
             "oro": -20,
             "campesinos": 3,
             "confianza": 1
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Que la ceda por el progreso",
@@ -1219,7 +1254,8 @@
             "oro": 5,
             "igualdad": -2,
             "confianza": -1
-          }
+          },
+          "huella": "pancarta"
         }
       ]
     },
@@ -1236,7 +1272,8 @@
             "oro": -15,
             "confianza": 3,
             "animo": -1
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "Esperar la comisión nacional",
@@ -1260,7 +1297,8 @@
             "oro": -10,
             "confianza": 2,
             "campesinos": 2
-          }
+          },
+          "huella": "vivero"
         },
         {
           "texto": "Que busque por su cuenta",
@@ -1285,7 +1323,8 @@
             "oro": -15,
             "campesinos": 3,
             "igualdad": 1
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Dejar que se resuelva solo",
@@ -1309,7 +1348,8 @@
             "oro": -15,
             "animo": 2,
             "confianza": 1
-          }
+          },
+          "huella": "placa"
         },
         {
           "texto": "Hacerlo por separado",
@@ -1358,7 +1398,8 @@
             "oro": -15,
             "campesinos": 3,
             "ambiente": 1
-          }
+          },
+          "huella": "vivero"
         },
         {
           "texto": "Que se las arreglen",
@@ -1382,7 +1423,8 @@
             "oro": -15,
             "artesanos": 3,
             "elite": -1
-          }
+          },
+          "huella": "mural"
         },
         {
           "texto": "Dejar que la empresa decida",

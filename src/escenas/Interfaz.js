@@ -1277,10 +1277,17 @@ export class Interfaz {
       <div class="phil"><b>${T.pensar}</b><br>${v.pensar}</div><button class="main" id="okB">${T.continuar}</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => { this.cerrarTarjeta(); this.mapa.cambio && this.mapa.cambio(); });
   }
+  // Un hecho de las polis vecinas que trae gente (desplazados, migrantes, colonos) se ve llegar a la plaza.
+  mundoAnio(alTerminar) {
+    const e = (this.S.mundoHechos || [])[0];
+    if (!e || !e.nuevo || !e.cine) { alTerminar(); return; }
+    e.nuevo = false;
+    if (!this.escena(e.cine[0], 'mv-' + e.id, alTerminar, { titulo: `${e.lugar}: ${e.titulo}`, texto: e.cine[1] })) alTerminar();
+  }
   sucesoAnio(alTerminar) {
     const S = this.S, ev = S.suceso, alTerminar0 = alTerminar;
     if (S.tarjetaRapida && tarjetasActivas(S)) { this.tarjetaRapida(() => this.sucesoAnio(alTerminar0)); return; }
-    alTerminar = () => this.polisAnio(() => this.comisionAnio(() => this.visitanteAnio(() => this.figurasAnio(alTerminar0))));
+    alTerminar = () => this.mundoAnio(() => this.polisAnio(() => this.comisionAnio(() => this.visitanteAnio(() => this.figurasAnio(alTerminar0)))));
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
     const cn = (C.SUCESOS.sucesos[ev.id] || {}).cine; // lo que pasó se ve en el mapa (sucesos.json: cine)

@@ -25,7 +25,11 @@
         "igualdad": -1
       },
       "relacion": 4,
-      "anio": 11
+      "anio": 11,
+      "cine": [
+        "desplazados",
+        "Por el camino de la cordillera bajan familias antioqueñas con mulas, hachas y semillas."
+      ]
     },
     {
       "id": "mv_humboldt",
@@ -131,7 +135,11 @@
         "animo": -1
       },
       "relacion": 2,
-      "anio": 38
+      "anio": 38,
+      "cine": [
+        "desplazados",
+        "Llegan de Santafé los que huyeron del incendio, con lo poco que alcanzaron a sacar."
+      ]
     },
     {
       "id": "mv_valle_pajaros",
@@ -168,7 +176,11 @@
         "igualdad": 2
       },
       "relacion": 3,
-      "anio": 46
+      "anio": 46,
+      "cine": [
+        "desplazados",
+        "Llegan exiliados de la dictadura venezolana: maestros, periodistas y sus familias."
+      ]
     },
     {
       "id": "mv_petroleo",
@@ -204,7 +216,8 @@
         "oro": 25
       },
       "relacion": 4,
-      "anio": 56
+      "anio": 56,
+      "vista": "festival"
     },
     {
       "id": "mv_huila_agraria",
@@ -222,7 +235,8 @@
         "confianza": -1
       },
       "relacion": 2,
-      "anio": 59
+      "anio": 59,
+      "vista": "crowd"
     },
     {
       "id": "mv_armero",
@@ -242,7 +256,11 @@
         "animo": -1
       },
       "relacion": 3,
-      "anio": 75
+      "anio": 75,
+      "cine": [
+        "desplazados",
+        "Llegan los sobrevivientes de Armero, cubiertos de barro, buscando a los suyos."
+      ]
     },
     {
       "id": "mv_dolar",
@@ -278,7 +296,11 @@
         "confianza": 2
       },
       "relacion": 4,
-      "anio": 81
+      "anio": 81,
+      "cine": [
+        "desplazados",
+        "Llegan familias del Eje Cafetero que perdieron la casa en el terremoto."
+      ]
     },
     {
       "id": "mv_migrantes",
@@ -298,7 +320,11 @@
         "igualdad": 0
       },
       "relacion": 0,
-      "anio": 92
+      "anio": 92,
+      "cine": [
+        "desplazados",
+        "Caminantes desde Venezuela llegan a la plaza con morrales y niños de la mano."
+      ]
     },
     {
       "id": "mv_paro",
@@ -316,7 +342,8 @@
         "animo": -1
       },
       "relacion": -2,
-      "anio": 96
+      "anio": 96,
+      "vista": "crowd"
     },
     {
       "id": "mv_canal",
@@ -403,7 +430,8 @@
         "animo": 3
       },
       "relacion": 2,
-      "anio": 31
+      "anio": 31,
+      "vista": "festival"
     },
     {
       "id": "mv_leticia",
@@ -477,7 +505,8 @@
         "animo": 3
       },
       "relacion": 2,
-      "anio": 49
+      "anio": 49,
+      "vista": "festival"
     },
     {
       "id": "mv_celam",
@@ -514,7 +543,8 @@
         "oro": 0
       },
       "relacion": 1,
-      "anio": 77
+      "anio": 77,
+      "vista": "festival"
     },
     {
       "id": "mv_plebiscito",
@@ -550,7 +580,8 @@
         "animo": 3
       },
       "relacion": 2,
-      "anio": 98
+      "anio": 98,
+      "vista": "festival"
     }
   ],
   "escalaFija": 0.6

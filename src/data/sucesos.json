@@ -68,7 +68,12 @@
         "taller"
       ],
       "causa": "Desempleo, pobreza y calles sin presencia policial.",
-      "prevenir": "Empleo, igualdad y una estación de policía cerca de los comercios."
+      "prevenir": "Empleo, igualdad y una estación de policía cerca de los comercios.",
+      "cine": [
+        "curiosos",
+        "El robo",
+        "Amanece con la puerta forzada: los vecinos se juntan a mirar y nadie vio nada."
+      ]
     },
     "incendio": {
       "icono": "🔥",
@@ -110,7 +115,8 @@
         "animo": -2
       },
       "causa": "Casas lejos de un hospital y ambiente deteriorado.",
-      "prevenir": "Construye hospitales que cubran todas las casas y cuida el río y el aire."
+      "prevenir": "Construye hospitales que cubran todas las casas y cuida el río y el aire.",
+      "epidemia": true
     },
     "abuso": {
       "icono": "🚔",
