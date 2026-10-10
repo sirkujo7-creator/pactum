@@ -115,6 +115,67 @@ function recetas(era = 1) {
     for (const [dx, col] of [[-4, '#F4F1E6'], [-2, '#C0392B'], [3, '#E7C76B'], [5, '#F4F1E6']]) { g.fillStyle = '#5E8A4D'; g.fillRect(p[0] + dx, p[1] - 4, .6, 3); g.fillStyle = col; g.beginPath(); g.arc(p[0] + dx + .3, p[1] - 4.4, 1.3, 0, 7); g.fill(); }
     g.fillStyle = '#F4EEDC'; g.fillRect(p[0] + 7, p[1] - 4, 1.8, 3.4); g.fillStyle = '#FFC25A'; g.beginPath(); g.arc(p[0] + 7.9, p[1] - 5.2, .9, 0, 7); g.fill();
   }]);
+  // Obras que levantan las decisiones (pedido de Juan): dique, reservorio, granero, cooperativa, tanques, parcela y escuela rural.
+  L.push(['m_dique', 68, 44, 34, 30, (g, r) => {
+    sombra(g, 26, 5, 3);
+    const m = iso(g, 1, .16, 0, 7, '#A39A88', '#8C8474', '#BDB4A2', r, 0, -.2); // muro de piedra a lo largo de la orilla
+    g.strokeStyle = '#6E6658'; g.lineWidth = .5; for (let k = 1; k < 8; k++) { const q = caraI(m, k / 8, 0, 0, 7); g.beginPath(); g.moveTo(q[0][0], q[0][1]); g.lineTo(q[0][0], q[0][1] - 7); g.stroke(); }
+    for (let k = 0; k < 7; k++) { const q = V2(-.42 + k * .14, .02); blob(g, q[0], q[1] - 2, 3.4, 2, k % 2 ? '#C9B58A' : '#B9A479', r, .97); } // sacos de arena
+    for (let k = 0; k < 6; k++) { const q = V2(-.35 + k * .14, .12); blob(g, q[0], q[1] - 1, 3.2, 1.9, k % 2 ? '#BFA97C' : '#CDBA8E', r, .97); }
+  }]);
+  L.push(['m_reservorio', 64, 40, 32, 22, (g, r) => {
+    const R = (s, col, al) => wash(g, [V2(-s, -s), V2(s, -s), V2(s, s), V2(-s, s)], col, r, al, .3);
+    R(.4, '#9C7E58', .95); R(.35, '#B39468', .95); R(.29, '#5E8FA4', .95); R(.21, '#7AAAB8', .9);
+    const h = V2(-.08, -.05); blob(g, h[0], h[1], 5, 1.2, '#CFE3E6', r, .7);
+    const v = V2(.38, .38); g.fillStyle = '#6E6A60'; g.fillRect(v[0] - 1, v[1] - 6, 2, 6); g.fillStyle = '#C0392B'; g.beginPath(); g.arc(v[0], v[1] - 6.5, 1.6, 0, 7); g.fill(); // válvula
+  }]);
+  L.push(['m_granero', 60, 62, 30, 46, (g, r) => {
+    sombra(g, 18, 5, 4);
+    g.fillStyle = '#5B4330'; for (const [u, v] of [[-.2, -.17], [.2, -.17], [.2, .17], [-.2, .17]]) { const q = V2(u, v); g.fillRect(q[0] - .8, q[1] - 7, 1.6, 7); } // troje en pilotes
+    const b = iso(g, .48, .4, 7, 13, '#A07A52', '#8A6644', null, r);
+    g.strokeStyle = '#6E5034'; g.lineWidth = .5; for (let k = 1; k < 4; k++) { const q = caraI(b, 0, 1, 7 + k * 3.2, 0); g.beginPath(); g.moveTo(q[0][0], q[0][1]); g.lineTo(q[1][0], q[1][1]); g.stroke(); }
+    techo(g, b, 3, 9, '#B89A5E', '#A07A52', r);
+    wash(g, caraI(b, .38, .24, 8, 8), '#4A3626', r, .95, .2);
+    for (const [u, v] of [[.38, .3], [.46, .22], [.42, .38]]) { const q = V2(u, v); blob(g, q[0], q[1] - 2.5, 3.2, 2.8, '#D8C79E', r, .97); } // bultos de maíz
+  }]);
+  L.push(['m_cooperativa', 66, 62, 33, 46, (g, r) => {
+    sombra(g, 22, 5, 4);
+    const b = iso(g, .62, .44, 0, 14, '#F2ECDD', '#D9D0BC', null, r);
+    wash(g, caraI(b, 0, 1, 0, 3), '#2D6E5E', r, .95, .2); wash(g, caraD(b, 0, 1, 0, 3), '#255A4D', r, .95, .2); // zócalo verde cafetero
+    techo(g, b, 3, 9, '#B4553A', '#E8E0CC', r);
+    wash(g, caraI(b, .42, .18, 2.5, 9), '#5B4330', r, .97, .2);
+    const t = caraI(b, .2, .6, 11, 3.5); wash(g, t, '#2D6E5E', r, .97, .1); g.fillStyle = '#F4EFE2'; for (let k = 0; k < 4; k++) { const f = .2 + k * .2, x = t[0][0] + (t[1][0] - t[0][0]) * f, y = t[0][1] + (t[1][1] - t[0][1]) * f; g.fillRect(x - .8, y - 2.6, 1.6, 1.6); } // letrero
+    for (let k = 0; k < 5; k++) { const q = V2(.12 + (k % 3) * .1, .36 + Math.floor(k / 3) * .02); blob(g, q[0], q[1] - 2.4 - Math.floor(k / 3) * 3.4, 3.2, 2.4, k % 2 ? '#C9B07A' : '#B89A64', r, .97); } // sacos de café
+    const q = V2(-.4, .32); g.fillStyle = '#6E6A60'; g.fillRect(q[0] - 3, q[1] - 2, 6, 1.2); g.fillRect(q[0] - .5, q[1] - 8, 1, 6); g.fillRect(q[0] - 3.5, q[1] - 8.5, 7, 1); // báscula
+    persona(g, q[0] + 6, q[1] + 2, '#2D6E5E', '#E7C76B');
+  }]);
+  L.push(['m_tanques', 62, 48, 31, 34, (g, r) => {
+    sombra(g, 22, 5, 3);
+    const tanque = (u, v, rr, h) => { const q = V2(u, v); g.fillStyle = '#A8A49A'; g.fillRect(q[0] - rr, q[1] - h, rr * 2, h); g.fillStyle = '#8E8A80'; g.fillRect(q[0] + rr * .3, q[1] - h, rr * .7, h); g.fillStyle = '#C6C2B8'; g.beginPath(); g.ellipse(q[0], q[1] - h, rr, rr * .45, 0, 0, 7); g.fill(); g.fillStyle = '#7A9E86'; g.beginPath(); g.ellipse(q[0], q[1] - h, rr * .78, rr * .33, 0, 0, 7); g.fill(); g.fillStyle = '#9C988E'; g.beginPath(); g.ellipse(q[0], q[1], rr, rr * .45, 0, 0, Math.PI); g.fill(); };
+    tanque(-.18, -.08, 9, 9); tanque(.2, .1, 8, 8);
+    g.strokeStyle = '#5A5650'; g.lineWidth = 1.4; const a = V2(.32, .2), b2 = V2(.5, .36); g.beginPath(); g.moveTo(a[0], a[1] - 3); g.lineTo(b2[0], b2[1] - 1); g.stroke(); // tubo hacia la quebrada
+  }]);
+  L.push(['m_parcela', 66, 52, 33, 36, (g, r) => {
+    wash(g, [V2(-.46, -.1), V2(.06, -.1), V2(.06, .44), V2(-.46, .44)], '#8C6A44', r, .9, .3); // la huerta
+    g.strokeStyle = '#5E8A4D'; g.lineWidth = 1.5; for (let k = 0; k < 5; k++) { const a = V2(-.42, -.02 + k * .1), b2 = V2(.02, -.02 + k * .1); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b2[0], b2[1]); g.stroke(); }
+    g.fillStyle = '#6B4F3A'; for (let k = 0; k < 6; k++) { const q = V2(-.48, -.1 + k * .11); g.fillRect(q[0] - .5, q[1] - 4, 1, 4); } // cerca
+    const b = iso(g, .3, .26, 0, 9, '#C9AE84', '#B0946C', null, r, .26, -.24);
+    techo(g, b, 2, 6, '#9AA4A8', '#C9AE84', r); // techo de zinc
+    wash(g, caraI(b, .35, .3, 0, 6), '#4A3626', r, .95, .2);
+    const q = V2(.2, .3); persona(g, q[0], q[1], '#B4553A', '#E7C76B');
+  }]);
+  L.push(['m_escuelita', 66, 66, 33, 46, (g, r) => {
+    sombra(g, 22, 5, 4);
+    const b = iso(g, .64, .4, 0, 13, '#F4EFE2', '#DCD3C0', null, r);
+    wash(g, caraI(b, 0, 1, 0, 3), '#3E6E9C', r, .95, .2); wash(g, caraD(b, 0, 1, 0, 3), '#335C84', r, .95, .2); // zócalo azul
+    techo(g, b, 3, 9, '#B4553A', '#E8E0CC', r);
+    for (const s of [.1, .62]) wash(g, caraI(b, s, .16, 5, 5), '#6E8FA8', r, .95, .2); // ventanas
+    wash(g, caraI(b, .36, .18, 0, 9), '#5B4330', r, .97, .2);
+    const e = V2(-.3, .36); g.fillStyle = '#5B4330'; g.fillRect(e[0] - 3.5, e[1] - 11, 1, 11); g.fillRect(e[0] + 2.5, e[1] - 11, 1, 11); g.fillRect(e[0] - 4, e[1] - 12, 8, 1.2); g.fillStyle = '#B08A3A'; g.beginPath(); g.arc(e[0], e[1] - 8.5, 1.8, Math.PI, 0); g.lineTo(e[0] + 2.2, e[1] - 7); g.lineTo(e[0] - 2.2, e[1] - 7); g.fill(); // campana en su marco de madera
+    const f = V2(-.46, .3); g.strokeStyle = '#5A4A3A'; g.lineWidth = .9; g.beginPath(); g.moveTo(f[0], f[1]); g.lineTo(f[0], f[1] - 24); g.stroke();
+    g.fillStyle = '#E7C24B'; g.fillRect(f[0], f[1] - 24, 9, 3); g.fillStyle = '#2E4C8C'; g.fillRect(f[0], f[1] - 21, 9, 1.6); g.fillStyle = '#C0392B'; g.fillRect(f[0], f[1] - 19.4, 9, 1.6); // bandera de Colombia
+    for (const [u, v, col] of [[.1, .36, '#F4F1E6'], [.22, .32, '#3E6E9C'], [.32, .4, '#F4F1E6']]) { const q = V2(u, v); g.fillStyle = col; g.fillRect(q[0] - 1, q[1] - 5, 2, 3.6); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(q[0], q[1] - 6, 1.1, 0, 7); g.fill(); } // niños
+  }]);
   L.push(['m_campamento', 60, 46, 30, 36, (g, r) => {
     sombra(g, 20, 5, 4);
     for (const [u, v, col] of [[-.25, -.05, '#4E5A3A'], [.18, .12, '#5E6A44']]) { const q = V2(u, v); wash(g, [[q[0] - 9, q[1]], [q[0] + 9, q[1]], [q[0], q[1] - 12]], col, r, .97, .3); wash(g, [[q[0] - 2, q[1]], [q[0] + 2, q[1]], [q[0], q[1] - 5]], '#2A2A22', r, .95, .2); }

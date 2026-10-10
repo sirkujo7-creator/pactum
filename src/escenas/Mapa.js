@@ -27,7 +27,7 @@ import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
 // Huellas grandes que despejan la vegetación de su casilla (fase 6: megaproyectos e inventos).
-const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'monumento', 'museo', 'mv_jardin', 'mv_conservatorio', 'mv_tunel', 'mv_parque', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento', 'colono', 'arriendo', 'sorteo', 'resguardo', 'trinchera']);
+const GRANDES = new Set(['megaobra', 'represa', 'ferrocarril', 'aeropuerto', 'monumento', 'museo', 'mv_jardin', 'mv_conservatorio', 'mv_tunel', 'mv_parque', 'electricidad', 'automatizacion', 'imprenta', 'asentamiento', 'colono', 'arriendo', 'sorteo', 'resguardo', 'trinchera', 'dique', 'reservorio', 'granero', 'cooperativa', 'tanques', 'parcela', 'escuelita', 'monumentoD', 'museoD']);
 const ZOOM_MAX = 2.6; // más cerca, el terreno pintado se vería pixelado
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
 
@@ -183,7 +183,7 @@ export class Mapa extends Phaser.Scene {
     const x = this.S.map[i];
     this.obras[i] = [];
     // Fase 4: huella de una decisión en una casilla libre.
-    if (!x.b && x.mk) { const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + x.mk.t, t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1)); return; }
+    if (!x.b && x.mk) { const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + ((C.MARCAS && C.MARCAS.tipos[x.mk.t] || {}).arte || x.mk.t), t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1)); return; }
     if (!x.b) return;
     const t = this.T.tiles[i], deSuelo = x.b === 'cultivo' || x.b === 'cafetal';
     // Fase 1: desgaste visible (0 buen estado, 1 gastada, 2 agrietada, 3 abandonada).
