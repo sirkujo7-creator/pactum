@@ -96,7 +96,9 @@ export function undoBuild(S) {
   if (u.mk) x.mk = u.mk;
   if (u.k === 'fundacion' && S.fundando) { S.fundando.plaza = 1; delete S.centro; } // deshacer la plaza: se vuelve a elegir el centro
   if (u.forest) { x.t = 'bosque'; S.env = clamp(S.env + 3, 0, 100); if (u.tl) delete x.tl; }
-  if (S.pop > cap(S)) S.pop = cap(S);
+  // Solo al deshacer una casa (y ya fundado el pueblo) se ajusta la población al cupo: deshacer la plaza, una finca
+  // o cualquier otra obra no borra a los primeros pobladores (antes pasaban de 15 a 0).
+  if (S.mundo === 'v9' ? S.pop > cap(S) : u.k === 'casa' && !S.fundando && S.pop > cap(S)) S.pop = cap(S);
   return u;
 }
 

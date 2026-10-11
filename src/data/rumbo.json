@@ -1,0 +1,10 @@
+{
+  "leccion": "Polibio: todo régimen tiende a corromperse, pero un poder vigilado (legitimidad, prensa libre, asambleas) se corrompe mucho más despacio.",
+  "tendencia": { "monarquia": 3, "aristocracia": 2 },
+  "legitSinFreno": 70,
+  "rango": 35,
+  "minimo": 0.2,
+  "porPrensa": 0.75,
+  "porAgora": 0.75,
+  "buenGobierno": { "todas": 50, "legit": 55, "valor": -2, "ninguna": 40, "valorParcial": -1 }
+}

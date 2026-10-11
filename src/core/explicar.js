@@ -11,6 +11,7 @@ import { efectoBarrios } from './barrios.js';
 import { efectoTec } from './tecnologia.js';
 import { efectoMega } from './megaproyectos.js';
 import { efectoLeyes } from './civismo.js';
+import { partesRumbo } from './rumbo.js';
 
 const suma = L => L.reduce((s, x) => s + x[1], 0);
 const limpio = L => L.filter(x => Math.abs(x[1]) >= .5).map(([t, v]) => [t, Math.round(v * 10) / 10]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
@@ -41,9 +42,8 @@ export function desgloseIndicador(S, k) {
     return { actual: S.tr, meta: Math.max(0, Math.min(100, suma(p))), partes: limpio(p), extra: 'Además: protestas (−5), promesas, emergencias, elecciones y dilemas la mueven de golpe.' };
   }
   if (k === 'corr') {
-    const minSat = Math.min(S.sat.c, S.sat.a, S.sat.e);
-    const p = [['Tendencia del régimen', RM(S, 'drift')], ['Censura', L('censura') ? 1.5 : 0], ['Libertad de prensa', L('prensa') ? -1.5 : 0], ['Alguna clase muy descontenta', minSat < 25 ? 3 : 0], ['Buen gobierno (todos contentos y legitimidad alta)', minSat > 50 && S.tr > 55 ? -2 : 0], ['Leyes nuevas y rasgos del pueblo', efectoLeyes(S, 'rumbo')]];
-    return { actual: S.corr, cambio: suma(p), partes: p.filter(x => x[1]).map(([t, v]) => [t, v]), extra: 'Además: sobornos y algunos dilemas lo mueven de golpe.' };
+    const p = partesRumbo(S);
+    return { actual: S.corr, cambio: Math.round(p.reduce((t, x) => t + x[1], 0) * 10) / 10, partes: p.filter(x => x[1]).map(([t, v]) => [t, v]), extra: 'Además: cada decisión mueve el rumbo (deber, equidad o virtud lo bajan 4; utilidad lo sube 1; realismo lo sube 9), y también los sobornos y las promesas.' };
   }
   return null;
 }

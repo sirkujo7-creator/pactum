@@ -247,6 +247,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--papel);color:var
 .sub b{text-align:right}
 .cls.otros{grid-template-columns:1fr}
 .opt.reg small.ventaja{color:var(--good);font-weight:600;margin-top:4px}
+.opt.reg small.riesgo{color:var(--bad, #9C2F25);font-weight:600;margin-top:2px}
 .sub.fig .sn img{width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:4px}
 .fig-r img{width:44px;height:44px;border-radius:50%}
 .fig-cab{display:flex;gap:12px;align-items:center}.fig-cab img{width:64px;height:64px;border-radius:50%}.fig-cab h3{margin:0}
