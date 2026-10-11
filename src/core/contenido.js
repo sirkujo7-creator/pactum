@@ -11,7 +11,7 @@ export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
-export const ARCHIVOS = ['edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'maravillas', 'comision', 'etapas', 'imagenes_dilemas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+export const ARCHIVOS = ['rumbo', 'edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'maravillas', 'comision', 'etapas', 'imagenes_dilemas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
   'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias', 'vecindad', 'huellas', 'territorios', 'exterior'];
 
 function efectos(obj, donde) {
@@ -55,7 +55,7 @@ export function usarContenido(d) {
   C.GUIDE = d.guia.map(g => ({ t: g.texto, cond: g.condicion }));
   C.CYCLE = d.regimenes.ciclo;
   C.REG = Object.fromEntries(Object.entries(d.regimenes.formas).map(([k, r]) => [k, {
-    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores, m3: r.ajustesFase3, v: r.ventaja
+    n: r.nombre, t: r.cargo, sede: r.sede, rect: r.recta, cor: r.seCorrompeEn, cyc: r.revolucionHacia, col: r.color, d: r.descripcion, m: r.modificadores, m3: r.ajustesFase3, v: r.ventaja, riesgo: r.riesgo
   }]));
   C.LAWS = d.leyes.map(l => sinVacios({ id: l.id, n: l.nombre, d: l.descripcion, st: l.etapa, no: l.prohibidaEn }));
   C.ACH = d.logros.map(a => ({ id: a.id, n: a.nombre, d: a.descripcion }));
@@ -80,6 +80,7 @@ export function usarContenido(d) {
   C.COB = d.cobertura;
   C.ECO = d.economia;
   C.IND = d.indicadores;
+  C.RUMBO = d.rumbo || null; // rumbo del gobierno: tendencia de cada régimen y freno por vigilancia
   C.GRUPOS = d.grupos;
   C.EJERCITO = d.ejercito;
   C.FUERZA = d.fuerza;

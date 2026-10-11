@@ -496,9 +496,10 @@ export class Interfaz {
     this.boton('claseB', () => { this.cerrarTarjeta(); this.explicarClase(A.clase); });
   }
   // Claridad: recuadro de un indicador con lo que mide, hacia dónde va y cada causa con su número.
-  filasCausas(partes) {
-    const max = Math.max(1, ...partes.map(x => Math.abs(x[1])));
-    return `<div class="causas">${partes.map(([t, v]) => `<div class="causa"><span>${t}</span><span class="barra"><i class="${v < 0 ? 'neg' : 'pos'}" style="width:${Math.round(Math.abs(v) / max * 100)}%"></i></span><b class="${v < 0 ? 'neg' : 'pos'}">${signo(v)}</b></div>`).join('')}</div>`;
+  // alReves: en el rumbo subir es malo (rojo) y bajar es bueno (verde).
+  filasCausas(partes, alReves = false) {
+    const max = Math.max(1, ...partes.map(x => Math.abs(x[1]))), cl = v => (v < 0) !== alReves ? 'neg' : 'pos';
+    return `<div class="causas">${partes.map(([t, v]) => `<div class="causa"><span>${t}</span><span class="barra"><i class="${cl(v)}" style="width:${Math.round(Math.abs(v) / max * 100)}%"></i></span><b class="${cl(v)}">${signo(v)}</b></div>`).join('')}</div>`;
   }
   tendencia(actual, meta) {
     const d = Math.round(meta - actual);
@@ -513,7 +514,7 @@ export class Interfaz {
         ${n.map(([c, t, p, v]) => `<button class="opt" data-clase="${c}"><b>${t}</b> (${p} personas): ánimo ${Math.round(v)} <small>${this.tendencia(v, desgloseClase(S, c).meta).replace(/<[^>]+>/g, '')}</small></button>`).join('')}
         ${society(S).un ? `<p class="small neg">Hay ${society(S).un} personas sin empleo: restan ${Math.round(society(S).un / Math.max(1, S.pop) * 15)} puntos.</p>` : ''}`;
     } else if (k === 'corr') {
-      cuerpo = D.partes.length ? `<p>${D.cambio > 0 ? `<b class="neg">Sube ${signo(D.cambio)} por año</b>` : D.cambio < 0 ? `<b class="pos">Baja ${signo(D.cambio)} por año</b>` : 'Este año sus causas se compensan'} por estas causas:</p>${this.filasCausas(D.partes)}<p class="small">${D.extra}</p>` : `<p>Este año no cambia por sí solo. ${D.extra}</p>`;
+      cuerpo = D.partes.length ? `<p>${D.cambio > 0 ? `<b class="neg">Sube ${signo(D.cambio)} por año</b>` : D.cambio < 0 ? `<b class="pos">Baja ${signo(D.cambio)} por año</b>` : 'Este año sus causas se compensan'} por estas causas:</p>${this.filasCausas(D.partes, true)}<p class="small">${D.extra}</p>` : `<p>Este año no cambia por sí solo. ${D.extra}</p>`;
     } else {
       cuerpo = `<p>${this.tendencia(D.actual, D.meta)} ${C.IND.tendencia.replace('{meta}', Math.round(D.meta))} Así se calcula la meta:</p>${this.filasCausas(D.partes)}${D.extra ? `<p class="small">${D.extra}</p>` : ''}`;
     }
@@ -1879,10 +1880,10 @@ export class Interfaz {
     const S = this.S, R0 = RG(S), c = Math.round(S.corr), REG = C.REG;
     this.tarjeta(`<div class="regh" style="--rc:${R0.col}">${EMB[S.reg]}</div><h3>${R0.n}</h3><p>${R0.d}</p>
       <p class="small">Tu cargo: ${R0.t}. Sede: ${seatName(S)}.</p>
-      ${R0.v && climaActivo(S) ? `<p><b>Ventaja:</b> ${R0.v}</p>` : ''}
+      ${R0.v && climaActivo(S) ? `<p><b>Ventaja:</b> ${R0.v}</p>` : ''}${R0.riesgo && climaActivo(S) ? `<p><b>Riesgo:</b> ${R0.riesgo}</p>` : ''}
       <h2>Rumbo del gobierno</h2><div class="rumbo"><div style="width:${c}%"></div></div><div class="rlab"><span>Bien común</span><span>Interés propio</span></div>
       <p class="small">${R0.rect ? `Si llega a 70, ${R0.n.toLowerCase()} se corrompe en ${REG[R0.cor].n.toLowerCase()}.` : `Si baja a 20, puedes reformarlo. Si la legitimidad se hunde, estalla una revolución y llega ${REG[R0.cyc].n.toLowerCase()}.`}
-      Sube al elegir por conveniencia o represión, al incumplir promesas y al abandonar a una clase. Baja al actuar por deber, justicia o prudencia y al cumplirle al pueblo.</p>
+      Sube con la tendencia del régimen (más despacio si el poder está vigilado: legitimidad alta, prensa libre, ágora), al elegir por conveniencia o represión, al incumplir promesas y al abandonar a una clase. Baja al actuar por deber, justicia o prudencia, al cumplirle al pueblo y cuando ninguna clase se queda atrás.</p>
       <p class="small">Ciclo de Polibio: ${C.CYCLE.map(k => k === S.reg ? `<b>${REG[k].n}</b>` : REG[k].n).join(', ')}.</p>
       ${this.seccionActa()}
       <button class="main" id="okB">Cerrar</button>`);

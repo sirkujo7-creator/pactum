@@ -31,8 +31,8 @@
     "nombre": "Rumbo", "icono": "🧭",
     "que": "Hacia dónde gobiernas: 0 es el bien común, 100 el interés propio. Es la corrupción del régimen, según Aristóteles.",
     "importa": "En regímenes rectos, a 70 el gobierno se corrompe en su forma degenerada (ciclo de Polibio).",
-    "sube": "La tendencia del régimen, la censura, el descontento de alguna clase, los sobornos.",
-    "baja": "Buen gobierno (todas las clases contentas y legitimidad alta), la libertad de prensa."
+    "sube": "La tendencia del régimen (monarquía y aristocracia; más lenta si el poder está vigilado), la censura, una clase muy descontenta, los sobornos, las promesas incumplidas.",
+    "baja": "Buen gobierno (ninguna clase por debajo de 40; más aún si las tres están contentas y la legitimidad es alta), la libertad de prensa, el ágora, las decisiones de deber, equidad o virtud y cumplir promesas."
   },
   "tendencia": "Cada año el valor se mueve un 30% hacia su meta ({meta}).",
   "clases": {

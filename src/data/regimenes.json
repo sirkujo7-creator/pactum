@@ -28,7 +28,8 @@
         "drift": 4.6,
         "leyesDescuento": 0.4
       },
-      "ventaja": "Decreto real: promulgar leyes cuesta 40% menos oro."
+      "ventaja": "Decreto real: promulgar leyes cuesta 40% menos oro.",
+      "riesgo": "Se corrompe rápido (+3 al rumbo cada año si nadie vigila), no hay elecciones que te frenen y la sucesión es una lotería."
     },
     "aristocracia": {
       "nombre": "Aristocracia",
@@ -53,7 +54,8 @@
         "drift": 3.0,
         "obrasDescuento": 0.1
       },
-      "ventaja": "Gobierno de los mejores: las obras cuestan 10% menos."
+      "ventaja": "Gobierno de los mejores: las obras cuestan 10% menos.",
+      "riesgo": "Se corrompe a paso medio (+2 al rumbo cada año si nadie vigila), la élite pesa más que el pueblo y el Senado solo deja mover cada impuesto 5 puntos por año."
     },
     "republica": {
       "nombre": "República democrática",
@@ -63,7 +65,7 @@
       "seCorrompeEn": "demagogia",
       "revolucionHacia": "demagogia",
       "color": "#2D5D72",
-      "descripcion": "Gobiernan muchos, con leyes y libertades. Máxima legitimidad, pero hay elecciones cada 4 años desde que eres Pueblo y la administración es más costosa.",
+      "descripcion": "Gobiernan muchos, con leyes y libertades. Máxima legitimidad, pero hay elecciones cada 4 años desde que eres Pueblo y los trámites y controles lo hacen todo más lento.",
       "modificadores": {
         "tr": 4,
         "sc": 2,
@@ -73,9 +75,13 @@
       },
       "ajustesFase3": {
         "tr": 4.3,
-        "movCrece": 0.6
+        "movCrece": 0.6,
+        "menosAnios": -1,
+        "leyesDescuento": -0.1,
+        "admin": 1.0
       },
-      "ventaja": "Participación: los movimientos sociales crecen 40% más lento, porque hay canales para hacerse oír."
+      "ventaja": "Participación: los movimientos sociales crecen 40% más lento, porque hay canales para hacerse oír.",
+      "riesgo": "Trámites y controles: las obras grandes tardan un año más y las leyes cuestan 10% más; hay elecciones cada 4 años y el Congreso no aprueba leyes con legitimidad baja."
     },
     "tirania": {
       "nombre": "Dictadura",
@@ -100,7 +106,8 @@
         "admin": 1.0,
         "menosAnios": 1
       },
-      "ventaja": "Mano dura: las obras grandes tardan un año menos."
+      "ventaja": "Mano dura: las obras grandes tardan un año menos.",
+      "riesgo": "La legitimidad se hunde, las protestas silenciadas suben el rumbo y el descontento oculto termina en revolución."
     },
     "oligarquia": {
       "nombre": "Plutocracia",
@@ -129,7 +136,8 @@
         "admin": 0.9,
         "tasaMenos": 0.05
       },
-      "ventaja": "Amigos en la banca: los préstamos cuestan 5 puntos menos de interés."
+      "ventaja": "Amigos en la banca: los préstamos cuestan 5 puntos menos de interés.",
+      "riesgo": "El pueblo se empobrece, la desigualdad crece y la legitimidad es baja: la revolución acecha."
     },
     "demagogia": {
       "nombre": "Populismo",
@@ -155,7 +163,8 @@
         "movEscucha": 1.5,
         "se": -3
       },
-      "ventaja": "Carisma: escuchar a un movimiento social lo calma 50% más."
+      "ventaja": "Carisma: escuchar a un movimiento social lo calma 50% más.",
+      "riesgo": "La élite desconfía, la administración cuesta más y hay elecciones: gobernar para el aplauso cansa."
     }
   }
 }

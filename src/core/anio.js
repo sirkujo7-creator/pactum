@@ -12,6 +12,7 @@ import { polisDelAnio } from './entrepolis.js';
 import { comisionDelAnio } from './comision.js';
 import { maravillasDelAnio } from './maravillas.js';
 import { C } from './contenido.js';
+import { partesRumbo } from './rumbo.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
 import { finance, totDebt } from './hacienda.js';
 import { society, waterCap, satTargets, calcHap, envTarget } from './sociedad.js';
@@ -158,9 +159,11 @@ export function advance(S) {
 
   // Rumbo del gobierno: corrupción, reforma y revolución (Aristóteles y Polibio).
   const minSat = Math.min(S.sat.c, S.sat.a, S.sat.e);
-  S.corr = clamp(S.corr + RM(S, 'drift') + (hasLaw(S, 'censura') ? 1.5 : 0) - (hasLaw(S, 'prensa') ? 1.5 : 0) + efectoLeyes(S, 'rumbo'), 0, 100);
-  if (minSat < 25) S.corr = clamp(S.corr + 3, 0, 100);
-  if (minSat > 50 && S.tr > 55) S.corr = clamp(S.corr - 2, 0, 100);
+  if (S.mundo === 'v9' || !S.clima) { // la regla de la v9, tal cual
+    S.corr = clamp(S.corr + RM(S, 'drift') + (hasLaw(S, 'censura') ? 1.5 : 0) - (hasLaw(S, 'prensa') ? 1.5 : 0) + efectoLeyes(S, 'rumbo'), 0, 100);
+    if (minSat < 25) S.corr = clamp(S.corr + 3, 0, 100);
+    if (minSat > 50 && S.tr > 55) S.corr = clamp(S.corr - 2, 0, 100);
+  } else S.corr = clamp(S.corr + partesRumbo(S).reduce((t, x) => t + x[1], 0), 0, 100); // el poder vigilado se corrompe menos (rumbo.js)
   S.regChange = null;
   if (RG(S).rect && S.corr >= 70) {
     const from = S.reg; S.reg = RG(S).cor; S.corr = 45; S.regChange = { type: 'cor', from, to: S.reg };
