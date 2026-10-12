@@ -1,19 +1,59 @@
 {
   "leccion": "Los caminos son la primera obra de un Estado: unen los mercados, llevan la escuela y el médico más lejos y dejan que el recaudador llegue a todas las casas. El trazado en damero (calles rectas que se cruzan) viene de las ciudades romanas y de las Leyes de Indias que fundaron los pueblos del Tolima.",
   "eras": {
-    "herradura": { "nombre": "Camino de herradura", "plural": "caminos de herradura", "costo": 4, "mantenimiento": 0.15, "vehiculo": "Arrieros con mulas" },
-    "empedrado": { "nombre": "Calle empedrada", "plural": "calles empedradas", "costo": 8, "mantenimiento": 0.25, "vehiculo": "Chivas" },
-    "carretera": { "nombre": "Carretera", "plural": "carreteras", "costo": 14, "mantenimiento": 0.4, "vehiculo": "Camiones" }
+    "herradura": {
+      "nombre": "Camino de herradura",
+      "plural": "caminos de herradura",
+      "costo": 2,
+      "mantenimiento": 0.15,
+      "vehiculo": "Arrieros con mulas"
+    },
+    "empedrado": {
+      "nombre": "Calle empedrada",
+      "plural": "calles empedradas",
+      "costo": 4,
+      "mantenimiento": 0.25,
+      "vehiculo": "Chivas"
+    },
+    "carretera": {
+      "nombre": "Carretera",
+      "plural": "carreteras",
+      "costo": 7,
+      "mantenimiento": 0.4,
+      "vehiculo": "Camiones"
+    }
   },
-  "eraPorEpoca": { "fundacion": "herradura", "cafe": "herradura", "violencia": "empedrado", "modernizacion": "carretera", "paz": "carretera", "digital": "carretera" },
-  "eraPorEtapa": ["herradura", "herradura", "empedrado", "carretera"],
+  "eraPorEpoca": {
+    "fundacion": "herradura",
+    "cafe": "herradura",
+    "violencia": "empedrado",
+    "modernizacion": "carretera",
+    "paz": "carretera",
+    "digital": "carretera"
+  },
+  "eraPorEtapa": [
+    "herradura",
+    "herradura",
+    "empedrado",
+    "carretera"
+  ],
   "puente": 20,
-  "comercio": 0.15,
-  "conComercio": ["mercado", "cafetal", "mina", "taller", "puerto"],
+  "comercio": 0.2,
+  "conComercio": [
+    "mercado",
+    "cafetal",
+    "mina",
+    "taller",
+    "puerto",
+    "cultivo"
+  ],
   "radioExtra": 1,
   "menosEvasion": 0.5,
   "talaAmbiente": 0.3,
-  "salida": { "comercio": 0.03, "relacion": 1 },
+  "salida": {
+    "comercio": 0.03,
+    "relacion": 1
+  },
   "textos": {
     "herramienta": "Calle",
     "quitar": "Quitar calles",
@@ -28,5 +68,18 @@
     "salida": "Una calle llega al borde del territorio: el comercio sale hacia los vecinos.",
     "mejora": "Nueva época: los caminos se vuelven {era}.",
     "ficha": "Junto a una calle"
+  },
+  "aislada": {
+    "comercio": 0.3,
+    "radio": 1,
+    "exentas": [
+      "fundacion",
+      "cementerio",
+      "parque",
+      "acueducto"
+    ],
+    "aviso": "{n} obras sin camino a la plaza: venden 30% menos y sus servicios llegan menos lejos.",
+    "ficha": "Sin camino a la plaza: vende 30% menos y su servicio llega una casilla menos lejos. Traza una calle hasta aquí.",
+    "leccion": "Una obra aislada casi no existe para el resto del territorio: sin camino, la cosecha se pierde, el médico no llega y el recaudador tampoco."
   }
 }

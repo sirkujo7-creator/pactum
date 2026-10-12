@@ -19,20 +19,34 @@ export function listaCalles(S) { return (S && S.calles) || []; }
 // Datos derivados (conjunto de bordes, casillas conectadas); se recalculan cuando cambia la lista.
 const CACHE = new WeakMap();
 function datos(S) {
-  const L = listaCalles(S);
+  const L = listaCalles(S), pz = plazaRed(S);
   let d = CACHE.get(L);
-  if (d && d.N === lado(S)) return d;
-  const N = lado(S), M = N + 1, set = new Set(L), con = new Uint8Array(N * N);
+  if (d && d.N === lado(S) && d.pz === pz) return d;
+  const N = lado(S), M = N + 1, set = new Set(L), con = new Uint8Array(N * N), red = new Uint8Array(N * N);
   let salida = false;
+  const vec = {};
   for (const k of L) {
     const [a, b] = k.split('|').map(Number);
     for (const t of casillasDeBorde(N, a, b)) con[t] = 1;
     for (const e of [a, b]) { const r = Math.floor(e / M), c = e % M; if (r === 0 || c === 0 || r === N || c === N) salida = true; }
+    (vec[a] = vec[a] || []).push(b); (vec[b] = vec[b] || []).push(a);
   }
-  d = { N, set, con, salida };
+  // Red de la plaza: las calles unidas (por esquinas) a las esquinas de la plaza; sus casillas a los lados quedan «en red».
+  if (pz >= 0) {
+    const r0 = Math.floor(pz / N), c0 = pz % N, vistas = new Set(), cola = [esquina(N, r0, c0), esquina(N, r0, c0 + 1), esquina(N, r0 + 1, c0), esquina(N, r0 + 1, c0 + 1)].filter(e => vec[e]);
+    cola.forEach(e => vistas.add(e));
+    while (cola.length) { const e = cola.pop(); for (const f of vec[e]) if (!vistas.has(f)) { vistas.add(f); cola.push(f); } }
+    // Una obra queda unida si alguna de sus cuatro esquinas toca la red (basta con que la calle llegue hasta ella).
+    for (const e of vistas) { const r = Math.floor(e / M), c = e % M; for (const [R, Cc] of [[r - 1, c - 1], [r - 1, c], [r, c - 1], [r, c]]) if (R >= 0 && Cc >= 0 && R < N && Cc < N) red[R * N + Cc] = 1; }
+    red[pz] = 1;
+    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const r = r0 + dr, c = c0 + dc; if (r >= 0 && c >= 0 && r < N && c < N) red[r * N + c] = 1; } // pegadas a la plaza
+  }
+  d = { N, set, con, red, salida, pz };
   CACHE.set(L, d);
   return d;
 }
+// La plaza de fundación (o el centro del pueblo) es el corazón de la red de caminos.
+function plazaRed(S) { const i = S.map.findIndex(x => x.b === 'fundacion'); return i >= 0 ? i : S.centro !== undefined ? S.centro : -1; }
 // Casillas (índices) a los dos lados de un borde.
 function casillasDeBorde(N, a, b) {
   const [r1, c1] = rcEsquina(N, a), [r2, c2] = rcEsquina(N, b), out = [];
@@ -117,9 +131,17 @@ export function quitarCalles(S, e) {
 
 // ---------- Efectos ----------
 // Las obras de comercio junto a una calle venden más.
-export function factorCalle(S, i) { return conectada(S, i) && K().conComercio.includes(S.map[i].b) ? 1 + K().comercio : 1; }
+export function factorCalle(S, i) { const b = S.map[i].b; if (!K().conComercio.includes(b)) return 1; return aislada(S, i) ? 1 - K().aislada.comercio : conectada(S, i) ? 1 + K().comercio : 1; }
+// Pedido de Juan (12 de octubre): una obra sin camino hasta la plaza queda aislada: vende menos y sus servicios no salen
+// de su casilla. Las pegadas a la plaza cuentan como unidas. Exentas: plaza, cementerio, parque y acueducto.
+export function aislada(S, i) {
+  const x = S.map[i], A = K().aislada;
+  if (!callesActivas(S) || !A || !x.b || x.ob || A.exentas.includes(x.b) || plazaRed(S) < 0) return false;
+  return !datos(S).red[i];
+}
+export function obrasAisladas(S) { return callesActivas(S) && K().aislada ? S.map.map((x, i) => i).filter(i => aislada(S, i)) : []; }
 // Los servicios junto a una calle llegan más lejos.
-export function radioCalle(S, i) { return conectada(S, i) ? K().radioExtra : 0; }
+export function radioCalle(S, i) { return aislada(S, i) ? -K().aislada.radio : conectada(S, i) ? K().radioExtra : 0; }
 // Parte de las casas con una calle al frente (baja la evasión).
 export function casasConectadas(S) {
   if (!callesActivas(S) || !listaCalles(S).length) return 0;

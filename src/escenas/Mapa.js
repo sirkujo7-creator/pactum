@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible } from '../core/index.js';
+import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -256,6 +256,11 @@ export class Mapa extends Phaser.Scene {
   fabricaViva(i, x) { const S = this.S; if (x.b !== 'taller' || !industriaActiva(S)) return true; const P = produccionFabrica(S, i); return P.encendida && P.f > 0; }
   huellaExtra(x, i) {
     const S = this.S;
+    if (x.b && aislada(S, i)) return 'a' + this.huellaExtra2(x, i); // sin camino a la plaza: letrero
+    return this.huellaExtra2(x, i);
+  }
+  huellaExtra2(x, i) {
+    const S = this.S;
     if (x.b === 'taller' && industriaActiva(S) && !this.fabricaViva(i, x)) return 'ap';
     if (!C.HUELLAS) return '';
     const ly = (x.b ? this.leyesAqui(i, x).join(',') : '') + (x.b && quemadaVisible(S, x) ? 'q' : '');
@@ -271,6 +276,7 @@ export class Mapa extends Phaser.Scene {
       for (let k = 0; k < n; k++) pon('tumba', -.18 + Math.floor(k / 4) * .2, -.2 + (k % 4) * .16, .95);
     }
     if (lutoVisible(S) && i === this.plazaLuto()) pon('velas', .28, -.05, .9);
+    if (aislada(S, i)) pon('sinCamino', .36, .3, .9); // obra aislada: letrero de «sin camino» al pie
     if (x.b === 'casa' && i % 3 === 1 && epidemiaVisible(S)) pon('bandera-amarilla', .22, -.22, .9);
     // Paso 4: una obra quemada en la guerra o en una toma: muros ahumados y hollín.
     if (quemadaVisible(S, x)) { for (const im of this.obras[i]) if (im.texture.key === 'edificios') im.setTint(0x8C8076); pon('hollin', -.05, -.05, 1); }
