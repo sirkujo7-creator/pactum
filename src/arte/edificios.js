@@ -106,6 +106,13 @@ function recetas(era = 1) {
     for (let k = 0; k < 9; k++) { const q = b.up(V2(-.22 + (k % 3) * .22, -.14 + Math.floor(k / 3) * .14), 2); blob(g, q[0], q[1] - 2, 2.2, 2.6, k % 2 ? '#5E8A4D' : '#7FA35C', r, .95); }
     const q = V2(.3, .25); persona(g, q[0], q[1], '#2D6E5E', '#E7C76B');
   }]);
+  // Letrero de obra aislada (sin camino a la plaza): poste con tabla y una trocha cortada.
+  L.push(['sinCamino', 30, 34, 15, 28, (g, r) => {
+    const p = V2(0, 0); blob(g, p[0], p[1] - .5, 6, 1.8, '#8C7458', r, .8);
+    g.fillStyle = '#5B4330'; g.fillRect(p[0] - .7, p[1] - 15, 1.4, 15);
+    wash(g, [[p[0] - 8, p[1] - 15], [p[0] + 8, p[1] - 16], [p[0] + 8, p[1] - 10], [p[0] - 8, p[1] - 9]], '#E8D9B0', r, .97, .2);
+    g.strokeStyle = '#B0402C'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(p[0] - 4, p[1] - 14.5); g.lineTo(p[0] + 4, p[1] - 10.5); g.moveTo(p[0] + 4, p[1] - 14.5); g.lineTo(p[0] - 4, p[1] - 10.5); g.stroke();
+  }]);
   // Cruz del camino: cruz de madera con flores al pie y una vela, donde mataron a alguien (violencia).
   L.push(['m_cruz', 40, 52, 20, 42, (g, r) => {
     sombra(g, 10, 3, 2); const p = V2(0, 0);

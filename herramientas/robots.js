@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
+  sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, aislada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
   industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
   materialesActivos, comprarMat, comprarFaltante, precioCompra, faltanteMat, plazaActiva, estadoPlaza, motivoMejora, mejorarPlaza, civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
@@ -67,14 +67,17 @@ export function botYear(S, strat, eth, op = {}) {
     if (!puedeVigilancia(S) && S.gold > costoVigilancia(S) + 150) comprarVigilancia(S);
   }
   // Fase 9: la estrategia equilibrada abre calles desde el centro hasta la obra más cercana que aún no tiene una.
-  if (prep && callesActivas(S) && S.year >= 4 && S.year % 3 === 0 && S.gold > 150) {
+  if (prep && callesActivas(S) && S.year >= 2 && S.gold > 100) { // las obras sin camino a la plaza venden menos: el robot las une
     const N = lado(S), c0 = centroPueblo(S);
     if (c0 >= 0) {
       const dc = i => Math.hypot(Math.floor(i / N) - Math.floor(c0 / N), i % N - c0 % N);
-      const cand = S.map.map((x, i) => i).filter(i => i !== c0 && S.map[i].b && S.map[i].b !== 'cultivo' && !S.map[i].ob && !conectada(S, i)).sort((a, b) => dc(a) - dc(b));
-      for (const i of cand.slice(0, 2)) {
-        const ruta = trazarCalle(S, esquina(N, Math.floor(c0 / N), c0 % N), esquina(N, Math.floor(i / N), i % N));
-        if (ruta && costoCalle(S, ruta).oro <= S.gold - 120) construirCalle(S, ruta);
+      const cand = S.map.map((x, i) => i).filter(i => i !== c0 && aislada(S, i)).sort((a, b) => dc(a) - dc(b));
+      for (const i of cand.slice(0, 3)) {
+        if (!aislada(S, i)) continue; // una calle anterior ya la unió
+        const r = Math.floor(i / N), c = i % N, e1 = esquina(N, r, c), ruta = trazarCalle(S, esquina(N, Math.floor(c0 / N), c0 % N), e1);
+        if (ruta && costoCalle(S, ruta).oro <= S.gold - 80) construirCalle(S, ruta);
+        // La ruta llega a una esquina de la obra: si aún no la toca, sigue por uno de sus bordes.
+        for (const e2 of [esquina(N, r, c + 1), esquina(N, r + 1, c)]) { if (!aislada(S, i)) break; const t = trazarCalle(S, e1, e2); if (t && t.length === 2 && costoCalle(S, t).oro <= S.gold - 40) construirCalle(S, t); }
       }
     }
   }
