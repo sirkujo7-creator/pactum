@@ -4,7 +4,7 @@
 // toma armada (crisis mayor). El gobierno elige una estrategia: ofensiva, diálogo de paz o inversión social.
 // Solo en el terreno en acuarela.
 import { C } from './contenido.js';
-import { registrarMuertes, quemar, dejarRuinas } from './huellas.js';
+import { registrarMuertes, quemar, dejarRuinas, balear, cubrir, desaparecer } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { counts, cap } from './reglas.js';
 import { climaActivo, marcarCrisis } from './clima.js';
@@ -34,6 +34,12 @@ export function partesConflicto(S) {
 export function metaConflicto(S) { return clamp(partesConflicto(S).reduce((s, x) => s + x[1], 0), 0, 100); }
 export function puedeEstrategia(S, id) { const E = K().estrategias[id]; return E.requiere && !counts(S)[E.requiere] ? `Necesitas ${C.B[E.requiere].a}.` : null; }
 export function elegirEstrategia(S, id) { if (puedeEstrategia(S, id)) return false; conflicto(S).estrategia = id; return true; }
+// Fincas abandonadas (se ven con maleza): las más cercanas al campamento, una por cada 20 puntos de conflicto.
+export function fincasAbandonadas(S) {
+  if (!hayGrupo(S) || S.conf.camp < 0) return [];
+  const N = lado(S), c = S.conf.camp, d = i => Math.hypot(Math.floor(i / N) - Math.floor(c / N), i % N - c % N);
+  return S.map.map((x, i) => (x.b === 'cultivo' || x.b === 'cafetal') && !x.ob ? i : -1).filter(i => i >= 0).sort((a, b) => d(a) - d(b)).slice(0, Math.floor(S.conf.nivel / 20));
+}
 // Pérdida de cosecha por veredas abandonadas.
 export function perdidaCosecha(S) { return hayGrupo(S) ? Math.min(.4, S.conf.nivel * K().efectos.cosecha) : 0; }
 
@@ -78,6 +84,7 @@ export function conflictoDelAnio(S) {
   if (n > 0) { S.pop = Math.min(cap(S) + 6, S.pop + n); news.push(T.desplazados.replace('{n}', n)); if (!S.desplEv || S.year - S.desplEv.anio >= 6) S.desplEv = { anio: S.year, n, nuevo: true }; } // fase 9: la caravana se ve cada 6 años como mucho
   const oro = Math.round(F.nivel * X.extorsion * S.price); S.gold -= oro; news.push(T.extorsion.replace('{oro}', oro));
   S.tr = clamp(S.tr - X.legitimidad, 0, 100); S.shock += X.inflacion / 100;
+  if (F.nivel >= 55 && (S.year - (F.desde || 0)) % 3 === 0) desaparecer(S); // con el grupo fuerte, cada tanto alguien no vuelve
   // Toma armada.
   const Tm = P.toma;
   if (F.nivel >= Tm.nivel && crisisLibre(S, S.year) && azar() < Tm.prob) {
@@ -86,7 +93,7 @@ export function conflictoDelAnio(S) {
       const i = cand[Math.floor(azar() * cand.length)], x = S.map[i];
       x.u = Math.min(100, (x.u || 0) + Tm.dano); x.sin = S.year;
       applyFx(S, { p: -Tm.perdida, c: Tm.legitimidad });
-      registrarMuertes(S, Tm.perdida, 'conflicto'); quemar(S, [i]); dejarRuinas(S, 'toma', [i]); // huellas: la toma deja muertos, hollín y a veces ruinas
+      registrarMuertes(S, Tm.perdida, 'conflicto'); quemar(S, [i]); dejarRuinas(S, 'toma', [i]); balear(S, i); cubrir(S, i); // huellas: la toma deja muertos, hollín y a veces ruinas
       marcarCrisis(S);
       const t = T.toma.replace('{grupo}', g).replace('{obra}', C.B[x.b].a);
       S.confEv = { tipo: 'toma', nuevo: true, texto: t, obra: i }; news.push(t);

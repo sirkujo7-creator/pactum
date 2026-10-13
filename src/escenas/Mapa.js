@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada } from '../core/index.js';
+import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -22,6 +22,7 @@ import { Navegacion } from './Navegacion.js';
 import { Transporte } from './Transporte.js';
 import { Visitas } from './Visitas.js';
 import { Patrullas } from './Patrullas.js';
+import { Conflicto } from './Conflicto.js';
 import { Oficios } from './Oficios.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
@@ -105,6 +106,7 @@ export class Mapa extends Phaser.Scene {
     this.transporte = new Transporte(this); // camiones y cable aéreo
     this.visitas = new Visitas(this); // visitante extranjero
     this.patrullas = new Patrullas(this); // policía y ejército
+    this.conflicto = new Conflicto(this); // grupo armado, retén, desplazados
     this.oficios = new Oficios(this); // trabajadores con su oficio
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
@@ -187,7 +189,11 @@ export class Mapa extends Phaser.Scene {
     const x = this.S.map[i];
     this.obras[i] = [];
     // Fase 4: huella de una decisión en una casilla libre.
-    if (!x.b && x.mk) { const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + ((C.MARCAS && C.MARCAS.tipos[x.mk.t] || {}).arte || x.mk.t), t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1)); return; }
+    if (!x.b && x.mk) {
+      const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + ((C.MARCAS && C.MARCAS.tipos[x.mk.t] || {}).arte || x.mk.t), t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1));
+      if (sabanaVisible(this.S, x)) this.obras[i].push(this.figura('edificios', 'sabana', t.r + .82, t.c + .3, t.h, .9).setDepth(t.r + t.c + 1.2)); // el velorio en el camino
+      return;
+    }
     if (!x.b) return;
     const t = this.T.tiles[i], deSuelo = x.b === 'cultivo' || x.b === 'cafetal';
     // Fase 1: desgaste visible (0 buen estado, 1 gastada, 2 agrietada, 3 abandonada).
@@ -250,11 +256,20 @@ export class Mapa extends Phaser.Scene {
       }
     }
     if (nivel >= 2) this.desgasteVisible(i, nivel);
+    // Vereda abandonada por el conflicto: el cultivo se apaga y lo cubre la maleza (sin grietas: es tierra).
+    if (deSuelo && this.abandonadas().has(i)) { for (const im of this.obras[i]) im.setTint(0xC9BE9C); this.desgasteVisible(i, 3, true); }
     this.huellasDeObra(i, x, t);
   }
   // Fase 17: una fábrica sin energía o sin materia prima no echa humo.
   fabricaViva(i, x) { const S = this.S; if (x.b !== 'taller' || !industriaActiva(S)) return true; const P = produccionFabrica(S, i); return P.encendida && P.f > 0; }
+  // Fincas que el conflicto dejó abandonadas (se calcula una vez por momento).
+  abandonadas() { const t = Math.floor(performance.now() / 40); if (!this._aband || this._aband.t !== t) this._aband = { t, s: new Set(fincasAbandonadas(this.S)) }; return this._aband.s; }
   huellaExtra(x, i) {
+    const S = this.S, conf = (baleadaVisible(S, x) ? 'B' : '') + (sabanaVisible(S, x) ? 'S' : '') + (this.abandonadas().has(i) ? 'X' : '');
+    if (conf) return conf + this.huellaExtra1(x, i);
+    return this.huellaExtra1(x, i);
+  }
+  huellaExtra1(x, i) {
     const S = this.S;
     if (x.b && x.b !== 'casa' && aislada(S, i)) return 'a' + this.huellaExtra2(x, i); // sin camino a la plaza: letrero
     return this.huellaExtra2(x, i);
@@ -270,7 +285,7 @@ export class Mapa extends Phaser.Scene {
   }
   // Huellas, paso 1: tumbas en el cementerio, velas de luto en la plaza y banderas amarillas en una epidemia.
   huellasDeObra(i, x, t) {
-    const S = this.S, pon = (k, dv, du, s = 1) => { const r = t.r + .5 + dv, c = t.c + .5 + du; this.obras[i].push(this.figura('edificios', k, r, c, t.h, s).setDepth(t.r + t.c + 1 + dv + du + .02)); };
+    const S = this.S, pon = (k, dv, du, s = 1) => { const r = t.r + .5 + dv, c = t.c + .5 + du, img = this.figura('edificios', k, r, c, t.h, s).setDepth(t.r + t.c + 1 + dv + du + .02); this.obras[i].push(img); return img; };
     if (x.b === 'cementerio') {
       const n = Math.min(12, Math.ceil(tumbasDe(S, i) * 12 / C.HUELLAS.cementerio.capacidad));
       for (let k = 0; k < n; k++) pon('tumba', -.18 + Math.floor(k / 4) * .2, -.2 + (k % 4) * .16, .95);
@@ -284,6 +299,9 @@ export class Mapa extends Phaser.Scene {
     const L = this.leyesAqui(i, x), plaza = i === this.plazaLuto();
     const sitios = plaza ? [[.38, .2], [.2, .38], [.38, -.3], [-.3, .38], [.05, .42], [.42, .05], [-.38, -.1], [-.1, -.38]] : [[.34, .3], [.3, -.3], [-.3, .34]];
     L.forEach((id, k) => { const [dv, du] = sitios[k % sitios.length]; pon('ley_' + id, dv, du, .85); });
+    // Conflicto (tono intermedio): impactos de bala en el muro de enfrente y el cuerpo cubierto el año del hecho.
+    if (baleadaVisible(S, x) && !A_SUELO.has(x.b)) { const b = this.obras[i].find(im => im.texture.key === 'edificios'); if (b) this.obras[i].push(this.add.image(b.x + (i % 2 ? -.18 : .16) * b.displayWidth, b.y - b.displayHeight * .1, 'edificios', 'impactos').setScale(.6 / this.hojas.edificios.escala).setDepth(b.depth + .015)); }
+    if (sabanaVisible(S, x)) pon('sabana', .42, .05, .7);
   }
   // Leyes vigentes que se ven en la casilla i: en su obra (las primeras, repartidas) o en la plaza.
   leyesAqui(i, x) {
@@ -306,8 +324,8 @@ export class Mapa extends Phaser.Scene {
   }
   plazaLuto() { const p = plazaFundacion(this.S); return p >= 0 ? p : centroPueblo(this.S); }
   // Grietas en el muro y maleza al pie de una obra descuidada.
-  desgasteVisible(i, nivel) {
-    const t = this.T.tiles[i], H = this.hojas.edificios, base = this.obras[i].find(im => im.texture.key === 'edificios');
+  desgasteVisible(i, nivel, soloMaleza = false) {
+    const t = this.T.tiles[i], H = this.hojas.edificios, base = !soloMaleza && this.obras[i].find(im => im.texture.key === 'edificios');
     if (base) for (let k = 0; k < nivel - 1 + (i % 2); k++) {
       const w = base.displayWidth, h = base.displayHeight, lado = (k % 2 ? 1 : -1) * (.1 + (i * 13 + k * 7) % 10 / 100);
       // En los muros (la parte baja del dibujo), no en el techo.
@@ -561,6 +579,7 @@ export class Mapa extends Phaser.Scene {
     if (this.transporte) this.transporte.actualizar();
     if (this.visitas) this.visitas.actualizar();
     if (this.patrullas) this.patrullas.actualizar();
+    if (this.conflicto) this.conflicto.actualizar();
     if (this.oficios) this.oficios.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
@@ -623,6 +642,7 @@ export class Mapa extends Phaser.Scene {
     this.transporte.update(Math.min(.05, delta / 1000));
     this.visitas.update(Math.min(.05, delta / 1000));
     this.patrullas.update(Math.min(.05, delta / 1000));
+    this.conflicto.update(Math.min(.05, delta / 1000));
     this.oficios.update(Math.min(.05, delta / 1000));
     this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).

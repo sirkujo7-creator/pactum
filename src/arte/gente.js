@@ -151,7 +151,7 @@ export function hornearGente() {
 // con la ropa de la época actual, y de frente (la figura se voltea de lado a lado con el espejo).
 export const ACCIONES = {
   campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4 },
-  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, balde: 1, esperar: 1 },
+  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1 },
   artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, esperar: 1, tocar: 4 },
   elite: { leer: 4, saludar: 6, conversar: 8, rezar: 4 },
   nino: { saltar: 6, saludar: 6, leer: 4, conversar: 8, lustrar: 4, balde: 1 }
@@ -180,6 +180,7 @@ function poseAccion(k, n, N) {
     case 'balde': return { lean: .04 + n * .02, L: [-3.2, -12.6], R: [3.6, -11.6 + n * .4], prop: { k: 'balde' } };
     case 'esperar': return { lean: n * .02, L: [-2.8, -15.6], R: [3, -12.8], prop: { k: 'canastoVacio' } };
     case 'tocar': return { lean: .02, L: [-3.4 + u * .3, -17.6], R: [1.6 + s * .9, -14.6 + c * .5], prop: { k: 'tiple' } }; // serenata con tiple
+    case 'foto': return { lean: .03, L: [-2.4, -18.6], R: [2.4, -18.4], prop: { k: 'foto' } }; // madre que muestra la foto de su desaparecido
     case 'lustrar': return { lean: .18, lift: -6, sienta: true, L: [2.4 + s * 1.4, -11.6], R: [4 + c * 1.2, -11], prop: { k: 'cajon' } };
   }
   return { lean: 0, L: [-3, -12.8], R: [3, -12.8], prop: null };
@@ -201,6 +202,7 @@ const PROPS = {
   balde(g, pz) { const R = pz.R; linea(g, [R[0] - 1.6, R[1] + .6], [R[0] + 1.6, R[1] + .6], .4, '#5A4A3A'); forma(g, [[R[0] - 1.9, R[1] + 1], [R[0] + 1.9, R[1] + 1], [R[0] + 1.5, R[1] + 4.6], [R[0] - 1.5, R[1] + 4.6]], '#8A6A48', false); elipse(g, R[0], R[1] + 1.1, 1.9, .5, '#6E9FB4'); },
   canastoVacio(g, pz) { const L = pz.L; elipse(g, L[0] - 1.2, L[1] + 1.6, 2.6, 1.1, '#5E4628'); g.fillStyle = '#B58A4E'; g.beginPath(); g.moveTo(L[0] - 3.8, L[1] + 1.6); g.lineTo(L[0] - 2.9, L[1] + 4.6); g.lineTo(L[0] + .5, L[1] + 4.6); g.lineTo(L[0] + 1.4, L[1] + 1.6); g.fill(); },
   cajon(g) { forma(g, [[1.6, -5.4], [6.4, -5.4], [6.4, -2.2], [1.6, -2.2]], '#7A5634', false); forma(g, [[3.4, -7.4], [4.6, -7.4], [4.6, -5.4], [3.4, -5.4]], '#5B4330', false); elipse(g, 7.6, -.9, 1.5, .7, '#2A2420'); },
+  foto(g, pz) { const m = [(pz.L[0] + pz.R[0]) / 2, (pz.L[1] + pz.R[1]) / 2 - 3.4]; forma(g, [[m[0] - 3, m[1] - 3.6], [m[0] + 3, m[1] - 3.6], [m[0] + 3, m[1] + 3.2], [m[0] - 3, m[1] + 3.2]], '#F2EDE0', false); forma(g, [[m[0] - 2.2, m[1] - 2.8], [m[0] + 2.2, m[1] - 2.8], [m[0] + 2.2, m[1] + 2.4], [m[0] - 2.2, m[1] + 2.4]], '#B9AE98', false); elipse(g, m[0], m[1] - .9, 1.1, 1.3, '#5E5446'); elipse(g, m[0], m[1] + 2, 1.9, 1.1, '#5E5446'); },
   saco(g) { g.save(); g.translate(.6, -27.4); g.rotate(-.35); g.fillStyle = '#C9B48A'; g.beginPath(); g.ellipse(0, 0, 4.6, 2.9, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(80,55,30,.25)'; g.beginPath(); g.ellipse(1.6, .6, 3, 1.8, 0, 0, 7); g.fill(); g.strokeStyle = '#8A6A3A'; g.lineWidth = .4; g.beginPath(); g.moveTo(-4, -.2); g.lineTo(-5.4, -.6); g.stroke(); g.restore(); }
 };
 function brazosAccion(g, pz, manga, piel) {

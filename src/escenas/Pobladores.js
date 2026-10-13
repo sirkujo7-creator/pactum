@@ -4,7 +4,7 @@
 // Fase 9: caminan por una rejilla de medias casillas (centros, bordes y esquinas) y prefieren las calles; doblan
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
-import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
+import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
 import { hornearGente, PASOS12, hornearAcciones, ACCIONES } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { caminos } from '../arte/terreno.js';
@@ -52,7 +52,7 @@ export class Pobladores {
     if (f.destino === 'enfermo' && tiene('rezar')) return 'rezar';
     if (f.destino === 'protesta' && tiene('saludar')) return 'saludar'; // brazo en alto
     // Voces del pueblo: los problemas se ven en la gente.
-    const PROB = { desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', contento: 'saludar' }[f.destino];
+    const PROB = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', contento: 'saludar' }[f.destino];
     if (PROB && tiene(PROB)) return PROB;
     if (f.mira && tiene('conversar')) return 'conversar';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
@@ -128,6 +128,8 @@ export class Pobladores {
     const pr = this.problemaVisible(f, d); if (pr) return pr;
     // Tanda 3: si un movimiento social está movilizado, parte de los adultos protesta en la plaza con pancartas.
     if (p.tipo !== 'nino' && p.plaza >= 0 && p.semilla > .25 && p.semilla < .6 && this.protesta() && Math.random() < .8) return { ...this.alCorrillo(f), lugar: 'protesta' };
+    // Conflicto: madres con la foto de su desaparecido, de pie en fila junto a la plaza, en silencio.
+    if (p.tipo === 'campesina' && p.plaza >= 0 && p.semilla < .32 && d > .3 && d < .7 && busquedaVisible(S) && Math.random() < .85) { const N = this.scene.T.N, an = p.semilla * 19; return { r: Math.floor(p.plaza / N) + .5 + Math.cos(an) * .42, c: p.plaza % N + .5 + Math.sin(an) * .42, lugar: 'busqueda', mira: { r: Math.floor(p.plaza / N) + 1.6, c: p.plaza % N + 1.6 } }; }
     if (p.tipo !== 'nino' && lutoVisible(S) && p.plaza >= 0 && p.semilla < .55 && Math.random() < .75) return { ...this.alCorrillo(f), lugar: 'luto' };
     if (epidemiaVisible(S) && p.semilla > .6 && Math.random() < .6) { const h = S.map.findIndex(x => x.b === 'hospital' && !x.ob); if (h >= 0) return { ...this.centro(h, .5), lugar: 'enfermo' }; }
     // Los niños sin escuela (o de tarde) juegan en ronda cerca de la plaza.
@@ -319,7 +321,7 @@ export class Pobladores {
         // Al llegar se queda un buen rato: así hay menos gente andando a la vez y más quieta con sentido.
         if (!f.ruta.length) {
           const b = f.destino === 'trabajo' && f.p.trabajo !== null ? this.scene.S.map[f.p.trabajo].b : null;
-          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : f.destino === 'luto' || f.destino === 'enfermo' || f.destino === 'protesta' || f.destino === 'desempleo' || f.destino === 'fila' || f.destino === 'lustrar' || f.destino === 'serenata' ? 30 + Math.random() * 25 : f.destino === 'misa' || f.destino === 'mercadeo' ? 18 + Math.random() * 10 : f.destino === 'agua' ? 10 + Math.random() * 8 : 3 + Math.random() * 5;
+          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : f.destino === 'luto' || f.destino === 'busqueda' || f.destino === 'enfermo' || f.destino === 'protesta' || f.destino === 'desempleo' || f.destino === 'fila' || f.destino === 'lustrar' || f.destino === 'serenata' ? 30 + Math.random() * 25 : f.destino === 'misa' || f.destino === 'mercadeo' ? 18 + Math.random() * 10 : f.destino === 'agua' ? 10 + Math.random() * 8 : 3 + Math.random() * 5;
           f.mira = f.miraLuego;
           if (b === 'mercado') { f.frente = 1; f.voltear = f.p.semilla < .5; } // el vendedor mira a la calle
           if (f.aCasa) f.oculto = true;
