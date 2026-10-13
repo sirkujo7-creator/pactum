@@ -53,14 +53,24 @@ export class Pobladores {
     if (f.destino === 'protesta' && tiene('saludar')) return 'saludar'; // brazo en alto
     // Voces del pueblo: los problemas se ven en la gente.
     const PROB = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', contento: 'saludar' }[f.destino];
-    if (PROB && tiene(PROB)) return PROB;
-    if (f.mira && tiene('conversar')) return 'conversar';
+    if (PROB && tiene(PROB) && (PROB !== 'saludar' || this.vecino(f))) return PROB;
+    // Hablar o saludar solo si hay alguien al lado (pedido de Juan: nada de mover los brazos a la nada).
+    if (f.mira && tiene('conversar') && this.vecino(f)) return 'conversar';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
     const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'], hospital: ['saludar'], teatro: ['saludar'] }[b];
     if (por) { const k = por[u % por.length]; if (tiene(k)) return k; }
     if (tipo === 'campesina' && b === null && f.destino === 'trabajo') return 'barrer';
-    if (f.destino === 'plaza' && tiene('saludar')) return u === 0 ? 'saludar' : 'conversar';
+    if (f.destino === 'plaza' && tiene('saludar') && this.vecino(f)) return u === 0 ? 'saludar' : 'conversar';
     return null;
+  }
+  // La persona más cercana a menos de media casilla (se revisa cada segundo); quien conversa la mira.
+  vecino(f) {
+    if (f._vecT === undefined || this.t - f._vecT >= 1) {
+      f._vecT = this.t; f._vec = null; let d0 = .55;
+      for (const o of this.figuras) { if (o === f || o.oculto) continue; const d = Math.hypot(o.r - f.r, o.c - f.c); if (d < d0) { d0 = d; f._vec = o; } }
+    }
+    if (f._vec && !f.mira) this.mirar(f, f._vec); // en el corrillo se sigue mirando al centro del grupo
+    return f._vec;
   }
 
   // Vuelve a repartir casas y trabajos (tras construir, demoler o terminar el año).
@@ -146,7 +156,7 @@ export class Pobladores {
   alCorrillo(f) {
     const G = this.grupos;
     if (!G.length) return { ...this.centro(f.p.plaza, 1.3), lugar: 'plaza' };
-    const g = G[f.p.id % G.length], an = f.p.semilla * Math.PI * 2 + Math.random() * .6, rad = .17 + Math.random() * .08;
+    const n = Math.max(1, Math.min(G.length, Math.floor(this.figuras.length / 12))), g = G[f.p.id % n], an = f.p.semilla * Math.PI * 2 + Math.random() * .6, rad = .17 + Math.random() * .08; // pueblo pequeño: un solo corrillo, para que haya con quién hablar
     return { r: g.r + Math.cos(an) * rad, c: g.c + Math.sin(an) * rad, lugar: 'plaza', mira: g };
   }
   // ¿Hay que correr a refugiarse? Aguacero de La Niña (cuando llueve en el mapa) o terremoto o erupción este año.
