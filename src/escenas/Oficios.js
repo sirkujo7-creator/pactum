@@ -28,6 +28,7 @@ export class Oficios {
     const lista = [];
     S.map.forEach((x, i) => {
       if (!x.b || x.ob) return;
+      if (this.scene.abandonadas && this.scene.abandonadas().has(i)) return; // vereda abandonada por el conflicto: nadie trabaja
       let o = OFICIO[x.b]; const ganado = x.b === 'cultivo' && x.cv === 'ganaderia';
       if (!o && !ganado) return;
       lista.push({ i, o: ganado ? 'pastor' : o });

@@ -177,6 +177,7 @@
       ],
       "muertes": 2,
       "peso": 2,
+      "impactos": "plaza",
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
       "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
       "cine": [
@@ -222,6 +223,7 @@
       ],
       "muertes": 0,
       "peso": 1,
+      "desaparece": 1,
       "causa": "A veces la violencia llega sin una causa que se vea a tiempo: odios heredados, armas y partidismo. Se reduce, pero nunca desaparece.",
       "prevenir": "Más policía cerca de las casas, un gobierno legítimo, justicia, reforma agraria y diálogo la reducen; ninguna medida la elimina.",
       "marca": "pancarta"
@@ -370,6 +372,7 @@
       "violencia": true,
       "muertes": 1,
       "peso": 1.5,
+      "impactos": true,
       "causa": "No toda la violencia es armada: también estalla donde se juntan la gente y el poder, en los edificios donde se decide la vida del pueblo. Se reduce con diálogo y justicia, pero nunca desaparece.",
       "prevenir": "Policía cercana, legitimidad, sindicatos y universidades reconocidos y leyes de justicia reducen estos hechos; ninguna medida los elimina.",
       "icono": "💰",

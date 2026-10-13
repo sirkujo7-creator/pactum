@@ -15,8 +15,9 @@ import { applyFx } from './dilemas.js';
 import { efectoBarrios } from './barrios.js';
 import { efectoTec } from './tecnologia.js';
 import { epocaHistorica, hasLaw } from './reglas.js';
-import { registrarMuertes, quemar, huellasActivas } from './huellas.js';
+import { registrarMuertes, quemar, huellasActivas, balear, cubrir, desaparecer, plazaFundacion } from './huellas.js';
 import { dejarMarca } from './marcas.js';
+import { lado } from './mundo.js';
 
 const K = () => C.SUCESOS;
 export function sucesosActivos(S) { return climaActivo(S) && !!C.SUCESOS && S.stage >= K().desde.etapa; }
@@ -76,6 +77,18 @@ function huellaSuceso(S, q, ev) {
   if (q.quema && ev.obra !== undefined) quemar(S, [ev.obra]);
   if (q.epidemia && huellasActivas(S)) S.epiVis = S.year; // los enfermos se ven ir al hospital
   if (q.marca) { const i = dejarMarca(S, q.marca, `Año ${S.year}: ${q.titulo.toLowerCase()}.`); if (i >= 0) ev.marca = i; }
+  // Tono intermedio: impactos de bala en el muro, el cuerpo cubierto el año del hecho y los desaparecidos.
+  const blanco = q.impactos === 'plaza' ? obraJuntoAPlaza(S) : ev.obra;
+  if (q.impactos && blanco >= 0 && blanco !== undefined) { balear(S, blanco); if (ev.obra === undefined) ev.obra = blanco; }
+  if (q.muertes && blanco >= 0 && blanco !== undefined) cubrir(S, blanco);
+  if (q.desaparece) desaparecer(S, q.desaparece);
+}
+// La obra más cercana a la plaza (los disparos a la salida de la misa).
+function obraJuntoAPlaza(S) {
+  const N = lado(S), p = plazaFundacion(S); if (p < 0) return -1;
+  let mejor = -1, d0 = 99;
+  S.map.forEach((x, i) => { if (!x.b || x.ob || i === p) return; const d = Math.hypot(Math.floor(i / N) - Math.floor(p / N), i % N - p % N); if (d < d0) { d0 = d; mejor = i; } });
+  return mejor;
 }
 // Cierre del año: como mucho un suceso (se prueba del más grave al más leve). Devuelve las noticias.
 export function sucesosDelAnio(S) {

@@ -1307,7 +1307,7 @@ export class Interfaz {
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
     const cn = (C.SUCESOS.sucesos[ev.id] || {}).cine; // lo que pasó se ve en el mapa (sucesos.json: cine)
-    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2], obra: cn[0] === 'incendio' || cn[0] === 'curiosos' ? ev.obra : undefined })) return;
+    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2], ataud: !!(C.SUCESOS.sucesos[ev.id] || {}).muertes && cn[0] === 'procesion', obra: cn[0] === 'incendio' || cn[0] === 'curiosos' ? ev.obra : undefined })) return;
     this._sucesoCine = false;
     const q = C.SUCESOS.sucesos[ev.id];
     this.tarjeta(`${fotoHtml(imagenDe(q.titulo, ev.texto, ev.fx, S))}<h3>${q.icono} ${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>

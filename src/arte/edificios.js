@@ -122,6 +122,29 @@ function recetas(era = 1) {
     for (const [dx, col] of [[-4, '#F4F1E6'], [-2, '#C0392B'], [3, '#E7C76B'], [5, '#F4F1E6']]) { g.fillStyle = '#5E8A4D'; g.fillRect(p[0] + dx, p[1] - 4, .6, 3); g.fillStyle = col; g.beginPath(); g.arc(p[0] + dx + .3, p[1] - 4.4, 1.3, 0, 7); g.fill(); }
     g.fillStyle = '#F4EEDC'; g.fillRect(p[0] + 7, p[1] - 4, 1.8, 3.4); g.fillStyle = '#FFC25A'; g.beginPath(); g.arc(p[0] + 7.9, p[1] - 5.2, .9, 0, 7); g.fill();
   }]);
+  // Conflicto (tono intermedio, sin sangre): un cuerpo cubierto con una sábana y una vela al lado; impactos de bala en un
+  // muro; la mesa del diálogo con dos banderas blancas.
+  L.push(['sabana', 40, 24, 20, 14, (g, r) => {
+    sombra(g, 12, 3, 1); const p = V2(0, 0);
+    wash(g, [[p[0] - 13, p[1] + 1], [p[0] - 9, p[1] - 4], [p[0] + 4, p[1] - 6], [p[0] + 12, p[1] - 3], [p[0] + 13, p[1] + 1], [p[0] + 2, p[1] + 3.5]], '#ECE7DA', r, .98, .2);
+    blob(g, p[0] - 8, p[1] - 3.2, 3.4, 2.4, '#F4F0E6', r, .95); // la cabeza bajo la tela
+    g.globalAlpha = .35; g.strokeStyle = '#9C9484'; g.lineWidth = .5; for (const dx of [-3, 2, 7]) { g.beginPath(); g.moveTo(p[0] + dx, p[1] - 4.6); g.lineTo(p[0] + dx + 1.5, p[1] + 2); g.stroke(); } g.globalAlpha = 1;
+    g.fillStyle = '#5A4632'; g.fillRect(p[0] + 11, p[1] - 1.6, 2.6, 1.4); g.fillRect(p[0] + 11.4, p[1] + .2, 2.4, 1.3); // las botas
+    g.fillStyle = '#F4EEDC'; g.fillRect(p[0] - 15.5, p[1] - 4, 1.6, 3.2); const gr = g.createRadialGradient(p[0] - 14.7, p[1] - 5.4, 0, p[0] - 14.7, p[1] - 5.4, 3); gr.addColorStop(0, 'rgba(255,214,120,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(p[0] - 18, p[1] - 9, 6, 6);
+  }]);
+  L.push(['impactos', 24, 20, 12, 10, g => {
+    for (const [x, y, s] of [[-7, -4, 1], [-2, -6, .8], [3, -2, 1.1], [6, -6, .7], [-4, 2, .9], [1, 3, .8], [8, 1, .7]]) {
+      g.fillStyle = 'rgba(214,204,186,.9)'; g.beginPath(); g.arc(x, y, 1.9 * s, 0, 7); g.fill(); // la cal saltada
+      g.fillStyle = '#2E2620'; g.beginPath(); g.arc(x, y, .75 * s, 0, 7); g.fill();
+    }
+  }]);
+  L.push(['mesaPaz', 48, 36, 24, 26, (g, r) => {
+    sombra(g, 14, 4, 2);
+    const m = iso(g, .38, .22, 4, 1.5, '#7A5634', '#694A2C', '#9C7448', r);
+    for (const [u, v] of [[-.16, -.08], [.16, -.08], [-.16, .08], [.16, .08]]) { const q = V2(u, v); g.fillStyle = '#5B4330'; g.fillRect(q[0] - .5, q[1] - 4, 1, 4); }
+    const pp = m.up(V2(0, 0), 5.5); g.fillStyle = '#F4F0E6'; g.fillRect(pp[0] - 3, pp[1] - .5, 5, 2.4); // papeles del acuerdo
+    for (const s of [-1, 1]) { const q = V2(s * .34, 0); blob(g, q[0], q[1] - 3, 2.6, 1.6, '#8C6A44', r, .95); bandera(g, q[0] + s * 2, q[1] - 2, 18, '#F6F3EA'); }
+  }]);
   // Obras que levantan las decisiones (pedido de Juan): dique, reservorio, granero, cooperativa, tanques, parcela y escuela rural.
   L.push(['m_dique', 68, 44, 34, 30, (g, r) => {
     sombra(g, 26, 5, 3);

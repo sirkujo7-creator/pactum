@@ -31,6 +31,7 @@ export class Cine {
     if (!tx.exists('cinePapel')) { const c = lienzo(10, 12), g = c.getContext('2d'); g.fillStyle = FR.cal; g.fillRect(0, 0, 10, 12); g.fillStyle = '#9A8E7E'; for (let k = 0; k < 4; k++) g.fillRect(2, 2 + k * 2.5, 6, 1); tx.addCanvas('cinePapel', c); }
     if (!tx.exists('cineBandera')) { const c = lienzo(40, 64), g = c.getContext('2d'); g.strokeStyle = FR.siena; g.lineWidth = 3; g.beginPath(); g.moveTo(6, 4); g.lineTo(6, 62); g.stroke(); g.fillStyle = FR.cal; g.beginPath(); g.moveTo(7, 6); g.quadraticCurveTo(22, 2, 36, 8); g.lineTo(36, 26); g.quadraticCurveTo(22, 20, 7, 26); g.fill(); tx.addCanvas('cineBandera', c); }
     if (!tx.exists('cineFusil')) { const c = lienzo(8, 44), g = c.getContext('2d'); g.strokeStyle = '#3A2E26'; g.lineWidth = 3; g.beginPath(); g.moveTo(4, 2); g.lineTo(4, 42); g.stroke(); g.fillStyle = '#C9C2B4'; g.fillRect(2.5, 0, 3, 6); tx.addCanvas('cineFusil', c); }
+    if (!tx.exists('cineAtaud')) { const c = lienzo(44, 16), g = c.getContext('2d'); g.fillStyle = '#4A3222'; g.beginPath(); g.moveTo(2, 8); g.lineTo(10, 2); g.lineTo(42, 4); g.lineTo(42, 12); g.lineTo(10, 14); g.closePath(); g.fill(); g.fillStyle = '#6B4A30'; g.beginPath(); g.moveTo(4, 7); g.lineTo(10, 3.5); g.lineTo(40, 5); g.lineTo(40, 7.5); g.closePath(); g.fill(); g.fillStyle = '#E8DFC8'; g.fillRect(20, 4.6, 1.6, 6); g.fillRect(17.6, 6.6, 6.4, 1.6); tx.addCanvas('cineAtaud', c); }
     if (!tx.exists('cineVela')) { const c = lienzo(16, 16), g = c.getContext('2d'), gr = g.createRadialGradient(8, 8, 0, 8, 8, 8); gr.addColorStop(0, 'rgba(255,226,140,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, 16, 16); tx.addCanvas('cineVela', c); }
   }
 
@@ -84,7 +85,8 @@ export class Cine {
         const tipoP = tipo === 'procesion' && k === 0 ? 'elite' : tipo === 'desplazados' && k % 4 === 3 ? 'nino' : TIPOS[(k * 3 + 1) % 4];
         const a = this.caminante(tipoP, k % 3, o, ruta, vel, k * (tipo === 'procesion' ? .55 : .4));
         if ((tipo === 'marcha' || tipo === 'marchaLider') && k % 3 === 1) a.extra = sc.add.image(0, 0, 'cinePancarta').setScale(.3).setOrigin(.5, 1);
-        if (tipo === 'procesion' && k > 0) a.extra = sc.add.image(0, 0, 'cineVela').setScale(.55).setBlendMode('ADD');
+        if (tipo === 'procesion' && k === 1 && this.datos.ataud) { a.extra = sc.add.image(0, 0, 'cineAtaud').setScale(.5).setOrigin(.5, .5); a.ataud = true; } // el ataúd en hombros
+        else if (tipo === 'procesion' && k > 0) a.extra = sc.add.image(0, 0, 'cineVela').setScale(.55).setBlendMode('ADD');
       }
       const q = this.punto((o.r + p.r) / 2, (o.c + p.c) / 2);
       return [q[0], q[1] - 10];
@@ -242,7 +244,8 @@ export class Cine {
       } else if (a.mira) { const dr = a.mira.r - a.r, dc = a.mira.c - a.c; a.frente = (dc + dr) >= 0 ? 1 : 0; a.voltear = (dc - dr) < 0; }
       const q = this.punto(a.r, a.c), paso = andando ? Math.floor(a.fase) % 4 : (a.mira && Math.floor(this.t * 3 + a.vi) % 4 === 0 ? 1 : 0);
       a.img.setFrame(`${a.tipo}_${a.vi}_${a.frente}_${paso}`).setPosition(q[0], q[1]).setFlipX(a.voltear).setDepth(a.r + a.c + .02);
-      if (a.extra) { const fx = this.tipo === 'procesion' ? 3 : this.tipo === 'asedio' ? 4 : 0, fy = this.tipo === 'procesion' ? 10 : this.tipo === 'asedio' ? 7 : 12; a.extra.setPosition(q[0] + (a.voltear ? -fx : fx), q[1] - fy).setDepth(a.r + a.c + .03); }
+      if (a.ataud) a.extra.setPosition(q[0], q[1] - 15).setFlipX(a.voltear).setDepth(a.r + a.c + .04);
+      else if (a.extra) { const fx = this.tipo === 'procesion' ? 3 : this.tipo === 'asedio' ? 4 : 0, fy = this.tipo === 'procesion' ? 10 : this.tipo === 'asedio' ? 7 : 12; a.extra.setPosition(q[0] + (a.voltear ? -fx : fx), q[1] - fy).setDepth(a.r + a.c + .03); }
     }
     // Fogonazos de la toma armada.
     const F = this.fogonazos;

@@ -162,6 +162,15 @@ export function sincronizarLeyes(S) {
 // Obras quemadas (x.qm): hollín en los muros hasta repararlas o hasta que pasen unos años.
 export function quemar(S, lista) { if (!huellasActivas(S)) return; for (const i of lista) if (S.map[i].b) S.map[i].qm = S.year; }
 export function quemadaVisible(S, x) { return huellasActivas(S) && x.qm !== undefined && S.year - x.qm < C.HUELLAS.guerra.quemadas; }
+// Conflicto, tono intermedio: impactos de bala en los muros (se ven unos años) y un cuerpo cubierto con una sábana el
+// año del hecho (velorio).
+export function balear(S, i) { if (huellasActivas(S) && i >= 0 && S.map[i].b) S.map[i].bz = S.year; }
+export function baleadaVisible(S, x) { return huellasActivas(S) && x.bz !== undefined && S.year - x.bz < 12; }
+export function cubrir(S, i) { if (huellasActivas(S) && i >= 0) S.map[i].sb = S.year; }
+export function sabanaVisible(S, x) { return huellasActivas(S) && ((x.sb !== undefined && S.year - x.sb <= 1) || (x.mk && x.mk.t === 'cruz' && S.year - x.mk.y <= 1)); }
+// Desaparecidos: madres que muestran la foto en la plaza mientras no haya verdad (se ven 20 años desde el último).
+export function desaparecer(S, n = 1) { if (!huellasActivas(S)) return; S.desap = (S.desap || 0) + n; S.desapUlt = S.year; }
+export function busquedaVisible(S) { return huellasActivas(S) && (S.desap || 0) > 0 && S.year - S.desapUlt < 20; }
 // Trincheras: zanjas entre el pueblo y el borde del vecino durante la guerra (marcas que duran unos años).
 export function cavarTrincheras(S, casillasDelBorde) {
   if (!huellasActivas(S) || !C.HUELLAS.guerra || !casillasDelBorde.length) return [];
