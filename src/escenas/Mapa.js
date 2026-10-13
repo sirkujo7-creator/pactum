@@ -256,7 +256,7 @@ export class Mapa extends Phaser.Scene {
   fabricaViva(i, x) { const S = this.S; if (x.b !== 'taller' || !industriaActiva(S)) return true; const P = produccionFabrica(S, i); return P.encendida && P.f > 0; }
   huellaExtra(x, i) {
     const S = this.S;
-    if (x.b && aislada(S, i)) return 'a' + this.huellaExtra2(x, i); // sin camino a la plaza: letrero
+    if (x.b && x.b !== 'casa' && aislada(S, i)) return 'a' + this.huellaExtra2(x, i); // sin camino a la plaza: letrero
     return this.huellaExtra2(x, i);
   }
   huellaExtra2(x, i) {
@@ -276,7 +276,7 @@ export class Mapa extends Phaser.Scene {
       for (let k = 0; k < n; k++) pon('tumba', -.18 + Math.floor(k / 4) * .2, -.2 + (k % 4) * .16, .95);
     }
     if (lutoVisible(S) && i === this.plazaLuto()) pon('velas', .28, -.05, .9);
-    if (aislada(S, i)) pon('sinCamino', .36, .3, .9); // obra aislada: letrero de «sin camino» al pie
+    if (x.b !== 'casa' && aislada(S, i)) pon('sinCamino', .36, .3, .9); // obra aislada: letrero de «sin camino» al pie
     if (x.b === 'casa' && i % 3 === 1 && epidemiaVisible(S)) pon('bandera-amarilla', .22, -.22, .9);
     // Paso 4: una obra quemada en la guerra o en una toma: muros ahumados y hollín.
     if (quemadaVisible(S, x)) { for (const im of this.obras[i]) if (im.texture.key === 'edificios') im.setTint(0x8C8076); pon('hollin', -.05, -.05, 1); }

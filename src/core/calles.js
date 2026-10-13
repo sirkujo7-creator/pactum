@@ -139,7 +139,8 @@ export function aislada(S, i) {
   if (!callesActivas(S) || !A || !x.b || x.ob || A.exentas.includes(x.b) || plazaRed(S) < 0) return false;
   return !datos(S).red[i];
 }
-export function obrasAisladas(S) { return callesActivas(S) && K().aislada ? S.map.map((x, i) => i).filter(i => aislada(S, i)) : []; }
+// Las casas sin camino no se cuentan ni llevan letrero (no venden ni prestan servicio): lo dicen sus habitantes.
+export function obrasAisladas(S) { return callesActivas(S) && K().aislada ? S.map.map((x, i) => i).filter(i => S.map[i].b !== 'casa' && aislada(S, i)) : []; }
 // Los servicios junto a una calle llegan más lejos.
 export function radioCalle(S, i) { return aislada(S, i) ? -K().aislada.radio : conectada(S, i) ? K().radioExtra : 0; }
 // Parte de las casas con una calle al frente (baja la evasión).

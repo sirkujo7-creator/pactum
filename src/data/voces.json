@@ -1,0 +1,34 @@
+{
+  "leccion": "Gobernar es escuchar: lo que la gente dice en la calle cuenta lo que los números no muestran.",
+  "problemas": {
+    "empleo": { "frases": ["Hace semanas que no me llaman a ninguna finca ni a ningún taller.", "Me siento en la plaza a esperar que alguien necesite unas manos.", "Sin trabajo no hay con qué llevar la remesa a la casa."], "tarea": "darle trabajo (fincas, talleres o un mercado)" },
+    "comida": { "frases": ["La libra de maíz está por las nubes; en la casa comemos una vez al día.", "Hago fila en el mercado y me devuelvo con el canasto vacío.", "Los niños se acuestan con hambre y uno no sabe qué decirles."], "tarea": "bajar el precio de la comida (más fincas de pancoger)" },
+    "escuela": { "frases": ["Mi hijo lustra botas en la plaza en vez de aprender a leer.", "La escuela queda tan lejos que los niños no alcanzan a llegar.", "Quiero que mis hijos sepan más que yo, pero aquí no hay maestra."], "tarea": "una escuela cerca de su casa" },
+    "hospital": { "frases": ["Cuando alguien se enferma, toca llevarlo en hamaca hasta otro pueblo.", "La partera hace lo que puede, pero no alcanza.", "Aquí la fiebre se lleva primero a los más chiquitos."], "tarea": "un hospital cerca de su casa" },
+    "agua": { "frases": ["Todos los días bajo al río con el balde, y el agua no siempre está limpia.", "Hay que madrugar para coger agua antes que los demás.", "Sin acueducto la enfermedad entra por la boca."], "tarea": "agua para todos (un acueducto)" },
+    "camino": { "frases": ["Para sacar la cosecha hay que cruzar el monte a pie: no hay camino.", "Vivimos como si no fuéramos del pueblo: ni el médico llega hasta acá.", "Con un camino, la mula llegaría al mercado en la mitad del tiempo."], "tarea": "un camino hasta su casa" },
+    "inseguridad": { "frases": ["Ya no salgo de noche: robaron donde el vecino.", "Hay que andar en grupo; uno ya no sabe quién es quién.", "Pedimos policía, pero nadie viene."], "tarea": "seguridad (policía y empleo)" },
+    "violencia": { "frases": ["Anoche se oyeron disparos en la vereda y nadie dice nada.", "Mataron al de la tienda; dicen que por ser del otro partido.", "Uno aprende a callarse para seguir vivo."], "tarea": "frenar la violencia (policía, justicia y diálogo)" },
+    "impuestos": { "frases": ["Lo que gano se va en impuestos; así no se puede.", "El recaudador viene más seguido que el médico.", "Pago y pago, y no veo en qué se gasta."], "tarea": "bajar los impuestos de su gente" }
+  },
+  "agradece": {
+    "empleo": "Tengo trabajo, y eso ya es mucho.",
+    "escuela": "Mis hijos ya leen el periódico; eso no tiene precio.",
+    "hospital": "Desde que hay hospital cerca dormimos más tranquilos.",
+    "agua": "Desde que hay acueducto ya no cargamos agua del río.",
+    "comida": "Hay comida y a buen precio: no me quejo.",
+    "camino": "Con el camino, la cosecha llega al mercado en un rato."
+  },
+  "recuerdo": "Me acuerdo de {recuerdo}.",
+  "nota": {
+    "boton": "📝 Tomar nota",
+    "hecha": "Tomaste nota de lo que dijo {nombre}: queda en Pendientes.",
+    "yaEsteAnio": "Ya tomaste nota este año; vuelve a escuchar el año que viene.",
+    "pendiente": "Le prometiste a {nombre} ({oficio}): {tarea}. Quedan {anios} años.",
+    "cumplida": "Cumpliste lo que le prometiste a {nombre}: los {clase} te lo agradecen.",
+    "vencida": "Pasaron {plazo} años y no cumpliste lo que le prometiste a {nombre}: la gente lo comenta.",
+    "plazo": 6,
+    "premio": 3,
+    "castigo": 2
+  }
+}
