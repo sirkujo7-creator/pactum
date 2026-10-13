@@ -291,8 +291,11 @@ function poseAccion(k, n, N) {
     case 'barrer': return { lean: .1, L: [1 + s * 2.2, -13.6], R: [2.6 + s * 2.2, -16.4], prop: { k: 'escoba' } };
     case 'rezar': return { lean: .12 + s * .015, L: [-.7, -17.2], R: [.7, -17.6], prop: null };
     case 'leer': return { lean: .04, L: [-2.2, -15.8], R: [2.2, -15.6], prop: { k: 'libro', pag: n % 2 } };
-    case 'saludar': return { lean: 0, L: [-3.4, -12.6], R: [5 + s * 1.3, -26.2 + c * .8], prop: null };
-    case 'conversar': return { lean: 0, L: [-4.6 + s * 2.2, -15.8 - u * 3], R: [4.4 + c * 1.5, -16.4 + s * 1.8], prop: null };
+    case 'saludar': return { lean: 0, L: [-3, -12.8], R: [4 + s * .9, -24.6 - Math.abs(c) * .3], prop: null }; // mano en alto junto a la cabeza, de lado a lado
+    case 'conversar': { // un brazo descansa; el otro, doblado frente al pecho, acompaña lo que dice con un gesto corto
+      const habla = Math.max(0, Math.sin(t * T2 * 2)) * (n % 4 < 2 ? 1 : .4);
+      return { lean: .015 * s, L: [-3, -12.8], R: [2.6 + habla * .5, -15 - habla * 1.6], prop: null };
+    }
     case 'saltar': { const a = Math.abs(s); return { lean: 0, lift: a * 3.2, L: [-4.4, -26 + a * 1.2], R: [4.4, -26 + a * 1.2], prop: null }; }
     // Voces del pueblo: sentado sin trabajo (cabizbajo, manos en las rodillas), con el balde del agua, esperando en
     // la fila con el canasto vacío y el niño lustrabotas agachado sobre su cajón.
