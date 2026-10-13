@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>Uniformados</title>
+<style>body{background:#E9E3D2;margin:0;font:14px sans-serif}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+import { figura } from '../src/arte/gente.js';
+const q = new URLSearchParams(location.search), tipos = (q.get('t') || 'soldado,policia,armado,campesino,campesina').split(','), Z = +(q.get('z') || 6);
+const pasos = [0, 4, 1, 6, 2, 8], cv = document.getElementById('c'), cw = 22 * Z, ch = 36 * Z;
+cv.width = cw * pasos.length * 2 + 20; cv.height = ch * tipos.length * 2;
+const g = cv.getContext('2d');
+tipos.forEach((t, fila) => [false, true].forEach((mod, m) => [1, 0].forEach((fr, f) => pasos.forEach((p, k) => {
+  if (f === 1 && k > 2) return;
+  const x = (k + f * 3 + (f ? 0 : 0)) * cw + (f ? cw * pasos.length : 0) + cw / 2, y = (fila * 2 + m) * ch + ch - 4 * Z;
+  g.save(); g.translate(x, y); g.scale(Z, Z); figura(g, t, k % 3, !!fr, p, mod); g.restore();
+}))));
+</script>

@@ -67,7 +67,7 @@ export class Mapa extends Phaser.Scene {
 
     // Fondo lejano y sombra del diorama.
     this.subidaVista = subidaPisos(this.S); this.glaciarVisto = glaciar(this.S); // fase 10: el clima del territorio
-    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600)), this.glaciarVisto); // fase 8: más resolución, sin pasar de 3600 px de ancho (límite seguro en celulares)
+    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600)) * (ES_CELULAR ? .65 : 1), this.glaciarVisto); // fase 8: más resolución, sin pasar de 3600 px de ancho (límite seguro en celulares)
     this.textures.addCanvas('fondo', f.canvas);
     this.add.image(f.x, f.y, 'fondo').setOrigin(0).setScale(1 / f.escala).setDepth(PROF_FONDO);
     const N = this.T.N, pie = P(N, N, -2.2);
@@ -590,7 +590,7 @@ export class Mapa extends Phaser.Scene {
     if (Math.abs(g - this.glaciarVisto) >= .12) { this.glaciarVisto = g; this.repintarFondo(); }
   }
   repintarFondo() {
-    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600)), this.glaciarVisto), tx = this.textures.get('fondo'), cv = tx.getSourceImage();
+    const f = pintarFondo(this.T, Math.min(1.1, 3600 / (this.T.N * 64 + 600)) * (ES_CELULAR ? .65 : 1), this.glaciarVisto), tx = this.textures.get('fondo'), cv = tx.getSourceImage();
     if (cv.width === f.canvas.width && cv.height === f.canvas.height) { const g = cv.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.drawImage(f.canvas, 0, 0); tx.refresh(); } // sin la transformación de la primera pintura
   }
   // El paisaje se seca o reverdece según el ambiente: se repinta poco a poco, un sector por cuadro.

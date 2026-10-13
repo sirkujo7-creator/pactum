@@ -7,9 +7,8 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { hayGrupo, plazaFundacion } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
-import { ACCIONES } from '../arte/gente.js';
+import { ACCIONES, PASOS12 } from '../arte/gente.js';
 
-const ARMADO = 0x6B6A4E, OLIVA = 0x9FAE7A;
 
 export class Conflicto {
   constructor(scene) { this.scene = scene; this.firma = ''; this.fijos = []; this.gente = []; this.t = 0; this.prox = { despl: 8, recluta: 25, fogon: 3 }; this.actualizar(); }
@@ -28,14 +27,14 @@ export class Conflicto {
     const ruta = this.scene.pob.ruta({ ...camp, carril: 0 }, plaza) || [plaza];
     this.camino = ruta; const medio = ruta[Math.floor(ruta.length * .35)] || camp;
     // Los hombres armados rondan el campamento.
-    for (let k = 0; k < 3; k++) this.fijos.push(this.figura('artesano', k, ARMADO, true, { r: camp.r + (k - 1) * .3 + .5, c: camp.c + .4, centro: camp, radio: 1.5 }));
+    for (let k = 0; k < 3; k++) this.fijos.push(this.figura('armado', k, 0, false, { r: camp.r + (k - 1) * .3 + .5, c: camp.c + .4, centro: camp, radio: 1.5 }));
     if (F.nivel >= 50) {
       const im = this.imagen('m_reten', medio.r, medio.c, .8); if (im) this.fijos.push({ img: im, fijo: true });
-      for (let k = 0; k < 2; k++) this.fijos.push(this.figura('artesano', k + 1, ARMADO, true, { r: medio.r + .25 + k * .2, c: medio.c - .2 + k * .35, quieto: true, mira: plaza }));
+      for (let k = 0; k < 2; k++) this.fijos.push(this.figura('armado', k + 1, 0, false, { r: medio.r + .25 + k * .2, c: medio.c - .2 + k * .35, quieto: true, mira: plaza }));
     }
     if (F.estrategia === 'ofensiva') {
       const c0 = { r: camp.r + (plaza.r - camp.r) * .25, c: camp.c + (plaza.c - camp.c) * .25 };
-      for (let k = 0; k < 4; k++) this.fijos.push(this.figura('artesano', k % 3, OLIVA, true, { r: c0.r + k * .2, c: c0.c - k * .15, centro: c0, radio: 1.3 }));
+      for (let k = 0; k < 4; k++) this.fijos.push(this.figura('soldado', k % 3, 0, false, { r: c0.r + k * .2, c: c0.c - k * .15, centro: c0, radio: 1.3 }));
     }
     if (F.estrategia === 'dialogo') { const im = this.imagen('mesaPaz', plaza.r + 1.05, plaza.c - .55, .85); if (im) this.fijos.push({ img: im, fijo: true }); }
     if (F.estrategia === 'inversion') for (let k = 0; k < 2; k++) this.fijos.push(this.figura('elite', k, 0, false, { r: plaza.r + .6, c: plaza.c + .6 * k, va: [plaza, medio], tramo: k }));
@@ -50,7 +49,7 @@ export class Conflicto {
     const H = this.scene.pob.H, ropa = this.scene.pob.ropa || '', f = `${tipo}${ropa}_${vi}_1_0`, m = H.marcos[f]; if (!m) return { r: o.r, c: o.c, img: null };
     const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala);
     if (tinte) img.setTint(tinte);
-    const extra = fusil && this.scene.textures.exists('cineFusil') ? this.scene.add.image(0, 0, 'cineFusil').setScale(.26).setOrigin(.5, .9).setAngle(-14) : null;
+    const extra = fusil && this.scene.textures.exists('cineFusil') ? this.scene.add.image(0, 0, 'cineFusil').setScale(.26 / 4).setOrigin(.5, .9).setAngle(-14) : null;
     return { tipo, vi, img, extra, ruta: [], vel: .4, fase: 0, frente: 1, voltear: false, espera: Math.random() * 3, meta: null, ...o };
   }
   dibujar(a, andando = false) {
@@ -58,7 +57,7 @@ export class Conflicto {
     const T = this.scene.T, ropa = this.scene.pob.ropa || '', p = P(a.r, a.c, alturaEn(T, a.r, a.c)), A = this.scene.pob.A;
     const N = a.acc && A && ACCIONES[a.tipo] && ACCIONES[a.tipo][a.acc], kA = N ? `${a.tipo}_${a.vi}_${a.acc}_${Math.floor(a.fase) % N}` : null;
     if (kA && A.marcos[kA] && this.scene.textures.exists('acciones')) { if (a.img.texture.key !== 'acciones') a.img.setTexture('acciones'); a.img.setFrame(kA); }
-    else { const f = `${a.tipo}${ropa}_${a.vi}_${a.frente}_${andando ? Math.floor(a.fase) % 4 : 0}`; if (this.scene.pob.H.marcos[f]) a.img.setFrame(f); }
+    else { const f = `${a.tipo}${ropa}_${a.vi}_${a.frente}_${andando ? PASOS12[Math.floor(a.fase * 3) % 12] : 0}`; if (this.scene.pob.H.marcos[f]) a.img.setFrame(f); }
     a.img.setPosition(p[0], p[1]).setFlipX(a.voltear).setDepth(a.r + a.c + .02);
     if (a.extra) a.extra.setPosition(p[0] + (a.voltear ? -3 : 3), p[1] - 7).setFlipX(a.voltear).setDepth(a.r + a.c + .03);
   }
@@ -105,7 +104,7 @@ export class Conflicto {
     if (this.nivel >= 60 && this.t > P0.recluta && this.gente.length < 10) {
       P0.recluta = this.t + 45 + Math.random() * 20;
       const desde = { r: this.plaza.r + 1.2, c: this.plaza.c + 1.2 };
-      this.caminantes([['artesano', 0, ARMADO, true, null], ['artesano', 2, 0, false, null]], desde, this.camp);
+      this.caminantes([['armado', 0, 0, false, null], ['artesano', 2, 0, false, null]], desde, this.camp);
     }
     // Fogonazos lejanos de la ofensiva.
     if (this.estrategia === 'ofensiva' && this.t > P0.fogon) {

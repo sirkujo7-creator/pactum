@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Acciones</title>
+<style>body{background:#B3BC82;margin:0}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+import { figura, ACCIONES } from '../src/arte/gente.js';
+const q = new URLSearchParams(location.search), Z = +(q.get('z') || 6), mod = q.get('m') === '1';
+const lista = (q.get('a') || 'campesino:sentado,campesina:balde,campesina:esperar,nino:lustrar,campesino:tocar,campesina:foto,campesino:cargar,artesano:martillar').split(',').map(x => x.split(':'));
+const cv = document.getElementById('c'), cw = 24 * Z, ch = 36 * Z; cv.width = cw * 4; cv.height = ch * lista.length;
+const g = cv.getContext('2d');
+lista.forEach(([t, a], fila) => { const N = ACCIONES[t][a]; for (let k = 0; k < 4; k++) { const n = Math.floor(k * N / 4); g.save(); g.translate(k * cw + cw / 2, fila * ch + ch - 3 * Z); g.scale(Z, Z); figura(g, t, fila % 3, true, 0, mod, { k: a, n, N }); g.restore(); } });
+</script>

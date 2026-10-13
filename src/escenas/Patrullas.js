@@ -4,8 +4,8 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { ejercitoActivo, ejercito, plazaFundacion } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
+import { PASOS12 } from '../arte/gente.js';
 
-const AZUL = 0x7F9FD6, OLIVA = 0x9FAE7A;
 
 export class Patrullas {
   constructor(scene) { this.scene = scene; this.firma = ''; this.gente = []; this.actualizar(); }
@@ -20,16 +20,16 @@ export class Patrullas {
     for (const i of obras) {
       const x = S.map[i], poli = x.b === 'policia', n = poli ? 2 : 3, c0 = { r: Math.floor(i / N) + .5, c: i % N + .5 };
       for (let k = 0; k < n; k++) {
-        const vi = k % 3, f = `artesano${ropa}_${vi}_1_0`, m = H.marcos[f]; if (!m) continue;
-        const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala).setTint(poli ? AZUL : OLIVA);
+        const vi = k % 3, f = `${poli ? 'policia' : 'soldado'}${ropa}_${vi}_1_0`, m = H.marcos[f]; if (!m) continue;
+        const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala);
         const rally = golpe && !poli && base;
-        this.gente.push({ img, r: c0.r + (k - 1) * .3 + .8, c: c0.c + .8, centro: rally ? { r: base.r + 1.1, c: base.c + (k - 1) * .35 } : c0, radio: rally ? .5 : poli ? 3 : 2.2, vi, meta: null, espera: Math.random() * 3, fase: 0, frente: 1, voltear: false, andando: false });
+        this.gente.push({ img, tipo: poli ? 'policia' : 'soldado', r: c0.r + (k - 1) * .3 + .8, c: c0.c + .8, centro: rally ? { r: base.r + 1.1, c: base.c + (k - 1) * .35 } : c0, radio: rally ? .5 : poli ? 3 : 2.2, vi, meta: null, espera: Math.random() * 3, fase: 0, frente: 1, voltear: false, andando: false });
       }
     }
     this.gente.forEach(a => this.dibujar(a));
   }
   dibujar(a) {
-    const T = this.scene.T, ropa = this.scene.pob.ropa || '', p = P(a.r, a.c, alturaEn(T, a.r, a.c)), f = `artesano${ropa}_${a.vi}_${a.frente}_${a.andando ? Math.floor(a.fase) % 4 : 0}`;
+    const T = this.scene.T, ropa = this.scene.pob.ropa || '', p = P(a.r, a.c, alturaEn(T, a.r, a.c)), f = `${a.tipo}${ropa}_${a.vi}_${a.frente}_${a.andando ? PASOS12[Math.floor(a.fase * 3) % 12] : 0}`;
     if (this.scene.pob.H.marcos[f]) a.img.setFrame(f);
     a.img.setPosition(p[0], p[1]).setFlipX(a.voltear).setDepth(a.r + a.c + .02);
   }
