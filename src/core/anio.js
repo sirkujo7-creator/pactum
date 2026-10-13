@@ -7,6 +7,7 @@ import { tarjetasDelAnio } from './tarjetas.js';
 import { materialesActivos, producirMat } from './materiales.js';
 import { exteriorDelAnio } from './exterior.js';
 import { mundoDelAnio } from './mundovivo.js';
+import { notasDelAnio } from './voces.js';
 import { visitanteDelAnio } from './visitantes.js';
 import { polisDelAnio } from './entrepolis.js';
 import { comisionDelAnio } from './comision.js';
@@ -199,6 +200,7 @@ export function advance(S) {
   news.push(...colonosDelAnio(S)); // huellas: colonos en los baldíos
   sincronizarLeyes(S);
   news.push(...exteriorDelAnio(S)); // fase 15: la polis en el mundo
+  news.push(...notasDelAnio(S)); // promesas a los pobladores: cumplidas o vencidas
   news.push(...mundoDelAnio(S)); // fase 16: lo que pasa en las polis vecinas llega a tu plaza
   news.push(...visitanteDelAnio(S)); // fase 16: un visitante extranjero
   news.push(...polisDelAnio(S)); // fase 16: pleitos entre polis vecinas
