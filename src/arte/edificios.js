@@ -11,7 +11,7 @@ function wash(g, pts, col, rng, al = .9) { g.save(); g.globalAlpha = Math.min(1,
 function blob(g, x, y, rx, ry, col, rng, al = .9) { g.save(); g.globalAlpha = al; ovalo(g, x, y, rx, ry, col, rng, { n: 1, bw: .35, bal: .45 }); g.restore(); }
 import { TW, TH } from './iso.js';
 
-const ESCALA = ES_CELULAR ? 2.5 : RES_HOJA; // resolución del horneado: 4 en computador; 2,5 en celular (la hoja de edificios debe quedar por debajo de 4096 px y cuidar la memoria)
+const ESCALA = ES_CELULAR ? 3 : RES_HOJA; // resolución del horneado: 4 en computador; 3 en celular (la hoja de edificios debe quedar por debajo de 4096 px y cuidar la memoria)
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // ---------- Pinceles de construcción ----------
@@ -58,12 +58,6 @@ function recetas(era = 1) {
   // El mercado (de toldos o cubierto) está con las obras públicas, en src/arte/publicos.js, y cambia con las épocas.
   // Huellas de las decisiones (fase 4): figuras pequeñas que quedan unos años en el espacio público.
   const persona = (g, x, y, ropa, gorro) => { g.fillStyle = ropa; g.fillRect(x - 1.2, y - 7, 2.4, 5); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(x, y - 8.2, 1.3, 0, 7); g.fill(); if (gorro) { g.fillStyle = gorro; g.fillRect(x - 1.6, y - 10, 3.2, 1.3); } };
-  L.push(['m_mural', 56, 44, 28, 34, (g, r) => {
-    sombra(g, 18, 4, 4); const b = iso(g, .62, .1, 0, 13, '#E8DFCC', '#CFC4AE', '#D8CDB6', r);
-    const cols = ['#C0602A', '#2D6E5E', '#E7C76B', '#C4513B', '#5E8FB0', '#7A4E8A'];
-    for (let k = 0; k < 6; k++) wash(g, caraI(b, .04 + k * .155, .15, 2 + (k % 2) * 3, 6 + (k % 3) * 2), cols[k], r, .9, .3);
-    const s = caraI(b, .3, .4, 4, 4); blob(g, (s[0][0] + s[2][0]) / 2, (s[0][1] + s[2][1]) / 2, 3, 2.4, '#F4EFE2', r, .9);
-  }]);
   // Fase 12: estandarte del pueblo: pedestal de piedra, asta y bandera roja con borde ocre.
   L.push(['m_estandarte', 40, 64, 20, 54, (g, r) => {
     sombra(g, 12, 3.5, 2); const b = iso(g, .3, .3, 0, 6, '#E3D9C4', '#C9BDA4', '#D6CBB3', r);
@@ -72,12 +66,6 @@ function recetas(era = 1) {
     pintar(g, [[0.5, -46], [15, -44], [13, -38], [15, -32], [0.5, -33]], '#9C2F25', r, { n: 1, bw: .4, bal: .6 });
     g.strokeStyle = '#D4A24C'; g.lineWidth = .8; g.beginPath(); g.moveTo(1.5, -44.5); g.lineTo(13.5, -43); g.stroke();
     g.fillStyle = '#F7F1E3'; g.beginPath(); g.arc(7, -39.3, 2.4, 0, 7); g.fill();
-  }]);
-  L.push(['m_reten', 56, 46, 28, 36, (g, r) => {
-    sombra(g, 20, 5, 4);
-    for (const [u, v] of [[-.3, .1], [.05, .25], [.32, -.05]]) { const q = V2(u, v); for (let k = 0; k < 3; k++) wash(g, [[q[0] - 6, q[1] - k * 2.2], [q[0] + 6, q[1] - k * 2.2], [q[0] + 6, q[1] - k * 2.2 - 2], [q[0] - 6, q[1] - k * 2.2 - 2]], '#B7A27A', r, .95, .2); }
-    const v = V2(-.05, -.25); for (let k = 0; k < 5; k++) { g.fillStyle = k % 2 ? '#F4F1E6' : '#C0392B'; g.fillRect(v[0] - 10 + k * 4, v[1] - 9, 4, 2.4); } g.fillStyle = '#4A3A2C'; g.fillRect(v[0] - 10, v[1] - 6.6, 1, 6.6); g.fillRect(v[0] + 9, v[1] - 6.6, 1, 6.6);
-    const q = V2(.25, .2); persona(g, q[0], q[1], '#3F4A36', '#2E3A28');
   }]);
   L.push(['m_valla', 50, 56, 25, 46, (g, r) => {
     sombra(g, 12, 3, 2); const p = V2(0, 0); g.fillStyle = '#5A4632'; g.fillRect(p[0] - 9, p[1] - 22, 1.6, 22); g.fillRect(p[0] + 8, p[1] - 22, 1.6, 22);
@@ -88,13 +76,6 @@ function recetas(era = 1) {
     sombra(g, 10, 3, 2); const b = iso(g, .3, .3, 0, 4, '#A9A39A', '#8E887F', '#BEB8AE', r);
     const o = iso(g, .1, .1, 4, 16, '#C9C3B8', '#AAA49A', '#D6D0C6', r); const t = o.up(V2(0, 0), 20); blob(g, t[0], t[1] - 1, 2.2, 1.6, '#D9A93E', r, .9);
     wash(g, caraI(b, .2, .6, 1, 2.4), '#6B6258', r, .95, .2);
-  }]);
-  L.push(['m_olla', 52, 44, 26, 34, (g, r) => {
-    sombra(g, 16, 4, 4); const p = V2(0, 0);
-    wash(g, [[p[0] - 14, p[1] - 12], [p[0] + 14, p[1] - 12], [p[0] + 9, p[1] - 22], [p[0] - 9, p[1] - 22]], '#E7C76B', r, .95, .3);
-    g.fillStyle = '#5A4632'; g.fillRect(p[0] - 12, p[1] - 12, 1.2, 12); g.fillRect(p[0] + 11, p[1] - 12, 1.2, 12);
-    blob(g, p[0] - 2, p[1] - 3, 5, 3, '#3A3532', r, .95); g.fillStyle = '#C0602A'; g.beginPath(); g.arc(p[0] - 2, p[1] + .5, 2, 0, 7); g.fill();
-    persona(g, p[0] + 6, p[1] + 2, '#B4553A', '#F4F1E6'); persona(g, p[0] - 9, p[1] + 3, '#5A6F7E');
   }]);
   L.push(['m_pancarta', 56, 46, 28, 36, (g, r) => {
     sombra(g, 18, 4, 4); const p = V2(0, 0);
@@ -113,120 +94,13 @@ function recetas(era = 1) {
     wash(g, [[p[0] - 8, p[1] - 15], [p[0] + 8, p[1] - 16], [p[0] + 8, p[1] - 10], [p[0] - 8, p[1] - 9]], '#E8D9B0', r, .97, .2);
     g.strokeStyle = '#B0402C'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(p[0] - 4, p[1] - 14.5); g.lineTo(p[0] + 4, p[1] - 10.5); g.moveTo(p[0] + 4, p[1] - 14.5); g.lineTo(p[0] - 4, p[1] - 10.5); g.stroke();
   }]);
-  // Cruz del camino: cruz de madera con flores al pie y una vela, donde mataron a alguien (violencia).
-  L.push(['m_cruz', 40, 52, 20, 42, (g, r) => {
-    sombra(g, 10, 3, 2); const p = V2(0, 0);
-    blob(g, p[0], p[1] - 1, 7, 2.6, '#8C7A5E', r, .9);
-    g.fillStyle = '#5B4330'; g.fillRect(p[0] - 1, p[1] - 26, 2.2, 25); g.fillRect(p[0] - 6.5, p[1] - 20, 13, 2);
-    g.fillStyle = '#7A5A3E'; g.fillRect(p[0] - .4, p[1] - 26, .8, 25);
-    for (const [dx, col] of [[-4, '#F4F1E6'], [-2, '#C0392B'], [3, '#E7C76B'], [5, '#F4F1E6']]) { g.fillStyle = '#5E8A4D'; g.fillRect(p[0] + dx, p[1] - 4, .6, 3); g.fillStyle = col; g.beginPath(); g.arc(p[0] + dx + .3, p[1] - 4.4, 1.3, 0, 7); g.fill(); }
-    g.fillStyle = '#F4EEDC'; g.fillRect(p[0] + 7, p[1] - 4, 1.8, 3.4); g.fillStyle = '#FFC25A'; g.beginPath(); g.arc(p[0] + 7.9, p[1] - 5.2, .9, 0, 7); g.fill();
-  }]);
-  // Conflicto (tono intermedio, sin sangre): un cuerpo cubierto con una sábana y una vela al lado; impactos de bala en un
-  // muro; la mesa del diálogo con dos banderas blancas.
-  L.push(['sabana', 40, 24, 20, 14, (g, r) => {
-    sombra(g, 12, 3, 1); const p = V2(0, 0);
-    wash(g, [[p[0] - 13, p[1] + 1], [p[0] - 9, p[1] - 4], [p[0] + 4, p[1] - 6], [p[0] + 12, p[1] - 3], [p[0] + 13, p[1] + 1], [p[0] + 2, p[1] + 3.5]], '#ECE7DA', r, .98, .2);
-    blob(g, p[0] - 8, p[1] - 3.2, 3.4, 2.4, '#F4F0E6', r, .95); // la cabeza bajo la tela
-    g.globalAlpha = .35; g.strokeStyle = '#9C9484'; g.lineWidth = .5; for (const dx of [-3, 2, 7]) { g.beginPath(); g.moveTo(p[0] + dx, p[1] - 4.6); g.lineTo(p[0] + dx + 1.5, p[1] + 2); g.stroke(); } g.globalAlpha = 1;
-    g.fillStyle = '#5A4632'; g.fillRect(p[0] + 11, p[1] - 1.6, 2.6, 1.4); g.fillRect(p[0] + 11.4, p[1] + .2, 2.4, 1.3); // las botas
-    g.fillStyle = '#F4EEDC'; g.fillRect(p[0] - 15.5, p[1] - 4, 1.6, 3.2); const gr = g.createRadialGradient(p[0] - 14.7, p[1] - 5.4, 0, p[0] - 14.7, p[1] - 5.4, 3); gr.addColorStop(0, 'rgba(255,214,120,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(p[0] - 18, p[1] - 9, 6, 6);
-  }]);
-  L.push(['impactos', 24, 20, 12, 10, g => {
-    for (const [x, y, s] of [[-7, -4, 1], [-2, -6, .8], [3, -2, 1.1], [6, -6, .7], [-4, 2, .9], [1, 3, .8], [8, 1, .7]]) {
-      g.fillStyle = 'rgba(214,204,186,.9)'; g.beginPath(); g.arc(x, y, 1.9 * s, 0, 7); g.fill(); // la cal saltada
-      g.fillStyle = '#2E2620'; g.beginPath(); g.arc(x, y, .75 * s, 0, 7); g.fill();
-    }
-  }]);
-  L.push(['mesaPaz', 48, 36, 24, 26, (g, r) => {
-    sombra(g, 14, 4, 2);
-    const m = iso(g, .38, .22, 4, 1.5, '#7A5634', '#694A2C', '#9C7448', r);
-    for (const [u, v] of [[-.16, -.08], [.16, -.08], [-.16, .08], [.16, .08]]) { const q = V2(u, v); g.fillStyle = '#5B4330'; g.fillRect(q[0] - .5, q[1] - 4, 1, 4); }
-    const pp = m.up(V2(0, 0), 5.5); g.fillStyle = '#F4F0E6'; g.fillRect(pp[0] - 3, pp[1] - .5, 5, 2.4); // papeles del acuerdo
-    for (const s of [-1, 1]) { const q = V2(s * .34, 0); blob(g, q[0], q[1] - 3, 2.6, 1.6, '#8C6A44', r, .95); bandera(g, q[0] + s * 2, q[1] - 2, 18, '#F6F3EA'); }
-  }]);
-  // Obras que levantan las decisiones (pedido de Juan): dique, reservorio, granero, cooperativa, tanques, parcela y escuela rural.
-  L.push(['m_dique', 68, 44, 34, 30, (g, r) => {
-    sombra(g, 26, 5, 3);
-    const m = iso(g, 1, .16, 0, 7, '#A39A88', '#8C8474', '#BDB4A2', r, 0, -.2); // muro de piedra a lo largo de la orilla
-    g.strokeStyle = '#6E6658'; g.lineWidth = .5; for (let k = 1; k < 8; k++) { const q = caraI(m, k / 8, 0, 0, 7); g.beginPath(); g.moveTo(q[0][0], q[0][1]); g.lineTo(q[0][0], q[0][1] - 7); g.stroke(); }
-    for (let k = 0; k < 7; k++) { const q = V2(-.42 + k * .14, .02); blob(g, q[0], q[1] - 2, 3.4, 2, k % 2 ? '#C9B58A' : '#B9A479', r, .97); } // sacos de arena
-    for (let k = 0; k < 6; k++) { const q = V2(-.35 + k * .14, .12); blob(g, q[0], q[1] - 1, 3.2, 1.9, k % 2 ? '#BFA97C' : '#CDBA8E', r, .97); }
-  }]);
-  L.push(['m_reservorio', 64, 40, 32, 22, (g, r) => {
-    const R = (s, col, al) => wash(g, [V2(-s, -s), V2(s, -s), V2(s, s), V2(-s, s)], col, r, al, .3);
-    R(.4, '#9C7E58', .95); R(.35, '#B39468', .95); R(.29, '#5E8FA4', .95); R(.21, '#7AAAB8', .9);
-    const h = V2(-.08, -.05); blob(g, h[0], h[1], 5, 1.2, '#CFE3E6', r, .7);
-    const v = V2(.38, .38); g.fillStyle = '#6E6A60'; g.fillRect(v[0] - 1, v[1] - 6, 2, 6); g.fillStyle = '#C0392B'; g.beginPath(); g.arc(v[0], v[1] - 6.5, 1.6, 0, 7); g.fill(); // válvula
-  }]);
-  L.push(['m_granero', 60, 62, 30, 46, (g, r) => {
-    sombra(g, 18, 5, 4);
-    g.fillStyle = '#5B4330'; for (const [u, v] of [[-.2, -.17], [.2, -.17], [.2, .17], [-.2, .17]]) { const q = V2(u, v); g.fillRect(q[0] - .8, q[1] - 7, 1.6, 7); } // troje en pilotes
-    const b = iso(g, .48, .4, 7, 13, '#A07A52', '#8A6644', null, r);
-    g.strokeStyle = '#6E5034'; g.lineWidth = .5; for (let k = 1; k < 4; k++) { const q = caraI(b, 0, 1, 7 + k * 3.2, 0); g.beginPath(); g.moveTo(q[0][0], q[0][1]); g.lineTo(q[1][0], q[1][1]); g.stroke(); }
-    techo(g, b, 3, 9, '#B89A5E', '#A07A52', r);
-    wash(g, caraI(b, .38, .24, 8, 8), '#4A3626', r, .95, .2);
-    for (const [u, v] of [[.38, .3], [.46, .22], [.42, .38]]) { const q = V2(u, v); blob(g, q[0], q[1] - 2.5, 3.2, 2.8, '#D8C79E', r, .97); } // bultos de maíz
-  }]);
-  L.push(['m_cooperativa', 66, 62, 33, 46, (g, r) => {
-    sombra(g, 22, 5, 4);
-    const b = iso(g, .62, .44, 0, 14, '#F2ECDD', '#D9D0BC', null, r);
-    wash(g, caraI(b, 0, 1, 0, 3), '#2D6E5E', r, .95, .2); wash(g, caraD(b, 0, 1, 0, 3), '#255A4D', r, .95, .2); // zócalo verde cafetero
-    techo(g, b, 3, 9, '#B4553A', '#E8E0CC', r);
-    wash(g, caraI(b, .42, .18, 2.5, 9), '#5B4330', r, .97, .2);
-    const t = caraI(b, .2, .6, 11, 3.5); wash(g, t, '#2D6E5E', r, .97, .1); g.fillStyle = '#F4EFE2'; for (let k = 0; k < 4; k++) { const f = .2 + k * .2, x = t[0][0] + (t[1][0] - t[0][0]) * f, y = t[0][1] + (t[1][1] - t[0][1]) * f; g.fillRect(x - .8, y - 2.6, 1.6, 1.6); } // letrero
-    for (let k = 0; k < 5; k++) { const q = V2(.12 + (k % 3) * .1, .36 + Math.floor(k / 3) * .02); blob(g, q[0], q[1] - 2.4 - Math.floor(k / 3) * 3.4, 3.2, 2.4, k % 2 ? '#C9B07A' : '#B89A64', r, .97); } // sacos de café
-    const q = V2(-.4, .32); g.fillStyle = '#6E6A60'; g.fillRect(q[0] - 3, q[1] - 2, 6, 1.2); g.fillRect(q[0] - .5, q[1] - 8, 1, 6); g.fillRect(q[0] - 3.5, q[1] - 8.5, 7, 1); // báscula
-    persona(g, q[0] + 6, q[1] + 2, '#2D6E5E', '#E7C76B');
-  }]);
-  L.push(['m_tanques', 62, 48, 31, 34, (g, r) => {
-    sombra(g, 22, 5, 3);
-    const tanque = (u, v, rr, h) => { const q = V2(u, v); g.fillStyle = '#A8A49A'; g.fillRect(q[0] - rr, q[1] - h, rr * 2, h); g.fillStyle = '#8E8A80'; g.fillRect(q[0] + rr * .3, q[1] - h, rr * .7, h); g.fillStyle = '#C6C2B8'; g.beginPath(); g.ellipse(q[0], q[1] - h, rr, rr * .45, 0, 0, 7); g.fill(); g.fillStyle = '#7A9E86'; g.beginPath(); g.ellipse(q[0], q[1] - h, rr * .78, rr * .33, 0, 0, 7); g.fill(); g.fillStyle = '#9C988E'; g.beginPath(); g.ellipse(q[0], q[1], rr, rr * .45, 0, 0, Math.PI); g.fill(); };
-    tanque(-.18, -.08, 9, 9); tanque(.2, .1, 8, 8);
-    g.strokeStyle = '#5A5650'; g.lineWidth = 1.4; const a = V2(.32, .2), b2 = V2(.5, .36); g.beginPath(); g.moveTo(a[0], a[1] - 3); g.lineTo(b2[0], b2[1] - 1); g.stroke(); // tubo hacia la quebrada
-  }]);
-  L.push(['m_parcela', 66, 52, 33, 36, (g, r) => {
-    wash(g, [V2(-.46, -.1), V2(.06, -.1), V2(.06, .44), V2(-.46, .44)], '#8C6A44', r, .9, .3); // la huerta
-    g.strokeStyle = '#5E8A4D'; g.lineWidth = 1.5; for (let k = 0; k < 5; k++) { const a = V2(-.42, -.02 + k * .1), b2 = V2(.02, -.02 + k * .1); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b2[0], b2[1]); g.stroke(); }
-    g.fillStyle = '#6B4F3A'; for (let k = 0; k < 6; k++) { const q = V2(-.48, -.1 + k * .11); g.fillRect(q[0] - .5, q[1] - 4, 1, 4); } // cerca
-    const b = iso(g, .3, .26, 0, 9, '#C9AE84', '#B0946C', null, r, .26, -.24);
-    techo(g, b, 2, 6, '#9AA4A8', '#C9AE84', r); // techo de zinc
-    wash(g, caraI(b, .35, .3, 0, 6), '#4A3626', r, .95, .2);
-    const q = V2(.2, .3); persona(g, q[0], q[1], '#B4553A', '#E7C76B');
-  }]);
-  L.push(['m_escuelita', 66, 66, 33, 46, (g, r) => {
-    sombra(g, 22, 5, 4);
-    const b = iso(g, .64, .4, 0, 13, '#F4EFE2', '#DCD3C0', null, r);
-    wash(g, caraI(b, 0, 1, 0, 3), '#3E6E9C', r, .95, .2); wash(g, caraD(b, 0, 1, 0, 3), '#335C84', r, .95, .2); // zócalo azul
-    techo(g, b, 3, 9, '#B4553A', '#E8E0CC', r);
-    for (const s of [.1, .62]) wash(g, caraI(b, s, .16, 5, 5), '#6E8FA8', r, .95, .2); // ventanas
-    wash(g, caraI(b, .36, .18, 0, 9), '#5B4330', r, .97, .2);
-    const e = V2(-.3, .36); g.fillStyle = '#5B4330'; g.fillRect(e[0] - 3.5, e[1] - 11, 1, 11); g.fillRect(e[0] + 2.5, e[1] - 11, 1, 11); g.fillRect(e[0] - 4, e[1] - 12, 8, 1.2); g.fillStyle = '#B08A3A'; g.beginPath(); g.arc(e[0], e[1] - 8.5, 1.8, Math.PI, 0); g.lineTo(e[0] + 2.2, e[1] - 7); g.lineTo(e[0] - 2.2, e[1] - 7); g.fill(); // campana en su marco de madera
-    const f = V2(-.46, .3); g.strokeStyle = '#5A4A3A'; g.lineWidth = .9; g.beginPath(); g.moveTo(f[0], f[1]); g.lineTo(f[0], f[1] - 24); g.stroke();
-    g.fillStyle = '#E7C24B'; g.fillRect(f[0], f[1] - 24, 9, 3); g.fillStyle = '#2E4C8C'; g.fillRect(f[0], f[1] - 21, 9, 1.6); g.fillStyle = '#C0392B'; g.fillRect(f[0], f[1] - 19.4, 9, 1.6); // bandera de Colombia
-    for (const [u, v, col] of [[.1, .36, '#F4F1E6'], [.22, .32, '#3E6E9C'], [.32, .4, '#F4F1E6']]) { const q = V2(u, v); g.fillStyle = col; g.fillRect(q[0] - 1, q[1] - 5, 2, 3.6); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(q[0], q[1] - 6, 1.1, 0, 7); g.fill(); } // niños
-  }]);
-  L.push(['m_campamento', 60, 46, 30, 36, (g, r) => {
-    sombra(g, 20, 5, 4);
-    for (const [u, v, col] of [[-.25, -.05, '#4E5A3A'], [.18, .12, '#5E6A44']]) { const q = V2(u, v); wash(g, [[q[0] - 9, q[1]], [q[0] + 9, q[1]], [q[0], q[1] - 12]], col, r, .97, .3); wash(g, [[q[0] - 2, q[1]], [q[0] + 2, q[1]], [q[0], q[1] - 5]], '#2A2A22', r, .95, .2); }
-    const f = V2(.32, -.25); blob(g, f[0], f[1], 3, 1.6, '#3A3532', r, .9); g.fillStyle = '#C0602A'; g.beginPath(); g.arc(f[0], f[1] - 1, 1.2, 0, 7); g.fill();
-    const q = V2(-.02, .3); persona(g, q[0], q[1], '#3E4A30', '#2A2A22');
-  }]);
+  // La cruz del camino, la sábana, los impactos, la mesa del diálogo, el retén, el campamento y las obras de las
+  // decisiones (dique, reservorio, granero…) se dibujan con detalle en publicos.js.
   L.push(['m_tratado', 44, 50, 22, 40, (g, r) => {
     sombra(g, 10, 3, 2); const p = V2(0, 0); g.fillStyle = '#6B4F3A'; g.fillRect(p[0] - .8, p[1] - 26, 1.8, 26);
     wash(g, [[p[0], p[1] - 24], [p[0] + 14, p[1] - 24], [p[0] + 18, p[1] - 21], [p[0] + 14, p[1] - 18], [p[0], p[1] - 18]], '#D9B98A', r, .97, .2);
     wash(g, [[p[0], p[1] - 16], [p[0] - 14, p[1] - 16], [p[0] - 18, p[1] - 13], [p[0] - 14, p[1] - 10], [p[0], p[1] - 10]], '#C9A473', r, .97, .2);
     g.fillStyle = '#5A4632'; g.fillRect(p[0] + 3, p[1] - 21.6, 9, 1); g.fillRect(p[0] - 12, p[1] - 13.6, 9, 1);
-  }]);
-  L.push(['m_asentamiento', 62, 46, 31, 36, (g, r) => {
-    sombra(g, 22, 5, 4);
-    for (const [u, v, pared, techo2] of [[-.28, -.08, '#9C7A55', '#8E9AA0'], [.12, -.18, '#7E6A52', '#A8B0B4'], [.02, .2, '#A88A62', '#7E8A90']]) {
-      const q = V2(u, v); wash(g, [[q[0] - 6, q[1]], [q[0] + 6, q[1]], [q[0] + 6, q[1] - 7], [q[0] - 6, q[1] - 7]], pared, r, .95, .3);
-      wash(g, [[q[0] - 7.5, q[1] - 6.5], [q[0] + 7.5, q[1] - 7.5], [q[0] + 6, q[1] - 10], [q[0] - 6, q[1] - 9]], techo2, r, .95, .2);
-      g.fillStyle = '#3A2E24'; g.fillRect(q[0] - 1.2, q[1] - 4.5, 2.4, 4.5);
-    }
-    const t = V2(.36, .05); g.strokeStyle = '#6B4F3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(t[0] - 8, t[1] - 6); g.lineTo(t[0] + 6, t[1] - 8); g.stroke();
-    for (let k = 0; k < 3; k++) { g.fillStyle = ['#C0602A', '#5E8FB0', '#E7C76B'][k]; g.fillRect(t[0] - 6 + k * 4.5, t[1] - 6.8 - k * .5, 2.6, 3); }
   }]);
   // Huellas, paso 2: ranchos de colonos en los baldíos (propios, arrendatarios o en parcela sorteada).
   const rancho = (g, r, modo) => {
@@ -305,22 +179,10 @@ function recetas(era = 1) {
   }]);
   // Fase 6: inventos adoptados.
   const poste = (g, x, y, h) => { g.fillStyle = '#6B4F3A'; g.fillRect(x - .7, y - h, 1.4, h); g.fillRect(x - 4, y - h + 2, 8, 1); };
-  L.push(['m_imprenta', 56, 50, 28, 38, (g, r) => {
-    sombra(g, 16, 5, 4); const b = iso(g, .44, .34, 0, 12, '#E6DCC6', '#CBBFA6', null, r);
-    wash(g, caraI(b, .25, .5, 3, 6), '#4A4038', r, .97, .2); techo(g, b, 3, 7, '#6E5A46', '#CBBFA6', r);
-    const s2 = caraI(b, .15, .7, 10, 2.4); wash(g, s2, '#F4F1E6', r, .97, .2); g.fillStyle = '#2A2A2A'; g.fillRect((s2[0][0] + s2[2][0]) / 2 - 4, (s2[0][1] + s2[2][1]) / 2 - .4, 8, .8);
-    const q = V2(.34, .3); for (let k = 0; k < 3; k++) wash(g, [[q[0] - 3, q[1] - k * 1.4], [q[0] + 3, q[1] - k * 1.4], [q[0] + 3, q[1] - k * 1.4 - 1.2], [q[0] - 3, q[1] - k * 1.4 - 1.2]], '#F4F1E6', r, .95, .2);
-  }]);
   L.push(['m_telegrafo', 64, 50, 32, 40, (g, r) => {
     sombra(g, 18, 3, 2); const ps = [V2(-.4, .1), V2(0, -.05), V2(.4, -.2)];
     ps.forEach(q => poste(g, q[0], q[1], 24)); g.strokeStyle = '#3A3A3A'; g.lineWidth = .5;
     for (const dy of [-22, -21]) { g.beginPath(); g.moveTo(ps[0][0], ps[0][1] + dy); for (const q of ps.slice(1)) g.quadraticCurveTo((q[0] + ps[0][0]) / 2, q[1] + dy + 3, q[0], q[1] + dy); g.stroke(); }
-  }]);
-  L.push(['m_electricidad', 64, 62, 32, 48, (g, r) => {
-    sombra(g, 20, 5, 4); const b = iso(g, .46, .36, 0, 14, '#C9C5BC', '#ADA89E', '#BDB8AE', r);
-    const ch = b.up(V2(.1, -.08), 14); wash(g, [[ch[0] - 2.5, ch[1]], [ch[0] + 2.5, ch[1]], [ch[0] + 2, ch[1] - 18], [ch[0] - 2, ch[1] - 18]], '#B5563A', r, .97, .2);
-    poste(g, V2(-.42, .3)[0], V2(-.42, .3)[1], 22); g.fillStyle = '#F2D36B'; const L1 = V2(-.42, .3); g.beginPath(); g.arc(L1[0] + 3, L1[1] - 21, 1.6, 0, 7); g.fill();
-    wash(g, caraI(b, .3, .4, 3, 6), '#E7C76B', r, .95, .2);
   }]);
   L.push(['m_radio', 44, 70, 22, 60, (g, r) => {
     sombra(g, 10, 3, 2); const p0 = V2(0, 0); g.strokeStyle = '#B03A2E'; g.lineWidth = .9;
@@ -333,26 +195,7 @@ function recetas(era = 1) {
     for (const [dy, s] of [[-40, 1], [-30, -1]]) { wash(g, [[p0[0] + s * 1, p0[1] + dy], [p0[0] + s * 7, p0[1] + dy - 2], [p0[0] + s * 7, p0[1] + dy - 9], [p0[0] + s * 1, p0[1] + dy - 7]], '#E4E1DA', r, .97, .2); }
     g.strokeStyle = '#5E8FB0'; g.lineWidth = .7; for (let k = 1; k <= 3; k++) { g.beginPath(); g.arc(p0[0], p0[1] - 48, k * 3, Math.PI * 1.2, Math.PI * 1.8); g.stroke(); }
   }]);
-  L.push(['m_automatizacion', 72, 62, 36, 46, (g, r) => {
-    sombra(g, 24, 6, 6); const b = iso(g, .62, .5, 0, 16, '#B9C1C8', '#9AA3AC', null, r);
-    for (let k = 0; k < 3; k++) { const t = caraI(b, .1 + k * .3, .2, 16, 6); wash(g, [t[0], t[1], [t[1][0] - 2, t[1][1] - 6]], '#7E8790', r, .95, .2); }
-    const c0 = caraI(b, .35, .3, 4, 8), cx = (c0[0][0] + c0[2][0]) / 2, cy = (c0[0][1] + c0[2][1]) / 2;
-    g.strokeStyle = '#E7C76B'; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, 3, 0, 7); g.stroke(); for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(cx + Math.cos(a) * 3, cy + Math.sin(a) * 3); g.lineTo(cx + Math.cos(a) * 4.6, cy + Math.sin(a) * 4.6); g.stroke(); }
-  }]);
   // Fase 6: megaproyectos (obra, represa, ferrocarril, aeropuerto).
-  L.push(['m_megaobra', 80, 76, 40, 58, (g, r) => {
-    sombra(g, 26, 6, 6); const b = iso(g, .8, .6, 0, 4, '#B9A27E', '#9C8664', '#C9B38E', r);
-    const p0 = V2(-.2, -.1, 4); g.strokeStyle = '#E2B24F'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(p0[0], p0[1]); g.lineTo(p0[0], p0[1] - 40); g.lineTo(p0[0] + 26, p0[1] - 40); g.stroke();
-    for (let k = 0; k < 8; k++) { g.beginPath(); g.moveTo(p0[0] - 1.5, p0[1] - k * 5); g.lineTo(p0[0] + 1.5, p0[1] - k * 5 - 5); g.stroke(); }
-    g.strokeStyle = '#4A4A4A'; g.lineWidth = .5; g.beginPath(); g.moveTo(p0[0] + 22, p0[1] - 40); g.lineTo(p0[0] + 22, p0[1] - 22); g.stroke(); wash(g, [[p0[0] + 19, p0[1] - 22], [p0[0] + 25, p0[1] - 22], [p0[0] + 25, p0[1] - 18], [p0[0] + 19, p0[1] - 18]], '#8E8A80', r, .95, .2);
-    const q = V2(.2, .15, 4); wash(g, [[q[0] - 9, q[1]], [q[0] + 9, q[1]], [q[0] + 9, q[1] - 10], [q[0] - 9, q[1] - 10]], '#C9C3B8', r, .95, .3);
-  }]);
-  L.push(['m_represa', 96, 66, 48, 44, (g, r) => {
-    sombra(g, 30, 6, 4); const lago = V2(-.15, -.2); g.fillStyle = '#5FA0C8'; g.globalAlpha = .85; g.beginPath(); g.ellipse(lago[0], lago[1], 34, 12, 0, 0, 7); g.fill(); g.globalAlpha = 1;
-    const b = iso(g, .9, .14, 0, 14, '#D2CCC0', '#B5AFA2', '#E0DACD', r, 0, .25);
-    for (let k = 0; k < 3; k++) { const c0 = caraI(b, .25 + k * .25, .08, 0, 12); wash(g, c0, '#8FB8D4', r, .9, .2); }
-    g.strokeStyle = '#6B6258'; g.lineWidth = .6; const t1 = V2(.42, .1); g.beginPath(); g.moveTo(t1[0], t1[1] - 14); g.lineTo(t1[0], t1[1] - 26); g.stroke(); g.beginPath(); g.moveTo(t1[0] - 4, t1[1] - 24); g.lineTo(t1[0] + 4, t1[1] - 24); g.stroke();
-  }]);
   L.push(['m_ferrocarril', 92, 62, 46, 44, (g, r) => {
     sombra(g, 30, 5, 4); g.strokeStyle = '#5A4632'; g.lineWidth = 1; const a1 = V2(-.6, .35), a2 = V2(.6, -.1);
     for (const d of [-2, 2]) { g.beginPath(); g.moveTo(a1[0], a1[1] + d); g.lineTo(a2[0], a2[1] + d); g.stroke(); }
@@ -535,7 +378,7 @@ let HOJA = null;
 export function hornearEdificios(era) {
   if (era === undefined) era = HOJA ? HOJA.era : 1;
   if (HOJA && HOJA.era === era) return HOJA;
-  const lista = recetas(era).sort((a, b) => b[2] - a[2]), sep = 4, anchoHoja = 2048, marcos = {}; // de mayor a menor alto: la hoja queda más compacta (menos memoria en el celular)
+  const lista = recetas(era).sort((a, b) => b[2] - a[2]), sep = 4, anchoHoja = 4096, marcos = {}; // hoja ancha: más resolución sin pasar de 4096 de alto // de mayor a menor alto: la hoja queda más compacta (menos memoria en el celular)
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
     const W = Math.ceil(w * ESCALA), H = Math.ceil(h * ESCALA);

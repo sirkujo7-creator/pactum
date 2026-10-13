@@ -12,7 +12,11 @@ export const TIPOS_GENTE = {
   campesina: [['#B23A2E'], ['#2F6E8E'], ['#C08A2A']],
   artesano: [['#5C7C9A'], ['#7A5C8A'], ['#4E7A5A']],
   elite: [['#2E3440'], ['#4A3B2E'], ['#3A4A40']],
-  nino: [['#E0A030'], ['#3E8E7E'], ['#D0604A']]
+  nino: [['#E0A030'], ['#3E8E7E'], ['#D0604A']],
+  // Uniformados (dibujo propio, pedido de Juan: que no sean campesinos teñidos): soldado, policía y hombre armado.
+  soldado: [['#6F7A4A'], ['#6F7A4A'], ['#6F7A4A']],
+  policia: [['#3E5B40'], ['#3E5B40'], ['#3E5B40']],
+  armado: [['#5E6644'], ['#5E6644'], ['#5E6644']]
 };
 const PIEL = ['#C98E62', '#E0B08A', '#A8734C'];
 
@@ -39,6 +43,7 @@ const FASE = [0, 3, 6, 9, 1, 2, 4, 5, 7, 8, 10, 11].map(k => k / 12);
 export const PASOS12 = [0, 4, 5, 1, 6, 7, 2, 8, 9, 3, 10, 11];
 // Dibuja una figura con los pies en (0, 0). frente: true de frente, false de espaldas. paso: 0 a 11. mod: ropa moderna.
 export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
+  if (UNIFORMES[tipo]) return uniformado(g, tipo, vi, frente, paso, mod);
   const pz = acc ? poseAccion(acc.k, acc.n, acc.N) : null; // acción de oficio: sembrar, picar, vender…
   const V = TIPOS_GENTE[tipo][vi], piel = PIEL[vi % 3];
   const ph = FASE[paso] * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35;
@@ -57,6 +62,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   const orden = sw >= 0 ? [1, 0] : [0, 1];
   if (pz && pz.sienta) {
     if (pz.prop && pz.prop.k === 'banca') PROPS.banca(g); // la banca de piedra va detrás de las piernas
+    if (pz.prop && pz.prop.k === 'cajon') PROPS.banquito(g); // el lustrabotas, sentado en su banquito
     for (const hx of [1, -1]) { miembro(g, [hx, -6.4], [hx * 1.2 + 2.2, -5.8], [hx * 1.1 + 2.6, -.8], 1.75, hx > 0 ? shade(pantalon, -.18) : pantalon); elipse(g, hx * 1.1 + 3.1, -.4, 1.25, .65, zapato); }
   } else for (const i of orden) {
     const [hx, hy, Pp] = caderas[i], x = hx + Pp.x;
@@ -126,24 +132,138 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   g.restore();
 }
 
+// ---------- Uniformados ----------
+// Cada uno con su ropa según la época (mod: desde la época del ladrillo). Colores: tela, sombra de la tela, manchas del
+// camuflado (si tiene), botas, tocado.
+const UNIFORMES = {
+  soldado: { viejo: { tela: '#9A8C5E', pant: '#8A7D52', bota: '#3A2E24', polaina: '#D8CDB0', tocado: 'quepis', tocCol: '#8A7D52', arma: 'hombro' },
+    nuevo: { tela: '#6F7A4A', pant: '#66704A', manchas: ['#4E5634', '#8C8A5A', '#3B3A2A'], bota: '#1E1C1A', chaleco: '#56603E', tocado: 'casco', tocCol: '#5A6440', arma: 'pecho' } },
+  policia: { viejo: { tela: '#2F3E5C', pant: '#2A3650', bota: '#1E1C1A', correaje: '#EDE6D2', tocado: 'quepis', tocCol: '#26324A', arma: 'hombro' },
+    nuevo: { tela: '#3E5B40', pant: '#38523A', bota: '#1E1C1A', chalecoLuz: '#C9DE4A', tocado: 'gorra', tocCol: '#344C36', arma: 'cinto' } },
+  armado: { viejo: { tela: '#E9E1CE', pant: '#D8CFB8', bota: '#C9B48A', ruana: '#4A4038', panuelo: '#B0302A', tocado: 'sombrero', tocCol: '#2A2420', cartuchera: true, arma: 'bandolera' },
+    nuevo: { tela: '#5E6644', pant: '#565C40', manchas: ['#3E4430', '#7A7652', '#2E2C24'], bota: '#141414', botaAlta: true, panuelo: '#2A2A2A', morral: '#4A4A36', tocado: 'gorra', tocCol: '#4A5034', arma: 'bajo' } }
+};
+// Fusil de a (culata) a b (boca del cañón).
+function fusil(g, a, b, moderno) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy), ux = dx / l, uy = dy / l, nx = -uy, ny = ux;
+  const at = t => [a[0] + dx * t, a[1] + dy * t];
+  g.lineCap = 'round';
+  // Culata (más ancha), cuerpo y cañón delgado.
+  const c0 = at(0), c1 = at(.3);
+  g.fillStyle = moderno ? '#26262A' : '#6B4426'; g.beginPath(); g.moveTo(c0[0] + nx * 1, c0[1] + ny * 1); g.lineTo(c1[0] + nx * .55, c1[1] + ny * .55); g.lineTo(c1[0] - nx * .55, c1[1] - ny * .55); g.lineTo(c0[0] - nx * .7, c0[1] - ny * .7); g.closePath(); g.fill();
+  g.strokeStyle = moderno ? '#2E2E33' : '#5A3A22'; g.lineWidth = 1.05; g.beginPath(); g.moveTo(...at(.28)); g.lineTo(...at(.72)); g.stroke();
+  g.strokeStyle = '#3A3C40'; g.lineWidth = .55; g.beginPath(); g.moveTo(...at(.6)); g.lineTo(...b); g.stroke();
+  if (moderno) { const m = at(.5); g.fillStyle = '#1E1E22'; g.beginPath(); g.moveTo(m[0], m[1]); g.lineTo(m[0] - nx * 2.2 + ux * .6, m[1] - ny * 2.2 + uy * .6); g.lineTo(m[0] - nx * 2 + ux * 1.5, m[1] - ny * 2 + uy * 1.5); g.lineTo(...at(.58)); g.closePath(); g.fill(); } // proveedor curvo
+  else { const m = at(.45); g.fillStyle = '#8A8E94'; g.beginPath(); g.arc(m[0], m[1], .35, 0, 7); g.fill(); } // cerrojo
+}
+// Manchas del camuflado dentro de la forma que ya está recortada.
+function camuflado(g, cols, x0, y0, x1, y1, semilla) {
+  let s = semilla * 9301 + 49297; const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+  for (let k = 0; k < 14; k++) { g.fillStyle = cols[k % cols.length]; g.globalAlpha = .85; g.beginPath(); g.ellipse(x0 + rnd() * (x1 - x0), y0 + rnd() * (y1 - y0), .6 + rnd() * 1.1, .35 + rnd() * .6, rnd() * 3, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+}
+function uniformado(g, tipo, vi, frente, paso, mod) {
+  const U = UNIFORMES[tipo][mod ? 'nuevo' : 'viejo'], piel = PIEL[vi % 3];
+  const ph = FASE[paso] * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35, dir = frente ? 1 : -1;
+  sombraSuave(g, 3.8, 0, 3.8, .28);
+  g.save(); g.translate(0, -alza);
+  // Piernas con botas (el paso es más firme: rodilla más alta).
+  const pie = s => { const lev = Math.max(0, s) * 1.6; return { x: s * .6, y: -lev, rod: [s * .9 + .2, -6 - lev * .6] }; };
+  const P1 = pie(sw), P2 = pie(-sw), caderas = [[-1, -11.2, P1], [1, -11.2, P2]], orden = sw >= 0 ? [1, 0] : [0, 1];
+  for (const i of orden) {
+    const [hx, hy, Pp] = caderas[i], x = hx + Pp.x, col = i === orden[0] ? shade(U.pant, -.2) : U.pant;
+    miembro(g, [hx, hy], [hx + Pp.rod[0] * .5, Pp.rod[1]], [x, Pp.y - .8], 1.85, col);
+    if (U.manchas) { g.save(); g.globalAlpha = .8; elipse(g, hx + Pp.rod[0] * .3, Pp.rod[1] - 1.5, .55, .9, U.manchas[i]); g.restore(); }
+    const alta = U.botaAlta ? 4.6 : U.polaina ? 0 : 2.2;
+    if (alta) miembro(g, [x - .05, Pp.y - .8 - alta], [x, Pp.y - .8 - alta / 2], [x, Pp.y - .7], 2.05, U.bota);
+    if (U.polaina) miembro(g, [x - .05, Pp.y - 4], [x, Pp.y - 2.6], [x, Pp.y - 1.2], 2, U.polaina);
+    elipse(g, x + .55 * dir, Pp.y - .4, 1.35, .72, U.bota);
+  }
+  // Morral a la espalda (se ve detrás si va de frente).
+  if (U.morral && frente) forma(g, [[-3.4, -20], [-1.6, -20.4], [-1.4, -14.4], [-3.6, -14.2]], shade(U.morral, -.15), false);
+  // Torso.
+  const torso = [[-2.7, -20.7], [0, -21.3], [2.7, -20.7], [2.6, -15.5], [2.4, -11], [0, -10.6], [-2.4, -11], [-2.6, -15.5]];
+  if (U.ruana) {
+    forma(g, torso, U.tela);
+    forma(g, [[-3, -21.1], [0, -21.7], [3, -21.1], [4.6, -15.6], [4.8, -13.8], [0, -12.2], [-4.8, -13.8], [-4.6, -15.6]], U.ruana);
+    g.save(); g.strokeStyle = shade(U.ruana, .25); g.lineWidth = .4; g.globalAlpha = .8; g.beginPath(); g.moveTo(-4.5, -14.4); g.quadraticCurveTo(0, -12.6, 4.5, -14.4); g.stroke(); g.restore();
+  } else {
+    forma(g, torso, U.tela);
+    if (U.manchas) { g.save(); g.beginPath(); g.moveTo(...torso[0]); torso.slice(1).forEach(p => g.lineTo(...p)); g.closePath(); g.clip(); camuflado(g, U.manchas, -2.8, -21.4, 2.8, -10.6, vi + 1); g.restore(); }
+  }
+  if (U.chaleco) { forma(g, [[-2.5, -20.2], [2.5, -20.2], [2.4, -13], [-2.4, -13]], U.chaleco, false); if (frente) { g.fillStyle = shade(U.chaleco, -.2); g.fillRect(-2, -16.6, 1.6, 1.6); g.fillRect(.4, -16.6, 1.6, 1.6); g.fillRect(-2, -14.6, 1.6, 1.2); g.fillRect(.4, -14.6, 1.6, 1.2); } }
+  if (U.chalecoLuz) { forma(g, [[-2.5, -20.2], [2.5, -20.2], [2.4, -13.4], [-2.4, -13.4]], U.chalecoLuz, false); g.fillStyle = '#C8CCD0'; g.fillRect(-2.45, -16.2, 4.9, .55); if (frente) { g.fillStyle = '#2A3A2C'; g.fillRect(-1.4, -19, 2.8, .7); } }
+  // Cinturón y correaje.
+  g.fillStyle = U.ruana ? '#5A3A24' : '#2A2420'; g.fillRect(-2.45, -11.9, 4.9, .8);
+  if (frente && !U.ruana) { g.fillStyle = '#B8A060'; g.fillRect(-.45, -11.85, .9, .7); }
+  if (U.correaje) { g.strokeStyle = U.correaje; g.lineWidth = .55; g.beginPath(); g.moveTo(-2.4, -20.4); g.lineTo(2.2, -12); g.stroke(); g.fillStyle = U.correaje; g.fillRect(-2.45, -11.9, 4.9, .7); }
+  if (U.cartuchera) { g.strokeStyle = '#7A5A34'; g.lineWidth = .7; g.beginPath(); g.moveTo(2.6, -20.6); g.lineTo(-2.2, -12.4); g.stroke(); g.fillStyle = '#C9A24A'; for (let k = 1; k < 5; k++) { g.beginPath(); g.arc(2.6 - k * .95, -20.6 + k * 1.65, .22, 0, 7); g.fill(); } }
+  if (U.arma === 'cinto' && frente) { forma(g, [[1.9, -12], [3, -12], [3, -9.6], [1.9, -9.8]], '#1E1C1A', false); } // pistola al cinto
+  // Brazos y arma.
+  const manga = U.ruana ? U.ruana : U.tela;
+  const brazo = (s, lado) => { const a = [lado * 2.7, -19.9], h = [lado * 3.1 + s * .8, -12.8 + Math.abs(s) * .3], m = [lado * 3.3 + s * .3, -16.4]; miembro(g, a, m, h, 1.45, manga); elipse(g, h[0], h[1] + .45, .75, .8, piel); };
+  const moderno = mod;
+  if (!frente) {
+    // De espaldas: el arma terciada a la espalda y los brazos que se balancean.
+    if (U.morral) forma(g, [[-2.4, -20], [2.4, -20], [2.6, -14], [-2.6, -14]], U.morral, false);
+    if (U.arma !== 'cinto') fusil(g, [2.6, -12.4], [-3.2, -24.6], moderno);
+    brazo(-sw, -1); brazo(sw, 1);
+  } else if (U.arma === 'pecho' || U.arma === 'bajo') {
+    // En guardia: el fusil cruzado sobre el pecho (soldado) o bajo, listo (hombre armado), con las dos manos.
+    const bajo = U.arma === 'bajo', mi = bajo ? [-2.6, -14.4] : [-2.4, -17.6], md = bajo ? [2.8, -12.2] : [2.8, -13.4];
+    miembro(g, [-2.7, -19.9], [-3.4, -16.6], mi, 1.45, manga);
+    fusil(g, bajo ? [3.8, -11.2] : [3.6, -11.6], bajo ? [-5.4, -16.4] : [-3.6, -22.6], moderno);
+    miembro(g, [2.7, -19.9], [3.6, -16], md, 1.45, manga);
+    elipse(g, mi[0], mi[1] + .3, .75, .8, piel); elipse(g, md[0], md[1] + .3, .75, .8, piel);
+  } else {
+    // Al hombro o en bandolera: una mano sostiene la correa, la otra se balancea.
+    if (U.arma === 'hombro') fusil(g, [3.4, -12.4], [2.6, -27.4], moderno);
+    if (U.arma === 'bandolera') fusil(g, [-3, -11.6], [3.6, -24.8], moderno);
+    brazo(-sw, -1);
+    if (U.arma === 'hombro') { miembro(g, [2.7, -19.9], [3.6, -17], [3.2, -15.2], 1.45, manga); elipse(g, 3.2, -14.8, .75, .8, piel); } else brazo(sw, 1);
+  }
+  // Cuello, pañuelo y cabeza.
+  elipse(g, 0, -21.4, .65, .9, shade(piel, -.1));
+  if (U.panuelo) forma(g, [[-1.6, -21.6], [1.6, -21.6], [1.2, -20.2], [0, -19.4], [-1.2, -20.2]], U.panuelo);
+  g.fillStyle = piel; g.beginPath(); g.ellipse(0, -23.6, 1.9, 2.2, 0, 0, 7); g.fill();
+  g.save(); g.clip(); g.fillStyle = shade(piel, -.16); g.fillRect(.7, -26, 2, 5); g.restore();
+  if (frente) { g.fillStyle = '#2A1E18'; g.beginPath(); g.arc(.15, -23.5, .26, 0, 7); g.arc(1.25, -23.5, .24, 0, 7); g.fill(); }
+  else { g.fillStyle = '#231C17'; g.beginPath(); g.ellipse(0, -23.8, 1.95, 2.1, 0, 0, 7); g.fill(); }
+  // Tocado.
+  const T = U.tocCol;
+  if (U.tocado === 'casco') { forma(g, [[-2.4, -24.2], [-2.1, -26.2], [0, -27], [2.1, -26.2], [2.4, -24.2], [0, -24.6]], T); g.fillStyle = shade(T, -.2); g.fillRect(-2.4, -24.6, 4.8, .5); }
+  if (U.tocado === 'quepis') { forma(g, [[-2, -24.9], [-1.9, -27.4], [1.9, -27.4], [2, -24.9]], T, false); g.fillStyle = '#1E1C1A'; g.fillRect(frente ? -.4 : -3, -25.2, 3.4, .55); if (tipo === 'policia') { g.fillStyle = '#C9A24A'; g.fillRect(-.4, -26.6, .8, .8); } }
+  if (U.tocado === 'gorra') { forma(g, [[-2.1, -24.9], [-1.8, -26.6], [0, -26.9], [1.8, -26.6], [2.1, -24.9]], T); if (frente) { g.fillStyle = shade(T, -.25); g.fillRect(-.2, -25.2, 3.4, .6); } }
+  if (U.tocado === 'sombrero') { forma(g, [[-4, -25.5], [0, -26.4], [4, -25.5], [0, -24.6]], T); forma(g, [[-1.9, -25.6], [-1.7, -28], [0, -28.4], [1.7, -28], [1.9, -25.6]], T); g.fillStyle = '#5A1E1A'; g.fillRect(-1.85, -26.4, 3.7, .6); }
+  g.restore();
+}
+
 // Hoja con todas las figuras, con las mismas claves que la anterior: `${tipo}${M?}_${variante}_${frente}_${paso}`.
+// Solo se hornea la ropa de la época actual (mod), a más resolución (pedido de Juan: más nitidez); cada cuadro queda
+// también con el nombre de la otra ropa, así nadie se queda sin dibujo. Al cambiar de época se vuelve a pintar.
 let HOJA = null;
-export function hornearGente() {
-  if (HOJA) return HOJA;
-  const E = ES_CELULAR ? 2 : Math.min(RES_HOJA, 3), w = 18, h = 34, W = w * E, H = h * E, marcos = {}, claves = [];
-  for (const mod of ['', 'M']) for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 12; f++) claves.push([`${tipo}${mod}_${vi}_${fr}_${f}`, tipo, vi, fr, f, !!mod]);
-  // Hoja de 2048 de ancho y hasta 2048 de alto (lados potencia de dos): la luz va en el hueco de la última fila.
-  const cols = Math.floor(2048 / W), filas = Math.ceil((claves.length + 1) / cols), cv = lienzo(cols * W, filas * H), g = cv.getContext('2d');
-  claves.forEach(([k, tipo, vi, fr, f, mod], n) => {
-    const x = (n % cols) * W, y = Math.floor(n / cols) * H;
-    marcos[k] = { x, y, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E };
-    g.save(); g.translate(x + w / 2 * E, y + (h - 3) * E); g.scale(E, E); figura(g, tipo, vi, !!fr, f, mod); g.restore();
-  });
-  const n = claves.length, x0 = (n % cols) * W, y = Math.floor(n / cols) * H, gr = g.createRadialGradient(x0 + 24, y + 24, 0, x0 + 24, y + 24, 24);
+const pot2 = n => 2 ** Math.ceil(Math.log2(Math.max(1, n)));
+export function hornearGente(mod) {
+  if (mod === undefined) mod = HOJA ? HOJA.mod : false;
+  mod = !!mod;
+  if (HOJA && HOJA.mod === mod) return HOJA;
+  const E = ES_CELULAR ? 3.2 : 4, w = 18, h = 34, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = [];
+  for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 12; f++) claves.push([`${tipo}_${vi}_${fr}_${f}`, tipo, vi, fr, f]);
+  const cols = Math.floor(2048 / W), filas = Math.ceil((claves.length + 1) / cols);
+  if (!HOJA) {
+    // Lados potencia de dos (sin temblor al moverse); en celular, solo el ancho justo.
+    const alto = ES_CELULAR ? filas * H : pot2(filas * H), cv = lienzo(2048, alto), marcos = {};
+    claves.forEach(([k], n) => { const m = { x: (n % cols) * W, y: Math.floor(n / cols) * H, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E }; marcos[k] = m; const [t, ...resto] = k.split('_'); marcos[`${t}M_${resto.join('_')}`] = m; });
+    const n = claves.length, x0 = (n % cols) * W, y = Math.floor(n / cols) * H;
+    marcos.luz = { x: x0, y, w: 48, h: 48, ax: 24, ay: 24 };
+    HOJA = { canvas: cv, marcos, escala: E, mod: null };
+  }
+  const g = HOJA.canvas.getContext('2d'); g.clearRect(0, 0, HOJA.canvas.width, HOJA.canvas.height);
+  for (const [k, tipo, vi, fr, f] of claves) { const m = HOJA.marcos[k]; g.save(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(E, E); figura(g, tipo, vi, !!fr, f, mod); g.restore(); }
+  const L = HOJA.marcos.luz, gr = g.createRadialGradient(L.x + 24, L.y + 24, 0, L.x + 24, L.y + 24, 24);
   gr.addColorStop(0, 'rgba(255,226,150,1)'); gr.addColorStop(.25, 'rgba(255,216,138,.8)'); gr.addColorStop(1, 'rgba(255,216,138,0)');
-  g.fillStyle = gr; g.fillRect(x0, y, 48, 48);
-  marcos.luz = { x: x0, y, w: 48, h: 48, ax: 24, ay: 24 };
-  return (HOJA = { canvas: cv, marcos, escala: E });
+  g.fillStyle = gr; g.fillRect(L.x, L.y, 48, 48);
+  HOJA.mod = mod; return HOJA;
 }
 
 // ---------- Acciones de oficio (pedido de Juan, 9 de octubre: más animación y detalle en cada habitante) ----------
@@ -180,7 +300,7 @@ function poseAccion(k, n, N) {
     case 'balde': return { lean: .04 + n * .02, L: [-3.2, -12.6], R: [3.6, -11.6 + n * .4], prop: { k: 'balde' } };
     case 'esperar': return { lean: n * .02, L: [-2.8, -15.6], R: [3, -12.8], prop: { k: 'canastoVacio' } };
     case 'tocar': return { lean: .02, L: [-3.4 + u * .3, -17.6], R: [1.6 + s * .9, -14.6 + c * .5], prop: { k: 'tiple' } }; // serenata con tiple
-    case 'foto': return { lean: .03, L: [-2.4, -18.6], R: [2.4, -18.4], prop: { k: 'foto' } }; // madre que muestra la foto de su desaparecido
+    case 'foto': return { lean: .03, L: [-2.6, -15.6], R: [2.6, -15.4], prop: { k: 'foto' } }; // madre que muestra la foto de su desaparecido
     case 'lustrar': return { lean: .18, lift: -6, sienta: true, L: [2.4 + s * 1.4, -11.6], R: [4 + c * 1.2, -11], prop: { k: 'cajon' } };
   }
   return { lean: 0, L: [-3, -12.8], R: [3, -12.8], prop: null };
@@ -201,8 +321,9 @@ const PROPS = {
   banca(g) { forma(g, [[-5.2, -6.6], [4.6, -6.6], [4.6, -4.8], [-5.2, -4.8]], '#9C8E78', false); forma(g, [[-4.6, -4.8], [-3.6, -4.8], [-3.6, -.6], [-4.6, -.6]], '#7E7262', false); forma(g, [[3, -4.8], [4, -4.8], [4, -.6], [3, -.6]], '#7E7262', false); },
   balde(g, pz) { const R = pz.R; linea(g, [R[0] - 1.6, R[1] + .6], [R[0] + 1.6, R[1] + .6], .4, '#5A4A3A'); forma(g, [[R[0] - 1.9, R[1] + 1], [R[0] + 1.9, R[1] + 1], [R[0] + 1.5, R[1] + 4.6], [R[0] - 1.5, R[1] + 4.6]], '#8A6A48', false); elipse(g, R[0], R[1] + 1.1, 1.9, .5, '#6E9FB4'); },
   canastoVacio(g, pz) { const L = pz.L; elipse(g, L[0] - 1.2, L[1] + 1.6, 2.6, 1.1, '#5E4628'); g.fillStyle = '#B58A4E'; g.beginPath(); g.moveTo(L[0] - 3.8, L[1] + 1.6); g.lineTo(L[0] - 2.9, L[1] + 4.6); g.lineTo(L[0] + .5, L[1] + 4.6); g.lineTo(L[0] + 1.4, L[1] + 1.6); g.fill(); },
+  banquito(g) { forma(g, [[-3.2, -6.4], [1.2, -6.4], [1.2, -5], [-3.2, -5]], '#8A6A48', false); forma(g, [[-2.8, -5], [-2, -5], [-2, 0], [-2.8, 0]], '#6B4A2B', false); forma(g, [[.2, -5], [1, -5], [1, 0], [.2, 0]], '#5B3E24', false); },
   cajon(g) { forma(g, [[1.6, -5.4], [6.4, -5.4], [6.4, -2.2], [1.6, -2.2]], '#7A5634', false); forma(g, [[3.4, -7.4], [4.6, -7.4], [4.6, -5.4], [3.4, -5.4]], '#5B4330', false); elipse(g, 7.6, -.9, 1.5, .7, '#2A2420'); },
-  foto(g, pz) { const m = [(pz.L[0] + pz.R[0]) / 2, (pz.L[1] + pz.R[1]) / 2 - 3.4]; forma(g, [[m[0] - 3, m[1] - 3.6], [m[0] + 3, m[1] - 3.6], [m[0] + 3, m[1] + 3.2], [m[0] - 3, m[1] + 3.2]], '#F2EDE0', false); forma(g, [[m[0] - 2.2, m[1] - 2.8], [m[0] + 2.2, m[1] - 2.8], [m[0] + 2.2, m[1] + 2.4], [m[0] - 2.2, m[1] + 2.4]], '#B9AE98', false); elipse(g, m[0], m[1] - .9, 1.1, 1.3, '#5E5446'); elipse(g, m[0], m[1] + 2, 1.9, 1.1, '#5E5446'); },
+  foto(g, pz) { const m = [(pz.L[0] + pz.R[0]) / 2, (pz.L[1] + pz.R[1]) / 2 - 1.2]; forma(g, [[m[0] - 2.6, m[1] - 2.8], [m[0] + 2.6, m[1] - 2.8], [m[0] + 2.6, m[1] + 2.8], [m[0] - 2.6, m[1] + 2.8]], '#F2EDE0', false); forma(g, [[m[0] - 1.9, m[1] - 2.1], [m[0] + 1.9, m[1] - 2.1], [m[0] + 1.9, m[1] + 2.1], [m[0] - 1.9, m[1] + 2.1]], '#BDB29C', false); elipse(g, m[0], m[1] - .5, .9, 1.05, '#5E5446'); elipse(g, m[0], m[1] + 1.7, 1.6, .8, '#5E5446'); }, // la foto a la altura del pecho, sin tapar la cara
   saco(g) { g.save(); g.translate(.6, -27.4); g.rotate(-.35); g.fillStyle = '#C9B48A'; g.beginPath(); g.ellipse(0, 0, 4.6, 2.9, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(80,55,30,.25)'; g.beginPath(); g.ellipse(1.6, .6, 3, 1.8, 0, 0, 7); g.fill(); g.strokeStyle = '#8A6A3A'; g.lineWidth = .4; g.beginPath(); g.moveTo(-4, -.2); g.lineTo(-5.4, -.6); g.stroke(); g.restore(); }
 };
 function brazosAccion(g, pz, manga, piel) {
@@ -217,7 +338,7 @@ function brazosAccion(g, pz, manga, piel) {
 // Hoja de acciones: se hornea con la ropa de la época (mod) y se vuelve a pintar sobre el mismo lienzo si cambia.
 let HOJA_A = null;
 export function hornearAcciones(mod) {
-  const E = ES_CELULAR ? 2 : 3, w = 22, h = 34, W = w * E, H = h * E, claves = []; // en celular, a menor resolución (cuida la memoria)
+  const E = ES_CELULAR ? 2.8 : 4, w = 22, h = 34, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = []; // en celular, algo menos (cuida la memoria: la hoja no pasa de 2048 de alto)
   for (const tipo in ACCIONES) for (let vi = 0; vi < 3; vi++) for (const [acc, N] of Object.entries(ACCIONES[tipo])) for (let n = 0; n < N; n++) claves.push([`${tipo}_${vi}_${acc}_${n}`, tipo, vi, acc, n, N]);
   if (!HOJA_A) {
     const cols = Math.floor(2048 / W), filas = Math.ceil(claves.length / cols), marcos = {};

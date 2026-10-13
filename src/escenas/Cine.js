@@ -8,6 +8,7 @@ import { lienzo } from '../arte/acuarela.js';
 import { FR } from '../arte/fresco.js';
 import { capaUI, el, tam, reducirMovimiento } from './pantalla.js';
 
+const RC = 4; // resolución de las texturas del cine
 const TIPOS = ['campesino', 'campesina', 'artesano', 'elite', 'nino'];
 const suave = t => t * t * (3 - 2 * t);
 
@@ -20,19 +21,33 @@ export class Cine {
   }
   // Pancarta, papel y vela, pintadas una vez.
   texturas() {
-    const tx = this.scene.textures;
-    if (!tx.exists('cinePancarta')) {
-      const c = lienzo(48, 64), g = c.getContext('2d');
-      g.strokeStyle = FR.siena; g.lineWidth = 3; g.beginPath(); g.moveTo(8, 6); g.lineTo(8, 62); g.moveTo(40, 6); g.lineTo(40, 62); g.stroke();
-      g.fillStyle = FR.cal; g.fillRect(4, 6, 40, 24); g.fillStyle = FR.rojo; g.fillRect(4, 6, 40, 7); g.fillRect(4, 24, 40, 6);
-      g.fillStyle = FR.siena; for (let k = 0; k < 4; k++) g.fillRect(9 + k * 8, 16, 5, 3);
-      tx.addCanvas('cinePancarta', c);
-    }
-    if (!tx.exists('cinePapel')) { const c = lienzo(10, 12), g = c.getContext('2d'); g.fillStyle = FR.cal; g.fillRect(0, 0, 10, 12); g.fillStyle = '#9A8E7E'; for (let k = 0; k < 4; k++) g.fillRect(2, 2 + k * 2.5, 6, 1); tx.addCanvas('cinePapel', c); }
-    if (!tx.exists('cineBandera')) { const c = lienzo(40, 64), g = c.getContext('2d'); g.strokeStyle = FR.siena; g.lineWidth = 3; g.beginPath(); g.moveTo(6, 4); g.lineTo(6, 62); g.stroke(); g.fillStyle = FR.cal; g.beginPath(); g.moveTo(7, 6); g.quadraticCurveTo(22, 2, 36, 8); g.lineTo(36, 26); g.quadraticCurveTo(22, 20, 7, 26); g.fill(); tx.addCanvas('cineBandera', c); }
-    if (!tx.exists('cineFusil')) { const c = lienzo(8, 44), g = c.getContext('2d'); g.strokeStyle = '#3A2E26'; g.lineWidth = 3; g.beginPath(); g.moveTo(4, 2); g.lineTo(4, 42); g.stroke(); g.fillStyle = '#C9C2B4'; g.fillRect(2.5, 0, 3, 6); tx.addCanvas('cineFusil', c); }
-    if (!tx.exists('cineAtaud')) { const c = lienzo(44, 16), g = c.getContext('2d'); g.fillStyle = '#4A3222'; g.beginPath(); g.moveTo(2, 8); g.lineTo(10, 2); g.lineTo(42, 4); g.lineTo(42, 12); g.lineTo(10, 14); g.closePath(); g.fill(); g.fillStyle = '#6B4A30'; g.beginPath(); g.moveTo(4, 7); g.lineTo(10, 3.5); g.lineTo(40, 5); g.lineTo(40, 7.5); g.closePath(); g.fill(); g.fillStyle = '#E8DFC8'; g.fillRect(20, 4.6, 1.6, 6); g.fillRect(17.6, 6.6, 6.4, 1.6); tx.addCanvas('cineAtaud', c); }
-    if (!tx.exists('cineVela')) { const c = lienzo(16, 16), g = c.getContext('2d'), gr = g.createRadialGradient(8, 8, 0, 8, 8, 8); gr.addColorStop(0, 'rgba(255,226,140,1)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, 16, 16); tx.addCanvas('cineVela', c); }
+    const tx = this.scene.textures, R = RC;
+    // Se pintan a 4 veces su tamaño (nitidez al acercar la cámara) y se muestran a escala / RC.
+    const hi = (k, w, h, fn) => { if (tx.exists(k)) return; const c = lienzo(w * R, h * R), g = c.getContext('2d'); g.scale(R, R); g.lineCap = 'round'; g.lineJoin = 'round'; fn(g); tx.addCanvas(k, c); };
+    hi('cinePancarta', 48, 64, g => {
+      g.strokeStyle = '#6B4A2B'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(9, 7); g.lineTo(8, 62); g.moveTo(39, 7); g.lineTo(40, 62); g.stroke();
+      g.fillStyle = '#F2EBDA'; g.beginPath(); g.moveTo(4, 7); g.quadraticCurveTo(24, 4, 44, 7); g.lineTo(44, 31); g.quadraticCurveTo(24, 34, 4, 31); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(120,100,80,.18)'; g.fillRect(30, 7, 14, 24); // sombra de la tela
+      g.fillStyle = FR.rojo; g.fillRect(4, 7, 40, 5); g.fillRect(4, 26.5, 40, 4.5);
+      g.fillStyle = '#3A2A20'; for (let k = 0; k < 5; k++) { g.fillRect(8 + k * 6.6, 15, 4.4, 1.6); g.fillRect(8 + k * 6.6, 19.5, k % 2 ? 3 : 4.4, 1.6); } // letras pintadas a mano
+    });
+    hi('cinePapel', 10, 12, g => { g.fillStyle = '#F4EEE0'; g.fillRect(.5, .5, 9, 11); g.fillStyle = '#8A7E6E'; for (let k = 0; k < 4; k++) g.fillRect(2, 2.5 + k * 2.3, k === 3 ? 4 : 6, .7); });
+    hi('cineBandera', 40, 64, g => {
+      g.strokeStyle = '#5A3A22'; g.lineWidth = 2.2; g.beginPath(); g.moveTo(6, 4); g.lineTo(6, 62); g.stroke(); g.fillStyle = '#C9A24A'; g.beginPath(); g.arc(6, 3.5, 1.8, 0, 7); g.fill();
+      g.fillStyle = '#F6F2E8'; g.beginPath(); g.moveTo(7, 6); g.quadraticCurveTo(15, 2, 22, 7); g.quadraticCurveTo(29, 11, 37, 7); g.lineTo(37, 27); g.quadraticCurveTo(29, 31, 22, 27); g.quadraticCurveTo(15, 22, 7, 26); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(90,80,70,.16)'; g.beginPath(); g.moveTo(22, 7); g.quadraticCurveTo(29, 11, 37, 7); g.lineTo(37, 27); g.quadraticCurveTo(29, 31, 22, 27); g.closePath(); g.fill();
+    });
+    hi('cineFusil', 8, 44, g => { g.fillStyle = '#6B4426'; g.beginPath(); g.moveTo(2, 44); g.lineTo(6, 44); g.lineTo(5, 30); g.lineTo(3, 30); g.fill(); g.strokeStyle = '#3A3C40'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(4, 31); g.lineTo(4, 2); g.stroke(); g.fillStyle = '#8A8E94'; g.fillRect(2.8, 22, 2.4, 3); });
+    hi('cineVela', 16, 16, g => { const gr = g.createRadialGradient(8, 8, 0, 8, 8, 8); gr.addColorStop(0, 'rgba(255,240,190,1)'); gr.addColorStop(.3, 'rgba(255,214,120,.9)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, 16, 16); });
+    // Ataúd de madera en hombros: tapa con molduras, cruz clara y manijas; en perspectiva isométrica.
+    hi('cineAtaud', 46, 20, g => {
+      g.fillStyle = 'rgba(40,30,20,.25)'; g.beginPath(); g.ellipse(23, 17, 20, 2.6, 0, 0, 7); g.fill();
+      g.fillStyle = '#3E2A1C'; g.beginPath(); g.moveTo(3, 9); g.lineTo(11, 4); g.lineTo(43, 6); g.lineTo(43, 12); g.lineTo(11, 15); g.lineTo(3, 13); g.closePath(); g.fill(); // costados
+      g.fillStyle = '#6B4A30'; g.beginPath(); g.moveTo(3, 9); g.lineTo(11, 4); g.lineTo(43, 6); g.lineTo(42, 8.6); g.lineTo(11, 7.4); g.lineTo(4, 10.6); g.closePath(); g.fill(); // tapa
+      g.strokeStyle = '#8A6644'; g.lineWidth = .6; g.beginPath(); g.moveTo(12, 5.6); g.lineTo(41, 7.3); g.stroke();
+      g.fillStyle = '#EDE4CC'; g.beginPath(); g.moveTo(24, 5.1); g.lineTo(25.6, 5.2); g.lineTo(25.5, 7.9); g.lineTo(23.9, 7.8); g.fill(); g.beginPath(); g.moveTo(21.4, 6); g.lineTo(28.4, 6.4); g.lineTo(28.3, 7.1); g.lineTo(21.3, 6.7); g.fill();
+      g.fillStyle = '#C9A24A'; for (const x of [16, 26, 36]) g.fillRect(x, 11.2 - (x - 16) * .03, 2.4, 1.1); // manijas
+    });
   }
 
   // ---------- Lugares ----------
@@ -84,9 +99,9 @@ export class Cine {
       for (let k = 0; k < n; k++) {
         const tipoP = tipo === 'procesion' && k === 0 ? 'elite' : tipo === 'desplazados' && k % 4 === 3 ? 'nino' : TIPOS[(k * 3 + 1) % 4];
         const a = this.caminante(tipoP, k % 3, o, ruta, vel, k * (tipo === 'procesion' ? .55 : .4));
-        if ((tipo === 'marcha' || tipo === 'marchaLider') && k % 3 === 1) a.extra = sc.add.image(0, 0, 'cinePancarta').setScale(.3).setOrigin(.5, 1);
-        if (tipo === 'procesion' && k === 1 && this.datos.ataud) { a.extra = sc.add.image(0, 0, 'cineAtaud').setScale(.5).setOrigin(.5, .5); a.ataud = true; } // el ataúd en hombros
-        else if (tipo === 'procesion' && k > 0) a.extra = sc.add.image(0, 0, 'cineVela').setScale(.55).setBlendMode('ADD');
+        if ((tipo === 'marcha' || tipo === 'marchaLider') && k % 3 === 1) a.extra = sc.add.image(0, 0, 'cinePancarta').setScale(.3 / RC).setOrigin(.5, 1);
+        if (tipo === 'procesion' && k === 1 && this.datos.ataud) { a.extra = sc.add.image(0, 0, 'cineAtaud').setScale(.5 / RC).setOrigin(.5, .5); a.ataud = true; } // el ataúd en hombros
+        else if (tipo === 'procesion' && k > 0) a.extra = sc.add.image(0, 0, 'cineVela').setScale(.55 / RC).setBlendMode('ADD');
       }
       const q = this.punto((o.r + p.r) / 2, (o.c + p.c) / 2);
       return [q[0], q[1] - 10];
@@ -107,9 +122,8 @@ export class Cine {
       for (let k = 0; k < 18; k++) {
         const fila = Math.floor(k / 3), col = k % 3 - 1, at = -fila * .32, lat = col * .3;
         const de = dentro({ r: ini.r + ur * at + pr * lat, c: ini.c + uc * at + pc * lat }), w = lat * 2.2 + (fila % 2 ? .18 : 0), a = { r: hacia.r + ur * at * .35 + pr * w, c: hacia.c + uc * at * .35 + pc * w };
-        const s0 = this.caminante('artesano', k % 3, de, [a], .62, .1 + fila * .05);
-        s0.img.setTint(0x6E7550);
-        s0.extra = k === 1 ? sc.add.image(0, 0, 'cineBandera').setScale(.42).setOrigin(.15, 1).setTint(0xB03A2E) : sc.add.image(0, 0, 'cineFusil').setScale(.32).setOrigin(.5, .9).setAngle(-14);
+        const s0 = this.caminante('soldado', k % 3, de, [a], .62, .1 + fila * .05);
+        if (k === 1) s0.extra = sc.add.image(0, 0, 'cineBandera').setScale(.42 / RC).setOrigin(.15, 1).setTint(0xB03A2E);
       }
       this.seguirTropa = true;
       this.objetos.push(...[0, 1, 2].map(k => {
@@ -130,7 +144,7 @@ export class Cine {
         const j = k % 6, a = { r: d.r + (j - 2.5) * .25 + (k > 5 ? .5 : -.5), c: d.c + (j - 2.5) * .22 + (k > 5 ? -.3 : .4) };
         const x = this.caminante(k % 5 === 4 ? 'nino' : TIPOS[(k + 1) % 4], k % 3, p, [a], .5 + (k % 3) * .06, k * .12);
         x.mira = d;
-        if (k % 4 === 0) x.extra = sc.add.image(0, 0, 'cineBandera').setScale(.3).setOrigin(.15, 1);
+        if (k % 4 === 0) x.extra = sc.add.image(0, 0, 'cineBandera').setScale(.3 / RC).setOrigin(.15, 1);
       }
       return [qs[0], qs[1] - 10];
     }
@@ -140,7 +154,7 @@ export class Cine {
         const lado = k < 5 ? -1 : 1, j = k % 5, de = { r: p.r + lado * 1.8 + (j - 2) * .12, c: p.c - lado * .4 + (j - 2) * .25 }, a = { r: p.r + lado * .35 + (j - 2) * .06, c: p.c + (j - 2) * .22 };
         const x = this.caminante(j === 2 ? 'elite' : TIPOS[(k + 1) % 4], k % 3, de, [a], .5, j * .15);
         x.mira = p;
-        if (j === 0) x.extra = sc.add.image(0, 0, 'cineBandera').setScale(.3).setOrigin(.15, 1);
+        if (j === 0) x.extra = sc.add.image(0, 0, 'cineBandera').setScale(.3 / RC).setOrigin(.15, 1);
       }
       return [pz[0], pz[1] - 10];
     }
@@ -150,7 +164,7 @@ export class Cine {
         this.caminante(TIPOS[k % 5], k % 3, de, [a], .6, k * .12).mira = p;
       }
       this.caminante('artesano', 1, p, [], 0, 0);
-      this.papeles = sc.add.particles(pz[0], pz[1] - 14, 'cinePapel', { lifespan: 1600, speedY: { min: -40, max: -18 }, speedX: { min: -22, max: 22 }, gravityY: 30, rotate: { min: 0, max: 360 }, scale: { start: .5, end: .3 }, alpha: { start: 1, end: 0 }, frequency: 140 }).setDepth(p.r + p.c + 2);
+      this.papeles = sc.add.particles(pz[0], pz[1] - 14, 'cinePapel', { lifespan: 1600, speedY: { min: -40, max: -18 }, speedX: { min: -22, max: 22 }, gravityY: 30, rotate: { min: 0, max: 360 }, scale: { start: .5 / RC, end: .3 / RC }, alpha: { start: 1, end: 0 }, frequency: 140 }).setDepth(p.r + p.c + 2);
       this.objetos.push(this.papeles);
       return [pz[0], pz[1] - 10];
     }
@@ -159,6 +173,8 @@ export class Cine {
         const an = k / 10 * Math.PI * 2 + .3, de = { r: p.r + Math.cos(an) * .4, c: p.c + Math.sin(an) * .4 }, a = { r: p.r + Math.cos(an) * 3.2, c: p.c + Math.sin(an) * 3.2 };
         this.caminante(TIPOS[k % 5], k % 3, de, [a], 1.05, .3 + (k % 4) * .15);
       }
+      // Los hombres armados entran desde las afueras, en guardia, hacia el centro.
+      for (let k = 0; k < 4; k++) { const an = k * 1.7 + .9, de = { r: p.r + Math.cos(an) * 2.8, c: p.c + Math.sin(an) * 2.8 }, a = { r: p.r + Math.cos(an) * .9, c: p.c + Math.sin(an) * .9 }; this.caminante('armado', k % 3, de, [a], .5, .8 + k * .35).mira = p; }
       for (let k = 0; k < 3; k++) {
         const q = this.punto(p.r + [-.8, .6, .9][k], p.c + [.7, -.9, .8][k]);
         this.objetos.push(sc.add.particles(q[0], q[1], 'edificios', { frame: 'humo', lifespan: 2600, speedY: { min: -26, max: -14 }, speedX: { min: -4, max: 6 }, scale: { start: .3, end: 1.1 }, alpha: { start: .7, end: 0 }, tint: 0x3A322C, frequency: 120 }).setDepth(40000 - 2));

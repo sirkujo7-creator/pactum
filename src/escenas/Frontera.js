@@ -75,8 +75,8 @@ export class Frontera {
           if (!quieto) this.objetos.push(sc.add.particles(f[0], f[1] - 3, 'edificios', { frame: 'humo', lifespan: 1800, speedY: { min: -10, max: -5 }, scale: { start: .08, end: .3 }, alpha: { start: .4, end: 0 }, frequency: 420 }).setDepth(r + c + .7));
           const H = sc.pob.H;
           for (let s = 0; s < 3; s++) {
-            const g = this.punto(r + .3 - s * .14, c + .35 + s * .08), key = `artesano_${s % 3}_${s % 2}_0`, m = H.marcos[key];
-            this.objetos.push(sc.add.image(g[0], g[1], 'personas', key).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala).setTint(0x8C8F6A).setDepth(r + c + .8 + s * .01));
+            const g = this.punto(r + .3 - s * .14, c + .35 + s * .08), key = `soldado_${s % 3}_${s % 2}_0`, m = H.marcos[key];
+            this.objetos.push(sc.add.image(g[0], g[1], 'personas', key).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala).setDepth(r + c + .8 + s * .01));
           }
         }
       });

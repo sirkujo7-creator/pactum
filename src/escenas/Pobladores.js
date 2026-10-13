@@ -19,7 +19,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 export class Pobladores {
   constructor(scene) {
     this.scene = scene;
-    this.H = hornearGente(); // fase 8: pobladores al fresco
+    this.H = hornearGente(ropaModerna(scene.S)); // fase 8: pobladores al fresco (solo la ropa de la época)
     if (!scene.textures.exists('personas')) {
       const tx = scene.textures.addCanvas('personas', enPotencia(this.H.canvas)); // lados potencia de dos: sin temblor al moverse
       for (const [k, m] of Object.entries(this.H.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
@@ -67,6 +67,7 @@ export class Pobladores {
   planear() {
     const { S, T } = this.scene, plan = planearPobladores(S);
     this.ropa = ropaModerna(S) ? 'M' : ''; // fase 5: desde la época del ladrillo, ropa moderna
+    if (this.H.mod !== !!this.ropa) { hornearGente(!!this.ropa); if (this.scene.textures.exists('personas')) this.scene.textures.get('personas').refresh(); } // cambió la época: se repinta la ropa
     this.ponerAcciones();
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     this.rejilla();
@@ -350,7 +351,7 @@ export class Pobladores {
     f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);
     // Tanda 3: quien protesta lleva una pancarta (también mientras camina a la plaza).
     const conPancarta = f.destino === 'protesta' && !f.oculto && f.p.semilla < .45 && this.scene.textures.exists('cinePancarta');
-    if (conPancarta && !f.pancarta) f.pancarta = this.scene.add.image(0, 0, 'cinePancarta').setScale(.3).setOrigin(.5, 1);
+    if (conPancarta && !f.pancarta) f.pancarta = this.scene.add.image(0, 0, 'cinePancarta').setScale(.3 / 4).setOrigin(.5, 1);
     if (f.pancarta) { f.pancarta.setVisible(conPancarta); if (conPancarta) f.pancarta.setPosition(p[0] + (f.voltear ? -3 : 3), p[1] - 12).setDepth(f.r + f.c + .015); }
     // Fase 13: los miembros de las familias que escriben cartas llevan una marca roja sobre la cabeza.
     if (f.p.familia && !f.marca) f.marca = this.scene.add.circle(0, 0, 1.7, 0x9C2F25).setStrokeStyle(.6, 0xD4A24C);
