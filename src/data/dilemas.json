@@ -2224,6 +2224,17 @@
         "tipo": "procesion",
         "titulo": "La fundación de la parroquia",
         "texto": "El pueblo sale en procesión con velas hacia el sitio donde se alzará la iglesia."
+      },
+      "mision": {
+        "obra": "iglesia",
+        "n": 1,
+        "aviso": 6,
+        "texto": "El obispo pide una iglesia para fundar la parroquia: constrúyela antes del año {anio}.",
+        "fallo": "No hubo iglesia: el obispo fundó la parroquia en el pueblo vecino, y con ella se fueron los bautizos, el registro y parte del comercio.",
+        "castigo": {
+          "confianza": -2,
+          "animo": -1
+        }
       }
     }
   },
@@ -2336,6 +2347,16 @@
         "tipo": "marcha",
         "titulo": "La huelga de los arrieros",
         "texto": "Los arrieros llegan a la plaza con sus mulas y pancartas: piden que no los dejen sin camino."
+      },
+      "mision": {
+        "cafe": 2,
+        "aviso": 6,
+        "texto": "Los arrieros sacan el café hacia Honda: ten al menos 2 fincas de café antes del año {anio}.",
+        "fallo": "Sin cafetales propios, los arrieros pasaron de largo con el café de otros pueblos.",
+        "castigo": {
+          "oro": -8,
+          "campesinos": -1
+        }
       }
     }
   },
@@ -2394,7 +2415,16 @@
     "hito": {
       "anio": 26,
       "fecha": "1913 a 1922",
-      "nota": "El cable aéreo Manizales–Mariquita se construyó entre 1913 y 1922 y fue uno de los más largos del mundo: llevaba café y carga desde el occidente hasta el río Magdalena, pasando por el norte del Tolima."
+      "nota": "El cable aéreo Manizales–Mariquita se construyó entre 1913 y 1922 y fue uno de los más largos del mundo: llevaba café y carga desde el occidente hasta el río Magdalena, pasando por el norte del Tolima.",
+      "mision": {
+        "cafe": 2,
+        "aviso": 5,
+        "texto": "Hablan de un cable aéreo para bajar el café de la montaña: ten al menos 2 fincas de café antes del año {anio}.",
+        "fallo": "No había café que bajar: el cable aéreo se tendió para otros pueblos.",
+        "castigo": {
+          "oro": -8
+        }
+      }
     }
   },
   {
@@ -2618,7 +2648,8 @@
         "tipo": "marcha",
         "titulo": "El 9 de abril",
         "texto": "La noticia del asesinato de Gaitán llega por radio y la multitud sale a la plaza."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -2862,7 +2893,8 @@
         "tipo": "paz",
         "titulo": "El pacto entre partidos",
         "texto": "Delegados liberales y conservadores se encuentran en la plaza y se dan la mano."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -3139,6 +3171,16 @@
         "tipo": "escandalo",
         "titulo": "La televisión llega a la plaza",
         "texto": "Medio pueblo se agolpa alrededor de una sola pantalla."
+      },
+      "mision": {
+        "aviso": 8,
+        "texto": "La televisión llegará al país: sin energía no habrá con qué verla. Ten un molino o una represa antes del año {anio}.",
+        "fallo": "Sin electricidad, la televisión se vio en el pueblo vecino: la plaza se quedó vacía esa noche.",
+        "castigo": {
+          "animo": -1,
+          "confianza": -1
+        },
+        "energia": 1
       }
     }
   },
@@ -3198,7 +3240,8 @@
         "tipo": "paz",
         "titulo": "La nueva Constitución",
         "texto": "Representantes de todos los sectores se reúnen en la plaza a leer el nuevo texto."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -3339,7 +3382,8 @@
         "tipo": "paz",
         "titulo": "La reincorporación",
         "texto": "Excombatientes y vecinos se encuentran con banderas blancas en la plaza."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -3395,7 +3439,8 @@
         "tipo": "procesion",
         "titulo": "Las velas de la verdad",
         "texto": "El pueblo sale con velas a nombrar a quienes se llevó la guerra."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -3566,7 +3611,17 @@
     "hito": {
       "anio": 97,
       "fecha": "Ley 1930 de 2018",
-      "nota": "Los páramos producen buena parte del agua que beben las ciudades. La Ley 1930 de 2018 los declaró ecosistemas protegidos y limitó la minería y la agricultura intensiva en ellos."
+      "nota": "Los páramos producen buena parte del agua que beben las ciudades. La Ley 1930 de 2018 los declaró ecosistemas protegidos y limitó la minería y la agricultura intensiva en ellos.",
+      "mision": {
+        "obra": "acueducto",
+        "n": 1,
+        "aviso": 6,
+        "texto": "El agua del páramo será motivo de pleito: ten un acueducto antes del año {anio}.",
+        "fallo": "Sin acueducto, el pleito por el agua del páramo te tomó sin con qué responder.",
+        "castigo": {
+          "confianza": -2
+        }
+      }
     }
   },
   {
@@ -4512,7 +4567,8 @@
         "tipo": "marcha",
         "titulo": "El grito de independencia",
         "texto": "Llegan las noticias de Santafé y la plaza se llena de gente que discute."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -4573,7 +4629,8 @@
         "tipo": "paz",
         "titulo": "La libertad de los esclavos",
         "texto": "Las familias libertas se reúnen en la plaza para escuchar la lectura de la ley."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -4634,7 +4691,8 @@
         "tipo": "desplazados",
         "titulo": "La Guerra de los Mil Días",
         "texto": "Familias salen de las veredas cargando lo que pueden mientras la guerra se acerca."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -4691,7 +4749,16 @@
     "hito": {
       "anio": 24,
       "fecha": "Junio de 1927",
-      "nota": "La Federación Nacional de Cafeteros se fundó en 1927 para defender los intereses de los productores y organizar la comercialización del café. Con el tiempo creó el Fondo Nacional del Café, y el grano llegó a ser el principal producto de exportación del país."
+      "nota": "La Federación Nacional de Cafeteros se fundó en 1927 para defender los intereses de los productores y organizar la comercialización del café. Con el tiempo creó el Fondo Nacional del Café, y el grano llegó a ser el principal producto de exportación del país.",
+      "mision": {
+        "cafe": 3,
+        "aviso": 5,
+        "texto": "Los cafeteros se quieren organizar: ten al menos 3 fincas de café antes del año {anio}.",
+        "fallo": "Con tan poco café, la Federación ni contó con tu territorio.",
+        "castigo": {
+          "campesinos": -2
+        }
+      }
     }
   },
   {
@@ -4754,7 +4821,8 @@
         "tipo": "marcha",
         "titulo": "La huelga de las bananeras",
         "texto": "Obreros marchan a la plaza con pancartas, mientras la tropa vigila."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -4811,7 +4879,8 @@
     "hito": {
       "anio": 33,
       "fecha": "1936",
-      "nota": "La Ley 200 de 1936, durante el gobierno de Alfonso López Pumarejo, intentó ordenar la propiedad rural y reconoció derechos a quienes trabajaban la tierra. Su aplicación fue difícil y los conflictos por la tierra continuaron."
+      "nota": "La Ley 200 de 1936, durante el gobierno de Alfonso López Pumarejo, intentó ordenar la propiedad rural y reconoció derechos a quienes trabajaban la tierra. Su aplicación fue difícil y los conflictos por la tierra continuaron.",
+      "nacional": true
     }
   },
   {
@@ -4872,7 +4941,8 @@
         "tipo": "paz",
         "titulo": "El general y la amnistía",
         "texto": "Hombres de monte bajan hasta la plaza para entregar sus armas."
-      }
+      },
+      "nacional": true
     }
   },
   {
@@ -4928,7 +4998,8 @@
     "hito": {
       "anio": 58,
       "fecha": "Ley 135 de 1961",
-      "nota": "La Ley 135 de 1961 creó el Instituto Colombiano de la Reforma Agraria (INCORA) y buscó redistribuir tierras y mejorar las condiciones del campo. Sus resultados fueron limitados frente al tamaño del problema."
+      "nota": "La Ley 135 de 1961 creó el Instituto Colombiano de la Reforma Agraria (INCORA) y buscó redistribuir tierras y mejorar las condiciones del campo. Sus resultados fueron limitados frente al tamaño del problema.",
+      "nacional": true
     }
   },
   {
@@ -5114,7 +5185,18 @@
     "hito": {
       "anio": 95,
       "fecha": "Marzo de 2020",
-      "nota": "El primer caso de covid-19 en Colombia se confirmó el 6 de marzo de 2020 y el aislamiento obligatorio comenzó a finales de ese mes. La pandemia agravó la pobreza y mostró desigualdades en el acceso a salud, internet y educación."
+      "nota": "El primer caso de covid-19 en Colombia se confirmó el 6 de marzo de 2020 y el aislamiento obligatorio comenzó a finales de ese mes. La pandemia agravó la pobreza y mostró desigualdades en el acceso a salud, internet y educación.",
+      "mision": {
+        "obra": "hospital",
+        "n": 1,
+        "aviso": 8,
+        "texto": "Los médicos advierten de epidemias nuevas en el mundo: ten un hospital antes del año {anio}.",
+        "fallo": "Sin hospital, los enfermos tuvieron que buscar cama en otro pueblo.",
+        "castigo": {
+          "habitantes": -2,
+          "animo": -2
+        }
+      }
     }
   },
   {
@@ -5180,6 +5262,16 @@
         "tipo": "marcha",
         "titulo": "La consulta de Cajamarca",
         "texto": "Los vecinos salen a votar con pancartas y el pueblo entero espera el resultado."
+      },
+      "mision": {
+        "obra": "estudio",
+        "n": 1,
+        "aviso": 8,
+        "texto": "Hay rumores de oro bajo el páramo: haz el estudio de suelos antes del año {anio} para saber qué hay.",
+        "fallo": "Sin estudio de suelos, la empresa minera sabía más de tu tierra que tu gobierno.",
+        "castigo": {
+          "confianza": -2
+        }
       }
     }
   }
