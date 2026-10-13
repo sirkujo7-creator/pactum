@@ -26,6 +26,7 @@ import { faltaFundar } from './estado.js';
 import { estadoPlaza } from './plaza.js';
 import { obrasAisladas } from './calles.js';
 import { notasPendientes } from './voces.js';
+import { misionesProximas } from './misiones.js';
 
 export function pendientes(S) {
   if (!climaActivo(S) || S.over) return [];
@@ -44,6 +45,7 @@ export function pendientes(S) {
   const V = desastresOk(S) ? nivelVolcan(S) : 0;
   if (V >= 2 && !volcan(S).plan) add('volcan', '🌋', 'El Nevado está en alerta y no hay plan de evacuación.', 1, { hoja: 'hacienda', seccion: 'h-riesgo' });
   // Trabajadores (fase 17): sin gente que las trabaje, las obras rinden menos.
+  for (const m of misionesProximas(S)) if (!m.ok) add('hito', '📜', m.texto, S.year >= m.anio - 2 ? 1 : 2, { hoja: 'construir' }); // misiones de los hitos locales
   for (const n of notasPendientes(S)) add('nota', '📝', n.texto, 2, { casilla: n.casa }); // promesas a los pobladores
   { const ais = !ff && C.CALLES && C.CALLES.aislada ? obrasAisladas(S) : []; if (ais.length) add('caminos', '🛤️', C.CALLES.aislada.aviso.replace('{n}', ais.length), 2, { hoja: 'construir' }); } // obras sin camino a la plaza
   if (C.TRABAJO) { const so = society(S), T = C.TRABAJO.textos, pct = Math.round(so.ocup * 100); if (so.ocup < .9 && so.jc + so.ja > 0) add('trabajo', '🧑‍🌾', (so.ocup < C.TRABAJO.minimo ? T.sinGente : T.faltan).replace('{puestos}', so.jc + so.ja).replace('{gente}', so.P - so.el).replace('{pct}', pct).replace('{min}', Math.round(C.TRABAJO.minimo * 100)), so.ocup < C.TRABAJO.minimo ? 1 : 2, { hoja: 'construir' }); }

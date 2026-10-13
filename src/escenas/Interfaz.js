@@ -1113,9 +1113,9 @@ export class Interfaz {
       if (this.escena(lid ? 'marchaLider' : 'marcha', ev, () => this.suceso(alTerminar), { movimiento: M.nombre, lider: C.FIG.figuras.lider.nombre })) return;
     }
     if (/escandalo/.test(ev.id || '') && this.escena('escandalo', ev, () => this.suceso(alTerminar))) return;
-    if (ev.hito && ev.hito.escena && this.escena(ev.hito.escena.tipo, ev, () => this.suceso(alTerminar), { titulo: ev.hito.escena.titulo, texto: ev.hito.escena.texto })) return; // hitos de la historia real
+    if (ev.hito && ev.hito.escena && (!ev.mision || ev.mision.ok) && this.escena(ev.hito.escena.tipo, ev, () => this.suceso(alTerminar), { titulo: ev.hito.escena.titulo, texto: ev.hito.escena.texto, obra: ev.mision ? ev.mision.obra : undefined })) return; // hitos de la historia real
     const temaFoto = C.IMAGENES && C.IMAGENES.dilemas[ev.id]; const img = fotoHtml(temaFoto ? imagenTema(temaFoto, S) : imagenDe(`${ev.title}`, ev.text, ev.opts && ev.opts[0] && ev.opts[0].fx, S)); // foto del propio mapa según el tema
-    this.tarjeta(`${img}<h3>${ev.title}</h3><p>${ev.text}</p>${ev.hito ? `<div class="historia-real"><b>📅 ${ev.hito.fecha}</b><br>${ev.hito.nota}</div>` : ''}${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
+    this.tarjeta(`${img}${ev.hito ? `<p class="small"><b>${ev.hito.nacional ? '🇨🇴 Noticia de Colombia' : ev.mision ? (ev.mision.ok ? '📜 Hito del territorio: cumpliste la misión' : '📜 Hito del territorio: no cumpliste la misión') : '📜 Hito de la historia'}</b></p>` : ''}<h3>${ev.title}</h3><p>${ev.text}</p>${ev.hito ? `<div class="historia-real"><b>📅 ${ev.hito.fecha}</b><br>${ev.hito.nota}</div>` : ''}${this.lineaMovimiento(ev)}` + ev.opts.map((o, i) =>
       `<button class="opt" data-o="${i}">${ev.followUp ? '' : `<span class="stances">${Object.keys(C.ADV).map(a => { const st = stance(a, o.fx); return st ? `<span class="st ${st > 0 ? 'pro' : 'con'}"><img src="${retrato(a, st > 0 ? 'feliz' : 'enojado')}" alt="${C.ADV[a].n}">${st > 0 ? '✓' : '✗'}</span>` : ''; }).join('')}</span>`}${o.l}${ev.followUp ? `<small>${Object.keys(o.fx).length ? 'Ver efectos' : ''}</small>` : `<small>${oroPrevisto(S, o.fx) ? (oroPrevisto(S, o.fx) > 0 ? '+' : '−') + Math.abs(oroPrevisto(S, o.fx)) + ' oro' : 'Sin costo en oro'}${o.f ? ` · ${C.PH[o.f].n}` : ''}</small>`}</button>`).join(''), false);
     this.card.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       const o = this.mapa.elegirOpcion(+b.dataset.o);
@@ -1307,7 +1307,7 @@ export class Interfaz {
     if (!ev || !ev.nuevo || !sucesosActivos(S)) { alTerminar(); return; }
     ev.nuevo = false;
     const cn = (C.SUCESOS.sucesos[ev.id] || {}).cine; // lo que pasó se ve en el mapa (sucesos.json: cine)
-    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2], obra: ev.obra })) return;
+    if (cn && !this._sucesoCine && this.escena(cn[0], 'suc-' + ev.id + ev.anio, () => { this._sucesoCine = true; ev.nuevo = true; this.sucesoAnio(alTerminar0); }, { titulo: cn[1], texto: cn[2], obra: cn[0] === 'incendio' || cn[0] === 'curiosos' ? ev.obra : undefined })) return;
     this._sucesoCine = false;
     const q = C.SUCESOS.sucesos[ev.id];
     this.tarjeta(`${fotoHtml(imagenDe(q.titulo, ev.texto, ev.fx, S))}<h3>${q.icono} ${q.titulo}</h3><p>${ev.texto}</p><div class="chips">${this.chips(ev.fx)}</div>

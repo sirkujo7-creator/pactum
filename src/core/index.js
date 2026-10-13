@@ -24,6 +24,7 @@ export * from './economia.js';
 export * from './explicar.js';
 export * from './rumbo.js';
 export * from './voces.js';
+export * from './misiones.js';
 export * from './grupos.js';
 export * from './ejercito.js';
 export * from './fuerza.js';

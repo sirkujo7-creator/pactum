@@ -10,6 +10,7 @@ import { demandaDelAnio, responderMovimiento } from './movimientos.js';
 import { contradecir, contradecirMovimiento } from './acta.js';
 import { reaccionar, reaccionarMovimiento } from './figuras.js';
 import { marcaDeOpcion, dejarMarca } from './marcas.js';
+import { resolverMision } from './misiones.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 // Lo que valdría el efecto en oro de una opción, con los mismos multiplicadores de dificultad que se aplican al decidir
@@ -59,7 +60,11 @@ export function drawEvent(S) {
   if (!climaActivo(S)) return drawEventV9(S);
   // Hitos de la historia real (pedido de Juan): llegan en su año, desplazan el azar y cada uno sale una sola vez.
   const hito = hitoDelAnio(S);
-  if (hito) { S.hitosVistos = [...(S.hitosVistos || []), hito.id]; S.recent.push(hito.id); if (S.recent.length > 7) S.recent.shift(); return { id: hito.id, e: hito.e, title: hito.title, text: hito.text, opts: hito.opts, hito: hito.hito }; }
+  if (hito) {
+    S.hitosVistos = [...(S.hitosVistos || []), hito.id]; S.recent.push(hito.id); if (S.recent.length > 7) S.recent.shift();
+    const mr = resolverMision(S, hito.hito); // hitos con misión: la obra pedida (para la escena) o la consecuencia de no tenerla
+    return { id: hito.id, e: hito.e, title: hito.title, text: mr && !mr.ok ? `${mr.fallo} ${hito.text}` : hito.text, opts: hito.opts, hito: hito.hito, ...(mr ? { mision: mr } : {}) };
+  }
   const crisis = !!(S.clima.fenomeno || (S.eco && S.eco.fase === 'recesion')), racha = (S.racha || 0) + (crisis ? 1 : 0);
   // Fase 4 (más exigencia): la racha que corta depende de la dificultad, y el corte es un suceso bueno solo a veces;
   // si no, es un año tranquilo.

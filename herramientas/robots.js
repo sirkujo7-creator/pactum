@@ -85,6 +85,8 @@ export function botYear(S, strat, eth, op = {}) {
   if (prep && hayGrupo(S)) elegirEstrategia(S, S.gold > 150 ? 'inversion' : 'dialogo');
   // Fase 4: la estrategia equilibrada prepara la evacuación cuando el volcán pasa a alerta naranja.
   if (prep && S.clima && nivelVolcan(S) >= 2 && !puedePlan(S)) comprarPlan(S);
+  // Hitos con misión: los robots no las persiguen (como con los requisitos de la plaza): cuando lo hacían, gastaban
+  // demasiado temprano y el balance caía a 24%. Pagan la consecuencia leve de no cumplirlas.
   // Fase 4: la estrategia equilibrada atiende las misiones de obra de los personajes si le sobra el oro.
   if (prep && S.clima) for (const id of presentes(S)) {
     const m = misionDe(S, id);

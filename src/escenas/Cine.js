@@ -38,9 +38,11 @@ export class Cine {
   T() { return this.scene.T; }
   punto(r, c) { const T = this.T(), N = T.N; return P(r, c, T.hf(clamp(r, 0, N - .01), clamp(c, 0, N - .01))); }
   plazaRC() { const S = this.scene.S, N = this.T().N, g = this.scene.pob && this.scene.pob.grupos[0]; if (g) return { r: g.r, c: g.c }; const i = plaza(S); return i >= 0 ? { r: Math.floor(i / N) + .5, c: i % N + .5 } : { r: N / 2, c: N / 2 }; }
+  // Centro de la escena: la obra del hito (la iglesia de la parroquia, el hospital de la pandemia…) o la plaza.
+  centroEscena() { const i = this.datos && this.datos.obra, N = this.T().N; return i !== undefined && i >= 0 ? { r: Math.floor(i / N) + 1.1, c: i % N + .5 } : this.plazaRC(); }
   // Casilla caminable a cierta distancia de la plaza (de donde llega la marcha).
   origen(dist, R = Math.random) {
-    const pob = this.scene.pob, N = this.T().N, G = pob.G, p = this.plazaRC(), L = [];
+    const pob = this.scene.pob, N = this.T().N, G = pob.G, p = this.centroEscena(), L = [];
     for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
       const d = Math.max(Math.abs(r + .5 - p.r), Math.abs(c + .5 - p.c));
       if (d >= dist - .5 && d <= dist + .5 && isFinite(pob.costo[(2 * r + 1) * G + 2 * c + 1])) L.push({ r: r + .5, c: c + .5 });
@@ -74,7 +76,7 @@ export class Cine {
   }
   // Prepara los actores de cada escena y devuelve el punto del mundo que mira la cámara.
   montar(tipo) {
-    const sc = this.scene, S = sc.S, p = this.plazaRC(), pz = this.punto(p.r, p.c);
+    const sc = this.scene, S = sc.S, p = this.centroEscena(), pz = this.punto(p.r, p.c);
     if (tipo === 'marcha' || tipo === 'marchaLider' || tipo === 'procesion' || tipo === 'desplazados') {
       const o = this.origen(tipo === 'desplazados' ? 4 : 3), n = tipo === 'desplazados' ? 9 : 14, vel = tipo === 'procesion' ? .38 : tipo === 'desplazados' ? .34 : .55;
       const ruta = sc.pob.ruta({ r: o.r, c: o.c, carril: 0 }, p) || [p];
