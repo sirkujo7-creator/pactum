@@ -269,12 +269,20 @@ export function hornearGente(mod) {
 // ---------- Acciones de oficio (pedido de Juan, 9 de octubre: más animación y detalle en cada habitante) ----------
 // Cada acción es un ciclo de cuadros con la herramienta dibujada en la mano. Se hornean aparte (hoja «acciones»), solo
 // con la ropa de la época actual, y de frente (la figura se voltea de lado a lado con el espejo).
+// Ritmo de trabajo con pausas: el ciclo se juega en la primera parte del periodo y luego descansa en el cuadro de
+// reposo (nadie martilla sin parar). Devuelve la fase de 0 a 1, o 0 durante la pausa.
+export function ritmo(t, periodo, activo = .65) { const ph = ((t % periodo) + periodo) % periodo / periodo; return ph < activo ? ph / activo : 0; }
+// Gestos breves de quien conversa (pedido de Juan, 13 de octubre: nada de bucles exagerados). Cada uno tiene tres
+// cuadros (reposo, camino y gesto completo) y se juega una sola vez —ida y vuelta— cada tantos segundos.
+const GESTOS_ADULTO = { asentir: 3, barbilla: 3, senalar: 3, manos: 3, sombrero: 3, saludo: 3 };
+const GESTOS_MUJER = { asentir: 3, barbilla: 3, senalar: 3, manos: 3, saludo: 3 };
+export const GESTOS = { campesino: Object.keys(GESTOS_ADULTO), campesina: Object.keys(GESTOS_MUJER), artesano: Object.keys(GESTOS_ADULTO), elite: Object.keys(GESTOS_ADULTO), nino: ['asentir', 'senalar', 'manos', 'saludo'] };
 export const ACCIONES = {
-  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4 },
-  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1 },
-  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, saludar: 6, conversar: 8, rezar: 4, sentado: 1, esperar: 1, tocar: 4 },
-  elite: { leer: 4, saludar: 6, conversar: 8, rezar: 4 },
-  nino: { saltar: 6, saludar: 6, leer: 4, conversar: 8, lustrar: 4, balde: 1 }
+  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4, ...GESTOS_ADULTO },
+  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1, ...GESTOS_MUJER },
+  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, rezar: 4, sentado: 1, esperar: 1, tocar: 4, ...GESTOS_ADULTO },
+  elite: { leer: 4, rezar: 4, ...GESTOS_ADULTO },
+  nino: { saltar: 6, leer: 4, lustrar: 4, balde: 1, asentir: 3, senalar: 3, manos: 3, saludo: 3 }
 };
 const T2 = Math.PI * 2;
 // Postura de cada acción en el momento n de N: inclinación del cuerpo, posición de las manos y la herramienta.
@@ -291,11 +299,13 @@ function poseAccion(k, n, N) {
     case 'barrer': return { lean: .1, L: [1 + s * 2.2, -13.6], R: [2.6 + s * 2.2, -16.4], prop: { k: 'escoba' } };
     case 'rezar': return { lean: .12 + s * .015, L: [-.7, -17.2], R: [.7, -17.6], prop: null };
     case 'leer': return { lean: .04, L: [-2.2, -15.8], R: [2.2, -15.6], prop: { k: 'libro', pag: n % 2 } };
-    case 'saludar': return { lean: 0, L: [-3, -12.8], R: [4 + s * .9, -24.6 - Math.abs(c) * .3], prop: null }; // mano en alto junto a la cabeza, de lado a lado
-    case 'conversar': { // un brazo descansa; el otro, doblado frente al pecho, acompaña lo que dice con un gesto corto
-      const habla = Math.max(0, Math.sin(t * T2 * 2)) * (n % 4 < 2 ? 1 : .4);
-      return { lean: .015 * s, L: [-3, -12.8], R: [2.6 + habla * .5, -15 - habla * 1.6], prop: null };
-    }
+    // Gestos (n de 0 a 2: reposo, camino, gesto completo). Desde los brazos en reposo hasta la pose del gesto.
+    case 'asentir': { const k = n / (N - 1); return { lean: .02 + k * .1, L: [-3, -12.8], R: [3, -12.8], prop: null }; } // inclina la cabeza: sí, claro
+    case 'barbilla': { const k = n / (N - 1); return { lean: .02, L: [-3 + k * 3.6, -12.8 - k * .6], R: [3 - k * 2.2, -12.8 - k * 8.6], prop: null }; } // la mano a la barbilla: lo piensa
+    case 'senalar': { const k = n / (N - 1); return { lean: -.02 * k, L: [-3, -12.8], R: [3 + k * 4.2, -12.8 - k * 6.4], prop: null }; } // señala a lo lejos
+    case 'manos': { const k = n / (N - 1); return { lean: .02, L: [-3 - k * .6, -12.8 - k * 2.6], R: [3 + k * .6, -12.8 - k * 2.8], prop: null }; } // abre las manos al explicar
+    case 'sombrero': { const k = n / (N - 1); return { lean: .03 * k, L: [-3, -12.8], R: [3 - k * 1.2, -12.8 - k * 12.6], prop: null }; } // se toca el sombrero: buenos días
+    case 'saludo': { const k = Math.min(1, n / (N - 2)), w = n === N - 1 ? .8 : 0; return { lean: 0, L: [-3, -12.8], R: [3 + k * 1.2 + w, -12.8 - k * 11.6], prop: null }; } // la mano en alto
     case 'saltar': { const a = Math.abs(s); return { lean: 0, lift: a * 3.2, L: [-4.4, -26 + a * 1.2], R: [4.4, -26 + a * 1.2], prop: null }; }
     // Voces del pueblo: sentado sin trabajo (cabizbajo, manos en las rodillas), con el balde del agua, esperando en
     // la fila con el canasto vacío y el niño lustrabotas agachado sobre su cajón.

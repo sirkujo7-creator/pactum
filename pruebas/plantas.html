@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Plantas</title>
+<style>body{background:#9DB07A;margin:0;font:12px sans-serif}canvas{display:inline-block;margin:4px;outline:1px dashed rgba(0,0,0,.25)}</style>
+<div id="r"></div>
+<script type="module">
+import { hornearNaturaleza } from '../src/arte/naturaleza.js';
+const q = new URLSearchParams(location.search), H = hornearNaturaleza(+(q.get('seco') || 0)), Z = +(q.get('z') || 1);
+const ks = (q.get('k') || 'palma,palma_va,palma_vb,guadua,guadua_va,guadua_vb,saman,saman_va,saman_vb,mango,mango_va,mango_vb,arbol,arbol_va,arbol_vb,ceiba,ceiba_va,ceiba_vb').split(',');
+for (const k of ks) { const m = H.marcos[k]; if (!m) continue; const c = document.createElement('canvas'); c.width = m.w * Z / 2; c.height = m.h * Z / 2; c.getContext('2d').drawImage(H.canvas, m.x, m.y, m.w, m.h, 0, 0, c.width, c.height); c.title = k; document.getElementById('r').appendChild(c); }
+</script>

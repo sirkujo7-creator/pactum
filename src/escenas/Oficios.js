@@ -4,7 +4,7 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
 import { reducirMovimiento } from './pantalla.js';
-import { ACCIONES } from '../arte/gente.js';
+import { ACCIONES, ritmo } from '../arte/gente.js';
 
 const E = 3;
 // Cada oficio usa un ciclo de cuadros de la hoja de acciones (con la herramienta en la mano).
@@ -69,7 +69,7 @@ export class Oficios {
         if (d < .05) { w.meta = null; w.espera = 1.5 + Math.random() * 3; continue; }
         const paso = Math.min(d, .3 * dt); w.r += dr / d * paso; w.c += dc / d * paso; w.fasePaso = (w.fasePaso || 0) + paso * 13; w.andando = true; w.frente = (dc + dr) >= 0 ? 1 : 0; w.voltear = (dc - dr) < 0;
         this.poner(w, 0);
-      } else this.poner(w, this.t * (w.o === 'sierra' ? 5 : 4) + w.fase);
+      } else this.poner(w, ritmo(this.t + w.fase, w.o === 'sierra' ? 1.6 : 1.9 + (w.fase % 1) * .6) * Math.PI * 2); // a golpes, con pausa entre uno y otro
     }
   }
 }

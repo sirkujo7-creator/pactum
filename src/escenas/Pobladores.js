@@ -5,12 +5,15 @@
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
-import { hornearGente, PASOS12, hornearAcciones, ACCIONES } from '../arte/gente.js';
+import { hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
 
+// Oficios que se hacen a golpes (con pausa entre uno y otro) y velocidad de los que van seguidos (ciclos por segundo).
+const TRABAJO = new Set(['sembrar', 'cosechar', 'picar', 'martillar', 'aserrar', 'barrer', 'vender', 'cargar']);
+const LENTO = { rezar: .35, leer: .25, tocar: .9, lustrar: 1, saltar: 1.4 };
 const DURACION_DIA = 180; // segundos que dura un día completo
 const TAMANO = .62;       // tamaño de las figuras frente a las casas
 const smooth = t => t * t * (3 - 2 * t);
@@ -50,18 +53,35 @@ export class Pobladores {
     const b = f.destino === 'trabajo' && p.trabajo !== null ? this.scene.S.map[p.trabajo].b : null;
     if (f.destino === 'luto' && tiene('rezar')) return 'rezar'; // velorio: cabeza baja y manos juntas
     if (f.destino === 'enfermo' && tiene('rezar')) return 'rezar';
-    if (f.destino === 'protesta' && tiene('saludar')) return 'saludar'; // brazo en alto
+    if (f.destino === 'protesta' && tiene('saludo')) return 'protesta'; // brazo en alto, despacio
     // Voces del pueblo: los problemas se ven en la gente.
-    const PROB = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', contento: 'saludar' }[f.destino];
-    if (PROB && tiene(PROB) && (PROB !== 'saludar' || this.vecino(f))) return PROB;
-    // Hablar o saludar solo si hay alguien al lado (pedido de Juan: nada de mover los brazos a la nada).
-    if (f.mira && tiene('conversar') && this.vecino(f)) return 'conversar';
+    const PROB = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar' }[f.destino];
+    if (PROB && tiene(PROB)) return PROB;
+    // Conversar (pedido de Juan): de pie y tranquilos, con un gesto breve cada tantos segundos, y solo si hay alguien al lado.
+    if ((f.destino === 'plaza' || f.destino === 'contento' || f.mira) && GESTOS[tipo] && this.vecino(f)) return 'social';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
-    const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'], hospital: ['saludar'], teatro: ['saludar'] }[b];
+    const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
     if (por) { const k = por[u % por.length]; if (tiene(k)) return k; }
     if (tipo === 'campesina' && b === null && f.destino === 'trabajo') return 'barrer';
-    if (f.destino === 'plaza' && tiene('saludar') && this.vecino(f)) return u === 0 ? 'saludar' : 'conversar';
     return null;
+  }
+  // Cuadro del gesto de quien conversa: casi siempre en reposo; cada 5 a 11 segundos un gesto breve (asentir, la mano
+  // a la barbilla, señalar, abrir las manos) que va y vuelve. Quien da la espalda escucha (cuadro de espaldas, quieto).
+  gestoDe(f) {
+    if (f.frente === 0) return null;
+    if (f.gesto && this.t > f.gesto.t0 + f.gesto.dur) f.gesto = null;
+    if (!f.gesto) {
+      if (f.proxGesto === undefined) f.proxGesto = this.t + 1.5 + f.p.semilla * 6;
+      if (this.t < f.proxGesto) return null;
+      f.proxGesto = this.t + 5 + Math.random() * 6;
+      const L = GESTOS[f.p.tipo].filter(k => k !== 'saludo' && k !== 'sombrero');
+      f.gesto = { k: L[Math.floor(Math.random() * L.length)], t0: this.t, dur: 1.4 + Math.random() * .9 };
+    }
+    return this.claveGesto(f);
+  }
+  claveGesto(f) {
+    const g = f.gesto, u = (this.t - g.t0) / g.dur, sec = [0, 1, 2, 2, 2, 2, 1, 0], n = sec[Math.max(0, Math.min(sec.length - 1, Math.floor(u * sec.length)))];
+    return `${f.p.tipo}_${f.p.vi}_${g.k}_${n}`;
   }
   // La persona más cercana a menos de media casilla (se revisa cada segundo); quien conversa la mira.
   vecino(f) {
@@ -156,7 +176,11 @@ export class Pobladores {
   alCorrillo(f) {
     const G = this.grupos;
     if (!G.length) return { ...this.centro(f.p.plaza, 1.3), lugar: 'plaza' };
-    const n = Math.max(1, Math.min(G.length, Math.floor(this.figuras.length / 12))), g = G[f.p.id % n], an = f.p.semilla * Math.PI * 2 + Math.random() * .6, rad = .17 + Math.random() * .08; // pueblo pequeño: un solo corrillo, para que haya con quién hablar
+    // Cada quien con su puesto fijo en el corrillo (pedido de Juan: nadie encima de nadie): ocho puestos en un anillo
+    // alrededor del centro y, si son más, un segundo anillo; todos miran al centro del grupo.
+    const n = Math.max(1, Math.min(G.length, Math.floor(this.figuras.length / 12))), gi = f.p.id % n, g = G[gi]; // pueblo pequeño: un solo corrillo
+    const miembros = this.figuras.filter(o => o.p.id % n === gi).map(o => o.p.id).sort((x, y) => x - y), k = miembros.indexOf(f.p.id);
+    const anillo = Math.floor(k / 8), an = (k % 8) / 8 * Math.PI * 2 + gi * .7 + anillo * .39, rad = (g.rad || .3) + anillo * .18;
     return { r: g.r + Math.cos(an) * rad, c: g.c + Math.sin(an) * rad, lugar: 'plaza', mira: g };
   }
   // ¿Hay que correr a refugiarse? Aguacero de La Niña (cuando llueve en el mapa) o terremoto o erupción este año.
@@ -241,6 +265,7 @@ export class Pobladores {
       if (clase(r0, c0) === 0) libres.push([r0, c0]);
       for (const [dr, dc] of [[1, 0], [0, 1], [1, 1], [-1, 0], [0, -1], [1, -1], [-1, 1], [-1, -1], [2, 0], [0, 2]]) if (clase(r0 + dr, c0 + dc) === 0) libres.push([r0 + dr, c0 + dc]);
       this.grupos = libres.slice(0, 3).map(([r, c]) => ({ r: r + .5, c: c + .5 }));
+      if (!this.grupos.length) this.grupos = [{ r: r0 + .5, c: c0 + .5, rad: .4 }]; // sin casillas libres: el corrillo rodea la cruz de la plaza
       const L = libres[3] || libres[0];
       if (L) this.ronda = { r: L[0] + .5 + (libres[3] ? 0 : .3), c: L[1] + .5 - (libres[3] ? 0 : .3) };
     }
@@ -340,6 +365,9 @@ export class Pobladores {
         this.dibujar(f, false);
         continue;
       }
+      // Saludo al cruzarse: si alguien que también camina pasa muy cerca, los dos se detienen un instante y se saludan
+      // (se tocan el sombrero o alzan la mano), una sola vez cada tanto.
+      if (this.saludoCruce(f)) { this.dibujar(f, false); continue; }
       // Arranca suave y anda a paso parejo; el paso va con la distancia recorrida (los pies no resbalan).
       f.andado += dt;
       const v = Math.min(dist, f.vel * (f.prisa ? 2.3 : 1) * dt * Math.min(1, .45 + f.andado * 1.4));
@@ -351,11 +379,32 @@ export class Pobladores {
     }
     this.luzDelDia();
   }
+  saludoCruce(f) {
+    if (f.gesto && f.gesto.saludo) { if (this.t < f.gesto.t0 + f.gesto.dur) return true; f.gesto = null; }
+    if ((f._cruceT || 0) > this.t || f.oculto || f.prisa || !GESTOS[f.p.tipo] || !this.A) return false;
+    f._cruceT = this.t + .5;
+    for (const o of this.figuras) {
+      if (o === f || o.oculto || o.prisa || !o.ruta.length || (o._saludoT || -99) > this.t - 25 || (f._saludoT || -99) > this.t - 25 || !GESTOS[o.p.tipo]) continue;
+      if (Math.hypot(o.r - f.r, o.c - f.c) > .3) continue;
+      for (const [a, b] of [[f, o], [o, f]]) { a._saludoT = this.t; this.mirar(a, b); const L = GESTOS[a.p.tipo], k = L.includes('sombrero') ? 'sombrero' : 'saludo'; a.gesto = { k, t0: this.t, dur: 1.1, saludo: true }; }
+      return true;
+    }
+    return false;
+  }
   mirar(f, q) { const dr = q.r - f.r, dc = q.c - f.c; if (Math.abs(dr) + Math.abs(dc) < .01) return; f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0; }
 
   dibujar(f, andando, postura, accion) {
     const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? PASOS12[Math.floor(f.fase * 3) % 12] : (postura || 0); // doce cuadros: andar suave
-    const N = accion && this.A && ACCIONES[f.p.tipo][accion], clave = N ? `${f.p.tipo}_${f.p.vi}_${accion}_${Math.floor(((this.t * (accion === 'rezar' ? .6 : 1.5) + f.p.semilla * 7) % 1) * N)}` : null;
+    let clave = null;
+    if (f.gesto && f.gesto.saludo && this.t < f.gesto.t0 + f.gesto.dur) clave = this.claveGesto(f); // saludo al cruzarse
+    else if (accion === 'social') clave = this.gestoDe(f);
+    else if (accion === 'protesta') clave = f.frente ? `${f.p.tipo}_${f.p.vi}_saludo_${1 + Math.floor(this.t * .7 + f.p.semilla * 5) % 2}` : null; // brazo en alto, sin agitarlo
+    else if (accion && this.A && ACCIONES[f.p.tipo][accion]) {
+      // Oficios con su ritmo: el ciclo se juega y luego hay una pausa; cada quien a destiempo de los demás.
+      const N = ACCIONES[f.p.tipo][accion], t = this.t + f.p.semilla * 7;
+      const ph = TRABAJO.has(accion) ? ritmo(t, 1.7 + f.p.semilla * .9) : (t * (LENTO[accion] || .8)) % 1;
+      clave = `${f.p.tipo}_${f.p.vi}_${accion}_${Math.min(N - 1, Math.floor(ph * N))}`;
+    }
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
     f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);
