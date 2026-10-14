@@ -32,16 +32,22 @@ function datos(S) {
     (vec[a] = vec[a] || []).push(b); (vec[b] = vec[b] || []).push(a);
   }
   // Red de la plaza: las calles unidas (por esquinas) a las esquinas de la plaza; sus casillas a los lados quedan «en red».
+  let d0vistas = new Set();
   if (pz >= 0) {
-    const r0 = Math.floor(pz / N), c0 = pz % N, vistas = new Set(), cola = [esquina(N, r0, c0), esquina(N, r0, c0 + 1), esquina(N, r0 + 1, c0), esquina(N, r0 + 1, c0 + 1)].filter(e => vec[e]);
+    // La red arranca en las esquinas de la plaza y en las de las casillas pegadas a ella (una calle que llega a la casa
+    // de al lado de la plaza ya está en el pueblo).
+    const r0 = Math.floor(pz / N), c0 = pz % N, vistas = new Set(), inicio = new Set();
+    for (const [dr, dc] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) { const r = r0 + dr, c = c0 + dc; if (r < 0 || c < 0 || r >= N || c >= N) continue; for (const e of [esquina(N, r, c), esquina(N, r, c + 1), esquina(N, r + 1, c), esquina(N, r + 1, c + 1)]) inicio.add(e); }
+    const cola = [...inicio].filter(e => vec[e]);
     cola.forEach(e => vistas.add(e));
     while (cola.length) { const e = cola.pop(); for (const f of vec[e]) if (!vistas.has(f)) { vistas.add(f); cola.push(f); } }
+    d0vistas = vistas;
     // Una obra queda unida si alguna de sus cuatro esquinas toca la red (basta con que la calle llegue hasta ella).
     for (const e of vistas) { const r = Math.floor(e / M), c = e % M; for (const [R, Cc] of [[r - 1, c - 1], [r - 1, c], [r, c - 1], [r, c]]) if (R >= 0 && Cc >= 0 && R < N && Cc < N) red[R * N + Cc] = 1; }
     red[pz] = 1;
     for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const r = r0 + dr, c = c0 + dc; if (r >= 0 && c >= 0 && r < N && c < N) red[r * N + c] = 1; } // pegadas a la plaza
   }
-  d = { N, set, con, red, salida, pz };
+  d = { N, set, con, red, salida, pz, vistas: d0vistas };
   CACHE.set(L, d);
   return d;
 }
@@ -122,6 +128,8 @@ export function construirCalle(S, ruta) {
   S.calles = [...set]; // lista nueva: así se renueva la caché
   return { ok: true, ...k };
 }
+// ¿La ruta toca la red unida a la plaza? (para avisar al construir un camino que no llega al pueblo)
+export function rutaEnRed(S, ruta) { const v = datos(S).vistas; return !!ruta && ruta.some(e => v.has(e)); }
 // Quita las calles que llegan a una esquina (no se devuelve el oro). Devuelve los bordes quitados.
 export function quitarCalles(S, e) {
   const fuera = listaCalles(S).filter(k => k.split('|').map(Number).includes(e));

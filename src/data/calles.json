@@ -65,6 +65,8 @@
     "sinRuta": "No hay ruta posible: la montaña la bloquea.",
     "sinOro": "No alcanza el oro para esta calle.",
     "nueva": "Calle nueva: {n}.",
+    "noLlega": "Ojo: este camino todavía no llega a la plaza. Únelo a una calle que llegue a ella para que las obras que toca dejen de estar aisladas.",
+    "unidas": "Ahora {n} obra{s} queda{N} unida{s} a la plaza.",
     "salida": "Una calle llega al borde del territorio: el comercio sale hacia los vecinos.",
     "mejora": "Nueva época: los caminos se vuelven {era}.",
     "ficha": "Junto a una calle"
