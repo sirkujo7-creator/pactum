@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada } from '../core/index.js';
+import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada, obrasAisladas, rutaEnRed } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -841,12 +841,17 @@ export class Mapa extends Phaser.Scene {
   presupuestoCalle() { return this.trazoCalle && this.trazoCalle.ruta ? costoCalle(this.S, this.trazoCalle.ruta) : null; }
   confirmarCalle() {
     if (!this.trazoCalle || !this.trazoCalle.ruta) return;
-    const r = construirCalle(this.S, this.trazoCalle.ruta);
+    const antes = obrasAisladas(this.S).length, ruta = this.trazoCalle.ruta;
+    const r = construirCalle(this.S, ruta);
     if (!r.ok) { this.ui.toast(r.motivo === 'ya' ? 'Esa calle ya existe.' : r.motivo); return; }
     this.trazoCalle = null; this.dibujarTrazo();
     this.refrescarCalles();
+    if (this.huellasVistas) this.refrescarCambios(this.huellasVistas); // el letrero de «sin camino» se quita en el acto
     Sonido.tap();
-    this.ui.toast(C.CALLES.textos.nueva.replace('{n}', `${r.tramos} tramo${r.tramos === 1 ? '' : 's'}`) + (r.puentes ? ` Con ${r.puentes} puente${r.puentes > 1 ? 's' : ''}.` : ''));
+    // Pedido de Juan: decir si el camino quedó unido a la plaza y cuántas obras dejó de tener aisladas.
+    const unidas = antes - obrasAisladas(this.S).length, enRed = rutaEnRed(this.S, ruta), T = C.CALLES.textos;
+    const extra = !enRed ? ' ' + T.noLlega : unidas > 0 ? ' ' + T.unidas.replace('{n}', unidas).replaceAll('{s}', unidas === 1 ? '' : 's').replace('{N}', unidas === 1 ? '' : 'n') : '';
+    this.ui.toast(T.nueva.replace('{n}', `${r.tramos} tramo${r.tramos === 1 ? '' : 's'}`) + (r.puentes ? ` Con ${r.puentes} puente${r.puentes > 1 ? 's' : ''}.` : '') + extra);
     this.ui.render();
   }
   cancelarCalle() { this.trazoCalle = null; this.dibujarTrazo(); this.ui.render(); }
