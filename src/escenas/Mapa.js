@@ -181,7 +181,7 @@ export class Mapa extends Phaser.Scene {
     // El bosque joven crece poco a poco durante sus primeros años.
     const edad = x.t === 'bosque' && x.nb ? this.S.year - x.nb : 9, crece = edad <= 1 ? .55 : edad === 2 ? .8 : 1;
     // Las vacas y garzas las mueve Vida.js; los árboles guardan cuánto se mecen.
-    this.plantas[i] = lista.map(o => this.figura('naturaleza', o.k, o.r, o.c, this.T.hf(o.r, o.c), o.s * crece).setData('arbol', Vida.vaiven(o.k)));
+    this.plantas[i] = lista.map(o => { const im = this.figura('naturaleza', o.k + (o.v || ''), o.r, o.c, this.T.hf(o.r, o.c), o.s * crece).setData('arbol', Vida.vaiven(o.k)); if (o.tn) im.setTint(o.tn); return im; }); // cada árbol con su versión y su tono
   }
   ponerObra(i) {
     (this.obras[i] || []).forEach(p => p.destroy());

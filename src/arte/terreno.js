@@ -16,6 +16,7 @@ const DRYC = '#D4B27A';
 
 // Fase 14: cada territorio tiñe un poco sus colores (pigmentos más ocres en el sur seco, más fríos en la montaña).
 let PAL = null;
+const suave = x => x * x * (3 - 2 * x);
 const teñir = c => PAL ? mix(c, PAL.color, PAL.fuerza) : c;
 function groundColor(t, dry, sub = 0) { return teñir(groundColor0(t, dry, sub)); }
 function groundColor0(t, dry, sub = 0) {
@@ -95,7 +96,23 @@ function campoDeColor(T, k, dry, sub, S = 4) {
     const r = r0 + (y + .5) / S, c = c0 + (x + .5) / S, i = (y + 1) * W + x + 1, h = alt[i];
     const hx = (alt[i + 1] - alt[i - 1]) * S / 2, hy = (alt[i + W] - alt[i - W]) * S / 2;
     const Lq = clamp(1 + .24 * hx - .13 * hy, .6, 1.3), luz = Lq >= 1 ? (Lq - 1) * .8 : (Lq - 1) * .9;
-    const cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, Math.hypot(hx, hy), dry), vr = (T.vary(c / 4, r / 4) - .5) * .1, bruma = (1 - (r + c) / (2 * N)) * .2, o = (y * cols + x) * 4;
+    let cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, Math.hypot(hx, hy), dry);
+    const vr = (T.vary(c / 4, r / 4) - .5) * .1, bruma = (1 - (r + c) / (2 * N)) * .2, o = (y * cols + x) * 4;
+    // Pasto seco y lodo como tono continuo del suelo (antes eran óvalos sueltos que se veían como manchones):
+    // ruido en dos escalas, así los bordes son irregulares y cruzan casillas sin costuras.
+    const t = T.tiles[clamp(Math.floor(r), 0, N - 1) * N + clamp(Math.floor(c), 0, N - 1)];
+    if (t && t.b !== 'agua' && t.b !== 'nieve') {
+      if (HIERBA.has(t.b) && t.b !== 'niebla') {
+        const n = .65 * T.vary(c / 3.1 + 40, r / 3.1 + 40) + .35 * T.vary(c / 1.05 + 13, r / 1.05 + 5);
+        const f = suave(clamp((n - .5 + dry * .2) / .22, 0, 1));
+        if (f > 0) cc = mix(cc, teñir(mix('#C9B27A', '#D6BC80', dry)), f * .42);
+      }
+      if (t.d < 2.6 && t.b !== 'arrozal') {
+        const n = .65 * T.vary(c / 2.6 + 90, r / 2.6 + 12) + .35 * T.vary(c / .9 + 31, r / .9 + 77);
+        const f = suave(clamp((n - .52) / .2, 0, 1)) * clamp((2.6 - t.d) / 1.2, 0, 1);
+        if (f > 0) cc = mix(cc, mix('#8A6E4E', '#B49A72', dry), f * .32);
+      }
+    }
     for (let j = 0; j < 3; j++) { const v = tono(tono(parseInt(cc.slice(1 + j * 2, 3 + j * 2), 16), vr), luz); d[o + j] = v + ([230, 226, 214][j] - v) * bruma; }
     d[o + 3] = 255;
   }
@@ -217,12 +234,10 @@ function sueloNatural(g, T, t, col, dry, rng) {
   // Pasto seco: más con la sequía.
   if (HIERBA.has(t.b) && t.b !== 'niebla') {
     const f = clamp((nA - .56 + dry * .2) / .22, 0, 1);
-    if (f > 0) for (let j = 0; j < 3; j++) { const p = en(); mancha(g, p[0], p[1], 11 + rng() * 9, teñir(mix('#CDB57A', '#D9BE7E', dry)), .18 + .22 * f); }
+    if (f > 0) { g.lineWidth = .55; g.lineCap = 'round'; g.globalAlpha = .35 + .3 * f; g.strokeStyle = teñir(mix('#B89C5E', '#C9AE6E', dry)); g.beginPath(); for (let j = 0; j < 10 * f; j++) { const p = en(), L = 1.2 + rng() * 2; g.moveTo(p[0], p[1]); g.lineTo(p[0] + (rng() - .5) * 2, p[1] - L); } g.stroke(); g.globalAlpha = 1; } // briznas secas (el tono ya viene del campo)
   }
   // Lodo y charcos junto al río (en la sequía se agrieta y se aclara).
   if (t.d < 2.6 && t.b !== 'arrozal' && nB > .55) {
-    const f = clamp((nB - .55) / .2, 0, 1);
-    for (let j = 0; j < 2; j++) { const p = en(); mancha(g, p[0], p[1], 8 + rng() * 7, mix('#86694A', '#B49A72', dry), .2 + .18 * f); }
     if (nB > .72 && dry < .45) { const p = en(); g.globalAlpha = .55; g.fillStyle = '#8FB0B4'; g.beginPath(); g.ellipse(p[0], p[1], 3 + rng() * 2, 1.2 + rng() * .6, 0, 0, 7); g.fill(); g.globalAlpha = .5; g.fillStyle = '#DCE8E4'; g.beginPath(); g.ellipse(p[0] - 1, p[1] - .4, 1.4, .35, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
   }
   // Piedras sueltas: en roca y páramo casi siempre; en las laderas empinadas, en manchones.

@@ -177,7 +177,7 @@ export function recetasFlora(seco = 0) {
     ['cardon', 22, 28, 9, 25, escala(.95, P.cardon)],
     ['arbusto', 20, 14, 9, 10, escala(1, P.arbusto)],
     ['arbolNiebla', 30, 44, 12, 40, escala(1.05, P.arbolNiebla)],
-    ['palma', 36, 64, 14, 60, escala(.85, P.palma)],
+    ['palma', 54, 64, 14, 60, escala(.85, P.palma)], // ancho de sobra: la sombra larga de la palma no se corta
     ['guadua', 40, 50, 18, 46, escala(.9, P.guadua)],
     ['cafeto', 16, 16, 7, 13, escala(1, P.cafeto)],
     ['platano', 30, 26, 14, 22, escala(.8, P.platano)],
