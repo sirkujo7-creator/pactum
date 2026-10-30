@@ -4,6 +4,7 @@
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { applyFx } from './dilemas.js';
+import { memorializar, resanar } from './huellas.js';
 
 const K = () => C.COMISION;
 export const comisionActiva = S => climaActivo(S) && !!C.COMISION;
@@ -24,7 +25,7 @@ export function accionComision(S, a) {
   if (puedeComision(S, a)) return null;
   const A = K().acciones[a], c = S.comision; S.gold -= costoComision(S, a);
   c.verdad = Math.min(100, c.verdad + A.verdad);
-  if (a === 'perdon') c.perdon = true; else { c.hechas = [...(c.hechas || []), a]; if (a === 'reparar') c.reparadas++; }
+  if (a === 'perdon') c.perdon = true; else { c.hechas = [...(c.hechas || []), a]; if (a === 'reparar') { c.reparadas++; resanar(S); } }
   const fx = applyFx(S, A.efectos); S.log.unshift({ y: S.year, t: `Comisión de la Verdad: ${K().textos.acciones[a].toLowerCase()}.` });
   return fx;
 }
@@ -40,6 +41,7 @@ export function comisionDelAnio(S) {
     if (!S.comision.cerrada && S.year >= S.comision.cierra) {
       const c = S.comision, p = puntajeComision(S), nivel = ['alta', 'media', 'baja'].find(k => p >= K().final[k].desde);
       c.cerrada = true; c.informe = { nivel, puntaje: p, nuevo: true, fx: applyFx(S, K().final[nivel].efectos) };
+      memorializar(S); // las cruces del camino quedan como lugares de memoria
       news.push(`⚖️ ${T.cierra} ${T.final[nivel]}`); S.log.unshift({ y: S.year, t: `${T.cierra} ${T.final[nivel]}` });
     }
   }

@@ -41,7 +41,7 @@ export function dejarMarca(S, tipo, d) {
   libres.sort((a, b) => a[1] - b[1]);
   if (!libres.length) return -1;
   const con = S.map.map((x, i) => x.mk ? i : -1).filter(i => i >= 0);
-  if (con.length >= K().maximo) { const viejo = con.filter(i => (K().tipos[S.map[i].mk.t] || { anios: 0 }).anios < 999).sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
+  if (con.length >= K().maximo) { const viejo = con.filter(i => !S.map[i].mk.perm && (K().tipos[S.map[i].mk.t] || { anios: 0 }).anios < 999).sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
   const i = libres[0][0];
   S.map[i].mk = { t: tipo, y: S.year, d };
   recordar(S, tipo); // fase 5: la huella queda en la memoria del pueblo
@@ -62,6 +62,6 @@ function reforestar(S, n, tipo, d, cr, cc) {
 // Cierre del año: las huellas viejas se borran.
 export function marcasDelAnio(S) {
   if (!marcasActivas(S)) return;
-  for (const x of S.map) if (x.mk && S.year - x.mk.y > (K().tipos[x.mk.t] || { anios: 0 }).anios) delete x.mk;
+  for (const x of S.map) if (x.mk && !x.mk.perm && S.year - x.mk.y > (K().tipos[x.mk.t] || { anios: 0 }).anios) delete x.mk; // perm: lugar de memoria, no se borra
 }
 export function marcasEnMapa(S) { return S.map.filter(x => x.mk).length; }

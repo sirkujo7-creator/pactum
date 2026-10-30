@@ -73,7 +73,7 @@ export function conflictoDelAnio(S) {
   if (F.nivel < P.seVa) {
     const paz = F.estrategia === 'dialogo';
     if (F.camp >= 0 && S.map[F.camp].mk && S.map[F.camp].mk.t === 'campamento') delete S.map[F.camp].mk;
-    F.grupo = false; F.camp = -1;
+    F.campViejo = F.camp; F.grupo = false; F.camp = -1; F.fin = S.year; // tanda 3: los desplazados vuelven a sus veredas
     if (paz) { S.tr = clamp(S.tr + 6, 0, 100); dejarMarca(S, 'placa', `Año ${S.year}: acuerdo de paz con ${g}.`); }
     S.confEv = { tipo: paz ? 'paz' : 'repliega', nuevo: true }; F.estrategia = 'ninguna';
     news.push((paz ? T.paz : T.repliega).replace('{grupo}', g));

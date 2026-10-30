@@ -17,9 +17,13 @@ export class Conflicto {
   rc(i) { const N = this.scene.T.N; return { r: Math.floor(i / N) + .5, c: i % N + .5 }; }
   actualizar() {
     const S = this.scene.S, F = S.conf, activo = hayGrupo(S) && F.camp >= 0, ropa = this.scene.pob.ropa || '';
-    const firma = activo ? [F.camp, Math.floor(F.nivel / 5), F.estrategia, ropa, plazaFundacion(S)].join('|') : '';
+    // Tanda 3 (memoria y reparación): los dos años después de que el grupo se va, las familias vuelven a sus veredas.
+    const vuelven = !activo && F && F.fin !== undefined && S.year - F.fin <= 2 && F.campViejo >= 0;
+    const firma = activo ? [F.camp, Math.floor(F.nivel / 5), F.estrategia, ropa, plazaFundacion(S)].join('|') : vuelven ? 'retorno|' + F.fin : '';
     if (firma === this.firma) return; this.firma = firma;
-    this.quitarFijos(); if (!activo) { this.quitarGente(); return; }
+    this.quitarFijos(); this.retorno = null;
+    if (vuelven) { const pz = plazaFundacion(S); this.nivel = 0; this.estrategia = 'ninguna'; this.retorno = { de: pz >= 0 ? this.rc(pz) : this.rc(F.campViejo), a: this.rc(F.campViejo) }; this.prox.ret = this.t + 3; return; }
+    if (!activo) { this.quitarGente(); return; }
     this.nivel = F.nivel; this.estrategia = F.estrategia;
     const camp = this.rc(F.camp), pz = plazaFundacion(S), plaza = pz >= 0 ? this.rc(pz) : camp;
     this.camp = camp; this.plaza = plaza;
@@ -97,6 +101,7 @@ export class Conflicto {
       a.img.destroy(); a.extra && a.extra.destroy(); return false;
     });
     const P0 = this.prox;
+    if (this.retorno && this.t > (P0.ret || 0) && this.gente.length < 10) { P0.ret = this.t + 20 + Math.random() * 12; this.caminantes([['campesino', Math.floor(this.t) % 3, 0, false, 'cargar'], ['campesina', 2, 0, false, 'cargar'], ['nino', 0, 0, false, null]], this.retorno.de, this.retorno.a); } // de regreso a la vereda
     if (this.nivel >= 45 && this.t > P0.despl && this.gente.length < 10) {
       P0.despl = this.t + 22 + Math.random() * 16;
       this.caminantes([['campesino', Math.floor(this.t) % 3, 0, false, 'cargar'], ['campesina', 1, 0, false, 'cargar'], ['nino', 2, 0, false, null]], this.camp, this.plaza);

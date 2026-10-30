@@ -170,7 +170,13 @@ export function cubrir(S, i) { if (huellasActivas(S) && i >= 0) S.map[i].sb = S.
 export function sabanaVisible(S, x) { return huellasActivas(S) && ((x.sb !== undefined && S.year - x.sb <= 1) || (x.mk && x.mk.t === 'cruz' && S.year - x.mk.y <= 1)); }
 // Desaparecidos: madres que muestran la foto en la plaza mientras no haya verdad (se ven 20 años desde el último).
 export function desaparecer(S, n = 1) { if (!huellasActivas(S)) return; S.desap = (S.desap || 0) + n; S.desapUlt = S.year; }
-export function busquedaVisible(S) { return huellasActivas(S) && (S.desap || 0) > 0 && S.year - S.desapUlt < 20; }
+export function busquedaVisible(S) { return huellasActivas(S) && (S.desap || 0) > 0 && S.year - S.desapUlt < 20 && !verdadEsclarecida(S); }
+// Memoria y reparación (animación de conflictos, tanda 3): con un informe final medio o alto de la Comisión de la Verdad
+// las madres ya saben qué pasó y dejan la plaza; las cruces del camino quedan como lugar de memoria (no se borran).
+export function verdadEsclarecida(S) { const c = S.comision; return !!(c && c.cerrada && c.informe && c.informe.nivel !== 'baja'); }
+export function memorializar(S) { if (!huellasActivas(S)) return 0; let n = 0; for (const x of S.map) if (x.mk && x.mk.t === 'cruz' && !x.mk.perm) { x.mk.perm = true; n++; } return n; }
+// Reparar: se resanan los muros con impactos de bala.
+export function resanar(S) { if (!huellasActivas(S)) return 0; let n = 0; for (const x of S.map) if (x.bz !== undefined) { delete x.bz; n++; } return n; }
 // Trincheras: zanjas entre el pueblo y el borde del vecino durante la guerra (marcas que duran unos años).
 export function cavarTrincheras(S, casillasDelBorde) {
   if (!huellasActivas(S) || !C.HUELLAS.guerra || !casillasDelBorde.length) return [];
