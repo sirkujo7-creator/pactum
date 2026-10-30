@@ -23,6 +23,7 @@ import { Transporte } from './Transporte.js';
 import { Visitas } from './Visitas.js';
 import { Patrullas } from './Patrullas.js';
 import { Conflicto } from './Conflicto.js';
+import { Guerra } from './Guerra.js';
 import { Oficios } from './Oficios.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
@@ -107,6 +108,7 @@ export class Mapa extends Phaser.Scene {
     this.visitas = new Visitas(this); // visitante extranjero
     this.patrullas = new Patrullas(this); // policía y ejército
     this.conflicto = new Conflicto(this); // grupo armado, retén, desplazados
+    this.frente = new Guerra(this); // la guerra con un vecino: frente, fogonazos, huida y heridos
     this.oficios = new Oficios(this); // trabajadores con su oficio
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
@@ -192,6 +194,7 @@ export class Mapa extends Phaser.Scene {
     if (!x.b && x.mk) {
       const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + ((C.MARCAS && C.MARCAS.tipos[x.mk.t] || {}).arte || x.mk.t), t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1));
       if (sabanaVisible(this.S, x)) this.obras[i].push(this.figura('edificios', 'sabana', t.r + .82, t.c + .3, t.h, .9).setDepth(t.r + t.c + 1.2)); // el velorio en el camino
+      if (x.mk.perm) this.obras[i].push(this.figura('edificios', 'velas', t.r + .7, t.c + .62, t.h, .8).setDepth(t.r + t.c + 1.1)); // lugar de memoria: siempre con velas
       return;
     }
     if (!x.b) return;
@@ -281,7 +284,7 @@ export class Mapa extends Phaser.Scene {
     const ly = (x.b ? this.leyesAqui(i, x).join(',') : '') + (x.b && quemadaVisible(S, x) ? 'q' : '');
     if (x.b === 'cementerio') return 't' + Math.ceil(tumbasDe(S, i) * 12 / C.HUELLAS.cementerio.capacidad);
     if (x.b === 'casa' && i % 3 === 1) return (epidemiaVisible(S) ? 'e' : '') + ly;
-    return (i === this.plazaLuto() && lutoVisible(S) ? 'l' : '') + ly;
+    return (i === this.plazaLuto() && lutoVisible(S) ? 'l' : '') + (i === this.plazaLuto() && this.muroVisible() ? 'v' : '') + ly;
   }
   // Huellas, paso 1: tumbas en el cementerio, velas de luto en la plaza y banderas amarillas en una epidemia.
   huellasDeObra(i, x, t) {
@@ -291,6 +294,7 @@ export class Mapa extends Phaser.Scene {
       for (let k = 0; k < n; k++) pon('tumba', -.18 + Math.floor(k / 4) * .2, -.2 + (k % 4) * .16, .95);
     }
     if (lutoVisible(S) && i === this.plazaLuto()) pon('velas', .28, -.05, .9);
+    if (i === this.plazaLuto() && this.muroVisible()) pon('muroFotos', .36, -.3, .95); // la Comisión de la Verdad trabaja: el muro de las fotos
     if (x.b !== 'casa' && aislada(S, i)) pon('sinCamino', .36, .3, .9); // obra aislada: letrero de «sin camino» al pie
     if (x.b === 'casa' && i % 3 === 1 && epidemiaVisible(S)) pon('bandera-amarilla', .22, -.22, .9);
     // Paso 4: una obra quemada en la guerra o en una toma: muros ahumados y hollín.
@@ -322,6 +326,7 @@ export class Mapa extends Phaser.Scene {
     }
     return this._leyes.donde[i] || [];
   }
+  muroVisible() { const c = this.S.comision; return !!(c && !c.cerrada); } // mientras trabaja la Comisión de la Verdad
   plazaLuto() { const p = plazaFundacion(this.S); return p >= 0 ? p : centroPueblo(this.S); }
   // Grietas en el muro y maleza al pie de una obra descuidada.
   desgasteVisible(i, nivel, soloMaleza = false) {
@@ -356,7 +361,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x, i) { return `${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}`; } // fase 10: el cultivo y si ya produce
+  huella(x, i) { return `${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}`; } // fase 10: el cultivo y si ya produce
   // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
   revisarRio() {
     const n = desvios(this.S).length;
@@ -580,6 +585,7 @@ export class Mapa extends Phaser.Scene {
     if (this.visitas) this.visitas.actualizar();
     if (this.patrullas) this.patrullas.actualizar();
     if (this.conflicto) this.conflicto.actualizar();
+    if (this.frente) this.frente.actualizar();
     if (this.oficios) this.oficios.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
@@ -643,6 +649,7 @@ export class Mapa extends Phaser.Scene {
     this.visitas.update(Math.min(.05, delta / 1000));
     this.patrullas.update(Math.min(.05, delta / 1000));
     this.conflicto.update(Math.min(.05, delta / 1000));
+    this.frente.update(Math.min(.05, delta / 1000));
     this.oficios.update(Math.min(.05, delta / 1000));
     this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).

@@ -1,3 +1,3 @@
 // Versión visible del juego. Al publicar, cambiarla también en sw.js (CACHE).
-export const VERSION = '0.152.1';
-export const PASO = 'Caminos: aviso claro y letrero que se quita al instante';
+export const VERSION = '0.153.0';
+export const PASO = 'La guerra se ve y la memoria repara';

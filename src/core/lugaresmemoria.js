@@ -5,6 +5,7 @@ import { climaActivo } from './clima.js';
 import { dejarMarca } from './marcas.js';
 import { recordar } from './memoria.js';
 import { applyFx } from './dilemas.js';
+import { memorializar } from './huellas.js';
 
 const K = () => C.LUGMEM;
 export const lugaresActivos = S => climaActivo(S) && !!C.LUGMEM && !!C.MARCAS;
@@ -25,6 +26,7 @@ export function levantarLugar(S, id) {
   const i = dejarMarca(S, l.tipo, `Año ${S.year}: ${l.nombre}. ${l.texto} ${l.nota}`); if (i < 0) return { error: K().textos.sinSitio };
   S.gold -= costoLugar(S, l); const fx = applyFx(S, l.efectos); recordar(S, l.recuerdo, 3);
   (S.lugaresMem = S.lugaresMem || {})[id] = { i, anio: S.year };
+  memorializar(S); // las cruces del camino también quedan como lugares de memoria
   S.log.unshift({ y: S.year, t: `Se levanta: ${l.nombre}. ${l.nota}` });
   return { i, fx, l };
 }

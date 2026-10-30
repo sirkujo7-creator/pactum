@@ -1530,6 +1530,26 @@ function mural(g, e) {
   for (const [dx, col] of [[3, '#C0392B'], [5, '#2F5D8A'], [7, '#E7B23C']]) cilindro(g, pz[0] + dx, pz[1] + 1, .9, 1.6, '#9AA0A4', col);
 }
 
+
+// Muro de las fotos (memoria, tanda 3): mientras trabaja la Comisión de la Verdad, en la plaza un tablero de madera
+// con las fotos de los desaparecidos, una cinta con «¿DÓNDE ESTÁN?», velas y flores al pie.
+function muroFotos(g) {
+  sombraSuelo(g, 3, 2, 18, 4);
+  const F = caras(.62, .06, 13, 0, 0, 0);
+  for (const c of [F.a + .03, F.b - .03]) { const a = P(F.f, c), b = P(F.f, c, 15); g.strokeStyle = K.maderaOsc; g.lineWidth = 1.2; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  rellena(g, [F.en('izq', 0, 2), F.en('izq', 1, 2), F.en('izq', 1, 13), F.en('izq', 0, 13)], '#8A6A48', K.contorno, .4);
+  rellena(g, [F.en('izq', .02, 2.6), F.en('izq', .98, 2.6), F.en('izq', .98, 12.4), F.en('izq', .02, 12.4)], '#A8865E', null);
+  for (let fila = 0; fila < 3; fila++) for (let k = 0; k < 7; k++) {
+    const u = .07 + k * .13 + (fila % 2) * .03, z = 3.4 + fila * 2.9, q = [F.en('izq', u, z), F.en('izq', u + .085, z), F.en('izq', u + .085, z + 2.4), F.en('izq', u, z + 2.4)];
+    rellena(g, q, '#F2EDE0', 'rgba(60,45,30,.4)', .2);
+    const c = F.en('izq', u + .042, z + 1.5); g.fillStyle = ['#6E6252', '#7E705E', '#5E5446'][(k + fila) % 3]; g.beginPath(); g.ellipse(c[0], c[1], .7, .8, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(c[0], c[1] + 1.1, 1.1, .5, 0, 0, 7); g.fill();
+  }
+  rellena(g, [F.en('izq', .1, 13.4), F.en('izq', .9, 13.4), F.en('izq', .9, 15.6), F.en('izq', .1, 15.6)], '#F4F1E6', 'rgba(60,45,30,.35)', .25);
+  { const a = F.en('izq', .1, 14.5), b = F.en('izq', .9, 14.5); g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0); g.fillStyle = '#8E2F22'; g.font = 'bold 1.9px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('¿DÓNDE ESTÁN?', 0, 0); g.restore(); }
+  for (let k = 0; k < 5; k++) { const q = P(F.f + .08, F.a + .08 + k * .12); vela(g, q[0], q[1], 2 + (k % 2)); }
+  const fl = P(F.f + .1, F.b - .1); flores(g, fl[0], fl[1], ['#F4F1E6', '#E7C76B', '#C0392B']);
+}
+
 export function recetasPublicos(e = 1) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela],
@@ -1550,7 +1570,7 @@ export function recetasPublicos(e = 1) {
     ['m_dique', 76, 52, 38, 34, dique], ['m_reservorio', 72, 52, 36, 30, reservorio], ['m_tanques', 70, 56, 35, 36, tanques],
     ['m_granero', 64, 70, 32, 50, granero], ['m_cooperativa', 84, 86, 42, 60, cooperativa], ['m_escuelita', 80, 88, 40, 62, escuelita],
     ['m_parcela', 72, 60, 36, 38, parcela], ['m_reten', 64, 56, 32, 38, reten], ['m_campamento', 64, 50, 32, 34, campamento],
-    ['m_cruz', 40, 54, 20, 44, g => cruzCamino(g)],
+    ['m_cruz', 40, 54, 20, 44, g => cruzCamino(g)], ['muroFotos', 56, 50, 28, 34, g => muroFotos(g)],
     ['m_represa', 100, 70, 50, 46, represa], ['m_megaobra', 84, 104, 42, 70, megaobra], ['m_automatizacion', 84, 70, 42, 48, automatizacion],
     ['m_electricidad', 76, 76, 38, 52, electricidad], ['m_imprenta', 72, 66, 36, 46, imprenta], ['m_asentamiento', 72, 56, 36, 38, asentamiento],
     ['m_olla', 60, 52, 30, 36, olla], ['m_mural', 70, 56, 35, 38, mural], ['sabana', 44, 24, 22, 13, g => sabana(g)], ['impactos', 26, 20, 13, 10, g => impactos(g)], ['mesaPaz', 60, 60, 30, 40, g => mesaPaz(g)],
