@@ -11,7 +11,7 @@ export const EFECTOS = {
   oro: 't', alimento: 'f', habitantes: 'p', animo: 'h', igualdad: 'e', confianza: 'c', ambiente: 'a',
   deuda: 'd', campesinos: 'sc', artesanos: 'sa', elite: 'se', inflacion: 'i', impuestoElite: 'txe', tierra: 'ti'
 };
-export const ARCHIVOS = ['voces', 'rumbo', 'edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'maravillas', 'comision', 'etapas', 'imagenes_dilemas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
+export const ARCHIVOS = ['opositores', 'voces', 'rumbo', 'edificios', 'trabajo', 'plaza', 'suelos', 'materiales', 'minerales', 'tarjetas', 'mejoras', 'placas', 'obras_decisiones', 'almanaque', 'mundo_vivo', 'visitantes', 'entre_polis', 'lugares_memoria', 'maravillas', 'comision', 'etapas', 'imagenes_dilemas', 'dilemas', 'consecuencias', 'dificultades', 'guia',
   'regimenes', 'leyes', 'logros', 'personajes', 'filosofias', 'textos', 'pobladores', 'clima', 'desgaste', 'obras', 'cobertura', 'economia', 'indicadores', 'grupos', 'ejercito', 'fuerza', 'movimientos', 'acta', 'sucesos', 'figuras', 'marcas', 'desastres', 'conflicto', 'vecinos', 'victorias', 'barrios', 'cultura', 'memoria', 'epocas', 'tecnologia', 'megaproyectos', 'rio', 'ritmo', 'historia', 'ciclos', 'amenazas', 'calles', 'cine', 'guerra', 'cultivos', 'biomas', 'avances', 'industria', 'civismo', 'rasgos', 'familias', 'vecindad', 'huellas', 'territorios', 'exterior'];
 
 function efectos(obj, donde) {
@@ -116,6 +116,7 @@ export function usarContenido(d) {
   C.LUGMEM = d.lugares_memoria ? { ...d.lugares_memoria, lugares: d.lugares_memoria.lugares.map(l => ({ ...l, efectos: efectos(l.efectos, `lugar ${l.id}`) })) } : null; // lugares de memoria
   C.COMISION = d.comision ? { ...d.comision, acciones: Object.fromEntries(Object.entries(d.comision.acciones).map(([k, a]) => [k, { ...a, efectos: efectos(a.efectos, `comisión ${k}`) }])), final: Object.fromEntries(Object.entries(d.comision.final).map(([k, a]) => [k, { ...a, efectos: efectos(a.efectos, `comisión final ${k}`) }])) } : null; // comisión de la verdad
   C.MARAV = d.maravillas ? { ...d.maravillas, maravillas: d.maravillas.maravillas.map(m => ({ ...m, efectos: efectos(m.efectos, `maravilla ${m.id}`) })) } : null; // maravillas
+  C.OPO = d.opositores || null; // opositores por época
   C.ALM = d.almanaque || null; // almanaque «Mientras tanto»
   C.PLACAS = d.placas || null; // placas de los edificios por época
   C.IMAGENES = d.imagenes_dilemas || { dilemas: {} }; // foto del mapa por decisión (elegida a mano)
