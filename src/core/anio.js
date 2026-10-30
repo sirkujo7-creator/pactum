@@ -12,6 +12,7 @@ import { visitanteDelAnio } from './visitantes.js';
 import { polisDelAnio } from './entrepolis.js';
 import { comisionDelAnio } from './comision.js';
 import { maravillasDelAnio } from './maravillas.js';
+import { opositorDelAnio } from './opositores.js';
 import { C } from './contenido.js';
 import { partesRumbo } from './rumbo.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
@@ -206,6 +207,7 @@ export function advance(S) {
   news.push(...polisDelAnio(S)); // fase 16: pleitos entre polis vecinas
   news.push(...comisionDelAnio(S)); // fase 16: la Comisión de la Verdad
   news.push(...maravillasDelAnio(S)); // fase 17: las maravillas dejan oro
+  news.push(...opositorDelAnio(S)); // el opositor de la época critica y gana o pierde fuerza
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));

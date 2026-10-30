@@ -67,7 +67,7 @@ export function avancesDelAnio(S, breves = []) {
   const repetidas = ids.map(id => C.TEC && C.TEC.inventos[id] && C.TEC.inventos[id].texto).filter(Boolean);
   const conIcono = t => /^\P{L}/u.test(t) ? 0 : 1;
   const br = breves.filter(t => t && t.length <= 160 && !repetidas.some(x => t.includes(x)) && !/ya es Ciudad|los caminos se vuelven/.test(t)).sort((a, b) => conIcono(a) - conIcono(b));
-  const ed = { n: A.ediciones.length + 1, anio: S.year, ids, breves: br.slice(0, 5), cifras: cifrasDelAnio(S) };
+  const ed = { n: A.ediciones.length + 1, anio: S.year, ids, breves: br.slice(0, 5), cifras: cifrasDelAnio(S), columna: S.opo && S.opo.col && S.opo.col.anio === S.year ? { id: S.opo.id, texto: S.opo.col.texto } : null };
   A.ediciones.push(ed);
   if (A.ediciones.length > 40) A.ediciones.shift();
   S.avancesEv = { ...ed, nuevo: true };

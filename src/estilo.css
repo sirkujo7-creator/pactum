@@ -495,3 +495,7 @@ section.fija>.pl-c{padding:0 12px 10px}
 }
 .vig-foto{display:block;width:100%;aspect-ratio:900/330;object-fit:cover;border-radius:12px;margin:0 0 8px;box-shadow:0 2px 8px rgba(40,25,10,.25);background:#e6d8b8}
 .vig-foto.vig-carta{aspect-ratio:2/1}
+.pe-opo{border-style:dashed}
+.card .pe-opo p.small{font-style:italic;text-align:right}
+.barra-opo{height:8px;border-radius:4px;background:rgba(0,0,0,.1);overflow:hidden;margin:2px 0 6px}
+.barra-opo span{display:block;height:100%;background:#A4492E}

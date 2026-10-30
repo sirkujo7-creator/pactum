@@ -24,6 +24,7 @@ import { Visitas } from './Visitas.js';
 import { Patrullas } from './Patrullas.js';
 import { Conflicto } from './Conflicto.js';
 import { Guerra } from './Guerra.js';
+import { Mitin } from './Mitin.js';
 import { Oficios } from './Oficios.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
@@ -109,6 +110,7 @@ export class Mapa extends Phaser.Scene {
     this.patrullas = new Patrullas(this); // policía y ejército
     this.conflicto = new Conflicto(this); // grupo armado, retén, desplazados
     this.frente = new Guerra(this); // la guerra con un vecino: frente, fogonazos, huida y heridos
+    this.mitin = new Mitin(this); // el mitin de la oposición en la plaza
     this.oficios = new Oficios(this); // trabajadores con su oficio
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
@@ -586,6 +588,7 @@ export class Mapa extends Phaser.Scene {
     if (this.patrullas) this.patrullas.actualizar();
     if (this.conflicto) this.conflicto.actualizar();
     if (this.frente) this.frente.actualizar();
+    if (this.mitin) this.mitin.actualizar();
     if (this.oficios) this.oficios.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
@@ -650,6 +653,7 @@ export class Mapa extends Phaser.Scene {
     this.patrullas.update(Math.min(.05, delta / 1000));
     this.conflicto.update(Math.min(.05, delta / 1000));
     this.frente.update(Math.min(.05, delta / 1000));
+    this.mitin.update(Math.min(.05, delta / 1000));
     this.oficios.update(Math.min(.05, delta / 1000));
     this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).

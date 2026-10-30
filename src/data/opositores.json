@@ -1,0 +1,255 @@
+{
+  "leccion": "La oposición es parte de la democracia: vigila al gobierno, dice en voz alta lo que sale mal y ofrece otro camino. Un gobierno que escucha a sus críticos se corrige; uno que los ignora les da fuerza.",
+  "desde": 3,
+  "inicial": 15,
+  "reposo": 20,
+  "regreso": 0.08,
+  "errores": {
+    "deficit": 4,
+    "corrupcion": 3,
+    "corrupcionAlta": 5,
+    "legitimidad": 4,
+    "animo": 3,
+    "muertes": 5,
+    "inseguridad": 3,
+    "ambiente": 2,
+    "igualdad": 2,
+    "impuestos": 3,
+    "hambre": 3
+  },
+  "umbrales": {
+    "corrupcion": 45,
+    "corrupcionAlta": 60,
+    "legitimidad": 50,
+    "animo": 45,
+    "muertes": 3,
+    "inseguridad": 35,
+    "ambiente": 40,
+    "igualdad": 45,
+    "impuestos": 22,
+    "hambre": 10,
+    "leve": 55,
+    "levePeso": 1
+  },
+  "aciertos": {
+    "legitimidad": 62,
+    "legitimidadPeso": 3,
+    "animo": 62,
+    "animoPeso": 2,
+    "sinErrores": 2
+  },
+  "efectos": {
+    "media": 50,
+    "mediaLegitimidad": 0,
+    "alta": 70,
+    "altaLegitimidad": 0
+  },
+  "mocion": {
+    "desde": 80,
+    "cadaAnios": 10,
+    "legitimidadMin": 50,
+    "aprobada": {
+      "legitimidad": -1,
+      "fuerza": -15,
+      "oro": 12,
+      "rumbo": -3
+    },
+    "fracasa": {
+      "legitimidad": 2,
+      "fuerza": -30
+    }
+  },
+  "mitin": 40,
+  "herencia": 0.5,
+  "textos": {
+    "titulo": "La oposición",
+    "ayuda": "Cada época tiene su opositor. Critica lo que sale mal en El Pregonero y gana fuerza con tus errores; con tus aciertos la pierde. Muy fuerte, pide una moción de censura.",
+    "fuerza": "Fuerza",
+    "suben": "Le dan fuerza: déficit, corrupción, poca legitimidad, ánimo bajo, muertes, inseguridad, río sucio, desigualdad, impuestos altos y hambre.",
+    "bajan": "Se la quitan: legitimidad y ánimo altos, y los años sin errores.",
+    "criticas": "Lo que ha dicho",
+    "sinCriticas": "Todavía no ha dicho nada.",
+    "columna": "Columna de la oposición",
+    "nuevo": "🗣️ Nueva voz de la oposición: {nombre}, {rol}.",
+    "crece": "🗣️ {nombre} gana fuerza: su mitin llena la plaza.",
+    "mocionAprobada": "🗣️ {nombre} logró una moción de censura en el cabildo: tuviste que rendir cuentas (legitimidad −1, oro −{oro}, y el rumbo mejora un poco porque el poder quedó vigilado).",
+    "mocionFracasa": "🗣️ La moción de censura de {nombre} fracasó: el cabildo te respaldó y la oposición se debilita.",
+    "niveles": {
+      "debil": "Débil",
+      "media": "Se hace oír",
+      "alta": "Fuerte"
+    },
+    "efectoMedia": "Con fuerza de 80 o más pide una moción de censura en el cabildo: si tu legitimidad está bajo 50, se aprueba y tienes que rendir cuentas; si no, fracasa y él se debilita.",
+    "mitinVisible": "Con fuerza de 40 o más, hace mitin en la plaza."
+  },
+  "opositores": {
+    "fundacion": {
+      "nombre": "Don Bernardo Caicedo",
+      "rol": "vecino notable y dueño de tierras",
+      "icono": "🎩",
+      "lema": "La tierra es de quien la heredó.",
+      "frases": {
+        "deficit": "Se gasta lo que no hay. En mi casa eso tiene nombre: ruina.",
+        "corrupcion": [
+          "Los cargos se reparten entre amigos. Así no se funda un pueblo, se funda una hacienda ajena.",
+          "Dicen que el escribano cobra por cada papel. Yo pagué dos veces el mismo."
+        ],
+        "legitimidad": [
+          "Ya nadie en la plaza le cree al gobierno. Yo, por lo menos, cumplo mi palabra.",
+          "Se murmura en el atrio que este gobierno no durará. No lo digo yo: lo dicen todos."
+        ],
+        "animo": [
+          "La gente anda cabizbaja y el gobierno no lo ve.",
+          "Nadie canta en las fiestas de este año. Mala señal para un pueblo que apenas empieza."
+        ],
+        "muertes": "Hemos enterrado vecinos este año. ¿Quién responde por ellos?",
+        "inseguridad": "De noche ya no se puede salir al camino. Un pueblo sin orden no es pueblo.",
+        "ambiente": "El río baja turbio. Mis abuelos lo bebían sin miedo.",
+        "igualdad": "Unos pocos se quedan con todo, y no hablo de mí.",
+        "impuestos": "Cada cosecha el gobierno se lleva más. Así nadie quiere sembrar.",
+        "hambre": "Falta maíz en las cocinas. Eso es lo primero que debe cuidar quien gobierna.",
+        "bien": "Reconozco que este año no hay mucho de qué quejarse. Ya habrá."
+      }
+    },
+    "cafe": {
+      "nombre": "Don Aurelio Santamaría",
+      "rol": "gamonal liberal y dueño del periódico El Radical",
+      "icono": "📰",
+      "lema": "Libertad, comercio y caminos.",
+      "frases": {
+        "deficit": "Las cuentas del gobierno están en rojo. Con el café a buen precio, eso solo se explica por el despilfarro.",
+        "corrupcion": [
+          "El Radical lo denuncia: contratos de caminos a dedo y cuñados en la nómina.",
+          "¿Quién cobra las comisiones del camino de herradura? El Radical tiene nombres."
+        ],
+        "legitimidad": [
+          "El pueblo ya no confía en este gobierno. En las próximas elecciones lo dirá.",
+          "En los cafés de la plaza ya se habla de cambio de gobierno. El Radical solo lo publica."
+        ],
+        "animo": [
+          "Los arrieros llegan cansados y se van tristes. Este no es el pueblo próspero que nos prometieron.",
+          "Mucho café en los trapiches y poca alegría en las casas. Algo anda mal."
+        ],
+        "muertes": "Hubo muertos este año y el gobierno guarda silencio. El Radical no.",
+        "inseguridad": "Las recuas no pueden pasar tranquilas. Sin caminos seguros no hay café que valga.",
+        "ambiente": "Las aguas mieles del beneficio pudren la quebrada. ¿Y la autoridad?",
+        "igualdad": "Los grandes cafeteros se enriquecen y el jornalero sigue descalzo.",
+        "impuestos": "Más impuestos al trabajo honrado. El Radical pregunta: ¿para qué?",
+        "hambre": "Se siembra café para vender y no hay comida para comer. Mal negocio.",
+        "bien": "Hoy El Radical no encuentra escándalo. Lo cual, admitimos, es noticia."
+      }
+    },
+    "violencia": {
+      "nombre": "Doctor Saturnino Barreto",
+      "rol": "jefe del directorio del partido contrario",
+      "icono": "⚔️",
+      "lema": "Orden, partido y tradición.",
+      "frases": {
+        "deficit": "El erario se desangra mientras el gobierno reparte puestos a sus copartidarios.",
+        "corrupcion": [
+          "Este gobierno de camarilla solo sirve a los suyos. El directorio lo dice sin miedo.",
+          "Las ayudas para los damnificados llegan solo a los del partido de gobierno."
+        ],
+        "legitimidad": [
+          "Medio pueblo no reconoce a este gobierno. Así empiezan las guerras.",
+          "Un gobierno que no protege a todos no gobierna para todos."
+        ],
+        "animo": [
+          "Hay luto y rabia en las veredas. El gobierno mira para otro lado.",
+          "Las campanas solo suenan para los entierros. Así está el ánimo del pueblo."
+        ],
+        "muertes": "Otra vez muertos en las veredas. Y cada bando dice que los otros empezaron.",
+        "inseguridad": "Nadie duerme tranquilo. ¿Dónde está la autoridad?",
+        "ambiente": "Se tumba el monte para esconder armas y nadie lo detiene.",
+        "igualdad": "La tierra del que huye la compra barato el que se queda. Así se hacen fortunas.",
+        "impuestos": "Cobran impuestos a los que ya lo perdieron todo.",
+        "hambre": "Los desplazados piden pan en la plaza. ¿Eso es gobernar?",
+        "bien": "Esta vez el gobierno no dio motivos. Que no se acostumbre el pueblo a la calma."
+      }
+    },
+    "modernizacion": {
+      "nombre": "Doña Ofelia Rengifo",
+      "rol": "concejal del Movimiento Popular Tolimense",
+      "icono": "📣",
+      "lema": "Primero el barrio, después la vitrina.",
+      "frases": {
+        "deficit": "Gastan en obras para la foto y dejan las cuentas en rojo. Los barrios pagarán la deuda.",
+        "corrupcion": [
+          "Los contratos se los ganan siempre los mismos apellidos. ¿Casualidad?",
+          "La licitación del acueducto se la ganó el cuñado de un concejal. Pido que se investigue."
+        ],
+        "legitimidad": [
+          "En los barrios ya no le creen al alcalde. Y tienen razón.",
+          "Recorrí los barrios: nadie sabe para quién gobierna este gobierno."
+        ],
+        "animo": [
+          "La gente llega del campo buscando una vida mejor y encuentra tugurios.",
+          "Los jóvenes se aburren, las madres se angustian y el alcalde inaugura glorietas."
+        ],
+        "muertes": "Hubo muertos este año que pudieron evitarse. Exijo un debate en el concejo.",
+        "inseguridad": "Los barrios de invasión no tienen policía, ni luz, ni nada.",
+        "ambiente": "Las fábricas echan humo y el río va negro. Modernizar no es envenenar.",
+        "igualdad": "Unos tienen casa con antejardín y otros duermen en cartones. Eso no es progreso.",
+        "impuestos": "Suben los impuestos y bajan los salarios. Las cuentas no cuadran para el pueblo.",
+        "hambre": "La libra de arroz está por las nubes. ¿Qué piensa hacer el gobierno?",
+        "bien": "No tengo reproche para este año. Pero vigilaré el próximo."
+      }
+    },
+    "paz": {
+      "nombre": "Senador Hernán Cuartas",
+      "rol": "político de mano dura",
+      "icono": "🛡️",
+      "lema": "Seguridad primero, lo demás después.",
+      "frases": {
+        "deficit": "Este gobierno gasta como si no hubiera mañana y endeuda a nuestros hijos.",
+        "corrupcion": [
+          "Los escándalos se acumulan. El gobierno se blinda y la gente paga.",
+          "Mientras se habla de paz, los contratistas hacen fiesta con la plata pública."
+        ],
+        "legitimidad": [
+          "Nadie confía en este gobierno. Ni sus propios aliados.",
+          "Este gobierno perdió la calle. Que convoque al pueblo y verá."
+        ],
+        "animo": [
+          "El pueblo está cansado de promesas. Quiere resultados.",
+          "La gente ya no sonríe en la calle. El miedo y la desconfianza se notan."
+        ],
+        "muertes": "Más muertos este año. Con mano firme esto no estaría pasando.",
+        "inseguridad": "La delincuencia campea y el gobierno conversa. Hace falta autoridad.",
+        "ambiente": "Ni siquiera el páramo se salva de este desgobierno.",
+        "igualdad": "La desigualdad es el caldo de cultivo de la violencia. Hasta yo lo veo.",
+        "impuestos": "Otra reforma tributaria contra la clase media. Basta ya.",
+        "hambre": "Hay familias que no comen tres veces al día. Así se recluta a los muchachos.",
+        "bien": "Debo admitirlo: este año el gobierno hizo su tarea."
+      }
+    },
+    "digital": {
+      "nombre": "Valeria Moncaleano",
+      "rol": "concejal joven y voz de las redes",
+      "icono": "📱",
+      "lema": "Transparencia en tiempo real.",
+      "frases": {
+        "deficit": "Abrí las cuentas públicas en mis redes: el déficit es real y el gobierno no lo explica.",
+        "corrupcion": [
+          "Mis seguidores encontraron contratos con sobrecostos. El enlace está en mi perfil.",
+          "Pedí los contratos por derecho de petición. Me respondieron tarde y a medias."
+        ],
+        "legitimidad": [
+          "La encuesta de mis redes es clara: la gente ya no confía en este gobierno.",
+          "Tendencia en redes: #NoNosRepresenta. El gobierno debería preocuparse."
+        ],
+        "animo": [
+          "Los jóvenes se van del pueblo porque aquí no ven futuro.",
+          "Ansiedad, desempleo, pantallas. Los jóvenes me escriben y no saben qué hacer."
+        ],
+        "muertes": "Hubo muertes que no debieron pasar. Pido memoria y respuestas, no excusas.",
+        "inseguridad": "Me escriben a diario: robos, amenazas, miedo. ¿Y el plan de seguridad?",
+        "ambiente": "El río y el páramo no son paisaje: son el agua de todos. Y se están muriendo.",
+        "igualdad": "Señal de internet para unos, y para otros ni agua. Eso es desigualdad.",
+        "impuestos": "Impuestos altos y servicios malos: la peor combinación.",
+        "hambre": "Ollas comunitarias en pleno siglo veintiuno. Algo está fallando.",
+        "bien": "Hoy no hay críticas: el gobierno cumplió. Lo digo también en mis redes."
+      }
+    }
+  }
+}
