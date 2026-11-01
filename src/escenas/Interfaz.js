@@ -13,7 +13,7 @@ import {
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
 } from '../core/index.js';
-import { pintarMundo, fichaLugar, lugarEn } from './mundo.js';
+import { montarCarta, fichaLugar } from './mundo.js';
 import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
 import { guardarLuego, guardarYa, infoRanura, guardarRanura, cargarRanura, logrosGanados, guardarLogros, guardarSonido } from './memoria.js';
 import { Sonido } from './sonido.js';
@@ -2094,14 +2094,19 @@ export class Interfaz {
     sel = sel || (visto[0] || L[0]).id;
     const fila = l => { const E = relacionExterior(S, l.id); return `<button class="sub${l.id === sel ? ' on' : ''}" data-lugar="${l.id}"><span class="sn">${l.icono} ${l.nombre} <small>${E ? `${nombreRegimen(E.reg)} · ${E.trato ? X.textos.trato[E.trato].toLowerCase() : 'relación ' + Math.round(E.rel)}` : X.textos.desconocida.toLowerCase()}</small></span></button>`; };
     this.tarjeta(`<div class="big">🌎</div><h3>${X.titulo}</h3><p class="small">${X.textos.ayuda}</p>
-      <canvas class="mundo" aria-label="Mapa de tu polis y sus vecinos"></canvas>
+      <div class="carta-caja"><canvas class="mundo" aria-label="Carta de tu polis, las polis hermanas y los países vecinos"></canvas></div>
+        <div class="carta-bt"><button class="btn" data-cz="mas" aria-label="Acercar">＋</button><button class="btn" data-cz="menos" aria-label="Alejar">－</button><button class="btn" data-cz="tolima">Tolima</button><button class="btn" data-cz="todo">Toda la carta</button></div>
+      <p class="small carta-ley"><i><b style="background:rgba(110,154,88,.6)"></b>amiga</i><i><b style="background:rgba(214,170,80,.7)"></b>neutral</i><i><b style="background:rgba(176,72,52,.6)"></b>hostil</i><i><b class="raya"></b>por conocer</i><i>△ nevado · ■ tus vecinos de frontera</i></p><p class="small">Toca un territorio para ver su ficha.</p>
       <div class="ficha-lugar">${fichaLugar(S, sel)}</div>
       ${this.noticiasMundo()}
       <h3>${X.textos.hermanas}</h3><div class="subs">${L.filter(l => l.circulo === 'hermanas').map(fila).join('')}</div>
       <h3>${X.textos.paises}</h3><div class="subs">${L.filter(l => l.circulo === 'paises').map(fila).join('')}</div>
       <div class="phil"><b>Lo que enseña</b><br>${X.leccion}</div><button class="main" id="okB">Volver</button>`);
     const cv = this.card.querySelector('canvas.mundo');
-    requestAnimationFrame(() => { const pos = pintarMundo(cv, S, sel); cv.onclick = ev => { const id = lugarEn(pos, cv, ev); if (id) this.tarjetaMundo(id); }; });
+    requestAnimationFrame(() => {
+      const M = montarCarta(cv, S, sel, id => this.tarjetaMundo(id));
+      this.card.querySelectorAll('[data-cz]').forEach(b => b.onclick = () => ({ mas: () => M.acercar(1.5), menos: () => M.acercar(1 / 1.5), tolima: M.tolima, todo: M.todo })[b.dataset.cz]());
+    });
     this.card.querySelectorAll('[data-lugar]').forEach(b => b.onclick = () => this.tarjetaMundo(b.dataset.lugar));
     this.card.querySelectorAll('[data-ext]').forEach(b => b.onclick = () => { if (accionExterior(S, sel, b.dataset.ext)) { Sonido.tap && Sonido.tap(); this.render(); this.mapa.cambio(true); } this.tarjetaMundo(sel); });
     this.boton('okB', () => this.cerrarTarjeta());
