@@ -434,7 +434,14 @@ details.familia summary{cursor:pointer;list-style-position:inside}
 /* Fase 15: la pantalla «El mundo» */
 canvas.plano{display:block;width:100%;border-radius:10px;border:1px solid #CDBB93;margin:6px 0 8px;cursor:pointer;touch-action:manipulation;image-rendering:auto}
 .leyenda-plano{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;margin:2px 0 6px}.leyenda-plano i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-canvas.mundo{display:block;width:100%;border-radius:10px;border:1px solid #CDBB93;margin:6px 0 8px;cursor:pointer;touch-action:manipulation}
+canvas.mundo{display:block;width:100%;border-radius:4px;margin:0;cursor:grab;touch-action:none;box-shadow:0 2px 8px rgba(60,40,20,.25)}
+.carta-caja{position:relative;margin:6px 0 4px}
+.carta-bt{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap;margin:4px 0}
+.carta-bt .btn{padding:3px 8px;min-width:30px;font-size:.85rem;background:rgba(246,238,216,.92)}
+.carta-ley{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-bottom:0}
+.carta-ley i{font-style:normal;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.carta-ley b{display:inline-block;width:12px;height:12px;border:1px solid #6B5440;border-radius:2px}
+.carta-ley .raya{background:repeating-linear-gradient(45deg,#d8d0c4 0 2px,#a69c8e 2px 3px)}
 .ficha-lugar{background:rgba(232,220,196,.45);border-radius:10px;padding:8px 10px;margin-bottom:8px}
 .ficha-lugar h3{margin-top:0}
 .subs .sub.on{outline:2px solid #B08E3A}
