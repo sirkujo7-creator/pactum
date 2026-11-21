@@ -780,7 +780,7 @@ export class Mapa extends Phaser.Scene {
         '+': () => this.zoomCentro(1.25), '=': () => this.zoomCentro(1.25), '-': () => this.zoomCentro(1 / 1.25),
         '0': () => this.encuadrar(), c: () => this.alternarCobertura(), m: () => this.ui.tarjetaMundo(), v: () => this.ui.tarjetaPlano(), p: () => this.ui.tarjetaPendientes(), b: () => this.ui.alternarHoja('construir'),
         '1': () => this.ui.alternarHoja('construir'), '2': () => this.ui.alternarHoja('hacienda'), '3': () => this.ui.alternarHoja('sociedad'),
-        '4': () => this.ui.alternarHoja('leyes'), '5': () => this.ui.alternarHoja('cronica'), ' ': () => this.terminarAnio(),
+        '4': () => this.ui.alternarHoja('leyes'), '5': () => this.ui.alternarHoja('mundo'), '6': () => this.ui.alternarHoja('cronica'), ' ': () => this.terminarAnio(),
         Escape: () => { if (this.ui.herramienta) this.ui.elegir(null); else if (this.ui.hojaAbierta()) this.ui.cerrarHojas(); else this.ui.cerrarFicha(); }
       };
       if (this.cine && this.cine.activo) { if ([' ', 'Escape', 'Enter'].includes(e.key)) { this.cine.terminar(); e.preventDefault(); } return; } // fase 9: saltar la escena

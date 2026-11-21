@@ -282,7 +282,7 @@ html,body{background:#E6DABF}
 .redondo.on,.controles button.on{background:var(--rojo);color:#F7F1E3}
 .grupo{display:none;flex-direction:column;gap:6px}
 .grupo.abierto{display:flex}
-@media (min-width:760px){.grupo{display:flex}.controles>.redondo:first-child{display:none}}
+
 /* Barra inferior con greca */
 .dock{background:var(--panel) var(--muro-cal);border-top:3px solid var(--rojo);backdrop-filter:none;-webkit-backdrop-filter:none}
 /* La guarda va dentro de la barra, nunca encima del panel, y con rombos enteros (round ajusta el ancho del dibujo). */
@@ -512,3 +512,23 @@ section.fija>.pl-c{padding:0 12px 10px}
 .vida-p{opacity:.3;margin-right:2px}
 .vida-p.on{opacity:1}
 .vida-barra{display:flex;height:12px;border-radius:6px;overflow:hidden;border:1px solid #6B5440;margin:4px 0}
+
+/* Orden del menú (pedido de Juan): seis pestañas abajo, «Terminar año» flotante, pestañas pequeñas en cada pantalla. */
+.dk{flex:1 1 0;min-width:0;font-size:.74rem}
+.fin-flot{pointer-events:auto;position:absolute;right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:3;background:var(--rojo);color:#F7F1E3;border:0;border-radius:14px;padding:8px 14px;font-family:Alegreya,Georgia,serif;font-weight:700;font-size:1rem;line-height:1.1;min-width:96px;box-shadow:inset 0 0 0 2px var(--ocre),0 6px 16px rgba(30,20,10,.3)}
+.fin-flot small{font-weight:500;font-size:.78rem;opacity:.9}
+.fin-flot:disabled{opacity:.5;cursor:default}
+.meta{right:calc(118px + env(safe-area-inset-right,0px))}
+.hoja:not([hidden])~.fin-flot{display:none}
+@media (min-width:760px){.fin-flot{bottom:24px;right:24px}.hoja:not([hidden])~.fin-flot{display:block}.meta{right:auto}}
+.controles .camara{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.redondo.chico{width:38px;height:38px;font-size:1rem;align-self:flex-end}
+@media (max-width:759px){.solo-pc{display:none}}
+.pest{position:sticky;top:-4px;z-index:2;display:flex;flex-wrap:wrap;gap:4px;padding:6px 0 8px;margin:0 0 4px;background:var(--panel) var(--muro-cal);border-bottom:1px solid var(--line)}
+.pest-b{flex:1 1 auto;border:1.5px solid var(--line);background:rgba(255,255,255,.35);border-radius:16px;padding:5px 10px;font:600 .84rem 'Alegreya Sans',system-ui,sans-serif;color:var(--siena);position:relative;white-space:nowrap}
+.pest-b.on{background:var(--rojo);border-color:var(--rojo);color:#F7F1E3}
+.pest-b.nuevo::after{content:'';position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:#B6452C;box-shadow:0 0 0 2px var(--panel,#F7F1E3)}
+.menu-op{display:grid;gap:8px;margin:8px 0}
+.menu-op .opt.on{border-color:var(--rojo)}
+#ui .fin-flot,.fin-flot{color:#F7F1E3}
+@media (min-width:760px){.dock{width:min(640px,70vw)}.dk{font-size:.84rem}}
