@@ -1,32 +1,148 @@
 {
-  "leccion": "Calidad de vida y necesidades: una familia primero busca comer y tener agua; luego, camino, mercado y templo; después, escuela, salud, seguridad y cultura. Cuando una necesidad se cumple aparece la siguiente (como en la pirámide de Maslow), y la casa lo muestra: del rancho a la casa próspera.",
+  "leccion": "Calidad de vida y necesidades: una familia primero busca comer y tener agua; luego, camino, mercado y templo; después, escuela, salud, seguridad y cultura. Cuando una necesidad se cumple aparece la siguiente (como en la pirámide de Maslow), y la casa lo muestra: del rancho a la casa próspera. Como en la saga Anno, el último escalón depende de la industria: sin cadenas de producción (caña → trapiche → panela) no hay casas prósperas.",
   "niveles": [
-    { "nombre": "Rancho", "icono": "🛖", "texto": "Le falta lo básico: comida o agua." },
-    { "nombre": "Casa", "icono": "🏠", "texto": "Tiene comida y agua." },
-    { "nombre": "Casa acomodada", "icono": "🏡", "texto": "Además tiene camino, mercado y templo cerca." },
-    { "nombre": "Casa próspera", "icono": "🏛️", "texto": "Además tiene escuela, hospital, seguridad y cultura." }
+    {
+      "nombre": "Rancho",
+      "icono": "🛖",
+      "texto": "Le falta lo básico: comida o agua."
+    },
+    {
+      "nombre": "Casa",
+      "icono": "🏠",
+      "texto": "Tiene comida y agua."
+    },
+    {
+      "nombre": "Casa acomodada",
+      "icono": "🏡",
+      "texto": "Además tiene camino, mercado y templo cerca."
+    },
+    {
+      "nombre": "Casa próspera",
+      "icono": "🏛️",
+      "texto": "Además tiene escuela, hospital, seguridad, cultura y los productos de las fábricas: panela o chocolate y, desde los telares, telas."
+    }
   ],
-  "pide": [[], ["comida", "agua"], ["camino", "mercado", "iglesia"], ["escuela", "hospital", "seguridad", "cultura"]],
+  "pide": [
+    [],
+    [
+      "comida",
+      "agua"
+    ],
+    [
+      "camino",
+      "mercado",
+      "iglesia"
+    ],
+    [
+      "escuela",
+      "hospital",
+      "seguridad",
+      "cultura",
+      "dulce",
+      "telas"
+    ]
+  ],
   "necesidades": {
-    "comida": { "icono": "🌽", "nombre": "Comida a buen precio", "falta": "La comida está cara o hubo hambre." },
-    "agua": { "icono": "💧", "nombre": "Agua", "falta": "No alcanza el agua: hacen falta acueductos (o estar cerca del río)." },
-    "camino": { "icono": "🛤️", "nombre": "Camino a la plaza", "falta": "La casa no está unida a la plaza por un camino." },
-    "mercado": { "icono": "🧺", "nombre": "Mercado cerca", "falta": "No hay mercado a su alcance." },
-    "iglesia": { "icono": "⛪", "nombre": "Templo cerca", "falta": "La iglesia queda lejos (o no hay)." },
-    "escuela": { "icono": "📚", "nombre": "Escuela cerca", "falta": "No hay escuela a su alcance." },
-    "hospital": { "icono": "🏥", "nombre": "Hospital cerca", "falta": "No hay hospital a su alcance." },
-    "seguridad": { "icono": "🛡️", "nombre": "Seguridad", "falta": "La inseguridad es alta." },
-    "cultura": { "icono": "🎭", "nombre": "Cultura y recreo cerca", "falta": "No hay parque, cancha, biblioteca, teatro ni estadio cerca." }
+    "comida": {
+      "icono": "🌽",
+      "nombre": "Comida a buen precio",
+      "falta": "La comida está cara o hubo hambre."
+    },
+    "agua": {
+      "icono": "💧",
+      "nombre": "Agua",
+      "falta": "No alcanza el agua: hacen falta acueductos (o estar cerca del río)."
+    },
+    "camino": {
+      "icono": "🛤️",
+      "nombre": "Camino a la plaza",
+      "falta": "La casa no está unida a la plaza por un camino."
+    },
+    "mercado": {
+      "icono": "🧺",
+      "nombre": "Mercado cerca",
+      "falta": "No hay mercado a su alcance."
+    },
+    "iglesia": {
+      "icono": "⛪",
+      "nombre": "Templo cerca",
+      "falta": "La iglesia queda lejos (o no hay)."
+    },
+    "escuela": {
+      "icono": "📚",
+      "nombre": "Escuela cerca",
+      "falta": "No hay escuela a su alcance."
+    },
+    "hospital": {
+      "icono": "🏥",
+      "nombre": "Hospital cerca",
+      "falta": "No hay hospital a su alcance."
+    },
+    "seguridad": {
+      "icono": "🛡️",
+      "nombre": "Seguridad",
+      "falta": "La inseguridad es alta."
+    },
+    "cultura": {
+      "icono": "🎭",
+      "nombre": "Cultura y recreo cerca",
+      "falta": "No hay parque, cancha, biblioteca, teatro ni estadio cerca."
+    },
+    "dulce": {
+      "icono": "🟫",
+      "nombre": "Dulce (panela o chocolate)",
+      "falta": "No alcanza la panela ni el chocolate: hacen falta trapiches o chocolaterías con su materia prima."
+    },
+    "telas": {
+      "icono": "🧵",
+      "nombre": "Telas",
+      "falta": "No alcanzan las telas: hacen falta fábricas de textiles con algodón."
+    }
   },
-  "radios": { "iglesia": 7, "cultura": 6, "rio": 3, "mercadoSinCobertura": 6 },
-  "culturales": ["parque", "cancha", "biblioteca", "teatro", "estadio"],
+  "radios": {
+    "iglesia": 7,
+    "cultura": 6,
+    "rio": 3,
+    "mercadoSinCobertura": 6
+  },
+  "culturales": [
+    "parque",
+    "cancha",
+    "biblioteca",
+    "teatro",
+    "estadio"
+  ],
   "inseguridadMax": 45,
-  "efectos": { "animo": 3, "ingresos": 0.04, "media": 1.2 },
+  "efectos": {
+    "animo": 3,
+    "ingresos": 0.04,
+    "media": 1.0
+  },
   "estilos": [
-    ["rancho0-", "casa0-", "casa0-", "casa2-"],
-    ["rancho0-", "casa0-", "casa2-", "casa3-"],
-    ["rancho1-", "casa2-", "casa3-", "casa4-"],
-    ["rancho1-", "casa3-", "casa4-", "casa4-"]
+    [
+      "rancho0-",
+      "casa0-",
+      "casa0-",
+      "casa2-"
+    ],
+    [
+      "rancho0-",
+      "casa0-",
+      "casa2-",
+      "casa3-"
+    ],
+    [
+      "rancho1-",
+      "casa2-",
+      "casa3-",
+      "casa4-"
+    ],
+    [
+      "rancho1-",
+      "casa3-",
+      "casa4-",
+      "casa4-"
+    ]
   ],
   "textos": {
     "titulo": "Nivel de vida",
@@ -37,6 +153,30 @@
     "subieron": "🏡 {n} casa{s} mejoraron su nivel de vida.",
     "bajaron": "🛖 {n} casa{s} perdieron nivel de vida: {falta}.",
     "pendiente": "{n} casa{s} no pueden mejorar: les falta {falta}.",
-    "resumen": "Casas: {r} ranchos, {c} casas, {a} acomodadas y {p} prósperas."
+    "resumen": "Casas: {r} ranchos, {c} casas, {a} acomodadas y {p} prósperas.",
+    "consumo": "Producción y consumo",
+    "consumoAyuda": "Cada fábrica que funciona abastece a unas cuantas casas. Las casas que ya tienen todo lo demás piden estos productos para ser prósperas; si no alcanzan, se quedan en casa acomodada.",
+    "abastece": "{n} casas",
+    "piden": "{n} casas lo piden",
+    "sobra": "sobra para {n}",
+    "falta": "faltan {n}",
+    "cerrado": "Aún no se pide: se abre con {req}.",
+    "cadena": "Cadena: {cadena}",
+    "leccionConsumo": "Cadena de valor: la materia prima del campo vale más cuando una fábrica la transforma cerca de quien la consume. Sin la cadena completa, ni la finca ni la fábrica sirven a las casas."
+  },
+  "bienes": {
+    "dulce": {
+      "productos": [
+        "trapiche",
+        "chocolate"
+      ],
+      "abastece": 8
+    },
+    "telas": {
+      "productos": [
+        "textiles"
+      ],
+      "abastece": 10
+    }
   }
 }
