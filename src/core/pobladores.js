@@ -52,7 +52,8 @@ export function planearPobladores(S) {
   for (let k = 0; k < n.u; k++) agregar(k % 2 ? 'campesina' : 'artesano', 'u', null, k);
   for (let k = 0; k < ninos; k++) agregar('nino', 'n', elegir(escuela, k), k);
   // Casas: la élite vive en las casas más cercanas a la plaza; los demás se reparten en las restantes.
-  const cerca = pz < 0 ? casas : casas.slice().sort((a, b) => dist(S, a, pz) - dist(S, b, pz));
+  const vida = i => S.map[i].vida ?? 1; // nivel de vida: la élite vive en las mejores casas
+  const cerca = pz < 0 ? casas : casas.slice().sort((a, b) => vida(b) - vida(a) || dist(S, a, pz) - dist(S, b, pz));
   let h = 0;
   for (const p of lista.filter(p => p.clase === 'e')) p.casa = cerca[h++ % cerca.length];
   const resto = lista.filter(p => p.clase !== 'e');

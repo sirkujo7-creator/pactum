@@ -13,6 +13,7 @@ import { polisDelAnio } from './entrepolis.js';
 import { comisionDelAnio } from './comision.js';
 import { maravillasDelAnio } from './maravillas.js';
 import { opositorDelAnio } from './opositores.js';
+import { vidaDelAnio, efectoVida } from './necesidades.js';
 import { C } from './contenido.js';
 import { partesRumbo } from './rumbo.js';
 import { counts, D, RG, RM, hasLaw, ETAPA_OK, ritmo, aniosPolis } from './reglas.js';
@@ -84,6 +85,7 @@ export function advance(S) {
 
   // Ánimo por clase.
   const TG = satTargets(S, c, hunger), sc = TG.sc, expc = TG.expc, ip = S.infl * 100;
+  const vida = efectoVida(S, 'animo'); if (vida) { TG.c += vida; TG.a += vida; TG.e += vida; } // nivel de vida de las casas
   S.sat.c = clamp(S.sat.c + (TG.c - S.sat.c) * .35, 0, 100);
   S.sat.a = clamp(S.sat.a + (TG.a - S.sat.a) * .35, 0, 100);
   S.sat.e = clamp(S.sat.e + (TG.e - S.sat.e) * .35, 0, 100);
@@ -208,6 +210,7 @@ export function advance(S) {
   news.push(...comisionDelAnio(S)); // fase 16: la Comisión de la Verdad
   news.push(...maravillasDelAnio(S)); // fase 17: las maravillas dejan oro
   news.push(...opositorDelAnio(S)); // el opositor de la época critica y gana o pierde fuerza
+  news.push(...vidaDelAnio(S)); // cada casa sube o baja un nivel de vida según sus necesidades
   marcasDelAnio(S);
   news.push(...memoriaDelAnio(S));
   news.push(...epocasDelAnio(S));
