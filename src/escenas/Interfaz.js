@@ -69,6 +69,14 @@ function teñirEmojis(nodo) {
   if (nodo.nodeType !== 1 || nodo.classList.contains('emo') || /^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(nodo.tagName)) return;
   for (const h of [...nodo.childNodes]) teñirEmojis(h);
 }
+// Pestañas pequeñas de cada pantalla: [id, título, secciones (un prefijo termina en «-»)].
+const PESTANAS = {
+  hacienda: [['cuentas', '💰 Cuentas', ['h-cuentas', 'h-fondo', 'h-bonos', 'h-mant', 'h-mega']], ['produccion', '🏭 Producción', ['h-economia', 'h-canasta', 'h-industria', 'h-almacen', 'h-consumo']], ['riesgos', '⚠️ Riesgos', ['h-riesgo', 'h-clima', 'h-ciclos', 'h-ejercito']]],
+  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
+  leyes: [['leyes', '📜 Leyes', ['ley-']], ['regimen', '🏛️ Régimen', ['gob-regimen']], ['oposicion', '🗣️ Oposición', ['c-oposicion']], ['seguridad', '🛡️ Seguridad', ['so-seguridad', 'so-conflicto']]],
+  mundo: [['carta', '🗺️ Carta', ['m-carta']], ['vecinos', '🏘️ Vecinos', ['so-vecinos']], ['noticias', '📰 Noticias', ['m-noticias']]],
+  cronica: [['resumen', '📈 Resumen', ['c-identidad', 'c-graficas', 'c-legado']], ['cartas', '✉️ Cartas', ['c-album']], ['memoria', '🕯️ Memoria', ['c-comision', 'c-lugares', 'c-maravillas']], ['epoca', '🌍 Época', ['c-contexto', 'c-almanaque']], ['registro', '📜 Registro', ['c-log']]]
+};
 export class Interfaz {
   constructor(mapa) {
     this.mapa = mapa;
@@ -93,16 +101,17 @@ export class Interfaz {
     this.hint = el('div', { class: 'hint' });
     this.bSoltar = el('button', { class: 'btn', on: { click: () => this.elegir(null) } }, 'Soltar la obra');
     this.bDeshacer = el('button', { class: 'btn', on: { click: () => this.mapa.deshacer() } }, 'Deshacer última obra');
-    this.cuentas = el('div'); this.sociedad = el('div'); this.leyes = el('div'); this.cronica = el('div');
+    this.cuentas = el('div'); this.sociedad = el('div'); this.leyes = el('div'); this.cronica = el('div'); this.mundoRaiz = el('div');
     // Botones de la barra inferior.
     const dk = (id, icono, texto, atajo) => {
       const d = el('button', { class: 'dk', 'aria-expanded': 'false', title: `${texto} (${atajo})`, on: { click: () => this.alternarHoja(id) } }, [el('span', { class: 'di', html: icono }), texto]);
       d.dataset.hoja = id; return d;
     };
-    this.bFin = el('button', { class: 'fin', on: { click: () => this.mapa.terminarAnio() } });
+    // «Terminar año» flota sobre la barra (así caben seis pestañas grandes en el celular).
+    this.bFin = el('button', { class: 'fin fin-flot', on: { click: () => this.mapa.terminarAnio() } });
     this.dock = el('nav', { class: 'dock', 'aria-label': 'Acciones' }, [
-      dk('construir', pintado('construir'), 'Construir', '1'), dk('hacienda', pintado('hacienda'), 'Hacienda', '2'), dk('sociedad', pintado('sociedad'), 'Sociedad', '3'),
-      dk('leyes', pintado('leyes'), 'Leyes', '4'), dk('cronica', pintado('cronica'), 'Crónica', '5'), this.bFin
+      dk('construir', pintado('construir'), 'Construir', '1'), dk('hacienda', pintado('hacienda'), 'Economía', '2'), dk('sociedad', pintado('sociedad'), 'Pueblo', '3'),
+      dk('leyes', pintado('leyes'), 'Gobierno', '4'), dk('mundo', pintado('mundo'), 'Mundo', '5'), dk('cronica', pintado('cronica'), 'Historia', '6')
     ]);
     this.meta = el('button', { class: 'meta', on: { click: () => this.meta.classList.toggle('abierta') } });
     this.ficha = el('div', { class: 'ficha', role: 'dialog', 'aria-label': 'Ficha' }); this.ficha.hidden = true;
@@ -115,28 +124,25 @@ export class Interfaz {
     this.raiz = el('div', { class: 'mapa-ui' }, [
       el('header', { class: 'arriba' }, [el('div', { class: 'fila1' }, [this.bReg, this.era]), this.hud, this.medidores,
         el('div', { class: 'fila-pend' }, [this.bPend = b('📋', 'Pendientes (p)', () => this.tarjetaPendientes(), 'redondo pendb')])]),
+      // Columna derecha ordenada (pedido de Juan): menú, capas y, aparte, la cámara.
       el('div', { class: 'controles' }, [
-        this.bGrupo = b('☰', 'Menú', () => this.alternarGrupo()),
-        this.grupo = el('div', { class: 'grupo' }, [
-        b('?', 'Cómo jugar', () => this.ayuda(false)),
-        b('▤', 'Partidas y logros', () => this.menu()),
-        b('🌎', 'El mundo (m)', () => this.tarjetaMundo()),
-        b('🗺️', 'Vista de plano (v)', () => this.tarjetaPlano()),
-        this.bSonido = b('🔇', 'Activar sonido', () => this.alternarSonido()),
-        b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25)),
-        b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25)),
-        b('⤢', 'Ver todo el territorio (0)', () => mapa.listo && mapa.encuadrar()),
-        b('⌂', 'Ir a la aldea', () => mapa.listo && mapa.enfocarAldea()),
-        this.bCob = b('◎', 'Capa de cobertura (c)', () => mapa.listo && mapa.alternarCobertura())
+        b('☰', 'Menú: ayuda, partidas, sonido y atajos', () => this.menuOpciones()),
+        b('🗺️', 'Capas y vistas del mapa', () => this.tarjetaCapas()),
+        el('div', { class: 'camara' }, [
+          b('+', 'Acercar (+)', () => mapa.listo && mapa.zoomCentro(1.25), 'redondo chico solo-pc'),
+          b('−', 'Alejar (−)', () => mapa.listo && mapa.zoomCentro(1 / 1.25), 'redondo chico solo-pc'),
+          b('⤢', 'Ver todo el territorio (0)', () => mapa.listo && mapa.encuadrar(), 'redondo chico'),
+          b('⌂', 'Ir a la aldea', () => mapa.listo && mapa.enfocarAldea(), 'redondo chico')
         ])
       ]),
       this.meta,
       hoja('construir', 'Construir', [this.tray, this.hint, el('div', { class: 'dos' }, [this.bSoltar, this.bDeshacer])]),
-      hoja('hacienda', 'Libro de cuentas', [this.cuentas]),
-      hoja('sociedad', 'Sociedad', [this.sociedad]),
-      hoja('leyes', 'Leyes', [this.leyes]),
-      hoja('cronica', 'Crónica del territorio', [this.cronica]),
-      this.ficha, this.dock, this.pasa, this.aviso, this.brindis, this.velo
+      hoja('hacienda', 'Economía', [this.cuentas]),
+      hoja('sociedad', 'Pueblo', [this.sociedad]),
+      hoja('leyes', 'Gobierno', [this.leyes]),
+      hoja('mundo', 'El mundo', [this.mundoRaiz]),
+      hoja('cronica', 'Historia', [this.cronica]),
+      this.ficha, this.dock, this.bFin, this.pasa, this.aviso, this.brindis, this.velo
     ]);
     capaUI().append(this.raiz);
     // Fase 9: los emojis de los textos se tiñen con los pigmentos del fresco (envueltos en <span class="emo">).
@@ -146,8 +152,6 @@ export class Interfaz {
   }
 
   destruir() { this.tinte.disconnect(); this.raiz.remove(); }
-  // Fase 8: los botones de la derecha se agrupan en un solo menú (en computador quedan abiertos).
-  alternarGrupo(abrir) { const on = abrir ?? !this.grupo.classList.contains('abierto'); this.grupo.classList.toggle('abierto', on); this.bGrupo.setAttribute('aria-expanded', String(on)); this.bGrupo.classList.toggle('on', on); }
   avisar(t) { this.aviso.textContent = t; this.aviso.hidden = !t; }
   toast(t) {
     this.brindis.textContent = t; this.brindis.classList.add('show');
@@ -174,18 +178,18 @@ export class Interfaz {
     this._nvClave = clave; this._nvBusy = true;
     try {
       const F = finance(S), R = rating(S), so = F.so, c = counts(S);
-      const hojas = { hacienda: () => this.renderHacienda(F, R), sociedad: () => this.renderSociedad(so, c), leyes: () => this.renderLeyes(), cronica: () => this.renderCronica() };
+      const hojas = { hacienda: () => this.renderHacienda(F, R), sociedad: () => this.renderSociedad(so, c), leyes: () => this.renderLeyes(), mundo: () => this.renderMundo(), cronica: () => this.renderCronica() };
       const ids = {}, en = {};
       for (const [h, f] of Object.entries(hojas)) {
         f();
-        this[{ hacienda: 'cuentas', sociedad: 'sociedad', leyes: 'leyes', cronica: 'cronica' }[h]].querySelectorAll('.pleg[data-pl]').forEach(d => { ids[d.dataset.pl] = 1; (en[h] = en[h] || []).push([d.dataset.pl, (d.querySelector('.pl-t') || {}).textContent || '']); });
+        this[{ hacienda: 'cuentas', sociedad: 'sociedad', leyes: 'leyes', mundo: 'mundoRaiz', cronica: 'cronica' }[h]].querySelectorAll('.pleg[data-pl]').forEach(d => { ids[d.dataset.pl] = 1; (en[h] = en[h] || []).push([d.dataset.pl, (d.querySelector('.pl-t') || {}).textContent || '']); });
       }
       if (!S.nv) { S.nv = { v: { ...ids } }; return; } // primera vez: lo que ya existe no es nuevo
       const avisos = [];
       for (const [h, L] of Object.entries(en)) {
         const nu = L.filter(([id]) => S.nv.v[id] === undefined);
         const d = this.dock.querySelector(`.dk[data-hoja="${h}"]`); if (d) d.classList.toggle('nuevo', nu.length > 0);
-        if (nu.length && !this._nvAvisado) avisos.push(`${{ hacienda: 'Hacienda', sociedad: 'Sociedad', leyes: 'Leyes', cronica: 'Crónica' }[h]}: ${nu.map(x => x[1].replace(/^\P{L}+/u, '').trim()).join(', ')}`);
+        if (nu.length && !this._nvAvisado) avisos.push(`${{ hacienda: 'Economía', sociedad: 'Pueblo', leyes: 'Gobierno', mundo: 'Mundo', cronica: 'Historia' }[h]}: ${nu.map(x => x[1].replace(/^\P{L}+/u, '').trim()).join(', ')}`);
       }
       if (avisos.length && this._nvViejo !== undefined) setTimeout(() => this.toast(`Novedades: ${avisos.join(' · ')}.`), 900);
       this._nvViejo = S.year;
@@ -193,9 +197,9 @@ export class Interfaz {
   }
   // Al cerrar una pantalla, lo que tenía de nuevo pasa a «visto».
   vistoNuevos(hoja) {
-    const S = this.S, raiz = { hacienda: this.cuentas, sociedad: this.sociedad, leyes: this.leyes, cronica: this.cronica }[hoja];
+    const S = this.S, raiz = { hacienda: this.cuentas, sociedad: this.sociedad, leyes: this.leyes, mundo: this.mundoRaiz, cronica: this.cronica }[hoja];
     if (!S || !S.nv || !raiz) return;
-    raiz.querySelectorAll('.pleg.nuevo').forEach(d => { S.nv.v[d.dataset.pl] = 1; d.classList.remove('nuevo'); const n = d.querySelector('.pl-n'); if (n) n.remove(); });
+    raiz.querySelectorAll('.pleg.nuevo').forEach(d => { if (d.closest('.pest-p[hidden]')) return; /* lo de otra pestaña sigue siendo nuevo */ S.nv.v[d.dataset.pl] = 1; d.classList.remove('nuevo'); const n = d.querySelector('.pl-n'); if (n) n.remove(); });
     const d = this.dock.querySelector(`.dk[data-hoja="${hoja}"]`); if (d) d.classList.remove('nuevo');
   }
   alternarHoja(id) { this.hojaAbierta() === id ? this.cerrarHojas() : this.abrirHoja(id); }
@@ -237,8 +241,7 @@ export class Interfaz {
     guardarLuego(S);
     setTimeout(() => this.novedades(), 300);
     Sonido.mode(S.reg); Sonido.era(epocaHistorica(S)); // la música sigue al régimen y a la época
-    this.bSonido.textContent = Sonido.on ? '🔊' : '🔇';
-    this.bSonido.setAttribute('aria-label', Sonido.on ? 'Silenciar' : 'Activar sonido'); this.bSonido.title = this.bSonido.getAttribute('aria-label');
+
     this.bReg.innerHTML = `${EMB[S.reg]}<b>${rg.n.split(' ')[0]}</b>`;
     this.bReg.setAttribute('aria-label', `Régimen: ${rg.n}. Ver rumbo del gobierno`);
     const L = lluvias(S), temp = this.mapa.pob ? this.mapa.pob.temporada() : null;
@@ -290,6 +293,7 @@ export class Interfaz {
     if (abierta === 'sociedad') this.renderSociedad(so, c);
     if (abierta === 'leyes') this.renderLeyes();
     if (abierta === 'cronica') this.renderCronica();
+    if (abierta === 'mundo') this.renderMundo();
   }
 
   // Lo que pide una obra además del oro, en iconos (en rojo lo que falta).
@@ -420,6 +424,7 @@ export class Interfaz {
       if (a === 'abonar') this.toast(`Abonaste ${payDebt(S)} a los préstamos.`);
       this.mapa.cambio(); this.render();
     });
+    this.organizar(this.cuentas, 'hacienda');
   }
 
   renderSociedad(so, c) {
@@ -430,18 +435,15 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a, gestoDe(v))}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-seguridad', this.seccionSeguridad(), 'Seguridad') + this.pleg('so-conflicto', this.seccionConflicto(), 'Conflicto armado') + this.pleg('so-vecinos', this.seccionVecinos() + (exteriorActivo(this.S) ? `<button class="btn" data-mundo style="width:100%;margin:6px 0">🌎 ${C.EXT.textos.boton}</button>` : ''), 'Otras polis y el mundo') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
-    const seg = this.sociedad.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
-    const cf = this.sociedad.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
-    this.sociedad.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
-    this.sociedad.querySelectorAll('[data-mundo]').forEach(b => b.onclick = () => this.tarjetaMundo());
     this.activarPlegables(this.sociedad);
     const fi = this.sociedad.querySelector('[data-fiesta]'); if (fi) fi.onclick = () => { if (organizarFiesta(this.S)) { this.toast(`🎉 ¡${fiestaDelPueblo(this.S).nombre}! La exigencia de sentido baja por dos años.`); this.mapa.cambio(true); this.render(); } };
     this.sociedad.querySelectorAll('[data-fig]').forEach(b => b.onclick = () => this.explicarFigura(b.dataset.fig));
+    this.organizar(this.sociedad, 'sociedad');
   }
   // Fase 3: movimientos sociales con su fuerza (más fuerza = más presión); tocar uno explica por qué crece.
   seccionMovimientos() {
@@ -553,21 +555,21 @@ export class Interfaz {
       C.LAWS.map(l => {
         const on = hasLaw(S, l.id), bl = lawBlock(S, l);
         return `<div class="law ${on ? 'on' : ''}"><b>${l.n}</b><small>${l.d}</small>${on ? `<small>Vigente desde el año ${S.laws[l.id]}.</small>` : ''}${bl && !on ? `<small class="neg">${bl}</small>` : ''}${!on && l.id === 'censura' ? this.avisoActa(['censura']) : ''}<button class="btn" data-ley="${l.id}" ${(bl && !on) || S.over ? 'disabled' : ''}>${on ? 'Derogar' : 'Promulgar'}</button></div>`;
-      }).join('') + this.seccionTecnologia();
-    this.botonesLeyes();
+      }).join('') + this.seccionTecnologia() + this.seccionesGobierno();
+    this.botonesLeyes(); this.finLeyes();
   }
   renderArbol(n) {
     const S = this.S, T = C.CIV.textos, E = estadoCivismo(S), L = todasLasLeyes(S);
     const ramas = Object.entries(C.CIV.ramas).map(([k, R]) => { const LR = L.filter(l => ramaDe(l.id) === k), vig = LR.filter(l => hasLaw(S, l.id)).length; return this.fija('ley-' + k, `${LR.map(l => this.tarjetaLey(l)).join('')}${k === 'economia' ? `<p class="small"><i>${T.libreComercio}</i></p>` : ''}`, `${R.icono} ${R.nombre}`, `${vig} vigente${vig === 1 ? '' : 's'} de ${LR.length}`); }).join('');
     // El árbol de civismo queda siempre abierto (pedido de Juan, 6 de octubre).
-    this.leyes.innerHTML = this.fija('ley-ayuda', `<p class="small">${T.ayuda}</p><p class="small"><i>${C.CIV.leccion}</i></p>`, `🌳 ${T.titulo}`) + `<p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}` + this.pleg('ley-tec', this.seccionTecnologia());
+    this.leyes.innerHTML = this.fija('ley-ayuda', `<p class="small">${T.ayuda}</p><p class="small"><i>${C.CIV.leccion}</i></p>`, `🌳 ${T.titulo}`) + `<p class="civ-puntos"><b>${T.puntos.replace('{p}', Math.floor(E.p)).replace('{anual}', civismoAnual(S).toLocaleString('es-CO'))}</b><br><small>Leyes vigentes: ${n} de ${lawSlots(S)}. Promulgar cuesta ${lawCostNow(S)} de oro${S.reg === 'monarquia' || S.reg === 'tirania' ? '' : ' y 2 de legitimidad'}. Cada etapa abre un cupo más.</small></p>${ramas}` + this.pleg('ley-tec', this.seccionTecnologia()) + this.seccionesGobierno();
     this.activarPlegables(this.leyes);
     this.leyes.querySelectorAll('[data-abrir]').forEach(bt => bt.onclick = () => {
       const id = bt.dataset.abrir, r = puedeAbrir(S, id);
       if (r) { this.toast(r); return; }
       abrirLey(S, id); this.toast(T.abierta.replace('{ley}', todasLasLeyes(S).find(l => l.id === id).n)); this.render();
     });
-    this.botonesLeyes();
+    this.botonesLeyes(); this.finLeyes();
   }
   botonesLeyes() {
     const S = this.S;
@@ -644,7 +646,7 @@ export class Interfaz {
     if (lleg && this.escena(lleg.id === 'ferrocarril' ? 'llegadaTren' : 'llegadaAvion', 'mega-' + lleg.id + S.year, () => { S.megaEv = L; this.megaAnio(alTerminar0); })) return;
     const M = C.MEGA, txt = { consultaSi: M.textos.consultaSi, consultaNo: M.textos.consultaNo, termina: '' };
     this.tarjeta(`<div class="big">🏗️</div><h3>Megaproyectos</h3>${L.map(e => { const P = M.proyectos[e.id]; return `<p><b>${P.icono} ${P.nombre}:</b> ${e.tipo === 'termina' ? `¡terminado! Desde ahora deja ${evaluarMega(S, e.id).beneficio} de oro por año. ${P.impactos}` : txt[e.tipo]}</p>`; }).join('')}
-      <p class="small">Revisa los proyectos en Hacienda → Megaproyectos.</p><div class="phil"><b>Consulta previa</b><br>${M.leccionConsulta}</div><button class="main" id="okB">Continuar</button>`);
+      <p class="small">Revisa los proyectos en Economía → Cuentas.</p><div class="phil"><b>Consulta previa</b><br>${M.leccionConsulta}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 6: el río cambió de curso.
@@ -722,7 +724,7 @@ export class Interfaz {
         <div class="phil"><b>Lo que enseña</b><br>${K.cafe.leccion}</div>`, d);
       if (d) this.boton('okB', () => fin()); else this.card.querySelectorAll('[data-c]').forEach(x => x.onclick = () => { decidirCrisis(S, x.dataset.c); fin(x.dataset.c === 'subsidiar' ? 'Subsidio a los caficultores.' : 'Sin subsidio: el campo lo resiente.'); });
     } else if (e.tipo === 'roya' || e.tipo === 'royaResiste') {
-      this.tarjeta(`<div class="big">🍂</div><h3>La roya del café</h3><p>${e.tipo === 'roya' ? K.roya.textos.llega : K.roya.textos.resiste}</p>${e.tipo === 'roya' ? '<p class="small">Para la próxima: renueva los cafetales en Hacienda → Ciclos de la economía.</p>' : ''}
+      this.tarjeta(`<div class="big">🍂</div><h3>La roya del café</h3><p>${e.tipo === 'roya' ? K.roya.textos.llega : K.roya.textos.resiste}</p>${e.tipo === 'roya' ? '<p class="small">Para la próxima: renueva los cafetales en Economía → Riesgos.</p>' : ''}
         <div class="phil"><b>Lo que enseña</b><br>${K.roya.leccion}</div><button class="main" id="okB">Continuar</button>`);
       this.boton('okB', () => fin());
     } else if (e.tipo === 'pensiones') {
@@ -746,7 +748,7 @@ export class Interfaz {
     S.biomasEv = null;
     if (!L || !L.length || !biomasActivos(S)) { alTerminar(); return; }
     const T = C.BIOMAS.textos, ico = { empieza: '🌡️', glaciarMitad: '🏔️', glaciarSeVa: '🏔️', paramo: '🌿' };
-    this.tarjeta(`<div class="big">${ico[L[0]]}</div><h3>${L[0] === 'empieza' ? 'El clima cambia' : L[0] === 'paramo' ? 'El páramo se encoge' : 'El glaciar del Nevado'}</h3>${L.map(k => `<p>${T[k]}</p>`).join('')}<p class="small">Míralo en <b>Hacienda → Clima del territorio</b>. Revisa tus fincas: el piso térmico de algunas casillas ya cambió.</p><div class="phil"><b>Lo que enseña</b><br>${C.BIOMAS.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.tarjeta(`<div class="big">${ico[L[0]]}</div><h3>${L[0] === 'empieza' ? 'El clima cambia' : L[0] === 'paramo' ? 'El páramo se encoge' : 'El glaciar del Nevado'}</h3>${L.map(k => `<p>${T[k]}</p>`).join('')}<p class="small">Míralo en <b>Economía → Riesgos</b>. Revisa tus fincas: el piso térmico de algunas casillas ya cambió.</p><div class="phil"><b>Lo que enseña</b><br>${C.BIOMAS.leccion}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   // Fase 10: bonanzas y crisis de los cultivos que siembra el jugador, y el auge y desplome del algodón.
@@ -757,7 +759,7 @@ export class Interfaz {
     const T = C.CULTIVOS.textos, K = C.CULTIVOS.canasta.textos;
     const lineas = L.map(e => { const D = datosCultivo(e.cv), p = S.precios[e.cv].p.toLocaleString('es-CO', { maximumFractionDigits: 2 }); return `<p>${D.icono} ${(T[e.tipo] || '').replace('{cultivo}', D.nombre.toLowerCase()).replace('{precio}', p)}</p>`; }).join('');
     const sube = L.some(e => e.tipo === 'bonanza' || e.tipo === 'auge');
-    this.tarjeta(`<div class="big">${sube ? '📈' : '📉'}</div><h3>El mercado del campo</h3>${lineas}<p class="small">Mira tu canasta en <b>Hacienda → ${K.titulo}</b>. En cada finca puedes cambiar de cultivo, pero la siembra cuesta y algunos tardan años en producir.</p><div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Continuar</button>`);
+    this.tarjeta(`<div class="big">${sube ? '📈' : '📉'}</div><h3>El mercado del campo</h3>${lineas}<p class="small">Mira tu canasta en <b>Economía → Producción → ${K.titulo}</b>. En cada finca puedes cambiar de cultivo, pero la siembra cuesta y algunos tardan años en producir.</p><div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div><button class="main" id="okB">Continuar</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
   amenazaAnio(alTerminar) {
@@ -770,7 +772,7 @@ export class Interfaz {
       const t = K.epidemia.tipos.find(x => x.id === e.id);
       html = `<div class="big">${t.icono}</div><h3>${t.nombre}</h3><p>${t.texto}</p>
         <div class="ledger"><table class="budget"><tr><td>Vidas perdidas</td><td class="neg">${e.perdidos}</td></tr><tr><td>Costo de la emergencia</td><td>${e.costo}</td></tr><tr><td>Pagado con el fondo</td><td>${e.fondo}</td></tr></table></div>
-        <p class="small">${e.vigilancia ? 'La vigilancia epidemiológica detectó el brote a tiempo y salvó vidas.' : `${K.epidemia.vigilancia.nombre} (Hacienda → Riesgo de desastres), más hospitales y acueductos reducen las pérdidas.`}</p>
+        <p class="small">${e.vigilancia ? 'La vigilancia epidemiológica detectó el brote a tiempo y salvó vidas.' : `${K.epidemia.vigilancia.nombre} (Economía → Riesgos), más hospitales y acueductos reducen las pérdidas.`}</p>
         <div class="phil"><b>Lo que enseña</b><br>${t.leccion}</div>`;
     } else if (e.tipo === 'avenida') {
       this.mapa.temblor && this.mapa.temblor();
@@ -831,7 +833,7 @@ export class Interfaz {
     // y camino de avances juntos en un solo desplegable; lo que ha pasado, al final y desplegable.
     const contexto = terr + epoca + this.seccionAvances();
     this.cronica.innerHTML = this.fija('c-identidad', this.seccionIdentidad()) + this.fija('c-graficas', `<div class="tabs">${tabs}</div>${grafica(h, G.s, G.o)}`, '📈 Gráficas', G.n) + this.fija('c-album', this.seccionAlbum()) + this.fija('c-legado', this.seccionLegado()) +
-      (S.comision ? this.pleg('c-comision', this.seccionComision(), `⚖️ ${C.COMISION.textos.titulo}`, S.comision.cerrada ? 'informe entregado' : `verdad ${S.comision.verdad}%`) : '') + (S.opo && C.OPO && oposicionActiva(S) ? this.pleg('c-oposicion', this.seccionOposicion(), `🗣️ ${C.OPO.textos.titulo}`, `${datosOpositor(S.opo.id).nombre} · ${C.OPO.textos.niveles[nivelOposicion(S.opo.f)].toLowerCase()}`) : '') + this.pleg('c-maravillas', this.seccionMaravillas(), `🏆 ${C.MARAV ? C.MARAV.textos.titulo : ''}`, `${maravillasHechas(S).length} levantadas`) + this.pleg('c-lugares', this.seccionLugares(), `🕯️ ${C.LUGMEM ? C.LUGMEM.textos.titulo : ''}`, `${lugaresHechos(S).length} levantados`) + this.pleg('c-almanaque', this.seccionAlmanaque(), `🌍 ${C.ALM ? C.ALM.titulo : ''}`, ep ? ep.nombre : '') + this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
+      (S.comision ? this.pleg('c-comision', this.seccionComision(), `⚖️ ${C.COMISION.textos.titulo}`, S.comision.cerrada ? 'informe entregado' : `verdad ${S.comision.verdad}%`) : '') + this.pleg('c-maravillas', this.seccionMaravillas(), `🏆 ${C.MARAV ? C.MARAV.textos.titulo : ''}`, `${maravillasHechas(S).length} levantadas`) + this.pleg('c-lugares', this.seccionLugares(), `🕯️ ${C.LUGMEM ? C.LUGMEM.textos.titulo : ''}`, `${lugaresHechos(S).length} levantados`) + this.pleg('c-almanaque', this.seccionAlmanaque(), `🌍 ${C.ALM ? C.ALM.titulo : ''}`, ep ? ep.nombre : '') + this.pleg('c-contexto', contexto, `🗺️ ${T ? 'Territorio, época' : 'Época'} y avances`, ep ? `${ep.icono} ${ep.nombre}${sig ? `, hasta el año ${sig.desde}` : ''}` : '') + this.pleg('c-log', `<div class="log">${S.log.slice(0, 40).map(l => `<p><b>Año ${l.y}.</b> ${l.t}</p>`).join('')}</div>`, '📜 Lo que ha pasado', S.log[0] ? `año ${S.log[0].y}` : '');
     this.activarPlegables(this.cronica);
     this.cronica.querySelectorAll('[data-mara]').forEach(bt => bt.onclick = () => { const r = levantarMaravilla(this.S, bt.dataset.mara); if (!r) return; if (r.error) { this.toast(r.error); return; } this.toast(`${r.m.nombre}: inaugurada.`); this.mapa.cambio && this.mapa.cambio(true); this.render(); this.renderCronica(); this.mapa.enfocarCasilla && this.mapa.enfocarCasilla(r.i); });
     this.cronica.querySelectorAll('[data-marver]').forEach(bt => bt.onclick = () => { this.cerrarHojas(); this.mapa.enfocarCasilla(+bt.dataset.marver); });
@@ -842,6 +844,7 @@ export class Interfaz {
     this.cronica.querySelectorAll('[data-objeto]').forEach(bt => bt.onclick = () => { const O = datosObjeto(bt.dataset.objeto); this.tarjeta(`<div class="big">${O.icono}</div><h3>${O.nombre}</h3><p>${O.texto}</p><button class="main" id="okB">Cerrar</button>`); this.boton('okB', () => this.cerrarTarjeta()); });
     this.cronica.querySelectorAll('[data-ed]').forEach(bt => bt.onclick = () => { const e = estadoAvances(this.S).ediciones.find(x => x.n === +bt.dataset.ed); if (e) this.periodico(e, null, true); });
     this.cronica.querySelectorAll('[data-g]').forEach(bt => bt.onclick = () => { this.grafica = bt.dataset.g; this.renderCronica(); });
+    this.organizar(this.cronica, 'cronica');
   }
 
   // ---------- Fichas ----------
@@ -1273,7 +1276,7 @@ export class Interfaz {
   comisionAnio(alTerminar) {
     const S = this.S, c = S.comision, T = C.COMISION && C.COMISION.textos;
     if (!c || !T) { alTerminar(); return; }
-    if (c.nuevo) { c.nuevo = false; this.tarjeta(`<div class="big">⚖️</div><h3>${T.titulo}</h3><p>${T.abre.replace('{n}', C.COMISION.duracion)}</p><p class="small">Puedes escuchar testimonios, reparar a familias y pedir perdón desde la Crónica.</p><div class="phil"><b>Lo que enseña</b><br>${C.COMISION.leccion}</div><button class="main" id="okB">Continuar</button>`); this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return; }
+    if (c.nuevo) { c.nuevo = false; this.tarjeta(`<div class="big">⚖️</div><h3>${T.titulo}</h3><p>${T.abre.replace('{n}', C.COMISION.duracion)}</p><p class="small">Puedes escuchar testimonios, reparar a familias y pedir perdón desde Historia → Memoria.</p><div class="phil"><b>Lo que enseña</b><br>${C.COMISION.leccion}</div><button class="main" id="okB">Continuar</button>`); this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return; }
     if (c.informe && c.informe.nuevo) { const I = c.informe; I.nuevo = false; this.tarjeta(`<div class="big">⚖️</div><h3>${T.cierra}</h3><p>${T.final[I.nivel]}</p><p class="small">${T.verdad.replace('{n}', c.verdad)} · ${T.reparadas.replace('{n}', c.reparadas)} · ${T.memoria.replace('{n}', memoriaLevantada(S))}</p><div class="chips">${this.chips(I.fx)}</div><div class="phil"><b>Lo que enseña</b><br>${C.COMISION.leccion}</div><button class="main" id="okB">Continuar</button>`); this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta()); return; }
     alTerminar();
   }
@@ -1377,7 +1380,7 @@ export class Interfaz {
     const titulo = { aparece: 'Conflicto armado en las veredas', toma: 'Toma armada', paz: 'Acuerdo de paz', repliega: 'El grupo armado se repliega' }[e.tipo];
     const texto = mayus(e.tipo === 'toma' ? e.texto : T[e.tipo].replace('{grupo}', g));
     this.tarjeta(`<div class="big">${{ aparece: '⛺', toma: '💥', paz: '🕊️', repliega: '🏞️' }[e.tipo]}</div><h3>${titulo}</h3><p>${texto}</p>
-      ${e.tipo === 'aparece' ? `<p class="small">Mientras siga: veredas abandonadas (menos cosecha), desplazados que llegan al pueblo, extorsión y pérdida de legitimidad. Elige una estrategia en <b>Sociedad → Conflicto armado</b>.</p>` : ''}
+      ${e.tipo === 'aparece' ? `<p class="small">Mientras siga: veredas abandonadas (menos cosecha), desplazados que llegan al pueblo, extorsión y pérdida de legitimidad. Elige una estrategia en <b>Gobierno → Seguridad</b>.</p>` : ''}
       <div class="phil"><b>Lo que enseña</b><br>${K.leccion}</div>
       <div class="dos">${e.tipo === 'aparece' ? '<button class="btn" id="estrB">Elegir estrategia</button>' : ''}<button class="main" id="okB">Entendido</button></div>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
@@ -1401,7 +1404,7 @@ export class Interfaz {
     const V = C.VECINOS;
     this.tarjeta(`<div class="big">🤝</div><h3>Las polis vecinas</h3><p>${V.textos.abre}</p>
       ${Object.entries(V.vecinos).map(([id, n]) => `<p class="small"><b>${n.icono} ${n.nombre}</b> (${n.alcalde}): ${n.rasgo}</p>`).join('')}
-      <p class="small">Cuida las relaciones en <b>Sociedad → Otras polis</b>. Con un promedio menor que ${V.minimo} hay aislamiento y no llegarás a Polis.</p>
+      <p class="small">Cuida las relaciones en <b>Mundo → Vecinos</b>. Con un promedio menor que ${V.minimo} hay aislamiento y no llegarás a Polis.</p>
       <div class="phil"><b>Lo que enseña</b><br>${V.leccion}</div><button class="main" id="okB">Entendido</button>`);
     this.alCerrar = alTerminar; this.boton('okB', () => this.cerrarTarjeta());
   }
@@ -1695,7 +1698,7 @@ export class Interfaz {
     if (e.tipo === 'tropas') { this.tarjetaFrontera(e.id, sigue); return; }
     if (e.tipo === 'fin') { sigue(); return; }
     let html;
-    if (e.tipo === 'incidente') html = `<div class="big">🚩</div><h3>Incidente en la frontera</h3><p>${T.incidente.replace('{vecino}', nom)}</p><p class="small">Mejora la relación con ${nom} (tratado, visita) o responde a la tensión en <b>Sociedad → Otras polis → ${nom} → Frontera y guerra</b>.</p>`;
+    if (e.tipo === 'incidente') html = `<div class="big">🚩</div><h3>Incidente en la frontera</h3><p>${T.incidente.replace('{vecino}', nom)}</p><p class="small">Mejora la relación con ${nom} (tratado, visita) o responde a la tensión en <b>Mundo → Vecinos → ${nom} → Frontera y guerra</b>.</p>`;
     else if (e.tipo === 'guerra' || e.tipo === 'declaras') html = `<div class="big">⚔️</div><h3>${e.tipo === 'guerra' ? `${nom} te declara la guerra` : `Guerra contra ${nom}`}</h3><p>${e.tipo === 'guerra' ? 'La tensión se desbordó: sus tropas cruzan el borde.' : T.declaras.replace('{vecino}', nom)}</p>
       <p class="small">Cada año de guerra: −${Math.round(Gk.costos.oro * S.price)} de oro, −${Math.round(Gk.costos.poblacion * 100)}% de habitantes, menos comida y ánimo, comercio cortado con ${nom} y obras dañadas cerca de su borde. Quien pierde el frente pierde casillas del borde. Dura hasta ${Gk.aniosMax} años.</p>
       <p><b>Tu fuerza: ${fuerzaPropia(S)}</b> · ${nom}: ${fuerzaVecino(S, e.id)}</p>${this.filasCausas(partesFuerza(S))}<p class="small">Sube tu fuerza con el Ejército (cuartel y gasto militar), la legitimidad, los aliados y fortificando la frontera.</p>`;
@@ -1857,6 +1860,117 @@ export class Interfaz {
     if (!reabrir) Sonido.prensa();
     this.alCerrar = alTerminar || null; this.boton('okB', () => this.cerrarTarjeta());
   }
+  // ---------- Pestañas pequeñas dentro de cada pantalla (pedido de Juan) ----------
+  // Reparte las secciones ya pintadas de una pantalla en pestañas según PESTANAS; lo que no está en la tabla va a la
+  // primera. Los botones de cada sección siguen funcionando: solo se mueven de lugar.
+  organizar(raiz, hoja) {
+    const G = PESTANAS[hoja]; if (!G || !raiz) return;
+    const de = n => { const id = n.dataset && n.dataset.pl; if (!id) return 0; const k = G.findIndex(g => g[2].some(p => p.endsWith('-') ? id.startsWith(p) : id === p)); return k < 0 ? 0 : k; };
+    const panes = G.map(() => []);
+    for (const n of [...raiz.children]) panes[de(n)].push(n);
+    const usadas = G.map((g, k) => k).filter(k => panes[k].length && panes[k].some(n => n.dataset && n.dataset.pl));
+    if (usadas.length < 2) return;
+    if (!this._pest) { try { this._pest = JSON.parse(localStorage.getItem('pactum-pestanas') || '{}'); } catch (e) { this._pest = {}; } }
+    let sel = G.findIndex(g => g[0] === this._pest[hoja]); if (!usadas.includes(sel)) sel = usadas[0];
+    const barra = el('div', { class: 'pest', role: 'tablist' });
+    const cuerpos = usadas.map(k => { const d = el('div', { class: 'pest-p', role: 'tabpanel' }); d.append(...panes[k]); d.hidden = k !== sel; return d; });
+    usadas.forEach((k, j) => {
+      const nuevo = cuerpos[j].querySelector('.pleg.nuevo'), bt = el('button', { class: 'pest-b' + (k === sel ? ' on' : '') + (nuevo ? ' nuevo' : ''), role: 'tab', 'aria-selected': String(k === sel) }, G[k][1]);
+      bt.onclick = () => {
+        this._pest[hoja] = G[k][0]; try { localStorage.setItem('pactum-pestanas', JSON.stringify(this._pest)); } catch (e) { /* sin almacenamiento */ }
+        barra.querySelectorAll('.pest-b').forEach((b, i) => { b.classList.toggle('on', i === j); b.setAttribute('aria-selected', String(i === j)); });
+        cuerpos.forEach((c, i) => { c.hidden = i !== j; });
+        const h = this.hojas[hoja]; if (h) h.scrollTop = 0;
+        if (hoja === 'mundo' && this._montarCarta) this._montarCarta();
+      };
+      barra.append(bt);
+    });
+    raiz.replaceChildren(barra, ...cuerpos);
+  }
+  // Gobierno: el régimen y su rumbo, la oposición, la seguridad y el conflicto (antes en Sociedad y Crónica).
+  seccionRegimen() {
+    const S = this.S, R0 = RG(S), c = Math.round(S.corr);
+    return `<p><b>${R0.n}</b>. ${R0.d}</p>${R0.v && climaActivo(S) ? `<p class="small"><b>Ventaja:</b> ${R0.v}</p>` : ''}${R0.riesgo && climaActivo(S) ? `<p class="small"><b>Riesgo:</b> ${R0.riesgo}</p>` : ''}
+      <p class="small">Rumbo del gobierno: <b>${c}</b> (0 bien común, 100 interés propio).</p><div class="rumbo"><div style="width:${c}%"></div></div>
+      <button class="btn" data-regimen style="width:100%;margin-top:6px">Ver el régimen, el rumbo y el acta</button>`;
+  }
+  seccionesGobierno() {
+    const S = this.S;
+    return this.pleg('gob-regimen', this.seccionRegimen(), '🏛️ Régimen y rumbo', RG(S).n, true)
+      + (S.opo && C.OPO && oposicionActiva(S) ? this.pleg('c-oposicion', this.seccionOposicion(), `🗣️ ${C.OPO.textos.titulo}`, `${datosOpositor(S.opo.id).nombre} · ${C.OPO.textos.niveles[nivelOposicion(S.opo.f)].toLowerCase()}`, true) : '')
+      + this.pleg('so-seguridad', this.seccionSeguridad(), 'Seguridad', '', true) + this.pleg('so-conflicto', this.seccionConflicto(), 'Conflicto armado', '', true);
+  }
+  finLeyes() {
+    const R = this.leyes;
+    R.querySelectorAll('[data-regimen]').forEach(b => b.onclick = () => this.infoRegimen());
+    const seg = R.querySelector('[data-seguridad]'); if (seg) seg.onclick = () => this.explicarSeguridad();
+    const cf = R.querySelector('[data-conflicto]'); if (cf) cf.onclick = () => this.explicarConflicto();
+    this.activarPlegables(R);
+    this.organizar(R, 'leyes');
+  }
+  // El mundo (pestaña propia): la carta, los vecinos de frontera y las noticias.
+  renderMundo() {
+    const S = this.S, R = this.mundoRaiz, X = C.EXT;
+    this._montarCarta = null;
+    if (!exteriorActivo(S)) { R.innerHTML = `<p class="small">El mundo se abre en las partidas en acuarela.</p>`; return; }
+    const L = lugares(), visto = L.filter(l => relacionExterior(S, l.id));
+    const sel = this._mundoSel || (visto[0] || L[0]).id; this._mundoSel = sel;
+    const fila = l => { const E = relacionExterior(S, l.id); return `<button class="sub${l.id === sel ? ' on' : ''}" data-lugar="${l.id}"><span class="sn">${l.icono} ${l.nombre} <small>${E ? `${nombreRegimen(E.reg)} · ${E.trato ? X.textos.trato[E.trato].toLowerCase() : `relación ${Math.round(E.rel)}`}` : X.textos.desconocida.toLowerCase()}</small></span></button>`; };
+    const carta = `<p class="small">${X.textos.ayuda}</p>
+      <div class="carta-caja"><canvas class="mundo" aria-label="Carta de tu polis, las polis hermanas y los países vecinos"></canvas></div>
+      <div class="carta-bt"><button class="btn" data-cz="mas" aria-label="Acercar">＋</button><button class="btn" data-cz="menos" aria-label="Alejar">－</button><button class="btn" data-cz="tolima">Tolima</button><button class="btn" data-cz="todo">Toda la carta</button></div>
+      <p class="small carta-ley"><i><b style="background:rgba(110,154,88,.6)"></b>amiga</i><i><b style="background:rgba(214,170,80,.7)"></b>neutral</i><i><b style="background:rgba(176,72,52,.6)"></b>hostil</i><i><b class="raya"></b>por conocer</i><i>△ nevado · ■ tus vecinos de frontera</i></p><p class="small">Toca un territorio para ver su ficha.</p>
+      <div class="ficha-lugar">${fichaLugar(S, sel)}</div>
+      <h3>${X.textos.hermanas}</h3><div class="subs">${L.filter(l => l.circulo === 'hermanas').map(fila).join('')}</div>
+      <h3>${X.textos.paises}</h3><div class="subs">${L.filter(l => l.circulo === 'paises').map(fila).join('')}</div>
+      <div class="phil"><b>Lo que enseña</b><br>${X.leccion}</div>`;
+    const noticias = this.noticiasMundo();
+    R.innerHTML = this.pleg('m-carta', carta, `🗺️ ${X.titulo}`, '', true) + this.pleg('so-vecinos', this.seccionVecinos(), 'Vecinos de frontera', '', true) + (noticias ? this.pleg('m-noticias', noticias, '📰 Noticias del mundo', '', true) : '');
+    R.querySelectorAll('[data-lugar]').forEach(b => b.onclick = () => this.tarjetaMundo(b.dataset.lugar));
+    R.querySelectorAll('[data-ext]').forEach(b => b.onclick = () => { if (accionExterior(S, sel, b.dataset.ext)) { Sonido.tap && Sonido.tap(); this.mapa.cambio(true); } this.render(); });
+    R.querySelectorAll('[data-vecino]').forEach(b => b.onclick = () => this.explicarVecino(b.dataset.vecino));
+    this.activarPlegables(R);
+    const cv = R.querySelector('canvas.mundo');
+    this._montarCarta = () => {
+      if (!cv || this.hojas.mundo.hidden || !cv.clientWidth) return;
+      const M = montarCarta(cv, S, sel, id => this.tarjetaMundo(id));
+      R.querySelectorAll('[data-cz]').forEach(b => b.onclick = () => ({ mas: () => M.acercar(1.5), menos: () => M.acercar(1 / 1.5), tolima: M.tolima, todo: M.todo })[b.dataset.cz]());
+    };
+    this.organizar(R, 'mundo');
+    requestAnimationFrame(() => this._montarCarta && this._montarCarta());
+  }
+  // Abrir el mundo (botón, tecla m, Pendientes o la carta): pestaña Mundo con el lugar elegido en la carta.
+  tarjetaMundo(sel) {
+    if (!exteriorActivo(this.S)) { this.toast('El mundo se abre en las partidas en acuarela.'); return; }
+    if (sel) this._mundoSel = sel;
+    if (!this._pest) this._pest = {};
+    this._pest.mundo = 'carta';
+    if (this.hojaAbierta() === 'mundo') this.render(); else this.abrirHoja('mundo');
+  }
+  // Menú: ayuda, partidas, sonido y atajos, en una sola hoja.
+  menuOpciones() {
+    const atajos = window.matchMedia('(min-width:760px)').matches ? `<h3>⌨️ Atajos de teclado</h3><ul class="conds"><li><b>1 a 6</b>: Construir, Economía, Pueblo, Gobierno, Mundo, Historia</li><li><b>Barra espaciadora</b>: terminar el año</li><li><b>P</b>: pendientes · <b>V</b>: plano · <b>C</b>: cobertura · <b>M</b>: el mundo</li><li><b>Flechas o WASD</b>: mover · <b>+ y −</b> o la rueda: acercar y alejar · <b>0</b>: ver todo</li><li><b>Esc</b>: cerrar</li></ul>` : '';
+    this.tarjeta(`<h3>☰ Menú</h3><div class="menu-op">
+      <button class="opt" id="mAyuda"><b>❓ Cómo jugar</b><small>La guía del juego y sus conceptos.</small></button>
+      <button class="opt" id="mPartidas"><b>▤ Partidas y logros</b><small>Guardar, cargar, códigos de partida y logros.</small></button>
+      <button class="opt" id="mSonido"><b>${Sonido.on ? '🔊 Sonido: encendido' : '🔇 Sonido: apagado'}</b><small>Música por época y sonidos del pueblo. Toca para ${Sonido.on ? 'apagarlo' : 'encenderlo'}.</small></button>
+      </div>${atajos}<button class="main" id="okB">Cerrar</button>`, true);
+    this.boton('mAyuda', () => { this.cerrarTarjeta(); this.ayuda(false); });
+    this.boton('mPartidas', () => { this.cerrarTarjeta(); this.menu(); });
+    this.boton('mSonido', () => { this.alternarSonido(); this.menuOpciones(); });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Capas y vistas del mapa.
+  tarjetaCapas() {
+    const on = !!this.mapa.verCobertura;
+    this.tarjeta(`<h3>🗺️ Capas y vistas</h3><div class="menu-op">
+      <button class="opt" id="cPlano"><b>🗺️ Vista de plano</b><small>El territorio visto desde arriba: calles, usos, suelo, cultivos y subsuelo (tecla V).</small></button>
+      <button class="opt${on ? ' on' : ''}" id="cCob"><b>◎ Cobertura de servicios: ${on ? 'visible' : 'oculta'}</b><small>Qué casas tienen escuela, hospital, mercado, recaudo y policía cerca (tecla C).</small></button>
+      </div><button class="main" id="okB">Cerrar</button>`, true);
+    this.boton('cPlano', () => { this.cerrarTarjeta(); this.tarjetaPlano(); });
+    this.boton('cCob', () => { if (this.mapa.listo) this.mapa.alternarCobertura(); this.cerrarTarjeta(); });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
   // Nivel de vida del pueblo (en Sociedad): cuántas casas hay en cada nivel, lo que más falta y su efecto.
   seccionVida() {
     const S = this.S; if (!necesidadesActivas(S) || !S.vidaIni) return '';
@@ -1998,13 +2112,14 @@ export class Interfaz {
     this.tarjeta(`<div class="big">🏛️</div><h3>${primera ? 'Bienvenido, gobernante' : 'Cómo jugar'}</h3>${primera && climaActivo(S) ? `<div class="historia-real"><b>📅 14 de octubre de 1550</b><br>El capitán Andrés López de Galarza funda Ibagué, la «ciudad musical», en el camino entre Santafé y el Pacífico. Desde ese día empieza esta historia: tu territorio nace de aquella fundación.</div>` : ''}
       <p>Gobiernas un territorio del Tolima junto al río. Llévalo de Aldea a Pueblo, Ciudad y Polis, y sostén la Polis ${aniosPolis(S)} años.</p>${this.parrafoTerritorio()}
       <p><b>Tres clases sociales.</b> Campesinos, artesanos y élite tienen ingresos y ánimo propios. Las casas traen gente, pero cada persona necesita un empleo: cultivos, mercados, talleres. Sin empleo crece el descontento.</p>
-      <p><b>Hacienda.</b> Fija un impuesto para cada clase. Desde Pueblo puedes pedir préstamos, emitir bonos o imprimir moneda. Imprimir genera inflación; endeudarte baja tu calificación y encarece el crédito.</p>
+      <p><b>Las pestañas de abajo.</b> Construir, Economía (impuestos, producción y riesgos), Pueblo (clases y nivel de vida), Gobierno (leyes, régimen, oposición y seguridad), Mundo (la carta y los vecinos) e Historia (gráficas, cartas y memoria). Cada pantalla tiene pestañas pequeñas arriba.</p>
+      <p><b>Economía.</b> Fija un impuesto para cada clase. Desde Pueblo puedes pedir préstamos, emitir bonos o imprimir moneda. Imprimir genera inflación; endeudarte baja tu calificación y encarece el crédito.</p>
       <p><b>Dilemas.</b> Cada respuesta refleja una corriente filosófica, y algunas regresan años después como consecuencia.</p>
       <p><b>Régimen.</b> Cada régimen cambia la sede, los colores y las reglas. Si gobiernas para ti o para una facción, el régimen se corrompe; si el gobierno pierde la legitimidad, estalla una revolución. Toca el emblema para ver tu rumbo.</p>
       <p><b>Agua, energía y ladera.</b> Desde Pueblo necesitas acueductos para crecer y molinos para que los talleres funcionen. El café solo crece en ladera y el puerto va junto al río.</p>
       <p><b>Leyes.</b> Cada etapa te da un cupo más, y cada ley tiene ganadores y perdedores.</p>
       <p><b>Exigencia creciente.</b> Con los años el pueblo espera más calidad de vida. Lo que bastaba al principio no basta al final.</p>
-      <p><b>Controles.</b> En el celular: arrastra, pellizca para acercar y toca casillas o personas. En el computador: arrastra, usa la rueda para acercar, flechas para moverte, 1 a 5 para los paneles, C para la capa de cobertura y la barra espaciadora para terminar el año. El botón ◎ muestra qué casas tienen escuela, hospital, mercado y recaudo cerca.</p>
+      <p><b>Controles.</b> En el celular: arrastra, pellizca para acercar y toca casillas o personas. En el computador: arrastra, usa la rueda para acercar, flechas para moverte, 1 a 6 para las pestañas, C para la capa de cobertura y la barra espaciadora para terminar el año. El botón ◎ muestra qué casas tienen escuela, hospital, mercado y recaudo cerca.</p>
       <p>Pierdes si la legitimidad o el ambiente llegan a cero, si caes dos veces en cesación de pagos o si pierdes unas elecciones.</p>
       <button class="main" id="okB">${primera ? 'Empezar a gobernar' : 'Entendido'}</button>`);
     this.boton('okB', () => { this.cerrarTarjeta(); if (primera && actaDisponible(S) && !S.acta) this.acta(); });
@@ -2108,30 +2223,6 @@ export class Interfaz {
   noticiasMundo2() {
     const S = this.S, M = C.MUNDO, L = S.mundoHechos || []; if (!M || !L.length) return '';
     return `<h3>📰 ${M.textos.titulo}</h3><ul class="alm">${L.slice(0, 5).map(h => `<li><b>${h.lugar}, año ${h.anio}.</b> ${h.titulo} <small>(${h.fecha})</small><br><small>${(h.trato ? M.textos.conTrato : M.textos.sinTrato).replace('{nombre}', h.lugar)}</small><div class="chips">${this.chips(h.fx)}</div></li>`).join('')}</ul>`;
-  }
-  tarjetaMundo(sel) {
-    const S = this.S, X = C.EXT;
-    if (!exteriorActivo(S)) { this.toast('El mundo se abre en las partidas en acuarela.'); return; }
-    const L = lugares(), visto = L.filter(l => relacionExterior(S, l.id));
-    sel = sel || (visto[0] || L[0]).id;
-    const fila = l => { const E = relacionExterior(S, l.id); return `<button class="sub${l.id === sel ? ' on' : ''}" data-lugar="${l.id}"><span class="sn">${l.icono} ${l.nombre} <small>${E ? `${nombreRegimen(E.reg)} · ${E.trato ? X.textos.trato[E.trato].toLowerCase() : 'relación ' + Math.round(E.rel)}` : X.textos.desconocida.toLowerCase()}</small></span></button>`; };
-    this.tarjeta(`<div class="big">🌎</div><h3>${X.titulo}</h3><p class="small">${X.textos.ayuda}</p>
-      <div class="carta-caja"><canvas class="mundo" aria-label="Carta de tu polis, las polis hermanas y los países vecinos"></canvas></div>
-        <div class="carta-bt"><button class="btn" data-cz="mas" aria-label="Acercar">＋</button><button class="btn" data-cz="menos" aria-label="Alejar">－</button><button class="btn" data-cz="tolima">Tolima</button><button class="btn" data-cz="todo">Toda la carta</button></div>
-      <p class="small carta-ley"><i><b style="background:rgba(110,154,88,.6)"></b>amiga</i><i><b style="background:rgba(214,170,80,.7)"></b>neutral</i><i><b style="background:rgba(176,72,52,.6)"></b>hostil</i><i><b class="raya"></b>por conocer</i><i>△ nevado · ■ tus vecinos de frontera</i></p><p class="small">Toca un territorio para ver su ficha.</p>
-      <div class="ficha-lugar">${fichaLugar(S, sel)}</div>
-      ${this.noticiasMundo()}
-      <h3>${X.textos.hermanas}</h3><div class="subs">${L.filter(l => l.circulo === 'hermanas').map(fila).join('')}</div>
-      <h3>${X.textos.paises}</h3><div class="subs">${L.filter(l => l.circulo === 'paises').map(fila).join('')}</div>
-      <div class="phil"><b>Lo que enseña</b><br>${X.leccion}</div><button class="main" id="okB">Volver</button>`);
-    const cv = this.card.querySelector('canvas.mundo');
-    requestAnimationFrame(() => {
-      const M = montarCarta(cv, S, sel, id => this.tarjetaMundo(id));
-      this.card.querySelectorAll('[data-cz]').forEach(b => b.onclick = () => ({ mas: () => M.acercar(1.5), menos: () => M.acercar(1 / 1.5), tolima: M.tolima, todo: M.todo })[b.dataset.cz]());
-    });
-    this.card.querySelectorAll('[data-lugar]').forEach(b => b.onclick = () => this.tarjetaMundo(b.dataset.lugar));
-    this.card.querySelectorAll('[data-ext]').forEach(b => b.onclick = () => { if (accionExterior(S, sel, b.dataset.ext)) { Sonido.tap && Sonido.tap(); this.render(); this.mapa.cambio(true); } this.tarjetaMundo(sel); });
-    this.boton('okB', () => this.cerrarTarjeta());
   }
   menu() {
     const S = this.S, g = logrosGanados();

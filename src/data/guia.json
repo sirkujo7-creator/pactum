@@ -24,7 +24,7 @@
     }
   },
   {
-    "texto": "Revisa la Hacienda y termina tu tercer año de gobierno.",
+    "texto": "Revisa la Economía y termina tu tercer año de gobierno.",
     "condicion": {
       "anio": 4
     }

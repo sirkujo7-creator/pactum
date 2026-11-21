@@ -21,6 +21,8 @@ export const ICONOS = {
   leyes: icono((g, r) => { pintar(g, [[-8, -6], [8, -6], [8, 6], [-8, 6]], FR.ocreClaro, r, { bw: .7 }); ovalo(g, -8, 0, 2.2, 6, FR.sienaClara, r, { bw: .5, n: 0 }); ovalo(g, 8, 0, 2.2, 6, FR.sienaClara, r, { bw: .5, n: 0 }); g.strokeStyle = FR.siena; g.lineWidth = .7; [-3, 0, 3].forEach(y => { g.beginPath(); g.moveTo(-4, y); g.lineTo(4, y); g.stroke(); }); }),
   cronica: icono((g, r) => { pintar(g, [[-9, -7], [0, -5], [9, -7], [9, 8], [0, 9], [-9, 8]], FR.cal, r, { bw: .7, n: 1 }); g.strokeStyle = FR.siena; g.lineWidth = .8; g.beginPath(); g.moveTo(0, -5); g.lineTo(0, 9); g.stroke(); g.lineWidth = .5; [-2, 1, 4].forEach(y => { g.beginPath(); g.moveTo(-7, y); g.lineTo(-2, y + .5); g.moveTo(2, y + .5); g.lineTo(7, y); g.stroke(); }); })
 };
+// El mundo: un globo con tierras verdes, meridianos y paralelos (pestaña «Mundo»).
+ICONOS.mundo = icono((g, r) => { ovalo(g, 0, 0, 9.5, 9.5, FR.agua, r, { bw: .8, n: 1 }); pintar(g, [[-6, -6], [-1, -7], [1, -3], [-2, 0], [-5, 1], [-7, -3]], FR.verde, r, { bw: .5, n: 0 }); pintar(g, [[1, 1], [6, 0], [7, 4], [3, 8], [1, 5]], FR.tierraVerde, r, { bw: .5, n: 0 }); g.strokeStyle = FR.siena; g.globalAlpha = .55; g.lineWidth = .5; g.beginPath(); g.ellipse(0, 0, 4, 9.3, 0, 0, 7); g.moveTo(-9.3, 0); g.lineTo(9.3, 0); g.stroke(); g.globalAlpha = 1; });
 ICONOS.hacienda = ICONOS.oro; ICONOS.sociedad = ICONOS.poblacion;
 
 // Etiqueta <img> lista para insertar en el HTML de la interfaz.
