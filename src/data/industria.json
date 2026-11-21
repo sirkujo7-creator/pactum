@@ -40,6 +40,30 @@
       "empleo": 9,
       "ambiente": -7
     },
+    "trapiche": {
+      "nombre": "Trapiche",
+      "icono": "🟫",
+      "texto": "Muele la caña y la cocina en pailas: sale la panela, el dulce que se toma en aguapanela en todas las casas. Abastece de dulce a las casas del pueblo.",
+      "insumo": {
+        "cultivo": "cana",
+        "porFabrica": 2
+      },
+      "renta": 5,
+      "empleo": 8,
+      "ambiente": -3
+    },
+    "cigarreria": {
+      "nombre": "Fábrica de cigarros",
+      "icono": "🚬",
+      "texto": "Escoge, seca y enrolla la hoja de tabaco, como en las factorías de Ambalema del siglo XIX. Buena ganancia mientras dure la bonanza; casi todo se vende afuera.",
+      "insumo": {
+        "cultivo": "tabaco",
+        "porFabrica": 2
+      },
+      "renta": 8,
+      "empleo": 10,
+      "ambiente": -3
+    },
     "trilladora": {
       "nombre": "Trilladora de café",
       "icono": "☕",

@@ -1,7 +1,7 @@
 // Robots que juegan partidas completas con distintas estrategias (los mismos de la versión 9).
 // pop = impuestos casi nulos, rich = cargar a los pobres, fair = impuestos equilibrados, debt = vivir de la deuda.
 import {
-  sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, aislada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra,
+  sinSepultura, exteriorActivo, costoExterior, puedeExterior, accionExterior, coberturaActiva, ordenarSitios, medirDesdeCentro, cobertura, obrasEnCurso, inseguridad, fondoSugerido, costoReparar, reparar, counts, finance, taxLimit, waterCap, energy, nearRiver, freeTiles, build, canBorrow, takeLoan, advance, choose, rnd, decidirInvento, costoLegalizar, decidirAsentamiento, costoAccion, accionVecino, hayGrupo, elegirEstrategia, nivelVolcan, puedePlan, comprarPlan, presentes, misionDe, cost, C, listaMovimientos, decidirBonanza, decidirCrisis, costoSubsidio, elegirPension, puedeRenovar, costoRenovar, renovarCafetales, puedeVigilancia, costoVigilancia, comprarVigilancia, costoDialogo, dialogar, callesActivas, conectada, aislada, trazarCalle, costoCalle, construirCalle, esquina, centroPueblo, lado, guerraActiva, estadoGuerra, opcionesTratado, costoTratado, firmarTratado, puedeResponder, responder, puedeRecuperar, recuperarTierras, fincasActivas, sembrar, aptitud, listaCultivos, datosCultivo, precioCultivo, canasta, cultivoDe, puedeSembrar, costoSiembra, consumoBienes,
   industriaActiva, productoDe, mejorProducto, producir, puedeProducir, insumoSi, datosProducto, nivelDe, puedeModernizar, modernizar, costoNivel, poweredT, fuerzaMov, elegirSalario, salarioActual, rasgoPendiente, opcionesRasgo, elegirRasgo,
   materialesActivos, comprarMat, comprarFaltante, precioCompra, faltanteMat, plazaActiva, estadoPlaza, motivoMejora, mejorarPlaza, civismoActivo, vecindadActiva, obrasCerca, puedeAbrir, abrirLey, lawBlock, toggleLaw, lawCostNow, datosLey, hasLaw
 } from '../src/core/index.js';
@@ -218,6 +218,19 @@ function robotIndustria(S) {
   for (const i of fab) {
     const pr = mejorProducto(S, i), ya = productoDe(S.map[i]);
     if (pr !== ya && insumoSi(S, i, pr) >= .66 && !puedeProducir(S, i, pr) && (ya === 'artesanias' || insumoSi(S, i, ya) < .34) && S.gold > 90) producir(S, i, pr);
+  }
+  // Paso 2 de Anno: si las casas piden panela y no alcanza, sembrar caña y montar un trapiche.
+  const dulce = consumoBienes(S).find(b => b.id === 'dulce');
+  if (dulce && dulce.abierto && dulce.oferta < dulce.demanda && !(typeof process !== 'undefined' && process.env.SINPANELA)) {
+    const fincas = S.map.map((x, i) => x.b === 'cultivo' && !x.ob ? i : -1).filter(i => i >= 0), canas = fincas.filter(i => cultivoDe(S.map[i]) === 'cana').length;
+    const trap = fab.filter(i => productoDe(S.map[i]) === 'trapiche').length;
+    if (canas < 2 * (trap + 1)) { // resembrar en caña la finca de dinero que menos deja
+      const L = fincas.filter(i => { const cv = cultivoDe(S.map[i]); return cv !== 'cana' && !datosCultivo(cv).comida && aptitud(S, i, 'cana') >= .6; }).sort((a, b) => datosCultivo(cultivoDe(S.map[a])).renta - datosCultivo(cultivoDe(S.map[b])).renta);
+      if (L.length && !puedeSembrar(S, L[0], 'cana') && S.gold > costoSiembra(S, 'cana') + 100) sembrar(S, L[0], 'cana');
+    } else if (trap < fab.length) {
+      const i = fab.find(j => productoDe(S.map[j]) === 'artesanias') ?? fab.find(j => productoDe(S.map[j]) !== 'trapiche' && insumoSi(S, j, productoDe(S.map[j])) < .5);
+      if (i !== undefined && !puedeProducir(S, i, 'trapiche') && S.gold > 90) producir(S, i, 'trapiche');
+    }
   }
   // Una fábrica nueva si hay materia prima sin usar.
   if (F.so.un >= 6 && c.taller < 6 && S.gold > cost(S, 'taller') + 160 && !obrasEnCurso(S).taller) {

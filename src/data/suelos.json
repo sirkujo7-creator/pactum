@@ -26,7 +26,8 @@
       ],
       "factores": {
         "arroz": 0.95,
-        "cafe": 0.95
+        "cafe": 0.95,
+        "cana": 0.95
       }
     },
     "seca": {
@@ -44,7 +45,9 @@
         "cacao": 0.8,
         "cafe": 0.85,
         "aguacate": 0.9,
-        "ganaderia": 0.95
+        "ganaderia": 0.95,
+        "cana": 0.8,
+        "tabaco": 0.85
       }
     },
     "ladera": {
@@ -60,7 +63,8 @@
         "algodon": 0.8,
         "pancoger": 1,
         "cacao": 0.95,
-        "ganaderia": 1
+        "ganaderia": 1,
+        "tabaco": 0.7
       }
     }
   },

@@ -549,6 +549,7 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
     for (const [u, v] of [[.35, .4], [.65, .62], [.45, .75]]) { const p = pt(u, v); blob(g, p[0], p[1] - 2.6, 4, 2.2, '#F2EEE4', rng, .97); blob(g, p[0] - 1, p[1] - 2.9, 1.6, 1, '#2E2723', rng, .9); blob(g, p[0] + 4, p[1] - 3.4, 1.6, 1.3, '#F2EEE4', rng, .97); }
     return;
   }
+  if (cv === 'cana' || cv === 'tabaco') { pintarCanaTabaco(g, q, pt, rng, dry, cv, joven); return; }
   const suelo = cv === 'algodon' ? mix('#B99A6A', '#C9B07A', dry) : mix('#8E7A52', '#A89A6A', dry);
   wash(g, q, suelo, rng, .5, .6);
   const filas = cv === 'algodon' ? 5 : 3, cols = cv === 'algodon' ? 6 : 4, s = joven ? .45 : 1;
@@ -561,6 +562,37 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
     blob(g, p[0], p[1] - 3.2 * s, (cv === 'aguacate' ? 3.6 : 3.1) * s, (cv === 'aguacate' ? 3.4 : 2.8) * s, col, rng, .95);
     if (!joven && cv === 'cacao') for (let k = 0; k < 2; k++) { g.fillStyle = k ? '#C9822E' : '#9C2F25'; g.beginPath(); g.ellipse(p[0] + (k ? 1.6 : -1.4), p[1] - 1.4, .7, 1.1, 0, 0, 7); g.fill(); }
     if (!joven && cv === 'aguacate') { g.fillStyle = '#4E6E2A'; g.beginPath(); g.ellipse(p[0] + 1.2, p[1] - 2, .7, .9, 0, 0, 7); g.fill(); }
+  }
+  g.globalAlpha = .4; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
+}
+// Paso 2 de Anno: caña panelera (macollas altas de tallos con hojas largas) y tabaco (matas de hojas anchas, algunas
+// amarillas, en surcos sobre tierra clara).
+function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven) {
+  const s = joven ? .5 : 1;
+  wash(g, q, cv === 'cana' ? mix('#9A8A5C', '#B4A272', dry) : mix('#B79E70', '#C9B386', dry), rng, .5, .6);
+  if (cv === 'cana') {
+    for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
+      const p = pt(.12 + b * .152 + (a % 2) * .04, .14 + a * .23);
+      g.globalAlpha = .2; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2.4, p[1] + .5, 3.4 * s, 1.1 * s, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+      g.lineCap = 'round';
+      for (let k = -2; k <= 2; k++) { // tallos con nudos
+        const x = p[0] + k * .9 * s, h = (8 + rng() * 3) * s;
+        g.strokeStyle = mix('#8FA24E', '#B9A75A', dry * .6); g.lineWidth = .7; g.beginPath(); g.moveTo(x, p[1]); g.lineTo(x + k * .4, p[1] - h); g.stroke();
+      }
+      g.strokeStyle = mix('#4E8A3E', '#9C9A4E', dry * .6); g.lineWidth = .8; // hojas largas que caen en arco
+      for (let k = 0; k < 6; k++) { const a0 = -Math.PI / 2 + (k - 2.5) * .5, L = (5 + rng() * 2) * s, y0 = p[1] - (6 + rng() * 3) * s; g.beginPath(); g.moveTo(p[0], y0); g.quadraticCurveTo(p[0] + Math.cos(a0) * L, y0 + Math.sin(a0) * L, p[0] + Math.cos(a0) * L * 1.4, y0 + 2.5 * s); g.stroke(); }
+    }
+  } else {
+    for (let a = 0; a < 4; a++) for (let b = 0; b < 5; b++) {
+      const p = pt(.14 + b * .18, .16 + a * .22);
+      g.globalAlpha = .2; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3 * s, 1 * s, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+      for (let k = 0; k < 5; k++) { // hojas anchas en roseta; las de abajo, amarillas
+        const ang = -Math.PI / 2 + (k - 2) * .62, L = (3.6 - Math.abs(k - 2) * .3) * s, x = p[0] + Math.cos(ang) * L * .7, y = p[1] - 2.4 * s + Math.sin(ang) * L * .5;
+        g.fillStyle = k === 0 || k === 4 ? mix('#C9B25A', '#D8C278', dry * .5) : mix('#6E9A48', '#A9A45A', dry * .6);
+        g.save(); g.translate(x, y); g.rotate(ang + Math.PI / 2); g.beginPath(); g.ellipse(0, 0, 1.3 * s, 2.6 * s, 0, 0, 7); g.fill(); g.restore();
+      }
+      if (!joven && rng() < .4) { g.fillStyle = '#E8D7E4'; g.beginPath(); g.arc(p[0], p[1] - 6, .7, 0, 7); g.fill(); } // flor rosada
+    }
   }
   g.globalAlpha = .4; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
 }

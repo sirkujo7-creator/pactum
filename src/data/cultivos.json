@@ -256,6 +256,72 @@
           "anios": 2
         }
       }
+    },
+    "cana": {
+      "nombre": "Caña panelera",
+      "icono": "🎋",
+      "texto": "La caña que se muele en el trapiche para hacer panela, el dulce de todas las casas del Tolima. Da trabajo todo el año; la quema y el bagazo ensucian un poco.",
+      "comida": 0,
+      "renta": 6,
+      "empleo": 6,
+      "ambiente": -0.5,
+      "madura": 1,
+      "siembra": 12,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.9,
+        "frio": 0
+      },
+      "mercado": {
+        "volatilidad": 0.06,
+        "regreso": 0.2,
+        "bonanza": {
+          "prob": 0.03,
+          "factor": 1.3,
+          "anios": 2
+        },
+        "crisis": {
+          "prob": 0.03,
+          "factor": 0.75,
+          "anios": 2
+        }
+      }
+    },
+    "tabaco": {
+      "nombre": "Tabaco",
+      "icono": "🍂",
+      "texto": "El tabaco de Ambalema hizo rico al Tolima a mediados del siglo XIX: se exportaba a Alemania por el río Magdalena. Su bonanza fue corta: cansa la tierra y su precio se desplomó.",
+      "comida": 0,
+      "renta": 8,
+      "empleo": 8,
+      "ambiente": -1.5,
+      "madura": 0,
+      "siembra": 14,
+      "pisos": {
+        "calido": 1,
+        "templado": 0.6,
+        "frio": 0
+      },
+      "mercado": {
+        "volatilidad": 0.09,
+        "regreso": 0.2,
+        "bonanza": {
+          "prob": 0.04,
+          "factor": 1.4,
+          "anios": 2
+        },
+        "crisis": {
+          "prob": 0.05,
+          "factor": 0.6,
+          "anios": 3
+        },
+        "auge": {
+          "desde": 6,
+          "anios": 18,
+          "factor": 1.7,
+          "despues": 0.55
+        }
+      }
     }
   },
   "textos": {

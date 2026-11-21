@@ -2,7 +2,8 @@
 // 2 casa acomodada, 3 casa próspera) según las necesidades que se le cumplen: primero comida y agua; luego camino,
 // mercado y templo; después escuela, hospital, seguridad y cultura. Cada año sube o baja un nivel hacia el que le
 // corresponde, y el dibujo de la casa cambia con su nivel. El nivel medio del pueblo da un poco de ánimo y de
-// ingresos (o los quita). Solo en acuarela.
+// ingresos (o los quita). Paso 2 (como en Anno): la casa próspera también consume productos de las fábricas (panela o
+// chocolate y, desde los telares, telas); cada fábrica que funciona abastece a unas cuantas casas. Solo en acuarela.
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { counts } from './reglas.js';
@@ -12,6 +13,7 @@ import { precioAlimento } from './economia.js';
 import { aislada } from './calles.js';
 import { inseguridad } from './sucesos.js';
 import { lado, nearRiver } from './mundo.js';
+import { industriaActiva, productoDe, productoDisponible, produccionFabrica, requisitoProducto, datosProducto } from './industria.js';
 
 const K = () => C.NEC;
 export const necesidadesActivas = S => climaActivo(S) && !!C.NEC;
@@ -30,6 +32,27 @@ function contexto(S) {
     iglesias: donde(b => b === 'iglesia'), cultura: donde(b => cul.has(b)), mercados: donde(b => b === 'mercado')
   };
 }
+// Productos que consumen las casas: si ya se pueden fabricar, cuántas casas abastecen las fábricas que funcionan.
+export function bienes(S) {
+  const B = K().bienes || {}, out = {}, ind = industriaActiva(S);
+  const fab = ind ? S.map.map((x, i) => x.b === 'taller' && !x.ob ? i : -1).filter(i => i >= 0) : [];
+  for (const [id, b] of Object.entries(B)) {
+    const abierto = ind && b.productos.some(pr => datosProducto(pr) && productoDisponible(S, pr));
+    let oferta = 0, fabricas = 0;
+    for (const i of fab) if (b.productos.includes(productoDe(S.map[i]))) { const P = produccionFabrica(S, i); fabricas++; if (P.encendida) oferta += Math.round(b.abastece * P.f); }
+    out[id] = { abierto, oferta, fabricas, productos: b.productos };
+  }
+  return out;
+}
+// Reparte los productos entre las casas que ya tienen todo lo demás (primero las de mejor nivel).
+function repartir(S, X) {
+  const B = bienes(S), P = K().pide, ids = Object.keys(B);
+  const resto = P.map(L => L.filter(id => !ids.includes(id)));
+  const cand = casasConVida(S).filter(i => resto.every(L => L.every(id => cumple(S, X, id, i))))
+    .sort((a, b) => (S.map[b].vida ?? 1) - (S.map[a].vida ?? 1) || a - b);
+  for (const [id, b] of Object.entries(B)) { b.demanda = cand.length; b.casas = new Set(cand.slice(0, b.oferta)); }
+  return B;
+}
 const cerca = (X, a, L, r) => L.some(b => Math.hypot(Math.floor(a / X.N) - Math.floor(b / X.N), a % X.N - b % X.N) <= r);
 // ¿Se le cumple esta necesidad a la casa i?
 function cumple(S, X, id, i) {
@@ -43,6 +66,7 @@ function cumple(S, X, id, i) {
     case 'hospital': return X.cob && cubre(S, 'hospital', i);
     case 'seguridad': return X.seguridad;
     case 'cultura': return cerca(X, i, X.cultura, X.R.cultura);
+    case 'dulce': case 'telas': { if (!X.bienes) X.bienes = repartir(S, X); const b = X.bienes[id]; return !b || !b.abierto || b.casas.has(i); }
   }
   return true;
 }
@@ -104,4 +128,10 @@ export function estiloCasa(S, era, i, v) {
   const x = S.map[i];
   if (!necesidadesActivas(S) || !x || x.vida === undefined) return null;
   return K().estilos[Math.max(0, Math.min(3, era))][x.vida] + v;
+}
+// Para Economía → Producción: cada producto con su oferta (casas que abastece) y su demanda (casas que lo piden).
+export function consumoBienes(S) {
+  if (!necesidadesActivas(S)) return [];
+  const X = contexto(S), B = repartir(S, X);
+  return Object.entries(B).map(([id, b]) => ({ id, ...b, req: b.abierto ? '' : b.productos.map(pr => requisitoProducto(S, pr)).filter(Boolean)[0] || '' }));
 }

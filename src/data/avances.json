@@ -103,6 +103,28 @@
       "texto": "Una fábrica puede descascarar y empacar el arroz de tus fincas, en vez de mandarlo crudo a otra parte."
     },
     {
+      "id": "p_trapiche",
+      "icono": "🟫",
+      "nombre": "Trapiche panelero",
+      "producto": "trapiche",
+      "cuando": {
+        "etapa": 1
+      },
+      "titular": "Muele el primer trapiche: hay panela en el pueblo",
+      "texto": "Una fábrica puede moler la caña de tus fincas y cocinarla en pailas. La panela endulza la aguapanela de todas las casas: sin ella, ninguna casa llega a ser próspera."
+    },
+    {
+      "id": "p_cigarreria",
+      "icono": "🚬",
+      "nombre": "Fábrica de cigarros",
+      "producto": "cigarreria",
+      "cuando": {
+        "etapa": 1
+      },
+      "titular": "El tabaco del Tolima viaja a Alemania",
+      "texto": "Como en las factorías de Ambalema hacia 1850, una fábrica puede escoger y enrollar el tabaco de tus fincas para venderlo afuera. La bonanza no dura para siempre."
+    },
+    {
       "id": "imprenta",
       "icono": "📰",
       "nombre": "La imprenta",
