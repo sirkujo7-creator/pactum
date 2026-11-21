@@ -1,0 +1,42 @@
+{
+  "leccion": "Calidad de vida y necesidades: una familia primero busca comer y tener agua; luego, camino, mercado y templo; después, escuela, salud, seguridad y cultura. Cuando una necesidad se cumple aparece la siguiente (como en la pirámide de Maslow), y la casa lo muestra: del rancho a la casa próspera.",
+  "niveles": [
+    { "nombre": "Rancho", "icono": "🛖", "texto": "Le falta lo básico: comida o agua." },
+    { "nombre": "Casa", "icono": "🏠", "texto": "Tiene comida y agua." },
+    { "nombre": "Casa acomodada", "icono": "🏡", "texto": "Además tiene camino, mercado y templo cerca." },
+    { "nombre": "Casa próspera", "icono": "🏛️", "texto": "Además tiene escuela, hospital, seguridad y cultura." }
+  ],
+  "pide": [[], ["comida", "agua"], ["camino", "mercado", "iglesia"], ["escuela", "hospital", "seguridad", "cultura"]],
+  "necesidades": {
+    "comida": { "icono": "🌽", "nombre": "Comida a buen precio", "falta": "La comida está cara o hubo hambre." },
+    "agua": { "icono": "💧", "nombre": "Agua", "falta": "No alcanza el agua: hacen falta acueductos (o estar cerca del río)." },
+    "camino": { "icono": "🛤️", "nombre": "Camino a la plaza", "falta": "La casa no está unida a la plaza por un camino." },
+    "mercado": { "icono": "🧺", "nombre": "Mercado cerca", "falta": "No hay mercado a su alcance." },
+    "iglesia": { "icono": "⛪", "nombre": "Templo cerca", "falta": "La iglesia queda lejos (o no hay)." },
+    "escuela": { "icono": "📚", "nombre": "Escuela cerca", "falta": "No hay escuela a su alcance." },
+    "hospital": { "icono": "🏥", "nombre": "Hospital cerca", "falta": "No hay hospital a su alcance." },
+    "seguridad": { "icono": "🛡️", "nombre": "Seguridad", "falta": "La inseguridad es alta." },
+    "cultura": { "icono": "🎭", "nombre": "Cultura y recreo cerca", "falta": "No hay parque, cancha, biblioteca, teatro ni estadio cerca." }
+  },
+  "radios": { "iglesia": 7, "cultura": 6, "rio": 3, "mercadoSinCobertura": 6 },
+  "culturales": ["parque", "cancha", "biblioteca", "teatro", "estadio"],
+  "inseguridadMax": 45,
+  "efectos": { "animo": 3, "ingresos": 0.04, "media": 1.2 },
+  "estilos": [
+    ["rancho0-", "casa0-", "casa0-", "casa2-"],
+    ["rancho0-", "casa0-", "casa2-", "casa3-"],
+    ["rancho1-", "casa2-", "casa3-", "casa4-"],
+    ["rancho1-", "casa3-", "casa4-", "casa4-"]
+  ],
+  "textos": {
+    "titulo": "Nivel de vida",
+    "ficha": "Nivel de vida",
+    "paraSubir": "Para subir a {nivel} le falta:",
+    "tope": "Es una casa próspera: tiene todo lo que necesita.",
+    "baja": "Si le falta algo de su nivel, baja uno al año.",
+    "subieron": "🏡 {n} casa{s} mejoraron su nivel de vida.",
+    "bajaron": "🛖 {n} casa{s} perdieron nivel de vida: {falta}.",
+    "pendiente": "{n} casa{s} no pueden mejorar: les falta {falta}.",
+    "resumen": "Casas: {r} ranchos, {c} casas, {a} acomodadas y {p} prósperas."
+  }
+}

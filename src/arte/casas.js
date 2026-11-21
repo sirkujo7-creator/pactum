@@ -281,6 +281,57 @@ function casa(g, era, v, hum) {
   }
 }
 
+// ---------- El rancho (nivel de vida más bajo; idea de Anno) ----------
+// moderno false: bahareque crudo sin cal y techo de paja, con fogón de leña afuera (épocas antiguas).
+// moderno true: tablas y techo de zinc oxidado con piedras encima, caneca de agua y un plástico de remiendo.
+function rancho(g, moderno, v) {
+  const R = mulberry(71 + v * 13 + (moderno ? 500 : 0));
+  const forma = [{ w: .52, d: .38, r0: -.04 }, { w: .44, d: .44, r0: -.06 }, { w: .62, d: .34, r0: -.02 }, { w: .46, d: .38, r0: -.08, c0: -.08 }][v];
+  const H = moderno ? 12 : 11, F = caras(forma.w, forma.d, H, forma.r0, forma.c0 || 0);
+  sombraCasa(g, F);
+  const muro = moderno ? ['#8E7A62', '#7E6A54', '#9A8468', '#86745E'][v] : '#A88A62';
+  muros(g, F, muro, null);
+  // Textura: cañas del bahareque con restos de cal, o tablas verticales mal ajustadas.
+  g.save(); g.lineWidth = .4;
+  for (const cara of ['izq', 'der']) {
+    const n = cara === 'izq' ? 12 : 8;
+    for (let k = 1; k < n; k++) {
+      const u = k / n + (R() - .5) * .02, a = F.en(cara, u, 0), b = F.en(cara, u, H);
+      g.strokeStyle = moderno ? 'rgba(50,36,24,.5)' : 'rgba(90,64,40,.35)'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+    }
+    if (!moderno) for (let k = 0; k < 2; k++) { const u = .1 + R() * .7, z = 3 + R() * 5, p = F.en(cara, u, z); g.fillStyle = 'rgba(226,214,190,.38)'; g.beginPath(); g.ellipse(p[0], p[1], 1.4 + R(), .8 + R() * .5, 0, 0, 7); g.fill(); } // la poca cal que queda
+  }
+  g.restore();
+  if (moderno && v !== 1) { const a = F.en('der', .15, 1), b = F.en('der', .75, 1), c = F.en('der', .75, H - 2), d = F.en('der', .15, H - 2); rellena(g, [a, b, c, d], 'rgba(62,110,154,.82)', 'rgba(30,60,90,.6)', .4); } // plástico de remiendo
+  // Puerta: hueco oscuro con cortina de tela (antes) o lámina (después) y una ventanita.
+  hueco(g, F, 'izq', .42, .62, 0, 8.5, '#2E2218');
+  if (!moderno) rellena(g, [F.en('izq', .43, 3), F.en('izq', .55, 3), F.en('izq', .55, 8.2), F.en('izq', .43, 8.2)], ['#B5523A', '#3E6B8A', '#8A6A2E', '#5E7A3A'][v], null);
+  hueco(g, F, 'izq', .14, .26, 4.5, 7.5, '#2E2218');
+  // Techo.
+  const tm = moderno ? { ...MAT[v % 2 ? 'zincOxido' : 'zinc'], hastial: muro } : { ...MAT.paja, hastial: '#9A7E58' };
+  if (v === 1) cuatroAguas(g, F, moderno ? 5 : 9, tm); else dosAguas(g, F, moderno ? 5 : 9, tm);
+  if (moderno) { // piedras sobre el zinc para que el viento no se lo lleve
+    for (let k = 0; k < 3; k++) { const p = P((F.f + F.t) / 2 + .06, F.a + .1 + k * (F.b - F.a - .2) / 2, H + 3.6); g.fillStyle = '#8C857A'; g.beginPath(); g.ellipse(p[0], p[1], 1.8, 1.2, 0, 0, 7); g.fill(); g.strokeStyle = K.contorno; g.lineWidth = .3; g.stroke(); }
+  }
+  // Al frente: fogón de leña con olla (antes) o caneca azul de agua (después).
+  const q = P(F.f + .2, F.b - .02);
+  if (!moderno) {
+    g.fillStyle = '#6E665C'; for (const dx of [-2.4, 0, 2.4]) { g.beginPath(); g.ellipse(q[0] + dx, q[1], 1.3, .9, 0, 0, 7); g.fill(); }
+    g.fillStyle = '#2E2A26'; g.beginPath(); g.ellipse(q[0], q[1] - 2.2, 2.6, 2, 0, 0, 7); g.fill();
+    g.fillStyle = '#E28A3A'; g.beginPath(); g.ellipse(q[0], q[1] - .2, 1.4, .6, 0, 0, 7); g.fill();
+    if (v === 2) { g.strokeStyle = '#6E4529'; g.lineWidth = 1; for (let k = 0; k < 4; k++) { const p = P(F.f + .16, F.a + .06 + k * .025); g.beginPath(); g.moveTo(p[0] - 3, p[1] - k * .9); g.lineTo(p[0] + 3, p[1] - 1 - k * .9); g.stroke(); } } // leña
+  } else {
+    rellena(g, [[q[0] - 2.6, q[1]], [q[0] + 2.6, q[1]], [q[0] + 2.6, q[1] - 6], [q[0] - 2.6, q[1] - 6]], '#2F6FA8', 'rgba(20,40,70,.6)', .4);
+    g.fillStyle = '#3E82BE'; g.beginPath(); g.ellipse(q[0], q[1] - 6, 2.6, 1, 0, 0, 7); g.fill();
+    if (v === 2 || v === 3) ropaTendida(g, P(F.f + .1, F.a - .05), P(F.t + .05, F.a - .12), R);
+  }
+  if (v === 3) { // cerca de guadua (o de alambre) alrededor del solar
+    g.strokeStyle = moderno ? '#7A7468' : '#9A8A4E'; g.lineWidth = .8;
+    for (let k = 0; k < 5; k++) { const p = P(F.f + .26, F.b + .04 - k * .09); g.beginPath(); g.moveTo(...p); g.lineTo(p[0], p[1] - 5); g.stroke(); }
+    const a = P(F.f + .26, F.b + .04, 3.5), b = P(F.f + .26, F.b - .32, 3.5); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+  }
+}
+
 // Recetas para la hoja de edificios: claves casa0- (bahareque), casa2- (tapia y balcón), casa3- (ladrillo) y
 // casa4- (concreto), con su variante 0 a 3 y la versión húmeda (h). Mismas anclas: el centro de la casilla.
 export function recetasCasas() {
@@ -288,6 +339,7 @@ export function recetasCasas() {
   [[0, 'casa0-', 70, 52], [1, 'casa2-', 84, 64], [2, 'casa3-', 84, 64], [3, 'casa4-', 96, 74]].forEach(([era, k, alto, ay]) => {
     for (let v = 0; v < 4; v++) for (const hum of [false, true]) L.push([k + v + (hum ? 'h' : ''), 88, alto, 44, ay, g => casa(g, era, v, hum)]);
   });
+  for (const [m, k] of [[false, 'rancho0-'], [true, 'rancho1-']]) for (let v = 0; v < 4; v++) L.push([k + v, 88, 56, 44, 44, g => rancho(g, m, v)]); // nivel de vida más bajo
   return L;
 }
 

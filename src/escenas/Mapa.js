@@ -1,7 +1,7 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada, obrasAisladas, rutaEnRed } from '../core/index.js';
+import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada, obrasAisladas, rutaEnRed, estiloCasa } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
@@ -236,7 +236,9 @@ export class Mapa extends Phaser.Scene {
     const kObra = x.b === 'cultivo' && x.cv ? ({ cafe: 'cafetal', cacao: 'cafetal', pancoger: 'cultivo', platano: 'cultivo' }[x.cv] || 'finca') : x.b === 'taller' && (x.pr || x.nv) ? `taller-${x.pr || 'artesanias'}-${x.nv || 0}` : x.b; // fase 10: sombrío según el cultivo; fase 11: la carga de la fábrica
     for (const f of figurasDeObra(kObra, i, this.S.stage, this.S.reg, epocaVisual(this.S))) {
       if (nivel === 3 && f.k.startsWith('bandera')) continue;
+      if (x.b === 'casa' && x.vida === 0 && f.k.startsWith('bandera')) continue; // el rancho no lleva bandera en el techo
       if (vacio && f.k.startsWith('mercado')) f.k += 'v';
+      if (x.b === 'casa' && /^casa\d-\d$/.test(f.k)) { const k = estiloCasa(this.S, epocaVisual(this.S), i, f.k.slice(-1)); if (k) f.k = k; } // nivel de vida: del rancho a la casa próspera
       if (nivel >= 1 && x.b === 'casa' && /^casa\d-\d$/.test(f.k)) f.k += 'h'; // renovación colonial: casa gastada con humedad y cal caída
       const e = A_SUELO.has(x.b) ? 1 : ESP, r = t.r + .5 + (f.dv || 0) * e, c = t.c + .5 + (f.du || 0) * e, h = f.n || deSuelo ? this.T.hf(r, c) : t.h;
       const img = this.figura(f.n ? 'naturaleza' : 'edificios', f.k, r, c, h, (f.s || 1) * e);
@@ -363,7 +365,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x, i) { return `${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}`; } // fase 10: el cultivo y si ya produce
+  huella(x, i) { return `${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}|${x.vida ?? ''}`; } // fase 10: el cultivo y si ya produce
   // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
   revisarRio() {
     const n = desvios(this.S).length;

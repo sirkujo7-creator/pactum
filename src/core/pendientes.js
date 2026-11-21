@@ -27,6 +27,7 @@ import { estadoPlaza } from './plaza.js';
 import { obrasAisladas } from './calles.js';
 import { notasPendientes } from './voces.js';
 import { misionesProximas } from './misiones.js';
+import { frenoPrincipal, datosNecesidad } from './necesidades.js';
 
 export function pendientes(S) {
   if (!climaActivo(S) || S.over) return [];
@@ -80,6 +81,8 @@ export function pendientes(S) {
   if (exteriorActivo(S) && S.ext) for (const [id, E] of Object.entries(S.ext.p)) if (E.trato && E.rel < C.EXT.romper + 10) add('ext-' + id, '🌎', `El tratado con ${datosLugar(id).nombre} está por romperse (relación ${Math.round(E.rel)}).`, 2, { mundo: id });
   // Promesas.
   for (const p of S.promises || []) add('promesa-' + p.k + p.dl, '🤝', `Prometiste ${C.B[p.k].a} antes del año ${p.dl}.`, p.dl - S.year <= 2 ? 1 : 2, { hoja: 'construir' });
+  const fr = frenoPrincipal(S); // nivel de vida: lo que más casas necesitan para mejorar
+  if (fr && fr.n >= 2) add('vida', datosNecesidad(fr.id).icono, C.NEC.textos.pendiente.replace('{n}', fr.n).replace('{s}', fr.n === 1 ? '' : 's').replace('{falta}', datosNecesidad(fr.id).nombre.toLowerCase()), 3, { casilla: fr.casa });
   return L.sort((a, b) => a.nivel - b.nivel);
 }
 const desastresOk = S => !!C.DESASTRES;

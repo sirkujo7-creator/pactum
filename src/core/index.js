@@ -73,3 +73,4 @@ export * from './lugaresmemoria.js';
 export * from './comision.js';
 export * from './maravillas.js';
 export * from './opositores.js';
+export * from './necesidades.js';

@@ -35,11 +35,12 @@ import { factorCalle, mantenimientoCalles } from './calles.js';
 import { fincasActivas, produccionFinca } from './fincas.js';
 import { industriaActiva, rentaFabrica } from './industria.js';
 import { efectoLeyes, costoLeyesNuevas } from './civismo.js';
+import { efectoVida } from './necesidades.js';
 import { bonoMercado } from './vecindad.js';
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
   // Fase 2: el ciclo económico mueve los ingresos, y los campesinos ganan más cuando la comida está cara.
-  const fi = factorIngresos(S), fv = factorVecinos(S), inc = { c: so.camp * 4 * w * fi * factorCampesinos(S), a: so.art * 7 * w * fi * (1 + fv + efectoTec(S, 'ing') + efectoMega(S, 'ingresos')), e: so.el * 25 * w * fi * (1 + efectoFig(S, 'ingresos') + fv + efectoTec(S, 'ing') + efectoMega(S, 'ingresos')), u: so.un * w }; // fase 4: comercio con los vecinos // fase 4: la empresaria invierte o saca su capital
+  const fi = factorIngresos(S) * (1 + efectoVida(S, 'ingresos')), fv = factorVecinos(S), inc = { c: so.camp * 4 * w * fi * factorCampesinos(S), a: so.art * 7 * w * fi * (1 + fv + efectoTec(S, 'ing') + efectoMega(S, 'ingresos')), e: so.el * 25 * w * fi * (1 + efectoFig(S, 'ingresos') + fv + efectoTec(S, 'ing') + efectoMega(S, 'ingresos')), u: so.un * w }; // fase 4: comercio con los vecinos // fase 4: la empresaria invierte o saca su capital
   // Fase 2: lejos de una oficina de recaudo parte de la gente evade (ev = fracción que se pierde).
   const ev = evasion(S), taxC = Math.round(inc.c * S.tx.c / 100 * (1 - ev)), taxA = Math.round(inc.a * S.tx.a / 100 * (1 - ev)), taxE = Math.round(inc.e * S.tx.e / 100 * (1 - ev) * (1 + efectoLeyes(S, 'impuestoElite'))); // fase 12: impuesto progresivo
   const evadido = ev ? Math.round((inc.c * S.tx.c + inc.a * S.tx.a + inc.e * S.tx.e) / 100 * ev) : 0;

@@ -506,3 +506,9 @@ section.fija>.pl-c{padding:0 12px 10px}
 .card .pe-opo p.small{font-style:italic;text-align:right}
 .barra-opo{height:8px;border-radius:4px;background:rgba(0,0,0,.1);overflow:hidden;margin:2px 0 6px}
 .barra-opo span{display:block;height:100%;background:#A4492E}
+.vida{background:rgba(110,140,90,.08);border-radius:8px;padding:6px 8px}
+.vida .conds{margin:2px 0 4px}
+.vida-pasos{white-space:nowrap;margin-left:4px}
+.vida-p{opacity:.3;margin-right:2px}
+.vida-p.on{opacity:1}
+.vida-barra{display:flex;height:12px;border-radius:6px;overflow:hidden;border:1px solid #6B5440;margin:4px 0}
