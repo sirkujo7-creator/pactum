@@ -494,9 +494,10 @@ export class Mapa extends Phaser.Scene {
     this.polvo(i);
     if (reducirMovimiento()) return;
     for (const img of this.obras[i] || []) {
-      const sy = img.scaleY, a = img.alpha;
-      img.setScale(img.scaleX, sy * .25).setAlpha(.3);
-      this.tweens.add({ targets: img, scaleY: sy, alpha: a, duration: 480, ease: 'Back.out' });
+      // a0: su opacidad de verdad, sin la transparencia de construir ni la del polvo (si no, la obra se queda pálida).
+      const sy = img.scaleY, a = this.velados && this.velados.has(img) ? this.velados.get(img) : img.alpha;
+      img.setData('a0', a).setScale(img.scaleX, sy * .25).setAlpha(.3);
+      this.tweens.add({ targets: img, scaleY: sy, alpha: a, duration: 480, ease: 'Back.out', onComplete: () => this.velo() });
     }
   }
   polvo(i) {
@@ -941,7 +942,7 @@ export class Mapa extends Phaser.Scene {
     if (this.marcada !== null && this.marcada !== undefined) poner(this.marcada, .35);
     for (const [img, a0] of this.velados || []) if (!quiero.has(img) && img.active) img.setAlpha(a0);
     const antes = this.velados || new Map(); this.velados = new Map();
-    for (const [img, a] of quiero) { const a0 = antes.has(img) ? antes.get(img) : img.alpha; this.velados.set(img, a0); img.setAlpha(a0 * a); }
+    for (const [img, a] of quiero) { const a0 = antes.has(img) ? antes.get(img) : (img.getData('a0') ?? img.alpha); this.velados.set(img, a0); img.setAlpha(a0 * a); }
   }
   // En computador: la casilla bajo el ratón (solo con una obra elegida).
   sobreCasilla(px, py) {
