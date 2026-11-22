@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Animales</title>
+<style>body{background:#B3BC82;margin:0}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+// Página de prueba de los animales: ?k=clave1,clave2 (claves de recetasFauna) y ?z= zoom. Sin k, los gestos nuevos.
+import { recetasFauna } from '../src/arte/fauna.js';
+const q = new URLSearchParams(location.search), Z = +(q.get('z') || 5), R = Object.fromEntries(recetasFauna().map(r => [r[0], r]));
+const L = (q.get('k') || 'vaca,vacaCola2,vacaCab1,vacaEchada0,vacaEchada1,cebuEchada0,chivoEchada0,caballoPisa2,caballoCola2,perroHuele,perroEchado,perroRasca1,perroLadra0,gatoDuerme,gatoEstira,gatoLame1,gallina0A1,gallina1A3,gallina1Canta,patoA1,patoNada').split(',');
+const col = 6, cw = 30 * Z, ch = 28 * Z, cv = document.getElementById('c'); cv.width = cw * col; cv.height = ch * Math.ceil(L.length / col); const g = cv.getContext('2d');
+g.font = '12px sans-serif';
+L.forEach((k, i) => { const r = R[k]; if (!r) return; const x = (i % col) * cw, y = Math.floor(i / col) * ch; g.fillStyle = '#333'; g.fillText(k, x + 4, y + 14); g.save(); g.translate(x + cw / 2 - (r[1] / 2 - r[3]) * Z, y + ch - 4 * Z); g.scale(Z, Z); r[5](g, () => .5); g.restore(); });
+</script>
