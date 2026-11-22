@@ -7,7 +7,7 @@ import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
 import { pintarNiebla, lienzo } from '../arte/acuarela.js';
 import { ES_CELULAR } from '../arte/fresco.js';
-import { P, TW, casillaEn } from '../arte/iso.js';
+import { P, TW, TH, EL, casillaEn } from '../arte/iso.js';
 import { DPR, tam, reducirMovimiento } from './pantalla.js';
 import { partida, nuevaPartida } from './partida.js';
 import { Interfaz } from './Interfaz.js';
@@ -359,7 +359,7 @@ export class Mapa extends Phaser.Scene {
   }
   // Tras un cambio en la casilla i: plantas, figuras y solo los sectores del terreno afectados.
   refrescarCasilla(i) {
-    this.ponerPlantas(i); this.ponerObra(i);
+    this.ponerPlantas(i); this.ponerObra(i); if (this.velados && this.velados.size) this.velo();
     for (const [sr, sc] of sectoresAfectados(this.T, i)) this.pintarSector(sr, sc);
     this.revisarCambiosGenerales();
     this.dibujarCobertura();
@@ -455,6 +455,8 @@ export class Mapa extends Phaser.Scene {
   }
   marcarPosibles(k) {
     this.posibles.clear();
+    if (!k) this.sobre = null;
+    this.velo(); if (this.sobreG) this.dibujarSobre();
     this.dibujarCobertura();
     if (k !== 'calle' && this.trazoCalle) { this.trazoCalle = null; this.dibujarTrazo(); }
     if (!k) return;
@@ -748,6 +750,7 @@ export class Mapa extends Phaser.Scene {
       if (dedos.size === 2) { const [a, b] = [...dedos.values()]; pellizco = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) }; arrastre = null; }
     });
     this.input.on('pointermove', p => {
+      if (!p.isDown && !p.wasTouch) { const ah = performance.now(); if (!this._tSobre || ah - this._tSobre > 60) { this._tSobre = ah; this.sobreCasilla(...pos(p)); } }
       if (!dedos.has(p.id) || !p.isDown) return;
       dedos.set(p.id, pos(p));
       if (dedos.size === 2 && pellizco) {
@@ -913,9 +916,47 @@ export class Mapa extends Phaser.Scene {
     if (this.pob) this.pob.rejilla(); // la gente camina por las calles nuevas
     this.dibujarCobertura();
   }
+  // ---------- Transparencia (pedido de Juan: que construir sea más cómodo) ----------
+  // Lo que tapa una casilla se aclara: con una obra elegida, los árboles y edificios que esconden las casillas donde
+  // se puede construir; en computador, al pasar el ratón, lo que tapa la casilla señalada; y la casilla con la ficha
+  // abierta. Solo se aclara lo que de verdad la tapa (lo bastante alto para cubrirla).
+  tapan(i) {
+    const N = this.T.N, r = Math.floor(i / N), c = i % N, tb = this.T.tiles[i], L = [];
+    for (const [dr, dc] of [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2], [2, 2]]) {
+      const R = r + dr, Cc = c + dc; if (R >= N || Cc >= N) continue;
+      const j = R * N + Cc, tf = this.T.tiles[j], dy = (dr + dc) * TH / 2 - (tf.h - tb.h) * EL;
+      for (const img of [...(this.obras[j] || []), ...(this.plantas[j] || [])]) if (img.displayHeight * img.originY > dy + 6) L.push(img);
+    }
+    return L;
+  }
+  velo() {
+    const quiero = new Map(), k = this.ui && this.ui.herramienta, poner = (i, a) => { for (const img of this.tapan(i)) quiero.set(img, Math.min(quiero.get(img) ?? 1, a)); };
+    if (k && k !== 'calle' && k !== 'quitarCalle') for (const i of freeTiles(this.S, k)) poner(i, .55);
+    if (this.sobre !== null && this.sobre !== undefined && k) poner(this.sobre, .3);
+    if (this.marcada !== null && this.marcada !== undefined) poner(this.marcada, .35);
+    for (const [img, a0] of this.velados || []) if (!quiero.has(img) && img.active) img.setAlpha(a0);
+    const antes = this.velados || new Map(); this.velados = new Map();
+    for (const [img, a] of quiero) { const a0 = antes.has(img) ? antes.get(img) : img.alpha; this.velados.set(img, a0); img.setAlpha(a0 * a); }
+  }
+  // En computador: la casilla bajo el ratón (solo con una obra elegida).
+  sobreCasilla(px, py) {
+    if (!this.ui || !this.ui.herramienta) { if (this.sobre != null) { this.sobre = null; this.velo(); this.dibujarSobre(); } return; }
+    const cam = this.cameras.main, t = casillaEn(this.T, cam.scrollX + px / this.escala, cam.scrollY + py / this.escala), i = t ? t.r * this.T.N + t.c : null;
+    if (i !== this.sobre) { this.sobre = i; this.velo(); this.dibujarSobre(); }
+  }
+  // Contorno de la casilla señalada, por encima de todo: verde si se puede construir ahí, rojo si no.
+  dibujarSobre() {
+    if (!this.sobreG) this.sobreG = this.add.graphics().setDepth(PROF_NIEBLA - 1);
+    const g = this.sobreG, i = this.sobre, k = this.ui && this.ui.herramienta; g.clear();
+    if (i === null || i === undefined || !k || k === 'calle' || k === 'quitarCalle') return;
+    const t = this.T.tiles[i], q = [P(t.r, t.c, t.h00), P(t.r, t.c + 1, t.h01), P(t.r + 1, t.c + 1, t.h11), P(t.r + 1, t.c, t.h10)].map(p => ({ x: p[0], y: p[1] }));
+    const col = whyNot(this.S, k, i) ? 0xC0392B : 0x3F9A4A;
+    g.lineStyle(2.2, col, .95).fillStyle(col, .14).fillPoints(q, true).strokePoints(q, true);
+  }
   marcar(i) {
     if (!this.marcaG) return;
     this.marcaG.clear();
+    if (this.marcada !== i) { this.marcada = i ?? null; this.velo(); }
     if (i === null || i === undefined) return;
     const t = this.T.tiles[i], q = [P(t.r, t.c, t.h00), P(t.r, t.c + 1, t.h01), P(t.r + 1, t.c + 1, t.h11), P(t.r + 1, t.c, t.h10)].map(p => ({ x: p[0], y: p[1] }));
     this.marcaG.lineStyle(2, 0xF2C94C, .95).fillStyle(0xF2C94C, .18).fillPoints(q, true).strokePoints(q, true);
