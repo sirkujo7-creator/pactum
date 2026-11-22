@@ -807,15 +807,9 @@ function maceta(g, x, y, col, col2) { g.fillStyle = '#B5654A'; g.fillRect(x - 2.
 // n: 0 plaza de fundación (tierra y cruz), 1 plaza mayor (empedrada), 2 plaza cívica (pila y faroles), 3 plaza de la polis (estatua).
 function plazaN(g, n) {
   const s = [.56, .6, .62, .64][n];
-  g.save(); g.globalAlpha = .18; g.fillStyle = '#26301E'; poli(g, [P(-s, -s), P(-s, s), P(s + .06, s + .08), P(s + .08, -s + .02)]); g.fill(); g.restore();
-  const cuerpo = caja(g, 2 * s, 2 * s, n === 0 ? 1.4 : 2, 0, 0, 0, n === 0 ? '#BFA97E' : n === 1 ? '#B5A98C' : '#BFB6A0');
-  const z = n === 0 ? 1.4 : 2;
-  if (n === 0) {
-    suelo(g, s - .04, z, '#D2BE95'); g.fillStyle = 'rgba(120,96,60,.35)';
-    for (let k = 0; k < 16; k++) { const q = P(-s + .1 + (k * .37 % 1) * (2 * s - .2), -s + .1 + (k * .61 % 1) * (2 * s - .2), z); g.beginPath(); g.ellipse(q[0], q[1], 1.6, .8, 0, 0, 7); g.fill(); }
-  } else if (n === 1) { suelo(g, s - .035, z, PIEDRA_BASE); empedrado(g, s - .035, z, .12); }
-  else if (n === 2) { suelo(g, s - .035, z, '#D8CEB8'); empedrado(g, s - .035, z, .16, 'rgba(90,76,56,.3)'); suelo(g, .2, z + .05, '#CDC2A8', 0, 0); empedrado(g, .2, z + .05, .1, 'rgba(90,76,56,.3)'); }
-  else { damero(g, s - .035, z, 8, '#E4DCC8', '#C6BCA4'); rellena(g, [P(-.2, -.2, z + .1), P(-.2, .2, z + .1), P(.2, .2, z + .1), P(.2, -.2, z + .1)], '#B8AE96', null); }
+  // Paso 2 de la fase visual: el piso de la plaza (tierra, empedrado o damero) se pinta en el suelo con borde
+  // irregular (asiento.js); aquí quedan solo lo que se levanta: cruz, pila, árboles, bancas, faroles y bandera.
+  const z = 0;
   // Setos y canteros en las esquinas (más cuidados cuanto más grande la plaza).
   const esq = [[-s + .09, -s + .09], [-s + .09, s - .09], [s - .09, -s + .09], [s - .09, s - .09]];
   // Árboles de sombra en las esquinas de los lados (el mango de la plaza) y faroles en las plazas cívicas.
