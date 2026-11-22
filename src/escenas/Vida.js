@@ -211,7 +211,11 @@ export class Vida {
     }
     a.pico = (a.pico ?? azar(.3, 1)) - dt;
     if (a.pico <= 0) { a.pica = 0; a.pico = azar(.5, 2); }
-    if (a.espera <= 0) { a.ruta = { r: a.casa.r + azar(-.25, .25), c: a.casa.c + azar(-.3, .3) }; a.espera = azar(1.5, 4); }
+    if (a.espera <= 0) {
+      // Si la dueña les echa maíz, las gallinas van a sus pies.
+      const q = a.k === 'gallina' && this.scene.pob && this.scene.pob.comedero ? this.scene.pob.comedero(a.casa) : null;
+      a.ruta = q ? { r: q.r + azar(-.15, .15), c: q.c + azar(-.15, .15) } : { r: a.casa.r + azar(-.25, .25), c: a.casa.c + azar(-.3, .3) }; a.espera = q ? azar(.6, 1.6) : azar(1.5, 4);
+    }
   }
   // Cerdo: hoza en el solar y da unos pasos de vez en cuando.
   cerdo(a, dt) {

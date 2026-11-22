@@ -5,7 +5,7 @@
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
-import { TAM_GENTE, hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo } from '../arte/gente.js';
+import { TAM_GENTE, hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo, hornearCargas, CARGAS_ESPALDA } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { mezclar } from './Efectos.js';
 import { caminos } from '../arte/terreno.js';
@@ -13,8 +13,16 @@ import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
 
 // Oficios que se hacen a golpes (con pausa entre uno y otro) y velocidad de los que van seguidos (ciclos por segundo).
-const TRABAJO = new Set(['sembrar', 'cosechar', 'picar', 'martillar', 'aserrar', 'barrer', 'vender', 'cargar']);
-const LENTO = { rezar: .35, leer: .25, tocar: .9, lustrar: 1, saltar: 1.4 };
+const TRABAJO = new Set(['sembrar', 'cosechar', 'picar', 'martillar', 'aserrar', 'barrer', 'vender', 'cargar', 'machete', 'lavar', 'gallinas', 'trompo']);
+const LENTO = { rezar: .35, leer: .25, tocar: .9, lustrar: 1, saltar: 1.4, regar: .7, ordenar: 1.6, tender: .25 };
+// Quien se sienta a tomar tinto o a leer el periódico casi no se mueve: un sorbo o una página cada tantos segundos.
+const PAUSADO = { tinto: [7, .25], periodico: [9, .3] };
+// Cuánto se queda cada quien en su lugar (segundos: mínimo y lo que puede sumar al azar).
+const ESPERA = { trabajo: [16, 16], plaza: [12, 14], juego: [9, 7], luto: [30, 25], busqueda: [30, 25], enfermo: [30, 25], protesta: [30, 25], desempleo: [30, 25], fila: [30, 25], lustrar: [30, 25], serenata: [30, 25], misa: [18, 10], mercadeo: [18, 10], agua: [10, 8], tinto: [20, 12], lavar: [18, 8], tender: [10, 6], gallinas: [9, 6], periodico: [22, 12], trompo: [10, 6], lleva: [.2, .5], futbol: [.3, 1], paseo: [.6, 1.2], tertulia: [15, 10], faroles: [14, 8], pila: [6, 4], alero: [12, 14], recoger: [3, 2], entrega: [4, 3] };
+// Lo que hace cada quien según el lugar al que llegó (además de los oficios del edificio).
+const HACE = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', tinto: 'tinto', lavar: 'lavar', tender: 'tender', gallinas: 'gallinas', periodico: 'periodico', trompo: 'trompo', pila: 'balde' };
+// Obras con alero donde la gente se resguarda de la lluvia.
+const SIN_ALERO = new Set(['cultivo', 'cafetal', 'parque', 'mina', 'cantera', 'fundacion', 'cementerio', 'cancha', 'estadio', 'acueducto']);
 const DURACION_DIA = 180; // segundos que dura un día completo
 const TAMANO = TAM_GENTE; // tamaño de las figuras frente a las casas (gente.js)
 const smooth = t => t * t * (3 - 2 * t);
@@ -28,6 +36,9 @@ export class Pobladores {
       const tx = scene.textures.addCanvas('personas', enPotencia(this.H.canvas)); // lados potencia de dos: sin temblor al moverse
       for (const [k, m] of Object.entries(this.H.marcos)) tx.add(k, 0, m.x, m.y, m.w, m.h);
     }
+    // Cargas que la gente lleva al caminar (leña, racimo, tablas, canasto…).
+    this.C = hornearCargas();
+    if (!scene.textures.exists('cargas')) { const t = scene.textures.addCanvas('cargas', this.C.canvas); for (const [k, m] of Object.entries(this.C.marcos)) t.add(k, 0, m.x, m.y, m.w, m.h); }
     this.figuras = [];
     this.reloj = .3; // 0 medianoche · .25 amanecer · .5 mediodía · .75 atardecer
     this.luces = [];
@@ -55,13 +66,15 @@ export class Pobladores {
     if (f.destino === 'enfermo' && tiene('rezar')) return 'rezar';
     if (f.destino === 'protesta' && tiene('saludo')) return 'protesta'; // brazo en alto, despacio
     // Voces del pueblo: los problemas se ven en la gente.
-    const PROB = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar' }[f.destino];
+    const PROB = HACE[f.destino];
     if (PROB && tiene(PROB)) return PROB;
     // Conversar (pedido de Juan): de pie y tranquilos, con un gesto breve cada tantos segundos, y solo si hay alguien al lado.
-    if ((f.destino === 'plaza' || f.destino === 'contento' || f.mira) && GESTOS[tipo] && this.vecino(f)) return 'social';
-    const u = Math.floor((this.t * .13 + p.semilla * 9)) % 3; // cambia de tarea cada rato
-    const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
-    if (por) { const k = por[u % por.length]; if (tiene(k)) return k; }
+    if ((f.destino === 'plaza' || f.destino === 'contento' || f.destino === 'tertulia' || f.destino === 'faroles' || f.mira) && GESTOS[tipo] && this.vecino(f)) return 'social';
+    const u = Math.floor((this.t * .13 + p.semilla * 9)) % 12; // cambia de tarea cada rato
+    // En la ganadería se ordeña de mañana y se desyerba el potrero el resto del día.
+    if (b === 'cultivo' && this.scene.S.map[p.trabajo].cv === 'ganaderia') { const k = this.reloj < .42 ? 'ordenar' : 'machete'; if (tiene(k)) return k; }
+    const por = { cultivo: ['sembrar', 'cosechar', 'machete', 'regar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'machete', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
+    if (por) { const L = por.filter(tiene); if (L.length) return L[u % L.length]; }
     if (tipo === 'campesina' && b === null && f.destino === 'trabajo') return 'barrer';
     return null;
   }
@@ -101,7 +114,7 @@ export class Pobladores {
     this.ponerAcciones();
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     this.rejilla();
-    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.som) f.som.destroy(); if (f.marca) f.marca.destroy(); if (f.pancarta) f.pancarta.destroy(); }
+    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.som) f.som.destroy(); if (f.cargaImg) f.cargaImg.destroy(); if (f.marca) f.marca.destroy(); if (f.pancarta) f.pancarta.destroy(); }
     plan.forEach((p, k) => {
       let f = this.figuras[k];
       if (!f) {
@@ -149,12 +162,18 @@ export class Pobladores {
     const a = (q, lugar) => ({ ...q, lugar });
     const S0 = this.scene.S, miedo = vocesActivas(S0) && inseguridad(S0) >= 50; // con inseguridad alta la gente se encierra temprano
     if (d > .82 && this.serenata(f)) return this.serenata(f);
-    if (d > (miedo ? .68 : .8) || d < .08) return { ...this.centro(p.casa, .2), casa: true };
+    // De noche, un rato bajo los faroles de la plaza antes de entrar.
+    if (d > .8 && d < .87 && !miedo && vocesActivas(S0) && Math.random() < .8) { const q = this.faroles(f); if (q) return q; }
+    if (d > (miedo ? .68 : .8) || d < .08) { f.plan = null; return { ...this.centro(p.casa, .2), casa: true, carga: this.cargaACasa(f) }; }
+    // Recados de varias partes (ir por tablas y volver al taller, lavar y luego tender…).
+    if (f.plan && f.plan.length) { const q = f.plan.shift()(); if (q) return q; }
     const rut = this.rutina(f, d); if (rut) return rut;
     // Reacciones a lo que pasa (animación, tanda 2): luto en la plaza y gente que acude al hospital en una epidemia.
     const S = this.scene.S;
     // Tanda 3: con el aguacero de La Niña o el año de un terremoto o una erupción, muchos corren a refugiarse en casa.
     if (this.peligro() && p.semilla < .7 && Math.random() < .8) return { ...this.centro(p.casa, .2), casa: true, prisa: true };
+    // Con un aguacero corriente, quien está afuera se resguarda bajo el alero más cercano.
+    if (this.lluvia() && p.semilla < .75 && Math.random() < .9) { const q = this.alero(f); if (q) return q; }
     // Voces del pueblo: desempleados sentados al borde de la plaza, fila en el mercado si la comida está cara,
     // niños sin escuela lustrando botas y, sin acueducto, mujeres y niños por agua al río en la mañana.
     const pr = this.problemaVisible(f, d); if (pr) return pr;
@@ -164,10 +183,12 @@ export class Pobladores {
     if (p.tipo === 'campesina' && p.plaza >= 0 && p.semilla < .32 && d > .3 && d < .7 && busquedaVisible(S) && Math.random() < .85) { const N = this.scene.T.N, an = p.semilla * 19; return { r: Math.floor(p.plaza / N) + .5 + Math.cos(an) * .42, c: p.plaza % N + .5 + Math.sin(an) * .42, lugar: 'busqueda', mira: { r: Math.floor(p.plaza / N) + 1.6, c: p.plaza % N + 1.6 } }; }
     if (p.tipo !== 'nino' && lutoVisible(S) && p.plaza >= 0 && p.semilla < .55 && Math.random() < .75) return { ...this.alCorrillo(f), lugar: 'luto' };
     if (epidemiaVisible(S) && p.semilla > .6 && Math.random() < .6) { const h = S.map.findIndex(x => x.b === 'hospital' && !x.ob); if (h >= 0) return { ...this.centro(h, .5), lugar: 'enfermo' }; }
-    // Los niños sin escuela (o de tarde) juegan en ronda cerca de la plaza.
-    if (p.tipo === 'nino' && this.ronda && (p.trabajo === null || d > .55) && Math.random() < .7) return a(this.puntoRonda(f), 'juego');
+    // Actividades de cada oficio (pedido de Juan: una ciudad más natural): tinto, lavar, tender, gallinas, recados…
+    const act = this.actividad(f, d); if (act) return act;
+    // Los niños sin escuela (o de tarde) juegan: ronda, trompo, la lleva o fútbol en la cancha.
+    if (p.tipo === 'nino' && (p.trabajo === null || d > .55) && Math.random() < .75) { const j = this.juego(f); if (j) return j; }
     if (d > .55 && Math.random() < .6 && p.plaza >= 0) return this.alCorrillo(f);
-    if (p.trabajo !== null && Math.random() < .8) return a(this.puestoDe(f), 'trabajo');
+    if (p.trabajo !== null && Math.random() < .8) return { ...a(this.puestoDe(f), 'trabajo'), carga: p.tipo === 'nino' && S.map[p.trabajo].b === 'escuela' ? 'cuaderno' : undefined };
     if (p.clase === 'n' || p.clase === 'e') return Math.random() < .6 && p.plaza >= 0 ? this.alCorrillo(f) : this.centro(p.casa, 1.4);
     return p.plaza >= 0 ? this.alCorrillo(f) : this.centro(p.casa, 1.2);
   }
@@ -197,7 +218,7 @@ export class Pobladores {
     if (!vocesActivas(S) || p.plaza < 0) return null;
     const N = this.scene.T.N;
     if (dia === 0 && d > .26 && d < .42 && Math.random() < .6) { const ig = S.map.findIndex(x => x.b === 'iglesia' && !x.ob); if (ig >= 0) return { ...this.centro(ig, .8), lugar: 'misa' }; }
-    if (dia === 1 && d > .3 && d < .6 && p.tipo !== 'nino' && Math.random() < .45) { const m = S.map.findIndex(x => x.b === 'mercado' && !x.ob); if (m >= 0) return { ...this.centro(m, .9), lugar: 'mercadeo', mira: { r: Math.floor(m / N) + .5, c: m % N + .5 } }; }
+    if (dia === 1 && d > .3 && d < .6 && p.tipo !== 'nino' && Math.random() < .45) { const m = S.map.findIndex(x => x.b === 'mercado' && !x.ob); if (m >= 0) return { ...this.centro(m, .9), lugar: 'mercadeo', mira: { r: Math.floor(m / N) + .5, c: m % N + .5 }, carga: p.tipo === 'campesina' ? 'canastoV' : null, luego: p.tipo === 'campesina' ? 'canasto' : p.tipo === 'elite' ? null : 'bulto' }; } // se va con el canasto vacío y vuelve con el mercado
     if (S.hap >= 65 && Math.random() < .15) return { ...this.alCorrillo(f), lugar: 'contento' };
     return null;
   }
@@ -225,6 +246,107 @@ export class Pobladores {
     return null;
   }
   protesta() { const S = this.scene.S; return movilizados(S).length > 0; }
+  // Actividades del día según el oficio y la hora (pedido de Juan: que haya interacción según la profesión y el entorno).
+  actividad(f, d) {
+    const S = this.scene.S, p = f.p, N = this.scene.T.N, R = Math.random();
+    if (!vocesActivas(S)) return null;
+    const rc = i => ({ r: Math.floor(i / N), c: i % N }), busca = k => S.map.findIndex(x => x.b === k && !x.ob);
+    const b = p.trabajo !== null ? S.map[p.trabajo].b : null, casa = rc(p.casa), tarde = d > .6 && d < .78, manana = d > .26 && d < .45;
+    // El tinto de la tarde, sentados en la puerta de la casa.
+    if (p.tipo !== 'nino' && tarde && p.semilla > .55 && p.semilla < .85 && R < .45) return { r: casa.r + 1.16, c: casa.c + .2 + (p.semilla - .55) * 2, lugar: 'tinto', mira: { r: casa.r + 4, c: casa.c + .6 } };
+    if (p.tipo === 'campesina') {
+      // Lavar en el río de mañana y luego tender la ropa en la casa.
+      if (manana && p.semilla >= .55 && p.semilla < .8 && R < .55 && this.scene.vida) {
+        const o = this.scene.vida.orilla({ casa: { r: casa.r + .5, c: casa.c + .5 } });
+        if (o) { f.plan = [() => ({ r: casa.r + .45, c: casa.c + 1.2, lugar: 'tender', carga: 'ropa', mira: { r: casa.r + .45, c: casa.c + 4 } })]; return { r: o.r, c: o.c, lugar: 'lavar', carga: 'ropa', mira: { r: o.r * 2 - Math.floor(o.r) - .5, c: o.c * 2 - Math.floor(o.c) - .5 } }; }
+      }
+      if (manana && p.semilla < .3 && R < .5) return { r: casa.r + 1.42, c: casa.c + .3, lugar: 'gallinas', mira: { r: casa.r + 1.42, c: casa.c + 3 } }; // maíz a las gallinas
+      // Agua de la pila de la plaza (desde la plaza cívica): llega con el balde y se va con la múcura en la cabeza.
+      if (d > .4 && d < .56 && S.stage >= 2 && p.plaza >= 0 && p.semilla >= .3 && p.semilla < .55 && R < .3) { const g = rc(p.plaza), an = p.id * 1.7; return { r: g.r + .5 + Math.cos(an) * .26, c: g.c + .5 + Math.sin(an) * .26, lugar: 'pila', luego: 'cantaro', mira: { r: g.r + .5, c: g.c + .5 } }; }
+    }
+    // El campesino lleva café o plátano de su finca al mercado y vuelve a trabajar.
+    if (p.tipo === 'campesino' && (b === 'cultivo' || b === 'cafetal') && d > .3 && d < .65 && R < .12) { const m = busca('mercado'); if (m >= 0) { f.plan = [() => ({ ...this.puestoDe(f), lugar: 'trabajo' })]; return { ...this.centro(m, .8), lugar: 'entrega', carga: b === 'cafetal' ? 'bulto' : 'racimo' }; } }
+    // El artesano va por tablas al aserradero o lleva lo que hizo al mercado.
+    if (p.tipo === 'artesano' && (b === 'taller' || b === 'molino') && d > .3 && d < .7 && R < .25) {
+      const ase = busca('aserradero'), mer = busca('mercado'), volver = carga => () => ({ ...this.puestoDe(f), lugar: 'trabajo', carga });
+      if (ase >= 0 && p.semilla < .5) { f.plan = [volver('tablas')]; return { ...this.centro(ase, .6), lugar: 'recoger' }; }
+      if (mer >= 0) { f.plan = [volver(null)]; return { ...this.centro(mer, .8), lugar: 'entrega', carga: 'bulto' }; }
+    }
+    // La élite: periódico en una banca de la plaza, paseo con bastón alrededor de la plaza y tertulia en el banco o el cabildo.
+    if (p.tipo === 'elite' && p.plaza >= 0) {
+      const g = rc(p.plaza);
+      if (manana && R < .4) { const an = p.semilla * 6.28 + 1.3; return { r: g.r + .5 + Math.cos(an) * .44, c: g.c + .5 + Math.sin(an) * .44, lugar: 'periodico', mira: { r: g.r + .5, c: g.c + .5 } }; }
+      if (tarde && R < .45) { const E2 = [[-.14, -.14], [-.14, 1.14], [1.14, 1.14], [1.14, -.14]], k0 = Math.floor(Math.random() * 4), pt = k => ({ r: g.r + E2[(k0 + k) % 4][0], c: g.c + E2[(k0 + k) % 4][1], lugar: 'paseo' }); f.plan = [1, 2, 3, 4].map(k => () => pt(k)); return pt(0); }
+      if (d > .3 && d < .7 && R < .35) { const o = S.map.findIndex(x => (x.b === 'banco' || x.b === 'agora') && !x.ob); if (o >= 0) { const q = rc(o), an = (p.id % 5) / 5 * 6.28, cen = { r: q.r + 1.32, c: q.c + .5 }; return { r: cen.r + Math.cos(an) * .2, c: cen.c + Math.sin(an) * .2, lugar: 'tertulia', mira: cen }; } }
+    }
+    return null;
+  }
+  // Juegos de los niños: ronda, trompo, la lleva (corren unos tras otros) y fútbol en la cancha detrás del balón.
+  juego(f) {
+    const S = this.scene.S, p = f.p, N = this.scene.T.N, R0 = this.ronda, k = (p.id + (this.dias || 0)) % 4;
+    const can = S.map.findIndex(x => x.b === 'cancha' && !x.ob);
+    if (k === 3 && can >= 0) { const r = Math.floor(can / N), c = can % N, B = this.bal; const q = B && B.can === can ? { r: B.r + (Math.random() - .5) * .5, c: B.c + (Math.random() - .5) * .5 } : { r: r + .5, c: c + .5 }; return { r: clamp(q.r, r + .12, r + .88), c: clamp(q.c, c + .12, c + .88), lugar: 'futbol', prisa: true, can }; }
+    if (!R0) return null;
+    if (k === 1) { const an = p.semilla * 6.28; return { r: R0.r + Math.cos(an) * .5, c: R0.c + Math.sin(an) * .5, lugar: 'trompo' }; }
+    if (k === 2) { const an = Math.random() * 6.28, rad = .15 + Math.random() * .5; return { r: R0.r + Math.cos(an) * rad, c: R0.c + Math.sin(an) * rad, lugar: 'lleva', prisa: true }; }
+    return { ...this.puntoRonda(f), lugar: 'juego' };
+  }
+  // Al volver de la finca al atardecer: leña para el fogón (en las épocas antiguas), un racimo o un bulto de café.
+  cargaACasa(f) {
+    const p = f.p; if (p.tipo !== 'campesino' || f.destino !== 'trabajo' || p.trabajo === null) return null;
+    const b = this.scene.S.map[p.trabajo].b; if (b !== 'cultivo' && b !== 'cafetal') return null;
+    return !this.ropa && p.semilla < .45 ? 'lena' : p.semilla < .8 ? (b === 'cafetal' ? 'bulto' : 'racimo') : null;
+  }
+  // Bajo los faroles de la plaza, de noche: corrillos de dos o tres en cada esquina (desde la plaza mayor).
+  faroles(f) {
+    const S = this.scene.S, p = f.p; if (S.stage < 1 || p.plaza < 0 || p.tipo === 'nino' || p.semilla < .6 || p.semilla >= .8) return null;
+    const N = this.scene.T.N, r = Math.floor(p.plaza / N), c = p.plaza % N, E2 = [[.08, .08], [.08, .92], [.92, .08], [.92, .92]][p.id % 4], an = (Math.floor(p.id / 4) % 5) / 5 * 6.28;
+    const cen = { r: r + E2[0] + (E2[0] < .5 ? -.2 : .2), c: c + E2[1] + (E2[1] < .5 ? -.2 : .2) };
+    return { r: cen.r + Math.cos(an) * .17, c: cen.c + Math.sin(an) * .17, lugar: 'faroles', mira: cen };
+  }
+  lluvia() { const ef = this.scene.efectos; return !!(ef && ef.lluvia && ef.lluvia.length) && !this.peligro(); }
+  // Bajo el alero de la obra más cercana (a tres casillas como máximo), mirando la lluvia.
+  alero(f) {
+    const N = this.scene.T.N; let mejor = -1, dm = 3;
+    for (const i of this.obras || []) { const d = Math.hypot(Math.floor(i / N) + .5 - f.r, i % N + .5 - f.c); if (d < dm) { dm = d; mejor = i; } }
+    if (mejor < 0) return null;
+    const q = this.centro(mejor, .6), r0 = Math.floor(mejor / N) + .5, c0 = mejor % N + .5;
+    return { ...q, lugar: 'alero', mira: { r: q.r * 2 - r0, c: q.c * 2 - c0 } };
+  }
+  // Para las gallinas de una casa: dónde está la mujer que les echa maíz (o null). Lo usa Vida.
+  comedero(casa) {
+    for (const f of this.figuras) if (f.destino === 'gallinas' && f.espera > 0 && !f.oculto && Math.abs(f.r - casa.r) < 1 && Math.abs(f.c - casa.c) < 1) return { r: f.r - .05, c: f.c + .32 };
+    return null;
+  }
+  // Esquivar: si alguien está justo adelante, se corre un poco de lado (devuelve el corrimiento lateral deseado).
+  esquivar(f) {
+    for (const o of this.figuras) {
+      if (o === f || o.oculto) continue;
+      const er = o.r - f.r, ec = o.c - f.c; if (Math.abs(er) > .4 || Math.abs(ec) > .4) continue;
+      const ade = er * f.dr + ec * f.dc; if (ade <= 0 || ade > .38) continue;
+      const lat = ec * f.dr - er * f.dc; if (Math.abs(lat) < .14) return lat > 0 ? -.11 : .11;
+    }
+    return 0;
+  }
+  // El balón del fútbol: va de un niño a otro (un pase cada uno o dos segundos).
+  balon(dt) {
+    const J = this.figuras.filter(f => f.destino === 'futbol' && !f.oculto && !f.aCasa);
+    if (J.length < 2 || reducirMovimiento()) { if (this.balonImg) this.balonImg.setVisible(false); return; }
+    if (!this.balonImg) this.balonImg = this.scene.add.image(0, 0, this.texBalon()).setScale(TAMANO * 1.3 / 4);
+    const B = this.bal && this.bal.can === J[0].can ? this.bal : (this.bal = { r: J[0].r, c: J[0].c, can: J[0].can, a: null, t: 0 });
+    if (!B.a || !J.includes(B.a) || this.t > B.t) { B.a = J[Math.floor(Math.random() * J.length)]; B.t = this.t + 1 + Math.random() * 1.4; }
+    const dr = B.a.r + .05 - B.r, dc = B.a.c + .05 - B.c, d = Math.hypot(dr, dc), v = Math.min(d, 1.5 * dt);
+    if (d > .001) { B.r += dr / d * v; B.c += dc / d * v; }
+    const T = this.scene.T, q = P(B.r, B.c, T.hf(B.r, B.c)), salta = d > .1 ? Math.abs(Math.sin(this.t * 9)) * 1.2 : 0;
+    this.balonImg.setPosition(q[0], q[1] - .8 - salta).setDepth(B.r + B.c + .012).setVisible(true);
+  }
+  texBalon() {
+    const tx = this.scene.textures; if (tx.exists('balon')) return 'balon';
+    const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d');
+    g.fillStyle = '#F4F1E8'; g.beginPath(); g.arc(8, 8, 7, 0, 7); g.fill(); g.fillStyle = 'rgba(0,0,0,.18)'; g.beginPath(); g.arc(10, 10, 5, 0, 7); g.fill();
+    g.fillStyle = '#2A2420'; for (const [x, y] of [[8, 8], [4, 5], [12, 5], [5, 12], [11, 12]]) { g.beginPath(); g.arc(x, y, 1.5, 0, 7); g.fill(); }
+    tx.addCanvas('balon', c); return 'balon';
+  }
   puntoRonda(f) { const R = this.ronda, an = f.p.semilla * Math.PI * 2; return { r: R.r + Math.cos(an) * .25, c: R.c + Math.sin(an) * .25 }; }
 
   // ---------- Rejilla para caminar (fase 9) ----------
@@ -258,6 +380,7 @@ export class Pobladores {
       costo[R * G + C] = k;
     }
     this.G = G; this.costo = costo;
+    this.obras = []; S.map.forEach((x, i) => { if (x.b && !x.ob && !SIN_ALERO.has(x.b)) this.obras.push(i); });
     // Corrillos: casillas libres junto a la plaza (hasta tres); la ronda de los niños, en otra.
     this.grupos = []; this.ronda = null;
     const plaza = plazaDe(S);
@@ -328,6 +451,10 @@ export class Pobladores {
     const peligro = !quieto && this.peligro();
     if (peligro && !this._peligro) for (const f of this.figuras) if (!f.oculto && f.p.semilla < .7) { f.espera = 0; f.ruta = []; }
     this._peligro = peligro;
+    // Al empezar a llover, quien está afuera busca un alero.
+    const lluvia = !quieto && this.lluvia();
+    if (lluvia && !this._lluvia) for (const f of this.figuras) if (!f.oculto && f.p.semilla < .75 && f.destino !== 'alero') { f.espera = 0; f.ruta = []; f.plan = null; }
+    this._lluvia = lluvia;
     for (const f of this.figuras) {
       if (quieto) { f.oculto = false; this.dibujar(f, false); continue; }
       if (f.espera > 0) {
@@ -351,6 +478,7 @@ export class Pobladores {
         const d = this.siguiente(f), r = this.ruta(f, d);
         if (!r) { f.espera = 3 + Math.random() * 4; continue; }
         f.ruta = r; f.aCasa = !!d.casa; f.prisa = !!d.prisa; f.destino = d.lugar; f.mira = null; f.miraLuego = d.mira || null; f.oculto = false; f.andado = 0;
+        f.carga = d.carga !== undefined ? d.carga : (f.cargaLuego || null); f.cargaLuego = d.luego || null; f.lento = d.lugar === 'paseo'; f.can = d.can;
       }
       const d = f.ruta[0], dr = d.r - f.r, dc = d.c - f.c, dist = Math.hypot(dr, dc);
       if (dist < .02) {
@@ -358,7 +486,9 @@ export class Pobladores {
         // Al llegar se queda un buen rato: así hay menos gente andando a la vez y más quieta con sentido.
         if (!f.ruta.length) {
           const b = f.destino === 'trabajo' && f.p.trabajo !== null ? this.scene.S.map[f.p.trabajo].b : null;
-          f.espera = b === 'mercado' ? 25 + Math.random() * 20 : f.destino === 'trabajo' ? 16 + Math.random() * 16 : f.destino === 'plaza' ? 12 + Math.random() * 14 : f.destino === 'juego' ? 9 + Math.random() * 7 : f.destino === 'luto' || f.destino === 'busqueda' || f.destino === 'enfermo' || f.destino === 'protesta' || f.destino === 'desempleo' || f.destino === 'fila' || f.destino === 'lustrar' || f.destino === 'serenata' ? 30 + Math.random() * 25 : f.destino === 'misa' || f.destino === 'mercadeo' ? 18 + Math.random() * 10 : f.destino === 'agua' ? 10 + Math.random() * 8 : 3 + Math.random() * 5;
+          const E2 = b === 'mercado' ? [25, 20] : ESPERA[f.destino] || [3, 5];
+          f.espera = E2[0] + Math.random() * E2[1];
+          if (f.destino !== 'mercadeo') f.carga = null; // deja la carga al llegar (salvo el canasto de quien hace mercado)
           f.mira = f.miraLuego;
           if (b === 'mercado') { f.frente = 1; f.voltear = f.p.semilla < .5; } // el vendedor mira a la calle
           if (f.aCasa) f.oculto = true;
@@ -369,15 +499,26 @@ export class Pobladores {
       // Saludo al cruzarse: si alguien que también camina pasa muy cerca, los dos se detienen un instante y se saludan
       // (se tocan el sombrero o alzan la mano), una sola vez cada tanto.
       if (this.saludoCruce(f)) { this.dibujar(f, false); continue; }
-      // Arranca suave y anda a paso parejo; el paso va con la distancia recorrida (los pies no resbalan).
+      // De vez en cuando, quien camina sin afán se detiene un momento a mirar alrededor.
+      if (f.pausa > this.t) { this.dibujar(f, false); continue; }
+      if (!f.prisa && !f.lento && f.p.tipo !== 'nino' && f.andado > 2 && f.ruta.length > 1 && Math.random() < dt / 35) { f.pausa = this.t + .7 + Math.random() * 1.1; f.voltear = !f.voltear; f.andado = 0; this.dibujar(f, false); continue; }
+      // Esquiva a quien tiene justo adelante (se corre un poco de lado, sin salirse del camino).
+      f.dr = dr / dist; f.dc = dc / dist;
+      if ((f._esqT || 0) <= this.t) { f._esqT = this.t + .25 + Math.random() * .1; f.latT = this.esquivar(f); }
+      if (f.ruta.length === 1 && dist < .35) f.latT = 0;
+      f.lat = (f.lat || 0) + ((f.latT || 0) - (f.lat || 0)) * Math.min(1, dt * 5);
+      // Arranca suave y anda a paso parejo, cada quien a su ritmo (que cambia un poco con el rato); el paso va con la
+      // distancia recorrida (los pies no resbalan). Los niños que juegan corren y la élite pasea despacio.
       f.andado += dt;
-      const v = Math.min(dist, f.vel * (f.prisa ? 2.3 : 1) * dt * Math.min(1, .45 + f.andado * 1.4));
+      const aire = 1 + .1 * Math.sin(this.t * .37 + f.p.semilla * 20);
+      const v = Math.min(dist, f.vel * (f.prisa ? 2.3 : f.lento ? .65 : 1) * aire * dt * Math.min(1, .45 + f.andado * 1.4));
       f.r += dr / dist * v; f.c += dc / dist * v; f.fase += v * 13;
       // Solo gira si la dirección cambia de verdad (en las esquinas suavizadas no se voltea de un lado al otro).
       if (Math.abs(dc + dr) > dist * .3) f.frente = (dc + dr) >= 0 ? 1 : 0;
       if (Math.abs(dc - dr) > dist * .3) f.voltear = (dc - dr) < 0;
       this.dibujar(f, true);
     }
+    this.balon(dt);
     this.luzDelDia();
   }
   saludoCruce(f) {
@@ -395,7 +536,8 @@ export class Pobladores {
   mirar(f, q) { const dr = q.r - f.r, dc = q.c - f.c; if (Math.abs(dr) + Math.abs(dc) < .01) return; f.frente = (dc + dr) >= 0 ? 1 : 0; f.voltear = (dc - dr) < 0; }
 
   dibujar(f, andando, postura, accion) {
-    const T = this.scene.T, p = P(f.r, f.c, T.hf(f.r, f.c)), paso = andando ? PASOS12[Math.floor(f.fase * 3) % 12] : (postura || 0); // doce cuadros: andar suave
+    const T = this.scene.T, lat = f.lat || 0, fr = f.r - lat * (f.dc || 0), fc = f.c + lat * (f.dr || 0); // con el corrimiento al esquivar
+    const p = P(fr, fc, T.hf(fr, fc)), paso = andando ? PASOS12[Math.floor(f.fase * 3) % 12] : (postura || 0); // doce cuadros: andar suave
     let clave = null;
     if (f.gesto && f.gesto.saludo && this.t < f.gesto.t0 + f.gesto.dur) clave = this.claveGesto(f); // saludo al cruzarse
     else if (accion === 'social') clave = this.gestoDe(f);
@@ -403,13 +545,24 @@ export class Pobladores {
     else if (accion && this.A && ACCIONES[f.p.tipo][accion]) {
       // Oficios con su ritmo: el ciclo se juega y luego hay una pausa; cada quien a destiempo de los demás.
       const N = ACCIONES[f.p.tipo][accion], t = this.t + f.p.semilla * 7;
-      const ph = TRABAJO.has(accion) ? ritmo(t, 1.7 + f.p.semilla * .9) : (t * (LENTO[accion] || .8)) % 1;
+      const ph = PAUSADO[accion] ? ritmo(t, PAUSADO[accion][0] + f.p.semilla * 3, PAUSADO[accion][1]) : TRABAJO.has(accion) ? ritmo(t, 1.7 + f.p.semilla * .9) : (t * (LENTO[accion] || .8)) % 1;
       clave = `${f.p.tipo}_${f.p.vi}_${accion}_${Math.min(N - 1, Math.floor(ph * N))}`;
     }
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
-    f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);
-    if (f.som) f.som.setPosition(p[0], p[1]).setDepth(f.r + f.c + .005).setVisible(!f.oculto && f.img.visible).setScale(TAMANO * (f.p && f.p.tipo === 'nino' ? .75 : 1.1) / 4);
+    const giro = andando && !f.prisa ? Math.sin(f.fase * Math.PI / 2) * .035 : 0; // vaivén suave del cuerpo al caminar
+    f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(fr + fc + .01).setVisible(!f.oculto).setRotation(giro);
+    // Lo que lleva: leña, racimo, tablas, canasto en la cabeza… (y el bebé de algunas campesinas al caminar).
+    const ca = f.oculto ? null : f.carga || (f.p.tipo === 'campesina' && f.p.semilla > .88 && andando ? 'bebe' : null), ver = !!ca && (andando || !clave);
+    if (ver && !f.cargaImg) f.cargaImg = this.scene.add.image(0, 0, 'cargas', ca);
+    if (f.cargaImg) {
+      f.cargaImg.setVisible(ver);
+      if (ver) {
+        if (f.cargaK !== ca) { const m = this.C.marcos[ca]; f.cargaImg.setFrame(ca).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAMANO / this.C.escala * (f.p.tipo === 'nino' ? .72 : 1)); f.cargaK = ca; }
+        f.cargaImg.setPosition(p[0], p[1]).setFlipX(f.voltear).setRotation(giro).setDepth(fr + fc + (CARGAS_ESPALDA.has(ca) && f.frente ? .008 : .012));
+      }
+    }
+    if (f.som) f.som.setPosition(p[0], p[1]).setDepth(fr + fc + .005).setVisible(!f.oculto && f.img.visible).setScale(TAMANO * (f.p && f.p.tipo === 'nino' ? .75 : 1.1) / 4);
     // Tanda 3: quien protesta lleva una pancarta (también mientras camina a la plaza).
     const conPancarta = f.destino === 'protesta' && !f.oculto && f.p.semilla < .45 && this.scene.textures.exists('cinePancarta');
     if (conPancarta && !f.pancarta) f.pancarta = this.scene.add.image(0, 0, 'cinePancarta').setScale(.3 / 4).setOrigin(.5, 1);
@@ -468,5 +621,5 @@ export class Pobladores {
     tx.addCanvas('sombraGente', c); return 'sombraGente';
   }
 
-  destruir() { this.figuras.forEach(f => { f.img.destroy(); if (f.som) f.som.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); }
+  destruir() { if (this.balonImg) this.balonImg.destroy(); this.figuras.forEach(f => { f.img.destroy(); if (f.som) f.som.destroy(); if (f.cargaImg) f.cargaImg.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); }
 }
