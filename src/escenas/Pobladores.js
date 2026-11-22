@@ -20,7 +20,7 @@ const VAIVEN = new Set(['tender', 'tocar']);
 // Quien se sienta a tomar tinto o a leer el periódico casi no se mueve: un sorbo o una página cada tantos segundos.
 const PAUSADO = { tinto: [7, .25], periodico: [9, .3] };
 // Cuánto se queda cada quien en su lugar (segundos: mínimo y lo que puede sumar al azar).
-const ESPERA = { trabajo: [16, 16], plaza: [12, 14], juego: [9, 7], luto: [30, 25], busqueda: [30, 25], enfermo: [30, 25], protesta: [30, 25], desempleo: [30, 25], fila: [30, 25], lustrar: [30, 25], serenata: [30, 25], misa: [18, 10], mercadeo: [18, 10], agua: [10, 8], tinto: [20, 12], lavar: [18, 8], tender: [10, 6], gallinas: [9, 6], periodico: [22, 12], trompo: [10, 6], lleva: [.2, .5], futbol: [.3, 1], paseo: [.6, 1.2], tertulia: [15, 10], faroles: [14, 8], pila: [6, 4], alero: [12, 14], recoger: [3, 2], entrega: [4, 3], banca: [18, 16], comprar: [3, 3], cliente: [3, 3], tienda: [14, 10], domino: [25, 20], mirarJuego: [12, 10], tejo: [20, 15], recostado: [20, 15], pozo: [7, 4], alberca: [14, 8], huerta: [12, 8], sombra: [14, 10], columpio: [10, 8], balancin: [10, 8] };
+const ESPERA = { trabajo: [12, 10], plaza: [12, 14], juego: [9, 7], luto: [30, 25], busqueda: [30, 25], enfermo: [30, 25], protesta: [30, 25], desempleo: [30, 25], fila: [30, 25], lustrar: [30, 25], serenata: [30, 25], misa: [18, 10], mercadeo: [18, 10], agua: [10, 8], tinto: [20, 12], lavar: [18, 8], tender: [10, 6], gallinas: [9, 6], periodico: [22, 12], trompo: [10, 6], lleva: [.2, .5], futbol: [.3, 1], paseo: [.6, 1.2], tertulia: [15, 10], faroles: [14, 8], pila: [6, 4], alero: [12, 14], recoger: [3, 2], entrega: [4, 3], banca: [18, 16], comprar: [3, 3], cliente: [3, 3], tienda: [14, 10], domino: [25, 20], mirarJuego: [12, 10], tejo: [20, 15], recostado: [20, 15], pozo: [7, 4], alberca: [14, 8], huerta: [12, 8], sombra: [14, 10], columpio: [10, 8], balancin: [10, 8] };
 // Lo que hace cada quien según el lugar al que llegó (además de los oficios del edificio).
 const HACE = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', tinto: 'tinto', lavar: 'lavar', tender: 'tender', gallinas: 'gallinas', periodico: 'periodico', trompo: 'trompo', pila: 'balde', domino: 'jugarMesa', recostado: 'recostado', tejo: 'tejo', pozo: 'sacarAgua', alberca: 'restregar', huerta: 'huerta' };
 const SOCIAL = new Set(['plaza', 'contento', 'tertulia', 'faroles', 'tienda', 'sombra', 'mirarJuego']);
@@ -79,6 +79,9 @@ export class Pobladores {
     const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
     if (por) { const L = por.filter(tiene); if (L.length) return L[u % L.length]; }
     if (tipo === 'campesina' && b === null && f.destino === 'trabajo') return 'barrer';
+    // En las demás obras (hospital, cabildo, recaudo…) cada quien con algo en las manos: la élite lee, la campesina
+    // barre la entrada y los hombres cargan.
+    if (b && f.destino === 'trabajo') { const k = { elite: 'leer', campesina: 'barrer', artesano: 'cargar', campesino: 'cargar' }[tipo]; if (k && tiene(k)) return k; }
     return null;
   }
   // Cuadro del gesto de quien conversa: casi siempre en reposo; cada 5 a 11 segundos un gesto breve (asentir, la mano
@@ -89,7 +92,7 @@ export class Pobladores {
     if (!f.gesto) {
       if (f.proxGesto === undefined) f.proxGesto = this.t + 1.5 + f.p.semilla * 6;
       if (this.t < f.proxGesto) return null;
-      f.proxGesto = this.t + 5 + Math.random() * 6;
+      f.proxGesto = this.t + 3 + Math.random() * 4;
       const L = GESTOS[f.p.tipo].filter(k => k !== 'saludo' && k !== 'sombrero');
       f.gesto = { k: L[Math.floor(Math.random() * L.length)], t0: this.t, dur: 1.4 + Math.random() * .9 };
     }
@@ -192,7 +195,7 @@ export class Pobladores {
     const act = this.actividad(f, d); if (act) return act;
     // Los niños sin escuela (o de tarde) juegan: ronda, trompo, la lleva o fútbol en la cancha.
     if (p.tipo === 'nino' && (p.trabajo === null || d > .55) && Math.random() < .75) { const j = this.juego(f); if (j) return j; }
-    if (d > .55 && Math.random() < .6 && p.plaza >= 0) return this.alCorrillo(f);
+    if (d > .55 && Math.random() < .3 && p.plaza >= 0) return this.alCorrillo(f);
     if (p.trabajo !== null && Math.random() < .8) return { ...a(this.puestoDe(f), 'trabajo'), carga: p.tipo === 'nino' && S.map[p.trabajo].b === 'escuela' ? 'cuaderno' : undefined };
     if (p.clase === 'n' || p.clase === 'e') return Math.random() < .6 && p.plaza >= 0 ? this.alCorrillo(f) : this.centro(p.casa, 1.4);
     return p.plaza >= 0 ? this.alCorrillo(f) : this.centro(p.casa, 1.2);
@@ -260,16 +263,16 @@ export class Pobladores {
     // Las cosas del pueblo (Mobiliario): la huerta, el pozo y la alberca de mañana; la sombra de los árboles al mediodía;
     // la banca, el dominó, el tejo y la silla recostada en la tarde; el carrito y la tienda a cualquier hora del día.
     const usar = (tipo, prob, filtro) => R < prob ? this.usar(tipo, f, filtro) : null; let q = null;
-    if (p.tipo === 'campesina' && manana && (q = usar('huerta', .35))) return q;
-    if ((p.tipo === 'campesina' || p.tipo === 'nino') && d < .5 && (q = usar('pozo', .3))) return q;
-    if (p.tipo === 'campesina' && manana && (q = usar('alberca', .25))) return q;
-    if (p.tipo !== 'nino' && d > .46 && d < .58 && (q = usar('sombra', .35))) return q;
-    if (d > .3 && d < .76 && (q = usar('comprar', .07))) return q;
-    if (p.tipo !== 'nino' && d > .3 && d < .7 && (q = usar('cliente', .07))) return q;
+    if (p.tipo === 'campesina' && manana && (q = usar('huerta', .6))) return q;
+    if ((p.tipo === 'campesina' || p.tipo === 'nino') && d < .5 && (q = usar('pozo', .5))) return q;
+    if (p.tipo === 'campesina' && manana && (q = usar('alberca', .45))) return q;
+    if (p.tipo !== 'nino' && d > .46 && d < .58 && (q = usar('sombra', .55))) return q;
+    if (d > .3 && d < .76 && (q = usar('comprar', .18))) return q;
+    if (p.tipo !== 'nino' && d > .3 && d < .7 && (q = usar('cliente', .15))) return q;
     if ((p.tipo === 'campesino' || p.tipo === 'artesano' || p.tipo === 'elite') && d > .55 && d < .8) {
-      if ((q = usar('domino', .3)) || (q = usar('tejo', .25)) || (q = usar('mirarJuego', .15)) || (q = usar('recostado', .2))) return q;
+      if ((q = usar('domino', .55)) || (q = usar('tejo', .5)) || (q = usar('mirarJuego', .3)) || (q = usar('recostado', .4))) return q;
     }
-    if (d > .45 && d < .78 && p.tipo !== 'nino' && (q = usar('banca', .2))) return q;
+    if (d > .45 && d < .78 && p.tipo !== 'nino' && (q = usar('banca', .5))) return q;
     // El tinto de la tarde, sentados en la puerta de la casa.
     if (p.tipo !== 'nino' && tarde && p.semilla > .55 && p.semilla < .85 && R < .45) return { r: casa.r + 1.16, c: casa.c + .2 + (p.semilla - .55) * 2, lugar: 'tinto', mira: { r: casa.r + 4, c: casa.c + .6 } };
     if (p.tipo === 'campesina') {
