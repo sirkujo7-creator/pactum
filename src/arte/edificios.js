@@ -54,7 +54,7 @@ function monedas(g, x, y) { for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? 
 function recetas(era = 1, hist) {
   const L = [];
   // Renovación colonial: casas de src/arte/casas.js (cuatro variantes distintas, cuatro épocas y la versión húmeda).
-  L.push(...recetasCasas());
+  L.push(...recetasCasas(hist));
   // El mercado (de toldos o cubierto) está con las obras públicas, en src/arte/publicos.js, y cambia con las épocas.
   // Huellas de las decisiones (fase 4): figuras pequeñas que quedan unos años en el espacio público.
   const persona = (g, x, y, ropa, gorro) => { g.fillStyle = ropa; g.fillRect(x - 1.2, y - 7, 2.4, 5); g.fillStyle = '#C98E62'; g.beginPath(); g.arc(x, y - 8.2, 1.3, 0, 7); g.fill(); if (gorro) { g.fillStyle = gorro; g.fillRect(x - 1.6, y - 10, 3.2, 1.3); } };

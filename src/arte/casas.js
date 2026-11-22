@@ -135,10 +135,37 @@ function terraza(g, F, col) {
   rellena(g, [P(f, a, H), P(f, b, H), P(f, b, H + 2), P(f, a, H + 2)], mezcla(col, '#FFFFFF', .2));
   rellena(g, [P(f, b, H), P(t, b, H), P(t, b, H + 2), P(f, b, H + 2)], mezcla(col, '#000000', .1));
   const q = P(t + .14, b - .16, H + 2); rellena(g, [[q[0] - 4, q[1]], [q[0] + 4, q[1]], [q[0] + 4, q[1] - 6], [q[0] - 4, q[1] - 6]], '#3A4A5A'); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(q[0], q[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
-  // Antena de televisión (espina de pescado, a lo largo del techo; antes era una cruz y parecía una iglesia).
-  const an = P(t + .14, a + .14, H + 2); g.strokeStyle = '#4A4A4A'; g.lineWidth = .55; g.beginPath(); g.moveTo(an[0], an[1]); g.lineTo(an[0], an[1] - 8); g.stroke();
-  const bx = 4, by = 2; g.beginPath(); g.moveTo(an[0] - bx, an[1] - 8 + by); g.lineTo(an[0] + bx, an[1] - 8 - by); g.stroke();
-  g.lineWidth = .4; for (let k = 0; k < 5; k++) { const f = k / 4 - .5, cx = an[0] + f * 2 * bx, cy = an[1] - 8 - f * 2 * by, l = 2.4 - k * .35; g.beginPath(); g.moveTo(cx - l * .9, cy - l * .45); g.lineTo(cx + l * .9, cy + l * .45); g.stroke(); }
+  const an = P(t + .14, a + .14, H + 2); antenaTV(g, an[0], an[1]);
+}
+// Carro particular estacionado (desde los años del conflicto, en las casas de ladrillo y de concreto).
+function carroCasa(g, x, y, col) {
+  g.save(); g.globalAlpha = .22; g.fillStyle = '#2A2A1E'; g.beginPath(); g.ellipse(x + 1, y + .5, 8, 2.4, 0, 0, 7); g.fill(); g.restore();
+  rellena(g, [[x - 7, y - 1], [x + 5, y + 2.5], [x + 5, y - 2], [x - 7, y - 5.5]], col); rellena(g, [[x - 7, y - 5.5], [x + 5, y - 2], [x + 7.5, y - 3.2], [x - 4.5, y - 6.8]], mezcla(col, '#000000', .1));
+  rellena(g, [[x - 5, y - 5.6], [x + 1, y - 3.8], [x + 2, y - 7], [x - 3.6, y - 8.6]], '#7FA6BC');
+  g.fillStyle = '#1E1A18'; for (const dx of [-4.5, 3]) { g.beginPath(); g.ellipse(x + dx, y + (dx + 7) * .3 - .6, 1.4, 1.4, 0, 0, 7); g.fill(); }
+}
+// Antena de televisión (espina de pescado, a lo largo del techo; antes era una cruz y parecía una iglesia).
+function antenaTV(g, x, y, alto = 8) {
+  g.strokeStyle = '#4A4A4A'; g.lineWidth = .55; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - alto); g.stroke();
+  const bx = 4, by = 2; g.beginPath(); g.moveTo(x - bx, y - alto + by); g.lineTo(x + bx, y - alto - by); g.stroke();
+  g.lineWidth = .4; for (let k = 0; k < 5; k++) { const f = k / 4 - .5, cx = x + f * 2 * bx, cy = y - alto - f * 2 * by, l = 2.4 - k * .35; g.beginPath(); g.moveTo(cx - l * .9, cy - l * .45); g.lineTo(cx + l * .9, cy + l * .45); g.stroke(); }
+}
+// Lo que marca cada época de la historia en una casa (fase visual, tanda D): la antena de televisión desde la
+// modernización, rejas y tanque plástico de agua en el conflicto, y antena parabólica, panel solar y moto en la era
+// digital. Las casas ya cambian de material con la época de dibujo y con su nivel de vida.
+function detallesEpoca(g, F, era, v, hist) {
+  if (hist < 3) return;
+  const techo = F.z0 + F.H;
+  if (era < 3 && v !== 1) { const q = P((F.f + F.t) / 2, F.b - .1, techo + 9); antenaTV(g, q[0], q[1] + 2, 7); }
+  if (hist >= 4 && era >= 1) {
+    for (const u of [.2, .8]) { g.strokeStyle = '#2E2A28'; g.lineWidth = .35; for (let k = 0; k <= 3; k++) { const a = F.en('izq', u - .05 + .1 * k / 3, 4), b = F.en('izq', u - .05 + .1 * k / 3, 10); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } } // rejas en las ventanas de abajo
+    if (era >= 2 && v % 2 === 0) { const q = P(F.t + .12, F.a + .14, techo + (era === 3 ? 2 : 4)); g.fillStyle = '#2A2A2A'; g.beginPath(); g.moveTo(q[0] - 3, q[1]); g.lineTo(q[0] - 3, q[1] - 5); g.ellipse(q[0], q[1] - 5, 3, 1.2, 0, Math.PI, 0); g.lineTo(q[0] + 3, q[1]); g.ellipse(q[0], q[1], 3, 1.2, 0, 0, Math.PI); g.fill(); g.fillStyle = '#4A4A4A'; g.beginPath(); g.ellipse(q[0], q[1] - 5, 3, 1.2, 0, 0, 7); g.fill(); } // tanque plástico negro
+  }
+  if (hist >= 5) {
+    const d = F.en('der', .2, F.H - 3); g.fillStyle = '#E8ECEE'; g.beginPath(); g.ellipse(d[0] + 2.4, d[1], 2.2, 2.6, -.4, 0, 7); g.fill(); g.strokeStyle = '#8A9094'; g.lineWidth = .4; g.stroke(); g.beginPath(); g.moveTo(d[0] + 2.4, d[1]); g.lineTo(d[0] + 4.4, d[1] - 1.2); g.stroke(); // antena parabólica
+    if (era === 3 && v % 2 === 1) { const a = F.a + .06, b = F.a + (F.b - F.a) * .55, r = F.t + .1, z = techo + 2.2; rellena(g, [P(r + .1, a, z), P(r + .1, b, z), P(r, b, z + 2.4), P(r, a, z + 2.4)], '#2C4A6E', 'rgba(30,40,55,.8)', .3); } // panel solar
+    if (v === 0) { const m = P(F.f + .16, F.b - .04); g.fillStyle = '#2E3238'; g.beginPath(); g.ellipse(m[0] - 2, m[1] - 1, 1.2, 1.2, 0, 0, 7); g.ellipse(m[0] + 2.2, m[1] + .5, 1.2, 1.2, 0, 0, 7); g.fill(); rellena(g, [[m[0] - 2, m[1] - 2], [m[0] + 2.2, m[1] - .6], [m[0] + 1.4, m[1] - 3.2], [m[0] - 1, m[1] - 3.8]], '#B9442F', K.contorno, .3); } // moto
+  }
 }
 // Sombra de la obra en el suelo: cae abajo a la derecha (el sol de todo el mapa) con el borde difuso. Se dibuja con
 // el desenfoque del lienzo: la forma va lejos, fuera del cuadro, y aquí solo cae su sombra borrosa.
@@ -226,7 +253,7 @@ function platanoSolar(g, x, y) {
 
 // ---------- La casa ----------
 // era: 0 bahareque (un piso), 1 tapia con balcón (dos pisos), 2 ladrillo, 3 concreto. v: 0 a 3. hum: húmeda.
-function casa(g, era, v, hum) {
+function casa(g, era, v, hum, hist = [0, 1, 2, 5][era]) {
   const R = mulberry(31 + v * 17 + era * 101), zo = ZOCALO[v], ca = CARPINTERIA[v];
   const pisos = era === 0 ? 1 : era === 3 ? (v === 1 ? 3 : 2) : 2, H = pisos === 1 ? 15 : pisos === 2 ? 25 : 34;
   const forma = [{ w: .66, d: .44, r0: -.08 }, { w: .56, d: .56, r0: -.04 }, { w: .8, d: .42, r0: -.06 }, { w: .48, d: .46, r0: -.14, c0: -.12 }][v];
@@ -270,17 +297,18 @@ function casa(g, era, v, hum) {
     }
   }
   if (era < 2 && v !== 1 && R() < .7) { const p = P(F.t + .1, F.a + .18, F.z0 + F.H + 8); g.fillStyle = K.calSombra; g.fillRect(p[0] - 1.6, p[1] - 5, 3.2, 5); g.fillStyle = K.tejaSombra; g.fillRect(p[0] - 2.2, p[1] - 6, 4.4, 1.4); } // chimenea del fogón
+  detallesEpoca(g, F, era, v, hist);
   // Capa 4: elementos vivos, al frente de la casa.
   if (v === 0) { const y0 = F.f + (era === 0 ? .17 : .1); materas(g, [P(y0, F.a + .1), P(y0, F.a + .22), P(y0, F.b - .1)]); if (era === 0) banco(g, ...P(y0 - .04, F.a + .45)); }
   if (v === 1) ropaTendida(g, P(F.f + .08, F.b + .1), P(F.t + .12, F.b + .2), R);
-  if (v === 2) { const p = P(F.f + .22, F.a + .12); era === 3 ? carreta(g, p[0] + 6, p[1] + 2) : caballo(g, p[0], p[1]); }
+  if (v === 2) { const p = P(F.f + .22, F.a + .12); hist >= 4 && era >= 2 ? carroCasa(g, p[0] + 4, p[1] + 2, ['#B9442F', '#2F5D8A', '#E8E4DA'][hist % 3]) : era === 3 ? carreta(g, p[0] + 6, p[1] + 2) : caballo(g, p[0], p[1]); }
   if (v === 3) {
     // Tapia del solar (bahareque o ladrillo) con su portón y la carreta al frente.
     const tc = era === 2 ? K.ladrillo : era === 3 ? K.concreto[v] : K.cal, Tz = caras(.34, .5, 6, -.1, .31);
     rellena(g, Tz.izq, tc); rellena(g, Tz.der, mezcla(tc, '#000000', .14));
     g.strokeStyle = era === 3 ? mezcla(tc, '#000000', .3) : K.tejaSombra; g.lineWidth = 1.4; g.lineCap = 'round'; g.beginPath(); g.moveTo(...P(Tz.f, Tz.a, 6.3)); g.lineTo(...P(Tz.f, Tz.b, 6.3)); g.lineTo(...P(Tz.t, Tz.b, 6.3)); g.stroke();
     hueco(g, Tz, 'izq', .3, .7, 0, 5, ca);
-    const p = P(F.f + .26, F.a + .06); carreta(g, p[0], p[1]);
+    const p = P(F.f + .26, F.a + .06); if (hist < 4 || era < 2) carreta(g, p[0], p[1]);
   }
 }
 
@@ -337,10 +365,10 @@ function rancho(g, moderno, v) {
 
 // Recetas para la hoja de edificios: claves casa0- (bahareque), casa2- (tapia y balcón), casa3- (ladrillo) y
 // casa4- (concreto), con su variante 0 a 3 y la versión húmeda (h). Mismas anclas: el centro de la casilla.
-export function recetasCasas() {
+export function recetasCasas(hist) {
   const L = [];
   [[0, 'casa0-', 70, 52], [1, 'casa2-', 84, 64], [2, 'casa3-', 84, 64], [3, 'casa4-', 96, 74]].forEach(([era, k, alto, ay]) => {
-    for (let v = 0; v < 4; v++) for (const hum of [false, true]) L.push([k + v + (hum ? 'h' : ''), 88, alto, 44, ay, g => casa(g, era, v, hum)]);
+    for (let v = 0; v < 4; v++) for (const hum of [false, true]) L.push([k + v + (hum ? 'h' : ''), 88, alto, 44, ay, g => casa(g, era, v, hum, hist === undefined ? [0, 1, 2, 5][era] : hist)]);
   });
   for (const [m, k] of [[false, 'rancho0-'], [true, 'rancho1-']]) for (let v = 0; v < 4; v++) L.push([k + v, 88, 56, 44, 44, g => rancho(g, m, v)]); // nivel de vida más bajo
   return L;
