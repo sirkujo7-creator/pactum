@@ -147,6 +147,11 @@ function campoDeColor(T, k, dry, sub, S = 8) {
     let sombra = 0;
     if (t && t.b !== 'agua' && t.b !== 'nieve') {
       const verde = HIERBA.has(t.b) && t.b !== 'paramo';
+      if (verde || t.b === 'seco') {
+        // Luces y sombras del pasto: ondas suaves de claro y oscuro a dos escalas, sin figuras.
+        const ls = (T.vary((c * .7 - r * .7) / .45 + 501, (c * .7 + r * .7) / .45 + 77) - .5) * .16 + (T.vary(c / .22 + 613, r / .22 + 41) - .5) * .08;
+        sombra -= ls;
+      }
       if (verde) {
         // Potreros de varios verdes (unos más amarillos, otros más azulados), en manchones grandes e irregulares.
         const nv = .7 * T.vary((c * .88 - r * .48) / 2.6 + 200, (c * .48 + r * .88) / 2.6 + 150) + .3 * T.vary(c / 1.1 + 71, r / 1.1 + 9);
@@ -163,8 +168,8 @@ function campoDeColor(T, k, dry, sub, S = 8) {
         if (f > 0) cc = mix(cc, lodo, f * .32);
       }
       // Hondonadas: guardan agua, más verdes y en sombra; lomos: secos y con más luz.
-      if (curv > 0) { const f = clamp(curv * .06, 0, 1); if (verde || t.b === 'seco') cc = mix(cc, hondo, f * .2); sombra = f * .05; }
-      else { const f = clamp(-curv * .06, 0, 1); if (verde) cc = mix(cc, pasto, f * .12); sombra = -f * .03; }
+      if (curv > 0) { const f = clamp(curv * .06, 0, 1); if (verde || t.b === 'seco') cc = mix(cc, hondo, f * .2); sombra += f * .05; }
+      else { const f = clamp(-curv * .06, 0, 1); if (verde) cc = mix(cc, pasto, f * .12); sombra -= f * .03; }
       // Pendiente fuerte: la tierra rojiza asoma en cárcavas (menos en el bosque de niebla y nada en la roca).
       if (pend > 1 && h > .8 && t.b !== 'roca' && t.b !== 'paramo') {
         const gate = T.vary((c * .36 - r * .93) / .9 + 333, (c * .93 + r * .36) / .9 + 77);
@@ -242,7 +247,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     if (t.b !== 'nieve') sueloNatural(g, T, t, col, dry, rng); // también en las casillas de río: su orilla lleva pasto
     if (t.b === 'roca' || (t.b === 'paramo' && rng() < .3)) peñas(g, cx, cy, rng, t.b === 'roca' ? 1 + Math.floor(rng() * 2) : 1); // afloramientos de roca
     g.globalAlpha = 1;
-    if (t.b === 'paramo' && rng() < .08) blob(g, cx, cy + 1, 7, 3, '#8FB6C4', rng, .85); // lagunas de páramo
+    if (t.b === 'paramo' && rng() < .08) charco(g, cx, cy + 1, 7, rng, '#7FA9B8'); // lagunas de páramo
   }
 
   if (rios.length) pintarRio(g, T, zona, dry); // el río entero de una vez: orilla curva, sin escalones de casilla
@@ -324,10 +329,11 @@ function pintarCostado(g, T, a, b, rc, col, dry) {
 // grieta y su sombra en el suelo (antes eran rayitas en V que parecían pájaros).
 function peñas(g, cx, cy, rng, n) {
   // Contorno irregular y redondeado (puntos a distinta distancia del centro, unidos con curvas).
-  const forma = (x, y, w, h, k) => { const L = []; for (let i = 0; i < k; i++) { const a = i / k * 6.283 + rng() * .4, f = .75 + rng() * .35; L.push([x + Math.cos(a) * w * f, y + Math.sin(a) * h * f - (Math.sin(a) < 0 ? h * .35 : 0)]); } return L; };
-  const curva = L => { g.beginPath(); const m = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2], s0 = m(L[L.length - 1], L[0]); g.moveTo(...s0); L.forEach((p, i) => g.quadraticCurveTo(p[0], p[1], ...m(p, L[(i + 1) % L.length]))); g.closePath(); };
+  // Contorno facetado: cantos rectos de largo distinto, base plana y más ancha que alta (piedra partida, no bola).
+  const forma = (x, y, w, h, k) => { const L = []; for (let i = 0; i < k; i++) { const a = i / k * 6.283 + (rng() - .5) * .5, f = .7 + rng() * .4, sy = Math.sin(a); L.push([x + Math.cos(a) * w * f, sy > 0 ? y + sy * h * .25 : y + sy * h * f * 1.25]); } return L; };
+  const curva = L => { g.beginPath(); L.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); };
   for (let j = 0; j < n; j++) {
-    const x = cx + (rng() - .5) * 26, y = cy + (rng() - .5) * 9, w = 3.5 + rng() * 4.5, h = w * (.55 + rng() * .3);
+    const x = cx + (rng() - .5) * 26, y = cy + (rng() - .5) * 9, w = 4 + rng() * 5, h = w * (.5 + rng() * .35);
     g.globalAlpha = .3; g.fillStyle = '#2E281E'; g.beginPath(); g.ellipse(x + w * .3, y + h * .35, w * 1.15, h * .5, 0, 0, 7); g.fill();
     g.globalAlpha = 1; g.fillStyle = '#7D766A'; curva(forma(x, y, w, h, 7)); g.fill();                                     // la peña, en sombra
     g.fillStyle = '#A9A294'; curva(forma(x - w * .18, y - h * .22, w * .78, h * .72, 6)); g.fill();                     // la parte que recibe luz
@@ -336,6 +342,19 @@ function peñas(g, cx, cy, rng, n) {
     if (rng() < .55) { g.globalAlpha = .85; g.fillStyle = '#7E9A52'; g.beginPath(); g.ellipse(x - w * .6, y + h * .25, w * .35, h * .18, 0, 0, 7); g.fill(); } // musgo al pie
   }
   g.globalAlpha = 1;
+}
+// Charco o laguna de borde irregular (cantos cortos, más ancho que alto): orilla de lodo oscuro, agua y un reflejo
+// del cielo en la parte de atrás, y unos juncos en punta.
+function charco(g, x, y, w, rng, agua) {
+  const L = [], k = 9;
+  for (let i = 0; i < k; i++) { const a = i / k * 6.283 + (rng() - .5) * .4, f = .7 + rng() * .4; L.push([x + Math.cos(a) * w * f, y + Math.sin(a) * w * .4 * f]); }
+  const trazo = (esc, dy) => { g.beginPath(); L.forEach(([px, py], i) => { const X = x + (px - x) * esc, Y = y + (py - y) * esc + dy; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.closePath(); };
+  g.globalAlpha = .55; g.fillStyle = '#5E4E36'; trazo(1.12, .3); g.fill();
+  g.globalAlpha = .95; g.fillStyle = agua; trazo(1, 0); g.fill();
+  g.globalAlpha = .55; g.fillStyle = '#D8E6E4'; g.beginPath(); g.moveTo(x - w * .5, y - w * .16); g.lineTo(x + w * .2, y - w * .22); g.lineTo(x + w * .05, y - w * .12); g.lineTo(x - w * .45, y - w * .08); g.closePath(); g.fill();
+  g.globalAlpha = 1; g.fillStyle = '#5C7A3A'; g.beginPath();
+  for (let q = 0; q < 5; q++) { const bx = x + w * (.55 + rng() * .3) * (rng() < .5 ? -1 : 1), by = y + (rng() - .3) * w * .3, h = 2 + rng() * 2.5; g.moveTo(bx - .4, by); g.lineTo(bx + (rng() - .5) * 1.2, by - h); g.lineTo(bx + .4, by); g.closePath(); }
+  g.fill();
 }
 // Mancha suave de bordes difusos (sin contorno), para que el suelo no parezca un mosaico.
 function mancha(g, x, y, rx, col, al) {
@@ -358,7 +377,7 @@ function sueloNatural(g, T, t, col, dry, rng) {
   }
   // Lodo y charcos junto al río (en la sequía se agrieta y se aclara).
   if (t.d < 2.6 && t.b !== 'arrozal' && nB > .55) {
-    if (nB > .72 && dry < .45) { const p = en(); g.globalAlpha = .55; g.fillStyle = '#8FB0B4'; g.beginPath(); g.ellipse(p[0], p[1], 3 + rng() * 2, 1.2 + rng() * .6, 0, 0, 7); g.fill(); g.globalAlpha = .5; g.fillStyle = '#DCE8E4'; g.beginPath(); g.ellipse(p[0] - 1, p[1] - .4, 1.4, .35, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
+    if (nB > .72 && dry < .45) { const p = en(); charco(g, p[0], p[1], 3 + rng() * 2, rng, '#86A9AE'); }
   }
   // Piedras sueltas: en roca y páramo casi siempre; en las laderas empinadas, en manchones.
   const pedregal = t.b === 'roca' || t.b === 'paramo' ? nC > .38 : (t.slope > 1.1 && nC > .55) || nC > .78;
@@ -386,37 +405,50 @@ function tonosPasto(b, dry) {
 }
 function pintarPasto(g, T, t, dry, rng, pt, en) {
   const hum = clamp(T.moistAt(t.r + .5, t.c + .5), 0, 1);
-  // Cada hojita toma el tipo de suelo del punto donde cae (con el mismo borde irregular del color de fondo).
-  const capas = new Map(), pesos = [.28, .34, .26, .12];
-  for (let j = 0; j < 190; j++) {
+  // Matas bajas de hojitas en punta (pedido de Juan: nada de círculos ni óvalos). Cada mata abre 3 a 6 hojas desde
+  // un mismo pie; las de atrás y abajo, oscuras; las de adelante, en tono medio; y unas pocas puntas claras del lado
+  // de la luz. Cada mata toma el tipo de suelo del punto donde cae (con el mismo borde irregular del fondo).
+  const capas = new Map(), pesos = [.3, .4, .22, .08];
+  const hoja = (L, x, y, a, h, w) => { const s = Math.sin(a), c = Math.cos(a); L.push(x - w * c, y - w * s * .3, x + s * h, y - c * h, x + w * c, y + w * s * .3); };
+  for (let j = 0; j < 100; j++) {
     const u = .03 + rng() * .94, v = .03 + rng() * .94, tb = tipoEn(T, t.r + v, t.c + u).b;
     if (!HIERBA.has(tb)) continue;
-    const seco = tb === 'seco' || tb === 'paramo', dens = (tb === 'niebla' ? 70 : seco ? 60 + 40 * hum : 130 + 60 * hum) * (1 - dry * .3) / 190;
+    const seco = tb === 'seco' || tb === 'paramo', dens = (tb === 'niebla' ? 30 : seco ? 28 + 18 * hum : 66 + 30 * hum) * (1 - dry * .3) / 100;
     if (rng() > dens) continue;
     const nm = T.vary((t.c + u) / .55 + 17, (t.r + v) / .55 + 61);
-    if (rng() > .25 + nm * .9) continue; // manchones
-    const [x, y] = pt(u, v); let q = rng(), k = 0; while (k < 3 && q > pesos[k]) { q -= pesos[k]; k++; }
-    const col = tonosPasto(tb, dry)[k], L = capas.get(col) || capas.set(col, { k, L: [] }).get(col); L.L.push([x, y, .9 + rng() * 1.3]);
+    if (rng() > .3 + nm * .85) continue; // manchones de pasto más alto
+    const [x, y] = pt(u, v), tonos = tonosPasto(tb, dry), n = 3 + Math.floor(rng() * 4), alto = (seco ? 1.6 : 2) + rng() * 1.6 + nm * .8;
+    for (let q = 0; q < n; q++) {
+      const f = n > 1 ? q / (n - 1) - .5 : 0, a = f * 1.3 + (rng() - .5) * .35, h = alto * (1 - Math.abs(f) * .45) * (.8 + rng() * .3);
+      let k = q === 0 || q === n - 1 ? 0 : 1; if (f < 0 && rng() < .55) k = 2; if (f < -.2 && rng() < pesos[3] * 3) k = 3; // lado izquierdo, hacia la luz
+      const col = tonos[k], L = capas.get(col) || capas.set(col, { k, L: [] }).get(col);
+      hoja(L.L, x + f * 1.4, y + Math.abs(f) * .3, a, h, .42 + rng() * .2);
+    }
   }
   [...capas.entries()].sort((a, b) => a[1].k - b[1].k).forEach(([col, { k, L }]) => {
-    g.globalAlpha = k === 3 ? .85 : .9; g.fillStyle = col; g.beginPath();
-    for (const [x, y, w] of L) { const dx = k >= 2 ? -.35 : .3; g.moveTo(x + dx + w, y - w * .25); g.ellipse(x + dx, y - w * .25, w, w * .55, -.5, 0, 6.3); }
+    g.globalAlpha = k === 3 ? .9 : 1; g.fillStyle = col; g.beginPath();
+    for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); }
     g.fill();
   });
   if (!HIERBA.has(t.b)) { g.globalAlpha = 1; return; }
   const seco = t.b === 'seco' || t.b === 'paramo';
-  // Matas de flores silvestres (pocas, en racimos) y arbustitos redondos.
-  if (!seco && t.b !== 'niebla' && rng() < .35 + hum * .2) {
-    const [x, y] = en(), col2 = ['#F4F0E2', '#F2D04A', '#E79AB4', '#E26A4A'][Math.floor(rng() * 4)];
-    g.globalAlpha = 1; g.fillStyle = '#4B7A2E'; g.beginPath(); for (let q = 0; q < 6; q++) { const a = rng() * 6.3, d2 = rng() * 2.4; g.ellipse(x + Math.cos(a) * d2, y + Math.sin(a) * d2 * .5, 1.2, .7, 0, 0, 6.3); } g.fill();
-    g.fillStyle = col2; g.beginPath(); for (let q = 0; q < 5; q++) { const a = rng() * 6.3, d2 = rng() * 2.6; g.moveTo(x + Math.cos(a) * d2 + .6, y + Math.sin(a) * d2 * .5 - .8); g.arc(x + Math.cos(a) * d2, y + Math.sin(a) * d2 * .5 - .8, .6, 0, 6.3); } g.fill();
+  // Flores silvestres: puntitos de color asomando entre una mata (pocas, en racimos).
+  if (!seco && t.b !== 'niebla' && rng() < .3 + hum * .2) {
+    const [x, y] = en(), col2 = ['#F4F0E2', '#F2D04A', '#E79AB4', '#E26A4A'][Math.floor(rng() * 4)], L = [];
+    for (let q = 0; q < 7; q++) hoja(L, x + (rng() - .5) * 4, y + (rng() - .5) * 1.5, (rng() - .5) * 1.2, 2 + rng() * 1.5, .45);
+    g.globalAlpha = 1; g.fillStyle = tonosPasto('potrero', dry)[1]; g.beginPath(); for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); } g.fill();
+    g.fillStyle = col2; for (let q = 0; q < 4; q++) g.fillRect(x + (rng() - .5) * 4.5, y - 2.4 - rng() * 1.6, .9, .9);
   }
-  if (rng() < (seco ? .18 : t.b === 'niebla' ? .5 : .3)) {
-    const [x, y] = en(), w = 2.4 + rng() * 2, verdeM = seco ? '#7E8A3C' : t.b === 'niebla' ? '#335F2C' : '#4E8030';
-    g.globalAlpha = .3; g.fillStyle = '#2A2414'; g.beginPath(); g.ellipse(x + w * .5, y + .6, w * 1.1, w * .4, 0, 0, 6.3); g.fill();
-    g.globalAlpha = 1; g.fillStyle = shade(verdeM, -.2); g.beginPath(); g.ellipse(x, y - w * .45, w, w * .7, 0, 0, 6.3); g.fill();
-    g.fillStyle = verdeM; g.beginPath(); g.ellipse(x - w * .2, y - w * .6, w * .75, w * .5, 0, 0, 6.3); g.fill();
-    g.fillStyle = shade(verdeM, .3); g.beginPath(); g.ellipse(x - w * .45, y - w * .8, w * .35, w * .22, 0, 0, 6.3); g.fill();
+  // Matorral: un montón de hojitas en punta más grande y tupido, oscuro abajo y claro arriba a la izquierda.
+  if (rng() < (seco ? .16 : t.b === 'niebla' ? .45 : .26)) {
+    const [x, y] = en(), w = 2.6 + rng() * 2.4, tonos = tonosPasto(seco ? 'seco' : t.b === 'niebla' ? 'niebla' : 'potrero', dry);
+    const capasM = [[], [], [], []];
+    for (let q = 0; q < 26; q++) {
+      const px = (rng() - .5) * 2 * w, alto = (1 - Math.abs(px) / w) * w * .9, py = -rng() * alto, k = py < -alto * .55 ? (px < 0 ? 3 : 2) : py < -alto * .25 ? 1 : 0;
+      hoja(capasM[k], x + px, y + py * .9, (px / w) * .9 + (rng() - .5) * .5, 1.8 + rng() * 1.8, .55);
+    }
+    g.globalAlpha = .22; g.fillStyle = '#2A2414'; g.beginPath(); g.moveTo(x - w, y + .4); g.lineTo(x + w * 1.6, y + .9); g.lineTo(x + w * 1.2, y + 1.8); g.lineTo(x - w * .6, y + 1.4); g.closePath(); g.fill(); // sombra a la derecha
+    capasM.forEach((L, k) => { g.globalAlpha = 1; g.fillStyle = tonos[k]; g.beginPath(); for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); } g.fill(); });
   }
   g.globalAlpha = 1;
 }
