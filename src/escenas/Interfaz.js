@@ -948,7 +948,7 @@ export class Interfaz {
     if (v.preocupa && v.agradece) L.push(el('span', { ...col, class: 'small', html: `<b>Agradece:</b> ${v.agradece}` }));
     if (v.recuerdo) L.push(el('span', { ...col, class: 'small', text: v.recuerdo }));
     const botones = [ir(p.casa, '🏠 Ver su casa'), ir(p.trabajo, '🛠️ Ver su trabajo')].filter(Boolean);
-    if (v.preocupa) botones.push(el('button', { class: 'btn', on: { click: () => { const r = tomarNota(S, p); this.toast(r || C.VOCES.nota.yaEsteAnio); if (r) { this.render(); this.ficha.hidden = true; } } } }, C.VOCES.nota.boton));
+    if (v.preocupa) botones.push(el('button', { class: 'btn', on: { click: () => { const r = tomarNota(S, p); this.toast(r || C.VOCES.nota.yaEsteAnio); if (r) { this.render(); this.cerrarFicha(); } } } }, C.VOCES.nota.boton));
     if (botones.length) L.push(el('div', { ...col, class: 'dos' }, botones));
     return L;
   }
