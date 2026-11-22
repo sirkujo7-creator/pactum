@@ -6,7 +6,9 @@ import { recetasFlora } from './flora.js';
 import { recetasFauna } from './fauna.js';
 import { RES_HOJA } from './fresco.js';
 
-const ESCALA = RES_HOJA; // resolución del horneado (fase 8: 3 en celulares, 4 en computador)
+const ESCALA = RES_HOJA;
+// Un solo sol, arriba a la izquierda: la sombra de algo de alto h cae h·x a la derecha y h·y hacia abajo.
+export const SOMBRA = { x: .42, y: .3, a: .72, color: 'rgb(30,38,20)' }; // resolución del horneado (fase 8: 3 en celulares, 4 en computador)
 // Pedido de Juan (13 de octubre): que los árboles no sean una sola copia. Cada especie se hornea en tres versiones:
 // la original, una más alta y angosta y otra más ancha y baja, cada una con su propio pincel (hojas y ramas en
 // otro lugar). La sombra sigue cayendo a la derecha (un solo sol), por eso no se voltean en espejo.
@@ -43,7 +45,11 @@ export function hornearNaturaleza(dry = 0) {
   if (HOJAS[clave]) return HOJAS[clave];
   dry = clave;
   // Fase 8: las plantas vienen del fresco; fase 9: también los animales, piedras y troncos quemados.
-  const lista = [...conVariantes(recetasFlora(dry), dry), ...recetasFauna()], sep = 4, anchoHoja = 2048;
+  // Sombra proyectada (pedido de Juan: sombras coherentes): cada planta proyecta su propia silueta en el suelo,
+  // hacia abajo a la derecha (el sol está arriba a la izquierda), pegada a su base. El marco se ensancha para que
+  // la sombra larga no se corte.
+  const plantas = conVariantes(recetasFlora(dry), dry).map(([k, w, h, ax, ay, f]) => [k, Math.ceil(w + ay * SOMBRA.x + 3), Math.ceil(h + ay * SOMBRA.y + 3), ax, ay, f, true]);
+  const lista = [...plantas, ...recetasFauna()], sep = 4, anchoHoja = 2048;
   const marcos = {};
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
@@ -53,11 +59,23 @@ export function hornearNaturaleza(dry = 0) {
     x += W + sep; fila = Math.max(fila, H);
   }
   const cv = lienzo(anchoHoja, y + fila + sep), g = cv.getContext('2d');
-  for (const [k, , , , , pintar] of lista) {
+  const tmp = lienzo(8, 8), tg = tmp.getContext('2d');
+  for (const [k, , , , , pintar, planta] of lista) {
     const m = marcos[k];
+    const b = k.replace(/\d+$/, ''), semilla = b.length * 97 + b.charCodeAt(0) * 13 + (b.charCodeAt(b.length - 1) || 0); // los cuadros de una misma animación (perro0, perro1...) con el mismo pincel: sin temblor
+    if (planta) {
+      // Silueta de la planta (mismo pincel, misma semilla) y luego su proyección inclinada y aplastada.
+      tmp.width = m.w; tmp.height = m.h; tg.setTransform(1, 0, 0, 1, 0, 0); tg.clearRect(0, 0, m.w, m.h);
+      tg.save(); tg.translate(m.ax, m.ay); tg.scale(ESCALA, ESCALA); pintar(tg, mulberry(semilla)); tg.restore();
+      tg.globalCompositeOperation = 'source-in'; tg.fillStyle = SOMBRA.color; tg.fillRect(0, 0, m.w, m.h); tg.globalCompositeOperation = 'source-over';
+      g.save(); g.beginPath(); g.rect(m.x, m.y, m.w, m.h); g.clip();
+      g.translate(m.x + m.ax, m.y + m.ay); g.transform(1, 0, -SOMBRA.x, -SOMBRA.y, 0, 0);
+      // Borde suave: varias copias apenas corridas (sin filtros, que no todos los celulares tienen).
+      for (const [dx, dy, al] of [[0, 0, SOMBRA.a * .55], [-.8, 0, SOMBRA.a * .2], [.8, 0, SOMBRA.a * .2], [0, -1.2, SOMBRA.a * .2]]) { g.globalAlpha = al; g.drawImage(tmp, -m.ax + dx * ESCALA, -m.ay + dy * ESCALA); }
+      g.restore();
+    }
     g.save(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(ESCALA, ESCALA);
-    const b = k.replace(/\d+$/, ''); // los cuadros de una misma animación (perro0, perro1...) con el mismo pincel: sin temblor
-    pintar(g, mulberry(b.length * 97 + b.charCodeAt(0) * 13 + (b.charCodeAt(b.length - 1) || 0)));
+    pintar(g, mulberry(semilla));
     g.restore();
   }
   return (HOJAS[clave] = { canvas: cv, marcos, escala: ESCALA });

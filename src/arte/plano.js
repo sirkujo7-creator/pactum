@@ -39,11 +39,22 @@ export function sombraSuave(g, ancho, alto = 0, copa = ancho, a = .3) {
 
 // Follaje con detalle: muchas hojas pequeñas en tres pasadas (sombra, color, luz) que se concentran arriba a la izquierda.
 export function follaje(g, R, cx, cy, rx, ry, cols, n, tam = 1.6, forma = 'hoja') {
-  const [osc, med, luz] = cols;
-  const hoja = (x, y, c, s) => { g.fillStyle = c; g.beginPath(); if (forma === 'flor') g.arc(x, y, s * .7, 0, 7); else g.ellipse(x, y, s, s * .55, R() * Math.PI, 0, 7); g.fill(); };
-  for (let k = 0; k < n; k++) { const a = R() * 6.28, d = Math.sqrt(R()); hoja(cx + Math.cos(a) * rx * d, cy + Math.sin(a) * ry * d, osc, tam * (.8 + R() * .5)); }
-  for (let k = 0; k < n * .8; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .86; hoja(cx - rx * .12 + Math.cos(a) * rx * d, cy - ry * .14 + Math.sin(a) * ry * d, med, tam * (.8 + R() * .5)); }
-  for (let k = 0; k < n * .35; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .55; hoja(cx - rx * .34 + Math.cos(a) * rx * d, cy - ry * .36 + Math.sin(a) * ry * d, luz, tam * (.7 + R() * .4)); }
+  const [osc, med, luz] = cols, honda = sh(osc, -.28), brillo = sh(luz, .22);
+  // Hojas en punta (pedido de Juan: nada de óvalos): forma de almendra con las dos puntas afiladas, cada una con
+  // su giro. Las flores siguen siendo puntitos.
+  const hoja = (x, y, c, s) => {
+    g.fillStyle = c; g.beginPath();
+    if (forma === 'flor') { g.arc(x, y, s * .7, 0, 7); g.fill(); return; }
+    const a = R() * Math.PI, ca = Math.cos(a) * s, sa = Math.sin(a) * s, w = .55;
+    g.moveTo(x - ca, y - sa); g.quadraticCurveTo(x - sa * w * 1.6, y + ca * w * 1.6, x + ca, y + sa); g.quadraticCurveTo(x + sa * w * 1.6, y - ca * w * 1.6, x - ca, y - sa); g.fill();
+  };
+  // Cuatro pasadas para que la copa tenga volumen: sombra honda abajo a la derecha, sombra, color y luz arriba a
+  // la izquierda (el mismo sol del suelo y de las sombras).
+  for (let k = 0; k < n * .5; k++) { const a = R() * 6.28, d = Math.sqrt(R()); hoja(cx + rx * .1 + Math.cos(a) * rx * d, cy + ry * .14 + Math.sin(a) * ry * d, forma === 'flor' ? osc : honda, tam * (.8 + R() * .5)); }
+  for (let k = 0; k < n; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .95; hoja(cx + Math.cos(a) * rx * d, cy + Math.sin(a) * ry * d, osc, tam * (.8 + R() * .5)); }
+  for (let k = 0; k < n * .8; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .82; hoja(cx - rx * .14 + Math.cos(a) * rx * d, cy - ry * .16 + Math.sin(a) * ry * d, med, tam * (.8 + R() * .5)); }
+  for (let k = 0; k < n * .38; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .55; hoja(cx - rx * .34 + Math.cos(a) * rx * d, cy - ry * .38 + Math.sin(a) * ry * d, luz, tam * (.7 + R() * .4)); }
+  if (forma !== 'flor') for (let k = 0; k < n * .1; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .3; hoja(cx - rx * .42 + Math.cos(a) * rx * d, cy - ry * .48 + Math.sin(a) * ry * d, brillo, tam * (.6 + R() * .3)); }
 }
 // Tronco plano que se adelgaza, con su lado derecho en sombra.
 export function tronco(g, x0, y0, x1, y1, w0, w1, col) {

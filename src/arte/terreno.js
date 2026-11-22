@@ -440,7 +440,7 @@ function pintarPasto(g, T, t, dry, rng, pt, en) {
     }
   }
   g.globalAlpha = .2; g.fillStyle = '#26301A'; g.beginPath();
-  for (let i = 0; i < sombras.length; i += 3) { const x = sombras[i], y = sombras[i + 1], h = sombras[i + 2]; g.moveTo(x - 1, y); g.lineTo(x + h * 1.1, y + h * .22); g.lineTo(x + h * .5, y + h * .34); g.lineTo(x - .6, y + .7); g.closePath(); }
+  for (let i = 0; i < sombras.length; i += 3) { const x = sombras[i], y = sombras[i + 1], h = sombras[i + 2]; g.moveTo(x - 1, y); g.lineTo(x + h * .42 + .4, y + h * .3 - .3); g.lineTo(x + h * .42 + .8, y + h * .3 + .5); g.lineTo(x + .6, y + .7); g.closePath(); }
   g.fill();
   [...capas.entries()].sort((a, b) => a[1].k - b[1].k).forEach(([col, { k, L }]) => {
     g.globalAlpha = k === 3 ? .9 : 1; g.fillStyle = col; g.beginPath();
@@ -482,10 +482,6 @@ function pintarPie(g, T, o, dry) {
   const d = PIE[o.k], R = mulberry(Math.round(o.r * 7919 + o.c * 104729) + T.seed), s = o.s || 1, rad = d.r * s;
   const [x, y] = P(o.r, o.c, T.hf(o.r, o.c)), tb = tipoEn(T, o.r, o.c).b, tonos = tonosPasto(HIERBA.has(tb) ? tb : 'potrero', dry);
   const en = (rmin, rmax) => { const a = R() * 6.283, q = rmin + Math.sqrt(R()) * (rmax - rmin); return [x + Math.cos(a) * q, y + Math.sin(a) * q * .5]; };
-  // Sombra suave bajo la copa, corrida a la derecha (degradado, sin borde).
-  const gr = g.createRadialGradient(x + rad * .5, y + rad * .12, 0, x + rad * .5, y + rad * .12, rad * 1.5);
-  gr.addColorStop(0, `rgba(30,38,18,${d.sombra})`); gr.addColorStop(1, 'rgba(30,38,18,0)');
-  g.save(); g.translate(0, (y + rad * .12) * .5); g.scale(1, .5); g.globalAlpha = 1; g.fillStyle = gr; g.fillRect(x - rad, y + rad * .12 - rad * 1.6, rad * 3.2, rad * 3.2); g.restore();
   // Hojarasca: hojitas secas sueltas (y pétalos si el árbol florece).
   const hojas = d.hoja || 0;
   for (let j = 0; j < hojas; j++) { const [hx, hy] = en(1.5, rad * 1.1); g.globalAlpha = .75; g.fillStyle = d.flor && R() < .5 ? d.flor : ['#8A6A3A', '#A9813F', '#6E5530'][Math.floor(R() * 3)]; g.fillRect(hx, hy, 1.1, .6); }

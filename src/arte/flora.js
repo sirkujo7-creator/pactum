@@ -4,7 +4,9 @@
 // Biodiversidad: palma de cera, guadua, samán, ceiba, guayacán amarillo, ocobo, cámbulo, yarumo, mango, cafeto,
 // plátano, cardón, árbol del bosque de niebla y frailejón (redibujado a pedido de Juan).
 import { mulberry, lienzo, RES_HOJA } from './fresco.js';
-import { sh, mezcla, pol, elip, follaje, tronco, sombraSuave } from './plano.js';
+import { sh, mezcla, pol, elip, follaje, tronco } from './plano.js';
+// Las plantas ya no pintan su sombra en óvalos: al hornear, su propia silueta se proyecta en el suelo (naturaleza.js).
+const sombraSuave = () => {};
 
 const VERDES = { claro: ['#3F6631', '#5E8B42', '#8DB35C'], oscuro: ['#2A4A2C', '#3E6B3A', '#5E8A4A'], niebla: ['#24402A', '#34583A', '#557A4E'], cafe: ['#1E3E22', '#2F5A32', '#4E7A3A'] };
 const SECO = '#B39B57';
