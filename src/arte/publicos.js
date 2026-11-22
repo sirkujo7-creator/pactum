@@ -147,7 +147,33 @@ function bahareque(g, F) {
 }
 // Ventanas por piso a lo largo de una cara.
 function fila(g, F, cara, n, z, ancho, alto, E, u0 = .08, u1 = .92) { for (let k = 0; k < n; k++) ventana(g, F, cara, u0 + (k + .5) * (u1 - u0) / n, z, ancho, alto, E.carp, E.vent); }
-function franjasVidrio(g, F, pisos) { for (let p = 0; p < pisos; p++) { const z = 3 + p * 9.5; for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, .06, z), F.en(cara, .94, z), F.en(cara, .94, z + 5.5), F.en(cara, .06, z + 5.5)], cara === 'izq' ? '#86AEC4' : '#6E94AA', K.contorno, .3); } }
+// Vidrio con su marco, montantes, el interior oscuro abajo, el cielo reflejado arriba y un brillo en diagonal
+// (pulido de la tanda A: antes era un solo color plano). La cara de la derecha va en sombra.
+function vidrio(g, F, cara, u0, u1, z0, z1, op = {}) {
+  const q = [F.en(cara, u0, z0), F.en(cara, u1, z0), F.en(cara, u1, z1), F.en(cara, u0, z1)], sombra = cara === 'der';
+  const gr = g.createLinearGradient(0, q[0][1], 0, q[3][1]);
+  gr.addColorStop(0, sombra ? '#3E5A6E' : '#4E6E84'); gr.addColorStop(.55, sombra ? '#5E84A0' : '#7FA8C2'); gr.addColorStop(1, sombra ? '#86A8BE' : '#B8D4E2');
+  rellena(g, q, gr, op.marco || '#E8ECEC', .7);
+  g.save(); poli(g, q); g.clip();
+  g.globalAlpha = sombra ? .12 : .22; g.fillStyle = '#FFFFFF'; const a = F.en(cara, u0 + (u1 - u0) * .15, z0), b = F.en(cara, u0 + (u1 - u0) * .35, z0), c = F.en(cara, u0 + (u1 - u0) * .55, z1), d = F.en(cara, u0 + (u1 - u0) * .35, z1); poli(g, [a, b, c, d]); g.fill(); // brillo en diagonal
+  g.globalAlpha = .6; g.strokeStyle = op.marco || '#E8ECEC'; g.lineWidth = .4;
+  const n = op.montantes ?? Math.max(1, Math.round((u1 - u0) / .09)); for (let k = 1; k < n; k++) { const u = u0 + (u1 - u0) * k / n, m0 = F.en(cara, u, z0), m1 = F.en(cara, u, z1); g.beginPath(); g.moveTo(...m0); g.lineTo(...m1); g.stroke(); }
+  if (z1 - z0 > 4) { const m0 = F.en(cara, u0, z0 + (z1 - z0) * .66), m1 = F.en(cara, u1, z0 + (z1 - z0) * .66); g.beginPath(); g.moveTo(...m0); g.lineTo(...m1); g.stroke(); }
+  g.restore();
+  rellena(g, [F.en(cara, u0 - .01, z0 - .5), F.en(cara, u1 + .01, z0 - .5), F.en(cara, u1 + .01, z0), F.en(cara, u0 - .01, z0)], sombra ? '#BDB8AC' : '#ECE8DE', null); // alféizar
+}
+// Sombra bajo el alero o el pretil sobre las dos caras, y la mugre que sube del suelo (los años en el muro).
+function aleroYdesgaste(g, F, alto = 2.4) {
+  for (const cara of ['izq', 'der']) {
+    const a = F.en(cara, 0, F.H), b = F.en(cara, 1, F.H), gr = g.createLinearGradient(0, a[1], 0, a[1] + alto * 1.2);
+    gr.addColorStop(0, 'rgba(40,30,20,.32)'); gr.addColorStop(1, 'rgba(40,30,20,0)');
+    rellena(g, [a, b, F.en(cara, 1, F.H - alto), F.en(cara, 0, F.H - alto)], gr, null);
+    const c = F.en(cara, 0, 0), d = F.en(cara, 1, 0), gr2 = g.createLinearGradient(0, c[1], 0, c[1] - 3);
+    gr2.addColorStop(0, 'rgba(70,55,35,.28)'); gr2.addColorStop(1, 'rgba(70,55,35,0)');
+    rellena(g, [c, d, F.en(cara, 1, 3), F.en(cara, 0, 3)], gr2, null);
+  }
+}
+function franjasVidrio(g, F, pisos) { for (let p = 0; p < pisos; p++) { const z = 3 + p * 9.5; for (const cara of ['izq', 'der']) vidrio(g, F, cara, .06, .94, z, z + 5.5); } }
 function carro(g, x, y, col = '#F4F1E8', franja = '#B9442F') {
   g.save(); g.globalAlpha = .22; g.fillStyle = '#2A2A1E'; g.beginPath(); g.ellipse(x + 1, y + .5, 8, 2.4, 0, 0, 7); g.fill(); g.restore();
   rellena(g, [[x - 7, y - 1], [x + 5, y + 2.5], [x + 5, y - 2], [x - 7, y - 5.5]], col); rellena(g, [[x - 7, y - 5.5], [x + 5, y - 2], [x + 7.5, y - 3.2], [x - 4.5, y - 6.8]], mezcla(col, '#000000', .1));
@@ -1608,10 +1634,10 @@ function escuelaBloque(g) {
   const F = caras(.94, .42, 12, -.06);
   sombraCasa(g, F); cancha(g, F.f + .12, F.a + .12);
   arbolito(g, ...P(F.t + .05, F.a - .06), 1, '#4E7A3A');
-  muros(g, F, '#F4F1E8', '#2F6E8E');
+  muros(g, F, '#F4F1E8', '#2F6E8E'); aleroYdesgaste(g, F);
   for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 0), F.en(cara, 1, 0), F.en(cara, 1, 4.2), F.en(cara, 0, 4.2)], cara === 'izq' ? '#3E7FA0' : '#2E6480', null);
-  for (let k = 0; k < 5; k++) { const u = .1 + k * .2; if (k === 2) { puerta(g, F, 'izq', u, .1, 8.5, '#2F6E8E', false); continue; } hueco(g, F, 'izq', u - .075, u + .075, 4.6, 9.6, '#7FA6BC'); g.strokeStyle = '#E8ECEE'; g.lineWidth = .35; for (let j = 1; j < 4; j++) { const a = F.en('izq', u - .075 + .15 * j / 4, 4.6), b = F.en('izq', u - .075 + .15 * j / 4, 9.6); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } }
-  hueco(g, F, 'der', .3, .7, 4.6, 9.6, '#6E94AA');
+  for (let k = 0; k < 5; k++) { const u = .1 + k * .2; if (k === 2) { puerta(g, F, 'izq', u, .1, 8.5, '#2F6E8E', false); continue; } vidrio(g, F, 'izq', u - .075, u + .075, 4.6, 9.6); g.strokeStyle = '#E8ECEE'; g.lineWidth = .35; for (let j = 1; j < 4; j++) { const a = F.en('izq', u - .075 + .15 * j / 4, 4.6), b = F.en('izq', u - .075 + .15 * j / 4, 9.6); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } }
+  vidrio(g, F, 'der', .3, .7, 4.6, 9.6);
   const zf = dosAguas(g, F, 5, { ...ETERNIT, sale: .16, hastial: '#E6E2D8' });
   g.strokeStyle = '#D9D4C8'; g.lineWidth = 1.1; for (const u of [.02, .26, .5, .74, .98]) { const c = F.a + (F.b - F.a) * u, a = P(F.f + .16, c, 0), b = P(F.f + .16, c, zf); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
   letrero(g, F, .5, 10.6, '#2F6E8E', 'ESCUELA');
@@ -1622,9 +1648,9 @@ function escuelaBloque(g) {
 function colegioLadrillo(g) {
   const F = caras(.9, .44, 22, -.08);
   sombraCasa(g, F); cancha(g, F.f + .2, F.a + .5);
-  muros(g, F, K.ladrillo, null, { ladrillo: true }); aporticado(g, F, 2);
-  for (const z of [3, 14]) for (const u of [.17, .5, .83]) { hueco(g, F, 'izq', u - .1, u + .1, z, z + 5.5, '#6E94AA'); rejas(g, F, 'izq', u, z, .2, 5.5); }
-  hueco(g, F, 'der', .3, .7, 3, 8.5, '#5E84A0'); rejas(g, F, 'der', .5, 3, .4, 5.5); hueco(g, F, 'der', .3, .7, 14, 19.5, '#5E84A0');
+  muros(g, F, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, F); aporticado(g, F, 2);
+  for (const z of [3, 14]) for (const u of [.17, .5, .83]) { vidrio(g, F, 'izq', u - .1, u + .1, z, z + 5.5); rejas(g, F, 'izq', u, z, .2, 5.5); }
+  vidrio(g, F, 'der', .3, .7, 3, 8.5); rejas(g, F, 'der', .5, 3, .4, 5.5); vidrio(g, F, 'der', .3, .7, 14, 19.5);
   dosAguas(g, F, 6, { ...MAT.zinc, hastial: '#C9C3B6' });
   letrero(g, F, .5, 11.2, '#3E6B4A', 'COLEGIO');
   tapiaMural(g, F.f + .3, F.a - .02, F.b + .02, 4.5, .62);
@@ -1636,10 +1662,10 @@ function colegioLadrillo(g) {
 function centroSalud(g) {
   const F = caras(.9, .5, 13, -.06);
   sombraCasa(g, F); jardin(g, F);
-  muros(g, F, '#F7F5EF', '#2F5D8A');
+  muros(g, F, '#F7F5EF', '#2F5D8A'); aleroYdesgaste(g, F);
   for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 9.4), F.en(cara, 1, 9.4), F.en(cara, 1, 10.6), F.en(cara, 0, 10.6)], cara === 'izq' ? '#2F6E9E' : '#245A82', null);
-  for (const u of [.12, .28, .72, .88]) hueco(g, F, 'izq', u - .065, u + .065, 3.6, 8.4, '#7FA6BC');
-  for (const u of [.25, .5, .75]) hueco(g, F, 'der', u - .08, u + .08, 3.6, 8.4, '#6E94AA');
+  for (const u of [.12, .28, .72, .88]) vidrio(g, F, 'izq', u - .065, u + .065, 3.6, 8.4);
+  for (const u of [.25, .5, .75]) vidrio(g, F, 'der', u - .08, u + .08, 3.6, 8.4);
   hueco(g, F, 'izq', .42, .58, 0, 8, '#4E7FA0');
   terraza(g, F, '#F2F0EA');
   // marquesina sobre la entrada
@@ -1654,8 +1680,8 @@ function centroSalud(g) {
 function casaCultura(g) {
   const F = caras(.66, .56, 20, -.04);
   sombraCasa(g, F); arbolito(g, ...P(F.f + .16, F.b + .04), .85, '#5E8B42'); bancoMadera(g, ...P(F.f + .2, F.a + .2));
-  muros(g, F, '#E8E2D4', '#7A6A58');
-  for (const cara of ['izq', 'der']) { rellena(g, [F.en(cara, .04, 4), F.en(cara, .96, 4), F.en(cara, .96, 17), F.en(cara, .04, 17)], cara === 'izq' ? '#7FA6BC' : '#6E94AA', K.contorno, .3); for (let k = 0; k <= 10; k++) { const u = .04 + .92 * k / 10; rellena(g, [F.en(cara, u - .012, 4), F.en(cara, u + .012, 4), F.en(cara, u + .012, 17), F.en(cara, u - .012, 17)], cara === 'izq' ? '#F2EEE4' : '#CFC9BC', null); } }
+  muros(g, F, '#E8E2D4', '#7A6A58'); aleroYdesgaste(g, F);
+  for (const cara of ['izq', 'der']) { vidrio(g, F, cara, .04, .96, 4, 17); for (let k = 0; k <= 10; k++) { const u = .04 + .92 * k / 10; rellena(g, [F.en(cara, u - .012, 4), F.en(cara, u + .012, 4), F.en(cara, u + .012, 17), F.en(cara, u - .012, 17)], cara === 'izq' ? '#F2EEE4' : '#CFC9BC', null); } }
   hueco(g, F, 'izq', .4, .6, 0, 7, '#3A3A3A');
   terraza(g, F, '#E8E2D4');
   const l = F.en('izq', .5, 18.6); g.fillStyle = '#B9442F'; g.fillRect(l[0] - 6, l[1] - 1.4, 12, 2.6); g.save(); g.fillStyle = '#F7F1E3'; g.font = 'bold 2px sans-serif'; g.textAlign = 'center'; g.fillText('CASA DE LA CULTURA', l[0], l[1] + .6); g.restore();
@@ -1664,8 +1690,8 @@ function casaCultura(g) {
 function bibliotecaPublica(g) {
   const F = caras(.66, .56, 22, -.04);
   sombraCasa(g, F); arbolito(g, ...P(F.f + .16, F.b + .04), .85, '#5E8B42');
-  muros(g, F, K.ladrillo, null, { ladrillo: true }); aporticado(g, F, 2, [0, .5, 1]);
-  for (const z of [3, 13.5]) { hueco(g, F, 'izq', .06, .44, z, z + 6, '#7FA6BC'); if (z === 13.5) hueco(g, F, 'izq', .56, .94, z, z + 6, '#7FA6BC'); hueco(g, F, 'der', .1, .9, z, z + 6, '#6E94AA'); }
+  muros(g, F, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, F); aporticado(g, F, 2, [0, .5, 1]);
+  for (const z of [3, 13.5]) { vidrio(g, F, 'izq', .06, .44, z, z + 6); if (z === 13.5) vidrio(g, F, 'izq', .56, .94, z, z + 6); vidrio(g, F, 'der', .1, .9, z, z + 6); }
   rellena(g, [F.en('izq', .56, 1), F.en('izq', .94, 1), F.en('izq', .94, 9.5), F.en('izq', .56, 9.5)], '#E7C76B', K.contorno, .3); // mural de un libro abierto
   const m = F.en('izq', .75, 5.2); g.fillStyle = '#F7F1E3'; g.beginPath(); g.moveTo(m[0] - 3.4, m[1] + 1); g.lineTo(m[0], m[1] + 2.2); g.lineTo(m[0] + 3.4, m[1] + 1); g.lineTo(m[0] + 3.4, m[1] - 2.6); g.lineTo(m[0], m[1] - 1.4); g.lineTo(m[0] - 3.4, m[1] - 2.6); g.closePath(); g.fill();
   hueco(g, F, 'izq', .2, .32, 0, 3, '#3A3A3A');
@@ -1675,10 +1701,10 @@ function bibliotecaPublica(g) {
 // Universidad de la modernización (años 60 y 70): bloque de cinco pisos de ladrillo con franjas de ventanas, una
 // plazoleta con escalinata y el bloque bajo de la biblioteca.
 function universidadBloques(g, mural = false) {
-  const B = caras(.42, .32, 14, .18, -.28); sombraCasa(g, B); muros(g, B, '#E8E2D4', null); hueco(g, B, 'izq', .1, .9, 4, 10, '#7FA6BC'); hueco(g, B, 'der', .1, .9, 4, 10, '#6E94AA'); terraza(g, B, '#E8E2D4');
+  const B = caras(.42, .32, 14, .18, -.28); sombraCasa(g, B); muros(g, B, '#E8E2D4', null); vidrio(g, B, 'izq', .1, .9, 4, 10); vidrio(g, B, 'der', .1, .9, 4, 10); terraza(g, B, '#E8E2D4');
   const F = caras(.62, .5, 44, -.14, .16);
-  sombraCasa(g, F); muros(g, F, K.ladrillo, null, { ladrillo: true });
-  for (let p = 0; p < 5; p++) for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, .06, 3 + p * 8.4), F.en(cara, .94, 3 + p * 8.4), F.en(cara, .94, 8.2 + p * 8.4), F.en(cara, .06, 8.2 + p * 8.4)], cara === 'izq' ? '#86AEC4' : '#6E94AA', K.contorno, .25);
+  sombraCasa(g, F); muros(g, F, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, F);
+  for (let p = 0; p < 5; p++) for (const cara of ['izq', 'der']) vidrio(g, F, cara, .06, .94, 3 + p * 8.4, 8.2 + p * 8.4);
   for (let p = 0; p <= 5; p++) for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, p * 8.4), F.en(cara, 1, p * 8.4), F.en(cara, 1, p * 8.4 + 1.2), F.en(cara, 0, p * 8.4 + 1.2)], cara === 'izq' ? '#E2DCCE' : '#C2BCAE', null);
   terraza(g, F, '#E2DCCE');
   for (let k = 0; k < 3; k++) rellena(g, [P(.36 + k * .04, -.2, k * .8), P(.36 + k * .04, .2, k * .8), P(.36 + k * .04, .2, k * .8 + .8), P(.36 + k * .04, -.2, k * .8 + .8)], '#D8D2C4', K.contorno, .3); // escalinata
@@ -1698,9 +1724,9 @@ function universidadBloques(g, mural = false) {
 // Estación de policía de la modernización: casa de bloque de dos pisos con franja verde y la patrulla.
 function estacionBloque(g) {
   const F = caras(.62, .46, 18, -.08);
-  sombraCasa(g, F); muros(g, F, '#EFF1EA', '#4E5A34');
+  sombraCasa(g, F); muros(g, F, '#EFF1EA', '#4E5A34'); aleroYdesgaste(g, F);
   for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 8), F.en(cara, 1, 8), F.en(cara, 1, 9.6), F.en(cara, 0, 9.6)], '#4E5A34', null);
-  puerta(g, F, 'izq', .4, .15, 7.6, '#4E5A34', false); for (const u of [.15, .75]) hueco(g, F, 'izq', u - .07, u + .07, 3, 7, '#6E94AA'); for (const u of [.15, .45, .75]) hueco(g, F, 'izq', u - .07, u + .07, 11.4, 16, '#6E94AA'); hueco(g, F, 'der', .3, .7, 11.4, 16, '#5E84A0');
+  puerta(g, F, 'izq', .4, .15, 7.6, '#4E5A34', false); for (const u of [.15, .75]) vidrio(g, F, 'izq', u - .07, u + .07, 3, 7); for (const u of [.15, .45, .75]) vidrio(g, F, 'izq', u - .07, u + .07, 11.4, 16); vidrio(g, F, 'der', .3, .7, 11.4, 16);
   terraza(g, F, '#EFF1EA'); letrero(g, F, .4, 10, '#2F5D8A', 'POLICÍA');
   const p = P(F.f + .26, F.a + .5); carro(g, p[0], p[1], '#E8ECE4', '#4E5A34');
 }
@@ -1708,7 +1734,7 @@ function estacionBloque(g) {
 // garita de concreto y ventanas tapiadas.
 function estacionFortificada(g) {
   const F = caras(.62, .46, 18, -.12);
-  sombraCasa(g, F); muros(g, F, '#E8EAE2', '#4E5A34');
+  sombraCasa(g, F); muros(g, F, '#E8EAE2', '#4E5A34'); aleroYdesgaste(g, F);
   for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 8), F.en(cara, 1, 8), F.en(cara, 1, 9.6), F.en(cara, 0, 9.6)], '#4E5A34', null);
   for (const u of [.15, .75]) { hueco(g, F, 'izq', u - .07, u + .07, 3, 7, '#9A9488'); g.strokeStyle = 'rgba(60,55,45,.45)'; g.lineWidth = .3; for (let z = 4; z < 7; z += 1) { const a = F.en('izq', u - .07, z), b = F.en('izq', u + .07, z); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } } // ventanas tapiadas con bloque
   for (const u of [.15, .45, .75]) { hueco(g, F, 'izq', u - .07, u + .07, 11.4, 16, '#3A3A3A'); rejas(g, F, 'izq', u, 11.4, .14, 4.6); }
@@ -1721,8 +1747,8 @@ function estacionFortificada(g) {
 // CAI de la era digital: caseta de vidrio y concreto con cámaras, moto y patrulla eléctrica.
 function caiDigital(g) {
   const F = caras(.5, .4, 13, -.06);
-  sombraCasa(g, F); muros(g, F, '#EEF0EC', '#4E5A34');
-  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, .05, 2), F.en(cara, .95, 2), F.en(cara, .95, 10), F.en(cara, .05, 10)], cara === 'izq' ? '#8FB6CA' : '#7AA2B8', K.contorno, .3);
+  sombraCasa(g, F); muros(g, F, '#EEF0EC', '#4E5A34'); aleroYdesgaste(g, F);
+  for (const cara of ['izq', 'der']) vidrio(g, F, cara, .05, .95, 2, 10);
   rellena(g, [F.en('izq', 0, 10.5), F.en('izq', 1, 10.5), F.en('izq', 1, 12.4), F.en('izq', 0, 12.4)], '#3E8A4A', null);
   g.save(); g.fillStyle = '#F4F1E8'; g.font = 'bold 2.2px sans-serif'; g.textAlign = 'center'; const t = F.en('izq', .5, 11); g.fillText('CAI', t[0], t[1]); g.restore();
   terraza(g, F, '#E8EAE6'); solares(g, F, 1);
