@@ -14,7 +14,9 @@ import { reducirMovimiento } from './pantalla.js';
 
 // Oficios que se hacen a golpes (con pausa entre uno y otro) y velocidad de los que van seguidos (ciclos por segundo).
 const TRABAJO = new Set(['sembrar', 'cosechar', 'picar', 'martillar', 'aserrar', 'barrer', 'vender', 'cargar', 'machete', 'lavar', 'gallinas', 'trompo']);
-const LENTO = { rezar: .35, leer: .25, tocar: .9, lustrar: 1, saltar: 1.4, regar: .7, ordenar: 1.6, tender: .25 };
+const LENTO = { rezar: .35, leer: .25, tocar: .9, lustrar: 1, saltar: 1.4, regar: .7, ordenar: 1.6, tender: .12 };
+// Acciones que van y vuelven (ida y vuelta, sin saltar del último cuadro al primero).
+const VAIVEN = new Set(['tender', 'tocar']);
 // Quien se sienta a tomar tinto o a leer el periódico casi no se mueve: un sorbo o una página cada tantos segundos.
 const PAUSADO = { tinto: [7, .25], periodico: [9, .3] };
 // Cuánto se queda cada quien en su lugar (segundos: mínimo y lo que puede sumar al azar).
@@ -544,7 +546,9 @@ export class Pobladores {
       // Oficios con su ritmo: el ciclo se juega y luego hay una pausa; cada quien a destiempo de los demás.
       const N = ACCIONES[f.p.tipo][accion], t = this.t + f.p.semilla * 7;
       const ph = PAUSADO[accion] ? ritmo(t, PAUSADO[accion][0] + f.p.semilla * 3, PAUSADO[accion][1]) : TRABAJO.has(accion) ? ritmo(t, 1.7 + f.p.semilla * .9) : (t * (LENTO[accion] || .8)) % 1;
-      clave = `${f.p.tipo}_${f.p.vi}_${accion}_${Math.min(N - 1, Math.floor(ph * N))}`;
+      let n = Math.min(N - 1, Math.floor(ph * N));
+      if (VAIVEN.has(accion) && N > 2) { const m = Math.floor(ph * (2 * N - 2)) % (2 * N - 2); n = m < N ? m : 2 * N - 2 - m; }
+      clave = `${f.p.tipo}_${f.p.vi}_${accion}_${n}`;
     }
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }

@@ -293,12 +293,12 @@ const T2 = Math.PI * 2;
 function poseAccion(k, n, N) {
   const t = n / N, s = Math.sin(t * T2), c = Math.cos(t * T2), u = (1 - c) / 2, u2 = (1 - Math.cos(t * T2 + 1.3)) / 2;
   switch (k) {
-    case 'sembrar': return { lean: .08 + u * .5, L: [1.2 + u * 3, -24.4 + u * 15], R: [3 + u * 3.4, -23.2 + u * 14], prop: { k: 'azadon', off: [(1 - u) * -4.5 + u * 4.2, (1 - u) * -9.5 + u * 11.6] } };
-    case 'cosechar': return { lean: -.04, L: [-2.6, -27 + u * 15], R: [2.8, -26 + u2 * 14], prop: { k: 'canasto' } };
+    case 'sembrar': return { lean: .12 + u * .24, L: [1.6 + u * 1.6, -17.6 + u * 5], R: [3 + u * 1.8, -16.6 + u * 5.4], prop: { k: 'azadon', off: [-1.6 + u * 5.6, -7.4 + u * 16.4] } }; // azadón: sube hasta el pecho y baja a la tierra (sin pasar sobre la cabeza)
+    case 'cosechar': return { lean: .04, L: [-2.6, -12.4], R: [3.4 + u * 1.4, -18 + u * 3.6], prop: { k: 'canasto' } }; // coge el grano a la altura del pecho y lo echa al canasto
     case 'cargar': return { lean: .1, L: [-1.2, -26.4], R: [2.6, -25.2], prop: { k: 'saco' } };
-    case 'vender': return { lean: 0, L: [-4.2 + s * .5, -15.8 + c * .9], R: [4.6 + c * .6, -17.6 + s * 1.6], prop: { k: 'fruta' } };
-    case 'martillar': { const v = u * u; return { lean: .12 + v * .15, L: [-.5, -13.6], R: [3 + v * 2.6, -26.5 + v * 14.5], prop: { k: 'martillo', off: [3.6 - v * 1.4, -1.8 + v * 7] } }; }
-    case 'picar': return { lean: .15 + u * .35, L: [.4 + u * 3, -27 + u * 15], R: [2.8 + u * 3.2, -26 + u * 14.4], prop: { k: 'pico', off: [(1 - u) * -5 + u * 5.6, (1 - u) * -8 + u * 9.5] } };
+    case 'vender': return { lean: 0, L: [-3.6, -14.6], R: [4.2 + u * .6, -16.2 + u * .8], prop: { k: 'fruta' } }; // ofrece la fruta, sin dar vueltas
+    case 'martillar': { const v = u * u; return { lean: .12 + v * .1, L: [-.5, -13.6], R: [3 + v * 1.6, -19.6 + v * 7], prop: { k: 'martillo', off: [3.2 - v, -2 + v * 5] } }; }
+    case 'picar': return { lean: .15 + u * .25, L: [1 + u * 1.8, -18.2 + u * 6], R: [2.6 + u * 2, -17.2 + u * 6.4], prop: { k: 'pico', off: [-2 + u * 6.5, -8 + u * 16.5] } };
     case 'aserrar': return { lean: .1, L: [1.6 + s * 2.3, -14.6], R: [3 + s * 2.3, -15.8], prop: { k: 'sierra' } };
     case 'barrer': return { lean: .1, L: [1 + s * 2.2, -13.6], R: [2.6 + s * 2.2, -16.4], prop: { k: 'escoba' } };
     case 'rezar': return { lean: .12 + s * .015, L: [-.7, -17.2], R: [.7, -17.6], prop: null };
@@ -310,7 +310,7 @@ function poseAccion(k, n, N) {
     case 'manos': { const k = n / (N - 1); return { lean: .02, L: [-3 - k * .6, -12.8 - k * 2.6], R: [3 + k * .6, -12.8 - k * 2.8], prop: null }; } // abre las manos al explicar
     case 'sombrero': { const k = n / (N - 1); return { lean: .03 * k, L: [-3, -12.8], R: [3 - k * 1.2, -12.8 - k * 12.6], prop: null }; } // se toca el sombrero: buenos días
     case 'saludo': { const k = Math.min(1, n / (N - 2)), w = n === N - 1 ? .8 : 0; return { lean: 0, L: [-3, -12.8], R: [3 + k * 1.2 + w, -12.8 - k * 11.6], prop: null }; } // la mano en alto
-    case 'saltar': { const a = Math.abs(s); return { lean: 0, lift: a * 3.2, L: [-4.4, -26 + a * 1.2], R: [4.4, -26 + a * 1.2], prop: null }; }
+    case 'saltar': { const a = Math.abs(s); return { lean: 0, lift: a * 3.2, L: [-3.8, -13.4 + a * .6], R: [3.8, -13.4 + a * .6], prop: null }; } // brazos a los lados (antes arriba)
     // Voces del pueblo: sentado sin trabajo (cabizbajo, manos en las rodillas), con el balde del agua, esperando en
     // la fila con el canasto vacío y el niño lustrabotas agachado sobre su cajón.
     case 'sentado': return { lean: .16 + n * .03, lift: -5, sienta: true, L: [-2.2, -12.2], R: [2.4, -12], prop: { k: 'banca' } };
