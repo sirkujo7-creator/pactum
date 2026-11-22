@@ -913,14 +913,36 @@ function pintarSuelo(g, T, mapa, k, dry) {
   }
 }
 
+// Mata con volumen (pedido de Juan: nada de círculos planos): un cuerpo oscuro abajo a la derecha, hojas en punta
+// que salen hacia afuera, más claras arriba a la izquierda donde da el sol, y unas pocas hojas de luz encima.
+function mata(g, x, y, rx, ry, col, rng, al = 1) {
+  g.save(); g.globalAlpha = al;
+  const osc = shade(col, -.24), luz = shade(col, .24), n = Math.max(7, Math.round(rx * 3.2));
+  g.fillStyle = osc; g.beginPath(); g.ellipse(x + rx * .12, y + ry * .12, rx * .78, ry * .72, 0, 0, 7); g.fill();
+  for (let k = 0; k < n; k++) {
+    const a = (k / n) * Math.PI * 2 + rng() * .5, d = .55 + rng() * .35, hx = x + Math.cos(a) * rx * d * .6, hy = y + Math.sin(a) * ry * d * .6;
+    const arriba = Math.cos(a - 3.9) * .5 + .5; // 1 hacia arriba a la izquierda
+    g.fillStyle = mix(osc, col, .4 + arriba * .6);
+    g.save(); g.translate(hx, hy); g.rotate(a + Math.PI / 2); g.beginPath(); g.moveTo(0, -rx * .55); g.quadraticCurveTo(rx * .4, 0, 0, rx * .32); g.quadraticCurveTo(-rx * .4, 0, 0, -rx * .55); g.fill(); g.restore();
+  }
+  for (let k = 0; k < 4; k++) { const hx = x - rx * (.1 + rng() * .35), hy = y - ry * (.15 + rng() * .4), a = -2.2 + rng() * 1.4; g.fillStyle = luz; g.save(); g.translate(hx, hy); g.rotate(a); g.beginPath(); g.moveTo(0, -rx * .4); g.quadraticCurveTo(rx * .2, 0, 0, rx * .2); g.quadraticCurveTo(-rx * .2, 0, 0, -rx * .4); g.fill(); g.restore(); }
+  g.restore();
+}
+// Surco con relieve: lomo de tierra con luz y la zanja en sombra.
+function surco(g, a, b, ancho = 1) {
+  g.save(); g.lineCap = 'round';
+  g.globalAlpha = .4; g.strokeStyle = '#6E5434'; g.lineWidth = 1.4 * ancho; g.beginPath(); g.moveTo(a[0], a[1] + .7); g.lineTo(b[0], b[1] + .7); g.stroke();
+  g.globalAlpha = .45; g.strokeStyle = '#D2B88A'; g.lineWidth = .8 * ancho; g.beginPath(); g.moveTo(a[0], a[1] - .3); g.lineTo(b[0], b[1] - .3); g.stroke();
+  g.restore();
+}
 function pintarCafe(g, T, t, rng, dry, joven) {
   const col = mix('#2E5E36', '#6E7A3A', dry * .4);
   wash(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, .45, .6);
   for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
     const u = .14 + b * .145, v = .18 + a * .21 + Math.sin(b * .9 + a) * .03, r = t.r + v, c = t.c + u, p = P(r, c, T.hf(r, c));
     g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.2, 1.2, 0, 0, 7); g.fill(); g.globalAlpha = 1;
-    if (joven) { blob(g, p[0], p[1] - 1.2, 1.4, 1.2, col, rng, .9); continue; }
-    blob(g, p[0], p[1] - 2.4, 3, 2.6, col, rng, .95);
+    if (joven) { mata(g, p[0], p[1] - 1.2, 1.5, 1.2, col, rng); continue; }
+    mata(g, p[0], p[1] - 2.4, 3, 2.6, col, rng);
     if (rng() < .45 && dry < .6) { g.fillStyle = '#B8322A'; g.beginPath(); g.arc(p[0] + (rng() - .5) * 3, p[1] - 2.8, .75, 0, 7); g.fill(); }
   }
 }
@@ -949,14 +971,15 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
   if (cv === 'cana' || cv === 'tabaco') { pintarCanaTabaco(g, q, pt, rng, dry, cv, joven); return; }
   const suelo = cv === 'algodon' ? mix('#B99A6A', '#C9B07A', dry) : mix('#8E7A52', '#A89A6A', dry);
   wash(g, q, suelo, rng, .5, .6);
+  for (let a = 0; a < (cv === 'algodon' ? 5 : 3); a++) { const v = .16 + a * (.68 / ((cv === 'algodon' ? 5 : 3) - 1)); surco(g, pt(.06, v + .03), pt(.94, v + .03), cv === 'algodon' ? .8 : 1.2); }
   const filas = cv === 'algodon' ? 5 : 3, cols = cv === 'algodon' ? 6 : 4, s = joven ? .45 : 1;
   for (let a = 0; a < filas; a++) for (let b = 0; b < cols; b++) {
     const u = .14 + b * (.72 / (cols - 1)), v = .16 + a * (.68 / (filas - 1)), p = pt(u, v);
     g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.4 * s, 1.2 * s, 0, 0, 7); g.fill(); g.globalAlpha = 1;
-    if (cv === 'algodon') { blob(g, p[0], p[1] - 1.6, 2.2 * s, 1.6 * s, mix('#5E8A46', '#B8A65A', dry * .7), rng, .9); if (!joven) for (let k = 0; k < 3; k++) { g.fillStyle = '#F6F2EA'; g.beginPath(); g.arc(p[0] + (rng() - .5) * 3.4, p[1] - 2.2 - rng() * 1.5, .9, 0, 7); g.fill(); } continue; }
+    if (cv === 'algodon') { mata(g, p[0], p[1] - 1.6, 2.2 * s, 1.6 * s, mix('#5E8A46', '#B8A65A', dry * .7), rng); if (!joven) for (let k = 0; k < 3; k++) { g.fillStyle = '#F6F2EA'; g.beginPath(); g.arc(p[0] + (rng() - .5) * 3.4, p[1] - 2.2 - rng() * 1.5, .9, 0, 7); g.fill(); } continue; }
     if (cv === 'platano') { g.save(); g.translate(p[0], p[1] - 3 * s); for (let k = 0; k < 5; k++) { g.save(); g.rotate(-Math.PI / 2 + (k - 2) * .6); g.fillStyle = mix('#6FA04A', '#B3A65A', dry * .5); g.beginPath(); g.ellipse(0, -3 * s, 1.1 * s, 3.4 * s, 0, 0, 7); g.fill(); g.restore(); } g.restore(); continue; }
     const col = cv === 'cacao' ? mix('#3E6A3A', '#7A7A40', dry * .4) : mix('#2F5432', '#6E7A3A', dry * .4);
-    blob(g, p[0], p[1] - 3.2 * s, (cv === 'aguacate' ? 3.6 : 3.1) * s, (cv === 'aguacate' ? 3.4 : 2.8) * s, col, rng, .95);
+    mata(g, p[0], p[1] - 3.2 * s, (cv === 'aguacate' ? 3.6 : 3.1) * s, (cv === 'aguacate' ? 3.4 : 2.8) * s, col, rng);
     if (!joven && cv === 'cacao') for (let k = 0; k < 2; k++) { g.fillStyle = k ? '#C9822E' : '#9C2F25'; g.beginPath(); g.ellipse(p[0] + (k ? 1.6 : -1.4), p[1] - 1.4, .7, 1.1, 0, 0, 7); g.fill(); }
     if (!joven && cv === 'aguacate') { g.fillStyle = '#4E6E2A'; g.beginPath(); g.ellipse(p[0] + 1.2, p[1] - 2, .7, .9, 0, 0, 7); g.fill(); }
   }
@@ -986,7 +1009,7 @@ function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven) {
       for (let k = 0; k < 5; k++) { // hojas anchas en roseta; las de abajo, amarillas
         const ang = -Math.PI / 2 + (k - 2) * .62, L = (3.6 - Math.abs(k - 2) * .3) * s, x = p[0] + Math.cos(ang) * L * .7, y = p[1] - 2.4 * s + Math.sin(ang) * L * .5;
         g.fillStyle = k === 0 || k === 4 ? mix('#C9B25A', '#D8C278', dry * .5) : mix('#6E9A48', '#A9A45A', dry * .6);
-        g.save(); g.translate(x, y); g.rotate(ang + Math.PI / 2); g.beginPath(); g.ellipse(0, 0, 1.3 * s, 2.6 * s, 0, 0, 7); g.fill(); g.restore();
+        g.save(); g.translate(x, y); g.rotate(ang + Math.PI / 2); g.beginPath(); g.moveTo(0, -2.8 * s); g.quadraticCurveTo(1.6 * s, -.4 * s, 0, 2.6 * s); g.quadraticCurveTo(-1.6 * s, -.4 * s, 0, -2.8 * s); g.fill(); g.fillStyle = 'rgba(30,40,15,.25)'; g.beginPath(); g.moveTo(0, -2.8 * s); g.quadraticCurveTo(1.6 * s, -.4 * s, 0, 2.6 * s); g.closePath(); g.fill(); g.strokeStyle = 'rgba(240,240,200,.45)'; g.lineWidth = .25; g.beginPath(); g.moveTo(0, -2.4 * s); g.lineTo(0, 2.3 * s); g.stroke(); g.restore(); // hoja en punta con su vena y la mitad en sombra
       }
       if (!joven && rng() < .4) { g.fillStyle = '#E8D7E4'; g.beginPath(); g.arc(p[0], p[1] - 6, .7, 0, 7); g.fill(); } // flor rosada
     }
@@ -999,10 +1022,8 @@ function pintarHuerta(g, T, t, q, rng, dry) {
   const col = mix('#4F8A43', '#C9A94A', dry * .8);
   for (let a = 0; a < 5; a++) {
     const v = .12 + a * .19;
-    g.globalAlpha = .45; g.strokeStyle = '#8C6F48'; g.lineWidth = 1; g.beginPath();
-    for (let b = 0; b <= 6; b++) { const r = t.r + v, c = t.c + .06 + b * .147, p = P(r, c, T.hf(r, c)); b ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }
-    g.stroke(); g.globalAlpha = 1;
-    for (let b = 0; b < 6; b++) { const r = t.r + v, c = t.c + .12 + b * .15, p = P(r, c, T.hf(r, c)); blob(g, p[0], p[1] - 2, 2.6, 2.2, col, rng, .85); if (rng() < .2) { g.fillStyle = '#E0B040'; g.beginPath(); g.arc(p[0] + 1, p[1] - 3, .7, 0, 7); g.fill(); } }
+    for (let b = 0; b < 6; b++) { const r = t.r + v, c0 = t.c + .06 + b * .147, c1 = c0 + .147; surco(g, P(r, c0, T.hf(r, c0)), P(r, c1, T.hf(r, c1))); }
+    for (let b = 0; b < 6; b++) { const r = t.r + v, c = t.c + .12 + b * .15, p = P(r, c, T.hf(r, c)); g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 1.8, p[1] + .3, 2.6, .9, 0, 0, 7); g.fill(); g.globalAlpha = 1; mata(g, p[0], p[1] - 2, 2.4, 2, col, rng); if (rng() < .2) { g.fillStyle = '#E0B040'; g.beginPath(); g.arc(p[0] + 1, p[1] - 3, .7, 0, 7); g.fill(); } }
   }
   g.globalAlpha = .5; g.strokeStyle = '#8B7A55'; g.lineWidth = .9; poly(g, q); g.stroke(); g.globalAlpha = 1;
 }
