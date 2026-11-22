@@ -2,6 +2,7 @@
 // bajan franjas de cine con un texto y se ve lo que pasa: marchas, procesiones, escándalos, desplazados, tomas
 // armadas, terremotos, lahares y avenidas. Solo muestra lo que ya ocurrió en la lógica (no cambia el balance).
 // Dura unos diez segundos y se queda en pantalla hasta tocar «Continuar» (o Esc, Enter, barra espaciadora). Con "reducir movimiento" no hay escena.
+import { TAM_GENTE } from '../arte/gente.js';
 import { C, plaza, clamp, casillasBorde, bordes } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
@@ -228,7 +229,7 @@ export class Cine {
     const sc = this.scene, H = sc.pob.H, ropa = sc.pob.ropa || '';
     const a = { tipo: tipo + ropa, vi, r: de.r + (Math.random() - .5) * .1, c: de.c + (Math.random() - .5) * .1, ruta: ruta.map(q => ({ ...q })), vel, demora, fase: Math.random() * 4, frente: 1, voltear: false };
     const k = `${a.tipo}_${vi}_1_0`, m = H.marcos[k];
-    a.img = sc.add.image(0, 0, 'personas', k).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala).setVisible(false);
+    a.img = sc.add.image(0, 0, 'personas', k).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAM_GENTE / H.escala).setVisible(false);
     this.caminantes.push(a);
     return a;
   }

@@ -1,6 +1,7 @@
 // La guerra en el mapa (fase 9): campamentos del vecino en el borde (carpas, bandera, fogata y soldados) cuando
 // hay tropas o guerra, casillas ocupadas con su color y su bandera, y humo en el borde durante la guerra.
 // Se rehace solo cuando cambia el estado de la frontera.
+import { TAM_GENTE } from '../arte/gente.js';
 import { C, guerraActiva, casillasBorde, ocupadasPor } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
@@ -76,7 +77,7 @@ export class Frontera {
           const H = sc.pob.H;
           for (let s = 0; s < 3; s++) {
             const g = this.punto(r + .3 - s * .14, c + .35 + s * .08), key = `soldado_${s % 3}_${s % 2}_0`, m = H.marcos[key];
-            this.objetos.push(sc.add.image(g[0], g[1], 'personas', key).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala).setDepth(r + c + .8 + s * .01));
+            this.objetos.push(sc.add.image(g[0], g[1], 'personas', key).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAM_GENTE / H.escala).setDepth(r + c + .8 + s * .01));
           }
         }
       });

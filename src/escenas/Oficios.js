@@ -4,7 +4,7 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { lienzo } from '../arte/acuarela.js';
 import { reducirMovimiento } from './pantalla.js';
-import { ACCIONES, ritmo } from '../arte/gente.js';
+import { ACCIONES, ritmo, TAM_GENTE } from '../arte/gente.js';
 
 const E = 3;
 // Cada oficio usa un ciclo de cuadros de la hoja de acciones (con la herramienta en la mano).
@@ -37,7 +37,7 @@ export class Oficios {
     this.quitar();
     for (const { i, o } of lista.slice(0, 36)) {
       const tipo = o === 'pastor' ? 'campesino' : (o === 'martillo' || o === 'sierra' || o === 'bulto' ? 'artesano' : 'campesino'), vi = i % 3, f = `${tipo}${ropa}_${vi}_1_0`, m = H.marcos[f]; if (!m) continue;
-      const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala);
+      const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAM_GENTE / H.escala);
       const herr = o === 'pastor' ? null : this.scene.add.image(0, 0, 'herr-' + o).setScale(.55 / E * 1.6).setOrigin(.15, .9);
       const r0 = Math.floor(i / N) + .5, c0 = i % N + .5;
       this.gente.push({ img, herr, o, tipo, vi, r0, c0, r: r0 + .38, c: c0 + .3, fase: (i * 1.7) % 6, meta: null, espera: 0, ropa });

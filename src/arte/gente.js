@@ -19,6 +19,9 @@ export const TIPOS_GENTE = {
   armado: [['#5E6644'], ['#5E6644'], ['#5E6644']]
 };
 const PIEL = ['#C98E62', '#E0B08A', '#A8734C'];
+// Tamaño de las personas en el mapa (antes .62: una persona medía casi el doble de la puerta de una casa; pedido de
+// Juan: tamaños en proporción con la naturaleza y la infraestructura).
+export const TAM_GENTE = .5;
 
 // Figura plana: color liso y la sombra de la derecha con borde nítido (sin contorno).
 function forma(g, pts, col, curva = true) {
@@ -26,23 +29,13 @@ function forma(g, pts, col, curva = true) {
   if (curva) { for (let k = 1; k < pts.length; k++) { const p = pts[k], q = pts[(k + 1) % pts.length]; g.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); } }
   else pts.slice(1).forEach(p => g.lineTo(...p));
   g.closePath(); g.fillStyle = col; g.fill();
-  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-  // Volumen (pedido de Juan: que las personas no se vean planas al lado de las casas con relieve): luz suave a la
-  // izquierda, sombra que se redondea hacia la derecha, un poco más oscuro abajo y un filo de luz en el borde izquierdo.
-  g.save(); g.clip();
-  const gx = g.createLinearGradient(x0, 0, x1, 0); gx.addColorStop(0, 'rgba(255,248,230,.22)'); gx.addColorStop(.35, 'rgba(255,248,230,0)'); gx.addColorStop(.6, 'rgba(30,18,10,0)'); gx.addColorStop(.78, 'rgba(30,18,10,.2)'); gx.addColorStop(1, 'rgba(30,18,10,.32)');
-  g.fillStyle = gx; g.fillRect(x0 - 1, y0 - 1, x1 - x0 + 2, y1 - y0 + 2);
-  const gy = g.createLinearGradient(0, y0, 0, y1); gy.addColorStop(0, 'rgba(255,248,230,.08)'); gy.addColorStop(.7, 'rgba(30,18,10,0)'); gy.addColorStop(1, 'rgba(30,18,10,.14)');
-  g.fillStyle = gy; g.fillRect(x0 - 1, y0 - 1, x1 - x0 + 2, y1 - y0 + 2);
-  g.restore();
-  g.save(); g.strokeStyle = 'rgba(40,24,14,.28)'; g.lineWidth = .22; g.stroke(); g.restore(); // contorno finísimo del mismo tono
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs);
+  g.save(); g.clip(); g.fillStyle = shade(col, -.2); g.fillRect(x0 + (x1 - x0) * .62, Math.min(...ys) - 1, x1 - x0, Math.max(...ys) - Math.min(...ys) + 2); g.restore();
 }
 // Miembro (pierna o brazo) con codo o rodilla: de a a b pasando por m; grueso w; liso, sin contorno.
 function miembro(g, a, m, b, w, col) {
   g.lineCap = 'round'; g.lineJoin = 'round';
   g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo(...m, ...b); g.stroke();
-  g.strokeStyle = shade(col, -.22); g.lineWidth = w * .45; g.beginPath(); g.moveTo(a[0] + w * .25, a[1]); g.quadraticCurveTo(m[0] + w * .25, m[1], b[0] + w * .25, b[1]); g.stroke(); // lado en sombra
-  g.strokeStyle = shade(col, .18); g.lineWidth = w * .25; g.beginPath(); g.moveTo(a[0] - w * .28, a[1]); g.quadraticCurveTo(m[0] - w * .28, m[1], b[0] - w * .28, b[1]); g.stroke(); // filo de luz
 }
 const elipse = (g, x, y, rx, ry, col, rot = 0) => { g.fillStyle = col; g.beginPath(); g.ellipse(x, y, rx, ry, rot, 0, 7); g.fill(); };
 
@@ -59,7 +52,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   const ph = FASE[paso] * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35;
   const nino = tipo === 'nino', E = nino ? .72 : 1, dir = frente ? 1 : -1;
   // Sombra suave en el suelo, del mismo sol que la de árboles y animales.
-  sombraSuave(g, 3.8 * E, 0, 3.8 * E, .28);
+  sombraSuave(g, 2.6 * E, 0, 2.6 * E, .2); // solo el contacto con el suelo; la sombra larga la pone Pobladores aparte (no se voltea)
   g.save(); g.scale(E, E); g.translate(0, -alza);
   const falda = tipo === 'campesina' && !mod;
   const pantalon = mod ? (tipo === 'elite' ? '#3A3A44' : '#3F5872') : { campesino: '#EFE8D8', campesina: '#EFE8D8', artesano: '#5A4A3C', elite: '#2E2E34', nino: '#4A5A70' }[tipo];
@@ -96,8 +89,6 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
     // Ruana de lana en dos colores, con franjas al ruedo.
     forma(g, [[-2.9, -21], [0, -21.6], [2.9, -21], [4.4, -15.6], [4.6, -14], [0, -12.4], [-4.6, -14], [-4.4, -15.6]], V[0]);
     g.save(); g.strokeStyle = V[1]; g.lineWidth = .5; g.globalAlpha = .9; for (const y of [-14.3, -15.2]) { g.beginPath(); g.moveTo(-4.3, y); g.quadraticCurveTo(0, y + 1.6, 4.3, y); g.stroke(); } g.restore();
-    g.save(); g.strokeStyle = shade(V[0], -.15); g.lineWidth = .2; for (let k = 0; k < 13; k++) { const u = k / 12, x = -4.4 + u * 8.8, y = -13.9 + Math.sin(u * Math.PI) * 1.4; g.beginPath(); g.moveTo(x, y); g.lineTo(x + .1, y + .8); g.stroke(); } g.restore(); // flecos
-    g.save(); g.strokeStyle = 'rgba(30,18,10,.25)'; g.lineWidth = .25; for (const x of [-2.6, 2.8]) { g.beginPath(); g.moveTo(x * .5, -20.6); g.quadraticCurveTo(x * .8, -17, x, -14.6); g.stroke(); } g.restore(); // pliegues de la lana
   }
   if (tipo === 'campesina' && !mod) forma(g, [[-2.9, -20.8], [0, -21.4], [2.9, -20.8], [3.2, -18.4], [0, -17.4], [-3.2, -18.4]], V[0] === '#B23A2E' ? '#E7C76B' : '#B23A2E'); // pañolón sobre los hombros
   if (tipo === 'artesano' && !mod && frente) forma(g, [[-1.9, -19], [1.9, -19], [2.3, -10.4], [-2.3, -10.4]], '#8A6A48', false); // delantal de cuero
@@ -117,19 +108,13 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   if (tipo === 'campesino' && !mod) { g.strokeStyle = '#5A3A24'; g.lineWidth = .8; g.lineCap = 'round'; g.beginPath(); g.moveTo(-2.6, -12.2); g.quadraticCurveTo(-3.4, -10, -3.2, -8.2); g.stroke(); } // machete en su funda de cuero, al cinto
   // Cuello y cabeza en tres cuartos: la cara mira un poco a la derecha.
   elipse(g, 0, -21.4, .65, .9, shade(piel, -.1));
-  { const gc = g.createRadialGradient(-.6, -24.3, .3, 0, -23.6, 2.4); gc.addColorStop(0, shade(piel, .12)); gc.addColorStop(.55, piel); gc.addColorStop(1, shade(piel, -.24)); g.fillStyle = gc; } g.beginPath(); g.ellipse(0, -23.6, 1.9, 2.2, 0, 0, 7); g.fill();
-  g.save(); g.clip(); g.fillStyle = 'rgba(60,30,15,.14)'; g.beginPath(); g.ellipse(1.6, -23.4, 1.2, 2.4, 0, 0, 7); g.fill(); g.restore(); // la mejilla de la derecha, en sombra suave
+  g.fillStyle = piel; g.beginPath(); g.ellipse(0, -23.6, 1.9, 2.2, 0, 0, 7); g.fill();
+  g.save(); g.clip(); g.fillStyle = shade(piel, -.16); g.fillRect(.7, -26, 2, 5); g.restore(); // sombra nítida de la cara
   const pelo = vi === 2 ? '#4A2E1E' : '#231C17';
   if (frente) {
     g.fillStyle = pelo; g.beginPath(); g.ellipse(-.2, -24.7, 2, 1.3, 0, Math.PI, Math.PI * 2); g.fill();
-    g.fillStyle = 'rgba(255,240,220,.18)'; g.beginPath(); g.ellipse(-.8, -25.4, .9, .35, -.3, 0, 7); g.fill(); // brillo del pelo
     if (tipo === 'campesina' || (tipo === 'nino' && vi === 1)) { g.beginPath(); g.ellipse(-1.8, -23.4, .6, 1.5, 0, 0, 7); g.fill(); }
-    g.fillStyle = '#2A1E18'; g.beginPath(); g.arc(.15, -23.5, .26, 0, 7); g.arc(1.25, -23.5, .24, 0, 7); g.fill(); // ojos
-    g.strokeStyle = shade(pelo, .1); g.lineWidth = .22; g.beginPath(); g.moveTo(-.25, -24.15); g.lineTo(.5, -24.2); g.moveTo(.95, -24.2); g.lineTo(1.6, -24.1); g.stroke(); // cejas
-    g.fillStyle = shade(piel, -.22); g.beginPath(); g.moveTo(.75, -23.3); g.lineTo(1.05, -22.6); g.lineTo(.6, -22.55); g.closePath(); g.fill(); // nariz
-    g.strokeStyle = shade(piel, -.35); g.lineWidth = .2; g.beginPath(); g.moveTo(.35, -22.05); g.quadraticCurveTo(.75, -21.9, 1.1, -22.05); g.stroke(); // boca
-    g.fillStyle = 'rgba(200,80,60,.18)'; g.beginPath(); g.arc(-.4, -22.7, .45, 0, 7); g.fill(); // mejilla
-    g.fillStyle = shade(piel, -.15); g.beginPath(); g.ellipse(-1.75, -23.5, .35, .55, 0, 0, 7); g.fill(); // oreja
+    g.fillStyle = '#2A1E18'; g.beginPath(); g.arc(.15, -23.5, .26, 0, 7); g.arc(1.25, -23.5, .24, 0, 7); g.fill(); // ojos, nada más (cara mínima)
   } else {
     g.fillStyle = pelo; g.beginPath(); g.ellipse(0, -23.8, 2, 2.15, 0, 0, 7); g.fill();
     if (tipo === 'campesina') { g.beginPath(); g.ellipse(0, -21.3, .7, 1.8, 0, 0, 7); g.fill(); } // trenza
@@ -137,11 +122,9 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   // Sombreros y tocados.
   if (tipo === 'campesino' && !mod) {
     // Sombrero aguadeño: ala ancha blanca y cinta negra.
-    if (frente) { g.fillStyle = 'rgba(40,25,15,.22)'; g.beginPath(); g.ellipse(.2, -24.6, 2.1, .7, 0, 0, 7); g.fill(); } // sombra del ala en la frente
     forma(g, [[-4.3, -25.6], [0, -26.6], [4.3, -25.6], [0, -24.5]], '#F4EFE2');
     forma(g, [[-1.9, -25.7], [-1.7, -28.1], [0, -28.6], [1.7, -28.1], [1.9, -25.7]], '#F4EFE2');
     g.fillStyle = '#231F1C'; g.fillRect(-1.85, -26.6, 3.7, .7);
-    g.strokeStyle = 'rgba(150,130,90,.35)'; g.lineWidth = .15; for (const y of [-27.2, -27.8]) { g.beginPath(); g.moveTo(-1.7, y); g.lineTo(1.7, y); g.stroke(); } // trenzado de la paja
   }
   if (tipo === 'campesina' && !mod) forma(g, [[-2.2, -24.3], [-1.6, -26.2], [0, -26.5], [1.6, -26.2], [2.2, -24.3], [0, -24.8]], V[0] === '#B23A2E' ? '#E7C76B' : '#B23A2E'); // pañoleta
   if (tipo === 'artesano' && !mod) { forma(g, [[-2.1, -24.8], [-1.6, -26.6], [0, -27], [1.6, -26.6], [2.1, -24.8]], '#3F4A55'); g.fillStyle = '#2E363E'; g.fillRect(frente ? 0 : -3.2, -25.1, 3.2, .6); } // gorra de paño

@@ -5,7 +5,7 @@
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
-import { hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo } from '../arte/gente.js';
+import { TAM_GENTE, hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { mezclar } from './Efectos.js';
 import { caminos } from '../arte/terreno.js';
@@ -16,7 +16,7 @@ import { reducirMovimiento } from './pantalla.js';
 const TRABAJO = new Set(['sembrar', 'cosechar', 'picar', 'martillar', 'aserrar', 'barrer', 'vender', 'cargar']);
 const LENTO = { rezar: .35, leer: .25, tocar: .9, lustrar: 1, saltar: 1.4 };
 const DURACION_DIA = 180; // segundos que dura un día completo
-const TAMANO = .62;       // tamaño de las figuras frente a las casas
+const TAMANO = TAM_GENTE; // tamaño de las figuras frente a las casas (gente.js)
 const smooth = t => t * t * (3 - 2 * t);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -101,7 +101,7 @@ export class Pobladores {
     this.ponerAcciones();
     this.puentes = new Set(caminos(T, S.map).puentes.map(([, j]) => j));
     this.rejilla();
-    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.marca) f.marca.destroy(); if (f.pancarta) f.pancarta.destroy(); }
+    while (this.figuras.length > plan.length) { const f = this.figuras.pop(); f.img.destroy(); if (f.som) f.som.destroy(); if (f.marca) f.marca.destroy(); if (f.pancarta) f.pancarta.destroy(); }
     plan.forEach((p, k) => {
       let f = this.figuras[k];
       if (!f) {
@@ -110,6 +110,7 @@ export class Pobladores {
         f.img = this.scene.add.image(0, 0, 'personas', `${p.tipo}${this.ropa || ''}_${p.vi}_1_0`);
         const m = this.H.marcos[`${p.tipo}${this.ropa || ''}_${p.vi}_1_0`];
         f.img.setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAMANO / this.H.escala);
+        f.som = this.scene.add.image(0, 0, this.texSombra()).setOrigin(.16, .5).setRotation(.32).setScale(TAMANO * 1.1 / 4); // sombra propia: siempre abajo a la derecha, aunque la figura se voltee
         this.figuras.push(f);
       }
       const nueva = !f.p;
@@ -408,6 +409,7 @@ export class Pobladores {
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
     f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(f.r + f.c + .01).setVisible(!f.oculto);
+    if (f.som) f.som.setPosition(p[0], p[1]).setDepth(f.r + f.c + .005).setVisible(!f.oculto && f.img.visible).setScale(TAMANO * (f.p && f.p.tipo === 'nino' ? .75 : 1.1) / 4);
     // Tanda 3: quien protesta lleva una pancarta (también mientras camina a la plaza).
     const conPancarta = f.destino === 'protesta' && !f.oculto && f.p.semilla < .45 && this.scene.textures.exists('cinePancarta');
     if (conPancarta && !f.pancarta) f.pancarta = this.scene.add.image(0, 0, 'cinePancarta').setScale(.3 / 4).setOrigin(.5, 1);
@@ -456,5 +458,15 @@ export class Pobladores {
     this.esNoche = noche > .5; this.nocheF = noche;
   }
 
-  destruir() { this.figuras.forEach(f => { f.img.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); }
+  // Textura de la sombra de una persona (una sola vez): mancha alargada y difusa, del mismo color que las de los
+  // árboles, que sale de los pies hacia abajo a la derecha (el sol está arriba a la izquierda).
+  texSombra() {
+    const tx = this.scene.textures; if (tx.exists('sombraGente')) return 'sombraGente';
+    const W = 96, H = 28, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+    const mancha = (cx, rx, ry, a) => { g.save(); g.translate(cx, H / 2); g.scale(1, ry / rx); const gr = g.createRadialGradient(0, 0, 0, 0, 0, rx); gr.addColorStop(0, `rgba(32,38,20,${a})`); gr.addColorStop(.6, `rgba(32,38,20,${a * .55})`); gr.addColorStop(1, 'rgba(32,38,20,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, rx, 0, 7); g.fill(); g.restore(); }; // borde difuso (sin filtros: funciona en todos los navegadores)
+    mancha(W * .5, W * .42, H * .4, .3); mancha(W * .22, W * .14, H * .32, .16); // más oscura junto a los pies
+    tx.addCanvas('sombraGente', c); return 'sombraGente';
+  }
+
+  destruir() { this.figuras.forEach(f => { f.img.destroy(); if (f.som) f.som.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); }
 }

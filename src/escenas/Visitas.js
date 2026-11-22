@@ -1,5 +1,6 @@
 // El visitante extranjero caminando por el pueblo (fase 16, punto 5): el año que llega y el siguiente recorre la plaza y las
 // casas con una banderita del color de su tierra. Con «reducir movimiento» se queda quieto en la plaza.
+import { TAM_GENTE } from '../arte/gente.js';
 import { P, alturaEn } from '../arte/iso.js';
 import { datosVisitante, plazaFundacion } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
@@ -14,7 +15,7 @@ export class Visitas {
     this.quitar(); this.id = e.id;
     const D = datosVisitante(e.id), H = pob.H, ropa = pob.ropa || '', k = `elite${ropa}_1_1_0`, m = H.marcos[k]; if (!m) return;
     const i = plazaFundacion(S), N = this.scene.T.N, base = i >= 0 ? { r: Math.floor(i / N) + .5, c: i % N + .5 } : { r: N / 2, c: N / 2 };
-    const img = this.scene.add.image(0, 0, 'personas', k).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala);
+    const img = this.scene.add.image(0, 0, 'personas', k).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAM_GENTE / H.escala);
     const col = parseInt(D.color.slice(1), 16), asta = this.scene.add.rectangle(0, 0, 1, 14, 0x3A2A1C), bandera = this.scene.add.rectangle(0, 0, 8, 5, col).setStrokeStyle(.6, 0x2A2118);
     this.v = { img, asta, bandera, r: base.r + .6, c: base.c + .6, meta: null, espera: 0, fase: 0, frente: 1, voltear: false, vi: 1, base };
     this.dibujar();

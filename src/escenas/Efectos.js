@@ -1,5 +1,6 @@
 // Efectos del mapa (de la versión 9): números que flotan al cerrar el año, huellas visibles de los
 // dilemas (crecida, sequía, plaga, río envenenado, multitud, fiesta, humo) y tintes del régimen y del esmog.
+import { TAM_GENTE } from '../arte/gente.js';
 import { ES_CELULAR } from '../arte/fresco.js';
 import { C, nearRiver, clamp, lluvias, movilizados, nivelVolcan } from '../core/index.js';
 import { P } from '../arte/iso.js';
@@ -63,7 +64,7 @@ export class Efectos {
       const [hx, hy] = this.centroCasilla(hub), tipos = ['campesino', 'campesina', 'artesano', 'elite', 'nino'];
       for (let k = 0; k < 16; k++) {
         const x = hx + ((k * 29) % 46) - 23, y = hy + 22 + ((k * 7) % 12);
-        const H = this.scene.pob.H, fk = `${tipos[k % 5]}_${k % 3}_${k % 2}_0`, m = H.marcos[fk], img = this.scene.add.image(x, y, 'personas', fk).setScale(.62 / H.escala).setOrigin(m.ax / m.w, m.ay / m.h); // fase 9: a la escala real de la hoja
+        const H = this.scene.pob.H, fk = `${tipos[k % 5]}_${k % 3}_${k % 2}_0`, m = H.marcos[fk], img = this.scene.add.image(x, y, 'personas', fk).setScale(TAM_GENTE / H.escala).setOrigin(m.ax / m.w, m.ay / m.h); // fase 9: a la escala real de la hoja
         if (!reducirMovimiento() && vk === 'crowd') this.scene.tweens.add({ targets: img, y: y - 1.6, duration: 260 + k * 17, yoyo: true, repeat: -1 });
         this.encima.add(img);
       }
