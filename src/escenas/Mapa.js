@@ -1,10 +1,13 @@
 // Escena del mapa: el territorio en acuarela, sus obras y la cámara.
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
-import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada, obrasAisladas, rutaEnRed, estiloCasa } from '../core/index.js';
+import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada, obrasAisladas, rutaEnRed, estiloCasa, epocaHistorica } from '../core/index.js';
 import { pintarSector, pintarFondo, caminoRio, geoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
-import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
+import { hornearEdificios, figurasDeObra, HIST_DE_ERA } from '../arte/edificios.js';
+// Fase visual, edificios por época: las obras de servicio siguen las seis épocas de la historia.
+const HIST = ['fundacion', 'cafe', 'violencia', 'modernizacion', 'paz', 'digital'];
+const histObras = S => { const k = HIST.indexOf(epocaHistorica(S)); return k >= 0 ? k : HIST_DE_ERA[epocaVisual(S)]; };
 import { pintarNiebla, lienzo, mulberry } from '../arte/acuarela.js';
 import { ES_CELULAR } from '../arte/fresco.js';
 import { P, TW, TH, EL, casillaEn } from '../arte/iso.js';
@@ -159,7 +162,7 @@ export class Mapa extends Phaser.Scene {
 
   // ---------- Figuras: naturaleza y edificios ----------
   prepararHojas() {
-    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios(epocaVisual(this.S)); // las obras públicas de la época
+    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios(epocaVisual(this.S), histObras(this.S)); // las obras públicas de la época
     for (const [clave, h] of [['naturaleza', nat], ['edificios', edi]]) {
       // La textura usa su propio lienzo (una copia): así, al repintar la naturaleza por la sequía,
       // nunca se borra el lienzo guardado en la memoria de horneados (antes los árboles podían desaparecer).
@@ -433,14 +436,20 @@ export class Mapa extends Phaser.Scene {
   revisarCambiosGenerales() {
     const vacio = precioAlimento(this.S) >= 1.3;
     if (vacio !== this.mercadoVacio) { this.mercadoVacio = vacio; this.S.map.forEach((x, i) => { if (x.b === 'mercado') this.ponerObra(i); }); }
-    const era = epocaVisual(this.S);
-    if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto && era === this.eraVista) return;
-    if (this.eraVista !== undefined && era !== this.eraVista) { // otra época: las obras públicas cambian de dibujo
-      const edi = hornearEdificios(era), tx = this.textures.get('edificios'), cv = tx.getSourceImage(), g = cv.getContext('2d');
+    const era = epocaVisual(this.S), hist = histObras(this.S);
+    if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto && era === this.eraVista && hist === this.histVista) return;
+    if (this.eraVista !== undefined && (era !== this.eraVista || hist !== this.histVista)) { // otra época: las obras públicas cambian de dibujo
+      const edi = hornearEdificios(era, hist), tx = this.textures.get('edificios'), cv = tx.getSourceImage(), g = cv.getContext('2d');
       g.clearRect(0, 0, cv.width, cv.height); g.drawImage(edi.canvas, 0, 0); tx.refresh(); this.hojas.edificios = edi;
     }
-    this.etapaVista = this.S.stage; this.regVisto = this.S.reg; this.eraVista = era;
+    const cambioEpoca = this.eraVista !== undefined && (era !== this.eraVista || hist !== this.histVista);
+    this.etapaVista = this.S.stage; this.regVisto = this.S.reg; this.eraVista = era; this.histVista = hist;
     this.S.map.forEach((x, i) => { if (x.b) this.ponerObra(i); });
+    if (cambioEpoca && this.sectores) { // la sombra de cada edificio cambia con su dibujo: se repinta el suelo, un sector por cuadro
+      const cola = Object.keys(this.sectores).map(k => k.split('-').slice(1).map(Number));
+      const paso = () => { if (!this.sys.isActive()) return; const x = cola.shift(); if (x) { this.pintarSector(...x); requestAnimationFrame(paso); } };
+      paso();
+    }
   }
 
   // ---------- Construir ----------

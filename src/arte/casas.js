@@ -135,7 +135,10 @@ function terraza(g, F, col) {
   rellena(g, [P(f, a, H), P(f, b, H), P(f, b, H + 2), P(f, a, H + 2)], mezcla(col, '#FFFFFF', .2));
   rellena(g, [P(f, b, H), P(t, b, H), P(t, b, H + 2), P(f, b, H + 2)], mezcla(col, '#000000', .1));
   const q = P(t + .14, b - .16, H + 2); rellena(g, [[q[0] - 4, q[1]], [q[0] + 4, q[1]], [q[0] + 4, q[1] - 6], [q[0] - 4, q[1] - 6]], '#3A4A5A'); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(q[0], q[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
-  const an = P(t + .14, a + .14, H + 2); g.strokeStyle = '#4A4A4A'; g.lineWidth = .6; g.beginPath(); g.moveTo(an[0], an[1]); g.lineTo(an[0], an[1] - 9); g.moveTo(an[0] - 3, an[1] - 7); g.lineTo(an[0] + 3, an[1] - 7); g.stroke();
+  // Antena de televisión (espina de pescado, a lo largo del techo; antes era una cruz y parecía una iglesia).
+  const an = P(t + .14, a + .14, H + 2); g.strokeStyle = '#4A4A4A'; g.lineWidth = .55; g.beginPath(); g.moveTo(an[0], an[1]); g.lineTo(an[0], an[1] - 8); g.stroke();
+  const bx = 4, by = 2; g.beginPath(); g.moveTo(an[0] - bx, an[1] - 8 + by); g.lineTo(an[0] + bx, an[1] - 8 - by); g.stroke();
+  g.lineWidth = .4; for (let k = 0; k < 5; k++) { const f = k / 4 - .5, cx = an[0] + f * 2 * bx, cy = an[1] - 8 - f * 2 * by, l = 2.4 - k * .35; g.beginPath(); g.moveTo(cx - l * .9, cy - l * .45); g.lineTo(cx + l * .9, cy + l * .45); g.stroke(); }
 }
 // Sombra de la obra en el suelo: cae abajo a la derecha (el sol de todo el mapa) con el borde difuso. Se dibuja con
 // el desenfoque del lienzo: la forma va lejos, fuera del cuadro, y aquí solo cae su sombra borrosa.

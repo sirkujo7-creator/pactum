@@ -2,9 +2,11 @@
 import { hornearEdificios } from '../src/arte/edificios.js';
 const q = new URLSearchParams(location.search), claves = (q.get('k') || 'cruzFundacion,estadio,acueducto,cantera,banco,hospital,biblioteca,cancha').split(',');
 const Z = +q.get('z') || 1.2, R = document.getElementById('r');
-const eras = (q.get('e') || '0,1,2,3').split(',').map(Number), hojas = eras.map(e => hornearEdificios(e));
+// ?h=0,1,2,3,4,5 muestra las seis épocas de la historia (la época de dibujo de las casas sale de cada una).
+const hs = q.get('h') ? q.get('h').split(',').map(Number) : null, eras = hs ? hs.map(h => [0, 0, 1, 2, 3, 3][h]) : (q.get('e') || '0,1,2,3').split(',').map(Number), hojas = eras.map((e, i) => hornearEdificios(e, hs ? hs[i] : undefined));
+const NOM = ['fundación', 'café', 'La Violencia', 'modernización', 'conflicto y paz', 'era digital'];
 const tabla = document.createElement('table');
-tabla.innerHTML = '<tr><th></th>' + eras.map(e => `<th>época ${e}</th>`).join('') + '</tr>';
+tabla.innerHTML = '<tr><th></th>' + eras.map((e, i) => `<th>${hs ? NOM[hs[i]] : 'época ' + e}</th>`).join('') + '</tr>';
 for (const k of claves) {
   const tr = document.createElement('tr'); tr.innerHTML = `<td class="n">${k}</td>`;
   for (const h of hojas) {
