@@ -5,6 +5,7 @@ import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosA
 import { pintarSector, pintarFondo, caminoRio, geoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra, HIST_DE_ERA } from '../arte/edificios.js';
+import { ObrasVivas } from './ObrasVivas.js';
 // Fase visual, edificios por época: las obras de servicio siguen las seis épocas de la historia.
 const HIST = ['fundacion', 'cafe', 'violencia', 'modernizacion', 'paz', 'digital'];
 const histObras = S => { const k = HIST.indexOf(epocaHistorica(S)); return k >= 0 ? k : HIST_DE_ERA[epocaVisual(S)]; };
@@ -162,7 +163,7 @@ export class Mapa extends Phaser.Scene {
 
   // ---------- Figuras: naturaleza y edificios ----------
   prepararHojas() {
-    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios(epocaVisual(this.S), histObras(this.S)); // las obras públicas de la época
+    const nat = hornearNaturaleza(this.dry), edi = hornearEdificios(epocaVisual(this.S), histObras(this.S), { banderasVivas: true }); // las obras públicas de la época (las banderas ondean aparte)
     for (const [clave, h] of [['naturaleza', nat], ['edificios', edi]]) {
       // La textura usa su propio lienzo (una copia): así, al repintar la naturaleza por la sequía,
       // nunca se borra el lienzo guardado en la memoria de horneados (antes los árboles podían desaparecer).
@@ -182,6 +183,8 @@ export class Mapa extends Phaser.Scene {
     this.plantasMundo = colocarNaturaleza(this.T, this.S.map.map(() => ({ t: 'bosque', b: null })));
     this.plantasPorCasilla = {};
     for (const o of this.plantasMundo) (this.plantasPorCasilla[o.i] = this.plantasPorCasilla[o.i] || []).push(o);
+    if (!this.vivas) this.vivas = new ObrasVivas(this);
+    this.vivas.rehacer(edi); // banderas que ondean y luces de la noche
   }
   figura(hoja, k, r, c, h, s = 1) {
     const H = this.hojas[hoja], m = H.marcos[k], p = P(r, c, h);
@@ -223,6 +226,7 @@ export class Mapa extends Phaser.Scene {
   }
   ponerObra(i) {
     (this.obras[i] || []).forEach(p => p.destroy());
+    if (this.vivas) this.vivas.quitar(i);
     if (this.humos[i]) { this.humos[i].destroy(); delete this.humos[i]; }
     const x = this.S.map[i];
     this.obras[i] = [];
@@ -283,6 +287,7 @@ export class Mapa extends Phaser.Scene {
       if (x.b === 'iglesia' && this.plazaADerecha(i)) img.setFlipX(true).setOrigin(1 - img.originX, img.originY); // la fachada mira a la plaza
       if (nivel) img.setTint(f.n ? [0, 0xF2EEDC, 0xE0D6B4, 0xC8B98A][nivel] : [0, 0xE6DCCB, 0xD2C6B2, 0xA0978B][nivel]);
       this.obras[i].push(img);
+      if (!f.n && this.vivas && nivel < 3) this.vivas.agregar(img, f.k, i); // bandera que ondea y ventanas que se encienden de noche
       if (nivel === 3) continue; // sin humo: nadie cocina en una obra abandonada
       if (x.b === 'casa' && i % 3 === 0 && !f.k.startsWith('bandera') && !reducirMovimiento()) {
         // Humo del fogón en algunas casas.
@@ -439,8 +444,8 @@ export class Mapa extends Phaser.Scene {
     const era = epocaVisual(this.S), hist = histObras(this.S);
     if (this.S.stage === this.etapaVista && this.S.reg === this.regVisto && era === this.eraVista && hist === this.histVista) return;
     if (this.eraVista !== undefined && (era !== this.eraVista || hist !== this.histVista)) { // otra época: las obras públicas cambian de dibujo
-      const edi = hornearEdificios(era, hist), tx = this.textures.get('edificios'), cv = tx.getSourceImage(), g = cv.getContext('2d');
-      g.clearRect(0, 0, cv.width, cv.height); g.drawImage(edi.canvas, 0, 0); tx.refresh(); this.hojas.edificios = edi;
+      const edi = hornearEdificios(era, hist, { banderasVivas: true }), tx = this.textures.get('edificios'), cv = tx.getSourceImage(), g = cv.getContext('2d');
+      g.clearRect(0, 0, cv.width, cv.height); g.drawImage(edi.canvas, 0, 0); tx.refresh(); this.hojas.edificios = edi; if (this.vivas) this.vivas.rehacer(edi);
     }
     const cambioEpoca = this.eraVista !== undefined && (era !== this.eraVista || hist !== this.histVista);
     this.etapaVista = this.S.stage; this.regVisto = this.S.reg; this.eraVista = era; this.histVista = hist;
@@ -679,15 +684,25 @@ export class Mapa extends Phaser.Scene {
       return img;
     });
 
-    if (!this.textures.exists('sombraNube')) {
-      const c = lienzo(256, 96), g = c.getContext('2d'), gr = g.createRadialGradient(128, 48, 0, 128, 48, 48);
-      gr.addColorStop(0, 'rgba(29,42,48,1)'); gr.addColorStop(1, 'rgba(29,42,48,0)');
-      g.setTransform(2.6, 0, 0, 1, -128 * 1.6, 0); g.fillStyle = gr; g.fillRect(0, 0, 256, 96);
-      this.textures.addCanvas('sombraNube', c);
+    // Fase visual, animación: sombras de nubes de forma irregular (varias manchas suaves juntas) que cruzan despacio
+    // el valle, y ráfagas de viento: bandas de luz que corren sobre el pasto y los cultivos (la hierba se dobla y
+    // muestra su envés claro). Con «reducir movimiento» no hay ni unas ni otras.
+    if (!this.textures.exists('sombraNube2')) {
+      const c = lienzo(320, 140), g = c.getContext('2d');
+      for (const [x, y, r] of [[90, 74, 52], [150, 60, 62], [214, 76, 50], [130, 92, 44], [250, 86, 34], [60, 86, 32]]) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(26,36,44,.9)'); gr.addColorStop(.6, 'rgba(26,36,44,.5)'); gr.addColorStop(1, 'rgba(26,36,44,0)'); g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, r * 1.3, r * .7, 0, 0, 7); g.fill(); }
+      this.textures.addCanvas('sombraNube2', c);
     }
-    const izq = P(this.T.N, 0)[0] - 300, ancho = P(0, this.T.N)[0] - izq + 600;
-    this.nubes = quieto ? [] : [0, 1, 2].map(k => this.add.image(0, P(0, 0)[1] + 200 + k * this.T.N * 6, 'sombraNube')
-      .setDisplaySize(360, 100).setAlpha(.07).setDepth(PROF_NIEBLA + 1).setData({ izq, ancho, fase: k * 560 }));
+    if (!this.textures.exists('rafaga')) {
+      const c = lienzo(256, 48), g = c.getContext('2d'), gr = g.createRadialGradient(128, 24, 0, 128, 24, 120);
+      gr.addColorStop(0, 'rgba(255,250,215,1)'); gr.addColorStop(.5, 'rgba(255,250,215,.45)'); gr.addColorStop(1, 'rgba(255,250,215,0)');
+      g.setTransform(1, 0, 0, .2, 0, 19); g.fillStyle = gr; g.beginPath(); g.arc(128, 24, 120, 0, 7); g.fill();
+      this.textures.addCanvas('rafaga', c);
+    }
+    const izq = P(this.T.N, 0)[0] - 300, ancho = P(0, this.T.N)[0] - izq + 600, arriba = P(0, 0)[1], alto = P(this.T.N, this.T.N)[1] - arriba;
+    this.nubes = quieto ? [] : [0, 1, 2, 3].map(k => this.add.image(0, arriba + 120 + k * alto / 4, 'sombraNube2')
+      .setDisplaySize(440 + k * 40, 190).setAlpha(.11).setDepth(PROF_NIEBLA + 1).setData({ izq, ancho, fase: k * 470 + (k % 2) * 200, v: 6 + k }));
+    this.rafagas = quieto ? [] : Array.from({ length: ES_CELULAR ? 5 : 8 }, (_, k) => this.add.image(0, 0, 'rafaga').setDisplaySize(160 + (k % 3) * 60, 22).setAlpha(0).setBlendMode('ADD').setDepth(PROF_BRILLO - 1)
+      .setData({ izq, ancho, y: arriba + 60 + Math.random() * alto, fase: Math.random() * ancho, v: 24 + Math.random() * 18, t: Math.random() * 6 }));
   }
 
   update(tiempo, delta) {
@@ -706,6 +721,7 @@ export class Mapa extends Phaser.Scene {
     this.frente.update(Math.min(.05, delta / 1000));
     this.mitin.update(Math.min(.05, delta / 1000));
     this.oficios.update(Math.min(.05, delta / 1000));
+    if (this.vivas) this.vivas.update(Math.min(.05, delta / 1000), this.pob.nocheF || 0);
     this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).
     const m = this.pob.manana(), a = .2 + .3 * m;
@@ -713,7 +729,8 @@ export class Mapa extends Phaser.Scene {
     const s = tiempo / 1000, quieto = reducirMovimiento();
     const g = this.brillo; g.clear();
     this.corriente(g, s, quieto);
-    for (const n of this.nubes) { const { izq, ancho, fase } = n.data.values; n.x = izq + ((s * 7 + fase) % ancho); }
+    for (const n of this.nubes) { const { izq, ancho, fase, v } = n.data.values; n.x = izq + ((s * v + fase) % ancho); }
+    for (const r of this.rafagas) { const d = r.data.values, x = (s * d.v + d.fase) % d.ancho; r.x = d.izq + x; r.y = d.y + x * .12; const a = .075 * Math.max(0, Math.sin(s * .5 + d.t)); r.setAlpha(a).setVisible(a > .004); }
   }
   // Corriente del río (paso 3 de la fase visual): rizos cortos y claros que bajan con el agua a distinta velocidad
   // (más rápido en el medio), aparecen y se desvanecen; ya no son rayas blancas en fila.

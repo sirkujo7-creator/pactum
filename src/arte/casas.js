@@ -31,6 +31,10 @@ const MAT = {
 };
 const ZOCALO = ['#2F5D8A', '#3E6B4A', '#8E2F22', '#B07A2A'], CARPINTERIA = ['#3E6B4A', '#8E2F22', '#2F5D8A', '#6E4529'];
 
+// Captura al hornear (fase visual, animación): las ventanas y los vidrios de cada dibujo se anotan (en píxeles del
+// lienzo) para pintar después la capa de luces de la noche, y las banderas, para que su tela ondee aparte.
+export const CAPTURA = { quads: null, banderas: null, sinTela: false };
+export function capturarQuad(g, pts) { if (!CAPTURA.quads) return; const T = g.getTransform(); CAPTURA.quads.push(pts.map(([x, y]) => [T.a * x + T.c * y + T.e, T.b * x + T.d * y + T.f])); }
 const mezcla = (a, b, t) => { const h = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16)); const A = h(a), B = h(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
 function poli(g, pts) { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); }
 function rellena(g, pts, col, borde = K.contorno, w = .6) { poli(g, pts); g.fillStyle = col; g.fill(); if (borde) { g.strokeStyle = borde; g.lineWidth = w; g.lineJoin = 'round'; g.stroke(); } }
@@ -73,6 +77,7 @@ function hueco(g, F, cara, u0, u1, z0, z1, col, arco = false) {
   rellena(g, pts, col, K.contorno, .5);
 }
 function ventana(g, F, cara, u, z, ancho, alto, color, op = {}) {
+  capturarQuad(g, [F.en(cara, u - ancho / 2, z), F.en(cara, u + ancho / 2, z), F.en(cara, u + ancho / 2, z + alto), F.en(cara, u - ancho / 2, z + alto)]);
   if (op.marco) hueco(g, F, cara, u - ancho / 2 - .02, u + ancho / 2 + .02, z - .8, z + alto + .8, op.marco);
   hueco(g, F, cara, u - ancho / 2, u + ancho / 2, z, z + alto, op.vidrio || '#3A2A1E');
   if (op.postigos !== false) { hueco(g, F, cara, u - ancho / 2 - ancho * .45, u - ancho / 2, z, z + alto, color); hueco(g, F, cara, u + ancho / 2, u + ancho / 2 + ancho * .45, z, z + alto, color); }
@@ -375,4 +380,5 @@ export function recetasCasas(hist) {
 }
 
 // Pinceles compartidos con los edificios públicos (src/arte/publicos.js).
+export { capturarQuad as capturarVentana };
 export { casa as casaColonial, P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera };

@@ -7,6 +7,7 @@
 import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
 import { hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
+import { mezclar } from './Efectos.js';
 import { caminos } from '../arte/terreno.js';
 import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
@@ -32,7 +33,6 @@ export class Pobladores {
     this.luces = [];
     const cam = scene.cameras.main;
     this.noche = scene.add.rectangle(0, 0, 1, 1, 0x101A34, 0).setOrigin(0).setDepth(40000);
-    this.ocaso = scene.add.rectangle(0, 0, 1, 1, 0xF0965A, 0).setOrigin(0).setDepth(40000);
     this.cam = cam;
     this.planear();
   }
@@ -433,15 +433,7 @@ export class Pobladores {
   ponerLuces() {
     this.luces.forEach(l => l.destroy());
     this.luces = [];
-    const obras = this.scene.obras || {};
-    for (const [i, figs] of Object.entries(obras)) {
-      const img = figs && figs[0], b = this.scene.S.map[i].b;
-      if (!img || ['cultivo', 'cafetal', 'mina', 'acueducto', 'parque'].includes(b)) continue;
-      const w = img.displayWidth, h = img.displayHeight * img.originY;
-      for (const [fx, fy] of [[-.2, -.2], [.08, -.17]]) {
-        this.luces.push(this.scene.add.image(img.x + w * fx, img.y + h * fy, 'personas', 'luz').setScale(.28).setAlpha(0).setDepth(40001).setData('fase', Math.random() * 6));
-      }
-    }
+    // (Las ventanas de cada edificio las enciende ObrasVivas con su forma real; antes eran dos bolas de luz por obra.)
     // Faroles de la plaza (desde la plaza mayor): cuatro luces cálidas en las esquinas que se encienden de noche.
     const { S, T } = this.scene, pz = plazaDe(S);
     if (pz >= 0 && S.stage >= 1) {
@@ -456,13 +448,13 @@ export class Pobladores {
     const d = this.reloj, noche = d > .8 ? smooth(clamp((d - .8) / .06, 0, 1)) : d < .1 ? smooth(clamp((.1 - d) / .06, 0, 1)) : 0;
     // Vista actual en coordenadas del mundo (la cámara hace zoom desde su esquina superior izquierda).
     const c = this.cam, v = { x: c.scrollX, y: c.scrollY, width: c.width / c.zoom, height: c.height / c.zoom };
-    const ocaso = Math.max(0, 1 - Math.abs(d - .74) / .08);
-    this.noche.setPosition(v.x, v.y).setScale(v.width, v.height).setFillStyle(0x101A34, .45 * noche).setVisible(noche > 0);
-    this.ocaso.setPosition(v.x, v.y).setScale(v.width, v.height).setFillStyle(0xF0965A, .16 * ocaso).setVisible(ocaso > 0);
+    const tarde = Math.max(0, 1 - Math.abs(d - .74) / .08), alba = Math.max(0, 1 - Math.abs(d - .27) / .06), ocaso = Math.max(tarde, alba * .7); // amanecer rosado y atardecer naranja
+    const [col, a] = mezclar([ocaso > 0 ? [alba > tarde ? 0xF2B48E : 0xF0965A, .16 * ocaso] : null, noche > 0 ? [0x101A34, .45 * noche] : null]); // noche y luz de la tarde en una sola capa
+    this.noche.setVisible(a > .003); if (a > .003) this.noche.setPosition(v.x, v.y).setScale(v.width, v.height).setFillStyle(col, a);
     const t = this.scene.time.now / 1000;
     for (const l of this.luces) l.setAlpha(noche * (.75 + .25 * Math.sin(t * 2 + l.getData('fase'))));
-    this.esNoche = noche > .5;
+    this.esNoche = noche > .5; this.nocheF = noche;
   }
 
-  destruir() { this.figuras.forEach(f => { f.img.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); this.ocaso.destroy(); }
+  destruir() { this.figuras.forEach(f => { f.img.destroy(); if (f.pancarta) f.pancarta.destroy(); }); this.luces.forEach(l => l.destroy()); this.noche.destroy(); }
 }

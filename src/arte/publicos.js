@@ -10,6 +10,7 @@
 //   fortaleza (tiranía), casa de comercio de ladrillo (oligarquía) y tribuna popular (demagogia).
 import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, bancoMadera } from './casas.js';
 import { mulberry } from './fresco.js';
+import { CAPTURA, capturarQuad } from './casas.js';
 
 const PIEDRA = '#C9C0AE', PIEDRA_OSC = '#A39A88', OCRE = '#E2C17E', MADERA = K.madera;
 
@@ -62,6 +63,7 @@ function reloj(g, x, y, r) {
 }
 function bandera(g, x, y, h, cols, ancho = 9) {
   g.strokeStyle = K.maderaOsc; g.lineWidth = .8; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - h); g.stroke();
+  if (CAPTURA.banderas) { const T = g.getTransform(); CAPTURA.banderas.push({ x: T.a * x + T.c * (y - h) + T.e, y: T.b * x + T.d * (y - h) + T.f, esc: Math.hypot(T.a, T.b), ancho, cols }); if (CAPTURA.sinTela) return; } // la tela ondea aparte (animación)
   const alto = 6, fr = cols.length === 3 && cols[0] === '#E8C23A' ? [.5, .25, .25] : cols.map(() => 1 / cols.length);
   let y0 = y - h;
   cols.forEach((c, k) => { const hh = alto * fr[k]; g.fillStyle = c; g.beginPath(); g.moveTo(x, y0); g.quadraticCurveTo(x + ancho / 2, y0 - 1, x + ancho, y0 + .6); g.lineTo(x + ancho, y0 + .6 + hh); g.quadraticCurveTo(x + ancho / 2, y0 + hh - 1, x, y0 + hh); g.fill(); y0 += hh; });
@@ -152,6 +154,7 @@ function fila(g, F, cara, n, z, ancho, alto, E, u0 = .08, u1 = .92) { for (let k
 // (pulido de la tanda A: antes era un solo color plano). La cara de la derecha va en sombra.
 function vidrio(g, F, cara, u0, u1, z0, z1, op = {}) {
   const q = [F.en(cara, u0, z0), F.en(cara, u1, z0), F.en(cara, u1, z1), F.en(cara, u0, z1)], sombra = cara === 'der';
+  capturarQuad(g, q);
   const gr = g.createLinearGradient(0, q[0][1], 0, q[3][1]);
   gr.addColorStop(0, sombra ? '#3E5A6E' : '#4E6E84'); gr.addColorStop(.55, sombra ? '#5E84A0' : '#7FA8C2'); gr.addColorStop(1, sombra ? '#86A8BE' : '#B8D4E2');
   rellena(g, q, gr, op.marco || '#E8ECEC', .7);
