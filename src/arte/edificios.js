@@ -51,7 +51,7 @@ function banderines(g, a, b, rng) {
 function monedas(g, x, y) { for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#E2B24F' : '#C9962E'; g.beginPath(); g.ellipse(x, y - k * 2.2, 4.5, 1.8, 0, 0, 7); g.fill(); } }
 
 // ---------- Recetas: [clave, ancho, alto, anclaX, anclaY, pintura] ----------
-function recetas(era = 1) {
+function recetas(era = 1, hist) {
   const L = [];
   // Renovación colonial: casas de src/arte/casas.js (cuatro variantes distintas, cuatro épocas y la versión húmeda).
   L.push(...recetasCasas());
@@ -369,7 +369,7 @@ function recetas(era = 1) {
   L.push(['nave', 40, 30, 20, 24, (g, r) => { sombra(g, 16, 4, 2); pintar(g, [[-16, 0], [16, 0], [16, -14], [-16, -14]], '#A7ADB0', r, op); pintar(g, [[-16, -14], [16, -14], [12, -20], [-12, -20]], '#7F878C', r, op); g.fillStyle = '#4F86A6'; for (let x = -13; x < 14; x += 6) g.fillRect(x, -11, 4, 4); g.fillStyle = '#2E3A40'; g.fillRect(-3, -6, 6, 6); }]);
   L.push(['humo', 16, 16, 8, 8, g => { const gr = g.createRadialGradient(0, 0, 0, 0, 0, 7); gr.addColorStop(0, 'rgba(142,138,134,.9)'); gr.addColorStop(1, 'rgba(142,138,134,0)'); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); }]);
   // Renovación colonial, paso 5: los edificios públicos coloniales (src/arte/publicos.js) reemplazan a los griegos.
-  for (const r of recetasPublicos(era)) { const k = L.findIndex(x => x[0] === r[0]); if (k >= 0) L[k] = r; else L.push(r); }
+  for (const r of recetasPublicos(era, hist)) { const k = L.findIndex(x => x[0] === r[0]); if (k >= 0) L[k] = r; else L.push(r); }
   return L;
 }
 
@@ -377,10 +377,14 @@ function recetas(era = 1) {
 // Las obras públicas cambian con la época: la hoja se hornea para una época (sin dato, la última horneada) y se
 // vuelve a hornear al cambiar. Las medidas son las mismas en todas las épocas, así los marcos no se mueven.
 let HOJA = null;
-export function hornearEdificios(era) {
+// hist (fase visual, edificios por época): 0 a 5, las seis épocas de la historia (fundación, café, La Violencia,
+// modernización, conflicto y paz, era digital); los edificios de servicio cambian con ellas.
+export const HIST_DE_ERA = [0, 1, 2, 5];
+export function hornearEdificios(era, hist) {
   if (era === undefined) era = HOJA ? HOJA.era : 1;
-  if (HOJA && HOJA.era === era) return HOJA;
-  const lista = recetas(era).sort((a, b) => b[2] - a[2]), sep = 4, anchoHoja = 4096, marcos = {}; // hoja ancha: más resolución sin pasar de 4096 de alto // de mayor a menor alto: la hoja queda más compacta (menos memoria en el celular)
+  if (hist === undefined) hist = HOJA && HOJA.era === era ? HOJA.hist : HIST_DE_ERA[era];
+  if (HOJA && HOJA.era === era && HOJA.hist === hist) return HOJA;
+  const lista = recetas(era, hist).sort((a, b) => b[2] - a[2]), sep = 4, anchoHoja = 4096, marcos = {}; // hoja ancha: más resolución sin pasar de 4096 de alto // de mayor a menor alto: la hoja queda más compacta (menos memoria en el celular)
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
     const W = Math.ceil(w * ESCALA), H = Math.ceil(h * ESCALA);
@@ -395,7 +399,7 @@ export function hornearEdificios(era) {
     pintar(g, mulberry(k.length * 97 + k.charCodeAt(0) * 13 + (k.charCodeAt(k.length - 1) || 0)));
     g.restore();
   }
-  return (HOJA = { canvas: cv, marcos, escala: ESCALA, era });
+  return (HOJA = { canvas: cv, marcos, escala: ESCALA, era, hist });
 }
 
 // Qué figuras lleva cada obra en una casilla: [{ k (figura), du, dv (desplazamiento en la casilla), s (escala), humo }].

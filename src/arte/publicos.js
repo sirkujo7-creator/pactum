@@ -264,8 +264,8 @@ function teatro(g, e) {
   }
   for (const u of [0, 1]) { const p = F.en('izq', u, 0); farol(g, p[0] + (u ? -3 : 3), p[1] + 5, 11); }
 }
-function policia(g, e) {
-  const E = epoca(e, { muro: '#F4F1E8', zocalo: '#4E5A34', techo: 'zincVerde', techo0: 'paja', techo2: 'zincVerde', muro2: '#F4F1E8', zocalo2: '#4E5A34', muro3: '#EFF1EA', zocalo3: '#4E5A34' });
+function policia(g, e, h) {
+  const E = h === 2 ? epoca(2, { zocalo2: '#4E5A34', techo2: 'zinc' }) : epoca(e, { muro: '#F4F1E8', zocalo: '#4E5A34', techo: 'zincVerde', techo0: 'paja', techo2: 'zincVerde', muro2: '#F4F1E8', zocalo2: '#4E5A34', muro3: '#EFF1EA', zocalo3: '#4E5A34' });
   const F = caras(.6, .44, e === 3 ? 24 : 15, -.08);
   sombraCasa(g, F); murosDe(g, F, E);
   for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 8), F.en(cara, 1, 8), F.en(cara, 1, 9.4), F.en(cara, 0, 9.4)], '#4E5A34', null); // franja verde
@@ -1544,19 +1544,269 @@ function muroFotos(g) {
   const fl = P(F.f + .1, F.b - .1); flores(g, fl[0], fl[1], ['#F4F1E6', '#E7C76B', '#C0392B']);
 }
 
-export function recetasPublicos(e = 1) {
+
+// ---------- Seis épocas de la historia (fase visual, tanda A; pedido de Juan: «que cada edificio se vea como lo que
+// es en cada época, lo más cercano posible»). h: 0 fundación, 1 café, 2 La Violencia, 3 modernización, 4 conflicto
+// y paz, 5 era digital. Las tres primeras usan los dibujos de bahareque, tapia y ladrillo; la modernización y el
+// conflicto tienen dibujo propio; la era digital usa el de concreto con lo nuevo (paneles solares, cámaras).
+const ETERNIT = { teja: '#C9C7BF', luz: '#DEDCD4', osc: '#9C9A92', linea: '#86847C' }; // teja ondulada de asbesto-cemento
+// Paneles solares inclinados sobre una azotea.
+function solares(g, F, filas = 2) {
+  const z = F.z0 + F.H + .6, c0 = F.a + .08, c1 = F.b - .08, n = Math.max(2, Math.round((c1 - c0) / .16));
+  for (let k = 0; k < filas; k++) {
+    const r = F.t + .1 + k * .14;
+    for (let j = 0; j < n; j++) {
+      const a = c0 + (c1 - c0) * j / n + .006, b = c0 + (c1 - c0) * (j + 1) / n - .006;
+      const q = [P(r + .08, a, z), P(r + .08, b, z), P(r, b, z + 2.6), P(r, a, z + 2.6)];
+      rellena(g, q, '#2C4A6E', 'rgba(30,40,55,.8)', .3);
+      g.strokeStyle = 'rgba(140,180,215,.55)'; g.lineWidth = .25; g.beginPath(); const m1 = P(r + .04, a, z + 1.3), m2 = P(r + .04, b, z + 1.3); g.moveTo(...m1); g.lineTo(...m2); g.stroke();
+      g.fillStyle = 'rgba(220,235,250,.35)'; const l = P(r + .02, a + .01, z + 2.2); g.fillRect(l[0], l[1], 1.6, .5);
+    }
+  }
+}
+// Tapia baja de concreto al frente con un mural de colores (escuelas y colegios de los años 80 y 90).
+function tapiaMural(g, r, c0, c1, h = 4.5, puerta = .5) {
+  const tramo = (a, b) => {
+    const q = [P(r, a, 0), P(r, b, 0), P(r, b, h), P(r, a, h)]; rellena(g, q, '#ECE6D8', K.contorno, .4);
+    rellena(g, [P(r, a, h), P(r, b, h), P(r - .03, b, h + .5), P(r - .03, a, h + .5)], '#D6CEBE', null);
+    // mural: cielo, montaña, sol, una casa y gente de la mano
+    const L = (u, z) => P(r, a + (b - a) * u, z);
+    rellena(g, [L(0, .4), L(1, .4), L(1, h - .4), L(0, h - .4)], '#8EC3D6', null);
+    rellena(g, [L(0, .4), L(.35, h - 1.2), L(.6, 1.8), L(.85, h - .9), L(1, 1.4), L(1, .4)], '#5E9A48', null);
+    const sol = L(.75, h - 1.2); g.fillStyle = '#F2C531'; g.beginPath(); g.arc(sol[0], sol[1], .9, 0, 7); g.fill();
+    for (let k = 0; k < 4; k++) { const p = L(.12 + k * .2, .5); g.fillStyle = ['#C0392B', '#2F5D8A', '#E7B23C', '#6A4A86'][k]; g.fillRect(p[0] - .4, p[1] - 2, .8, 1.6); g.fillStyle = '#8A5A3A'; g.beginPath(); g.arc(p[0], p[1] - 2.4, .45, 0, 7); g.fill(); }
+  };
+  const m = c0 + (c1 - c0) * puerta; tramo(c0, m - .07); tramo(m + .07, c1);
+  g.strokeStyle = '#4A4E52'; g.lineWidth = .5; for (let k = 0; k <= 5; k++) { const c = m - .07 + .14 * k / 5, a = P(r, c, 0), b = P(r, c, h + 1); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } // reja de la entrada
+}
+// Rejas en una ventana (barras verticales y una horizontal).
+function rejas(g, F, cara, u, z, ancho, alto) {
+  g.strokeStyle = '#2E2A28'; g.lineWidth = .4;
+  for (let k = 0; k <= 4; k++) { const a = F.en(cara, u - ancho / 2 + ancho * k / 4, z), b = F.en(cara, u - ancho / 2 + ancho * k / 4, z + alto); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  const a = F.en(cara, u - ancho / 2, z + alto / 2), b = F.en(cara, u + ancho / 2, z + alto / 2); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+}
+// Estructura de concreto a la vista (columnas y vigas) sobre muros de ladrillo: la construcción de los 70 a los 90.
+function aporticado(g, F, pisos, cols = [0, .34, .67, 1]) {
+  const gris = '#D9D4C8', gris2 = '#B9B3A6';
+  for (const cara of ['izq', 'der']) {
+    for (const u of cols) rellena(g, [F.en(cara, Math.max(0, u - .025), 0), F.en(cara, Math.min(1, u + .025), 0), F.en(cara, Math.min(1, u + .025), F.H), F.en(cara, Math.max(0, u - .025), F.H)], cara === 'izq' ? gris : gris2, null);
+    for (let p = 1; p <= pisos; p++) { const z = F.H * p / pisos; rellena(g, [F.en(cara, 0, z - 1.4), F.en(cara, 1, z - 1.4), F.en(cara, 1, z), F.en(cara, 0, z)], cara === 'izq' ? gris : gris2, null); }
+  }
+}
+// Cámara de seguridad en un poste o en una esquina.
+function camara(g, x, y) { g.fillStyle = '#2E3238'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 2.4, y + 1); g.lineTo(x + 2.4, y + 2.2); g.lineTo(x, y + 1.4); g.closePath(); g.fill(); g.fillStyle = '#C0392B'; g.fillRect(x + .3, y + .6, .5, .5); }
+// Trinchera de sacos de arena con su malla anticilindros detrás (estaciones de policía en el conflicto).
+function trinchera(g, r, c0, c1, malla = true) {
+  const n = Math.round((c1 - c0) / .07);
+  for (let fila = 0; fila < 3; fila++) for (let k = 0; k < n - fila; k++) { const q = P(r, c0 + (k + fila * .5 + .5) * (c1 - c0) / n, fila * 1.6); costal(g, q[0], q[1], k % 2 ? '#B8A27A' : '#A8926A', .46, 2.2, 1.2); }
+  if (malla) { g.strokeStyle = 'rgba(80,86,90,.75)'; g.lineWidth = .3; const a = (c, z) => P(r - .14, c, z); for (let k = 0; k <= 12; k++) { const c = c0 + (c1 - c0) * k / 12; g.beginPath(); g.moveTo(...a(c, 0)); g.lineTo(...a(c, 20)); g.stroke(); } for (let z = 0; z <= 20; z += 2.5) { g.beginPath(); g.moveTo(...a(c0, z)); g.lineTo(...a(c1, z)); g.stroke(); } for (const c of [c0, c1]) { g.strokeStyle = '#4A4E52'; g.lineWidth = .8; g.beginPath(); g.moveTo(...a(c, 0)); g.lineTo(...a(c, 21)); g.stroke(); g.strokeStyle = 'rgba(80,86,90,.75)'; g.lineWidth = .3; } }
+}
+
+// Escuela de la modernización (años 60 y 70, Alianza para el Progreso): bloque largo de un piso, muros blancos con
+// franja de color, ventanales de marco metálico en fila, corredor con columnas de concreto y teja de asbesto.
+function escuelaBloque(g) {
+  const F = caras(.94, .42, 12, -.06);
+  sombraCasa(g, F); cancha(g, F.f + .12, F.a + .12);
+  arbolito(g, ...P(F.t + .05, F.a - .06), 1, '#4E7A3A');
+  muros(g, F, '#F4F1E8', '#2F6E8E');
+  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 0), F.en(cara, 1, 0), F.en(cara, 1, 4.2), F.en(cara, 0, 4.2)], cara === 'izq' ? '#3E7FA0' : '#2E6480', null);
+  for (let k = 0; k < 5; k++) { const u = .1 + k * .2; if (k === 2) { puerta(g, F, 'izq', u, .1, 8.5, '#2F6E8E', false); continue; } hueco(g, F, 'izq', u - .075, u + .075, 4.6, 9.6, '#7FA6BC'); g.strokeStyle = '#E8ECEE'; g.lineWidth = .35; for (let j = 1; j < 4; j++) { const a = F.en('izq', u - .075 + .15 * j / 4, 4.6), b = F.en('izq', u - .075 + .15 * j / 4, 9.6); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } }
+  hueco(g, F, 'der', .3, .7, 4.6, 9.6, '#6E94AA');
+  const zf = dosAguas(g, F, 5, { ...ETERNIT, sale: .16, hastial: '#E6E2D8' });
+  g.strokeStyle = '#D9D4C8'; g.lineWidth = 1.1; for (const u of [.02, .26, .5, .74, .98]) { const c = F.a + (F.b - F.a) * u, a = P(F.f + .16, c, 0), b = P(F.f + .16, c, zf); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  letrero(g, F, .5, 10.6, '#2F6E8E', 'ESCUELA');
+  const b = P(F.f + .3, F.a + .04); bandera(g, b[0], b[1], 22, TRICOLOR);
+}
+// Colegio del conflicto y la paz (años 80 a 2000): dos pisos de ladrillo con columnas y vigas de concreto, ventanas
+// con rejas, tapia con mural y reja de entrada, teja de zinc.
+function colegioLadrillo(g) {
+  const F = caras(.9, .44, 22, -.08);
+  sombraCasa(g, F); cancha(g, F.f + .2, F.a + .5);
+  muros(g, F, K.ladrillo, null, { ladrillo: true }); aporticado(g, F, 2);
+  for (const z of [3, 14]) for (const u of [.17, .5, .83]) { hueco(g, F, 'izq', u - .1, u + .1, z, z + 5.5, '#6E94AA'); rejas(g, F, 'izq', u, z, .2, 5.5); }
+  hueco(g, F, 'der', .3, .7, 3, 8.5, '#5E84A0'); rejas(g, F, 'der', .5, 3, .4, 5.5); hueco(g, F, 'der', .3, .7, 14, 19.5, '#5E84A0');
+  dosAguas(g, F, 6, { ...MAT.zinc, hastial: '#C9C3B6' });
+  letrero(g, F, .5, 11.2, '#3E6B4A', 'COLEGIO');
+  tapiaMural(g, F.f + .3, F.a - .02, F.b + .02, 4.5, .62);
+  const b = P(F.f + .26, F.a - .04); bandera(g, b[0], b[1], 26, TRICOLOR);
+}
+
+// Centro de salud de la modernización (años 60 y 70): bloque blanco de un piso con franja azul, marquesina de
+// concreto sobre la entrada, cruz roja y una ambulancia de la época.
+function centroSalud(g) {
+  const F = caras(.9, .5, 13, -.06);
+  sombraCasa(g, F); jardin(g, F);
+  muros(g, F, '#F7F5EF', '#2F5D8A');
+  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 9.4), F.en(cara, 1, 9.4), F.en(cara, 1, 10.6), F.en(cara, 0, 10.6)], cara === 'izq' ? '#2F6E9E' : '#245A82', null);
+  for (const u of [.12, .28, .72, .88]) hueco(g, F, 'izq', u - .065, u + .065, 3.6, 8.4, '#7FA6BC');
+  for (const u of [.25, .5, .75]) hueco(g, F, 'der', u - .08, u + .08, 3.6, 8.4, '#6E94AA');
+  hueco(g, F, 'izq', .42, .58, 0, 8, '#4E7FA0');
+  terraza(g, F, '#F2F0EA');
+  // marquesina sobre la entrada
+  const a = F.a + (F.b - F.a) * .36, b = F.a + (F.b - F.a) * .64, z = 9;
+  rellena(g, [P(F.f, a, z), P(F.f, b, z), P(F.f + .16, b, z), P(F.f + .16, a, z)], '#E4E0D6'); rellena(g, [P(F.f + .16, a, z), P(F.f + .16, b, z), P(F.f + .16, b, z - 1), P(F.f + .16, a, z - 1)], '#C9C4B8');
+  g.strokeStyle = '#D9D4C8'; g.lineWidth = 1; for (const c of [a + .02, b - .02]) { g.beginPath(); g.moveTo(...P(F.f + .14, c, 0)); g.lineTo(...P(F.f + .14, c, z - 1)); g.stroke(); }
+  const c = F.en('izq', .5, 11.5); rellena(g, [[c[0] - 3, c[1] - 3], [c[0] + 3, c[1] - 3], [c[0] + 3, c[1] + 3], [c[0] - 3, c[1] + 3]], '#F4F1E8', K.contorno, .3); g.fillStyle = '#C0392B'; g.fillRect(c[0] - .8, c[1] - 2.4, 1.6, 4.8); g.fillRect(c[0] - 2.4, c[1] - .8, 4.8, 1.6);
+  const p = P(F.f + .3, F.b - .1); carro(g, p[0], p[1], '#F4F1E8', '#C0392B');
+}
+
+// Casa de la cultura de los años 60 y 70: volumen de concreto con quiebrasoles verticales y un libro en relieve.
+function casaCultura(g) {
+  const F = caras(.66, .56, 20, -.04);
+  sombraCasa(g, F); arbolito(g, ...P(F.f + .16, F.b + .04), .85, '#5E8B42'); bancoMadera(g, ...P(F.f + .2, F.a + .2));
+  muros(g, F, '#E8E2D4', '#7A6A58');
+  for (const cara of ['izq', 'der']) { rellena(g, [F.en(cara, .04, 4), F.en(cara, .96, 4), F.en(cara, .96, 17), F.en(cara, .04, 17)], cara === 'izq' ? '#7FA6BC' : '#6E94AA', K.contorno, .3); for (let k = 0; k <= 10; k++) { const u = .04 + .92 * k / 10; rellena(g, [F.en(cara, u - .012, 4), F.en(cara, u + .012, 4), F.en(cara, u + .012, 17), F.en(cara, u - .012, 17)], cara === 'izq' ? '#F2EEE4' : '#CFC9BC', null); } }
+  hueco(g, F, 'izq', .4, .6, 0, 7, '#3A3A3A');
+  terraza(g, F, '#E8E2D4');
+  const l = F.en('izq', .5, 18.6); g.fillStyle = '#B9442F'; g.fillRect(l[0] - 6, l[1] - 1.4, 12, 2.6); g.save(); g.fillStyle = '#F7F1E3'; g.font = 'bold 2px sans-serif'; g.textAlign = 'center'; g.fillText('CASA DE LA CULTURA', l[0], l[1] + .6); g.restore();
+}
+// Biblioteca pública de los años 80 y 90: ladrillo y concreto, dos pisos con ventanales y un mural de lectura.
+function bibliotecaPublica(g) {
+  const F = caras(.66, .56, 22, -.04);
+  sombraCasa(g, F); arbolito(g, ...P(F.f + .16, F.b + .04), .85, '#5E8B42');
+  muros(g, F, K.ladrillo, null, { ladrillo: true }); aporticado(g, F, 2, [0, .5, 1]);
+  for (const z of [3, 13.5]) { hueco(g, F, 'izq', .06, .44, z, z + 6, '#7FA6BC'); if (z === 13.5) hueco(g, F, 'izq', .56, .94, z, z + 6, '#7FA6BC'); hueco(g, F, 'der', .1, .9, z, z + 6, '#6E94AA'); }
+  rellena(g, [F.en('izq', .56, 1), F.en('izq', .94, 1), F.en('izq', .94, 9.5), F.en('izq', .56, 9.5)], '#E7C76B', K.contorno, .3); // mural de un libro abierto
+  const m = F.en('izq', .75, 5.2); g.fillStyle = '#F7F1E3'; g.beginPath(); g.moveTo(m[0] - 3.4, m[1] + 1); g.lineTo(m[0], m[1] + 2.2); g.lineTo(m[0] + 3.4, m[1] + 1); g.lineTo(m[0] + 3.4, m[1] - 2.6); g.lineTo(m[0], m[1] - 1.4); g.lineTo(m[0] - 3.4, m[1] - 2.6); g.closePath(); g.fill();
+  hueco(g, F, 'izq', .2, .32, 0, 3, '#3A3A3A');
+  dosAguas(g, F, 6, { ...MAT.zinc, hastial: '#C9C3B6' });
+  letrero(g, F, .25, 11.4, '#2F5D8A', 'BIBLIOTECA');
+}
+// Universidad de la modernización (años 60 y 70): bloque de cinco pisos de ladrillo con franjas de ventanas, una
+// plazoleta con escalinata y el bloque bajo de la biblioteca.
+function universidadBloques(g, mural = false) {
+  const B = caras(.42, .32, 14, .18, -.28); sombraCasa(g, B); muros(g, B, '#E8E2D4', null); hueco(g, B, 'izq', .1, .9, 4, 10, '#7FA6BC'); hueco(g, B, 'der', .1, .9, 4, 10, '#6E94AA'); terraza(g, B, '#E8E2D4');
+  const F = caras(.62, .5, 44, -.14, .16);
+  sombraCasa(g, F); muros(g, F, K.ladrillo, null, { ladrillo: true });
+  for (let p = 0; p < 5; p++) for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, .06, 3 + p * 8.4), F.en(cara, .94, 3 + p * 8.4), F.en(cara, .94, 8.2 + p * 8.4), F.en(cara, .06, 8.2 + p * 8.4)], cara === 'izq' ? '#86AEC4' : '#6E94AA', K.contorno, .25);
+  for (let p = 0; p <= 5; p++) for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, p * 8.4), F.en(cara, 1, p * 8.4), F.en(cara, 1, p * 8.4 + 1.2), F.en(cara, 0, p * 8.4 + 1.2)], cara === 'izq' ? '#E2DCCE' : '#C2BCAE', null);
+  terraza(g, F, '#E2DCCE');
+  for (let k = 0; k < 3; k++) rellena(g, [P(.36 + k * .04, -.2, k * .8), P(.36 + k * .04, .2, k * .8), P(.36 + k * .04, .2, k * .8 + .8), P(.36 + k * .04, -.2, k * .8 + .8)], '#D8D2C4', K.contorno, .3); // escalinata
+  if (mural) { // los años del conflicto: el muro pintado por los estudiantes y una pancarta colgada del bloque
+    const L = (u, z) => F.en('izq', u, z);
+    rellena(g, [L(.04, 1.2), L(.96, 1.2), L(.96, 15.6), L(.04, 15.6)], '#E8D49A', K.contorno, .3);
+    rellena(g, [L(.04, 1.2), L(.4, 1.2), L(.28, 15.6), L(.04, 15.6)], '#B9442F', null);
+    rellena(g, [L(.55, 1.2), L(.96, 1.2), L(.96, 9), L(.7, 15.6), L(.6, 15.6)], '#2F6E8E', null);
+    const sol = L(.5, 9.5); g.fillStyle = '#F2C531'; g.beginPath(); g.arc(sol[0], sol[1], 3, 0, 7); g.fill(); // la cara de un sol, mural estudiantil
+    const a = L(.15, 34), b = L(.85, 34); rellena(g, [a, b, [b[0], b[1] + 6], [a[0], a[1] + 6]], '#F4F1E8', K.contorno, .3);
+    g.save(); g.fillStyle = '#B9442F'; g.font = 'bold 2.6px sans-serif'; g.textAlign = 'center'; g.fillText('EDUCACIÓN PÚBLICA', (a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 3.8); g.restore();
+  }
+  const bd = P(.4, .42); bandera(g, bd[0], bd[1], 22, TRICOLOR);
+  const t = P(.4, -.42); bandera(g, t[0], t[1], 18, ['#F4F1E8', '#3E6B4A']); // la bandera de la universidad
+}
+
+// Estación de policía de la modernización: casa de bloque de dos pisos con franja verde y la patrulla.
+function estacionBloque(g) {
+  const F = caras(.62, .46, 18, -.08);
+  sombraCasa(g, F); muros(g, F, '#EFF1EA', '#4E5A34');
+  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 8), F.en(cara, 1, 8), F.en(cara, 1, 9.6), F.en(cara, 0, 9.6)], '#4E5A34', null);
+  puerta(g, F, 'izq', .4, .15, 7.6, '#4E5A34', false); for (const u of [.15, .75]) hueco(g, F, 'izq', u - .07, u + .07, 3, 7, '#6E94AA'); for (const u of [.15, .45, .75]) hueco(g, F, 'izq', u - .07, u + .07, 11.4, 16, '#6E94AA'); hueco(g, F, 'der', .3, .7, 11.4, 16, '#5E84A0');
+  terraza(g, F, '#EFF1EA'); letrero(g, F, .4, 10, '#2F5D8A', 'POLICÍA');
+  const p = P(F.f + .26, F.a + .5); carro(g, p[0], p[1], '#E8ECE4', '#4E5A34');
+}
+// Estación de policía en los años del conflicto: el mismo edificio con trinchera de sacos, malla anticilindros,
+// garita de concreto y ventanas tapiadas.
+function estacionFortificada(g) {
+  const F = caras(.62, .46, 18, -.12);
+  sombraCasa(g, F); muros(g, F, '#E8EAE2', '#4E5A34');
+  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, 0, 8), F.en(cara, 1, 8), F.en(cara, 1, 9.6), F.en(cara, 0, 9.6)], '#4E5A34', null);
+  for (const u of [.15, .75]) { hueco(g, F, 'izq', u - .07, u + .07, 3, 7, '#9A9488'); g.strokeStyle = 'rgba(60,55,45,.45)'; g.lineWidth = .3; for (let z = 4; z < 7; z += 1) { const a = F.en('izq', u - .07, z), b = F.en('izq', u + .07, z); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } } // ventanas tapiadas con bloque
+  for (const u of [.15, .45, .75]) { hueco(g, F, 'izq', u - .07, u + .07, 11.4, 16, '#3A3A3A'); rejas(g, F, 'izq', u, 11.4, .14, 4.6); }
+  puerta(g, F, 'izq', .45, .12, 7.6, '#3A3E36', false);
+  terraza(g, F, '#E8EAE2'); letrero(g, F, .45, 10, '#2F5D8A', 'POLICÍA');
+  g.save(); g.strokeStyle = '#3A3A3A'; g.lineWidth = .4; for (const [u, z] of [[.3, 5], [.62, 13], [.88, 6], [.22, 15]]) { const c = F.en('izq', u, z); g.beginPath(); g.arc(c[0], c[1], .5, 0, 7); g.stroke(); } g.restore(); // marcas de bala en la fachada
+  trinchera(g, F.f + .3, F.a - .02, F.b + .02);
+  const G = caras(.14, .14, 9, F.f + .22, F.b + .1); muros(g, G, '#B9B4A8', null); hueco(g, G, 'izq', .15, .85, 5, 7, '#2E2A28'); azotea(g, G, '#A8A398'); // garita de concreto
+}
+// CAI de la era digital: caseta de vidrio y concreto con cámaras, moto y patrulla eléctrica.
+function caiDigital(g) {
+  const F = caras(.5, .4, 13, -.06);
+  sombraCasa(g, F); muros(g, F, '#EEF0EC', '#4E5A34');
+  for (const cara of ['izq', 'der']) rellena(g, [F.en(cara, .05, 2), F.en(cara, .95, 2), F.en(cara, .95, 10), F.en(cara, .05, 10)], cara === 'izq' ? '#8FB6CA' : '#7AA2B8', K.contorno, .3);
+  rellena(g, [F.en('izq', 0, 10.5), F.en('izq', 1, 10.5), F.en('izq', 1, 12.4), F.en('izq', 0, 12.4)], '#3E8A4A', null);
+  g.save(); g.fillStyle = '#F4F1E8'; g.font = 'bold 2.2px sans-serif'; g.textAlign = 'center'; const t = F.en('izq', .5, 11); g.fillText('CAI', t[0], t[1]); g.restore();
+  terraza(g, F, '#E8EAE6'); solares(g, F, 1);
+  const p0 = P(F.f + .02, F.a - .02, 12); camara(g, p0[0] - 2, p0[1]); const p1 = P(F.f + .02, F.b + .02, 12); camara(g, p1[0], p1[1]);
+  const c = P(F.f + .3, F.a + .32); carro(g, c[0], c[1], '#F4F6F2', '#3E8A4A');
+  const m = P(F.f + .24, F.b - .06); g.fillStyle = '#2E3238'; g.beginPath(); g.ellipse(m[0] - 2, m[1] - 1, 1.3, 1.3, 0, 0, 7); g.ellipse(m[0] + 2.4, m[1] + .4, 1.3, 1.3, 0, 0, 7); g.fill(); rellena(g, [[m[0] - 2, m[1] - 2], [m[0] + 2.4, m[1] - .6], [m[0] + 1.6, m[1] - 3.4], [m[0] - 1, m[1] - 4]], '#F4F6F2', K.contorno, .3); // moto
+  const b = P(F.f + .2, F.a - .06); bandera(g, b[0], b[1], 20, TRICOLOR);
+}
+
+// Base militar de la modernización: barracas largas de teja de asbesto, torre de vigilancia, cerca y un camión.
+function basaBarracas(g, helipuerto = false, radar = false) {
+  const F = caras(.9, .56, 4, -.04, .02);
+  for (const [r, c] of [[-.22, -.16], [.04, -.16]]) { const B = caras(.5, .18, 8, r, c); sombraCasa(g, B); muros(g, B, radar ? '#C8C6BC' : '#B9B48A', '#5A5A3A'); for (let k = 0; k < 4; k++) hueco(g, B, 'izq', .1 + k * .22, .2 + k * .22, 2.4, 5, '#3A3A3A'); dosAguas(g, B, 3.5, radar ? MAT.zinc : ETERNIT); }
+  // cerca con alambre
+  g.strokeStyle = '#5A5A5A'; g.lineWidth = .35; for (const [p, q] of [[[F.f, F.a], [F.f, F.b]], [[F.f, F.b], [F.t, F.b]]]) { for (let k = 0; k <= 14; k++) { const t = k / 14, r = p[0] + (q[0] - p[0]) * t, c = p[1] + (q[1] - p[1]) * t; poste(g, ...P(r, c), 6, '#6E6E6E'); } alambre(g, [P(...p), P(...q)], [2, 4, 5.6]); }
+  const t = P(F.t + .14, F.b - .14); g.strokeStyle = '#6E6E6E'; g.lineWidth = .9; for (const dx of [-3, 3]) { g.beginPath(); g.moveTo(t[0] + dx, t[1]); g.lineTo(t[0] + dx * .5, t[1] - 26); g.stroke(); } rellena(g, [[t[0] - 4, t[1] - 26], [t[0] + 4, t[1] - 26], [t[0] + 4, t[1] - 31], [t[0] - 4, t[1] - 31]], '#8A8E92'); rellena(g, [[t[0] - 5, t[1] - 31], [t[0] + 5, t[1] - 31], [t[0], t[1] - 34]], '#5E6670');
+  if (radar) { const a = P(F.t + .1, F.a + .2); g.strokeStyle = '#8A8E92'; g.lineWidth = 1; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(a[0], a[1] - 22); g.stroke(); g.fillStyle = '#E8ECEE'; g.beginPath(); g.ellipse(a[0], a[1] - 22, 4.4, 2, -.3, 0, 7); g.fill(); g.strokeStyle = K.contorno; g.lineWidth = .4; g.stroke(); antena(g, a[0] + 8, a[1] + 2, 20); }
+  if (helipuerto) { trinchera(g, F.f - .04, F.a + .1, F.a + .4, false); }
+  const c = P(F.f - .02, F.b - .16); carro(g, c[0], c[1], '#5E6A44', '#4E5A34');
+  const b = P(F.f - .06, F.a + .06); bandera(g, b[0], b[1], 26, TRICOLOR);
+}
+
+// Envoltorios: cada obra de servicio según la época de la historia.
+function escuela6(g, e, h) { if (h === 3) return escuelaBloque(g); if (h === 4) return colegioLadrillo(g); escuela(g, Math.min(h, 3)); if (h === 5) solares(g, caras(.82, .44, 32, -.08)); }
+// Hospital regional de los años 80 y 90: tres pisos de ladrillo con estructura de concreto, franjas de ventanas,
+// la cruz grande, ambulancia y la planta eléctrica de emergencia.
+function hospitalRegional(g) {
+  const F = caras(.86, .44, 30, -.06);
+  sombraCasa(g, F); jardin(g, F);
+  muros(g, F, K.ladrillo, null, { ladrillo: true }); aporticado(g, F, 3, [0, .25, .5, .75, 1]);
+  for (let p = 0; p < 3; p++) for (const cara of ['izq', 'der']) for (let k = 0; k < (cara === 'izq' ? 4 : 2); k++) { const n = cara === 'izq' ? 4 : 2, u0 = k / n + .04, u1 = (k + 1) / n - .04; hueco(g, F, cara, u0, u1, 2.6 + p * 10, 7.2 + p * 10, cara === 'izq' ? '#7FA6BC' : '#6E94AA'); }
+  hueco(g, F, 'izq', .4, .6, 0, 6, '#4E7FA0');
+  terraza(g, F, '#D9D4C8');
+  const c = F.en('izq', .5, 29); rellena(g, [[c[0] - 3.4, c[1] - 1], [c[0] + 3.4, c[1] - 1], [c[0] + 3.4, c[1] + 5], [c[0] - 3.4, c[1] + 5]], '#F4F1E8', K.contorno, .3); g.fillStyle = '#C0392B'; g.fillRect(c[0] - .9, c[1] - .4, 1.8, 4.8); g.fillRect(c[0] - 2.6, c[1] + 1.2, 5.2, 1.6);
+  const p = P(F.f + .26, F.b - .12); carro(g, p[0], p[1], '#F4F1E8', '#C0392B');
+  const q = P(F.t + .04, F.b + .12); cilindro(g, q[0], q[1], 3, 5, '#6E7A52'); // planta eléctrica
+}
+function hospital6(g, e, h) {
+  if (h === 3) return centroSalud(g);
+  if (h === 4) return hospitalRegional(g);
+  const ee = h >= 4 ? 3 : h; hospital(g, ee); hospitalExtra(g, ee);
+  if (h === 5) solares(g, caras(.86, .42, 32, -.06), 1);
+}
+function biblioteca6(g, e, h) {
+  if (h === 3) { casaCultura(g); bibliotecaVida(g, 2); return; }
+  if (h === 4) { bibliotecaPublica(g); bibliotecaExtra(g, 3); bibliotecaVida(g, 2); return; }
+  const ee = Math.min(h, 3); biblioteca(g, ee); bibliotecaExtra(g, ee); bibliotecaVida(g, ee);
+}
+// Universidad de mediados del siglo XX (la del Tolima se fundó en 1945): edificio blanco de tres pisos con
+// pilastras, azotea, torre central con reloj y escalinata, la arquitectura moderna de esos años.
+function universidadDeco(g) {
+  const F = caras(.92, .5, 26, -.06);
+  sombraCasa(g, F); muros(g, F, '#EEE8DA', '#7A6A58');
+  for (const cara of ['izq', 'der']) for (let k = 0; k <= (cara === 'izq' ? 8 : 4); k++) { const n = cara === 'izq' ? 8 : 4, u = k / n; rellena(g, [F.en(cara, Math.max(0, u - .012), 0), F.en(cara, Math.min(1, u + .012), 0), F.en(cara, Math.min(1, u + .012), 26), F.en(cara, Math.max(0, u - .012), 26)], cara === 'izq' ? '#F8F4EA' : '#D2CCBE', null); }
+  for (let p = 0; p < 3; p++) { for (let k = 0; k < 8; k++) if (!(p === 0 && (k === 3 || k === 4))) hueco(g, F, 'izq', k / 8 + .03, (k + 1) / 8 - .03, 2.6 + p * 8, 7 + p * 8, '#6E94AA'); for (let k = 0; k < 4; k++) hueco(g, F, 'der', k / 4 + .04, (k + 1) / 4 - .04, 2.6 + p * 8, 7 + p * 8, '#5E84A0'); }
+  azotea(g, F, '#DED8CA');
+  const T = caras(.2, .16, 14, F.f - .06, 0, 26); muros(g, T, '#F4F0E6', null); reloj(g, ...T.en('izq', .5, 8), 3); azotea(g, T, '#DED8CA');
+  hueco(g, F, 'izq', .4, .6, 0, 8, '#4A3A2C', true);
+  for (let k = 0; k < 3; k++) rellena(g, [P(F.f + .04 + k * .04, -.16, k * .8), P(F.f + .04 + k * .04, .16, k * .8), P(F.f + .04 + k * .04, .16, k * .8 + .8), P(F.f + .04 + k * .04, -.16, k * .8 + .8)], '#D8D2C4', K.contorno, .3);
+  const b = P(F.f - .06, 0, 40); bandera(g, b[0], b[1], 14, TRICOLOR);
+  arbolito(g, ...P(F.f + .2, F.a + .06), .9, '#4E7A3A'); arbolito(g, ...P(F.f + .2, F.b - .06), .9, '#5E8B42');
+}
+function universidad6(g, e, h) {
+  if (h === 2) return universidadDeco(g); if (h === 3 || h === 4) return universidadBloques(g, h === 4); universidad(g, Math.min(h, 3)); if (h === 5) solares(g, caras(.92, .7, 30, -.04), 2); }
+function policia6(g, e, h) { if (h === 3) return estacionBloque(g); if (h === 4) return estacionFortificada(g); if (h === 5) return caiDigital(g); policia(g, h, h); }
+function cuartel6(g, e, h) {
+  if (h === 3) { basaBarracas(g, false, false); for (let k = 0; k < 5; k++) soldadoM(g, ...P(.46, -.34 + k * .15)); personaM(g, ...P(.56, .0), '#2F3E24', '#2E2A28', '#C98E62'); const q = P(.2, .46, 0); g.strokeStyle = '#2E2A28'; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(q[0] - 5, q[1] - 2); g.lineTo(q[0] + 4, q[1] - 5.4); g.stroke(); return; } // base con su formación
+  if (h >= 4) { basaBarracas(g, h === 4, h === 5); cuartelVida(g, 3); return; } // helipuerto (y radar en la era digital)
+  cuartel(g, h); cuartelExtra(g, h); cuartelVida(g, h);
+}
+
+export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   const L = [
-    ['escuela', 96, 96, 48, 68, escuela],
-    ['hospital', 104, 112, 52, 82, (g, e) => { hospital(g, e); hospitalExtra(g, e); }],
+    ['escuela', 96, 96, 48, 68, escuela6],
+    ['hospital', 104, 112, 52, 82, hospital6],
     ['taller', 84, 82, 42, 60, taller],
     ['recaudo', 84, 84, 42, 62, recaudo],
-    ['biblioteca', 120, 116, 60, 84, (g, e) => { biblioteca(g, e); bibliotecaExtra(g, e); bibliotecaVida(g, e); }],
+    ['biblioteca', 120, 116, 60, 84, biblioteca6],
     ['teatro', 138, 122, 69, 92, teatroN],
     ['cancha', 108, 74, 54, 44, g => canchaN(g)],
-    ['policia', 88, 92, 44, 70, policia],
-    ['cuartel', 136, 124, 68, 92, (g, e) => { cuartel(g, e); cuartelExtra(g, e); cuartelVida(g, e); }],
+    ['policia', 88, 92, 44, 70, policia6],
+    ['cuartel', 136, 124, 68, 92, cuartel6],
     ['banco', 124, 140, 62, 108, (g, e) => { if (e === 1 || e === 2) { g.save(); g.scale(1.18, 1.18); bancoClasico(g, e); bancoVida(g, e); g.restore(); } else { bancoEdificio(g, e); bancoVida(g, e); } }],
-    ['universidad', 108, 120, 54, 88, universidad],
+    ['universidad', 108, 120, 54, 88, universidad6],
     ['acueducto', 92, 72, 46, 48, acueducto],
     ['plaza0', 100, 80, 50, 56, g => plazaN(g, 0)], ['plaza1', 100, 82, 50, 58, g => plazaN(g, 1)], ['plaza2', 100, 84, 50, 60, g => plazaN(g, 2)], ['plaza3', 100, 90, 50, 66, g => plazaN(g, 3)],
     ['estadio', 148, 124, 74, 94, estadioN],
@@ -1581,7 +1831,7 @@ export function recetasPublicos(e = 1) {
     ['sede-demagogia', 100, 96, 50, 66, tribuna],
     ['mercado0', 104, 100, 52, 74, g => { mercadoToldos(g, e, false); vidaMercado(g, e, false); }], ['mercado0v', 90, 76, 45, 52, g => mercadoToldos(g, e, true)],
     ['mercado2', 112, 110, 56, 76, g => { mercadoCubierto(g, e, false); vidaMercado(g, e, true); }], ['mercado2v', 100, 96, 50, 68, g => mercadoCubierto(g, e, true)]
-  ].map(([k, w, h, ax, ay, f]) => [k, w, h, ax, ay, g => f(g, e)]);
+  ].map(([k, w, alto, ax, ay, f]) => [k, w, alto, ax, ay, g => f(g, e, h)]);
   // La iglesia: capilla de bahareque, iglesia colonial con espadaña, templo de dos torres y templo restaurado.
   return [...L, ...[0, 1, 2, 3].map(k => ['iglesia' + k, 110, 130, 55, 96, g => iglesiaEpoca(g, k)])];
 }
