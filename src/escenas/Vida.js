@@ -15,6 +15,10 @@ const azar = (a, b) => a + Math.random() * (b - a);
 // Cuadros por casilla recorrida: la zancada de cada animal según su tamaño.
 const VEL_CUADROS = { vaca: 78, cebu: 78, caballo: 70, chivo: 110, cerdo: 120, perro: 66, garza: 120 };
 
+// Tamaño de cada animal frente a las personas (pedido de Juan: tamaños en proporción con la naturaleza y la
+// infraestructura). Un poco más grandes que en la realidad para que se vean en el celular: un perro llega a la cintura
+// de una persona, una vaca o un caballo a sus hombros.
+const ESC_ANIMAL = { perro: .66, gato: .66, gallina: .72, cerdo: .74, vaca: .86, cebu: .86, caballo: .86, garza: .78, pato: .78, chulo: .9, loro: .85, pajaro: .9 };
 export class Vida {
   // Cuánto se mece cada tipo de planta (en grados).
   static vaiven(k) { return VAIVEN[k] || 0; }
@@ -29,6 +33,7 @@ export class Vida {
   static esArbol(k) { return ARBOLES.has(k); }
 
   figura(k, r, c, s = 1) {
+    s *= ESC_ANIMAL[k.replace(/V?\d+$/, '')] ?? 1; // en proporción con las personas (más chicas desde 0.170.0) y las casas
     const { T } = this.scene, H = this.scene.hojas.naturaleza, m = H.marcos[k], p = P(r, c, T.hf(r, c));
     return this.scene.add.image(p[0], p[1], 'naturaleza', k).setOrigin(m.ax / m.w, m.ay / m.h).setScale(s / H.escala).setDepth(r + c);
   }

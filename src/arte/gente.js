@@ -19,6 +19,9 @@ export const TIPOS_GENTE = {
   armado: [['#5E6644'], ['#5E6644'], ['#5E6644']]
 };
 const PIEL = ['#C98E62', '#E0B08A', '#A8734C'];
+// Tamaño de las personas en el mapa (antes .62: una persona medía casi el doble de la puerta de una casa; pedido de
+// Juan: tamaños en proporción con la naturaleza y la infraestructura).
+export const TAM_GENTE = .5;
 
 // Figura plana: color liso y la sombra de la derecha con borde nítido (sin contorno).
 function forma(g, pts, col, curva = true) {
@@ -49,7 +52,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   const ph = FASE[paso] * Math.PI * 2, sw = Math.sin(ph), alza = Math.abs(sw) * .35;
   const nino = tipo === 'nino', E = nino ? .72 : 1, dir = frente ? 1 : -1;
   // Sombra suave en el suelo, del mismo sol que la de árboles y animales.
-  sombraSuave(g, 3.8 * E, 0, 3.8 * E, .28);
+  sombraSuave(g, 2.6 * E, 0, 2.6 * E, .2); // solo el contacto con el suelo; la sombra larga la pone Pobladores aparte (no se voltea)
   g.save(); g.scale(E, E); g.translate(0, -alza);
   const falda = tipo === 'campesina' && !mod;
   const pantalon = mod ? (tipo === 'elite' ? '#3A3A44' : '#3F5872') : { campesino: '#EFE8D8', campesina: '#EFE8D8', artesano: '#5A4A3C', elite: '#2E2E34', nino: '#4A5A70' }[tipo];

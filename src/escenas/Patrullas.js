@@ -4,7 +4,7 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { ejercitoActivo, ejercito, plazaFundacion } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
-import { PASOS12 } from '../arte/gente.js';
+import { PASOS12, TAM_GENTE } from '../arte/gente.js';
 
 
 export class Patrullas {
@@ -21,7 +21,7 @@ export class Patrullas {
       const x = S.map[i], poli = x.b === 'policia', n = poli ? 2 : 3, c0 = { r: Math.floor(i / N) + .5, c: i % N + .5 };
       for (let k = 0; k < n; k++) {
         const vi = k % 3, f = `${poli ? 'policia' : 'soldado'}${ropa}_${vi}_1_0`, m = H.marcos[f]; if (!m) continue;
-        const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala);
+        const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAM_GENTE / H.escala);
         const rally = golpe && !poli && base;
         this.gente.push({ img, tipo: poli ? 'policia' : 'soldado', r: c0.r + (k - 1) * .3 + .8, c: c0.c + .8, centro: rally ? { r: base.r + 1.1, c: base.c + (k - 1) * .35 } : c0, radio: rally ? .5 : poli ? 3 : 2.2, vi, meta: null, espera: Math.random() * 3, fase: 0, frente: 1, voltear: false, andando: false });
       }

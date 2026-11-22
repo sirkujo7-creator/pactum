@@ -7,7 +7,7 @@
 import { P, alturaEn } from '../arte/iso.js';
 import { hayGrupo, plazaFundacion } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
-import { ACCIONES, PASOS12 } from '../arte/gente.js';
+import { ACCIONES, PASOS12, TAM_GENTE } from '../arte/gente.js';
 
 
 export class Conflicto {
@@ -51,7 +51,7 @@ export class Conflicto {
   }
   figura(tipo, vi, tinte, fusil, o) {
     const H = this.scene.pob.H, ropa = this.scene.pob.ropa || '', f = `${tipo}${ropa}_${vi}_1_0`, m = H.marcos[f]; if (!m) return { r: o.r, c: o.c, img: null };
-    const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(.62 / H.escala);
+    const img = this.scene.add.image(0, 0, 'personas', f).setOrigin(m.ax / m.w, m.ay / m.h).setScale(TAM_GENTE / H.escala);
     if (tinte) img.setTint(tinte);
     const extra = fusil && this.scene.textures.exists('cineFusil') ? this.scene.add.image(0, 0, 'cineFusil').setScale(.26 / 4).setOrigin(.5, .9).setAngle(-14) : null;
     return { tipo, vi, img, extra, ruta: [], vel: .4, fase: 0, frente: 1, voltear: false, espera: Math.random() * 3, meta: null, ...o };
