@@ -850,6 +850,59 @@ function pilaPlaza(g, x, y, R, alto = 12) {
   for (const dx of [-1, 1]) for (const dz of [0, .6]) { g.beginPath(); g.moveTo(x + dx * R * .38, y - alto - .2); g.quadraticCurveTo(x + dx * R * .55, y - alto + 2 + dz, x + dx * R * .62, y - 3.4); g.stroke(); } // chorros
   g.fillStyle = 'rgba(240,250,255,.8)'; for (const dx of [-1, 1]) { g.beginPath(); g.ellipse(x + dx * R * .62, y - 3.3, .9, .3, 0, 0, 7); g.fill(); } // salpicaduras
 }
+// Monumento de la plaza de la polis (pedido de Juan: le gusta la idea, no el busto): estatua de bronce de cuerpo
+// entero sobre un pedestal de piedra, como las de las plazas de Bolívar: un prócer de pie, con levita y capa, la mano
+// izquierda en el puño de la espada y la derecha señalando al frente. Bronce verdoso con luz a la izquierda.
+function monumentoProcer(g, x, y) {
+  sombraPie(g, x, y, 13, 4.6, .2);
+  // Jardín y reja baja de hierro alrededor del pedestal.
+  const A = P(.24, -.24), base = (r, c) => [x + (c - r) * 32, y + (c + r) * 16];
+  g.fillStyle = '#6E9A4E'; g.beginPath(); [[-.22, -.22], [-.22, .22], [.22, .22], [.22, -.22]].forEach(([r, c], k) => { const q = base(r, c); k ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fill();
+  const R = mulberry(77); for (let k = 0; k < 26; k++) { const r = (R() - .5) * .4, c = (R() - .5) * .4, q = base(r, c); if (Math.abs(r) < .12 && Math.abs(c) < .12) continue; hojaP(g, q[0], q[1], -Math.PI / 2 + (R() - .5), 1.6 + R(), .55, R() < .5 ? '#4E7A3A' : '#7FAA56', false); if (R() < .35) { g.fillStyle = ['#D8433A', '#F4EFE4', '#E7B23C'][k % 3]; g.beginPath(); g.arc(q[0], q[1] - 1.6, .5, 0, 7); g.fill(); } }
+  void A;
+  const reja = (r0, c0, r1, c1) => { const a = base(r0, c0), b = base(r1, c1), n = 7; g.strokeStyle = '#1E2622'; g.lineWidth = .35; for (let k = 0; k <= n; k++) { const f = k / n, px = a[0] + (b[0] - a[0]) * f, py = a[1] + (b[1] - a[1]) * f; g.beginPath(); g.moveTo(px, py); g.lineTo(px, py - 2.4); g.stroke(); g.fillStyle = '#1E2622'; g.beginPath(); g.moveTo(px - .3, py - 2.4); g.lineTo(px + .3, py - 2.4); g.lineTo(px, py - 3.1); g.fill(); } g.lineWidth = .4; for (const z of [.8, 2.2]) { g.beginPath(); g.moveTo(a[0], a[1] - z); g.lineTo(b[0], b[1] - z); g.stroke(); } };
+  reja(-.24, -.24, -.24, .24); reja(-.24, -.24, .24, -.24); // lados de atrás
+  // Pedestal: dos gradas, dado con placa de bronce y cornisa.
+  cajaPx(g, x, y, .3, .3, 1.6, '#BFB59E', { izq: '#D0C6AE', top: '#DCD2BC' });
+  cajaPx(g, x, y, .24, .24, 1.6, '#C9BFA8', { z0: 1.6, izq: '#D8CEB6', top: '#E2D8C2' });
+  const D = cajaPx(g, x, y, .17, .17, 11, '#D2C8B0', { z0: 3.2, izq: '#E2D8C2', top: '#E8DFCA' });
+  const ins = (q, u, v) => [q[0][0] + (q[1][0] - q[0][0]) * u, q[0][1] + (q[1][1] - q[0][1]) * u - 11 * v];
+  rellena(g, [ins(D.izq, .22, .3), ins(D.izq, .78, .3), ins(D.izq, .78, .62), ins(D.izq, .22, .62)], '#6E5A2E', 'rgba(40,30,15,.6)', .3); // placa
+  g.strokeStyle = '#C9A24A'; g.lineWidth = .3; for (const v of [.4, .47, .54]) { g.beginPath(); g.moveTo(...ins(D.izq, .3, v)); g.lineTo(...ins(D.izq, .7, v)); g.stroke(); } // letras de la placa
+  g.fillStyle = 'rgba(60,90,70,.25)'; g.beginPath(); g.moveTo(...ins(D.izq, .4, .3)); g.lineTo(...ins(D.izq, .5, .3)); g.lineTo(...ins(D.izq, .48, .05)); g.lineTo(...ins(D.izq, .42, .08)); g.fill(); // chorreón verde del bronce
+  cajaPx(g, x, y, .21, .21, 1.4, '#C9BFA8', { z0: 14.2, izq: '#D8CEB6', top: '#E6DCC6' }); // cornisa
+  // Estatua (los pies sobre la cornisa).
+  g.save(); g.translate(x, y - 15.6);
+  const br = '#5E806E', bl = '#9CC0A8', bo = '#344A3E', bh = '#C6E0CC';
+  const grad2 = (x0, x1) => { const gr = g.createLinearGradient(x0, 0, x1, 0); gr.addColorStop(0, bl); gr.addColorStop(.45, br); gr.addColorStop(1, bo); return gr; };
+  g.fillStyle = mezcla(bo, '#000000', .1); g.beginPath(); g.ellipse(0, 0, 3.4, 1.3, 0, 0, 7); g.fill(); // plinto de bronce
+  // Capa detrás, cayendo hacia la derecha.
+  g.fillStyle = bo; g.beginPath(); g.moveTo(-1.8, -13.2); g.quadraticCurveTo(3.5, -11, 4.2, -2.2); g.lineTo(2.2, -1.2); g.quadraticCurveTo(1.6, -7, .6, -12); g.closePath(); g.fill();
+  g.strokeStyle = 'rgba(20,30,25,.5)'; g.lineWidth = .3; for (const k of [0, 1]) { g.beginPath(); g.moveTo(.8 + k, -11.6); g.quadraticCurveTo(2.6 + k * .6, -7, 3 + k * .5, -2); g.stroke(); }
+  // Piernas y botas.
+  g.fillStyle = grad2(-1.6, 1.6); g.beginPath(); g.moveTo(-1.5, -6.2); g.lineTo(-1.6, -.3); g.lineTo(-.4, -.3); g.lineTo(-.2, -6.2); g.closePath(); g.fill(); g.beginPath(); g.moveTo(.2, -6.2); g.lineTo(.5, -.2); g.lineTo(1.7, -.2); g.lineTo(1.3, -6.2); g.closePath(); g.fill();
+  g.fillStyle = bo; g.beginPath(); g.ellipse(-1, -.3, 1, .45, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(1.15, -.25, 1, .45, 0, 0, 7); g.fill();
+  // Levita hasta las rodillas.
+  g.fillStyle = grad2(-2.6, 2.6); g.beginPath(); g.moveTo(-1.9, -12.4); g.lineTo(1.9, -12.4); g.lineTo(2.5, -5.4); g.lineTo(.4, -5.8); g.lineTo(0, -8); g.lineTo(-.4, -5.8); g.lineTo(-2.5, -5.4); g.closePath(); g.fill();
+  g.strokeStyle = 'rgba(20,30,25,.45)'; g.lineWidth = .25; g.beginPath(); g.moveTo(0, -12.2); g.lineTo(0, -8); g.stroke(); g.fillStyle = bh; for (const z of [-11.4, -10.2, -9]) { g.beginPath(); g.arc(-.45, z, .18, 0, 7); g.fill(); } // botones
+  g.fillStyle = bo; g.fillRect(-2, -9.4, 4, .6); // fajín
+  // Espada al costado izquierdo, con la mano en el puño.
+  g.strokeStyle = bo; g.lineWidth = .45; g.beginPath(); g.moveTo(-2.3, -8.6); g.lineTo(-3.4, -2.2); g.stroke(); g.strokeStyle = bh; g.lineWidth = .2; g.beginPath(); g.moveTo(-2.25, -8.4); g.lineTo(-3.25, -2.4); g.stroke();
+  g.fillStyle = grad2(-3.2, -1); g.beginPath(); g.moveTo(-1.9, -12.2); g.quadraticCurveTo(-3, -11, -2.8, -9); g.lineTo(-2, -8.6); g.quadraticCurveTo(-2.1, -10.6, -1.4, -11.4); g.closePath(); g.fill(); // brazo izquierdo
+  g.fillStyle = bl; g.beginPath(); g.ellipse(-2.4, -8.6, .55, .5, 0, 0, 7); g.fill(); // mano en el puño
+  // Brazo derecho extendido, señalando al frente.
+  g.fillStyle = grad2(1, 5); g.beginPath(); g.moveTo(1.6, -12.4); g.quadraticCurveTo(3.4, -12.8, 5.4, -14.4); g.lineTo(5.8, -13.6); g.quadraticCurveTo(3.8, -11.8, 1.8, -10.8); g.closePath(); g.fill();
+  g.fillStyle = br; g.beginPath(); g.ellipse(5.9, -14.3, .55, .45, -.6, 0, 7); g.fill(); g.strokeStyle = br; g.lineWidth = .3; g.beginPath(); g.moveTo(6.2, -14.5); g.lineTo(7, -15); g.stroke(); // mano y dedo
+  // Cuello, cabeza con patillas y cabello, cuello alto del uniforme.
+  g.fillStyle = bo; g.beginPath(); g.moveTo(-1.2, -12.4); g.lineTo(1.2, -12.4); g.lineTo(.9, -13.4); g.lineTo(-.9, -13.4); g.closePath(); g.fill();
+  const cab = g.createRadialGradient(-.6, -15.2, .3, 0, -14.6, 2.2); cab.addColorStop(0, bh); cab.addColorStop(.5, br); cab.addColorStop(1, bo);
+  g.fillStyle = cab; g.beginPath(); g.ellipse(0, -14.7, 1.35, 1.65, 0, 0, 7); g.fill();
+  g.fillStyle = bo; g.beginPath(); g.ellipse(.1, -15.8, 1.4, .8, 0, Math.PI * .95, Math.PI * 2.05); g.fill(); g.fillRect(.9, -15.2, .45, 1.4); // cabello y patilla
+  // Luz del bronce en el borde izquierdo de la figura.
+  g.strokeStyle = 'rgba(210,235,215,.55)'; g.lineWidth = .3; g.beginPath(); g.moveTo(-1.9, -12.2); g.lineTo(-2.45, -5.6); g.stroke(); g.beginPath(); g.moveTo(-1.5, -6); g.lineTo(-1.6, -.6); g.stroke();
+  g.restore();
+  reja(-.24, .24, .24, .24); reja(.24, -.24, .24, .24); // lados de adelante
+}
 // Busto de bronce sobre un pedestal alto (como los de las plazas de verdad), con su pie en (x, y).
 function estatua(g, x, y) {
   g.save(); g.translate(x, y); g.scale(.68, .68); // a escala humana (antes era más alta que las casas)
@@ -901,12 +954,11 @@ function plazaN(g, n) {
   const C = Q(0, 0);
   if (n === 1) cruzDePiedra(g, C[0], C[1], 1);
   else if (n === 2) pilaPlaza(g, C[0], C[1], 8.5, 13);
-  else { pilaPlaza(g, C[0], C[1] + 3, 11, 3); estatua(g, C[0], C[1] - 1); }
+  else monumentoProcer(g, C[0], C[1]);
   { const q = Q(s - .14, -s + .14); arbolito(g, q[0], q[1], .95, '#5E8B42'); } // esquina izquierda
   { const q = Q(s - .12, -.2); bancoMadera(g, q[0], q[1]); }
   if (n >= 2) { const q = Q(-.2, s - .12); bancoMadera(g, q[0], q[1]); const fr = Q(.14, s - .1); farol(g, fr[0], fr[1], 12); } // orilla de adelante a la derecha
   cantero(s - .14, s - .2, n >= 2);
-  if (n >= 3) { const m = Q(.36, -.36); maceta(g, m[0], m[1]); }
 }
 
 // Estadio de cuatro épocas: graderías en dos lados, la cancha de pasto y el borde de entrada.
