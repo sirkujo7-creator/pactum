@@ -5,6 +5,7 @@ import { mulberry, lienzo } from './acuarela.js';
 import { recetasFlora } from './flora.js';
 import { recetasFauna } from './fauna.js';
 import { RES_HOJA, ES_CELULAR } from './fresco.js';
+import { enAgua } from './aguas.js';
 
 const ESCALA = RES_HOJA;
 // Un solo sol, arriba a la izquierda: la sombra de algo de alto h cae h·x a la derecha y h·y hacia abajo.
@@ -117,14 +118,14 @@ export function colocarNaturaleza(T, mapa) {
       const grupos = Math.max(1, Math.round(n / 2.5));
       for (let gq = 0; gq < grupos; gq++) {
         const cr = t.r + .25 + R() * .5, cc = t.c + .25 + R() * .5, an = R() * Math.PI, L = .5 + R() * .25, k = 3 + (R() < .4 ? 1 : 0);
-        for (let j = 0; j < k; j++) { const u = j / (k - 1) - .5, tam = j === 0 ? 1.1 : j === k - 1 && k > 2 ? .55 : .75 + R() * .3; objs.push(variar({ k: 'guadua', i, r: cr + Math.sin(an) * u * L + (R() - .5) * .14, c: cc + Math.cos(an) * u * L + (R() - .5) * .14, s: TAM.guadua * tam * (.9 + R() * .2) }, R)); }
+        for (let j = 0; j < k; j++) { const u = j / (k - 1) - .5, tam = j === 0 ? 1.1 : j === k - 1 && k > 2 ? .55 : .75 + R() * .3, r = cr + Math.sin(an) * u * L + (R() - .5) * .14, c = cc + Math.cos(an) * u * L + (R() - .5) * .14; if (!enAgua(T, r, c, .12)) objs.push(variar({ k: 'guadua', i, r, c, s: TAM.guadua * tam * (.9 + R() * .2) }, R)); }
       }
     } else if (n > 0) {
       // Árboles repartidos sin encimarse (cada especie con su espacio), de tamaños distintos.
       const puestos = [];
       for (let j = 0, intentos = 0; j < n && intentos < n * 10; intentos++) {
         const k = typeof especie === 'function' ? especie() : especie, r = t.r + .1 + R() * .8, c = t.c + .1 + R() * .8, rad = RADIO[k] || .2;
-        if (puestos.some(o => Math.hypot(o.r - r, o.c - c) < (rad + o.rad) * .8)) continue;
+        if (puestos.some(o => Math.hypot(o.r - r, o.c - c) < (rad + o.rad) * .8) || enAgua(T, r, c, .15)) continue; // ni encimados ni en el agua
         puestos.push({ r, c, rad }); j++;
         const joven = R() < .22;
         objs.push(variar({ k, i, r, c, s: TAM[k] * (joven ? .6 + R() * .2 : .85 + R() * .3) }, R));

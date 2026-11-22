@@ -4,6 +4,7 @@ import { mulberry, clamp, shade, mix, saturar, poly, wash, blob, grano, lienzo }
 import { P, TW, TH, EL, alturaEn } from './iso.js';
 import { yeso, FR } from './fresco.js';
 import { C } from '../core/contenido.js';
+import { pintarAguas, lodoOrilla } from './aguas.js';
 
 export const LADO_SECTOR = 8;
 const BASE = -2.2; // profundidad de los costados del diorama
@@ -252,6 +253,10 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
 
   // Pie de la vegetación (pedido de Juan: que el suelo se enlace con los árboles): pasto alto, helechos, hojarasca
   // y sombra al pie de cada árbol, palma, guadua o frailejón de las casillas libres.
+  // Agua quieta y quebradas (recortadas a las casillas del sector, para que no se pinten dos veces en las uniones).
+  g.save(); g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip();
+  pintarAguas(g, T, k, opciones.mapa, dry);
+  g.restore();
   if (opciones.plantas && opciones.mapa) {
     const pies = [];
     for (const t of tiles) {
@@ -405,6 +410,9 @@ function sueloNatural(g, T, t, col, dry, rng) {
   // Pasto pintado a toquecitos (referencia de Juan): muchas hojitas cortas de varios verdes, primero las oscuras y
   // encima las claras, con la luz de arriba a la izquierda; se juntan en manchones y dejan ver algo del suelo.
   pintarPasto(g, T, t, dry, rng, pt, en);
+  // Lodo donde el ganado baja a beber junto al río, y charcos en los potreros después de las lluvias.
+  if (t.d < 2.4 && t.d > 1.2 && ['potrero', 'galeria', 'seco', 'arrozal'].includes(t.b)) lodoOrilla(g, T, t, rng, dry, pt);
+  if (dry < .4 && ['potrero', 'galeria', 'arrozal', 'ladera'].includes(t.b) && t.slope < .7 && rng() < (.42 - dry) * .7) { const p = en(); charco(g, p[0], p[1], 3 + rng() * 4, rng, '#7FA2A8'); }
 }
 const PALETAS = {};
 function tonosPasto(b, dry) {

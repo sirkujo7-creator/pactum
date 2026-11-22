@@ -6,6 +6,7 @@ const ARCHIVOS = [
   'index.html',
   'manifest.webmanifest',
   'src/arte/acuarela.js',
+  'src/arte/aguas.js',
   'src/arte/calles.js',
   'src/arte/casas.js',
   'src/arte/edificios.js',
