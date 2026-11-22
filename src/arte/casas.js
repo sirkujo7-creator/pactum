@@ -24,10 +24,10 @@ const K = {
 // rojo, verde u oxidado), pizarra, teja vidriada y paja. Cada uno con su color, su luz, su sombra y sus líneas.
 const MAT = {
   teja: {}, tejaVieja: { teja: '#A04A2E', luz: '#B85A38', osc: '#7A3220' }, tejaNueva: { teja: '#C8683A', luz: '#DA7E4A', osc: '#9A4A26' }, tejaParda: { teja: '#9E5A3C', luz: '#B46C48', osc: '#74402A' },
-  zinc: { teja: '#9AA4A8', luz: '#B8C0C2', osc: '#78828A', linea: '#5E686E' }, zincRojo: { teja: '#A8443A', luz: '#BE5A4C', osc: '#7E2E26', linea: '#6A2620' },
-  zincVerde: { teja: '#5E7A52', luz: '#76925E', osc: '#44583C', linea: '#344630' }, zincOxido: { teja: '#9C6A48', luz: '#B07E58', osc: '#744C32', linea: '#5E3A24' },
-  pizarra: { teja: '#5E646C', luz: '#747A82', osc: '#454A52', linea: '#2E3238' }, vidriada: { teja: '#3E7A5A', luz: '#58946E', osc: '#2C5A42', linea: '#204432' },
-  paja: { teja: '#C2A15E', luz: '#D6B874', osc: '#94763E', linea: '#7E6232' }
+  zinc: { tipo: 'lamina', teja: '#9AA4A8', luz: '#B8C0C2', osc: '#78828A', linea: '#5E686E' }, zincRojo: { tipo: 'lamina', teja: '#A8443A', luz: '#BE5A4C', osc: '#7E2E26', linea: '#6A2620' },
+  zincVerde: { tipo: 'lamina', teja: '#5E7A52', luz: '#76925E', osc: '#44583C', linea: '#344630' }, zincOxido: { tipo: 'lamina', teja: '#9C6A48', luz: '#B07E58', osc: '#744C32', linea: '#5E3A24' },
+  pizarra: { tipo: 'lamina', teja: '#5E646C', luz: '#747A82', osc: '#454A52', linea: '#2E3238' }, vidriada: { teja: '#3E7A5A', luz: '#58946E', osc: '#2C5A42', linea: '#204432' },
+  paja: { tipo: 'paja', teja: '#C2A15E', luz: '#D6B874', osc: '#94763E', linea: '#7E6232' }
 };
 const ZOCALO = ['#2F5D8A', '#3E6B4A', '#8E2F22', '#B07A2A'], CARPINTERIA = ['#3E6B4A', '#8E2F22', '#2F5D8A', '#6E4529'];
 
@@ -56,11 +56,42 @@ function muros(g, F, col, zocalo, op = {}) {
   rellena(g, F.izq, grad(g, 0, p0[1], 0, p3[1], [[0, mezcla(col, '#000000', .1)], [.25, col], [1, col]]));
   rellena(g, F.der, grad(g, 0, q0[1], 0, q3[1], [[0, mezcla(col, '#000000', .24)], [.3, mezcla(col, '#000000', .14)], [1, mezcla(col, '#000000', .14)]]));
   if (op.ladrillo) hiladas(g, F);
+  textura(g, F, col, op);
   if (zocalo) {
     const zh = Math.min(5, F.H * .2);
     rellena(g, [F.en('izq', 0, 0), F.en('izq', 1, 0), F.en('izq', 1, zh), F.en('izq', 0, zh)], zocalo, null);
     rellena(g, [F.en('der', 0, 0), F.en('der', 1, 0), F.en('der', 1, zh), F.en('der', 0, zh)], mezcla(zocalo, '#000000', .25), null);
+    g.strokeStyle = 'rgba(255,240,215,.5)'; g.lineWidth = .45; g.beginPath(); g.moveTo(...F.en('izq', 0, zh)); g.lineTo(...F.en('izq', 1, zh)); g.stroke(); // bocel del zócalo
+    g.strokeStyle = 'rgba(30,18,10,.3)'; g.beginPath(); g.moveTo(...F.en('der', 0, zh)); g.lineTo(...F.en('der', 1, zh)); g.stroke();
   }
+  esquina(g, F);
+}
+// Textura del muro: la cal no es lisa (manchas de pañete, encalado viejo y repisado), más oscuro junto al suelo
+// (salpique de la lluvia y oclusión) y un poco más claro arriba, donde da el sol.
+function textura(g, F, col, op = {}) {
+  const R = mulberry(Math.round(F.H * 37 + (F.b - F.a) * 911 + (F.f - F.t) * 577));
+  for (const cara of ['izq', 'der']) {
+    g.save(); poli(g, F[cara]); g.clip();
+    const n = Math.round(14 + (F.b - F.a) * 20);
+    for (let k = 0; k < n; k++) {
+      const p = F.en(cara, R(), R() * F.H), rx = 1.5 + R() * 4, ry = .8 + R() * 2.2;
+      g.fillStyle = R() < .55 ? `rgba(120,96,64,${.025 + R() * .035})` : `rgba(255,252,240,${.04 + R() * .05})`;
+      g.beginPath(); g.ellipse(p[0], p[1], rx, ry, (R() - .5) * .6, 0, 7); g.fill();
+    }
+    if (!op.ladrillo) { g.strokeStyle = 'rgba(110,86,60,.12)'; g.lineWidth = .3; for (let k = 0; k < 4; k++) { const u = R(), z = R() * F.H, a = F.en(cara, u, z); g.beginPath(); g.moveTo(...a); g.lineTo(a[0] + (R() - .5) * 2, a[1] + 1.5 + R() * 2.5); g.lineTo(a[0] + (R() - .5) * 3, a[1] + 3 + R() * 3); g.stroke(); } } // grietas finas
+    const b0 = F.en(cara, 0, 0), b1 = F.en(cara, 0, Math.min(F.H, 7)), gr = g.createLinearGradient(0, b0[1], 0, b1[1]);
+    gr.addColorStop(0, 'rgba(60,42,24,.32)'); gr.addColorStop(1, 'rgba(60,42,24,0)'); g.fillStyle = gr; poli(g, F[cara]); g.fill();
+    g.restore();
+  }
+  void col;
+}
+// Arista de la esquina: canto con luz en la fachada y filo oscuro en el costado; la casa deja de ser una caja plana.
+function esquina(g, F) {
+  const a = F.en('izq', 1, 0), b = F.en('izq', 1, F.H);
+  g.strokeStyle = 'rgba(255,250,235,.55)'; g.lineWidth = .8; g.beginPath(); g.moveTo(a[0] - .5, a[1]); g.lineTo(b[0] - .5, b[1]); g.stroke();
+  g.strokeStyle = 'rgba(40,24,12,.3)'; g.lineWidth = .6; g.beginPath(); g.moveTo(a[0] + .45, a[1]); g.lineTo(b[0] + .45, b[1]); g.stroke();
+  const gr = g.createLinearGradient(a[0], 0, a[0] + 6, 0); gr.addColorStop(0, 'rgba(30,18,10,.12)'); gr.addColorStop(1, 'rgba(30,18,10,0)');
+  g.save(); poli(g, F.der); g.clip(); g.fillStyle = gr; poli(g, F.der); g.fill(); g.restore();
 }
 // Hiladas de ladrillo: líneas horizontales y llagas alternadas.
 function hiladas(g, F) {
@@ -80,12 +111,28 @@ function ventana(g, F, cara, u, z, ancho, alto, color, op = {}) {
   capturarQuad(g, [F.en(cara, u - ancho / 2, z), F.en(cara, u + ancho / 2, z), F.en(cara, u + ancho / 2, z + alto), F.en(cara, u - ancho / 2, z + alto)]);
   if (op.marco) hueco(g, F, cara, u - ancho / 2 - .02, u + ancho / 2 + .02, z - .8, z + alto + .8, op.marco);
   hueco(g, F, cara, u - ancho / 2, u + ancho / 2, z, z + alto, op.vidrio || '#3A2A1E');
+  hondura(g, F, cara, u - ancho / 2, u + ancho / 2, z, z + alto);
   if (op.postigos !== false) { hueco(g, F, cara, u - ancho / 2 - ancho * .45, u - ancho / 2, z, z + alto, color); hueco(g, F, cara, u + ancho / 2, u + ancho / 2 + ancho * .45, z, z + alto, color); }
   g.strokeStyle = op.vidrio ? 'rgba(255,255,255,.55)' : 'rgba(30,20,15,.7)'; g.lineWidth = .4;
   for (let k = 1; k < (op.vidrio ? 2 : 4); k++) { const a = F.en(cara, u - ancho / 2 + ancho * k / (op.vidrio ? 2 : 4), z), b = F.en(cara, u - ancho / 2 + ancho * k / (op.vidrio ? 2 : 4), z + alto); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
 }
+// Hondura de un vano: el muro es grueso, así que arriba (dintel) y del lado contrario al sol el vano hace sombra
+// adentro, y abajo sale un alféizar con luz.
+function hondura(g, F, cara, u0, u1, z0, z1, alfeizar = true) {
+  const e = .022, dz = Math.min(1.4, (z1 - z0) * .2);
+  g.fillStyle = 'rgba(20,12,6,.45)'; poli(g, [F.en(cara, u0, z1), F.en(cara, u1, z1), F.en(cara, u1, z1 - dz), F.en(cara, u0, z1 - dz)]); g.fill();
+  const lado = cara === 'izq' ? [u1 - e, u1] : [u1 - e, u1];
+  g.fillStyle = 'rgba(20,12,6,.32)'; poli(g, [F.en(cara, lado[0], z0), F.en(cara, lado[1], z0), F.en(cara, lado[1], z1), F.en(cara, lado[0], z1)]); g.fill();
+  if (alfeizar) {
+    rellena(g, [F.en(cara, u0 - e, z0), F.en(cara, u1 + e, z0), F.en(cara, u1 + e, z0 - .8), F.en(cara, u0 - e, z0 - .8)], cara === 'izq' ? '#F2EADB' : '#CFC3AE', 'rgba(60,40,25,.35)', .3);
+    g.fillStyle = 'rgba(40,24,12,.18)'; poli(g, [F.en(cara, u0, z0 - .8), F.en(cara, u1, z0 - .8), F.en(cara, u1, z0 - 2.6), F.en(cara, u0, z0 - 2.6)]); g.fill();
+  }
+}
 function puerta(g, F, cara, u, ancho, alto, color, arco = true) {
   hueco(g, F, cara, u - ancho / 2, u + ancho / 2, 0, alto, color, arco);
+  hondura(g, F, cara, u - ancho / 2, u + ancho / 2, 0, alto, false);
+  { const a = F.en(cara, u - ancho / 2 - .03, 0), b = F.en(cara, u + ancho / 2 + .03, 0); rellena(g, [a, b, [b[0], b[1] + 1.2], [a[0], a[1] + 1.2]], '#9A9284', 'rgba(50,40,30,.4)', .3); } // umbral de piedra
+  g.strokeStyle = 'rgba(30,18,10,.35)'; g.lineWidth = .35; for (const f of [.25, .75]) { const p = F.en(cara, u - ancho / 2 + ancho * f - ancho * .12, alto * .2), q = F.en(cara, u - ancho / 2 + ancho * f + ancho * .12, alto * .2), r = F.en(cara, u - ancho / 2 + ancho * f + ancho * .12, alto * .55), t = F.en(cara, u - ancho / 2 + ancho * f - ancho * .12, alto * .55); poli(g, [p, q, r, t]); g.stroke(); } // tableros de la puerta
   const a = F.en(cara, u, 0), b = F.en(cara, u, alto); g.strokeStyle = 'rgba(30,20,15,.5)'; g.lineWidth = .4; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
   g.fillStyle = '#C9A24A'; const m = F.en(cara, u + ancho * .3, alto * .45); g.beginPath(); g.arc(m[0], m[1], .45, 0, 7); g.fill();
 }
@@ -100,38 +147,114 @@ function balcon(g, F, u0, u1, z, sal, col) {
   g.strokeStyle = K.maderaOsc; g.lineWidth = 1; g.beginPath(); g.moveTo(...P(f + sal, a, z0 + 5)); g.lineTo(...P(f + sal, b, z0 + 5)); g.stroke();
   g.lineWidth = .7; for (let k = 0; k <= 3; k++) { const c = a + (b - a) * k / 3; g.beginPath(); g.moveTo(...P(f, c, z0 - 2)); g.lineTo(...P(f + sal, c, z0 - 1.2)); g.stroke(); }
 }
-function tejas(g, en, n, linea = K.tejaLinea) {
-  g.save(); g.strokeStyle = linea; g.globalAlpha = .55; g.lineWidth = .45;
-  for (let k = 1; k < n; k++) { const u = k / n; g.beginPath(); g.moveTo(...en(u, 0)); g.lineTo(...en(u, 1)); g.stroke(); }
-  g.globalAlpha = .3;
-  for (let j = 1; j < 5; j++) { const v = j / 5; g.beginPath(); for (let k = 0; k <= n; k++) { const p = en(k / n, v); k ? g.lineTo(p[0], p[1] + (k % 2 ? .5 : 0)) : g.moveTo(...p); } g.stroke(); }
+// Tejas con relieve (pedido de Juan: «las casas parecen de juguete»): teja de barro en canales, cada canal con
+// su luz a la izquierda y su sombra a la derecha (el sol arriba a la izquierda), el labio redondo de cada hilada que
+// hace sombra sobre la de abajo, las bocas oscuras de las tejas en el alero, un tono distinto en cada teja y algo de
+// musgo y hollín. La lámina de zinc va acanalada y la paja en mechones. Se pinta con capas transparentes encima del
+// color del techo, así sirve para cualquier tono.
+function tejas(g, en, n, linea = K.tejaLinea, tipo = 'teja') {
+  const R = mulberry(Math.round(n * 131 + en(.37, .61)[0] * 7 + en(.37, .61)[1] * 13));
+  const largo = Math.hypot(en(.5, 1)[0] - en(.5, 0)[0], en(.5, 1)[1] - en(.5, 0)[1]);
+  const quad = (u0, u1, v0, v1) => { g.beginPath(); g.moveTo(...en(u0, v0)); g.lineTo(...en(u1, v0)); g.lineTo(...en(u1, v1)); g.lineTo(...en(u0, v1)); g.closePath(); };
+  g.save();
+  if (tipo === 'lamina') { // zinc o pizarra lisa: canales finos y traslapos
+    const c = Math.max(8, Math.round(n * 2.6));
+    for (let k = 0; k < c; k++) { const u0 = k / c, u1 = (k + .45) / c; g.fillStyle = 'rgba(255,255,255,.16)'; quad(u0, u1, 0, 1); g.fill(); g.fillStyle = 'rgba(0,0,0,.14)'; quad(u1, (k + .8) / c, 0, 1); g.fill(); }
+    g.strokeStyle = linea; g.globalAlpha = .45; g.lineWidth = .4;
+    for (let v = .34; v < 1; v += .33) { g.beginPath(); g.moveTo(...en(0, v)); g.lineTo(...en(1, v)); g.stroke(); }
+    g.globalAlpha = 1; for (let k = 0; k < 3; k++) { const u = R(), v = R() * .8; g.fillStyle = 'rgba(120,70,40,.18)'; quad(u, Math.min(1, u + .08), v, v + .2); g.fill(); } // óxido
+    g.restore(); return;
+  }
+  if (tipo === 'paja') { // mechones de paja que caen hacia el alero
+    const filas = Math.max(4, Math.round(largo / 3));
+    g.lineCap = 'round';
+    for (let j = 0; j < filas; j++) for (let k = 0; k < n * 4; k++) {
+      const u = (k + R()) / (n * 4), v = (j + R() * .4) / filas, a = en(u, v + .9 / filas), b = en(u + (R() - .5) * .02, v);
+      g.strokeStyle = R() < .5 ? 'rgba(255,240,190,.32)' : 'rgba(80,55,20,.3)'; g.lineWidth = .5 + R() * .4; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+    }
+    g.fillStyle = 'rgba(60,40,15,.25)'; quad(0, 1, 0, .06); g.fill();
+    g.restore(); return;
+  }
+  const cols = Math.max(5, Math.round(n * 1.5)), filas = Math.max(3, Math.round(largo / 5.2));
+  for (let j = 0; j < filas; j++) {
+    const v0 = j / filas, v1 = (j + 1) / filas;
+    for (let k = 0; k < cols; k++) {
+      const u0 = k / cols, u1 = (k + 1) / cols, w = u1 - u0;
+      const t = R(); g.fillStyle = t < .3 ? `rgba(70,25,10,${.06 + R() * .1})` : t < .55 ? `rgba(255,220,180,${.05 + R() * .08})` : 'rgba(0,0,0,0)'; quad(u0, u1, v0, v1); g.fill(); // cada teja con su tono
+      g.fillStyle = 'rgba(255,228,196,.3)'; quad(u0 + w * .12, u0 + w * .42, v0, v1); g.fill(); // lomo con luz
+      g.fillStyle = 'rgba(60,18,8,.3)'; quad(u0 + w * .66, u1, v0, v1); g.fill();          // costado en sombra
+      g.fillStyle = 'rgba(40,12,4,.35)'; quad(u1 - w * .06, u1 + w * .04, v0, v1); g.fill(); // junta entre canales
+      if (R() < .05) { g.fillStyle = 'rgba(80,96,50,.35)'; quad(u0, u1, v0, v0 + (v1 - v0) * .6); g.fill(); } // musgo
+    }
+    // Labio redondo de la hilada de arriba: sombra que cae sobre esta y borde con luz.
+    if (j > 0) for (let k = 0; k < cols; k++) {
+      const u0 = k / cols, u1 = (k + 1) / cols, um = (u0 + u1) / 2, dv = v1 - v0;
+      const A = en(u0, v0), B = en(u1, v0), M = en(um, v0 - dv * .26), S1 = en(u1, v0 - dv * .16), S0 = en(u0, v0 - dv * .16);
+      g.fillStyle = 'rgba(50,15,6,.34)'; g.beginPath(); g.moveTo(...S0); g.quadraticCurveTo(...en(um, v0 - dv * .4), ...S1); g.lineTo(...B); g.quadraticCurveTo(...M, ...A); g.closePath(); g.fill();
+      g.strokeStyle = 'rgba(255,214,170,.42)'; g.lineWidth = .35; g.beginPath(); g.moveTo(...A); g.quadraticCurveTo(...M, ...B); g.stroke();
+    }
+  }
+  // Bocas de las tejas en el alero.
+  for (let k = 0; k < cols; k++) { const u0 = k / cols, u1 = (k + 1) / cols, A = en(u0 + .1 / cols, 0), B = en(u1 - .1 / cols, 0), M = en((u0 + u1) / 2, -.5 / filas); g.fillStyle = 'rgba(40,12,5,.6)'; g.beginPath(); g.moveTo(...A); g.quadraticCurveTo(...M, ...B); g.closePath(); g.fill(); }
   g.restore();
+}
+// Techo de teja a dos aguas, cumbrera a lo largo de c. sale: cuánto avanza el alero del frente (corredor).
+// Sombra del alero sobre el muro (franja oscura que se desvanece hacia abajo): da el volumen del techo volado.
+function sombraAlero(g, F, cara, alto = 5) {
+  const H = F.H, a = F.en(cara, 0, H), b = F.en(cara, 1, H), c = F.en(cara, 1, H - alto), d = F.en(cara, 0, H - alto);
+  const gr = g.createLinearGradient(0, a[1], 0, d[1]); gr.addColorStop(0, 'rgba(40,24,12,.42)'); gr.addColorStop(.45, 'rgba(40,24,12,.16)'); gr.addColorStop(1, 'rgba(40,24,12,0)');
+  g.fillStyle = gr; poli(g, [a, b, c, d]); g.fill();
+}
+// Canecillos: puntas de las vigas de madera bajo el alero, como en las casas coloniales.
+function canecillos(g, r, a, b, z, n) {
+  g.lineCap = 'butt';
+  for (let k = 0; k <= n; k++) { const c = a + (b - a) * (k + .5) / (n + 1), p = P(r, c, z), q = P(r - .07, c, z + .6); g.strokeStyle = K.maderaOsc; g.lineWidth = 1.1; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); g.strokeStyle = 'rgba(255,220,170,.35)'; g.lineWidth = .35; g.beginPath(); g.moveTo(p[0] - .4, p[1]); g.lineTo(q[0] - .4, q[1]); g.stroke(); }
 }
 // Techo de teja a dos aguas, cumbrera a lo largo de c. sale: cuánto avanza el alero del frente (corredor).
 function dosAguas(g, F, rh, op = {}) {
   const o = .08, sale = op.sale || 0, a = F.a - o, b = F.b + o, f = F.f + o + sale, t = F.t - o, m = (F.f + F.t) / 2, H = F.z0 + F.H;
-  const teja = op.teja || K.teja, luz = op.luz || K.tejaLuz, osc = op.osc || K.tejaSombra;
+  const teja = op.teja || K.teja, luz = op.luz || K.tejaLuz, osc = op.osc || K.tejaSombra, tipo = op.tipo || 'teja';
+  if (!op.sinAlero) sombraAlero(g, F, 'izq', sale ? 9 : 5);
   rellena(g, [P(F.f, F.b, H), P(F.t, F.b, H), P(m, F.b, H + rh * .92)], op.hastial || K.calSombra);
+  { const gr = g.createLinearGradient(...P(m, F.b, H + rh), ...P(F.f, F.b, H)); gr.addColorStop(0, 'rgba(40,24,12,.3)'); gr.addColorStop(.35, 'rgba(40,24,12,0)'); g.fillStyle = gr; poli(g, [P(F.f, F.b, H), P(F.t, F.b, H), P(m, F.b, H + rh * .92)]); g.fill(); } // sombra del vuelo en el hastial
   rellena(g, [P(m, a, H + rh), P(m, b, H + rh), P(t, b, H), P(t, a, H)], osc);
   const zf = H - (sale ? rh * sale / (F.f - m + o) : 0), faldon = [P(f, a, zf), P(f, b, zf), P(m, b, H + rh), P(m, a, H + rh)];
+  if (!op.sinAlero && tipo !== 'paja') canecillos(g, f - .02, a + .02, b - .02, zf - 1.6, Math.round((b - a) * 11));
   rellena(g, faldon, grad(g, 0, faldon[0][1], 0, faldon[3][1], [[0, teja], [1, luz]]));
-  tejas(g, (u, v) => P(f + (m - f) * v, a + (b - a) * u, zf + (H + rh - zf) * v), Math.round((b - a) * 9), op.linea);
+  tejas(g, (u, v) => P(f + (m - f) * v, a + (b - a) * u, zf + (H + rh - zf) * v), Math.round((b - a) * 9), op.linea, tipo);
+  // Grosor del alero (canto del techo) y tapa del borde en el hastial.
+  rellena(g, [P(f, a, zf), P(f, b, zf), P(f, b, zf - 1.3), P(f, a, zf - 1.3)], mezcla(osc, '#000000', .25), null);
+  g.strokeStyle = mezcla(osc, '#000000', .3); g.lineWidth = 1.2; g.lineCap = 'round'; g.beginPath(); g.moveTo(...P(f, b, zf - .6)); g.lineTo(...P(m, b, H + rh - .4)); g.stroke();
+  g.strokeStyle = 'rgba(255,220,180,.35)'; g.lineWidth = .4; g.beginPath(); g.moveTo(...P(f, a, zf)); g.lineTo(...P(f, b, zf)); g.stroke();
+  // Cumbrera: tejas puestas al revés, en fila, con su luz.
   rellena(g, [P(m + .02, a, H + rh + .8), P(m + .02, b, H + rh + .8), P(m - .02, b, H + rh - .4), P(m - .02, a, H + rh - .4)], osc, null);
+  if (tipo === 'teja') { const nn = Math.round((b - a) * 14); for (let k = 0; k < nn; k++) { const c = a + (b - a) * (k + .5) / nn, q = P(m + .01, c, H + rh + .5); g.fillStyle = mezcla(teja, '#000000', .15); g.beginPath(); g.ellipse(q[0], q[1], 1.5, 1, -.46, 0, 7); g.fill(); g.fillStyle = 'rgba(255,220,180,.4)'; g.beginPath(); g.ellipse(q[0] - .4, q[1] - .35, .8, .4, -.46, 0, 7); g.fill(); } }
   return zf;
 }
 // Techo de cuatro aguas (casa esquinera): cumbrera corta en el centro.
+// Techo de cuatro aguas (casa esquinera): cumbrera corta en el centro.
 function cuatroAguas(g, F, rh, op = {}) {
   const o = .08, a = F.a - o, b = F.b + o, f = F.f + o, t = F.t - o, m = (F.f + F.t) / 2, H = F.z0 + F.H, k = (b - a) * .28;
-  const teja = op.teja || K.teja, luz = op.luz || K.tejaLuz, osc = op.osc || K.tejaSombra;
+  const teja = op.teja || K.teja, luz = op.luz || K.tejaLuz, osc = op.osc || K.tejaSombra, tipo = op.tipo || 'teja';
+  if (!op.sinAlero) { sombraAlero(g, F, 'izq', 5); sombraAlero(g, F, 'der', 5); }
   const A = P(m, a + k, H + rh), B = P(m, b - k, H + rh);
   rellena(g, [P(t, a, H), P(t, b, H), B, A], osc);
+  if (!op.sinAlero && tipo !== 'paja') canecillos(g, f - .02, a + .02, b - .02, H - 1.6, Math.round((b - a) * 11));
   const frente = [P(f, a, H), P(f, b, H), B, A];
   rellena(g, frente, grad(g, 0, frente[0][1], 0, A[1], [[0, teja], [1, luz]]));
-  tejas(g, (u, v) => { const c0 = a + (a + k - a) * v, c1 = b + (b - k - b) * v; return P(f + (m - f) * v, c0 + (c1 - c0) * u, H + rh * v); }, Math.round((b - a) * 9));
+  g.save(); poli(g, frente); g.clip();
+  tejas(g, (u, v) => { const c0 = a + (a + k - a) * v, c1 = b + (b - k - b) * v; return P(f + (m - f) * v, c0 + (c1 - c0) * u, H + rh * v); }, Math.round((b - a) * 9), op.linea, tipo);
+  g.restore();
   const lado = [P(f, b, H), P(t, b, H), B];
   rellena(g, lado, grad(g, lado[0][0], 0, lado[1][0], 0, [[0, osc], [1, teja]]));
-  tejas(g, (u, v) => { const r0 = f + (t - f) * u; return P(r0 + (m - r0) * v, b + (b - k - b) * v, H + rh * v); }, Math.round((f - t) * 9));
-  g.strokeStyle = osc; g.lineWidth = 1; g.beginPath(); g.moveTo(...A); g.lineTo(...B); g.stroke();
+  g.save(); poli(g, lado); g.clip();
+  tejas(g, (u, v) => { const r0 = f + (t - f) * u; return P(r0 + (m - r0) * v, b + (b - k - b) * v, H + rh * v); }, Math.round((f - t) * 9), op.linea, tipo);
+  g.fillStyle = 'rgba(30,12,6,.18)'; poli(g, lado); g.fill(); // el faldón del costado, más en sombra
+  g.restore();
+  rellena(g, [P(f, a, H), P(f, b, H), P(f, b, H - 1.3), P(f, a, H - 1.3)], mezcla(osc, '#000000', .25), null);
+  rellena(g, [P(f, b, H), P(t, b, H), P(t, b, H - 1.3), P(f, b, H - 1.3)], mezcla(osc, '#000000', .4), null);
+  g.strokeStyle = mezcla(osc, '#000000', .2); g.lineWidth = 1.4; g.lineCap = 'round'; g.beginPath(); g.moveTo(...P(f, b, H)); g.lineTo(...B); g.lineTo(...A); g.lineTo(...P(f, a, H)); g.stroke(); // limas y cumbrera
+  g.strokeStyle = 'rgba(255,220,180,.35)'; g.lineWidth = .4; g.beginPath(); g.moveTo(...P(f, b, H)); g.lineTo(...B); g.stroke();
 }
 // Terraza plana de concreto con pretil y tanque de agua.
 function terraza(g, F, col) {
