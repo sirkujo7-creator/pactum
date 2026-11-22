@@ -1,0 +1,17 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Pobladores</title>
+<style>body{margin:0;background:#E9E1CC;font:13px sans-serif;color:#3A2A1E}h1{font-size:15px;margin:8px 10px 2px}.f{display:flex;gap:4px;margin:0 10px 6px;flex-wrap:wrap}canvas{background:#B3BC82;border-radius:4px}</style></head>
+<body><div id="r"></div><script type="module">
+// Prueba de los pobladores en grande (?m=1 ropa moderna, ?z= escala, ?f= archivo de figura para comparar).
+const q = new URLSearchParams(location.search), mod = q.get('m') === '1', Z = +(q.get('z') || 7), src = q.get('f') || '../src/arte/gente.js';
+const { figura } = await import(src);
+const R = document.getElementById('r');
+for (const tipo of ['campesino', 'campesina', 'artesano', 'elite', 'nino', 'soldado', 'policia', 'armado']) {
+  const t = document.createElement('h1'); t.textContent = tipo + (mod ? ' (moderno)' : ''); R.appendChild(t);
+  const f = document.createElement('div'); f.className = 'f'; R.appendChild(f);
+  for (let vi = 0; vi < 3; vi++) for (const frente of [true, false]) {
+    const c = document.createElement('canvas'); c.width = 16 * Z; c.height = 34 * Z; const g = c.getContext('2d');
+    g.translate(8 * Z, 32 * Z); g.scale(Z, Z); figura(g, tipo, vi, frente, 0, mod); f.appendChild(c);
+    if (!frente) continue;
+  }
+}
+</script></body></html>
