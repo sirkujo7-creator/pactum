@@ -1,3 +1,3 @@
 // Versión visible del juego. Al publicar, cambiarla también en sw.js (CACHE).
-export const VERSION = '0.159.0';
-export const PASO = 'La logística se ve';
+export const VERSION = '0.160.0';
+export const PASO = 'Lo que tapa se aclara';
