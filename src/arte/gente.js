@@ -67,6 +67,7 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   if (pz && pz.sienta) {
     if ((pz.prop && pz.prop.k === 'banca') || pz.banca) PROPS.banca(g); // la banca de piedra va detrás de las piernas
     if ((pz.prop && pz.prop.k === 'cajon') || pz.banquito) PROPS.banquito(g); // sentado en su banquito
+    if (pz.silla) PROPS.sillaRecostada(g); // la silla inclinada contra la pared
     for (const hx of [1, -1]) { miembro(g, [hx, -6.4], [hx * 1.2 + 2.2, -5.8], [hx * 1.1 + 2.6, -.8], 1.75, hx > 0 ? shade(pantalon, -.18) : pantalon); elipse(g, hx * 1.1 + 3.1, -.4, 1.25, .65, zapato); }
   } else for (const i of orden) {
     const [hx, hy, Pp] = caderas[i], x = hx + Pp.x;
@@ -282,11 +283,11 @@ const GESTOS_ADULTO = { asentir: 3, barbilla: 3, senalar: 3, manos: 3, sombrero:
 const GESTOS_MUJER = { asentir: 3, barbilla: 3, senalar: 3, manos: 3, saludo: 3 };
 export const GESTOS = { campesino: Object.keys(GESTOS_ADULTO), campesina: Object.keys(GESTOS_MUJER), artesano: Object.keys(GESTOS_ADULTO), elite: Object.keys(GESTOS_ADULTO), nino: ['asentir', 'senalar', 'manos', 'saludo'] };
 export const ACCIONES = {
-  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4, machete: 4, regar: 3, ordenar: 2, tinto: 2, ...GESTOS_ADULTO },
-  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1, lavar: 4, tender: 3, gallinas: 4, tinto: 2, ...GESTOS_MUJER },
-  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, rezar: 4, sentado: 1, esperar: 1, tocar: 4, tinto: 2, ...GESTOS_ADULTO },
-  elite: { leer: 4, rezar: 4, periodico: 2, tinto: 2, ...GESTOS_ADULTO },
-  nino: { saltar: 6, leer: 4, lustrar: 4, balde: 1, trompo: 3, asentir: 3, senalar: 3, manos: 3, saludo: 3 }
+  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4, machete: 4, regar: 3, ordenar: 2, tinto: 2, sentarse: 2, migas: 3, jugarMesa: 3, recostado: 2, tejo: 4, sacarAgua: 4, ...GESTOS_ADULTO },
+  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1, lavar: 4, tender: 3, gallinas: 4, tinto: 2, sentarse: 2, migas: 3, sacarAgua: 4, huerta: 4, restregar: 4, ...GESTOS_MUJER },
+  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, rezar: 4, sentado: 1, esperar: 1, tocar: 4, tinto: 2, sentarse: 2, jugarMesa: 3, recostado: 2, tejo: 4, ...GESTOS_ADULTO },
+  elite: { leer: 4, rezar: 4, periodico: 2, tinto: 2, sentarse: 2, migas: 3, jugarMesa: 3, recostado: 2, ...GESTOS_ADULTO },
+  nino: { saltar: 6, leer: 4, lustrar: 4, balde: 1, trompo: 3, sentarse: 2, sacarAgua: 4, asentir: 3, senalar: 3, manos: 3, saludo: 3 }
 };
 const T2 = Math.PI * 2;
 // Postura de cada acción en el momento n de N: inclinación del cuerpo, posición de las manos y la herramienta.
@@ -328,6 +329,15 @@ function poseAccion(k, n, N) {
     case 'tender': { const k = n / (N - 1); return { lean: -.05 * k, L: [1.2 + k * 1.2, -15 - k * 11.6], R: [4 + k * 2.4, -15.4 - k * 10.8], prop: { k: 'sabana', k2: k } }; } // cuelga la ropa en la cuerda
     case 'gallinas': { const R = [[.4, -14.4], [-1, -15.4], [5.2, -16.6], [6, -15.2]][n]; return { lean: .05, L: [-.8, -13.6], R, prop: { k: 'maiz', n } }; } // echa maíz a las gallinas
     case 'trompo': { const R = [[-1.6, -24], [5.2, -13.4], [3.4, -12.6]][n]; return { lean: n === 2 ? .16 : n ? .1 : -.04, L: [-2.8, -13.4], R, prop: { k: 'trompo', n }, suelo: n === 2 ? 'trompoGira' : null }; }
+    // Con las cosas del pueblo (bancas, mesa de dominó, silla recostada, tejo, pozo, huerta, alberca).
+    case 'sentarse': return { lean: .03 + n * .02, lift: -5, sienta: true, L: [2.8, -11.2], R: [3.4, -10.9 + n * .2], prop: null }; // descansa en la banca
+    case 'migas': return { lean: .06, lift: -5, sienta: true, L: [1.6, -12.6], R: [[2.8, -12.2], [5.2, -11.4], [4, -12.4]][n], prop: { k: 'migas', n } }; // migas a las palomas
+    case 'jugarMesa': return { lean: .14, lift: -5, sienta: true, L: [4.6, -13.6], R: [[5, -13.4], [6.4, -14.4], [5.6, -13.8]][n], prop: { k: 'ficha', n } }; // pone la ficha en la mesa
+    case 'recostado': return { lean: -.2, lift: -5, sienta: true, silla: true, L: [1.4, -14.4], R: [2.2, -14 + n * .25], prop: null }; // la silla recostada contra la pared
+    case 'tejo': { const R = [[2.8, -16.6], [-2.4, -10.8], [6, -14.8], [5.4, -18.4]][n]; return { lean: [0, .12, .06, 0][n], L: [-3, -12.8], R, prop: n < 2 ? { k: 'tejo' } : null }; } // lanza el tejo por debajo
+    case 'sacarAgua': return { lean: .1, L: [3.2, -16.4 + s * 1.2], R: [4, -15.8 - s * 1.2], prop: null }; // da vuelta a la manivela del pozo
+    case 'huerta': return { lean: .32, lift: -6, sienta: true, L: [3.6, -9.6 - u * 1.2], R: [4.6, -9.2 - u * 1.8], prop: { k: 'manojo', u } }; // recoge cebolla y cilantro
+    case 'restregar': return { lean: .22, L: [3.2 + s * 1.2, -12.6], R: [4.4 + s * 1.2, -12.2], prop: { k: 'trapito' } }; // restriega la ropa en el lavadero
     case 'lustrar': return { lean: .18, lift: -6, sienta: true, L: [2.4 + s * 1.4, -11.6], R: [4 + c * 1.2, -11], prop: { k: 'cajon' } };
   }
   return { lean: 0, L: [-3, -12.8], R: [3, -12.8], prop: null };
@@ -404,6 +414,18 @@ const PROPS = {
     if (pz.prop.n === 2) { g.strokeStyle = '#C9B48A'; g.lineWidth = .3; g.beginPath(); g.moveTo(...pz.R); g.quadraticCurveTo(pz.R[0] + .8, pz.R[1] + 3, pz.R[0] + .3, pz.R[1] + 4); g.stroke(); return; } // la piola suelta
     const [x, y] = pz.R; g.fillStyle = '#B8452E'; g.beginPath(); g.moveTo(x - 1.1, y - .6); g.lineTo(x + 1.1, y - .6); g.lineTo(x, y + 1.6); g.closePath(); g.fill(); elipse(g, x, y - .6, 1.1, .45, '#D9A64A');
   },
+  migas(g, pz) { const L = pz.L; forma(g, [[L[0] - .9, L[1] - 1.2], [L[0] + .9, L[1] - 1.2], [L[0] + .8, L[1] + .8], [L[0] - .8, L[1] + .8]], '#E2D2A8', false); if (pz.prop.n === 1) { g.fillStyle = '#E8D9A8'; for (const [dx, dy] of [[1.2, 1], [2, 2.4], [.8, 3.4], [2.4, 4.4]]) { g.beginPath(); g.arc(pz.R[0] + dx, pz.R[1] + dy, .25, 0, 7); g.fill(); } } },
+  ficha(g, pz) { if (pz.prop.n === 1) forma(g, [[pz.R[0] - .3, pz.R[1] - .9], [pz.R[0] + .4, pz.R[1] - .9], [pz.R[0] + .4, pz.R[1] + .3], [pz.R[0] - .3, pz.R[1] + .3]], '#F4F1E8', false); },
+  tejo(g, pz) { elipse(g, pz.R[0] + .3, pz.R[1] - .2, 1, .55, '#5A5A60'); elipse(g, pz.R[0], pz.R[1] - .4, .5, .25, '#8A8A90'); },
+  manojo(g, pz) { if (pz.prop.u < .4) return; for (let k = 0; k < 4; k++) linea(g, [pz.R[0], pz.R[1]], [pz.R[0] - 1 + k * .6, pz.R[1] - 3.2], .35, k % 2 ? '#5E9A3E' : '#7AB04E'); },
+  trapito(g, pz) { forma(g, [[pz.R[0] - 1.2, pz.R[1] - .2], [pz.R[0] + 1.4, pz.R[1] - .4], [pz.R[0] + 1.6, pz.R[1] + 1], [pz.R[0] - 1, pz.R[1] + 1.2]], '#5F8FB0', false); },
+  sillaRecostada(g) { // taburete de cuero inclinado contra la pared de atrás: patas de adelante al aire
+    g.save(); g.translate(-1.2, 0); g.rotate(-.24);
+    linea(g, [-2.6, 0], [-2.4, -6.4], .8, MADERA); linea(g, [2, -1.2], [2, -6.4], .8, MADERA); // patas
+    forma(g, [[-3, -6.8], [2.6, -6.8], [2.6, -5.8], [-3, -5.8]], '#8A5A36', false); // asiento de cuero
+    linea(g, [-2.8, -6.6], [-3.2, -14.6], .8, MADERA); forma(g, [[-3.6, -14.8], [-2.6, -14.8], [-2.4, -10.4], [-3.4, -10.4]], '#8A5A36', false); // espaldar
+    g.restore();
+  },
   saco(g) { g.save(); g.translate(.6, -27.4); g.rotate(-.35); g.fillStyle = '#C9B48A'; g.beginPath(); g.ellipse(0, 0, 4.6, 2.9, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(80,55,30,.25)'; g.beginPath(); g.ellipse(1.6, .6, 3, 1.8, 0, 0, 7); g.fill(); g.strokeStyle = '#8A6A3A'; g.lineWidth = .4; g.beginPath(); g.moveTo(-4, -.2); g.lineTo(-5.4, -.6); g.stroke(); g.restore(); }
 };
 function brazosAccion(g, pz, manga, piel) {
@@ -445,6 +467,9 @@ const DIB_CARGA = {
   canastoV(g) { forma(g, [[-3.2, -29.4], [3.2, -29.4], [2.4, -26.6], [-2.4, -26.6]], '#B58A4E', false); elipse(g, 0, -29.4, 3.2, .7, '#5E4628'); g.strokeStyle = 'rgba(90,60,30,.5)'; g.lineWidth = .3; for (const y of [-28.4, -27.4]) { g.beginPath(); g.moveTo(-2.9, y); g.lineTo(2.9, y); g.stroke(); } },
   ropa(g) { elipse(g, 0, -27.6, 3.4, 1.6, '#ECE6D6'); elipse(g, -.8, -28.6, 2.4, 1.2, '#5F8FB0'); elipse(g, 1, -29.2, 1.8, .9, '#D9B54A'); },
   cantaro(g) { elipse(g, 0, -26.8, 1.8, .5, '#ECE6D6'); g.fillStyle = '#A85E3A'; g.beginPath(); g.ellipse(0, -29.4, 2.4, 2.2, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(60,30,15,.3)'; g.beginPath(); g.ellipse(.9, -29.2, 1.3, 1.9, 0, 0, 7); g.fill(); forma(g, [[-.9, -31.4], [.9, -31.4], [.7, -32.6], [-.7, -32.6]], '#94522F', false); elipse(g, 0, -32.6, .9, .3, '#5A3020'); },
+  raspado(g) { forma(g, [[2.4, -15.6], [4.4, -15.6], [4, -12.8], [2.8, -12.8]], '#F4F1E8', false); elipse(g, 3.4, -15.8, 1.2, .7, '#D8344A'); elipse(g, 3.1, -16.1, .5, .3, '#F2A0A8'); linea(g, [3.8, -16.6], [4.4, -18], .25, '#E8C840'); },
+  mazorca(g) { g.save(); g.translate(3.4, -15); g.rotate(-.9); elipse(g, 0, 0, 2.2, .85, '#E2B23C'); g.fillStyle = 'rgba(120,70,20,.5)'; for (let q = 0; q < 5; q++) g.fillRect(-1.6 + q * .7, -.4 + (q % 2) * .3, .35, .35); linea(g, [2, 0], [3.4, 0], .5, '#B49A5E'); g.restore(); },
+  bolsa(g) { forma(g, [[2.4, -15], [5, -15.2], [5.2, -11.4], [2.6, -11.2]], '#C9A878', false); forma(g, [[2.4, -15], [5, -15.2], [4.8, -14.4], [2.6, -14.2]], '#B08E60', false); },
   cuaderno(g) { forma(g, [[2.2, -16.4], [5.2, -16.9], [5.4, -12.6], [2.4, -12.1]], '#2F5D8A', false); forma(g, [[2.4, -16.1], [5, -16.5], [5.1, -16], [2.5, -15.6]], '#F2EDE0', false); }
 };
 let HOJA_C = null;

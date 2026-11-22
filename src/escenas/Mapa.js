@@ -31,6 +31,7 @@ import { Conflicto } from './Conflicto.js';
 import { Guerra } from './Guerra.js';
 import { Mitin } from './Mitin.js';
 import { Oficios } from './Oficios.js';
+import { Mobiliario } from './Mobiliario.js';
 import { Sonido } from './sonido.js';
 import { guardarYa, quiereSonido } from './memoria.js';
 
@@ -127,6 +128,7 @@ export class Mapa extends Phaser.Scene {
     this.frente = new Guerra(this); // la guerra con un vecino: frente, fogonazos, huida y heridos
     this.mitin = new Mitin(this); // el mitin de la oposición en la plaza
     this.oficios = new Oficios(this); // trabajadores con su oficio
+    this.mob = new Mobiliario(this); // bancas, carrito, tienda, dominó, tejo, pozo, huertas, columpio, mulas y palomas
     this.efectos.actualizar(); this.efectos.humoIncendio();
     this.posibles = this.add.graphics().setDepth(PROF_POSIBLES);
     this.capaCob = this.add.graphics().setDepth(PROF_POSIBLES - .5); // fase 2: capa de cobertura
@@ -645,6 +647,7 @@ export class Mapa extends Phaser.Scene {
     if (this.mitin) this.mitin.actualizar();
     if (this.logistica && this.logistica.firmaActual() !== this.logistica.firma) this.logistica.poner(); // fábricas nuevas: viajes nuevos
     if (this.oficios) this.oficios.actualizar();
+    if (this.mob) this.mob.actualizar();
     this.dibujarCobertura();
     const d = sequedad(this.S);
     // Fase 10: si los pisos térmicos subieron lo suficiente, se repinta el terreno (y el Nevado si perdió hielo).
@@ -721,6 +724,7 @@ export class Mapa extends Phaser.Scene {
     this.frente.update(Math.min(.05, delta / 1000));
     this.mitin.update(Math.min(.05, delta / 1000));
     this.oficios.update(Math.min(.05, delta / 1000));
+    this.mob.update(Math.min(.05, delta / 1000));
     if (this.vivas) this.vivas.update(Math.min(.05, delta / 1000), this.pob.nocheF || 0);
     this.cine.update(Math.min(.05, delta / 1000));
     // Niebla más espesa en las mañanas (fase 1).

@@ -20,9 +20,10 @@ const VAIVEN = new Set(['tender', 'tocar']);
 // Quien se sienta a tomar tinto o a leer el periódico casi no se mueve: un sorbo o una página cada tantos segundos.
 const PAUSADO = { tinto: [7, .25], periodico: [9, .3] };
 // Cuánto se queda cada quien en su lugar (segundos: mínimo y lo que puede sumar al azar).
-const ESPERA = { trabajo: [16, 16], plaza: [12, 14], juego: [9, 7], luto: [30, 25], busqueda: [30, 25], enfermo: [30, 25], protesta: [30, 25], desempleo: [30, 25], fila: [30, 25], lustrar: [30, 25], serenata: [30, 25], misa: [18, 10], mercadeo: [18, 10], agua: [10, 8], tinto: [20, 12], lavar: [18, 8], tender: [10, 6], gallinas: [9, 6], periodico: [22, 12], trompo: [10, 6], lleva: [.2, .5], futbol: [.3, 1], paseo: [.6, 1.2], tertulia: [15, 10], faroles: [14, 8], pila: [6, 4], alero: [12, 14], recoger: [3, 2], entrega: [4, 3] };
+const ESPERA = { trabajo: [16, 16], plaza: [12, 14], juego: [9, 7], luto: [30, 25], busqueda: [30, 25], enfermo: [30, 25], protesta: [30, 25], desempleo: [30, 25], fila: [30, 25], lustrar: [30, 25], serenata: [30, 25], misa: [18, 10], mercadeo: [18, 10], agua: [10, 8], tinto: [20, 12], lavar: [18, 8], tender: [10, 6], gallinas: [9, 6], periodico: [22, 12], trompo: [10, 6], lleva: [.2, .5], futbol: [.3, 1], paseo: [.6, 1.2], tertulia: [15, 10], faroles: [14, 8], pila: [6, 4], alero: [12, 14], recoger: [3, 2], entrega: [4, 3], banca: [18, 16], comprar: [3, 3], cliente: [3, 3], tienda: [14, 10], domino: [25, 20], mirarJuego: [12, 10], tejo: [20, 15], recostado: [20, 15], pozo: [7, 4], alberca: [14, 8], huerta: [12, 8], sombra: [14, 10], columpio: [10, 8], balancin: [10, 8] };
 // Lo que hace cada quien según el lugar al que llegó (además de los oficios del edificio).
-const HACE = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', tinto: 'tinto', lavar: 'lavar', tender: 'tender', gallinas: 'gallinas', periodico: 'periodico', trompo: 'trompo', pila: 'balde' };
+const HACE = { busqueda: 'foto', desempleo: 'sentado', fila: 'esperar', lustrar: 'lustrar', agua: 'balde', misa: 'rezar', serenata: 'tocar', tinto: 'tinto', lavar: 'lavar', tender: 'tender', gallinas: 'gallinas', periodico: 'periodico', trompo: 'trompo', pila: 'balde', domino: 'jugarMesa', recostado: 'recostado', tejo: 'tejo', pozo: 'sacarAgua', alberca: 'restregar', huerta: 'huerta' };
+const SOCIAL = new Set(['plaza', 'contento', 'tertulia', 'faroles', 'tienda', 'sombra', 'mirarJuego']);
 // Obras con alero donde la gente se resguarda de la lluvia.
 const SIN_ALERO = new Set(['cultivo', 'cafetal', 'parque', 'mina', 'cantera', 'fundacion', 'cementerio', 'cancha', 'estadio', 'acueducto']);
 const DURACION_DIA = 180; // segundos que dura un día completo
@@ -68,10 +69,11 @@ export class Pobladores {
     if (f.destino === 'enfermo' && tiene('rezar')) return 'rezar';
     if (f.destino === 'protesta' && tiene('saludo')) return 'protesta'; // brazo en alto, despacio
     // Voces del pueblo: los problemas se ven en la gente.
+    if (f.destino === 'banca') return f.accionMigas ? 'migas' : tiene('sentarse') ? 'sentarse' : null; // en la banca: descansa o les echa migas a las palomas
     const PROB = HACE[f.destino];
     if (PROB && tiene(PROB)) return PROB;
     // Conversar (pedido de Juan): de pie y tranquilos, con un gesto breve cada tantos segundos, y solo si hay alguien al lado.
-    if ((f.destino === 'plaza' || f.destino === 'contento' || f.destino === 'tertulia' || f.destino === 'faroles' || f.mira) && GESTOS[tipo] && this.vecino(f)) return 'social';
+    if ((SOCIAL.has(f.destino) || f.mira) && GESTOS[tipo] && this.vecino(f)) return 'social';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 12; // cambia de tarea cada rato
     // En la ganadería se ordeña de mañana y se desyerba el potrero el resto del día.
     const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
@@ -165,6 +167,8 @@ export class Pobladores {
     if (d > .82 && this.serenata(f)) return this.serenata(f);
     // De noche, un rato bajo los faroles de la plaza antes de entrar.
     if (d > .8 && d < .87 && !miedo && vocesActivas(S0) && Math.random() < .8) { const q = this.faroles(f); if (q) return q; }
+    // De noche, los señores se quedan un rato conversando frente a la tienda de la esquina.
+    if (d > .78 && d < .86 && !miedo && vocesActivas(S0) && p.tipo !== 'nino' && p.tipo !== 'campesina' && p.semilla > .4 && Math.random() < .5) { const q = this.usar('tienda', f); if (q) return q; }
     if (d > (miedo ? .68 : .8) || d < .08) { f.plan = null; return { ...this.centro(p.casa, .2), casa: true, carga: this.cargaACasa(f) }; }
     // Recados de varias partes (ir por tablas y volver al taller, lavar y luego tender…).
     if (f.plan && f.plan.length) { const q = f.plan.shift()(); if (q) return q; }
@@ -253,6 +257,19 @@ export class Pobladores {
     if (!vocesActivas(S)) return null;
     const rc = i => ({ r: Math.floor(i / N), c: i % N }), busca = k => S.map.findIndex(x => x.b === k && !x.ob);
     const b = p.trabajo !== null ? S.map[p.trabajo].b : null, casa = rc(p.casa), tarde = d > .6 && d < .78, manana = d > .26 && d < .45;
+    // Las cosas del pueblo (Mobiliario): la huerta, el pozo y la alberca de mañana; la sombra de los árboles al mediodía;
+    // la banca, el dominó, el tejo y la silla recostada en la tarde; el carrito y la tienda a cualquier hora del día.
+    const usar = (tipo, prob, filtro) => R < prob ? this.usar(tipo, f, filtro) : null; let q = null;
+    if (p.tipo === 'campesina' && manana && (q = usar('huerta', .35))) return q;
+    if ((p.tipo === 'campesina' || p.tipo === 'nino') && d < .5 && (q = usar('pozo', .3))) return q;
+    if (p.tipo === 'campesina' && manana && (q = usar('alberca', .25))) return q;
+    if (p.tipo !== 'nino' && d > .46 && d < .58 && (q = usar('sombra', .35))) return q;
+    if (d > .3 && d < .76 && (q = usar('comprar', .07))) return q;
+    if (p.tipo !== 'nino' && d > .3 && d < .7 && (q = usar('cliente', .07))) return q;
+    if ((p.tipo === 'campesino' || p.tipo === 'artesano' || p.tipo === 'elite') && d > .55 && d < .8) {
+      if ((q = usar('domino', .3)) || (q = usar('tejo', .25)) || (q = usar('mirarJuego', .15)) || (q = usar('recostado', .2))) return q;
+    }
+    if (d > .45 && d < .78 && p.tipo !== 'nino' && (q = usar('banca', .2))) return q;
     // El tinto de la tarde, sentados en la puerta de la casa.
     if (p.tipo !== 'nino' && tarde && p.semilla > .55 && p.semilla < .85 && R < .45) return { r: casa.r + 1.16, c: casa.c + .2 + (p.semilla - .55) * 2, lugar: 'tinto', mira: { r: casa.r + 4, c: casa.c + .6 } };
     if (p.tipo === 'campesina') {
@@ -282,10 +299,18 @@ export class Pobladores {
     }
     return null;
   }
+  // Toma un puesto de Mobiliario (banca, dominó, pozo…) y devuelve el destino para ir allá, o null.
+  usar(tipo, f, filtro) {
+    const mob = this.scene.mob; if (!mob) return null;
+    const q = mob.tomar(tipo, f, filtro); if (!q) return null;
+    return { r: q.r, c: q.c, lugar: tipo, frente: q.frente, voltear: q.voltear, mira: q.mira, luego: q.luego, palomas: q.palomas };
+  }
   // Juegos de los niños: ronda, trompo, la lleva (corren unos tras otros) y fútbol en la cancha detrás del balón.
   juego(f) {
     const S = this.scene.S, p = f.p, N = this.scene.T.N, R0 = this.ronda, k = (p.id + (this.dias || 0)) % 4;
     const can = S.map.findIndex(x => x.b === 'cancha' && !x.ob);
+    const mob = this.scene.mob;
+    if (mob && (p.id + (this.dias || 0)) % 3 === 0) { const q = this.usar('columpio', f) || this.usar('balancin', f); if (q) return q; } // columpio o balancín
     if (k === 3 && can >= 0) { const r = Math.floor(can / N), c = can % N, B = this.bal; const q = B && B.can === can ? { r: B.r + (Math.random() - .5) * .5, c: B.c + (Math.random() - .5) * .5 } : { r: r + .5, c: c + .5 }; return { r: clamp(q.r, r + .12, r + .88), c: clamp(q.c, c + .12, c + .88), lugar: 'futbol', prisa: true, can }; }
     if (!R0) return null;
     if (k === 1) { const an = p.semilla * 6.28; return { r: R0.r + Math.cos(an) * .5, c: R0.c + Math.sin(an) * .5, lugar: 'trompo' }; }
@@ -476,10 +501,12 @@ export class Pobladores {
         continue;
       }
       if (!f.ruta.length) {
+        if (this.scene.mob) this.scene.mob.soltar(f); // deja la banca, la mesa o el pozo que usaba
         const d = this.siguiente(f), r = this.ruta(f, d);
         if (!r) { f.espera = 3 + Math.random() * 4; continue; }
         f.ruta = r; f.aCasa = !!d.casa; f.prisa = !!d.prisa; f.destino = d.lugar; f.mira = null; f.miraLuego = d.mira || null; f.oculto = false; f.andado = 0;
         f.carga = d.carga !== undefined ? d.carga : (f.cargaLuego || null); f.cargaLuego = d.luego || null; f.lento = d.lugar === 'paseo'; f.can = d.can;
+        f.poseLuego = d.frente !== undefined ? { frente: d.frente, voltear: d.voltear } : null; f.accionMigas = !!d.palomas && f.p.semilla < .5 && !!(ACCIONES[f.p.tipo] || {}).migas;
       }
       const d = f.ruta[0], dr = d.r - f.r, dc = d.c - f.c, dist = Math.hypot(dr, dc);
       if (dist < .02) {
@@ -490,6 +517,7 @@ export class Pobladores {
           const E2 = b === 'mercado' ? [25, 20] : ESPERA[f.destino] || [3, 5];
           f.espera = E2[0] + Math.random() * E2[1];
           if (f.destino !== 'mercadeo') f.carga = null; // deja la carga al llegar (salvo el canasto de quien hace mercado)
+          if (f.poseLuego) { f.frente = f.poseLuego.frente; f.voltear = f.poseLuego.voltear; f.mira = null; } // sentado en la banca, frente a la mesa…
           f.mira = f.miraLuego;
           if (b === 'mercado') { f.frente = 1; f.voltear = f.p.semilla < .5; } // el vendedor mira a la calle
           if (f.aCasa) f.oculto = true;
@@ -553,7 +581,8 @@ export class Pobladores {
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
     const giro = 0; // sin vaivén (Juan lo vio raro)
-    f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(fr + fc + .01).setVisible(!f.oculto).setRotation(giro);
+    const juega = (f.destino === 'columpio' || f.destino === 'balancin') && this.scene.mob && this.scene.mob.enJuego(f); // lo dibuja Mobiliario
+    f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(fr + fc + .01).setVisible(!f.oculto && !juega).setRotation(giro);
     // Lo que lleva: leña, racimo, tablas, canasto en la cabeza… (y el bebé de algunas campesinas al caminar).
     const ca = f.oculto ? null : f.carga || (f.p.tipo === 'campesina' && f.p.semilla > .88 && andando ? 'bebe' : null), ver = !!ca && (andando || !clave);
     if (ver && !f.cargaImg) f.cargaImg = this.scene.add.image(0, 0, 'cargas', ca);
