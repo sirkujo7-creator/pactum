@@ -360,6 +360,22 @@ function humedad(g, F, R, base) {
   void base;
 }
 
+// Leña arrumada contra el costado de la casa, bajo el alero (las casas del campo cocinaban con fogón de leña):
+// troncos cortados con la cara clara del corte y la corteza oscura, sobre dos palos para que no se mojen.
+function lena(g, F, R) {
+  const u0 = .55, u1 = .92, filas = 3;
+  g.save();
+  for (let f = 0; f < filas; f++) {
+    const n = 5 - f;
+    for (let k = 0; k < n; k++) {
+      const u = u0 + (u1 - u0) * (k + .5 + f * .5) / 5.5, p = F.en('der', u, 1 + f * 1.7), q = [p[0] + 1.6, p[1] + .8];
+      g.fillStyle = '#4A3220'; g.beginPath(); g.ellipse(q[0] - .9, q[1] - .4, 1, .95, 0, 0, 7); g.fill(); // largo del tronco hacia el muro
+      g.fillStyle = R() < .5 ? '#D8B884' : '#C9A470'; g.beginPath(); g.ellipse(q[0], q[1], .95, .9, 0, 0, 7); g.fill(); // cara del corte
+      g.strokeStyle = 'rgba(90,60,30,.6)'; g.lineWidth = .25; g.beginPath(); g.arc(q[0], q[1], .45, 0, 7); g.stroke(); g.strokeStyle = '#3E2A1A'; g.lineWidth = .3; g.beginPath(); g.ellipse(q[0], q[1], .95, .9, 0, 0, 7); g.stroke();
+    }
+  }
+  g.restore();
+}
 // ---------- Elementos vivos ----------
 function materas(g, pts) {
   for (const [x, y] of pts) {
@@ -460,6 +476,7 @@ function casa(g, era, v, hum, hist = [0, 1, 2, 5][era]) {
   }
   if (era < 2 && v !== 1 && R() < .7) { const p = P(F.t + .1, F.a + .18, F.z0 + F.H + 8); g.fillStyle = K.calSombra; g.fillRect(p[0] - 1.6, p[1] - 5, 3.2, 5); g.fillStyle = K.tejaSombra; g.fillRect(p[0] - 2.2, p[1] - 6, 4.4, 1.4); } // chimenea del fogón
   detallesEpoca(g, F, era, v, hist);
+  if (era < 2 && (v === 0 || v === 2)) lena(g, F, R);
   // Capa 4: elementos vivos, al frente de la casa.
   if (v === 0) { const y0 = F.f + (era === 0 ? .17 : .1); materas(g, [P(y0, F.a + .1), P(y0, F.a + .22), P(y0, F.b - .1)]); if (era === 0) banco(g, ...P(y0 - .04, F.a + .45)); }
   if (v === 1) ropaTendida(g, P(F.f + .08, F.b + .1), P(F.t + .12, F.b + .2), R);

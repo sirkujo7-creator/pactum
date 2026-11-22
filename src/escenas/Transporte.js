@@ -50,8 +50,11 @@ export class Transporte {
     const { T } = this.scene, r0 = Math.floor(pla / N) + .5, c0 = pla % N + .5;
     const opc = [[1, 0, N - r0], [-1, 0, r0], [0, 1, N - c0], [0, -1, c0]].sort((a, b) => a[2] - b[2])[0], [dr, dc, largo] = opc;
     const pts = []; for (let s = 0; s <= largo; s += .5) pts.push(pos(T, r0 + dr * s, c0 + dc * s));
-    this.capa.lineStyle(6, 0x9A7B52, .75); this.capa.beginPath(); pts.forEach((p, i) => i ? this.capa.lineTo(p[0], p[1]) : this.capa.moveTo(p[0], p[1])); this.capa.strokePath();
-    this.capa.lineStyle(1, 0x6B4A2B, .6); this.capa.beginPath(); pts.forEach((p, i) => i ? this.capa.lineTo(p[0], p[1]) : this.capa.moveTo(p[0], p[1])); this.capa.strokePath();
+    // Carretera destapada: orilla difusa, cuerpo de tierra, dos huellas de llantas y el lomo del medio más claro
+    // (antes era una franja lisa con una raya en el centro).
+    const trazo = (ancho, col, al, o = 0) => { const a = pts[0], b = pts[pts.length - 1], d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / d * o, ny = (b[0] - a[0]) / d * o; this.capa.lineStyle(ancho, col, al); this.capa.beginPath(); pts.forEach((p, i) => i ? this.capa.lineTo(p[0] + nx, p[1] + ny) : this.capa.moveTo(p[0] + nx, p[1] + ny)); this.capa.strokePath(); };
+    trazo(9, 0x8C7656, .16); trazo(6.5, 0xA88A60, .55); trazo(2.2, 0xC2A87E, .45);
+    for (const o of [-1.7, 1.7]) trazo(1, 0x6E5638, .38, o);
     this.ruta = { r0, c0, dr, dc, largo };
     for (let k = 0; k < n; k++) this.camiones.push({ img: this.scene.add.image(0, 0, 'camion').setScale(.8 / E).setOrigin(.5, .85).setVisible(false), s: largo * k / n, dir: 1, espera: 0, v: .9 + k * .25 });
     this.objetos.push(...this.camiones.map(c => c.img));
