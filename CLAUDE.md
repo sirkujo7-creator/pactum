@@ -243,6 +243,10 @@ Ideas propuestas por Claude, pendientes de su visto bueno: una **comisión de la
 **Lista de lo que sigue (pedido de Juan el 12 de octubre, en este orden):** (a) ~~pobladores con ficha y voz~~ (publicado en 0.148.0); (b) ~~hitos con misión previa~~ (publicado en 0.149.0): la parroquia pide construir la iglesia antes, y al cumplirla sale la escena de cine en esa obra y luego la decisión (revisar los demás hitos con la misma lógica; propuesta enviada a Juan); (c) ~~opositores por época~~ (publicado en 0.154.0); (d) ~~rediseñar el mapa «mundo»~~ (publicado en 0.155.0); (e) ~~rotar la cámara~~ (en su lugar, transparencia en 0.160.0); (f) en segundo plano: cuaderno de conceptos, informe de la década, cabildo abierto, copia de seguridad de la partida.
 
 **Pendientes para después (no olvidar):**
+- **Lo que es solo ambiente debe tener razón de existir** (pedido de Juan, después de 0.171.0): cada cosa del pueblo aparece porque hay felicidad, porque da felicidad, porque es necesaria para algo o porque causa un problema que hay que resolver (regla «lo que se ve informa»). Ejemplo de Juan: las palomas pueden anunciar una enfermedad o llevar a decidir si se cazan, con su contraindicación.
+- **Decisiones que vuelven** (pedido de Juan): consecuencias inmediatas o muchos años después, para que el juego entretenga más y valga la pena rejugarlo.
+- Decisiones de Juan pendientes de respuesta: si las fincas abandonadas por el conflicto dejan de producir, si huertas y pozos aportan comida y agua, y si las obras de las decisiones (dique, reservorio, granero) cumplen su función.
+- Hecho en 0.171.0: los trabajadores de `Oficios.js` solo aparecen en tantas obras como puestos haya ocupados de verdad (`factorTrabajo`).
 - **Relevo de generaciones y legado** (a Juan le encantó): cada 20 o 30 años cambia el gobernante y el siguiente hereda aciertos y deudas, con un balance del legado; los personajes envejecen y los reemplazan sus sucesores con misiones nuevas.
 - **Gobierno nacional y comunidad internacional**: Juan lo decide después de probar.
 - Campaña por capítulos: le gusta, pero no es prioridad.
