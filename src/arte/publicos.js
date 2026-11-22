@@ -164,7 +164,9 @@ function vidrio(g, F, cara, u0, u1, z0, z1, op = {}) {
   const n = op.montantes ?? Math.max(1, Math.round((u1 - u0) / .09)); for (let k = 1; k < n; k++) { const u = u0 + (u1 - u0) * k / n, m0 = F.en(cara, u, z0), m1 = F.en(cara, u, z1); g.beginPath(); g.moveTo(...m0); g.lineTo(...m1); g.stroke(); }
   if (z1 - z0 > 4) { const m0 = F.en(cara, u0, z0 + (z1 - z0) * .66), m1 = F.en(cara, u1, z0 + (z1 - z0) * .66); g.beginPath(); g.moveTo(...m0); g.lineTo(...m1); g.stroke(); }
   g.restore();
+  { const dz = Math.min(1, (z1 - z0) * .18); g.fillStyle = 'rgba(20,24,30,.4)'; poli(g, [q[3], q[2], F.en(cara, u1, z1 - dz), F.en(cara, u0, z1 - dz)]); g.fill(); g.fillStyle = 'rgba(20,24,30,.25)'; poli(g, [F.en(cara, u1 - .015, z0), q[1], q[2], F.en(cara, u1 - .015, z1)]); g.fill(); } // el vidrio va hundido: sombra del dintel y del marco
   rellena(g, [F.en(cara, u0 - .01, z0 - .5), F.en(cara, u1 + .01, z0 - .5), F.en(cara, u1 + .01, z0), F.en(cara, u0 - .01, z0)], sombra ? '#BDB8AC' : '#ECE8DE', null); // alféizar
+  g.fillStyle = 'rgba(40,30,20,.14)'; poli(g, [F.en(cara, u0, z0 - .5), F.en(cara, u1, z0 - .5), F.en(cara, u1, z0 - 1.8), F.en(cara, u0, z0 - 1.8)]); g.fill(); // sombra del alféizar
 }
 // Sombra bajo el alero o el pretil sobre las dos caras, y la mugre que sube del suelo (los años en el muro).
 function aleroYdesgaste(g, F, alto = 2.4) {
@@ -1579,7 +1581,7 @@ function muroFotos(g) {
 // es en cada época, lo más cercano posible»). h: 0 fundación, 1 café, 2 La Violencia, 3 modernización, 4 conflicto
 // y paz, 5 era digital. Las tres primeras usan los dibujos de bahareque, tapia y ladrillo; la modernización y el
 // conflicto tienen dibujo propio; la era digital usa el de concreto con lo nuevo (paneles solares, cámaras).
-const ETERNIT = { teja: '#C9C7BF', luz: '#DEDCD4', osc: '#9C9A92', linea: '#86847C' }; // teja ondulada de asbesto-cemento
+const ETERNIT = { tipo: 'lamina', teja: '#C9C7BF', luz: '#DEDCD4', osc: '#9C9A92', linea: '#86847C' }; // teja ondulada de asbesto-cemento
 // Paneles solares inclinados sobre una azotea.
 function solares(g, F, filas = 2) {
   const z = F.z0 + F.H + .6, c0 = F.a + .08, c1 = F.b - .08, n = Math.max(2, Math.round((c1 - c0) / .16));

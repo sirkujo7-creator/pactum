@@ -94,11 +94,24 @@ function esquina(g, F) {
   g.save(); poli(g, F.der); g.clip(); g.fillStyle = gr; poli(g, F.der); g.fill(); g.restore();
 }
 // Hiladas de ladrillo: líneas horizontales y llagas alternadas.
+// Ladrillo: cada pieza con su tono (unos más quemados, otros más claros), juntas de mortero claras y la sombra
+// bajo cada hilada, para que el muro tenga grano y no sea un color plano con rayas.
 function hiladas(g, F) {
-  g.save(); g.strokeStyle = 'rgba(90,40,25,.35)'; g.lineWidth = .35;
+  const R = mulberry(Math.round(F.H * 53 + (F.b - F.a) * 701));
+  g.save();
   for (const cara of ['izq', 'der']) {
-    for (let z = 2; z < F.H; z += 2) { const a = F.en(cara, 0, z), b = F.en(cara, 1, z); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
-    for (let z = 0, k = 0; z < F.H; z += 2, k++) for (let u = (k % 2) * .06; u < 1; u += .12) { const a = F.en(cara, u, z), b = F.en(cara, u, z + 2); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+    g.save(); poli(g, F[cara]); g.clip();
+    const paso = cara === 'izq' ? .12 : .16;
+    for (let z = 0, k = 0; z < F.H; z += 2, k++) for (let u = -(k % 2) * paso / 2; u < 1; u += paso) {
+      const t = R(); if (t > .45) continue;
+      g.fillStyle = t < .2 ? `rgba(80,30,15,${.08 + R() * .12})` : `rgba(240,170,130,${.06 + R() * .1})`;
+      poli(g, [F.en(cara, Math.max(0, u), z), F.en(cara, Math.min(1, u + paso), z), F.en(cara, Math.min(1, u + paso), z + 2), F.en(cara, Math.max(0, u), z + 2)]); g.fill();
+    }
+    g.lineWidth = .35;
+    for (let z = 2; z < F.H; z += 2) { const a = F.en(cara, 0, z), b = F.en(cara, 1, z); g.strokeStyle = 'rgba(232,214,190,.45)'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); g.strokeStyle = 'rgba(70,30,15,.25)'; g.beginPath(); g.moveTo(a[0], a[1] + .4); g.lineTo(b[0], b[1] + .4); g.stroke(); }
+    g.strokeStyle = 'rgba(232,214,190,.35)';
+    for (let z = 0, k = 0; z < F.H; z += 2, k++) for (let u = (k % 2) * paso / 2; u < 1; u += paso) { const a = F.en(cara, u, z), b = F.en(cara, u, z + 2); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+    g.restore();
   }
   g.restore();
 }
@@ -257,13 +270,34 @@ function cuatroAguas(g, F, rh, op = {}) {
   g.strokeStyle = 'rgba(255,220,180,.35)'; g.lineWidth = .4; g.beginPath(); g.moveTo(...P(f, b, H)); g.lineTo(...B); g.stroke();
 }
 // Terraza plana de concreto con pretil y tanque de agua.
+// Azotea de concreto: pretil con grosor (se ve su cara de adentro en sombra y su remate con luz), placa con
+// manchas de humedad y de impermeabilizante, un sifón y la oclusión junto al pretil.
 function terraza(g, F, col) {
-  const H = F.z0 + F.H, a = F.a, b = F.b, f = F.f, t = F.t;
-  rellena(g, [P(f, a, H), P(f, b, H), P(t, b, H), P(t, a, H)], mezcla(col, '#000000', .06));
-  rellena(g, [P(f, a, H), P(f, b, H), P(f, b, H + 2), P(f, a, H + 2)], mezcla(col, '#FFFFFF', .2));
-  rellena(g, [P(f, b, H), P(t, b, H), P(t, b, H + 2), P(f, b, H + 2)], mezcla(col, '#000000', .1));
-  const q = P(t + .14, b - .16, H + 2); rellena(g, [[q[0] - 4, q[1]], [q[0] + 4, q[1]], [q[0] + 4, q[1] - 6], [q[0] - 4, q[1] - 6]], '#3A4A5A'); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(q[0], q[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
-  const an = P(t + .14, a + .14, H + 2); antenaTV(g, an[0], an[1]);
+  const H = F.z0 + F.H, a = F.a, b = F.b, f = F.f, t = F.t, e = .04, ph = 2.6;
+  sombraAlero(g, F, 'izq', 2.2); sombraAlero(g, F, 'der', 2.2);
+  const piso = [P(f, a, H), P(f, b, H), P(t, b, H), P(t, a, H)];
+  rellena(g, piso, mezcla(col, '#000000', .12));
+  g.save(); poli(g, piso); g.clip();
+  const R = mulberry(Math.round((b - a) * 977 + H * 31));
+  for (let k = 0; k < 9; k++) { const p = P(t + (f - t) * R(), a + (b - a) * R(), H); g.fillStyle = R() < .5 ? 'rgba(60,50,40,.12)' : 'rgba(150,60,40,.1)'; g.beginPath(); g.ellipse(p[0], p[1], 3 + R() * 5, 1.5 + R() * 2.5, 0, 0, 7); g.fill(); }
+  g.fillStyle = 'rgba(30,24,18,.28)'; poli(g, [P(t + e, a + e, H), P(t + e, b - e, H), P(t + e + .08, b - e, H), P(t + e + .08, a + e, H)]); g.fill(); // sombra del pretil del fondo
+  poli(g, [P(t + e, a + e, H), P(f - e, a + e, H), P(f - e, a + e + .08, H), P(t + e, a + e + .08, H)]); g.fill();
+  const d = P((f + t) / 2, (a + b) / 2, H); g.fillStyle = '#3A3430'; g.beginPath(); g.ellipse(d[0], d[1], 1, .5, 0, 0, 7); g.fill(); // sifón
+  g.restore();
+  // Caras de adentro del pretil (fondo e izquierda) en sombra, y caras de afuera (frente y derecha).
+  rellena(g, [P(t + e, a + e, H), P(t + e, b - e, H), P(t + e, b - e, H + ph), P(t + e, a + e, H + ph)], mezcla(col, '#000000', .2), null);
+  rellena(g, [P(f - e, a + e, H), P(t + e, a + e, H), P(t + e, a + e, H + ph), P(f - e, a + e, H + ph)], mezcla(col, '#000000', .28), null);
+  rellena(g, [P(f, a, H), P(f, b, H), P(f, b, H + ph), P(f, a, H + ph)], mezcla(col, '#FFFFFF', .12));
+  rellena(g, [P(f, b, H), P(t, b, H), P(t, b, H + ph), P(f, b, H + ph)], mezcla(col, '#000000', .14));
+  // Remate (la tapa del pretil), con luz arriba y un filo de sombra debajo.
+  const r = H + ph;
+  rellena(g, [P(f + .02, a - .02, r), P(f + .02, b + .02, r), P(t - .02, b + .02, r), P(t - .02, a - .02, r), P(t + e, a + e, r), P(f - e, a + e, r), P(f - e, b - e, r), P(t + e, b - e, r), P(t + e, a + e, r)], mezcla(col, '#FFFFFF', .35), 'rgba(60,50,40,.35)', .3);
+  g.strokeStyle = 'rgba(40,30,20,.35)'; g.lineWidth = .5; g.beginPath(); g.moveTo(...P(f + .02, a - .02, r - .5)); g.lineTo(...P(f + .02, b + .02, r - .5)); g.lineTo(...P(t - .02, b + .02, r - .5)); g.stroke();
+  // Chorreones de lluvia que bajan del remate por la fachada.
+  for (const cara of ['izq', 'der']) { g.save(); poli(g, F[cara]); g.clip(); for (let k = 0; k < 5; k++) { const u = .05 + R() * .9, p = F.en(cara, u, F.H), L = 3 + R() * F.H * .3, gr = g.createLinearGradient(0, p[1], 0, p[1] + L); gr.addColorStop(0, 'rgba(70,64,56,.22)'); gr.addColorStop(1, 'rgba(70,64,56,0)'); g.fillStyle = gr; g.fillRect(p[0] - .5 - R() * .5, p[1], 1 + R(), L); } g.restore(); }
+  const q = P(t + .14, b - .16, r); rellena(g, [[q[0] - 4, q[1]], [q[0] + 4, q[1]], [q[0] + 4, q[1] - 6], [q[0] - 4, q[1] - 6]], '#3A4A5A'); g.fillStyle = '#4E6070'; g.beginPath(); g.ellipse(q[0], q[1] - 6, 4, 1.5, 0, 0, 7); g.fill();
+  g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(q[0] - 3.4, q[1] - 5.5, 1.2, 5);
+  const an = P(t + .14, a + .14, r); antenaTV(g, an[0], an[1]);
 }
 // Carro particular estacionado (desde los años del conflicto, en las casas de ladrillo y de concreto).
 function carroCasa(g, x, y, col) {
