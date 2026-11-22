@@ -39,26 +39,51 @@ export function sombraSuave(g, ancho, alto = 0, copa = ancho, a = .3) {
 
 // Follaje con detalle: muchas hojas pequeñas en tres pasadas (sombra, color, luz) que se concentran arriba a la izquierda.
 export function follaje(g, R, cx, cy, rx, ry, cols, n, tam = 1.6, forma = 'hoja') {
-  const [osc, med, luz] = cols, honda = sh(osc, -.28), brillo = sh(luz, .22);
-  // Hojas en punta (pedido de Juan: nada de óvalos): forma de almendra con las dos puntas afiladas, cada una con
-  // su giro. Las flores siguen siendo puntitos.
-  const hoja = (x, y, c, s) => {
+  const [osc, med, luz] = cols;
+  // Hoja en punta (almendra con las dos puntas afiladas), cada una con su giro; las flores son puntitos.
+  const hoja = (x, y, c, s, a = R() * Math.PI) => {
     g.fillStyle = c; g.beginPath();
     if (forma === 'flor') { g.arc(x, y, s * .7, 0, 7); g.fill(); return; }
-    const a = R() * Math.PI, ca = Math.cos(a) * s, sa = Math.sin(a) * s, w = .55;
+    const ca = Math.cos(a) * s, sa = Math.sin(a) * s, w = .55;
     g.moveTo(x - ca, y - sa); g.quadraticCurveTo(x - sa * w * 1.6, y + ca * w * 1.6, x + ca, y + sa); g.quadraticCurveTo(x + sa * w * 1.6, y - ca * w * 1.6, x - ca, y - sa); g.fill();
   };
-  // Cuatro pasadas para que la copa tenga volumen: sombra honda abajo a la derecha, sombra, color y luz arriba a
-  // la izquierda (el mismo sol del suelo y de las sombras).
-  for (let k = 0; k < n * .5; k++) { const a = R() * 6.28, d = Math.sqrt(R()); hoja(cx + rx * .1 + Math.cos(a) * rx * d, cy + ry * .14 + Math.sin(a) * ry * d, forma === 'flor' ? osc : honda, tam * (.8 + R() * .5)); }
-  for (let k = 0; k < n; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .95; hoja(cx + Math.cos(a) * rx * d, cy + Math.sin(a) * ry * d, osc, tam * (.8 + R() * .5)); }
-  for (let k = 0; k < n * .8; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .82; hoja(cx - rx * .14 + Math.cos(a) * rx * d, cy - ry * .16 + Math.sin(a) * ry * d, med, tam * (.8 + R() * .5)); }
-  for (let k = 0; k < n * .38; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .55; hoja(cx - rx * .34 + Math.cos(a) * rx * d, cy - ry * .38 + Math.sin(a) * ry * d, luz, tam * (.7 + R() * .4)); }
-  if (forma !== 'flor') for (let k = 0; k < n * .1; k++) { const a = R() * 6.28, d = Math.sqrt(R()) * .3; hoja(cx - rx * .42 + Math.cos(a) * rx * d, cy - ry * .48 + Math.sin(a) * ry * d, brillo, tam * (.6 + R() * .3)); }
+  // Pulido (pedido de Juan): la copa se arma con grupos de follaje, cada uno con su propio volumen (sombra honda
+  // abajo a la derecha, color, luz y brillo arriba a la izquierda), como una coliflor; los grupos de abajo a la
+  // derecha de la copa quedan más oscuros y los de arriba a la izquierda más claros (un solo sol). Entre grupo y
+  // grupo se ve el hueco oscuro de adentro.
+  const k = Math.max(3, Math.round(n / 26)), grupos = [];
+  for (let i = 0; i < k * 3 && grupos.length < k; i++) {
+    const a = R() * 6.283, d = Math.sqrt(R()) * .72, x = cx + Math.cos(a) * rx * d, y = cy + Math.sin(a) * ry * d;
+    if (grupos.some(q => Math.hypot((q.x - x) / rx, (q.y - y) / ry) < .32)) continue;
+    grupos.push({ x, y });
+  }
+  if (!grupos.length) grupos.push({ x: cx, y: cy });
+  const rg = Math.sqrt(rx * ry / grupos.length) * 1.05, ryg = rg * (ry / rx) ** .5 * .92, por = Math.max(8, Math.round(n / grupos.length));
+  // Interior oscuro de la copa (se ve entre los grupos).
+  for (let i = 0; i < n * .35; i++) { const a = R() * 6.28, d = Math.sqrt(R()) * .8; hoja(cx + Math.cos(a) * rx * d, cy + Math.sin(a) * ry * d, sh(osc, forma === 'flor' ? -.15 : -.4), tam * (.9 + R() * .5)); }
+  grupos.sort((p, q) => p.y - q.y);
+  for (const q of grupos) {
+    const f = clamp01(.5 + ((q.x - cx) / rx) * .35 + ((q.y - cy) / ry) * .45), tono = c => sh(c, -.22 * f + .1 * (1 - f));
+    const capa = (c, m, ox, oy, rr, s0) => { for (let i = 0; i < m; i++) { const a = R() * 6.28, d = Math.sqrt(R()) * rr; hoja(q.x + ox * rg + Math.cos(a) * rg * d, q.y + oy * ryg + Math.sin(a) * ryg * d, c, tam * (s0 + R() * .45)); } };
+    capa(tono(sh(osc, -.25)), por * .5, .14, .2, .95, .8);
+    capa(tono(osc), por, .04, .06, 1, .8);
+    capa(tono(med), por * .8, -.14, -.16, .75, .78);
+    capa(tono(luz), por * .45, -.3, -.34, .48, .7);
+    if (forma !== 'flor') capa(sh(luz, .25), por * .12, -.42, -.46, .24, .6);
+  }
+}
+const clamp01 = v => Math.max(0, Math.min(1, v));
+// Hoja larga en punta (lanza) de (x0, y0) a (x1, y1), con ancho w en el medio y algo curvada (curva > 0, hacia la
+// izquierda del trazo).
+export function lanza(g, x0, y0, x1, y1, w, col, curva = 0) {
+  const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L, mx = (x0 + x1) / 2 + nx * curva, my = (y0 + y1) / 2 + ny * curva;
+  g.fillStyle = col; g.beginPath(); g.moveTo(x0, y0);
+  g.quadraticCurveTo(mx + nx * w * 1.4, my + ny * w * 1.4, x1, y1); g.quadraticCurveTo(mx - nx * w * 1.4, my - ny * w * 1.4, x0, y0); g.fill();
 }
 // Tronco plano que se adelgaza, con su lado derecho en sombra.
 export function tronco(g, x0, y0, x1, y1, w0, w1, col) {
   const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
-  pol(g, [[x0 + nx * w0, y0 + ny * w0], [x1 + nx * w1, y1 + ny * w1], [x1 - nx * w1, y1 - ny * w1], [x0 - nx * w0, y0 - ny * w0]], col);
-  pol(g, [[x0 - nx * w0 * .1, y0 - ny * w0 * .1], [x1 - nx * w1 * .1, y1 - ny * w1 * .1], [x1 - nx * w1, y1 - ny * w1], [x0 - nx * w0, y0 - ny * w0]], sh(col, -.2));
+  // Cilindro: color, sombra del lado derecho y una luz angosta del lado izquierdo (volumen, no silueta plana).
+  const borde = (f0, f1, c) => pol(g, [[x0 + nx * w0 * f0, y0 + ny * w0 * f0], [x1 + nx * w1 * f0, y1 + ny * w1 * f0], [x1 + nx * w1 * f1, y1 + ny * w1 * f1], [x0 + nx * w0 * f1, y0 + ny * w0 * f1]], c);
+  borde(1, -1, col); borde(.15, 1, sh(col, -.22)); borde(.6, 1, sh(col, -.34)); borde(-.85, -.45, sh(col, .18)); // el tronco sube: +n es la derecha
 }
