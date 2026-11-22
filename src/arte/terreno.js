@@ -935,9 +935,28 @@ function surco(g, a, b, ancho = 1) {
   g.globalAlpha = .45; g.strokeStyle = '#D2B88A'; g.lineWidth = .8 * ancho; g.beginPath(); g.moveTo(a[0], a[1] - .3); g.lineTo(b[0], b[1] - .3); g.stroke();
   g.restore();
 }
+// Tierra arada con textura (pedido de Juan): manchas de humedad y de tierra más seca, terrones con su cara de luz
+// arriba a la izquierda y su sombra, piedritas, paja seca y raíces sueltas. Se recorta a la forma de la finca.
+function tierra(g, q, base, rng, dry = 0) {
+  g.save(); poly(g, q); g.clip();
+  const xs = q.map(p => p[0]), ys = q.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), W = x1 - x0, H = y1 - y0;
+  const P2 = () => [x0 + rng() * W, y0 + rng() * H];
+  for (let k = 0; k < 10; k++) { const [x, y] = P2(); g.globalAlpha = .18 + rng() * .17; g.fillStyle = rng() < .55 ? shade(base, -.35) : shade(base, .22); g.beginPath(); g.ellipse(x, y, 4 + rng() * 9, 2 + rng() * 4, 0, 0, 7); g.fill(); } // humedad y tierra seca
+  for (let k = 0; k < 120; k++) { // terrones
+    const [x, y] = P2(), r = .6 + rng() * 1.05;
+    g.globalAlpha = .6; g.fillStyle = shade(base, -.5); g.beginPath(); g.ellipse(x + r * .35, y + r * .3, r, r * .6, 0, 0, 7); g.fill();
+    g.globalAlpha = .9; g.fillStyle = shade(base, -.12 + rng() * .2); g.beginPath(); g.ellipse(x, y, r, r * .6, 0, 0, 7); g.fill();
+    g.globalAlpha = .7; g.fillStyle = shade(base, .4); g.beginPath(); g.ellipse(x - r * .3, y - r * .2, r * .45, r * .25, 0, 0, 7); g.fill();
+  }
+  for (let k = 0; k < 16; k++) { const [x, y] = P2(), r = .5 + rng() * .6; g.globalAlpha = .8; g.fillStyle = mix('#A8A090', '#8C8476', rng()); g.beginPath(); g.ellipse(x, y, r, r * .7, 0, 0, 7); g.fill(); g.fillStyle = '#E2DCCE'; g.globalAlpha = .6; g.beginPath(); g.ellipse(x - r * .3, y - r * .25, r * .4, r * .25, 0, 0, 7); g.fill(); } // piedritas
+  g.lineWidth = .4; g.lineCap = 'round';
+  for (let k = 0; k < 26; k++) { const [x, y] = P2(), a = rng() * Math.PI, L = 1.2 + rng() * 2.4; g.globalAlpha = .7; g.strokeStyle = rng() < .6 ? mix('#D8C28A', '#BFA66A', dry) : '#5E4A30'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L * .5); g.stroke(); } // paja y raíces
+  g.restore(); g.globalAlpha = 1;
+}
 function pintarCafe(g, T, t, rng, dry, joven) {
   const col = mix('#2E5E36', '#6E7A3A', dry * .4);
   wash(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, .45, .6);
+  tierra(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, dry);
   for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
     const u = .14 + b * .145, v = .18 + a * .21 + Math.sin(b * .9 + a) * .03, r = t.r + v, c = t.c + u, p = P(r, c, T.hf(r, c));
     g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.2, 1.2, 0, 0, 7); g.fill(); g.globalAlpha = 1;
@@ -971,6 +990,7 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
   if (cv === 'cana' || cv === 'tabaco') { pintarCanaTabaco(g, q, pt, rng, dry, cv, joven); return; }
   const suelo = cv === 'algodon' ? mix('#B99A6A', '#C9B07A', dry) : mix('#8E7A52', '#A89A6A', dry);
   wash(g, q, suelo, rng, .5, .6);
+  tierra(g, q, suelo, rng, dry);
   for (let a = 0; a < (cv === 'algodon' ? 5 : 3); a++) { const v = .16 + a * (.68 / ((cv === 'algodon' ? 5 : 3) - 1)); surco(g, pt(.06, v + .03), pt(.94, v + .03), cv === 'algodon' ? .8 : 1.2); }
   const filas = cv === 'algodon' ? 5 : 3, cols = cv === 'algodon' ? 6 : 4, s = joven ? .45 : 1;
   for (let a = 0; a < filas; a++) for (let b = 0; b < cols; b++) {
@@ -990,6 +1010,7 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
 function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven) {
   const s = joven ? .5 : 1;
   wash(g, q, cv === 'cana' ? mix('#9A8A5C', '#B4A272', dry) : mix('#B79E70', '#C9B386', dry), rng, .5, .6);
+  tierra(g, q, cv === 'cana' ? mix('#9A8A5C', '#B4A272', dry) : mix('#B79E70', '#C9B386', dry), rng, dry);
   if (cv === 'cana') {
     for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
       const p = pt(.12 + b * .152 + (a % 2) * .04, .14 + a * .23);
@@ -1019,6 +1040,7 @@ function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven) {
 // Huerta de maíz, fríjol y yuca en surcos, para los cultivos lejos de la llanura.
 function pintarHuerta(g, T, t, q, rng, dry) {
   wash(g, q, mix('#B99A6A', '#C9B07A', dry), rng, .75, .6);
+  tierra(g, q, mix('#B99A6A', '#C9B07A', dry), rng, dry);
   const col = mix('#4F8A43', '#C9A94A', dry * .8);
   for (let a = 0; a < 5; a++) {
     const v = .12 + a * .19;
