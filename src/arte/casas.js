@@ -304,9 +304,12 @@ function terraza(g, F, col) {
 // bómper, placa amarilla y llantas con rin.
 function carroCasa(g, x, y, col) {
   sombraPie(g, x + 1, y + .5, 10, 3, .28);
-  ruedaIso(g, x - 4.6, y - .6, 1.9, { llanta: '#1E1A18' }); ruedaIso(g, x + 3.8, y + 3.6, 1.9, { llanta: '#1E1A18' });
+  // Cuatro llantas: las dos del lado de atrás se asoman por debajo (más oscuras, antes de la carrocería) y las dos
+  // de este lado van delante, en el sitio de sus guardabarros.
+  for (const [dx, dy] of [[-.86, -4.73], [5.66, -1.47]]) ruedaIso(g, x + dx, y + dy, 1.9, { llanta: '#141210', rin: '#5E6266' });
   const C = cajaPx(g, x, y, .34, .15, 3.4, col, { z0: 1.1 });
   const cab = cajaPx(g, x - 1, y - .5, .18, .14, 3, mezcla(col, '#FFFFFF', .05), { z0: 4.5 });
+  for (const [dx, dy] of [[-5.66, -2.33], [.86, .93]]) { g.fillStyle = mezcla(col, '#000000', .45); g.beginPath(); g.ellipse(x + dx, y + dy - .4, 2.3, 2.5, 0, Math.PI, 0); g.fill(); ruedaIso(g, x + dx, y + dy, 1.9, { llanta: '#1E1A18' }); } // guardabarros y llantas de este lado
   const ins = (a, b, f) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
   const vid = (q, c1) => { const gr = g.createLinearGradient(0, Math.min(...q.map(p => p[1])), 0, Math.max(...q.map(p => p[1]))); gr.addColorStop(0, '#CFE2EC'); gr.addColorStop(1, c1); rellena(g, q, gr, 'rgba(30,40,50,.5)', .25); };
   const iq = cab.izq, dr = cab.der;
