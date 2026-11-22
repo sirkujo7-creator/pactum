@@ -3,7 +3,7 @@
 // públicos son neoclásicos, con podio, columnas, friso, frontón y un emblema que dice qué es cada uno.
 import { mulberry, shade, mix, poly, lienzo } from './acuarela.js';
 import { FR, pintar, ovalo, urlDe, RES_HOJA, ES_CELULAR } from './fresco.js';
-import { recetasCasas } from './casas.js';
+import { recetasCasas, CAPTURA } from './casas.js';
 import { recetasPublicos } from './publicos.js';
 
 // Pinceles del fresco con la misma firma de los de acuarela (así todas las obras cambian de estilo a la vez).
@@ -380,10 +380,11 @@ let HOJA = null;
 // hist (fase visual, edificios por época): 0 a 5, las seis épocas de la historia (fundación, café, La Violencia,
 // modernización, conflicto y paz, era digital); los edificios de servicio cambian con ellas.
 export const HIST_DE_ERA = [0, 1, 2, 5];
-export function hornearEdificios(era, hist) {
+export function hornearEdificios(era, hist, op = {}) {
   if (era === undefined) era = HOJA ? HOJA.era : 1;
   if (hist === undefined) hist = HOJA && HOJA.era === era ? HOJA.hist : HIST_DE_ERA[era];
-  if (HOJA && HOJA.era === era && HOJA.hist === hist) return HOJA;
+  if (op.banderasVivas === undefined) op = { ...op, banderasVivas: HOJA ? HOJA.vivas : false };
+  if (HOJA && HOJA.era === era && HOJA.hist === hist && HOJA.vivas === !!op.banderasVivas) return HOJA;
   const lista = recetas(era, hist).sort((a, b) => b[2] - a[2]), sep = 4, anchoHoja = 4096, marcos = {}; // hoja ancha: más resolución sin pasar de 4096 de alto // de mayor a menor alto: la hoja queda más compacta (menos memoria en el celular)
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of lista) {
@@ -393,13 +394,20 @@ export function hornearEdificios(era, hist) {
     x += W + sep; fila = Math.max(fila, H);
   }
   const cv = lienzo(anchoHoja, y + fila + sep), g = cv.getContext('2d');
+  CAPTURA.sinTela = !!op.banderasVivas;
   for (const [k, , , , , pintar] of lista) {
     const m = marcos[k];
+    CAPTURA.quads = []; CAPTURA.banderas = [];
     g.save(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(ESCALA, ESCALA);
     pintar(g, mulberry(k.length * 97 + k.charCodeAt(0) * 13 + (k.charCodeAt(k.length - 1) || 0)));
     g.restore();
+    // Ventanas (para las luces de la noche) y banderas (para que ondeen), en unidades del dibujo desde su ancla.
+    const ox = m.x + m.ax, oy = m.y + m.ay;
+    if (CAPTURA.quads.length) m.ventanas = CAPTURA.quads.map(q => q.map(([x, y]) => [(x - ox) / ESCALA, (y - oy) / ESCALA]));
+    if (CAPTURA.banderas.length) m.banderas = CAPTURA.banderas.map(b => ({ x: (b.x - ox) / ESCALA, y: (b.y - oy) / ESCALA, s: b.esc / ESCALA, ancho: b.ancho, cols: Array.isArray(b.cols) ? b.cols : [b.cols] }));
   }
-  return (HOJA = { canvas: cv, marcos, escala: ESCALA, era, hist });
+  CAPTURA.quads = CAPTURA.banderas = null; CAPTURA.sinTela = false;
+  return (HOJA = { canvas: cv, marcos, escala: ESCALA, era, hist, vivas: !!op.banderasVivas });
 }
 
 // Qué figuras lleva cada obra en una casilla: [{ k (figura), du, dv (desplazamiento en la casilla), s (escala), humo }].

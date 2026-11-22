@@ -1,17 +1,30 @@
 // Efectos del mapa (de la versión 9): números que flotan al cerrar el año, huellas visibles de los
 // dilemas (crecida, sequía, plaga, río envenenado, multitud, fiesta, humo) y tintes del régimen y del esmog.
+import { ES_CELULAR } from '../arte/fresco.js';
 import { C, nearRiver, clamp, lluvias, movilizados, nivelVolcan } from '../core/index.js';
 import { P } from '../arte/iso.js';
 import { DPR, reducirMovimiento } from './pantalla.js';
 
 const TINTE = { tirania: [0x464650, .12], monarquia: [0x6E4696, .05], oligarquia: [0x785A14, .06], demagogia: [0xD26E28, .06], aristocracia: [0x285A46, .04] };
 
+// Junta varias capas de color (una encima de otra) en una sola: mismo resultado, una sola pasada por la pantalla.
+export function mezclar(capas) {
+  let r = 0, g = 0, b = 0, A = 0;
+  for (const c of capas) {
+    if (!c || c[1] <= 0) continue;
+    const a = c[1], cr = (c[0] >> 16) & 255, cg = (c[0] >> 8) & 255, cb = c[0] & 255;
+    r = cr * a + r * (1 - a); g = cg * a + g * (1 - a); b = cb * a + b * (1 - a); A = a + A * (1 - a);
+  }
+  if (A <= 0) return [0, 0];
+  return [(Math.round(r / A) << 16) | (Math.round(g / A) << 8) | Math.round(b / A), A];
+}
+
 export class Efectos {
   constructor(scene) {
     this.scene = scene;
     this.capa = scene.add.graphics().setDepth(-700);      // sobre el terreno, bajo las figuras
     this.encima = scene.add.container(0, 0).setDepth(30000); // multitudes y banderines
-    this.velos = [0, 0, 0, 0].map(() => scene.add.rectangle(0, 0, 1, 1, 0, 0).setOrigin(0).setDepth(39990).setVisible(false));
+    this.velo = scene.add.rectangle(0, 0, 1, 1, 0, 0).setOrigin(0).setDepth(39990).setVisible(false); // todos los tintes en una sola capa (rendimiento)
     this.textos = [];
     this.lluvia = [];
     this.visto = null;
@@ -116,23 +129,43 @@ export class Efectos {
         this.chubasco = Math.random() < p; this.cambioChubasco = 25 + Math.random() * 30;
       }
       const quiere = this.inundacion || this.chubasco;
-      if (quiere && !this.lluvia.length) this.lluvia = Array.from({ length: this.inundacion ? 70 : 45 }, () => ({ x: Math.random(), y: Math.random(), v: .6 + Math.random() * .4 }));
+      // Fase visual, animación: lluvia en dos capas (gotas lejanas cortas y tenues, cercanas largas y claras),
+      // salpicaduras en el suelo y el cielo encapotado mientras llueve; con la sequía, polvo que corre con el viento.
+      const n = (this.inundacion ? 1.5 : 1) * (ES_CELULAR ? 70 : 150);
+      if (quiere && !this.lluvia.length) this.lluvia = Array.from({ length: Math.round(n) }, (_, k) => ({ x: Math.random(), y: Math.random(), v: .7 + Math.random() * .5, cerca: k % 3 === 0 }));
       if (!quiere && this.lluvia.length) this.lluvia = [];
+      const polvo = vk === 'drought' || (L && temp === 'seca' && L.cosecha < 1);
+      if (polvo && !this.polvo) this.polvo = Array.from({ length: ES_CELULAR ? 24 : 40 }, () => ({ x: Math.random(), y: Math.random(), v: .03 + Math.random() * .05, r: 3 + Math.random() * 7, f: Math.random() * 6 }));
+      if (!polvo) this.polvo = null;
     }
+    const esc = this.scene.escala;
+    const nubl = this.lluvia.length ? Math.min(1, (this.nubl || 0) + dt * 1.2) : Math.max(0, (this.nubl || 0) - dt * .6); this.nubl = nubl;
+    const activo = nubl > 0 || this.lluvia.length || this.polvo;
+    // Solo se crean y se dibujan mientras llueve o hay polvo (rendimiento: una capa vacía también cuesta).
+    if (activo && !this.gl) { this.gl = this.scene.add.graphics().setDepth(39995); this.salpicas = []; }
+    if (this.gl) {
+      this.gl.setVisible(!!activo); if (this.gl.commandBuffer.length) this.gl.clear();
+    }
+    const g = this.gl;
     if (this.lluvia.length) {
-      if (!this.gl) this.gl = this.scene.add.graphics().setDepth(39980);
-      const g = this.gl; g.clear().lineStyle(1 / this.scene.escala, 0x466E8C, .45);
-      for (const r of this.lluvia) { r.y = (r.y + dt * r.v * .9) % 1; const x = v.x + r.x * v.w, y = v.y + r.y * v.h; g.lineBetween(x, y, x - 2 / this.scene.escala, y + 7 / this.scene.escala); }
-    } else if (this.gl) this.gl.clear();
+      for (const r of this.lluvia) {
+        const antes = r.y; r.y = (r.y + dt * r.v * (r.cerca ? 1.3 : .8)) % 1;
+        if (r.y < antes && r.cerca && this.salpicas.length < (ES_CELULAR ? 16 : 36)) this.salpicas.push({ x: v.x + Math.random() * v.w, y: v.y + (.2 + Math.random() * .8) * v.h, t: 0 });
+        const x = v.x + r.x * v.w, y = v.y + r.y * v.h, l = (r.cerca ? 17 : 9) / esc;
+        g.lineStyle((r.cerca ? 1.4 : .9) / esc, r.cerca ? 0xE8F0F4 : 0xB8C8D6, r.cerca ? .7 : .45); g.lineBetween(x, y, x - l * .28, y + l);
+      }
+      for (let k = this.salpicas.length - 1; k >= 0; k--) { const sp = this.salpicas[k]; sp.t += dt; if (sp.t > .35) { this.salpicas.splice(k, 1); continue; } const f = sp.t / .35; const a = (2 + f * 5) / esc; g.lineStyle(.8 / esc, 0xDCE8F0, .5 * (1 - f)); g.lineBetween(sp.x - a, sp.y - a * .4, sp.x - a * .3, sp.y); g.lineBetween(sp.x + a, sp.y - a * .4, sp.x + a * .3, sp.y); } // salpicadura: dos chispas que se abren
+    }
+    if (this.polvo) {
+      const t = this.scene.time.now / 1000;
+      for (const d of this.polvo) { d.x = (d.x + dt * d.v) % 1.1; const x = v.x + (d.x - .05) * v.w, y = v.y + d.y * v.h + Math.sin(t * .7 + d.f) * 6 / esc; g.fillStyle(0xC9A56C, .1); g.fillEllipse(x, y, d.r * 3 / esc, d.r / esc); }
+    }
     const tinte = TINTE[S.reg];
     let smog = clamp((45 - S.env) / 45, 0, 1) * .28; if (vk === 'smog') smog += .2;
     const seca = L && temp === 'seca' ? (L.cosecha < 1 ? .09 : .04) : 0;
-    const capas = [tinte ? [tinte[0], tinte[1]] : null, smog > 0 ? [0x786950, smog] : null, vk === 'drought' ? [0xE1AA3C, .16] : null, seca ? [0xE6B45A, seca] : null];
-    capas.forEach((c, k) => {
-      const r = this.velos[k];
-      if (!c) { r.setVisible(false); return; }
-      r.setVisible(true).setPosition(v.x, v.y).setScale(v.w, v.h).setFillStyle(c[0], c[1]);
-    });
+    const capas = [nubl > 0 ? [0x3E4E5E, .3 * nubl] : null, tinte ? [tinte[0], tinte[1]] : null, smog > 0 ? [0x786950, smog] : null, vk === 'drought' ? [0xE1AA3C, .16] : null, seca ? [0xE6B45A, seca] : null];
+    const [col, a] = mezclar(capas);
+    this.velo.setVisible(a > .003); if (a > .003) this.velo.setPosition(v.x, v.y).setScale(v.w, v.h).setFillStyle(col, a);
   }
 
   // Números que flotan al cerrar el año sobre las obras, las casas y el centro del pueblo.
