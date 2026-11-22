@@ -94,13 +94,15 @@ function pinceles(seco = 0) {
     for (const [x, y] of [[-10, -22], [-4, -27], [5, -26], [11, -20], [0, -20]]) tronco(g, 0, -12, x, y, .8, .4, '#7A6A58');
     for (const [x, y] of [[-10, -22], [-4, -27], [5, -26], [11, -20], [0, -20], [-6, -18], [7, -18]]) follaje(g, R, x, y, 3.4, 2.4, ['#B23A22', '#D9562E', '#F08A44'], 22, 1.1, 'flor');
   };
-  const yarumo = g => { // yarumo: tronco blanco y hojas grandes como manos, plateadas por debajo
+  const yarumo = (g, R) => { // yarumo: tronco blanco y hojas grandes como manos, plateadas por debajo
     sombraSuave(g, 1.2, 26, 8, .22);
     tronco(g, 0, 0, .4, -26, 1.2, .8, '#E2DED4'); g.fillStyle = 'rgba(120,110,95,.4)'; for (let y = -3; y > -24; y -= 3.4) g.fillRect(-1, y, 2, .4);
     tronco(g, .4, -20, -7, -28, .6, .4, '#E2DED4'); tronco(g, .4, -22, 7, -31, .6, .4, '#E2DED4');
     const [verde] = v(['#7E9A6A']);
-    const mano = (x, y, s) => { for (let k = 0; k < 7; k++) { const a = -Math.PI / 2 + (k - 3) * .52; g.save(); g.translate(x, y); g.rotate(a + Math.PI / 2); g.fillStyle = k % 2 ? '#C9CFC0' : verde; g.beginPath(); g.ellipse(0, -3.4 * s, .9 * s, 3.2 * s, 0, 0, 7); g.fill(); g.restore(); } };
-    mano(-7, -28, 1); mano(7, -31, 1.1); mano(.4, -27, .9);
+    // Hoja de yarumo como una mano abierta: lóbulos largos en punta que salen de un centro, verdes encima y
+    // plateados por debajo (se ven los dos lados), con su nervio claro.
+    const mano = (x, y, s) => { for (let k = 0; k < 9; k++) { const a = -Math.PI / 2 + (k - 4) * .4 + (R() - .5) * .1, L = (3.6 - Math.abs(k - 4) * .25) * s, ex = x + Math.cos(a) * L, ey = y + Math.sin(a) * L * .8 + Math.abs(k - 4) * .35 * s, plata = k % 3 === 1 || Math.cos(a) > .5; lanza(g, x, y, ex, ey, .55 * s, plata ? '#C9CFC0' : (Math.cos(a) < -.3 ? sh(verde, .15) : verde), .2); g.strokeStyle = plata ? '#9AA290' : '#B8C4A4'; g.lineWidth = .15; g.beginPath(); g.moveTo(x, y); g.lineTo(x + (ex - x) * .85, y + (ey - y) * .85); g.stroke(); } };
+    mano(-7, -28, 1.7); mano(7, -31, 1.8); mano(.4, -27, 1.5);
   };
   const mango = (g, R) => { // palo de mango: copa redonda, densa y oscura, con mangos
     sombraSuave(g, 2, 17, 12, .28);
@@ -132,6 +134,9 @@ function pinceles(seco = 0) {
     const trazo = (pts, w, col, dx = 0) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x + dx, y) : g.moveTo(x + dx, y)); g.stroke(); };
     for (const [i, r] of ramas.entries()) { const w = i < 2 ? 3.4 : 4.8; trazo(r, w, O); trazo(r, w * .62, V, -w * .18); trazo(r.slice(-2), w * .16, Lz, -w * .3); }
     g.strokeStyle = sh(V, -.4); g.lineWidth = .25; for (const x of [-.9, .9]) { g.beginPath(); g.moveTo(x, -.5); g.lineTo(x, -21.6); g.stroke(); }
+    // Costillas de los brazos y espinas: puntitos claros a lo largo de cada costilla.
+    for (const [bx, y0, y1] of [[-4.6, -6, -14.6], [4.4, -8.6, -16.6]]) { g.beginPath(); g.moveTo(bx + .5, y0); g.lineTo(bx + .5, y1); g.stroke(); }
+    g.fillStyle = '#F0E8C8'; for (const [bx, y0, y1] of [[-1.7, -1, -21], [0, -1, -21.6], [1.7, -1, -21], [-4.6, -6, -14.4], [4.4, -8.6, -16.4]]) for (let y = y0; y > y1; y -= 1.3) g.fillRect(bx - .1, y, .2, .2);
     elip(g, 0, -22.6, 1, .6, '#E8C23A'); elip(g, 4.4, -17.5, .7, .45, '#E8C23A');
   };
   const cafeto = (g, R) => { // mata de café con sus cerezas
@@ -144,10 +149,17 @@ function pinceles(seco = 0) {
     sombraSuave(g, 1.6, 12, 8, .24);
     tronco(g, 0, 0, 0, -12, 1.6, 1.3, '#8A9A5A');
     const [l, o, n] = v(['#6E9A4A', '#4E7A3A', '#B6CC80']);
-    for (let k = 0; k < 6; k++) {
-      const a = -Math.PI / 2 + (k - 2.5) * .62, L = 11 + R() * 3, x = Math.cos(a) * L, y = -12 + Math.sin(a) * L * .7 + 4;
-      g.fillStyle = k < 3 ? l : o; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(x * .5 - 2.6, y - 5, x, y); g.quadraticCurveTo(x * .5 + 2.6, y - .6, 0, -11.2); g.fill();
-      g.strokeStyle = n; g.lineWidth = .35; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(x * .5, y - 3, x, y); g.stroke();
+    // Hojas grandes ordenadas de atrás hacia adelante: cada una con su mitad en luz y su mitad en sombra, el nervio
+    // claro y algún rasgado del viento (así son las hojas del plátano).
+    const hojasP = []; for (let k = 0; k < 7; k++) hojasP.push({ a: -Math.PI / 2 + (k - 3) * .55 + (R() - .5) * .15, L: 11 + R() * 3.5, z: R() - .5 });
+    hojasP.sort((p, q) => p.z - q.z);
+    for (const h of hojasP) {
+      const x = Math.cos(h.a) * h.L, y = -12 + Math.sin(h.a) * h.L * .7 + 4 + h.z * 2, mx = x * .5, my = (y - 12) * .5 - 3, osc = h.z < 0;
+      const c1 = osc ? sh(o, -.15) : l, c2 = osc ? sh(o, -.3) : o;
+      g.fillStyle = c1; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(mx - 3, my - 3, x, y); g.quadraticCurveTo(mx, my, 0, -11.4); g.fill();
+      g.fillStyle = c2; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(mx + 3, my + 1.5, x, y); g.quadraticCurveTo(mx, my, 0, -11.4); g.fill();
+      g.strokeStyle = n; g.lineWidth = .35; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(mx, my, x, y); g.stroke();
+      g.strokeStyle = sh(c2, -.2); g.lineWidth = .18; for (let q = 1; q < 6; q++) { const t = q / 6, px = x * t, py = -12 + (y + 12) * t - Math.sin(t * 3.1) * 3; if (R() < .4) { g.beginPath(); g.moveTo(px, py); g.lineTo(px + 1.4, py + 1.6); g.stroke(); } } // rasgados
     }
     elip(g, 1.8, -8, 1.3, 2.4, '#6E4A6A', .3);
   };
