@@ -262,7 +262,9 @@ export class Pobladores {
     const b = p.trabajo !== null ? S.map[p.trabajo].b : null, casa = rc(p.casa), tarde = d > .6 && d < .78, manana = d > .26 && d < .45;
     // Las cosas del pueblo (Mobiliario): la huerta, el pozo y la alberca de mañana; la sombra de los árboles al mediodía;
     // la banca, el dominó, el tejo y la silla recostada en la tarde; el carrito y la tienda a cualquier hora del día.
-    const usar = (tipo, prob, filtro) => R < prob ? this.usar(tipo, f, filtro) : null; let q = null;
+    // El ocio sigue el ánimo del pueblo (lo que se ve informa): contento, más gente en la banca, el dominó o el carrito.
+    const animo = clamp((S.hap || 50) / 60, .5, 1.4), OCIO = new Set(['banca', 'domino', 'tejo', 'mirarJuego', 'recostado', 'comprar', 'cliente']);
+    const usar = (tipo, prob, filtro) => R < prob * (OCIO.has(tipo) ? animo : 1) ? this.usar(tipo, f, filtro) : null; let q = null;
     if (p.tipo === 'campesina' && manana && (q = usar('huerta', .6))) return q;
     if ((p.tipo === 'campesina' || p.tipo === 'nino') && d < .5 && (q = usar('pozo', .5))) return q;
     if (p.tipo === 'campesina' && manana && (q = usar('alberca', .45))) return q;

@@ -3,7 +3,7 @@
 // de tejo, pozo, alberca, huertas con cerca, columpio y balancín, mulas amarradas frente al mercado y palomas en la
 // plaza. Se ponen en las casillas libres junto al pueblo (nunca encima de una obra) y se rehacen al cambiar el mapa.
 // Cada cosa deja «puestos» que los pobladores toman (Pobladores pide uno con tomar() y lo suelta al irse).
-import { epocaHistorica, plaza as plazaDe } from '../core/index.js';
+import { epocaHistorica, plaza as plazaDe, huertasYPozos, inseguridad } from '../core/index.js';
 import { hornearMobiliario, ALTO_COLUMPIO } from '../arte/mobiliario.js';
 import { P, EL } from '../arte/iso.js';
 import { TAM_GENTE } from '../arte/gente.js';
@@ -51,7 +51,11 @@ export class Mobiliario {
   }
   actualizar() {
     const { S, T } = this.scene, N = T.N, pz = plazaDe(S), hist = this.hist();
-    const firma = S.map.map(x => (x.b || '') + (x.ob ? 'o' : '')).join(',') + '|' + S.stage + '|' + hist;
+    // Cada cosa existe por algo (pedido de Juan: «lo que se ve informa»): el carrito si hay mercado o el pueblo está
+    // contento; el dominó y el tejo si hay ánimo y calma; el columpio si hay seguridad; las palomas, más con mercados
+    // (comen las sobras); la alberca solo con agua del acueducto; huertas y pozos los decide la lógica (dan comida y agua).
+    const ins = inseguridad(S), hap = S.hap || 50;
+    const firma = S.map.map(x => (x.b || '') + (x.ob ? 'o' : '')).join(',') + '|' + S.stage + '|' + hist + '|' + Math.floor(hap / 10) + '|' + Math.floor(ins / 10);
     if (firma === this.firma) return; this.firma = firma;
     this.quitar();
     if (pz < 0) return;
@@ -64,6 +68,10 @@ export class Mobiliario {
     const casas = S.map.map((x, i) => x.b === 'casa' && !x.ob ? i : -1).filter(i => i >= 0).sort((a, b) => { const [ra, ca] = rc(a), [rb, cb] = rc(b); return Math.hypot(ra - r0, ca - c0) - Math.hypot(rb - r0, cb - c0); });
     const hay = k => S.map.some(x => x.b === k && !x.ob);
     usadas.add(pz);
+    // Huertas (dan comida) y pozos (dan agua mientras no haya acueducto), donde la lógica los cuenta.
+    const HP = huertasYPozos(S);
+    for (const { i } of HP.pozos) { usadas.add(i); const [r, c] = rc(i); this.poner('pozo', r + .5, c + .5); this.puesto('pozo', r + .5, c + .28, { frente: 1, voltear: false, luego: 'cantaro' }); }
+    HP.huertas.forEach(({ i, casa }, k) => { usadas.add(i); const [r, c] = rc(i); this.poner('huerta' + (k % 2), r + .5, c + .5); for (const dc of [-.12, .12]) this.puesto('huerta', r + .5, c + .5 + dc, { frente: 1, voltear: dc > 0, casa }); });
     const ocultarPlantas = () => { for (const i of usadas) for (const im of (this.scene.plantas || {})[i] || []) if (im.visible) { im.setVisible(false); this.ocultas.push(im); } };
 
     // Bancas de la plaza (las que ya trae su dibujo) y de los parques.
@@ -78,7 +86,8 @@ export class Mobiliario {
       for (const [dr, dc] of [[.42, 0], [0, .42]]) { this.poner(hist >= 3 ? 'bancaNueva' : 'bancaVieja', r + .5 + dr, c + .5 + dc, -.01); this.puesto('banca', r + .5 + dr, c + .5 + dc, { frente: 1, voltear: true }); }
     });
     // Palomas en la plaza (desde la plaza mayor).
-    if (nivel >= 1) for (let k = 0; k < 8; k++) {
+    const nPal = nivel >= 1 ? Math.min(9, 3 + 3 * S.map.filter(x => x.b === 'mercado' && !x.ob).length) : 0;
+    for (let k = 0; k < nPal; k++) {
       const an = k / 8 * Math.PI * 2 + .3, rad = .3 + (k % 3) * .06, r = r0 + .5 + Math.cos(an) * rad, c = c0 + .5 + Math.sin(an) * rad;
       const a = { r, c, casa: { r, c }, img: this.poner('paloma0', r, c, .01), espera: azar(0, 3), vuela: null, ruta: null, f: 0 };
       a.img.setScale(.9 / this.H.escala); this.palomas.push(a);
@@ -86,7 +95,7 @@ export class Mobiliario {
     if (casas.length < 3) return ocultarPlantas();
 
     // Carrito de mazorca (épocas antiguas) o de raspado, junto a la plaza, con su vendedor.
-    const iCar = libreCerca(pz, 1);
+    const iCar = hay('mercado') || hap >= 50 ? libreCerca(pz, 1) : undefined;
     if (iCar !== undefined) {
       usadas.add(iCar); const [r, c] = rc(iCar), cr = r + .45, cc = c + .5;
       this.poner(hist <= 1 ? 'carritoMazorca' : 'carritoRaspado', cr, cc);
@@ -103,14 +112,14 @@ export class Mobiliario {
         this.atiende(mod ? 'artesano' : 'campesino', (iT + 1) % 3, tr - .07, tc - .1, true);
         for (let k = 0; k < 2; k++) this.puesto('cliente', tr + .26, tc - .12 + k * .2, { frente: 0, voltear: k === 1, luego: 'bolsa' });
         for (let k = 0; k < 4; k++) { const an = k / 4 * Math.PI * 2; this.puesto('tienda', tr + .5 + Math.cos(an) * .18, tc + Math.sin(an) * .18, { mira: { r: tr + .5, c: tc } }); }
-        const iM = [iT + 1, iT - 1, iT + N].find(libre);
+        const iM = hap >= 40 && ins < 60 ? [iT + 1, iT - 1, iT + N].find(libre) : undefined;
         if (iM !== undefined) {
           usadas.add(iM); const [mr, mc] = rc(iM), r2 = mr + .4, c2 = mc + .45;
           this.poner(mod ? 'mesaParques' : 'mesaDomino', r2, c2);
           for (const [dr, dc, v] of [[-.17, 0, true], [0, -.17, false]]) { this.poner('taburete', r2 + dr, c2 + dc, -.01); this.puesto('domino', r2 + dr, c2 + dc, { frente: 1, voltear: v }); }
           this.puesto('mirarJuego', r2 + .1, c2 - .26, { mira: { r: r2, c: c2 } });
         }
-        if (hist <= 2) {
+        if (hist <= 2 && hap >= 40 && ins < 60) {
           const iJ = [iT - 1, iT + 1, iT + N, iT + 2].find(libre);
           if (iJ !== undefined) {
             usadas.add(iJ); const [jr, jc] = rc(iJ), r2 = jr + .5, c2 = jc + .5;
@@ -124,7 +133,7 @@ export class Mobiliario {
       }
     }
     // Columpio y balancín (desde La Violencia), en casillas libres junto a la plaza.
-    if (hist >= 2) {
+    if (hist >= 2 && ins < 55) {
       const iC = libreCerca(pz, 2);
       if (iC !== undefined) {
         usadas.add(iC); const [r, c] = rc(iC), cr = r + .45, cc = c + .5;
@@ -141,16 +150,8 @@ export class Mobiliario {
         this.balancines.push({ r: br, c: bc, tabla, puntos: [pa, pb], ninos: [], fase: 0 });
       }
     }
-    // Pozos (si no hay acueducto o en las épocas antiguas) y albercas (desde La Violencia), junto a las casas.
-    const sinAgua = !hay('acueducto') || hist <= 1;
-    let pozos = 0, albercas = 0, huertas = 0;
-    for (const casa of casas) {
-      const j = vecinos(casa).find(libre); if (j === undefined) continue;
-      const [r, c] = rc(j);
-      if (sinAgua && pozos < 2 && (casa % 4 === 0 || pozos === 0)) { usadas.add(j); pozos++; this.poner('pozo', r + .5, c + .5); this.puesto('pozo', r + .5, c + .28, { frente: 1, voltear: false, luego: 'cantaro' }); continue; }
-      if (hist >= 2 && albercas < 2 && casa % 3 === 1) { usadas.add(j); albercas++; this.poner('alberca', r + .45, c + .5); this.puesto('alberca', r + .48, c + .22, { frente: 1, voltear: false }); continue; }
-      if (huertas < 5 && casa % 2 === 0) { usadas.add(j); huertas++; this.poner('huerta' + (huertas % 2), r + .5, c + .5); for (const dc of [-.12, .12]) this.puesto('huerta', r + .5, c + .5 + dc, { frente: 1, voltear: dc > 0, casa }); }
-    }
+    // Albercas (desde La Violencia), solo con agua del acueducto.
+    if (hist >= 2 && hay('acueducto')) { let n = 0; for (const casa of casas) { if (n >= 2 || casa % 3 !== 1) continue; const j = vecinos(casa).find(libre); if (j === undefined) continue; usadas.add(j); n++; const [r, c] = rc(j); this.poner('alberca', r + .45, c + .5); this.puesto('alberca', r + .48, c + .22, { frente: 1, voltear: false }); } }
     // Mulas amarradas frente al mercado, mientras sus dueños compran.
     S.map.forEach((x, i) => {
       if (x.b !== 'mercado' || x.ob) return;

@@ -17,11 +17,12 @@ import { factorAguaClima } from './biomas.js';
 import { industriaActiva, empleoIndustria, ambienteIndustria } from './industria.js';
 import { efectoLeyes } from './civismo.js';
 import { vecindad } from './vecindad.js';
+import { aguaPozos } from './huertas.js';
 
 export function energy(S, c) { return (S.stage >= 1 && (!S.clima || S.energiaGratis) ? 1 : 0) + c.molino * 3 + efectoMega(S, 'energia'); } // fase 6: la represa
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
 // En El Niño (fase 1) el río baja y los acueductos entregan menos.
-export function waterCap(S, c) { if (S.stage < 1) return 9999; const w = 40 + c.acueducto * 70; return climaActivo(S) ? Math.round(w * factorAgua(S) * factorAguaClima(S)) : w; } // fase 10: deshielo y páramo
+export function waterCap(S, c) { if (S.stage < 1) return 9999; const w = 40 + c.acueducto * 70; return climaActivo(S) ? Math.round(w * factorAgua(S) * factorAguaClima(S)) + aguaPozos(S) : w; } // pozos junto a las casas mientras no haya acueducto // fase 10: deshielo y páramo
 
 // Reparte la población en élite, campesinos, artesanos y desempleados.
 export function society(S) {

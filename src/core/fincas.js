@@ -84,16 +84,25 @@ function factorSequia(S, D) { return D.sequia && S.clima && S.clima.fenomeno ===
 export function precioCultivo(S, cv) { return cv === 'cafe' ? precioCafe(S) * factorRoya(S) : (S.precios && S.precios[cv] ? S.precios[cv].p : 1); }
 export function fasePrecio(S, cv) { return S.precios && S.precios[cv] ? S.precios[cv].fase : 'normal'; }
 
+// Fincas abandonadas por el conflicto (pedido de Juan: «no pueden producir si están abandonadas»): las más cercanas al
+// campamento del grupo armado, una por cada 20 puntos de su nivel (misma regla que fincasAbandonadas en conflicto.js).
+let ABAND = { k: null, s: null };
+export function abandonada(S, i) {
+  const F = S.conf; if (!climaActivo(S) || !F || !F.grupo || !(F.camp >= 0) || F.nivel < 20) return false;
+  const k = S.year + '|' + F.nivel + '|' + F.camp + '|' + S.map.reduce((n, x, j) => (x.b === 'cultivo' || x.b === 'cafetal') && !x.ob ? n + j : n, 0);
+  if (ABAND.k !== k || ABAND.S !== S) { const N = lado(S), d = j => Math.hypot(Math.floor(j / N) - Math.floor(F.camp / N), j % N - F.camp % N); ABAND = { k, S, s: new Set(S.map.map((x, j) => (x.b === 'cultivo' || x.b === 'cafetal') && !x.ob ? j : -1).filter(j => j >= 0).sort((a, b) => d(a) - d(b)).slice(0, Math.floor(F.nivel / 20))) }; }
+  return ABAND.s.has(i);
+}
 // Producción de una finca en la casilla i: { comida, renta } al año (renta antes de multiplicar por S.price).
 export function produccionFinca(S, i) {
   const x = S.map[i];
-  if (!esFinca(x) || x.ob) return { comida: 0, renta: 0 };
+  if (!esFinca(x) || x.ob || abandonada(S, i)) return { comida: 0, renta: 0 }; // la vereda abandonada por el conflicto no produce
   const cv = cultivoDe(x), D = datosCultivo(cv), r = rindeObra(S, x) * (1 + mejoraRenta(x)) * aptitudPuesta(S, i, cv) * factorSequia(S, D) * (produce(S, x) ? 1 : 0);
   const riego = D.comida && nearRiver(S, i) ? K().riego : 0;
   return { comida: (D.comida + riego) * r, renta: D.renta * r * precioCultivo(S, cv) * (1 + efectoLeyes(S, 'fincas')) }; // fase 12: rasgos (colonos, cafeteros...)
 }
 // Empleo y efecto en el ambiente de todas las fincas.
-export function empleoCampo(S) { let n = 0; S.map.forEach(x => { if (esFinca(x) && !x.ob && rindeObra(S, x)) n += datosCultivo(cultivoDe(x)).empleo; }); return n; }
+export function empleoCampo(S) { let n = 0; S.map.forEach((x, i) => { if (esFinca(x) && !x.ob && rindeObra(S, x) && !abandonada(S, i)) n += datosCultivo(cultivoDe(x)).empleo; }); return n; }
 export function ambienteCampo(S) { let n = 0; S.map.forEach(x => { if (esFinca(x) && !x.ob) n += datosCultivo(cultivoDe(x)).ambiente; }); return n; }
 export function protegeSuelo(x) { return esFinca(x) && !!C.CULTIVOS && !!datosCultivo(cultivoDe(x)).protege; }
 // Cuántas fincas hay de cada cultivo (para la canasta agrícola y los conteos).

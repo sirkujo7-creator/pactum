@@ -4,7 +4,7 @@
 // ganancia. Las artesanías son el taller de siempre. Los productos se desbloquean con el camino de avances.
 // Solo en el terreno en acuarela; en la versión 9 todo sigue igual.
 import { C } from './contenido.js';
-import { fincasActivas, esFinca, cultivoDe, produce, precioCultivo, datosCultivo } from './fincas.js';
+import { fincasActivas, esFinca, cultivoDe, produce, precioCultivo, datosCultivo, abandonada } from './fincas.js';
 import { rindeObra } from './desgaste.js';
 import { counts } from './reglas.js';
 import { poweredT } from './sociedad.js';
@@ -32,7 +32,7 @@ export function insumo(S, pr) {
   const D = datosProducto(pr), q = D.insumo;
   if (!q) return { tiene: 0, necesita: 0, f: 1 };
   const n = fabricas(S).filter(i => productoDe(S.map[i]) === pr).length || 1;
-  const tiene = q.cultivo ? S.map.filter(x => esFinca(x) && !x.ob && cultivoDe(x) === q.cultivo && produce(S, x) && rindeObra(S, x)).length
+  const tiene = q.cultivo ? S.map.filter((x, j) => esFinca(x) && !x.ob && cultivoDe(x) === q.cultivo && produce(S, x) && rindeObra(S, x) && !abandonada(S, j)).length
     : S.map.filter(x => x.b === q.obra && !x.ob && rindeObra(S, x)).length;
   const necesita = q.porFabrica * n;
   return { tiene, necesita, f: Math.min(1, tiene / necesita) };
