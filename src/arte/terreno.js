@@ -1,9 +1,10 @@
 // Pintura del terreno en acuarela (tomada de la prueba de estilo aprobada), por sectores.
 // Cada sector es un lienzo con un bloque de casillas; si algo cambia, solo se repinta su sector.
-import { mulberry, clamp, shade, mix, poly, wash, blob, grano, lienzo } from './acuarela.js';
+import { mulberry, clamp, shade, mix, saturar, poly, wash, blob, grano, lienzo } from './acuarela.js';
 import { P, TW, TH, EL, alturaEn } from './iso.js';
 import { yeso, FR } from './fresco.js';
 import { C } from '../core/contenido.js';
+import { pintarAguas, lodoOrilla } from './aguas.js';
 
 export const LADO_SECTOR = 8;
 const BASE = -2.2; // profundidad de los costados del diorama
@@ -85,35 +86,105 @@ export function cajaSector(T, sr, sc) {
 // Color y luz del terreno en una imagen pequeña del sector (S muestras por casilla, más una casilla de margen).
 // La luz viene siempre del mismo punto, arriba a la izquierda (la misma de las sombras de árboles y animales): las
 // laderas que miran hacia allá se aclaran y las otras se oscurecen, con un paso suave entre una y otra.
-function campoDeColor(T, k, dry, sub, S = 4) {
+// Pulido visual (pedido de Juan: «el suelo no parece terreno»): además del relieve de la partida, la luz lee un
+// relieve fino que solo existe en la pintura (lomitas, ondulaciones y, en la montaña, filos y cañadas). Las
+// hondonadas guardan humedad (más oscuras y verdes) y los lomos se secan; en las pendientes fuertes asoma la tierra
+// rojiza del Tolima. El ruido va girado en cada escala para que nada siga la cuadrícula de las casillas.
+const GIROS = [[.88, .48], [.36, .93], [-.6, .8], [.97, -.24]];
+function relieveFino(T, r, c, h) {
+  const n = T.vary, g = (k, x, y, esc, o) => { const [co, si] = GIROS[k]; return n((x * co - y * si) / esc + o, (x * si + y * co) / esc + o * .7); };
+  const d = T.riverD(r, c), cerca = clamp((d - .9) / 1.6, .2, 1);
+  const monte = smooth(clamp((h - 3.2) / 3.2, 0, 1)), amp = (.26 + .16 * smooth(clamp((h - 1.2) / 3, 0, 1))) * cerca;
+  let m = (g(0, c, r, 2.2, 300) - .5) * .75 + (g(1, c, r, 1.05, 410) - .5) * .2 + (g(2, c, r, .5, 520) - .5) * .05;
+  m *= amp;
+  if (monte > 0) m += monte * (g(3, c, r, 1.6, 630) - .5) * .35; // la montaña, con lomas más anchas
+  return m;
+}
+// Tipo de suelo «de pintura» en un punto: la misma regla de la partida (altura, distancia al río, pendiente y
+// humedad), pero con los valores continuos del punto y un poco de ruido. Así el paso de un suelo a otro sigue las
+// curvas del terreno, con borde irregular, y no la escalera de las casillas.
+const ORILLA = { b: 'galeria', d: 0, slope: 0 };
+function tipoEn(T, r, c) {
+  const N = T.N, rr = clamp(r, 0, N), cc = clamp(c, 0, N), e = .2;
+  const ruido = (T.vary(c / .9 + 211, r / .9 + 97) - .5) * .5 + (T.vary(c / .32 + 7, r / .32 + 3) - .5) * .22;
+  const h = T.hf(rr, cc) + ruido, d = T.riverD(rr, cc) + ruido * 1.2;
+  const slope = Math.hypot(T.hf(rr, clamp(cc + e, 0, N)) - T.hf(rr, clamp(cc - e, 0, N)), T.hf(clamp(rr + e, 0, N), cc) - T.hf(clamp(rr - e, 0, N), cc)) / (2 * e);
+  const moist = T.moistAt(rr, cc) + ruido * .25;
+  let b;
+  if (d < 1.3 && h < 2.2) return ORILLA; // el agua se pinta encima; alrededor del cauce, orilla verde
+  else if (h > 9) b = 'nieve';
+  else if (h > 7.6 || slope > 2.4) b = 'roca';
+  else if (h > 6.1) b = 'paramo';
+  else if (h > 4.4) b = 'niebla';
+  else if (h > 2) b = 'ladera';
+  else if (d < 1.9) b = 'galeria';
+  else if (d < 6 && moist > .45 && slope < .45) b = 'arrozal';
+  else if (moist < .5) b = 'seco';
+  else b = 'potrero';
+  return { b, d, slope };
+}
+function campoDeColor(T, k, dry, sub, S = 8) {
   const N = T.N, r0 = k.r0 - 1, c0 = k.c0 - 1, filas = (k.r1 - k.r0 + 2) * S, cols = (k.c1 - k.c0 + 2) * S;
   const cv = lienzo(cols, filas), g = cv.getContext('2d'), im = g.createImageData(cols, filas), d = im.data;
-  // Alturas de una sola vez (con un borde de una muestra) y pendientes por diferencias entre vecinas.
-  const W = cols + 2, alt = new Float32Array(W * (filas + 2));
-  for (let y = -1; y <= filas; y++) for (let x = -1; x <= cols; x++) alt[(y + 1) * W + x + 1] = T.hf(clamp(r0 + (y + .5) / S, 0, N), clamp(c0 + (x + .5) / S, 0, N));
+  // Alturas de una sola vez (con un borde de dos muestras): la del juego para el color y la fina para la luz.
+  const B = 2, W = cols + 2 * B, F = filas + 2 * B, alt = new Float32Array(W * F), base = new Float32Array(W * F);
+  for (let y = -B; y < filas + B; y++) for (let x = -B; x < cols + B; x++) {
+    const r = clamp(r0 + (y + .5) / S, 0, N), c = clamp(c0 + (x + .5) / S, 0, N), h = T.hf(r, c), j = (y + B) * W + x + B;
+    base[j] = h; alt[j] = h + relieveFino(T, r, c, h);
+  }
   const tono = (v, f) => f < 0 ? v * (1 + f) : v + (255 - v) * f; // como shade(), pero con números
+  const pasto = teñir(mix('#C9B27A', '#D6BC80', dry)), lodo = mix('#8A6E4E', '#B49A72', dry), rojiza = teñir(mix('#A9774E', '#B98A5C', dry * .5));
+  const verdeA = teñir(mix('#9DAE62', '#BDB676', dry * .6)), verdeB = teñir(mix('#7F9C6A', '#A9AA78', dry * .6)), hondo = teñir(mix('#6E8C4C', '#9A9A62', dry * .5));
   for (let y = 0; y < filas; y++) for (let x = 0; x < cols; x++) {
-    const r = r0 + (y + .5) / S, c = c0 + (x + .5) / S, i = (y + 1) * W + x + 1, h = alt[i];
+    const r = r0 + (y + .5) / S, c = c0 + (x + .5) / S, i = (y + B) * W + x + B, h = base[i];
     const hx = (alt[i + 1] - alt[i - 1]) * S / 2, hy = (alt[i + W] - alt[i - W]) * S / 2;
-    const Lq = clamp(1 + .24 * hx - .13 * hy, .6, 1.3), luz = Lq >= 1 ? (Lq - 1) * .8 : (Lq - 1) * .9;
-    let cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, Math.hypot(hx, hy), dry);
-    const vr = (T.vary(c / 4, r / 4) - .5) * .1, bruma = (1 - (r + c) / (2 * N)) * .2, o = (y * cols + x) * 4;
-    // Pasto seco y lodo como tono continuo del suelo (antes eran óvalos sueltos que se veían como manchones):
-    // ruido en dos escalas, así los bordes son irregulares y cruzan casillas sin costuras.
-    const t = T.tiles[clamp(Math.floor(r), 0, N - 1) * N + clamp(Math.floor(c), 0, N - 1)];
+    const Lq = clamp(1 + .24 * hx - .13 * hy, .58, 1.32), luz = Lq >= 1 ? (Lq - 1) * .8 : (Lq - 1) * .9;
+    // Curvatura (a dos muestras): positiva en hondonadas, negativa en lomos.
+    const curv = (alt[i + 2] + alt[i - 2] + alt[i + 2 * W] + alt[i - 2 * W] - 4 * alt[i]) * S * S / 4;
+    const slope = Math.hypot((base[i + 1] - base[i - 1]) * S / 2, (base[i + W] - base[i - W]) * S / 2), pend = Math.hypot(hx, hy);
+    let cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, slope, dry);
+    const vr = (T.vary(c / 4, r / 4) - .5) * .1, bruma = (1 - (r + c) / (2 * N)) * .1, o = (y * cols + x) * 4;
+    const t = tipoEn(T, r, c); // con borde irregular entre tipos de suelo (no siguen la cuadrícula)
+    let sombra = 0;
     if (t && t.b !== 'agua' && t.b !== 'nieve') {
+      const verde = HIERBA.has(t.b) && t.b !== 'paramo';
+      if (verde || t.b === 'seco') {
+        // Luces y sombras del pasto: ondas suaves de claro y oscuro a dos escalas, sin figuras.
+        const ls = (T.vary((c * .7 - r * .7) / 1.3 + 801, (c * .7 + r * .7) / 1.3 + 17) - .5) * .2 + (T.vary((c * .7 - r * .7) / .45 + 501, (c * .7 + r * .7) / .45 + 77) - .5) * .24 + (T.vary(c / .22 + 613, r / .22 + 41) - .5) * .1;
+        sombra -= ls;
+      }
+      if (verde) {
+        // Potreros de varios verdes (unos más amarillos, otros más azulados), en manchones grandes e irregulares.
+        const nv = .7 * T.vary((c * .88 - r * .48) / 2.6 + 200, (c * .48 + r * .88) / 2.6 + 150) + .3 * T.vary(c / 1.1 + 71, r / 1.1 + 9);
+        cc = mix(cc, nv > .5 ? verdeA : verdeB, Math.min(.38, Math.abs(nv - .5) * 1.3) * (t.b === 'niebla' ? .4 : 1));
+      }
       if (HIERBA.has(t.b) && t.b !== 'niebla') {
         const n = .65 * T.vary(c / 3.1 + 40, r / 3.1 + 40) + .35 * T.vary(c / 1.05 + 13, r / 1.05 + 5);
         const f = suave(clamp((n - .5 + dry * .2) / .22, 0, 1));
-        if (f > 0) cc = mix(cc, teñir(mix('#C9B27A', '#D6BC80', dry)), f * .42);
+        if (f > 0) cc = mix(cc, pasto, f * .36);
       }
       if (t.d < 2.6 && t.b !== 'arrozal') {
         const n = .65 * T.vary(c / 2.6 + 90, r / 2.6 + 12) + .35 * T.vary(c / .9 + 31, r / .9 + 77);
         const f = suave(clamp((n - .52) / .2, 0, 1)) * clamp((2.6 - t.d) / 1.2, 0, 1);
-        if (f > 0) cc = mix(cc, mix('#8A6E4E', '#B49A72', dry), f * .32);
+        if (f > 0) cc = mix(cc, lodo, f * .32);
+      }
+      // Hondonadas: guardan agua, más verdes y en sombra; lomos: secos y con más luz.
+      if (curv > 0) { const f = clamp(curv * .06, 0, 1); if (verde || t.b === 'seco') cc = mix(cc, hondo, f * .2); sombra += f * .05; }
+      else { const f = clamp(-curv * .06, 0, 1); if (verde) cc = mix(cc, pasto, f * .12); sombra -= f * .03; }
+      // Pendiente fuerte: la tierra rojiza asoma en cárcavas (menos en el bosque de niebla y nada en la roca).
+      if (pend > 1 && h > .8 && t.b !== 'roca' && t.b !== 'paramo') {
+        const gate = T.vary((c * .36 - r * .93) / .9 + 333, (c * .93 + r * .36) / .9 + 77);
+        const f = smooth(clamp((pend - 1) / 1.1, 0, 1)) * smooth(clamp((gate - .42) / .25, 0, 1)) * (t.b === 'niebla' ? .45 : 1);
+        if (f > 0) cc = mix(cc, rojiza, f * .3);
       }
     }
-    for (let j = 0; j < 3; j++) { const v = tono(tono(parseInt(cc.slice(1 + j * 2, 3 + j * 2), 16), vr), luz); d[o + j] = v + ([230, 226, 214][j] - v) * bruma; }
+    // Colores vivos y cálidos (referencia de Juan): potreros verde hoja, bosque de niebla verde hondo, lo seco dorado.
+    if (t && (HIERBA.has(t.b) || t.b === 'arrozal') && t.b !== 'paramo') {
+      const meta = t.b === 'niebla' ? '#4F7F38' : t.b === 'seco' ? mix('#C3B45C', '#D2B46A', dry) : t.b === 'galeria' ? '#78A646' : mix('#8DB24A', '#BDB462', dry * .8);
+      cc = saturar(mix(cc, meta, .42), .28 - dry * .15);
+    }
+    const grano = (((x * 73856093) ^ (y * 19349663)) % 997 / 997 - .5) * .025; // grano fino de pincel
+    for (let j = 0; j < 3; j++) { const v = tono(tono(parseInt(cc.slice(1 + j * 2, 3 + j * 2), 16), vr + grano - sombra), luz); d[o + j] = v + ([230, 226, 214][j] - v) * bruma; }
     d[o + 3] = 255;
   }
   g.putImageData(im, 0, 0);
@@ -132,17 +203,11 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   const rngB = mulberry(T.seed * 3 + sr * 31 + sc);
   const zona = [];
 
-  // Costados del diorama (tierra con estratos), solo en los sectores del borde delantero.
-  const costado = (a, b, col) => { wash(g, [a[0], b[0], b[1], a[1]], col, rngB, .97, 0); zona.push([a[0], b[0], b[1], a[1]]); };
-  if (k.r1 === N) for (let c = k.c0; c < k.c1; c++) costado([P(N, c, T.hv(N, c)), P(N, c, BASE)], [P(N, c + 1, T.hv(N, c + 1)), P(N, c + 1, BASE)], '#9E805C');
-  if (k.c1 === N) for (let r = k.r0; r < k.r1; r++) costado([P(r, N, T.hv(r, N)), P(r, N, BASE)], [P(r + 1, N, T.hv(r + 1, N)), P(r + 1, N, BASE)], '#7D6347');
-  [[.35, '#B69770'], [.7, '#6C543C']].forEach(([f, col]) => {
-    g.globalAlpha = .4; g.strokeStyle = col; g.lineWidth = 1.3; g.beginPath();
-    if (k.r1 === N) for (let c = k.c0; c <= k.c1; c++) { const p = P(N, c, T.hv(N, c) * (1 - f) + BASE * f); c === k.c0 ? g.moveTo(...p) : g.lineTo(...p); }
-    if (k.c1 === N) for (let r = k.r1; r >= k.r0; r--) { const p = P(r, N, T.hv(r, N) * (1 - f) + BASE * f); (r === k.r1 && k.r1 !== N) ? g.moveTo(...p) : g.lineTo(...p); }
-    g.stroke();
-  });
-  g.globalAlpha = 1;
+  // Costados del diorama, solo en los sectores del borde delantero. Pulido visual: un solo corte de tierra por lado
+  // (antes un trozo por casilla, con rayas entre trozos), con capa de suelo oscuro, estratos ondulados de arcilla y
+  // piedra, piedras incrustadas, raíces y el pasto que cuelga del borde.
+  if (k.r1 === N) zona.push(pintarCostado(g, T, k.c0, k.c1, c => [N, c], '#9E805C', dry));
+  if (k.c1 === N) zona.push(pintarCostado(g, T, k.r0, k.r1, r => [r, N], '#7D6347', dry));
 
   // Casillas del sector, de atrás hacia adelante, con subdivisiones para que la luz sea continua.
   const tiles = [];
@@ -161,40 +226,49 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     col = L2 >= 1 ? shade(col, (L2 - 1) * .8) : shade(col, (L2 - 1) * .9);
     // Relieve suave (pedido de Juan, 6 de octubre: el suelo se veía pixelado): el color y la luz se calculan en una
     // imagen pequeña de todo el sector y cada casilla la pinta estirada y suavizada sobre su rombo, sin cuadritos.
-    g.save(); poly(g, qx); g.clip(); g.fillStyle = col; g.fill();
+    g.save(); poly(g, qx); g.clip(); g.fillStyle = col; g.fill(); g.restore();
+    // Dos triángulos por casilla, cada uno con su propia transformación exacta en sus tres esquinas: así la
+    // imagen de color y luz encaja sin rayas entre casillas vecinas (con una sola transformación por casilla la
+    // cuarta esquina quedaba corrida y el relieve fino mostraba los bordes de la cuadrícula).
     const ox = (t.c - campo.c0) * campo.S, oy = (t.r - campo.r0) * campo.S, S = campo.S;
-    const p00 = P(t.r, t.c, t.h00), p01 = P(t.r, t.c + 1, t.h01), p10 = P(t.r + 1, t.c, t.h10);
-    const ta = (p01[0] - p00[0]) / S, tb = (p01[1] - p00[1]) / S, tc = (p10[0] - p00[0]) / S, td = (p10[1] - p00[1]) / S;
-    g.transform(ta, tb, tc, td, p00[0] - ta * ox - tc * oy, p00[1] - tb * ox - td * oy);
-    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
-    g.drawImage(campo.canvas, ox - 1.5, oy - 1.5, S + 3, S + 3, ox - 1.5, oy - 1.5, S + 3, S + 3);
-    g.restore();
+    const p00 = P(t.r, t.c, t.h00), p01 = P(t.r, t.c + 1, t.h01), p10 = P(t.r + 1, t.c, t.h10), p11 = P(t.r + 1, t.c + 1, t.h11);
+    const crecer = (L, f) => { const cx = (L[0][0] + L[1][0] + L[2][0]) / 3, cy = (L[0][1] + L[1][1] + L[2][1]) / 3; return L.map(p => [cx + (p[0] - cx) * f, cy + (p[1] - cy) * f]); };
+    for (const [A, Bv, Cv, u0, v0, su, sv] of [[p00, p01, p10, ox, oy, 1, 1], [p11, p10, p01, ox + S, oy + S, -1, -1]]) {
+      // A es la esquina de origen; Bv avanza en columnas (u) y Cv en filas (v), con el signo de cada triángulo.
+      g.save(); poly(g, crecer([A, Bv, Cv], 1.06)); g.clip();
+      const ta = (Bv[0] - A[0]) / S * su, tb = (Bv[1] - A[1]) / S * su, tc = (Cv[0] - A[0]) / S * sv, td = (Cv[1] - A[1]) / S * sv;
+      g.transform(ta, tb, tc, td, A[0] - ta * u0 - tc * v0, A[1] - tb * u0 - td * v0);
+      g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+      g.drawImage(campo.canvas, ox - 1.5, oy - 1.5, S + 3, S + 3, ox - 1.5, oy - 1.5, S + 3, S + 3);
+      g.restore();
+    }
     if (t.b === 'agua') rios.push(qx); // el río se pinta al final: nada de la orilla se le monta encima
     // Suelo natural (renovación colonial): manchas agrupadas de pasto seco, lodo y piedra, y pinceladas finas de pasto.
     const cx = qc[0], cy = qc[1];
-    if (t.b !== 'agua' && t.b !== 'nieve') sueloNatural(g, T, t, col, dry, rng);
-    if (t.b === 'roca') { g.globalAlpha = .35; for (let j = 0; j < 3; j++) { const x = cx + (rng() - .5) * 30, y = cy + (rng() - .5) * 10; g.beginPath(); g.moveTo(x - 6, y); g.lineTo(x, y - 2); g.lineTo(x + 7, y + 1); g.stroke(); } }
+    if (t.b !== 'nieve') sueloNatural(g, T, t, col, dry, rng); // también en las casillas de río: su orilla lleva pasto
+    if (t.b === 'roca' || (t.b === 'paramo' && rng() < .3)) peñas(g, cx, cy, rng, t.b === 'roca' ? 1 + Math.floor(rng() * 2) : 1); // afloramientos de roca
     g.globalAlpha = 1;
-    if (t.b === 'paramo' && rng() < .08) blob(g, cx, cy + 1, 7, 3, '#8FB6C4', rng, .85); // lagunas de páramo
+    if (t.b === 'paramo' && rng() < .08) charco(g, cx, cy + 1, 7, rng, '#7FA9B8'); // lagunas de páramo
   }
 
+  // Pie de la vegetación (pedido de Juan: que el suelo se enlace con los árboles): pasto alto, helechos, hojarasca
+  // y sombra al pie de cada árbol, palma, guadua o frailejón de las casillas libres.
+  // Agua quieta y quebradas (recortadas a las casillas del sector, para que no se pinten dos veces en las uniones).
+  g.save(); g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip();
+  pintarAguas(g, T, k, opciones.mapa, dry);
+  g.restore();
+  if (opciones.plantas && opciones.mapa) {
+    const pies = [];
+    for (const t of tiles) {
+      const x = opciones.mapa[t.r * N + t.c];
+      if (!x || x.b || x.dr > 0 || x.q > 0 || (t.b === 'niebla' && x.t !== 'bosque')) continue;
+      for (const o of opciones.plantas[t.r * N + t.c] || []) if (PIE[o.k]) pies.push(o);
+    }
+    pies.sort((a, b) => (a.r + a.c) - (b.r + b.c)).forEach(o => pintarPie(g, T, o, dry));
+  }
   if (rios.length) pintarRio(g, T, zona, dry); // el río entero de una vez: orilla curva, sin escalones de casilla
 
-  // Curvas de nivel suaves: ayudan a leer la altura.
-  g.lineWidth = .7; g.strokeStyle = '#5E4B33';
-  for (const t of tiles) {
-    if (t.b === 'agua') continue;
-    const hs = [t.h00, t.h01, t.h11, t.h10], ps = [[t.r, t.c], [t.r, t.c + 1], [t.r + 1, t.c + 1], [t.r + 1, t.c]];
-    for (let L0 = 1; L0 < 7; L0++) {
-      const pts = [];
-      for (let e = 0; e < 4; e++) {
-        const a = hs[e], b = hs[(e + 1) % 4];
-        if ((a - L0) * (b - L0) < 0) { const f = (L0 - a) / (b - a), pa = ps[e], pb = ps[(e + 1) % 4]; pts.push(P(lerp(pa[0], pb[0], f), lerp(pa[1], pb[1], f), L0)); }
-      }
-      if (pts.length === 2) { g.globalAlpha = .13; g.beginPath(); g.moveTo(...pts[0]); g.lineTo(...pts[1]); g.stroke(); }
-    }
-  }
-  g.globalAlpha = 1;
+  // (Las curvas de nivel se quitaron en el pulido visual: el relieve ya se lee con la luz y se veían como rayas.)
 
   const recortar = () => { g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip(); };
 
@@ -217,6 +291,87 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   return { canvas: cv, x: k.x, y: k.y, w: k.w, h: k.h, escala: esc };
 }
 
+// Corte de tierra de un costado del diorama entre a y b (posición a lo largo del borde); rc(u) da [fila, columna].
+function pintarCostado(g, T, a, b, rc, col, dry) {
+  const pt = (r, c, h) => P(r, c, h), tramo = (u0, u1) => { const L = []; for (let u = u0; u < u1 - 1e-6; u += .25) L.push(u); L.push(u1); return L; };
+  const en = u => { const [r, c] = rc(clamp(u, 0, T.N)); return [r, c, T.hf(r, c)]; };
+  // Fondo opaco un poco más ancho (tapa la unión con el sector vecino); las capas, exactamente en el tramo.
+  const ancho = tramo(a - .06, b + .06).map(en), fondo = [...ancho.map(([r, c, h]) => pt(r, c, h)), ...ancho.map(([r, c]) => pt(r, c, BASE)).reverse()];
+  g.globalAlpha = 1; g.fillStyle = col; g.beginPath(); fondo.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
+  const us = tramo(a - .06, b + .06), arriba = us.map(en); // todo con la misma anchura: el vecino pinta encima lo mismo y no queda raya
+  const sup = arriba.map(([r, c, h]) => pt(r, c, h)), inf = arriba.map(([r, c]) => pt(r, c, BASE));
+  const zona = [...sup, ...inf.slice().reverse()];
+  const zonaGrano = zona;
+  const R = mulberry(Math.round(a * 13 + b * 7) + T.seed);
+  g.save(); g.beginPath(); zona.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.clip();
+  const y1 = Math.max(...inf.map(p => p[1]));
+  // Franja a una profundidad (0 arriba, 1 abajo) que ondula con el ruido del mundo.
+  const linea = (f, amp, o) => arriba.map(([r, c, h], j) => { const w = (T.vary(us[j] / 1.3 + o, o) - .5) * amp; return pt(r, c, h * (1 - f) + BASE * f + w - f * h * .5); });
+  const banda = (f1, f2, color, al, o) => { const A = linea(f1, .35, o), Bq = linea(f2, .35, o + 9).reverse(); g.globalAlpha = al; g.fillStyle = color; g.beginPath(); [...A, ...Bq].forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill(); };
+  banda(.5, 1.05, shade(col, -.3), .35, 51);                         // más oscura abajo
+  banda(.78, 1.05, shade(col, -.4), .3, 57);
+  banda(.42, .62, shade(mix(col, '#B5764A', .35), .05), .55, 11);   // arcilla rojiza
+  banda(.7, .86, mix(col, '#8F8A80', .45), .5, 23);                  // capa de piedra
+  // Capa de suelo oscuro bajo el pasto.
+  const capa = linea(.16, .18, 37);
+  g.globalAlpha = .5; g.fillStyle = shade(col, -.35); g.beginPath(); [...sup, ...capa.slice().reverse()].forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
+  // Piedras incrustadas en las capas de abajo.
+  for (let j = 0; j < arriba.length * .9; j++) {
+    const k = Math.floor(R() * arriba.length), [r, c, h] = arriba[k], f = .3 + R() * .62, p = pt(r, c, h * (1 - f) + BASE * f - f * h * .5), w = 1.2 + R() * 2.6;
+    g.globalAlpha = .5; g.fillStyle = shade(col, -.4); g.beginPath(); g.ellipse(p[0] + .5, p[1] + .6, w, w * .6, 0, 0, 7); g.fill();
+    g.globalAlpha = .9; g.fillStyle = mix('#A69C8C', col, R() * .5); g.beginPath(); g.ellipse(p[0], p[1], w, w * .58, 0, 0, 7); g.fill();
+    g.globalAlpha = .55; g.fillStyle = '#D8D0C2'; g.beginPath(); g.ellipse(p[0] - w * .3, p[1] - w * .22, w * .4, w * .18, 0, 0, 7); g.fill();
+  }
+  // Raíces que bajan del pasto.
+  g.strokeStyle = shade(col, -.5); g.lineWidth = .6; g.globalAlpha = .45; g.beginPath();
+  for (let j = 0; j < arriba.length * .6; j++) { const k = Math.floor(R() * arriba.length), [r, c, h] = arriba[k]; let [x, y] = pt(r, c, h); y += 1; g.moveTo(x, y); for (let s2 = 0; s2 < 4; s2++) { x += (R() - .5) * 2.2; y += 1.2 + R() * 1.6; g.lineTo(x, y); } }
+  g.stroke();
+  // Sombra suave al pie.
+  const gp = g.createLinearGradient(0, y1 - 10, 0, y1); gp.addColorStop(0, 'rgba(40,28,18,0)'); gp.addColorStop(1, 'rgba(40,28,18,.25)');
+  g.globalAlpha = 1; g.fillStyle = gp; g.fillRect(-1e4, y1 - 10, 2e4, 12);
+  g.restore();
+  // Borde de arriba: pasto que cuelga sobre el corte (fuera del recorte para que sobresalga un poco).
+  g.lineCap = 'round';
+  for (const [tono, al, L] of [[mix('#5E7A3E', '#9C8650', dry * .7), .7, 3.2], [mix('#93A85E', '#C9B27A', dry * .7), .6, 2.2]]) {
+    g.globalAlpha = al; g.strokeStyle = tono; g.lineWidth = .7; g.beginPath();
+    for (let j = 0; j < sup.length - 1; j++) for (let q = 0; q < 5; q++) { const f = R(), x = lerp(sup[j][0], sup[j + 1][0], f), y = lerp(sup[j][1], sup[j + 1][1], f); g.moveTo(x, y - .8); g.lineTo(x + (R() - .5) * 1.6, y + .5 + R() * L); }
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+  return zonaGrano;
+}
+
+// Afloramiento de roca: bloques angulosos con la cara de la izquierda iluminada, la de la derecha en sombra, una
+// grieta y su sombra en el suelo (antes eran rayitas en V que parecían pájaros).
+function peñas(g, cx, cy, rng, n) {
+  // Contorno irregular y redondeado (puntos a distinta distancia del centro, unidos con curvas).
+  // Contorno facetado: cantos rectos de largo distinto, base plana y más ancha que alta (piedra partida, no bola).
+  const forma = (x, y, w, h, k) => { const L = []; for (let i = 0; i < k; i++) { const a = i / k * 6.283 + (rng() - .5) * .5, f = .7 + rng() * .4, sy = Math.sin(a); L.push([x + Math.cos(a) * w * f, sy > 0 ? y + sy * h * .25 : y + sy * h * f * 1.25]); } return L; };
+  const curva = L => { g.beginPath(); L.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); };
+  for (let j = 0; j < n; j++) {
+    const x = cx + (rng() - .5) * 26, y = cy + (rng() - .5) * 9, w = 4 + rng() * 5, h = w * (.5 + rng() * .35);
+    g.globalAlpha = .3; g.fillStyle = '#2E281E'; g.beginPath(); g.ellipse(x + w * .3, y + h * .35, w * 1.15, h * .5, 0, 0, 7); g.fill();
+    g.globalAlpha = 1; g.fillStyle = '#7D766A'; curva(forma(x, y, w, h, 7)); g.fill();                                     // la peña, en sombra
+    g.fillStyle = '#A9A294'; curva(forma(x - w * .18, y - h * .22, w * .78, h * .72, 6)); g.fill();                     // la parte que recibe luz
+    g.fillStyle = '#D3CDBF'; curva(forma(x - w * .38, y - h * .45, w * .34, h * .28, 5)); g.fill();                     // brillo arriba a la izquierda
+    g.strokeStyle = '#5A5448'; g.lineWidth = .5; g.globalAlpha = .6; g.beginPath(); g.moveTo(x + w * .15, y - h * .55); g.quadraticCurveTo(x + w * .3, y - h * .1, x + w * .05, y + h * .3); g.stroke(); // grieta
+    if (rng() < .55) { g.globalAlpha = .85; g.fillStyle = '#7E9A52'; g.beginPath(); g.ellipse(x - w * .6, y + h * .25, w * .35, h * .18, 0, 0, 7); g.fill(); } // musgo al pie
+  }
+  g.globalAlpha = 1;
+}
+// Charco o laguna de borde irregular (cantos cortos, más ancho que alto): orilla de lodo oscuro, agua y un reflejo
+// del cielo en la parte de atrás, y unos juncos en punta.
+function charco(g, x, y, w, rng, agua) {
+  const L = [], k = 9;
+  for (let i = 0; i < k; i++) { const a = i / k * 6.283 + (rng() - .5) * .4, f = .7 + rng() * .4; L.push([x + Math.cos(a) * w * f, y + Math.sin(a) * w * .4 * f]); }
+  const trazo = (esc, dy) => { g.beginPath(); L.forEach(([px, py], i) => { const X = x + (px - x) * esc, Y = y + (py - y) * esc + dy; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.closePath(); };
+  g.globalAlpha = .55; g.fillStyle = '#5E4E36'; trazo(1.12, .3); g.fill();
+  g.globalAlpha = .95; g.fillStyle = agua; trazo(1, 0); g.fill();
+  g.globalAlpha = .55; g.fillStyle = '#D8E6E4'; g.beginPath(); g.moveTo(x - w * .5, y - w * .16); g.lineTo(x + w * .2, y - w * .22); g.lineTo(x + w * .05, y - w * .12); g.lineTo(x - w * .45, y - w * .08); g.closePath(); g.fill();
+  g.globalAlpha = 1; g.fillStyle = '#5C7A3A'; g.beginPath();
+  for (let q = 0; q < 5; q++) { const bx = x + w * (.55 + rng() * .3) * (rng() < .5 ? -1 : 1), by = y + (rng() - .3) * w * .3, h = 2 + rng() * 2.5; g.moveTo(bx - .4, by); g.lineTo(bx + (rng() - .5) * 1.2, by - h); g.lineTo(bx + .4, by); g.closePath(); }
+  g.fill();
+}
 // Mancha suave de bordes difusos (sin contorno), para que el suelo no parezca un mosaico.
 function mancha(g, x, y, rx, col, al) {
   g.save(); g.translate(x, y); g.scale(1, .5);
@@ -234,11 +389,11 @@ function sueloNatural(g, T, t, col, dry, rng) {
   // Pasto seco: más con la sequía.
   if (HIERBA.has(t.b) && t.b !== 'niebla') {
     const f = clamp((nA - .56 + dry * .2) / .22, 0, 1);
-    if (f > 0) { g.lineWidth = .55; g.lineCap = 'round'; g.globalAlpha = .35 + .3 * f; g.strokeStyle = teñir(mix('#B89C5E', '#C9AE6E', dry)); g.beginPath(); for (let j = 0; j < 10 * f; j++) { const p = en(), L = 1.2 + rng() * 2; g.moveTo(p[0], p[1]); g.lineTo(p[0] + (rng() - .5) * 2, p[1] - L); } g.stroke(); g.globalAlpha = 1; } // briznas secas (el tono ya viene del campo)
+    // (las briznas secas en rayitas se quitaron: ahora el pasto se pinta a toquecitos)
   }
   // Lodo y charcos junto al río (en la sequía se agrieta y se aclara).
   if (t.d < 2.6 && t.b !== 'arrozal' && nB > .55) {
-    if (nB > .72 && dry < .45) { const p = en(); g.globalAlpha = .55; g.fillStyle = '#8FB0B4'; g.beginPath(); g.ellipse(p[0], p[1], 3 + rng() * 2, 1.2 + rng() * .6, 0, 0, 7); g.fill(); g.globalAlpha = .5; g.fillStyle = '#DCE8E4'; g.beginPath(); g.ellipse(p[0] - 1, p[1] - .4, 1.4, .35, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
+    if (nB > .72 && dry < .45) { const p = en(); charco(g, p[0], p[1], 3 + rng() * 2, rng, '#86A9AE'); }
   }
   // Piedras sueltas: en roca y páramo casi siempre; en las laderas empinadas, en manchones.
   const pedregal = t.b === 'roca' || t.b === 'paramo' ? nC > .38 : (t.slope > 1.1 && nC > .55) || nC > .78;
@@ -252,16 +407,114 @@ function sueloNatural(g, T, t, col, dry, rng) {
     }
     g.globalAlpha = 1;
   }
-  // Pinceladas finas de pasto, en tres tonos cercanos y en un solo trazo por tono (rápido de pintar).
-  if (!HIERBA.has(t.b)) return;
-  const tonos = t.b === 'paramo' ? ['#B5A66A', '#9E9A62', '#C9B880'] : t.b === 'seco' ? [shade(col, -.18), mix(col, '#B89A5E', .4), shade(col, .12)] : t.b === 'niebla' ? [shade(col, -.2), shade(col, .1)] : [shade(col, -.2), mix(col, '#6F8E4A', .35), shade(col, .14)];
-  const n = t.b === 'niebla' ? 10 : 30;
-  g.lineWidth = .6; g.lineCap = 'round';
-  tonos.forEach((tono, k) => {
-    g.globalAlpha = .42; g.strokeStyle = tono; g.beginPath();
-    for (let j = 0; j < n / tonos.length; j++) { const p = en(), L = 1.4 + rng() * 2.4; g.moveTo(p[0], p[1]); g.lineTo(p[0] + (rng() - .5) * 1.4, p[1] - L); }
-    g.stroke();
+  // Pasto pintado a toquecitos (referencia de Juan): muchas hojitas cortas de varios verdes, primero las oscuras y
+  // encima las claras, con la luz de arriba a la izquierda; se juntan en manchones y dejan ver algo del suelo.
+  pintarPasto(g, T, t, dry, rng, pt, en);
+  // Lodo donde el ganado baja a beber junto al río, y charcos en los potreros después de las lluvias.
+  if (t.d < 2.4 && t.d > 1.2 && ['potrero', 'galeria', 'seco', 'arrozal'].includes(t.b)) lodoOrilla(g, T, t, rng, dry, pt);
+  if (dry < .4 && ['potrero', 'galeria', 'arrozal', 'ladera'].includes(t.b) && t.slope < .7 && rng() < (.42 - dry) * .7) { const p = en(); charco(g, p[0], p[1], 3 + rng() * 4, rng, '#7FA2A8'); }
+}
+const PALETAS = {};
+function tonosPasto(b, dry) {
+  const clave = b + Math.round(dry * 10); if (PALETAS[clave]) return PALETAS[clave];
+  return (PALETAS[clave] = b === 'paramo' ? ['#7E7A48', '#A39B5E', '#C4B97E', '#D9CF9C']
+    : b === 'seco' ? [mix('#8E8A44', '#9A8648', dry), mix('#AFA555', '#BCA45E', dry), mix('#C9BC6A', '#D4BC78', dry), '#E2D394']
+    : b === 'niebla' ? ['#2F5A2A', '#3F6E32', '#5A8A40', '#7AA453']
+    : [mix('#4D7A2C', '#7E7C3E', dry * .8), mix('#6A9838', '#9C9446', dry * .8), mix('#8DB848', '#B5AE58', dry * .8), mix('#B5D16A', '#D2C478', dry * .8)]);
+}
+function pintarPasto(g, T, t, dry, rng, pt, en) {
+  const hum = clamp(T.moistAt(t.r + .5, t.c + .5), 0, 1);
+  // Matas bajas de hojitas en punta (pedido de Juan: nada de círculos ni óvalos). Cada mata abre 3 a 6 hojas desde
+  // un mismo pie; las de atrás y abajo, oscuras; las de adelante, en tono medio; y unas pocas puntas claras del lado
+  // de la luz. Cada mata toma el tipo de suelo del punto donde cae (con el mismo borde irregular del fondo).
+  const capas = new Map(), pesos = [.3, .4, .22, .08], sombras = [];
+  const hoja = (L, x, y, a, h, w) => { const s = Math.sin(a), c = Math.cos(a); L.push(x - w * c, y - w * s * .3, x + s * h, y - c * h, x + w * c, y + w * s * .3); };
+  for (let j = 0; j < 110; j++) {
+    const u = .03 + rng() * .94, v = .03 + rng() * .94, tb = tipoEn(T, t.r + v, t.c + u).b;
+    if (!HIERBA.has(tb)) continue;
+    const seco = tb === 'seco' || tb === 'paramo', dens = (tb === 'niebla' ? 32 : seco ? 30 + 18 * hum : 72 + 32 * hum) * (1 - dry * .3) / 110;
+    if (rng() > dens) continue;
+    // Manchones a dos escalas: zonas de pasto alto y tupido junto a claros de pasto corto (más irregular).
+    const nm = .6 * T.vary((t.c + u) / 1.6 + 17, (t.r + v) / 1.6 + 61) + .4 * T.vary((t.c + u) / .5 + 117, (t.r + v) / .5 + 9);
+    if (rng() > smooth(clamp((nm - .28) / .42, 0, 1)) * 1.15) continue;
+    const alta = nm > .62 && rng() < .35, [x, y] = pt(u, v), tonos = tonosPasto(tb, dry);
+    const n = alta ? 6 + Math.floor(rng() * 4) : 3 + Math.floor(rng() * 4), alto = ((seco ? 1.4 : 1.7) + rng() * 1.4) * (.6 + nm * 1.1) * (alta ? 1.5 : 1);
+    if (alto > 2.6) sombras.push(x, y, alto); // la mata alta echa su sombrita hacia abajo a la derecha
+    for (let q = 0; q < n; q++) {
+      const f = n > 1 ? q / (n - 1) - .5 : 0, a = f * 1.3 + (rng() - .5) * .35, h = alto * (1 - Math.abs(f) * .45) * (.8 + rng() * .3);
+      let k = q === 0 || q === n - 1 ? 0 : 1; if (f < 0 && rng() < .55) k = 2; if (f < -.2 && rng() < pesos[3] * 3) k = 3; // lado izquierdo, hacia la luz
+      const col = tonos[k], L = capas.get(col) || capas.set(col, { k, L: [] }).get(col);
+      hoja(L.L, x + f * 1.4, y + Math.abs(f) * .3, a, h, .42 + rng() * .2);
+    }
+  }
+  g.globalAlpha = .2; g.fillStyle = '#26301A'; g.beginPath();
+  for (let i = 0; i < sombras.length; i += 3) { const x = sombras[i], y = sombras[i + 1], h = sombras[i + 2]; g.moveTo(x - 1, y); g.lineTo(x + h * .42 + .4, y + h * .3 - .3); g.lineTo(x + h * .42 + .8, y + h * .3 + .5); g.lineTo(x + .6, y + .7); g.closePath(); }
+  g.fill();
+  [...capas.entries()].sort((a, b) => a[1].k - b[1].k).forEach(([col, { k, L }]) => {
+    g.globalAlpha = k === 3 ? .9 : 1; g.fillStyle = col; g.beginPath();
+    for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); }
+    g.fill();
   });
+  if (!HIERBA.has(t.b)) { g.globalAlpha = 1; return; }
+  const seco = t.b === 'seco' || t.b === 'paramo';
+  // Flores silvestres: puntitos de color asomando entre una mata (pocas, en racimos).
+  if (!seco && t.b !== 'niebla' && rng() < .3 + hum * .2) {
+    const [x, y] = en(), col2 = ['#F4F0E2', '#F2D04A', '#E79AB4', '#E26A4A'][Math.floor(rng() * 4)], L = [];
+    for (let q = 0; q < 7; q++) hoja(L, x + (rng() - .5) * 4, y + (rng() - .5) * 1.5, (rng() - .5) * 1.2, 2 + rng() * 1.5, .45);
+    g.globalAlpha = 1; g.fillStyle = tonosPasto('potrero', dry)[1]; g.beginPath(); for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); } g.fill();
+    g.fillStyle = col2; for (let q = 0; q < 4; q++) g.fillRect(x + (rng() - .5) * 4.5, y - 2.4 - rng() * 1.6, .9, .9);
+  }
+  // Matorral: un montón de hojitas en punta más grande y tupido, oscuro abajo y claro arriba a la izquierda.
+  if (rng() < (seco ? .16 : t.b === 'niebla' ? .45 : .26)) {
+    const [x, y] = en(), w = 2.6 + rng() * 2.4, tonos = tonosPasto(seco ? 'seco' : t.b === 'niebla' ? 'niebla' : 'potrero', dry);
+    const capasM = [[], [], [], []];
+    for (let q = 0; q < 26; q++) {
+      const px = (rng() - .5) * 2 * w, alto = (1 - Math.abs(px) / w) * w * .9, py = -rng() * alto, k = py < -alto * .55 ? (px < 0 ? 3 : 2) : py < -alto * .25 ? 1 : 0;
+      hoja(capasM[k], x + px, y + py * .9, (px / w) * .9 + (rng() - .5) * .5, 1.8 + rng() * 1.8, .55);
+    }
+    g.globalAlpha = .22; g.fillStyle = '#2A2414'; g.beginPath(); g.moveTo(x - w, y + .4); g.lineTo(x + w * 1.6, y + .9); g.lineTo(x + w * 1.2, y + 1.8); g.lineTo(x - w * .6, y + 1.4); g.closePath(); g.fill(); // sombra a la derecha
+    capasM.forEach((L, k) => { g.globalAlpha = 1; g.fillStyle = tonos[k]; g.beginPath(); for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); } g.fill(); });
+  }
+  g.globalAlpha = 1;
+}
+
+// Qué se pinta al pie de cada planta: tamaño de la sombra, helechos, hojarasca y tipo de pasto.
+const PIE = {
+  ceiba: { r: 9, helecho: 3, hoja: 10, sombra: .2 }, saman: { r: 10, hoja: 12, sombra: .2 }, mango: { r: 7, helecho: 1, hoja: 8, sombra: .2 },
+  arbol: { r: 6, helecho: 2, hoja: 6, sombra: .18 }, arbolNiebla: { r: 6, helecho: 3, hoja: 5, sombra: .2 }, guayacan: { r: 6, hoja: 10, sombra: .15, flor: '#F2C531' },
+  cambulo: { r: 6, helecho: 1, hoja: 8, sombra: .15, flor: '#E2552E' }, ocobo: { r: 6, hoja: 8, sombra: .15, flor: '#EC9BC0' }, yarumo: { r: 5, helecho: 2, hoja: 5, sombra: .14 },
+  platano: { r: 5, helecho: 1, hoja: 4, sombra: .15 }, palma: { r: 4, helecho: 1, hoja: 4, sombra: .1 }, guadua: { r: 6, helecho: 1, hoja: 12, sombra: .18, seca: true },
+  arbusto: { r: 4, hoja: 3, sombra: .12 }, cardon: { r: 3, sombra: .08, piedras: 3 }, frailejon: { r: 3, sombra: .08 }
+};
+function pintarPie(g, T, o, dry) {
+  const d = PIE[o.k], R = mulberry(Math.round(o.r * 7919 + o.c * 104729) + T.seed), s = o.s || 1, rad = d.r * s;
+  const [x, y] = P(o.r, o.c, T.hf(o.r, o.c)), tb = tipoEn(T, o.r, o.c).b, tonos = tonosPasto(HIERBA.has(tb) ? tb : 'potrero', dry);
+  const en = (rmin, rmax) => { const a = R() * 6.283, q = rmin + Math.sqrt(R()) * (rmax - rmin); return [x + Math.cos(a) * q, y + Math.sin(a) * q * .5]; };
+  // Hojarasca: hojitas secas sueltas (y pétalos si el árbol florece).
+  const hojas = d.hoja || 0;
+  for (let j = 0; j < hojas; j++) { const [hx, hy] = en(1.5, rad * 1.1); g.globalAlpha = .75; g.fillStyle = d.flor && R() < .5 ? d.flor : ['#8A6A3A', '#A9813F', '#6E5530'][Math.floor(R() * 3)]; g.fillRect(hx, hy, 1.1, .6); }
+  for (let j = 0; j < (d.piedras || 0); j++) { const [hx, hy] = en(2, rad * 1.4); g.globalAlpha = .8; g.fillStyle = '#9C9384'; g.fillRect(hx, hy, 1.4, .8); }
+  // Pasto alto alrededor del tronco: más tupido cerca, en tonos oscuros con alguna punta clara.
+  const hojasP = [[], [], []];
+  const hoja = (L, bx, by, a, h, w) => { const sn = Math.sin(a), cs = Math.cos(a); L.push(bx - w * cs, by - w * sn * .3, bx + sn * h, by - cs * h, bx + w * cs, by + w * sn * .3); };
+  const nM = Math.round(5 + rad * 1.2);
+  for (let j = 0; j < nM; j++) {
+    const [bx, by] = en(1.2, rad * 1.05), n = 3 + Math.floor(R() * 4), alto = (2.6 + R() * 2.6) * (d.seca ? .8 : 1);
+    for (let q = 0; q < n; q++) { const f = q / (n - 1) - .5, k = f < -.2 && R() < .4 ? 2 : R() < .45 ? 0 : 1; hoja(hojasP[k], bx + f * 1.3, by, f * 1.4 + (R() - .5) * .3, alto * (1 - Math.abs(f) * .4), .45); }
+  }
+  // Helechos: hojas largas y arqueadas que se abren casi horizontales, con hojuelas.
+  const verdeH = ['#2F5A2A', '#4A7A34', '#6E9C48'];
+  for (let j = 0; j < (d.helecho || 0); j++) {
+    const [fx, fy] = en(rad * .35, rad * .9), nf = 5 + Math.floor(R() * 3);
+    for (let q = 0; q < nf; q++) {
+      const a = (q / (nf - 1) - .5) * 2.6, L = 5 + R() * 3.5, ex = fx + Math.sin(a) * L, ey = fy - Math.cos(a) * L * .45 - 1.2;
+      g.globalAlpha = 1; g.strokeStyle = verdeH[q % 2]; g.lineWidth = .6; g.beginPath(); g.moveTo(fx, fy); g.quadraticCurveTo(fx + Math.sin(a) * L * .5, fy - L * .55, ex, ey); g.stroke();
+      g.fillStyle = verdeH[q % 3]; g.beginPath();
+      for (let z = 1; z <= 4; z++) { const f = z / 5, px = fx + (ex - fx) * f, py = fy + (ey - fy) * f - Math.sin(f * 3.1) * L * .25, w = 1.6 * (1 - f * .6); g.moveTo(px, py); g.lineTo(px - w * .6, py - w); g.lineTo(px + w * .2, py - .2); g.moveTo(px, py); g.lineTo(px + w * .7, py - w * .8); g.lineTo(px + .2, py + .3); }
+      g.fill();
+    }
+  }
+  hojasP.forEach((L, k) => { g.globalAlpha = 1; g.fillStyle = tonos[k === 2 ? 3 : k]; g.beginPath(); for (let i = 0; i < L.length; i += 6) { g.moveTo(L[i], L[i + 1]); g.lineTo(L[i + 2], L[i + 3]); g.lineTo(L[i + 4], L[i + 5]); g.closePath(); } g.fill(); });
   g.globalAlpha = 1;
 }
 
@@ -488,7 +741,10 @@ function pintarSuelo(g, T, mapa, k, dry) {
       for (let j = 0; j < 8; j++) { const f = .5 + rng() * .5, p = punto(clamp(.5 - bu * (f * .5 - .1) + (rng() - .5) * .4, .05, .95), clamp(.5 - bv * (f * .5 - .1) + (rng() - .5) * .4, .05, .95)); blob(g, p[0], p[1], 1.4 + rng() * 1.8, .9 + rng() * .8, rng() < .5 ? '#9A938A' : '#7F776C', rng, .9); }
       continue;
     }
-    if (x.t === 'bosque') { manchas(mix('#5A8650', DRYC, dry * .3), 7, .3, 1.2); continue; }
+    if (x.t === 'bosque') { // sombra del bosque: manchas sueltas que pasan a las casillas vecinas (sin marcar el rombo)
+      for (let j = 0; j < 4; j++) { const p = punto(-.15 + rng() * 1.3, -.15 + rng() * 1.3), rx = 9 + rng() * 9; mancha(g, p[0], p[1], rx, mix('#3E6A30', DRYC, dry * .3), .16); }
+      continue;
+    }
     if (x.q > 0) {
       // Cenizas: suelo oscuro que se aclara con los años.
       const f = Math.min(1, .35 + x.q / 5);

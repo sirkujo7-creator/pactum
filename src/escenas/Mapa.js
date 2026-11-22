@@ -64,7 +64,7 @@ export class Mapa extends Phaser.Scene {
     this.T = terrenoDe(this.S, desvios(this.S)); // fase 6: con los cambios de curso del río
     this.desviosVistos = desvios(this.S).length;
     // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
-    this.escalaSector = (DPR > 2.5 ? 1.6 : DPR > 1.5 ? 1.8 : 1.5) * Math.min(1, 32 / this.S.n); // fase 8: algo menos en pantallas muy nítidas (iPhone), para dar margen de memoria
+    this.escalaSector = (ES_CELULAR ? (DPR > 2.5 ? 1.6 : 1.8) : 2.2) * Math.min(1, 32 / this.S.n); // fase 8: algo menos en pantallas muy nítidas (iPhone), para dar margen de memoria
     this.dry = sequedad(this.S);
     this.vistaInicial();
 
@@ -75,6 +75,11 @@ export class Mapa extends Phaser.Scene {
     this.add.image(f.x, f.y, 'fondo').setOrigin(0).setScale(1 / f.escala).setDepth(PROF_FONDO);
     const N = this.T.N, pie = P(N, N, -2.2);
     this.add.ellipse(pie[0], pie[1] + 16, N * TW * .9, 56, 0x3A3020, .12).setDepth(PROF_FONDO + 1);
+
+    // Las plantas se ubican antes de pintar el terreno: el suelo pinta su pie (pasto alto, helechos, hojarasca).
+    this.plantasMundo = colocarNaturaleza(this.T, this.S.map.map(() => ({ t: 'bosque', b: null })));
+    this.plantasPorCasilla = {};
+    for (const o of this.plantasMundo) (this.plantasPorCasilla[o.i] = this.plantasPorCasilla[o.i] || []).push(o);
 
     // Terreno por sectores, de atrás hacia adelante, repartido en varios cuadros para no congelar la pantalla.
     const n = Math.ceil(N / LADO_SECTOR), cola = [];
@@ -142,7 +147,7 @@ export class Mapa extends Phaser.Scene {
   // ---------- Terreno ----------
   pintarSector(sr, sc) {
     const clave = `sector-${sr}-${sc}`, previo = this.sectores[clave];
-    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, dry: this.dry, calles: this.dibCalles, anio: this.S.year, subida: this.subidaVista || 0 });
+    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, plantas: this.plantasPorCasilla, dry: this.dry, calles: this.dibCalles, anio: this.S.year, subida: this.subidaVista || 0 });
     if (previo) { previo.destroy(); this.textures.remove(clave); }
     this.textures.addCanvas(clave, s.canvas);
     this.sectores[clave] = this.add.image(s.x, s.y, clave).setOrigin(0).setScale(1 / s.escala).setDepth(PROF_TERRENO + (sr + sc) * .01);

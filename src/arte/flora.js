@@ -4,7 +4,9 @@
 // Biodiversidad: palma de cera, guadua, samán, ceiba, guayacán amarillo, ocobo, cámbulo, yarumo, mango, cafeto,
 // plátano, cardón, árbol del bosque de niebla y frailejón (redibujado a pedido de Juan).
 import { mulberry, lienzo, RES_HOJA } from './fresco.js';
-import { sh, mezcla, pol, elip, follaje, tronco, sombraSuave } from './plano.js';
+import { sh, mezcla, pol, elip, follaje, tronco, lanza } from './plano.js';
+// Las plantas ya no pintan su sombra en óvalos: al hornear, su propia silueta se proyecta en el suelo (naturaleza.js).
+const sombraSuave = () => {};
 
 const VERDES = { claro: ['#3F6631', '#5E8B42', '#8DB35C'], oscuro: ['#2A4A2C', '#3E6B3A', '#5E8A4A'], niebla: ['#24402A', '#34583A', '#557A4E'], cafe: ['#1E3E22', '#2F5A32', '#4E7A3A'] };
 const SECO = '#B39B57';
@@ -12,30 +14,58 @@ const SECO = '#B39B57';
 // seco: 0 lluvias a 1 sequía (las hojas se doran; las flores no).
 function pinceles(seco = 0) {
   const v = cols => cols.map(c => mezcla(c, SECO, seco * .45));
-  const palma = g => { // palma de cera del Quindío: el árbol nacional
-    sombraSuave(g, 1.6, 54, 9, .26);
-    tronco(g, 0, 0, .6, -54, 1.5, 1.1, '#DCD6CA');
-    g.fillStyle = 'rgba(120,110,95,.45)'; for (let y = -4; y > -52; y -= 3.2) g.fillRect(-1.3, y, 2.6, .5);
-    const fronda = (a, L, c) => {
-      const x1 = Math.cos(a) * L, y1 = -54 + Math.sin(a) * L * .55 + L * .32;
-      g.strokeStyle = c; g.lineWidth = .9; g.lineCap = 'round'; g.beginPath(); g.moveTo(.6, -54); g.quadraticCurveTo(x1 * .5, -54 + Math.sin(a) * L * .4 - 3, x1, y1); g.stroke();
-      for (let k = 1; k < 9; k++) { const t = k / 9, x = .6 + (x1 - .6) * t, y = -54 + (y1 + 54) * t - Math.sin(t * Math.PI) * 3; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 1.2 * Math.sign(x1 || 1) * .3, y + 3.2); g.moveTo(x, y); g.lineTo(x - .8, y + 2.8); g.stroke(); }
-    };
-    const [o, m, l] = v(['#2E5A30', '#4E7A3A', '#6E9A4A']);
-    for (let k = 0; k < 6; k++) fronda(-Math.PI + k * Math.PI / 5 + .05, 13, o);
-    for (let k = 0; k < 7; k++) fronda(-Math.PI * .95 + k * Math.PI / 6.4, 12, k < 3 ? l : m);
-    elip(g, .6, -54, 1.6, 1.2, '#6E6A5E');
+  const palma = (g, R) => { // palma de cera del Quindío, el árbol nacional (pulida a pedido de Juan: con volumen)
+    const H = 54, top = [.6, -H];
+    // Tronco cilíndrico, liso y blanquecino por la cera, un poco más grueso abajo, con anillos y raíces.
+    const cuerpo = '#DAD4C6';
+    for (const [dx, w] of [[-1.9, .9], [1.9, .9]]) pol(g, [[dx * 1.2, .4], [dx * .5, -.2], [0, -3], [dx * .2, .3]], sh(cuerpo, dx > 0 ? -.25 : -.05));
+    const bord = (f0, f1, c) => { g.fillStyle = c; g.beginPath(); for (let k = 0; k <= 20; k++) { const t = k / 20, y = -H * t, x = top[0] * t, w = 1.55 - .45 * t + Math.sin(t * 3.1) * .12; k ? g.lineTo(x + w * f0, y) : g.moveTo(x + w * f0, y); } for (let k = 20; k >= 0; k--) { const t = k / 20, y = -H * t, x = top[0] * t, w = 1.55 - .45 * t + Math.sin(t * 3.1) * .12; g.lineTo(x + w * f1, y); } g.fill(); };
+    bord(-1, 1, cuerpo); bord(.2, 1, sh(cuerpo, -.16)); bord(.62, 1, sh(cuerpo, -.3)); bord(-.85, -.4, sh(cuerpo, .3));
+    for (let y = -2.5; y > -H + 3; y -= 1.6 + R() * 1.6) { const t = -y / H, x = top[0] * t, w = 1.55 - .45 * t; g.strokeStyle = `rgba(110,100,86,${.18 + R() * .2})`; g.lineWidth = .22 + R() * .15; g.beginPath(); g.moveTo(x - w, y); g.quadraticCurveTo(x, y + .45, x + w, y); g.stroke(); g.strokeStyle = 'rgba(255,255,250,.35)'; g.beginPath(); g.moveTo(x - w * .9, y - .3); g.quadraticCurveTo(x - w * .2, y + .1, x + w * .1, y - .25); g.stroke(); }
+    // Vaina verde del penacho y hojas secas que cuelgan.
+    pol(g, [[top[0] - 1.3, top[1] + 1], [top[0] + 1.3, top[1] + 1], [top[0] + 1.1, top[1] - 2.6], [top[0] - 1.1, top[1] - 2.6]], '#7E9466');
+    pol(g, [[top[0] + .3, top[1] + 1], [top[0] + 1.3, top[1] + 1], [top[0] + 1.1, top[1] - 2.6], [top[0] + .4, top[1] - 2.6]], '#5E7450');
+    for (const s of [-1, 1]) { g.strokeStyle = '#8A6A44'; g.lineWidth = .55; g.beginPath(); g.moveTo(top[0] + s * .6, top[1] - 1); g.quadraticCurveTo(top[0] + s * 3, top[1] + 1, top[0] + s * 3.2, top[1] + 8); g.stroke(); for (let k = 1; k < 7; k++) lanza(g, top[0] + s * (1 + k * .33), top[1] + k * 1.1, top[0] + s * (1.6 + k * .33), top[1] + k * 1.1 + 2.6, .28, k % 2 ? '#9C7A4E' : '#7E6040'); }
+    // Frondas en 3D: azimut alrededor del penacho; las de atrás se pintan primero y más oscuras; cada una se arquea
+    // y deja colgar sus hojuelas, verdes arriba y plateadas por debajo (así es la palma de cera).
+    const frondas = []; for (let k = 0; k < 18; k++) { const az = k / 18 * 6.283 + (R() - .5) * .3, joven = k % 4 === 0; frondas.push({ az, L: (joven ? 9 : 11.5) + R() * 3, sube: joven ? 7 + R() * 2 : 3 + R() * 2.4 }); }
+    frondas.sort((p, q) => Math.sin(p.az) - Math.sin(q.az));
+    const cy0 = top[1] - 2.4;
+    for (const f of frondas) {
+      const cx = Math.cos(f.az), cz = Math.sin(f.az), delante = (cz + 1) / 2, luzF = (1 - cx) / 2;
+      const verde = mezcla(mezcla('#284E2C', '#4E8038', delante * .7), '#7CA650', luzF * .45), plata = mezcla(verde, '#B6C4A8', .45), raquis = mezcla(verde, '#C8C6A0', .4);
+      const punto = t => [top[0] + cx * f.L * t * (1 - .25 * Math.abs(cz)), cy0 - f.sube * Math.sin(Math.PI * Math.min(1, t * 1.25)) + 3.6 * t * t + cz * f.L * t * .3];
+      const pts = []; for (let k = 0; k <= 12; k++) pts.push(punto(k / 12));
+      for (let k = 1; k < 12; k++) {
+        const [x, y] = pts[k], [x2, y2] = pts[k + 1], t = k / 12, largo = (1 - Math.abs(t - .45) * 1.1) * 3.8, ang = Math.atan2(y2 - y, x2 - x);
+        for (const lado of [-1, 1]) {
+          const a = ang + lado * (1.15 - t * .3) + (Math.PI / 2 - ang) * .45, ex = x + Math.cos(a) * largo, ey = y + Math.abs(Math.sin(a)) * largo * .9 + largo * .35;
+          lanza(g, x, y, ex, ey, .3, lado * cx < 0 || cz > .3 ? verde : plata, lado * .3);
+        }
+      }
+      g.strokeStyle = raquis; g.lineWidth = .45; g.lineCap = 'round'; g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke();
+    }
+    // Racimos de frutos anaranjados bajo el penacho.
+    for (const s of [-1, 1]) for (let k = 0; k < 5; k++) elip(g, top[0] + s * (1.2 + R() * 1.4), top[1] + 1.5 + R() * 2.2, .45, .45, k % 2 ? '#D9822E' : '#E8A23A');
   };
-  const guadua = (g, R) => {
-    sombraSuave(g, 6, 30, 7, .24);
-    const tallos = []; for (let k = 0; k < 8; k++) tallos.push([(k - 3.5) * 1.1 + (R() - .5) * .6, (k - 3.5) * 3.2 + (R() - .5) * 2, 34 + R() * 12]);
+  const guadua = (g, R) => { // guadual: cañas cilíndricas con nudos que se arquean, y hojas en punta (pulida con volumen)
+    const tallos = []; for (let k = 0; k < 9; k++) tallos.push([(k - 4) * 1.05 + (R() - .5) * .6, (k - 4) * 3.4 + (R() - .5) * 2, 34 + R() * 12, (R() - .5) * 2]);
+    tallos.sort((a, b) => a[3] - b[3]); // las de atrás primero
     const en = ([x0, ab, h], t) => [x0 + ab * t * t, -h * t + (t > .75 ? (t - .75) * h * .4 : 0)];
-    const [c1, c2] = v(['#9DB35A', '#86A24A']), hojas = v(['#3F6631', '#5E8B42', '#4E7A3A']);
+    const hojas = v(['#2E5A2C', '#4E7A38', '#6E9A48', '#93B862']);
     tallos.forEach((T, k) => {
-      g.strokeStyle = k % 2 ? c1 : c2; g.lineWidth = 1.2; g.lineCap = 'round'; g.beginPath(); for (let j = 0; j <= 14; j++) { const q = en(T, j / 14); j ? g.lineTo(...q) : g.moveTo(...q); } g.stroke();
-      g.fillStyle = '#5E7A2E'; for (let j = 1; j < 8; j++) { const q = en(T, j / 9); g.fillRect(q[0] - .8, q[1], 1.6, .5); }
+      const atras = T[3] < 0, verde = atras ? '#7E9A44' : '#9DB35A', w = 1.05;
+      // Caña: color, sombra a la derecha y luz a la izquierda, en tramos entre nudos.
+      for (let j = 0; j < 14; j++) {
+        const [x1, y1] = en(T, j / 14), [x2, y2] = en(T, (j + 1) / 14), ww = w * (1 - j / 22);
+        pol(g, [[x1 - ww, y1], [x2 - ww, y2], [x2 + ww, y2], [x1 + ww, y1]], verde);
+        pol(g, [[x1 + ww * .2, y1], [x2 + ww * .2, y2], [x2 + ww, y2], [x1 + ww, y1]], sh(verde, -.25));
+        pol(g, [[x1 - ww * .8, y1], [x2 - ww * .8, y2], [x2 - ww * .35, y2], [x1 - ww * .35, y1]], sh(verde, .25));
+        if (j % 2 === 1) { g.fillStyle = '#5E7A2E'; g.fillRect(x2 - ww, y2 - .15, ww * 2, .35); g.fillStyle = 'rgba(240,240,210,.5)'; g.fillRect(x2 - ww, y2 - .45, ww * 1.2, .2); } // nudo
+      }
     });
-    tallos.forEach((T, k) => { for (let j = 0; j < 12; j++) { const t = .42 + j * .048, q = en(T, t), s = j % 2 ? 1 : -1; g.save(); g.translate(...q); g.rotate(s * (.9 + R() * .4)); g.fillStyle = hojas[(k + j) % 3]; g.beginPath(); g.ellipse(0, 2.6, .55, 2.8, 0, 0, 7); g.fill(); g.restore(); } });
+    // Hojas en punta que cuelgan de las ramitas de arriba, en cuatro tonos (las de abajo a la derecha más oscuras).
+    tallos.forEach((T, k) => { for (let j = 0; j < 34; j++) { const t = .3 + j * .02, [x, y] = en(T, t), s = j % 2 ? 1 : -1, L = 2.8 + R() * 2, a = s * (.7 + R() * .6) + Math.PI / 2, ex = x + Math.cos(a) * L * s * -1 + s * L * .7, ey = y + Math.sin(a) * L * .6 + .6; lanza(g, x, y, ex, ey, .42, hojas[Math.min(3, Math.max(0, (s < 0 ? 2 : 0) + (T[3] > 0 ? 1 : 0) + (R() < .2 ? 1 : 0)))], s * .3); } });
   };
   const saman = (g, R) => { // samán del valle: copa ancha y plana como un paraguas
     sombraSuave(g, 2.6, 18, 24, .26);
@@ -64,13 +94,15 @@ function pinceles(seco = 0) {
     for (const [x, y] of [[-10, -22], [-4, -27], [5, -26], [11, -20], [0, -20]]) tronco(g, 0, -12, x, y, .8, .4, '#7A6A58');
     for (const [x, y] of [[-10, -22], [-4, -27], [5, -26], [11, -20], [0, -20], [-6, -18], [7, -18]]) follaje(g, R, x, y, 3.4, 2.4, ['#B23A22', '#D9562E', '#F08A44'], 22, 1.1, 'flor');
   };
-  const yarumo = g => { // yarumo: tronco blanco y hojas grandes como manos, plateadas por debajo
+  const yarumo = (g, R) => { // yarumo: tronco blanco y hojas grandes como manos, plateadas por debajo
     sombraSuave(g, 1.2, 26, 8, .22);
     tronco(g, 0, 0, .4, -26, 1.2, .8, '#E2DED4'); g.fillStyle = 'rgba(120,110,95,.4)'; for (let y = -3; y > -24; y -= 3.4) g.fillRect(-1, y, 2, .4);
     tronco(g, .4, -20, -7, -28, .6, .4, '#E2DED4'); tronco(g, .4, -22, 7, -31, .6, .4, '#E2DED4');
     const [verde] = v(['#7E9A6A']);
-    const mano = (x, y, s) => { for (let k = 0; k < 7; k++) { const a = -Math.PI / 2 + (k - 3) * .52; g.save(); g.translate(x, y); g.rotate(a + Math.PI / 2); g.fillStyle = k % 2 ? '#C9CFC0' : verde; g.beginPath(); g.ellipse(0, -3.4 * s, .9 * s, 3.2 * s, 0, 0, 7); g.fill(); g.restore(); } };
-    mano(-7, -28, 1); mano(7, -31, 1.1); mano(.4, -27, .9);
+    // Hoja de yarumo como una mano abierta: lóbulos largos en punta que salen de un centro, verdes encima y
+    // plateados por debajo (se ven los dos lados), con su nervio claro.
+    const mano = (x, y, s) => { for (let k = 0; k < 9; k++) { const a = -Math.PI / 2 + (k - 4) * .4 + (R() - .5) * .1, L = (3.6 - Math.abs(k - 4) * .25) * s, ex = x + Math.cos(a) * L, ey = y + Math.sin(a) * L * .8 + Math.abs(k - 4) * .35 * s, plata = k % 3 === 1 || Math.cos(a) > .5; lanza(g, x, y, ex, ey, .55 * s, plata ? '#C9CFC0' : (Math.cos(a) < -.3 ? sh(verde, .15) : verde), .2); g.strokeStyle = plata ? '#9AA290' : '#B8C4A4'; g.lineWidth = .15; g.beginPath(); g.moveTo(x, y); g.lineTo(x + (ex - x) * .85, y + (ey - y) * .85); g.stroke(); } };
+    mano(-7, -28, 1.7); mano(7, -31, 1.8); mano(.4, -27, 1.5);
   };
   const mango = (g, R) => { // palo de mango: copa redonda, densa y oscura, con mangos
     sombraSuave(g, 2, 17, 12, .28);
@@ -102,6 +134,9 @@ function pinceles(seco = 0) {
     const trazo = (pts, w, col, dx = 0) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x + dx, y) : g.moveTo(x + dx, y)); g.stroke(); };
     for (const [i, r] of ramas.entries()) { const w = i < 2 ? 3.4 : 4.8; trazo(r, w, O); trazo(r, w * .62, V, -w * .18); trazo(r.slice(-2), w * .16, Lz, -w * .3); }
     g.strokeStyle = sh(V, -.4); g.lineWidth = .25; for (const x of [-.9, .9]) { g.beginPath(); g.moveTo(x, -.5); g.lineTo(x, -21.6); g.stroke(); }
+    // Costillas de los brazos y espinas: puntitos claros a lo largo de cada costilla.
+    for (const [bx, y0, y1] of [[-4.6, -6, -14.6], [4.4, -8.6, -16.6]]) { g.beginPath(); g.moveTo(bx + .5, y0); g.lineTo(bx + .5, y1); g.stroke(); }
+    g.fillStyle = '#F0E8C8'; for (const [bx, y0, y1] of [[-1.7, -1, -21], [0, -1, -21.6], [1.7, -1, -21], [-4.6, -6, -14.4], [4.4, -8.6, -16.4]]) for (let y = y0; y > y1; y -= 1.3) g.fillRect(bx - .1, y, .2, .2);
     elip(g, 0, -22.6, 1, .6, '#E8C23A'); elip(g, 4.4, -17.5, .7, .45, '#E8C23A');
   };
   const cafeto = (g, R) => { // mata de café con sus cerezas
@@ -114,48 +149,61 @@ function pinceles(seco = 0) {
     sombraSuave(g, 1.6, 12, 8, .24);
     tronco(g, 0, 0, 0, -12, 1.6, 1.3, '#8A9A5A');
     const [l, o, n] = v(['#6E9A4A', '#4E7A3A', '#B6CC80']);
-    for (let k = 0; k < 6; k++) {
-      const a = -Math.PI / 2 + (k - 2.5) * .62, L = 11 + R() * 3, x = Math.cos(a) * L, y = -12 + Math.sin(a) * L * .7 + 4;
-      g.fillStyle = k < 3 ? l : o; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(x * .5 - 2.6, y - 5, x, y); g.quadraticCurveTo(x * .5 + 2.6, y - .6, 0, -11.2); g.fill();
-      g.strokeStyle = n; g.lineWidth = .35; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(x * .5, y - 3, x, y); g.stroke();
+    // Hojas grandes ordenadas de atrás hacia adelante: cada una con su mitad en luz y su mitad en sombra, el nervio
+    // claro y algún rasgado del viento (así son las hojas del plátano).
+    const hojasP = []; for (let k = 0; k < 7; k++) hojasP.push({ a: -Math.PI / 2 + (k - 3) * .55 + (R() - .5) * .15, L: 11 + R() * 3.5, z: R() - .5 });
+    hojasP.sort((p, q) => p.z - q.z);
+    for (const h of hojasP) {
+      const x = Math.cos(h.a) * h.L, y = -12 + Math.sin(h.a) * h.L * .7 + 4 + h.z * 2, mx = x * .5, my = (y - 12) * .5 - 3, osc = h.z < 0;
+      const c1 = osc ? sh(o, -.15) : l, c2 = osc ? sh(o, -.3) : o;
+      g.fillStyle = c1; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(mx - 3, my - 3, x, y); g.quadraticCurveTo(mx, my, 0, -11.4); g.fill();
+      g.fillStyle = c2; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(mx + 3, my + 1.5, x, y); g.quadraticCurveTo(mx, my, 0, -11.4); g.fill();
+      g.strokeStyle = n; g.lineWidth = .35; g.beginPath(); g.moveTo(0, -12); g.quadraticCurveTo(mx, my, x, y); g.stroke();
+      g.strokeStyle = sh(c2, -.2); g.lineWidth = .18; for (let q = 1; q < 6; q++) { const t = q / 6, px = x * t, py = -12 + (y + 12) * t - Math.sin(t * 3.1) * 3; if (R() < .4) { g.beginPath(); g.moveTo(px, py); g.lineTo(px + 1.4, py + 1.6); g.stroke(); } } // rasgados
     }
     elip(g, 1.8, -8, 1.3, 2.4, '#6E4A6A', .3);
   };
   // Frailejón del páramo (redibujado a pedido de Juan): tallo cubierto por una falda espesa de hojas secas que
   // cuelgan, roseta apretada de hojas largas y peludas, verde plata, y varas con flores amarillas como margaritas.
-  const frailejon = (g, R) => {
-    sombraSuave(g, 2.8, 16, 6.4, .26);
-    const H = 11, cy = -H - 2.6;
-    // Falda: tiras de hoja seca que cuelgan, más ancha arriba (bajo la roseta); la derecha en sombra.
-    pol(g, [[-2.3, 0], [2.3, 0], [2.6, -H], [-2.6, -H]], '#54483A');
-    for (let fila = 0; fila < 7; fila++) {
-      const y0 = -H - .6 + fila * 1.55, ancho = 3.3 - fila * .14, n = 7;
-      for (let k = 0; k < n; k++) {
-        const x = -ancho + (k + .5 + (fila % 2) * .3) * ancho * 2 / n, d = x > ancho * .3;
-        const col = d ? ['#625444', '#56483A', '#5C4E40'][(k + fila) % 3] : ['#8E7E66', '#7E6E58', '#9A8A70', '#867660'][(k + fila) % 4];
-        const L = Math.min(2.8 + R() * 1, -y0 - .1), ab = x / ancho * .5;
-        if (L > .4) pol(g, [[x - .62, y0], [x + .62, y0], [x + .25 + ab, y0 + L], [x - .15 + ab, y0 + L + .25]], col);
-      }
+  const frailejon = (g, R) => { // frailejón del páramo (pulido con volumen a pedido de Juan)
+    const H = 11, cy = -H - 2.2, rad = 2.2;
+    // Falda de hojas secas que cuelgan, desgreñada: más ancha arriba, bajo la roseta, y angosta abajo; las tiras
+    // son de largo y ancho distintos y se montan unas sobre otras. Clara del lado de la luz, oscura del otro.
+    const anchoEn = y => rad * (.82 + .3 * Math.min(1, -y / H));
+    pol(g, [[-anchoEn(0), 0], [anchoEn(0), 0], [anchoEn(-H), -H], [-anchoEn(-H), -H]], '#43382C');
+    const tiras = [];
+    for (let k = 0; k < 130; k++) { const y0 = -H - .6 + R() * (H - 1.2), az = R() * Math.PI; tiras.push({ y0, az, L: 2.2 + R() * 2.6, w: .3 + R() * .35 }); }
+    tiras.sort((p, q) => p.y0 - q.y0 || Math.sin(p.az) - Math.sin(q.az));
+    for (const t of tiras) {
+      const x = -Math.cos(t.az) * anchoEn(t.y0), luz = (1 + Math.cos(t.az)) / 2, L = Math.min(t.L, -t.y0 - .05);
+      if (L < .3) continue;
+      const col = mezcla(mezcla('#3E342A', '#A89272', luz * .95), ['#7A6A52', '#8E7A5A', '#5E5242'][Math.floor(R() * 3)], .3);
+      const borde = Math.abs(Math.cos(t.az)) > .8 ? Math.sign(x) * R() * .7 : 0; // en los bordes las tiras se salen: silueta desgreñada
+      lanza(g, x + borde * .4 + (R() - .5) * .3, t.y0, x + borde + (x > 0 ? .25 : -.25) + (R() - .5) * .4, t.y0 + L, t.w, col, (R() - .5) * .4);
     }
-    // Roseta como una bola de hojas largas y peludas: atrás las oscuras hacia arriba, adelante las claras que se
-    // abren a los lados y caen un poco sobre la falda.
-    const hoja = (a, L, w, c, luz) => {
-      g.save(); g.translate(0, cy); g.rotate(a);
-      g.fillStyle = c; g.beginPath(); g.moveTo(-w * .4, 0); g.quadraticCurveTo(w * 1.3, -L * .45, 0, -L); g.quadraticCurveTo(-w * 1.3, -L * .45, w * .4, 0); g.fill();
-      if (luz) { g.strokeStyle = luz; g.lineWidth = .28; g.beginPath(); g.moveTo(0, -.8); g.lineTo(0, -L * .82); g.stroke(); }
-      g.restore();
-    };
-    const capas = [[16, 2.1, 7.2, '#6A765C', null], [15, 2.25, 6.8, '#8E9A78', '#B4BE9C'], [13, 2.35, 6, '#A8B48E', '#CCD4B6'], [10, 2.25, 5, '#BEC8A6', '#DEE4CC'], [7, 1.5, 3.6, '#D2DABE', '#ECF0DE']];
-    for (const [n, abre, L, col, luz] of capas) for (let k = 0; k < n; k++) {
-      const t = k / (n - 1), a = -abre + t * abre * 2 + (R() - .5) * .1;
-      hoja(a, L * (.88 + R() * .2) * (1 - Math.abs(a) * .06), 1.05, t > .62 ? sh(col, -.12) : col, luz);
+    for (let k = 0; k < 14; k++) { const y0 = -H + R() * (H - 2), x = -anchoEn(y0) * (.4 + R() * .5); lanza(g, x, y0, x - .2, y0 + 1.6 + R(), .1, 'rgba(225,210,180,.7)'); } // brillos del lado de la luz
+    // Roseta: muchas hojas anchas y lanudas que salen del centro en todas direcciones (azimut y altura), ordenadas
+    // de atrás hacia adelante; las bajas se doblan hacia afuera. Verde gris en la sombra y plateadas en la luz.
+    const hojas = [];
+    for (let k = 0; k < 70; k++) { const az = R() * 6.283, el = .02 + R() * 1.05; hojas.push({ az, el, L: 6.8 + R() * 2.6 }); }
+    hojas.sort((p, q) => Math.sin(p.az) * Math.cos(p.el) - Math.sin(q.az) * Math.cos(q.el));
+    for (const h of hojas) {
+      const ce = Math.cos(h.el), dx = Math.cos(h.az) * ce, dz = Math.sin(h.az) * ce, dy = Math.sin(h.el);
+      const brillo = Math.max(0, Math.min(1, .4 - dx * .32 + dy * .28 + dz * .18 + (R() - .5) * .15));
+      const base = mezcla('#4E5C42', '#8A9872', brillo), punta = mezcla('#7E8E68', '#C9D2B2', brillo * brillo);
+      const x1 = dx * h.L, y1 = cy - dy * h.L + dz * h.L * .35 + (1 - dy) * 1.6;
+      lanza(g, 0, cy, x1, y1, 1.15, base, dx * .5 + (dy < .4 ? 1 : 0));
+      lanza(g, x1 * .4, cy + (y1 - cy) * .4, x1, y1, .7, punta, dx * .25);
+      if (brillo > .5) { g.strokeStyle = 'rgba(250,252,240,.45)'; g.lineWidth = .2; g.beginPath(); g.moveTo(x1 * .25, cy + (y1 - cy) * .25); g.lineTo(x1 * .92, cy + (y1 - cy) * .92); g.stroke(); } // nervio y pelusa
     }
-    // Varas con flores: salen del centro y se curvan; cada flor con pétalos amarillos y botón ocre.
-    for (const [dx, alto] of [[-3.6, 8.6], [.8, 10.4], [3.8, 7.6]]) {
+    // Centro de la roseta: hojas nuevas apretadas, muy claras.
+    for (let k = 0; k < 9; k++) { const a = -Math.PI / 2 + (k - 4) * .28; lanza(g, 0, cy, Math.cos(a) * 2.6, cy + Math.sin(a) * 2.6, .45, k < 5 ? '#D2DAC0' : '#A9B492'); }
+    // Varas con flores amarillas: capítulos con pétalos en punta y botón ocre, sombreados.
+    for (const [dx, alto, dz] of [[-3.8, 8.4, -1], [.9, 10.6, 0], [4, 7.4, 1]]) {
       const x1 = dx, y1 = cy - alto;
-      g.strokeStyle = '#8E9A6E'; g.lineWidth = .45; g.lineCap = 'round'; g.beginPath(); g.moveTo(dx * .15, cy - 2); g.quadraticCurveTo(dx * .3, y1 + 3, x1, y1); g.stroke();
-      for (let p = 0; p < 9; p++) { const a = p / 9 * Math.PI * 2; elip(g, x1 + Math.cos(a) * .95, y1 + Math.sin(a) * .7, .6, .32, Math.cos(a - 2.4) > 0 ? '#F2D45A' : '#E0B832', a); }
-      elip(g, x1, y1, .6, .48, '#B8862A');
+      g.strokeStyle = '#7E8A5E'; g.lineWidth = .4; g.lineCap = 'round'; g.beginPath(); g.moveTo(dx * .12, cy - 1.5); g.quadraticCurveTo(dx * .3, y1 + 3, x1, y1); g.stroke();
+      for (let p = 0; p < 12; p++) { const a = p / 12 * Math.PI * 2, c = Math.cos(a - 2.4) > 0 ? '#F6DC5E' : '#D9AE2E'; lanza(g, x1, y1, x1 + Math.cos(a) * 1.3, y1 + Math.sin(a) * .85, .26, c); }
+      elip(g, x1, y1, .55, .42, '#9A6A22'); elip(g, x1 - .18, y1 - .15, .25, .18, '#C8963A');
     }
   };
   return { palma, guadua, saman, ceiba, florido, cambulo, yarumo, mango, arbol, arbusto, arbolNiebla, cardon, cafeto, platano, frailejon };
@@ -177,11 +225,11 @@ export function recetasFlora(seco = 0) {
     ['cardon', 22, 28, 9, 25, escala(.95, P.cardon)],
     ['arbusto', 20, 14, 9, 10, escala(1, P.arbusto)],
     ['arbolNiebla', 30, 44, 12, 40, escala(1.05, P.arbolNiebla)],
-    ['palma', 54, 64, 14, 60, escala(.85, P.palma)], // ancho de sobra: la sombra larga de la palma no se corta
-    ['guadua', 40, 50, 18, 46, escala(.9, P.guadua)],
+    ['palma', 58, 70, 18, 64, escala(.85, P.palma)], // ancho de sobra: la sombra larga de la palma no se corta
+    ['guadua', 46, 54, 22, 50, escala(.9, P.guadua)],
     ['cafeto', 16, 16, 7, 13, escala(1, P.cafeto)],
     ['platano', 30, 26, 14, 22, escala(.8, P.platano)],
-    ['frailejon', 22, 32, 10, 28, escala(.95, P.frailejon)]
+    ['frailejon', 28, 36, 14, 32, escala(.95, P.frailejon)]
   ];
 }
 // Para la página de prueba: los mismos pinceles que usa el juego.

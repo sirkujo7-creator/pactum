@@ -16,6 +16,8 @@ export const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const rgb = h => { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); };
 const hex = a => '#' + a.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('');
 export const shade = (h, f) => hex(rgb(h).map(v => f < 0 ? v * (1 + f) : v + (255 - v) * f));
+// Aviva (f > 0) o apaga (f < 0) el color: aleja cada canal de su gris.
+export const saturar = (h, f) => { const x = rgb(h), L = x[0] * .3 + x[1] * .59 + x[2] * .11; return hex(x.map(v => L + (v - L) * (1 + f))); };
 export const mix = (a, b, t) => { const x = rgb(a), y = rgb(b); return hex(x.map((v, i) => v + (y[i] - v) * t)); };
 
 export function lienzo(w, h) {
