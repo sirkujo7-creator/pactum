@@ -748,4 +748,4 @@ export function recetasCasas(hist) {
 
 // Pinceles compartidos con los edificios públicos (src/arte/publicos.js).
 export { capturarQuad as capturarVentana };
-export { casa as casaColonial, P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera };
+export { casa as casaColonial, P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera, cajaPx, cilindro, hojaP, sombraPie, ruedaIso };

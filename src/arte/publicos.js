@@ -8,7 +8,7 @@
 //   piedra con rueda hidráulica; puerto: bodega, muelle de madera y champán; mercado: toldos o plaza cubierta. La sede del gobierno cambia con el
 //   régimen: cabildo de portales (república), palacio con torreones (monarquía), casona con escudo (aristocracia),
 //   fortaleza (tiranía), casa de comercio de ladrillo (oligarquía) y tribuna popular (demagogia).
-import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, bancoMadera } from './casas.js';
+import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, bancoMadera, cajaPx, cilindro as cilindroV, hojaP, sombraPie } from './casas.js';
 import { mulberry } from './fresco.js';
 import { CAPTURA, capturarQuad } from './casas.js';
 
@@ -63,6 +63,7 @@ function reloj(g, x, y, r) {
 }
 function bandera(g, x, y, h, cols, ancho = 9) {
   g.strokeStyle = K.maderaOsc; g.lineWidth = .8; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - h); g.stroke();
+  g.fillStyle = '#C9A24A'; g.beginPath(); g.arc(x, y - h - .5, .55, 0, 7); g.fill(); // remate del asta
   if (CAPTURA.banderas) { const T = g.getTransform(); CAPTURA.banderas.push({ x: T.a * x + T.c * (y - h) + T.e, y: T.b * x + T.d * (y - h) + T.f, esc: Math.hypot(T.a, T.b), ancho, cols }); if (CAPTURA.sinTela) return; } // la tela ondea aparte (animación)
   const alto = 6, fr = cols.length === 3 && cols[0] === '#E8C23A' ? [.5, .25, .25] : cols.map(() => 1 / cols.length);
   let y0 = y - h;
@@ -88,7 +89,20 @@ function letrero(g, F, u, z, col, texto) {
   rellena(g, [a, b, [b[0], b[1] - 3.4], [a[0], a[1] - 3.4]], col, K.contorno, .35);
   if (texto) { g.save(); g.fillStyle = '#F7F1E3'; g.font = 'bold 2.4px serif'; g.textAlign = 'center'; g.fillText(texto, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - .9); g.restore(); }
 }
-function farol(g, x, y, h = 10) { g.strokeStyle = '#2E2A28'; g.lineWidth = .7; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - h); g.stroke(); rellena(g, [[x - 1.3, y - h], [x + 1.3, y - h], [x + 1, y - h - 3], [x - 1, y - h - 3]], '#F2D27A', 'rgba(40,30,20,.7)', .35); }
+// Farol de hierro: basa, poste con anillos, brazo con volutas y linterna de cuatro vidrios con su caperuza. El vidrio
+// se anota para encenderse de noche (ObrasVivas).
+function farol(g, x, y, h = 10) {
+  sombraPie(g, x, y, 1.6, .6, .3);
+  cajaPx(g, x, y, .03, .03, 1.4, '#2E3A34', { izq: '#3E4A44', borde: null });
+  const gr = g.createLinearGradient(x - .6, 0, x + .6, 0); gr.addColorStop(0, '#4E5A54'); gr.addColorStop(1, '#1E2622'); g.fillStyle = gr; g.fillRect(x - .45, y - h, .9, h - 1.2);
+  g.fillStyle = '#2E3A34'; for (const z of [3, h * .55]) g.fillRect(x - .7, y - z, 1.4, .6); // anillos
+  g.strokeStyle = '#2E3A34'; g.lineWidth = .4; g.beginPath(); g.moveTo(x, y - h + 1.6); g.quadraticCurveTo(x + 1.4, y - h + 1.2, x + .9, y - h + .4); g.stroke(); g.beginPath(); g.moveTo(x, y - h + 1.6); g.quadraticCurveTo(x - 1.4, y - h + 1.2, x - .9, y - h + .4); g.stroke(); // volutas
+  const vid = [[x - 1.3, y - h], [x + 1.3, y - h], [x + 1.6, y - h - 3.2], [x - 1.6, y - h - 3.2]];
+  capturarQuad(g, vid);
+  const lg = g.createLinearGradient(0, y - h - 3.2, 0, y - h); lg.addColorStop(0, '#FBEFC0'); lg.addColorStop(1, '#E8C87A'); rellena(g, vid, lg, '#1E2622', .4);
+  g.strokeStyle = '#1E2622'; g.lineWidth = .3; g.beginPath(); g.moveTo(x, y - h); g.lineTo(x, y - h - 3.2); g.stroke(); // montante
+  g.fillStyle = '#1E2622'; g.beginPath(); g.moveTo(x - 2, y - h - 3.2); g.lineTo(x + 2, y - h - 3.2); g.lineTo(x, y - h - 4.8); g.closePath(); g.fill(); g.beginPath(); g.arc(x, y - h - 5.1, .4, 0, 7); g.fill(); // caperuza
+}
 // Rueda hidráulica en un plano vertical a lo largo de r (de canto hacia el río).
 function rueda(g, cx, cy, R) {
   const u = [-R * .82, R * .41], v = [0, -R], pt = a => [cx + u[0] * Math.cos(a) + v[0] * Math.sin(a), cy + u[1] * Math.cos(a) + v[1] * Math.sin(a)];
@@ -107,12 +121,22 @@ function canoa(g, x, y) {
 }
 
 // Patios y jardines (identidad de cada obra).
+// Árbol de plaza o de patio (samán, mango): tronco que se abre en la raíz y se bifurca, con tres tonos; copa
+// armada con racimos de hojas en punta, oscuros por dentro y abajo a la derecha, con luz arriba a la izquierda
+// (antes eran cuatro bolas lisas).
 function arbolito(g, x, y, s = 1, col = '#5E8B42') {
-  g.save(); g.globalAlpha = .2; g.fillStyle = '#2A3A1E'; g.beginPath(); g.ellipse(x + 3 * s, y + 1, 8 * s, 2.6 * s, 0, 0, 7); g.fill(); g.restore();
-  g.strokeStyle = '#6B4A33'; g.lineWidth = 1.6 * s; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - 9 * s); g.stroke();
-  for (const [dx, dy, r] of [[-3.5, -12, 4.6], [3.5, -12.5, 4.4], [0, -16, 5], [0, -11, 4.2]]) {
-    const gr = g.createRadialGradient(x + dx * s - 1.5, y + dy * s - 1.8, .5, x + dx * s, y + dy * s, r * s); gr.addColorStop(0, '#9BBE68'); gr.addColorStop(.5, col); gr.addColorStop(1, mezcla(col, '#1E2E18', .35));
-    g.fillStyle = gr; g.beginPath(); g.ellipse(x + dx * s, y + dy * s, r * s, r * .8 * s, 0, 0, 7); g.fill();
+  const R = mulberry(Math.round(x * 7 + y * 13 + s * 100));
+  sombraPie(g, x + 3 * s, y, 9 * s, 2.8 * s, .22);
+  const tr = g.createLinearGradient(x - 1.4 * s, 0, x + 1.4 * s, 0); tr.addColorStop(0, '#8A6A4A'); tr.addColorStop(.5, '#6B4A33'); tr.addColorStop(1, '#4A3222');
+  g.fillStyle = tr; g.beginPath(); g.moveTo(x - 2 * s, y); g.quadraticCurveTo(x - 1 * s, y - 1.5 * s, x - .9 * s, y - 7 * s); g.lineTo(x - 2.6 * s, y - 11 * s); g.lineTo(x - 1.8 * s, y - 11.4 * s); g.lineTo(x, y - 8.4 * s); g.lineTo(x + 1.6 * s, y - 11.6 * s); g.lineTo(x + 2.4 * s, y - 11.2 * s); g.lineTo(x + .9 * s, y - 7 * s); g.quadraticCurveTo(x + 1 * s, y - 1.5 * s, x + 2.2 * s, y); g.closePath(); g.fill();
+  g.strokeStyle = 'rgba(30,20,12,.35)'; g.lineWidth = .3; g.beginPath(); g.moveTo(x + .3 * s, y - .5); g.lineTo(x + .4 * s, y - 7 * s); g.stroke();
+  const osc = mezcla(col, '#1A2A14', .32), luz = mezcla(col, '#E8F0B0', .4);
+  const racimos = [[-4.2, -13.5, 5], [4, -14, 5], [0, -18.5, 5.6], [-1.5, -12.5, 4.4], [2.5, -17, 4.2], [-3.4, -17.4, 4]];
+  for (const [dx, dy, r] of racimos) { g.fillStyle = osc; g.beginPath(); g.ellipse(x + (dx + .6) * s, y + (dy + .6) * s, r * .85 * s, r * .7 * s, 0, 0, 7); g.fill(); }
+  for (const [dx, dy, r] of racimos) {
+    const cx = x + dx * s, cy = y + dy * s, n = 14;
+    for (let k = 0; k < n; k++) { const a = k / n * Math.PI * 2 + R() * .4, d = r * (.35 + R() * .5) * s, hx = cx + Math.cos(a) * d, hy = cy + Math.sin(a) * d * .8, arriba = Math.cos(a - 3.9) * .5 + .5; hojaP(g, hx, hy, a + (R() - .5) * .5, (2 + R() * 1.4) * s, .75 * s, mezcla(osc, col, .35 + arriba * .65), false); }
+    for (let k = 0; k < 4; k++) { const a = -2.4 + R() * 1.2, hx = cx + Math.cos(a) * r * .45 * s, hy = cy + Math.sin(a) * r * .4 * s; hojaP(g, hx, hy, a, 1.8 * s, .6 * s, luz, false); }
   }
 }
 function rayuela(g, r, c) {
@@ -800,27 +824,35 @@ function damero(g, s, z, n, c1, c2) {
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const r = -s + i * d, c = -s + j * d; rellena(g, [P(r, c, z), P(r, c + d, z), P(r + d, c + d, z), P(r + d, c, z)], (i + j) % 2 ? c1 : c2, null); }
 }
 // Cruz de piedra sobre sus gradas, con su pie en (x, y).
+// Cruz de piedra a escala humana (unas dos veces la altura de una persona): gradas, fuste y brazos con volumen,
+// con luz a la izquierda y sombra a la derecha, y un poco de musgo en la grada de abajo.
 function cruzDePiedra(g, x, y, k = 1) {
   g.save(); g.translate(x, y); g.scale(k, k);
-  for (const [s, z0] of [[.15, 0], [.11, 2.6], [.07, 5.2]]) caja(g, 2 * s, 2 * s, 2.6, 0, 0, z0, '#D8CCB0');
-  rellena(g, [[-2.2, -8], [0, -7], [0, -40], [-2.2, -41]], '#E6DCC4', null); rellena(g, [[0, -7], [2.2, -8], [2.2, -41], [0, -40]], '#C9BE9F', null);
-  rellena(g, [[-9, -31], [0, -29.5], [0, -34.2], [-9, -35.7]], '#E6DCC4', null); rellena(g, [[0, -29.5], [9, -31], [9, -35.7], [0, -34.2]], '#C9BE9F', null);
-  g.strokeStyle = K.contorno; g.lineWidth = .5; g.strokeRect(-2.2, -41, 4.4, 33); g.restore();
+  sombraPie(g, 0, 0, 7, 2.2, .22);
+  [[.12, 1.6], [.09, 1.6], [.06, 1.6]].forEach(([l, h], i) => cajaPx(g, 0, 0, l * 2, l * 2, h, '#CFC5AE', { z0: i * 1.6, izq: '#DCD2BC', top: '#E6DCC4' }));
+  g.fillStyle = 'rgba(90,110,60,.35)'; g.beginPath(); g.ellipse(-2.4, .4, 2, .6, 0, 0, 7); g.fill(); // musgo
+  cajaPx(g, 0, 0, .05, .05, 17, '#D8CEB6', { z0: 4.8, izq: '#E8DFC8', top: '#EEE6D2' }); // fuste
+  cajaPx(g, 0, 0, .2, .05, 2.6, '#D8CEB6', { z0: 16.4, izq: '#E8DFC8', top: '#EEE6D2' }); // brazos
+  g.restore();
 }
 // Pila de piedra con su chorro (la de los pueblos del Tolima), con su pie en (x, y).
+// Pila de piedra de plaza: taza ancha con su borde grueso, agua con brillo y reflejo, columna central con anillo,
+// tacita arriba y chorros que caen con sus salpicaduras.
 function pilaPlaza(g, x, y, R, alto = 12) {
-  g.fillStyle = PIEDRA_OSC; g.beginPath(); g.ellipse(x, y, R, R * .5, 0, 0, 7); g.fill();
-  g.fillStyle = PIEDRA; g.beginPath(); g.ellipse(x, y - 3, R, R * .5, 0, 0, 7); g.fill();
-  g.fillStyle = '#7FB3C4'; g.beginPath(); g.ellipse(x, y - 3.4, R * .82, R * .41, 0, 0, 7); g.fill();
-  g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = .4; g.beginPath(); g.ellipse(x - 1, y - 3.4, R * .55, R * .27, 0, 0, 7); g.stroke();
-  rellena(g, [[x - 1.6, y - 3], [x + 1.6, y - 3], [x + 1.2, y - alto], [x - 1.2, y - alto]], PIEDRA_CL);
-  g.fillStyle = PIEDRA; g.beginPath(); g.ellipse(x, y - alto, R * .4, R * .2, 0, 0, 7); g.fill(); g.fillStyle = '#7FB3C4'; g.beginPath(); g.ellipse(x, y - alto - .4, R * .3, R * .15, 0, 0, 7); g.fill();
-  g.strokeStyle = 'rgba(210,235,245,.9)'; g.lineWidth = .8; g.lineCap = 'round';
-  for (const dx of [-3.4, 0, 3.4]) { g.beginPath(); g.moveTo(x, y - alto - .6); g.quadraticCurveTo(x + dx * .8, y - alto - 6, x + dx * 1.4, y - 3.8); g.stroke(); }
+  sombraPie(g, x, y + .6, R * 1.05, R * .5, .2);
+  cilindroV(g, x, y, R, 3, PIEDRA, { tapa: PIEDRA_CL });
+  const ag = g.createLinearGradient(x - R, y - 4, x + R, y - 2); ag.addColorStop(0, '#9CC8D4'); ag.addColorStop(.6, '#6FA2B6'); ag.addColorStop(1, '#4E7E92');
+  g.fillStyle = ag; g.beginPath(); g.ellipse(x, y - 3.05, R * .8, R * .36, 0, 0, 7); g.fill(); // agua
+  g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = .35; for (const f of [.45, .65]) { g.beginPath(); g.ellipse(x, y - 3.05, R * f, R * f * .45, 0, Math.PI * 1.1, Math.PI * 1.7); g.stroke(); } // ondas
+  cilindroV(g, x, y - 3, 1.2, alto - 4, PIEDRA_CL, { arriba: 1, aros: 1 });
+  cilindroV(g, x, y - alto + 1, R * .35, 1.2, PIEDRA, { arriba: R * .42, tapa: '#8FBCCB' }); // tacita
+  g.strokeStyle = 'rgba(215,238,246,.9)'; g.lineWidth = .6; g.lineCap = 'round';
+  for (const dx of [-1, 1]) for (const dz of [0, .6]) { g.beginPath(); g.moveTo(x + dx * R * .38, y - alto - .2); g.quadraticCurveTo(x + dx * R * .55, y - alto + 2 + dz, x + dx * R * .62, y - 3.4); g.stroke(); } // chorros
+  g.fillStyle = 'rgba(240,250,255,.8)'; for (const dx of [-1, 1]) { g.beginPath(); g.ellipse(x + dx * R * .62, y - 3.3, .9, .3, 0, 0, 7); g.fill(); } // salpicaduras
 }
 // Busto de bronce sobre un pedestal alto (como los de las plazas de verdad), con su pie en (x, y).
 function estatua(g, x, y) {
-  g.save(); g.translate(x, y);
+  g.save(); g.translate(x, y); g.scale(.68, .68); // a escala humana (antes era más alta que las casas)
   caja(g, .34, .34, 3, 0, 0, 0, '#CFC5AE'); caja(g, .26, .26, 3, 0, 0, 3, '#DCD2BC'); caja(g, .2, .2, 14, 0, 0, 6, '#E6DCC4'); caja(g, .28, .28, 2.4, 0, 0, 20, '#CFC5AE');
   rellena(g, [[-3.2, -13], [3.2, -11], [3.2, -8], [-3.2, -10]], '#8A7A5A', K.contorno, .3); g.fillStyle = '#E7C76B'; g.fillRect(-1.6, -11.2, 3.2, .8); // placa
   const z = -22.4, br = '#6C8E7C', bl = '#8FB09B', bo = '#4A6657';
@@ -835,31 +867,46 @@ function estatua(g, x, y) {
   g.strokeStyle = bo; g.lineWidth = .5; g.beginPath(); g.moveTo(-3.4, z - 3); g.quadraticCurveTo(0, z - 1.2, 3.4, z - 3); g.stroke(); // solapa
   g.restore();
 }
-function maceta(g, x, y, col, col2) { g.fillStyle = '#B5654A'; g.fillRect(x - 2.2, y - 3, 4.4, 3); for (const [dx, dy, c] of [[-2, -4.6, col], [0, -5.6, col2], [2, -4.4, col], [-.4, -4, col2]]) { g.fillStyle = c; g.beginPath(); g.arc(x + dx, y + dy, 1.5, 0, 7); g.fill(); } }
+function maceta(g, x, y) { materas(g, [[x, y]]); } // las materas nuevas de las casas (antes cuatro círculos)
 // n: 0 plaza de fundación (tierra y cruz), 1 plaza mayor (empedrada), 2 plaza cívica (pila y faroles), 3 plaza de la polis (estatua).
 function plazaN(g, n) {
   const s = [.56, .6, .62, .64][n];
-  // Paso 2 de la fase visual: el piso de la plaza (tierra, empedrado o damero) se pinta en el suelo con borde
-  // irregular (asiento.js); aquí quedan solo lo que se levanta: cruz, pila, árboles, bancas, faroles y bandera.
-  const z = 0;
-  // Setos y canteros en las esquinas (más cuidados cuanto más grande la plaza).
-  const esq = [[-s + .09, -s + .09], [-s + .09, s - .09], [s - .09, -s + .09], [s - .09, s - .09]];
-  // Árboles de sombra en las esquinas de los lados (el mango de la plaza) y faroles en las plazas cívicas.
-  { const q = P(-s + .12, s - .12, z); arbolito(g, q[0], q[1], n === 0 ? 1.2 : 1.05, '#4E7A3A'); }
-  if (n >= 1) { const q = P(s - .12, s - .12, z); arbolito(g, q[0], q[1], .9, '#6F9C4C'); }
-  if (n >= 2) for (const [r, c] of [[-s + .07, -.3], [-.3, -s + .07]]) { const q = P(r, c, z); farol(g, q[0], q[1], 12); }
-  // Centro.
-  const C = P(0, 0, z);
-  if (n === 0) { cruzDePiedra(g, C[0], C[1], 1); for (const [r, c] of [[-.34, -.2], [-.34, .26], [.3, -.34], [.3, .3]]) { const q = P(r, c, z); g.strokeStyle = K.maderaOsc; g.lineWidth = 1.1; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0], q[1] - 9); g.stroke(); } }
-  else if (n === 1) { cruzDePiedra(g, C[0], C[1], 1.05); }
-  else if (n === 2) { pilaPlaza(g, C[0], C[1], 10.5, 15); }
-  else { pilaPlaza(g, C[0], C[1] + 3, 13, 3); estatua(g, C[0], C[1] - 1); }
-  // Adelante: bancas, canteros, bandera.
-  if (n >= 1) { const q = P(s - .12, -.18, z); bancoMadera(g, q[0], q[1]); }
-  if (n >= 2) { const q = P(s - .12, .26, z); bancoMadera(g, q[0], q[1]); const f = P(s - .1, -s + .1, z); bandera(g, f[0], f[1], 26, TRICOLOR); }
-  if (n >= 3) { for (const [r, c] of [[-.38, -.22], [.34, .4], [.38, -.34]]) { const m = P(r, c, z); maceta(g, m[0], m[1], '#D8433A', '#F4EFE4'); } }
-  if (n === 1) { for (const [r, c] of [[.34, .36], [.36, -.36]]) { const m = P(r, c, z); maceta(g, m[0], m[1], '#E7B23C', '#D8433A'); } }
-  if (n <= 1) { const f = P(s - .1, -s + .1, z); bandera(g, f[0], f[1], 22, TRICOLOR); }
+  // Paso 2 de la fase visual: el piso (tierra, empedrado o damero) se pinta en el suelo (asiento.js); aquí va lo que
+  // se levanta. Redibujada a escala humana (pedido de Juan: «la plaza se ve horrible»): cruz y busto más bajos,
+  // árboles de verdad, canteros con seto y flores, faroles de hierro, bancas y bandera con su basa.
+  const z = 0, Q = (r, c) => P(r, c, z);
+  const cantero = (r, c, flores) => { // jardinera baja con borde de ladrillo, seto y flores
+    const p = Q(r, c); cajaPx(g, p[0], p[1], .16, .1, 1.2, '#B5654A', { izq: '#C4724F', top: '#5E8B42' });
+    const R = mulberry(Math.round(r * 97 + c * 31 + 500));
+    for (let k = 0; k < 9; k++) { const u = (k + .5) / 9 - .5, hx = p[0] + u * 4.6 - .2, hy = p[1] - 1.6 + u * 1.6; hojaP(g, hx, hy, -Math.PI / 2 + (R() - .5) * 1.4, 1.8 + R(), .6, R() < .5 ? '#4E7A3A' : '#6F9C4C', false); }
+    if (flores) for (let k = 0; k < 5; k++) { const u = (k + .5) / 5 - .5; g.fillStyle = ['#D8433A', '#F4EFE4', '#E7B23C', '#C2407A'][k % 4]; g.beginPath(); g.arc(p[0] + u * 4.4, p[1] - 2.6 + u * 1.4 - R() * .6, .55, 0, 7); g.fill(); }
+  };
+  if (n === 0) {
+    // Plaza de fundación: tierra, cruz de madera sobre un montón de piedras, el samán y la talanquera de amarrar.
+    { const q = Q(-.05, s - .14); arbolito(g, q[0], q[1], 1.25, '#4E7A3A'); }
+    const C = Q(0, 0);
+    for (const [dx, dy] of [[-2.4, .2], [2, .6], [0, 1.2], [-1, -.6], [1.4, -.4]]) { g.fillStyle = '#8E8676'; g.beginPath(); g.ellipse(C[0] + dx, C[1] + dy, 1.5, .9, 0, 0, 7); g.fill(); g.fillStyle = '#B4AC9C'; g.beginPath(); g.ellipse(C[0] + dx - .4, C[1] + dy - .4, .7, .4, 0, 0, 7); g.fill(); }
+    cajaPx(g, C[0], C[1], .03, .03, 16, K.madera, { z0: .8, izq: K.maderaLuz }); cajaPx(g, C[0], C[1], .16, .03, 2, K.madera, { z0: 11.6, izq: K.maderaLuz }); // cruz de madera
+    const t0 = Q(s - .14, -.3), t1 = Q(s - .14, .2); for (const t of [t0, t1]) cajaPx(g, t[0], t[1], .02, .02, 5, K.maderaOsc, { izq: K.madera }); g.strokeStyle = K.madera; g.lineWidth = 1; g.beginPath(); g.moveTo(t0[0], t0[1] - 4.2); g.lineTo(t1[0], t1[1] - 4.2); g.stroke(); // talanquera
+    const f = Q(-.05, -s + .12); cajaPx(g, f[0], f[1], .05, .05, 1.2, '#A39A88', { izq: '#B4AC9C' }); bandera(g, f[0], f[1] - 1.2, 22, TRICOLOR);
+    return;
+  }
+  // Árboles en las esquinas de atrás, canteros en las otras, faroles desde la plaza cívica.
+  // Por lados de la pantalla: atrás Q(-s,-s), derecha Q(-s,s), adelante Q(s,s), izquierda Q(s,-s). Nada justo
+  // detrás ni delante del monumento del centro; lo de atrás se pinta primero.
+  const f = Q(-s + .1, .12); cajaPx(g, f[0], f[1], .05, .05, 1.4, '#A39A88', { izq: '#B4AC9C' }); bandera(g, f[0], f[1] - 1.4, n >= 2 ? 26 : 22, TRICOLOR); // orilla de atrás a la derecha
+  if (n >= 2) { const q = Q(-.12, -s + .1); farol(g, q[0], q[1], 12); } // orilla de atrás a la izquierda
+  { const q = Q(-s + .14, s - .14); arbolito(g, q[0], q[1], 1.05, '#4E7A3A'); } // esquina derecha
+  cantero(.1, -s + .14, true);
+  const C = Q(0, 0);
+  if (n === 1) cruzDePiedra(g, C[0], C[1], 1);
+  else if (n === 2) pilaPlaza(g, C[0], C[1], 8.5, 13);
+  else { pilaPlaza(g, C[0], C[1] + 3, 11, 3); estatua(g, C[0], C[1] - 1); }
+  { const q = Q(s - .14, -s + .14); arbolito(g, q[0], q[1], .95, '#5E8B42'); } // esquina izquierda
+  { const q = Q(s - .12, -.2); bancoMadera(g, q[0], q[1]); }
+  if (n >= 2) { const q = Q(-.2, s - .12); bancoMadera(g, q[0], q[1]); const fr = Q(.14, s - .1); farol(g, fr[0], fr[1], 12); } // orilla de adelante a la derecha
+  cantero(s - .14, s - .2, n >= 2);
+  if (n >= 3) { const m = Q(.36, -.36); maceta(g, m[0], m[1]); }
 }
 
 // Estadio de cuatro épocas: graderías en dos lados, la cancha de pasto y el borde de entrada.
