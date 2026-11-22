@@ -935,28 +935,65 @@ function surco(g, a, b, ancho = 1) {
   g.globalAlpha = .45; g.strokeStyle = '#D2B88A'; g.lineWidth = .8 * ancho; g.beginPath(); g.moveTo(a[0], a[1] - .3); g.lineTo(b[0], b[1] - .3); g.stroke();
   g.restore();
 }
-// Tierra arada con textura (pedido de Juan): manchas de humedad y de tierra más seca, terrones con su cara de luz
-// arriba a la izquierda y su sombra, piedritas, paja seca y raíces sueltas. Se recorta a la forma de la finca.
-function tierra(g, q, base, rng, dry = 0) {
-  g.save(); poly(g, q); g.clip();
-  const xs = q.map(p => p[0]), ys = q.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), W = x1 - x0, H = y1 - y0;
-  const P2 = () => [x0 + rng() * W, y0 + rng() * H];
-  for (let k = 0; k < 10; k++) { const [x, y] = P2(); g.globalAlpha = .18 + rng() * .17; g.fillStyle = rng() < .55 ? shade(base, -.35) : shade(base, .22); g.beginPath(); g.ellipse(x, y, 4 + rng() * 9, 2 + rng() * 4, 0, 0, 7); g.fill(); } // humedad y tierra seca
-  for (let k = 0; k < 120; k++) { // terrones
-    const [x, y] = P2(), r = .6 + rng() * 1.05;
-    g.globalAlpha = .6; g.fillStyle = shade(base, -.5); g.beginPath(); g.ellipse(x + r * .35, y + r * .3, r, r * .6, 0, 0, 7); g.fill();
-    g.globalAlpha = .9; g.fillStyle = shade(base, -.12 + rng() * .2); g.beginPath(); g.ellipse(x, y, r, r * .6, 0, 0, 7); g.fill();
-    g.globalAlpha = .7; g.fillStyle = shade(base, .4); g.beginPath(); g.ellipse(x - r * .3, y - r * .2, r * .45, r * .25, 0, 0, 7); g.fill();
+// Parcela con forma de verdad (pedido de Juan: «son cuadros demasiado perfectos»; quiere relieve y difuminación):
+// el borde no es la casilla sino una línea irregular con las esquinas redondeadas que sigue el terreno; la tierra se
+// funde con el pasto en tres capas (la de afuera casi transparente), lleva la misma luz del relieve que el resto del
+// suelo (lomas claras hacia el sol de arriba a la izquierda, hondonadas en sombra) y manchas suaves de humedad.
+function formaParcela(T, t, dentro, seed) {
+  const N = T.N, pts = [], lados = [[0, 0, 0, 1], [0, 1, 1, 1], [1, 1, 1, 0], [1, 0, 0, 0]];
+  for (const [r0, c0, r1, c1] of lados) for (let s = 0; s < 10; s++) {
+    const f = s / 10, rr = r0 + (r1 - r0) * f, cc = c0 + (c1 - c0) * f;
+    const esq = Math.min(f, 1 - f) < .2 ? (.2 - Math.min(f, 1 - f)) * .45 : 0; // esquina redondeada
+    const n = (T.vary((t.c + cc) * 2.3 + seed, (t.r + rr) * 2.3 + seed * .7) - .5) * .09;
+    const m = dentro + esq + n, r = t.r + rr + (rr < .5 ? m : -m), c = t.c + cc + (cc < .5 ? m : -m);
+    pts.push(P(r, c, T.hf(clamp(r, 0, N), clamp(c, 0, N))));
   }
-  for (let k = 0; k < 16; k++) { const [x, y] = P2(), r = .5 + rng() * .6; g.globalAlpha = .8; g.fillStyle = mix('#A8A090', '#8C8476', rng()); g.beginPath(); g.ellipse(x, y, r, r * .7, 0, 0, 7); g.fill(); g.fillStyle = '#E2DCCE'; g.globalAlpha = .6; g.beginPath(); g.ellipse(x - r * .3, y - r * .25, r * .4, r * .25, 0, 0, 7); g.fill(); } // piedritas
-  g.lineWidth = .4; g.lineCap = 'round';
-  for (let k = 0; k < 26; k++) { const [x, y] = P2(), a = rng() * Math.PI, L = 1.2 + rng() * 2.4; g.globalAlpha = .7; g.strokeStyle = rng() < .6 ? mix('#D8C28A', '#BFA66A', dry) : '#5E4A30'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L * .5); g.stroke(); } // paja y raíces
+  return pts;
+}
+function parcela(g, T, t, base, rng, dry = 0) {
+  const N = T.N, seed = t.r * 7.3 + t.c * 3.1;
+  // Tierra difuminada hacia el pasto: tres capas, de la más ancha y transparente a la de adentro.
+  for (const [dentro, al] of [[-.03, .16], [.01, .3], [.05, .72]]) { g.globalAlpha = al; g.fillStyle = base; poly(g, formaParcela(T, t, dentro, seed)); g.fill(); }
+  const forma = formaParcela(T, t, .02, seed);
+  g.save(); poly(g, forma); g.clip();
+  // Luz del relieve, con la misma regla del suelo (campoDeColor): una rejilla fina de luces y sombras.
+  const n = 12, alt = (r, c) => { const h = T.hf(clamp(r, 0, N), clamp(c, 0, N)); return h + relieveFino(T, r, c, h); };
+  for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) {
+    const r = t.r + (a + .5) / n, c = t.c + (b + .5) / n, e = .5 / n;
+    const hx = (alt(r, c + e) - alt(r, c - e)) / (2 * e), hy = (alt(r + e, c) - alt(r - e, c)) / (2 * e);
+    const L = clamp(.24 * hx - .13 * hy, -.42, .32);
+    g.globalAlpha = Math.min(.5, Math.abs(L) * 1.1); g.fillStyle = L > 0 ? '#FFF2D8' : '#3A2614';
+    const q = [[a, b], [a, b + 1], [a + 1, b + 1], [a + 1, b]].map(([y, x]) => { const R = t.r + y / n, C = t.c + x / n; return P(R, C, T.hf(clamp(R, 0, N), clamp(C, 0, N))); });
+    g.beginPath(); q.forEach((p, k) => k ? g.lineTo(p[0], p[1] + .3) : g.moveTo(p[0], p[1] + .3)); g.closePath(); g.fill();
+  }
+  // Manchas suaves de humedad y de tierra más seca, grandes y difusas (sin terrones sueltos).
+  const xs = forma.map(p => p[0]), ys = forma.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  for (let k = 0; k < 6; k++) {
+    const x = x0 + rng() * (x1 - x0), y = y0 + rng() * (y1 - y0), rx = 6 + rng() * 10, gr = g.createRadialGradient(x, y, 0, x, y, rx);
+    const c = rng() < .55 ? '58,38,20' : '255,240,210'; gr.addColorStop(0, `rgba(${c},.16)`); gr.addColorStop(1, `rgba(${c},0)`);
+    g.globalAlpha = 1; g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, rx, rx * .5, 0, 0, 7); g.fill();
+  }
+  g.restore(); g.globalAlpha = 1;
+  return forma;
+}
+// Orilla de la parcela: matas de pasto que se meten sobre el borde (así no queda una raya entre la finca y el potrero).
+function bordeParcela(g, T, t, dry = 0) {
+  const forma = formaParcela(T, t, .02, t.r * 7.3 + t.c * 3.1), R = mulberry(t.r * 977 + t.c * 131);
+  g.save(); g.lineCap = 'round';
+  for (let k = 0; k < forma.length; k++) {
+    const [x0, y0] = forma[k], [x1, y1] = forma[(k + 1) % forma.length];
+    for (let s = 0; s < 3; s++) {
+      if (R() < .35) continue;
+      const f = R(), x = x0 + (x1 - x0) * f, y = y0 + (y1 - y0) * f, col = mix(mix('#6E8E42', '#93A85A', R()), '#B8A868', dry * .7);
+      g.strokeStyle = col; g.globalAlpha = .85; g.lineWidth = .5;
+      for (let b = 0; b < 4; b++) { const a = -Math.PI / 2 + (b - 1.5) * .38 + (R() - .5) * .3, L = 1.6 + R() * 1.8; g.beginPath(); g.moveTo(x + (b - 1.5) * .5, y + .4); g.lineTo(x + (b - 1.5) * .5 + Math.cos(a) * L, y + .4 + Math.sin(a) * L); g.stroke(); }
+    }
+  }
   g.restore(); g.globalAlpha = 1;
 }
 function pintarCafe(g, T, t, rng, dry, joven) {
   const col = mix('#2E5E36', '#6E7A3A', dry * .4);
-  wash(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, .45, .6);
-  tierra(g, [P(t.r + .05, t.c + .05, t.h00), P(t.r + .05, t.c + .95, t.h01), P(t.r + .95, t.c + .95, t.h11), P(t.r + .95, t.c + .05, t.h10)], mix('#8E7A52', '#A89A6A', dry), rng, dry);
+  parcela(g, T, t, mix('#8E7A52', '#A89A6A', dry), rng, dry);
   for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
     const u = .14 + b * .145, v = .18 + a * .21 + Math.sin(b * .9 + a) * .03, r = t.r + v, c = t.c + u, p = P(r, c, T.hf(r, c));
     g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 2, p[1] + .5, 3.2, 1.2, 0, 0, 7); g.fill(); g.globalAlpha = 1;
@@ -967,18 +1004,18 @@ function pintarCafe(g, T, t, rng, dry, joven) {
 }
 function pintarArroz(g, T, t, q, rng, dry) {
   const wet = dry < .5;
-  wash(g, q, wet ? '#A3B98A' : '#C9BC80', rng, .5, 0); // fase 8: arrozal en tierra verde, sin el azul que hacía cuadrícula
+  parcela(g, T, t, wet ? '#A3B98A' : '#C9BC80', rng, dry); // fase 8: arrozal en tierra verde, sin el azul que hacía cuadrícula
   g.globalAlpha = .4; g.strokeStyle = wet ? '#7E9A62' : '#A89A55'; g.lineWidth = .8;
   for (let k = 1; k < 7; k++) { const f = k / 7, a = [lerp(q[0][0], q[3][0], f), lerp(q[0][1], q[3][1], f)], b = [lerp(q[1][0], q[2][0], f), lerp(q[1][1], q[2][1], f)]; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
   g.globalAlpha = 1;
   if (wet) { g.globalAlpha = .3; g.fillStyle = '#E9F0E6'; g.beginPath(); g.ellipse((q[0][0] + q[2][0]) / 2 - 6, (q[0][1] + q[2][1]) / 2 - 2, 6, 1.2, -.4, 0, 7); g.fill(); g.globalAlpha = 1; }
-  g.globalAlpha = .18; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
+  bordeParcela(g, T, t, dry);
 }
 // Fase 10: fincas de plátano, cacao, aguacate, algodón y ganadería (matas pequeñas si aún no producen).
 function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
   const pt = (u, v) => { const r = t.r + v, c = t.c + u; return P(r, c, T.hf(r, c)); };
   if (cv === 'ganaderia') {
-    wash(g, q, mix('#A9B66E', DRYC, dry * .6), rng, .55, .6);
+    parcela(g, T, t, mix('#A9B66E', DRYC, dry * .6), rng, dry);
     g.globalAlpha = .7; g.strokeStyle = '#6B4A30'; g.lineWidth = .8;
     const borde = [pt(.06, .06), pt(.94, .06), pt(.94, .94), pt(.06, .94)];
     g.beginPath(); borde.forEach((p, k) => k ? g.lineTo(p[0], p[1] - 2) : g.moveTo(p[0], p[1] - 2)); g.closePath(); g.stroke();
@@ -987,10 +1024,9 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
     for (const [u, v] of [[.35, .4], [.65, .62], [.45, .75]]) { const p = pt(u, v); blob(g, p[0], p[1] - 2.6, 4, 2.2, '#F2EEE4', rng, .97); blob(g, p[0] - 1, p[1] - 2.9, 1.6, 1, '#2E2723', rng, .9); blob(g, p[0] + 4, p[1] - 3.4, 1.6, 1.3, '#F2EEE4', rng, .97); }
     return;
   }
-  if (cv === 'cana' || cv === 'tabaco') { pintarCanaTabaco(g, q, pt, rng, dry, cv, joven); return; }
+  if (cv === 'cana' || cv === 'tabaco') { pintarCanaTabaco(g, q, pt, rng, dry, cv, joven, T, t); return; }
   const suelo = cv === 'algodon' ? mix('#B99A6A', '#C9B07A', dry) : mix('#8E7A52', '#A89A6A', dry);
-  wash(g, q, suelo, rng, .5, .6);
-  tierra(g, q, suelo, rng, dry);
+  parcela(g, T, t, suelo, rng, dry);
   for (let a = 0; a < (cv === 'algodon' ? 5 : 3); a++) { const v = .16 + a * (.68 / ((cv === 'algodon' ? 5 : 3) - 1)); surco(g, pt(.06, v + .03), pt(.94, v + .03), cv === 'algodon' ? .8 : 1.2); }
   const filas = cv === 'algodon' ? 5 : 3, cols = cv === 'algodon' ? 6 : 4, s = joven ? .45 : 1;
   for (let a = 0; a < filas; a++) for (let b = 0; b < cols; b++) {
@@ -1003,14 +1039,13 @@ function pintarHuerto(g, T, t, q, rng, dry, cv, joven) {
     if (!joven && cv === 'cacao') for (let k = 0; k < 2; k++) { g.fillStyle = k ? '#C9822E' : '#9C2F25'; g.beginPath(); g.ellipse(p[0] + (k ? 1.6 : -1.4), p[1] - 1.4, .7, 1.1, 0, 0, 7); g.fill(); }
     if (!joven && cv === 'aguacate') { g.fillStyle = '#4E6E2A'; g.beginPath(); g.ellipse(p[0] + 1.2, p[1] - 2, .7, .9, 0, 0, 7); g.fill(); }
   }
-  g.globalAlpha = .4; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
+  bordeParcela(g, T, t, dry);
 }
 // Paso 2 de Anno: caña panelera (macollas altas de tallos con hojas largas) y tabaco (matas de hojas anchas, algunas
 // amarillas, en surcos sobre tierra clara).
-function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven) {
+function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven, T, t) {
   const s = joven ? .5 : 1;
-  wash(g, q, cv === 'cana' ? mix('#9A8A5C', '#B4A272', dry) : mix('#B79E70', '#C9B386', dry), rng, .5, .6);
-  tierra(g, q, cv === 'cana' ? mix('#9A8A5C', '#B4A272', dry) : mix('#B79E70', '#C9B386', dry), rng, dry);
+  parcela(g, T, t, cv === 'cana' ? mix('#9A8A5C', '#B4A272', dry) : mix('#B79E70', '#C9B386', dry), rng, dry);
   if (cv === 'cana') {
     for (let a = 0; a < 4; a++) for (let b = 0; b < 6; b++) {
       const p = pt(.12 + b * .152 + (a % 2) * .04, .14 + a * .23);
@@ -1035,19 +1070,18 @@ function pintarCanaTabaco(g, q, pt, rng, dry, cv, joven) {
       if (!joven && rng() < .4) { g.fillStyle = '#E8D7E4'; g.beginPath(); g.arc(p[0], p[1] - 6, .7, 0, 7); g.fill(); } // flor rosada
     }
   }
-  g.globalAlpha = .4; g.strokeStyle = '#8B7A55'; g.lineWidth = .8; poly(g, q); g.stroke(); g.globalAlpha = 1;
+  bordeParcela(g, T, t, dry);
 }
 // Huerta de maíz, fríjol y yuca en surcos, para los cultivos lejos de la llanura.
 function pintarHuerta(g, T, t, q, rng, dry) {
-  wash(g, q, mix('#B99A6A', '#C9B07A', dry), rng, .75, .6);
-  tierra(g, q, mix('#B99A6A', '#C9B07A', dry), rng, dry);
+  parcela(g, T, t, mix('#B99A6A', '#C9B07A', dry), rng, dry);
   const col = mix('#4F8A43', '#C9A94A', dry * .8);
   for (let a = 0; a < 5; a++) {
     const v = .12 + a * .19;
     for (let b = 0; b < 6; b++) { const r = t.r + v, c0 = t.c + .06 + b * .147, c1 = c0 + .147; surco(g, P(r, c0, T.hf(r, c0)), P(r, c1, T.hf(r, c1))); }
     for (let b = 0; b < 6; b++) { const r = t.r + v, c = t.c + .12 + b * .15, p = P(r, c, T.hf(r, c)); g.globalAlpha = .18; g.fillStyle = '#22301E'; g.beginPath(); g.ellipse(p[0] + 1.8, p[1] + .3, 2.6, .9, 0, 0, 7); g.fill(); g.globalAlpha = 1; mata(g, p[0], p[1] - 2, 2.4, 2, col, rng); if (rng() < .2) { g.fillStyle = '#E0B040'; g.beginPath(); g.arc(p[0] + 1, p[1] - 3, .7, 0, 7); g.fill(); } }
   }
-  g.globalAlpha = .5; g.strokeStyle = '#8B7A55'; g.lineWidth = .9; poly(g, q); g.stroke(); g.globalAlpha = 1;
+  bordeParcela(g, T, t, dry);
 }
 
 // Sectores que hay que repintar cuando cambia la casilla i (incluye vecinos por caminos y puentes).
