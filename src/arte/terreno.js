@@ -962,7 +962,7 @@ function parcela(g, T, t, base, rng, dry = 0) {
     const r = t.r + (a + .5) / n, c = t.c + (b + .5) / n, e = .5 / n;
     const hx = (alt(r, c + e) - alt(r, c - e)) / (2 * e), hy = (alt(r + e, c) - alt(r - e, c)) / (2 * e);
     const L = clamp(.24 * hx - .13 * hy, -.42, .32);
-    g.globalAlpha = Math.min(.5, Math.abs(L) * 1.1); g.fillStyle = L > 0 ? '#FFF2D8' : '#3A2614';
+    g.globalAlpha = Math.min(.6, Math.abs(L) * 1.9); g.fillStyle = L > 0 ? '#FFF2D8' : '#3A2614';
     const q = [[a, b], [a, b + 1], [a + 1, b + 1], [a + 1, b]].map(([y, x]) => { const R = t.r + y / n, C = t.c + x / n; return P(R, C, T.hf(clamp(R, 0, N), clamp(C, 0, N))); });
     g.beginPath(); q.forEach((p, k) => k ? g.lineTo(p[0], p[1] + .3) : g.moveTo(p[0], p[1] + .3)); g.closePath(); g.fill();
   }
@@ -973,6 +973,16 @@ function parcela(g, T, t, base, rng, dry = 0) {
     const c = rng() < .55 ? '58,38,20' : '255,240,210'; gr.addColorStop(0, `rgba(${c},.16)`); gr.addColorStop(1, `rgba(${c},0)`);
     g.globalAlpha = 1; g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, rx, rx * .5, 0, 0, 7); g.fill();
   }
+  // Textura fina y suave (punto medio pedido por Juan): grano de tierra suelta con su luz y su sombra, apenas
+  // marcado, y algunas piedritas y briznas de paja; nada de terrones grandes.
+  for (let k = 0; k < 110; k++) {
+    const x = x0 + rng() * (x1 - x0), y = y0 + rng() * (y1 - y0), r = .5 + rng() * .75;
+    g.globalAlpha = .45; g.fillStyle = shade(base, -.42); g.beginPath(); g.ellipse(x + r * .3, y + r * .25, r, r * .55, 0, 0, 7); g.fill();
+    g.globalAlpha = .5; g.fillStyle = shade(base, .3); g.beginPath(); g.ellipse(x - r * .25, y - r * .2, r * .6, r * .32, 0, 0, 7); g.fill();
+  }
+  for (let k = 0; k < 7; k++) { const x = x0 + rng() * (x1 - x0), y = y0 + rng() * (y1 - y0), r = .4 + rng() * .4; g.globalAlpha = .7; g.fillStyle = mix('#A8A090', '#8C8476', rng()); g.beginPath(); g.ellipse(x, y, r, r * .65, 0, 0, 7); g.fill(); g.globalAlpha = .5; g.fillStyle = '#E2DCCE'; g.beginPath(); g.ellipse(x - r * .3, y - r * .25, r * .4, r * .22, 0, 0, 7); g.fill(); }
+  g.lineWidth = .3; g.lineCap = 'round';
+  for (let k = 0; k < 10; k++) { const x = x0 + rng() * (x1 - x0), y = y0 + rng() * (y1 - y0), a = rng() * Math.PI, L = 1 + rng() * 1.6; g.globalAlpha = .45; g.strokeStyle = mix('#D8C28A', '#BFA66A', dry); g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L * .5); g.stroke(); }
   g.restore(); g.globalAlpha = 1;
   return forma;
 }
