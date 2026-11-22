@@ -59,16 +59,99 @@ export function caminoRio(T) {
   return pts;
 }
 
+// Geometría del río natural (fase visual, paso 3; pedido de Juan: «el río parece un canal»): por cada punto del
+// cauce, el centro y las dos orillas en el mundo, con un ancho que cambia (remansos anchos y estrechos con
+// raudales) y cada orilla con su propio ruido. La curva (k) dice hacia dónde dobla: la playa de arena sale por
+// dentro de la curva y lo hondo queda por fuera. Se usa para pintarlo y para la corriente animada.
+export function geoRio(T) {
+  if (T._geo) return T._geo;
+  const N = T.N, v = T.vary, L = [], base = [];
+  for (let k = -360; k <= 360; k++) { const s = k / 360 * 1.1, mid = T.riverMid(s), r = (mid - s * N) / 2, c = (mid + s * N) / 2; if (r >= -1.5 && c >= -1.5 && r <= N + 1.5 && c <= N + 1.5) base.push({ r, c }); }
+  const n = base.length;
+  const nr = 1 / Math.SQRT2; // la orilla se aleja del cauce en la dirección (1, 1) de filas y columnas
+  for (let i = 0; i < n; i++) {
+    const { r, c } = base[i], s = (c - r) / T.N, h = Math.max(0, alturaEn(T, r, c)) - .15;
+    const ancho = .8 + .42 * (v(s * 4 + 31, 7.3) - .5) + .2 * (v(s * 13 + 5, 1.9) - .5);
+    const a = clamp(ancho + .2 * (v(s * 19 + 71, 3.1) - .5), .5, 1.15), b = clamp(ancho + .2 * (v(s * 17 + 17, 8.7) - .5), .5, 1.15);
+    L.push({ r, c, h, s, a, b });
+  }
+  // Curvatura a partir del centro en pantalla (positiva: dobla hacia la orilla «b»).
+  for (let i = 0; i < n; i++) {
+    const p = L[Math.max(0, i - 12)], q = L[Math.min(n - 1, i + 12)], o = L[i];
+    const mid = ((p.r + p.c) + (q.r + q.c)) / 2;
+    o.k = clamp(((o.r + o.c) - mid) * 7, -1, 1);
+  }
+  const pt = (o, d, h = o.h) => P(o.r + d * nr, o.c + d * nr, h);
+  return (T._geo = { L, pt, nr });
+}
+
+// Contorno de una franja del río entre las distancias da (lado a, negativo) y db (lado b) desde el centro.
+function franja(geo, fa, fb, ha) {
+  const { L, pt } = geo, ida = [], vuelta = [];
+  for (const o of L) { ida.push(pt(o, -fa(o), ha ? ha(o, -fa(o)) : o.h)); vuelta.push(pt(o, fb(o), ha ? ha(o, fb(o)) : o.h)); }
+  return ida.concat(vuelta.reverse());
+}
+const rellenar = (g, pts, col, al = 1) => { g.globalAlpha = al; g.fillStyle = col; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill(); };
+
 function pintarRio(g, T, zona, dry) {
-  if (!T._rio) T._rio = caminoRio(T).map(x => x.p);
-  const pts = T._rio;
+  const geo = geoRio(T), { L, pt } = geo, N = T.N, sec = dry > .5, baja = sec ? .78 : 1; // en la sequía el río baja
+  const tierra = (o, d) => alturaEn(T, o.r + d * geo.nr, o.c + d * geo.nr);
   g.save(); g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip();
-  const st = (w, col, al) => {
-    g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round';
-    g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke();
-  };
-  const wc = dry > .5 ? '#7E9EA2' : '#5F95AE'; // azul egipcio
-  st(54, '#DCC79A', .6); st(42, '#5B3423', .25); st(40, shade(wc, -.1), .97); st(30, wc, .92); st(14, '#9CC2C8', .55);
+  const ruido = (o, k) => (T.vary(o.s * 30 + k, k * .37) - .5) * .7 + (T.vary(o.s * 110 + k, k * .21) - .5) * .5 + (T.vary(o.s * 330 + k, k * .53) - .5) * .25;
+  const suaveR = (o, k) => (T.vary(o.s * 22 + k, k * .37) - .5) * .8 + (T.vary(o.s * 60 + k, k * .21) - .5) * .4;
+  // 1. Orillas: tierra húmeda y arena que bajan al agua, de ancho irregular.
+  rellenar(g, franja(geo, o => o.a * baja + .36 + .4 * ruido(o, 11), o => o.b * baja + .36 + .4 * ruido(o, 23), tierra), mix('#B7A47C', '#CDB98E', dry), .4);
+  rellenar(g, franja(geo, o => o.a * baja + .16 + .22 * ruido(o, 37), o => o.b * baja + .16 + .22 * ruido(o, 41), tierra), mix('#8C7A58', '#B09C74', dry), .55);
+  // 2. Playas de arena y cascajo por dentro de las curvas (más grandes en la sequía).
+  const playa = (o, lado) => { const k = lado > 0 ? o.k : -o.k; return k > .18 ? (k - .18) * (sec ? 1.1 : .75) : 0; };
+  rellenar(g, franja(geo, o => o.a * baja + .07 + .12 * ruido(o, 43) - playa(o, -1) * .3, o => o.b * baja + .07 + .12 * ruido(o, 47) - playa(o, 1) * .3), '#7A6A4C', .55); // tierra mojada
+  // arena solo a ratos (y en las playas), no en una franja pareja
+  const arena = (o, lado, k) => Math.max(0, .1 * (ruido(o, k) + .15) * 2.2) + playa(o, lado) * .5;
+  rellenar(g, franja(geo, o => o.a * baja + arena(o, -1, 89) - playa(o, -1) * .6, o => o.b * baja + arena(o, 1, 97) - playa(o, 1) * .6), mix('#D8C79C', '#E2D2A8', dry), .85);
+  // 3. El agua: la orilla baja con sedimento; el cuerpo y los pozos hondos son manchas de ancho propio que se
+  // corren hacia el lado de afuera de cada curva (no franjas paralelas, que hacían ver un canal).
+  const ag = sec ? ['#97B2A2', '#6A98A2', '#4A7E90'] : ['#92B8AE', '#5E98AA', '#3C7089'];
+  const borde = o => [o.a * baja + .13 * ruido(o, 71) - playa(o, -1) * .6, o.b * baja + .13 * ruido(o, 73) - playa(o, 1) * .6];
+  const medio = o => clamp(.62 + .5 * suaveR(o, 101), .25, .9), hondo = o => clamp(suaveR(o, 131) * 1.6 + .25, 0, .6);
+  rellenar(g, franja(geo, o => borde(o)[0], o => borde(o)[1]), ag[0], .97);
+  rellenar(g, franja(geo, o => borde(o)[0] * medio(o) - o.k * .15, o => borde(o)[1] * medio(o) + o.k * .15), ag[1], .9);
+  rellenar(g, franja(geo, o => (o.a + o.b) * .5 * hondo(o) - o.k * .25, o => (o.a + o.b) * .5 * hondo(o) * (.7 + suaveR(o, 137)) + o.k * .25), ag[2], .8);
+  // 4. La orilla de atrás (lado a, hacia la luz) proyecta su sombra sobre el agua; reflejo del cielo en el medio.
+  rellenar(g, franja(geo, o => borde(o)[0], o => -borde(o)[0] + .14 + .06 * ruido(o, 53)), '#2E4C52', .22);
+  g.globalAlpha = .22; g.strokeStyle = '#E4F0EE'; g.lineCap = 'round';
+  for (let i = 2; i < L.length - 9; i += 9) {
+    const o = L[i], f = ruido(o, 61), d = f * (o.a + o.b) * .5, A = pt(o, d), B = pt(L[i + 6], d + .05);
+    g.lineWidth = .8 + (ruido(o, 67) + .5) * 1.4; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke();
+  }
+  // 5. Piedras con espuma donde el río se estrecha (raudales), y alguna en la orilla.
+  for (let i = 1; i < L.length - 1; i++) {
+    const o = L[i], R = mulberry(Math.round(o.s * 9973) + T.seed * 7);
+    const estrecho = (o.a + o.b) < 1.4;
+    if (R() > (estrecho ? .14 : .03)) continue;
+    const lado = R() < .5 ? -1 : 1, d = lado * (lado < 0 ? o.a : o.b) * baja * (.3 + R() * .65), [x, y] = pt(o, d), w = 1.6 + R() * 2.6;
+    // espuma río abajo
+    g.globalAlpha = .55; g.fillStyle = '#F2F6F2';
+    for (let q = 0; q < 5; q++) { const fx = x + 2 + q * 1.8 + R() * 1.5, fy = y + q * .7 + (R() - .5) * 1.4; g.beginPath(); g.moveTo(fx - 1.6, fy); g.quadraticCurveTo(fx, fy - .9, fx + 1.6, fy); g.quadraticCurveTo(fx, fy + .5, fx - 1.6, fy); g.fill(); }
+    const k = 6, Lp = [];
+    for (let j = 0; j < k; j++) { const a = j / k * 6.283 + (R() - .5) * .5, f = .7 + R() * .4, sy = Math.sin(a); Lp.push([x + Math.cos(a) * w * f, sy > 0 ? y + sy * w * .22 : y + sy * w * .7 * f]); }
+    rellenar(g, Lp, '#6E6A5E', 1);
+    rellenar(g, Lp.map(([a, b]) => [x + (a - x) * .7 - w * .18, y + (b - y) * .7 - w * .18]), '#A29C8C', 1);
+    g.globalAlpha = .7; g.strokeStyle = '#EEF4F0'; g.lineWidth = .7; g.beginPath(); g.ellipse(x, y + w * .12, w * 1.15, w * .3, 0, .2, 2.9); g.stroke(); // anillo de agua
+  }
+  // 6. Cascajo en las playas y juncos en la orilla.
+  for (let i = 1; i < L.length - 1; i += 1) {
+    const o = L[i], R = mulberry(Math.round(o.s * 7919) + T.seed * 13);
+    for (const lado of [-1, 1]) {
+      const pl = playa(o, lado), bd = (lado < 0 ? o.a : o.b) * baja;
+      if (pl > .05 && R() < .35) for (let q = 0; q < 3; q++) { const [x, y] = pt(o, lado * (bd - pl * .5 * R()), o.h); g.globalAlpha = .8; g.fillStyle = R() < .5 ? '#A39886' : '#C5B79A'; g.fillRect(x + (R() - .5) * 4, y + (R() - .5) * 2, 1.1, .7); }
+      if (R() < .12 && pl < .05) {
+        const [x, y] = pt(o, lado * (bd + .08 + R() * .1), tierra(o, lado * bd)), m = 4 + Math.floor(R() * 4);
+        g.globalAlpha = 1; g.fillStyle = R() < .5 ? '#5C7A38' : '#6E8C40'; g.beginPath();
+        for (let q = 0; q < m; q++) { const bx = x + (R() - .5) * 4, h = 3 + R() * 4, ln = (R() - .5) * 1.6; g.moveTo(bx - .45, y); g.lineTo(bx + ln, y - h); g.lineTo(bx + .45, y); g.closePath(); }
+        g.fill();
+      }
+    }
+  }
   g.restore(); g.globalAlpha = 1;
 }
 
@@ -94,7 +177,7 @@ export function cajaSector(T, sr, sc) {
 const GIROS = [[.88, .48], [.36, .93], [-.6, .8], [.97, -.24]];
 function relieveFino(T, r, c, h) {
   const n = T.vary, g = (k, x, y, esc, o) => { const [co, si] = GIROS[k]; return n((x * co - y * si) / esc + o, (x * si + y * co) / esc + o * .7); };
-  const d = T.riverD(r, c), cerca = clamp((d - .9) / 1.6, .2, 1);
+  const d = T.riverD(r, c), cerca = clamp((d - .4) / 1.2, .55, 1); // la ribera también tiene lomitas (antes casi lisa: parecía el muro de un canal)
   const monte = smooth(clamp((h - 3.2) / 3.2, 0, 1)), amp = (.26 + .16 * smooth(clamp((h - 1.2) / 3, 0, 1))) * cerca;
   let m = (g(0, c, r, 2.2, 300) - .5) * .75 + (g(1, c, r, 1.05, 410) - .5) * .2 + (g(2, c, r, .5, 520) - .5) * .05;
   m *= amp;
@@ -267,7 +350,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     }
     pies.sort((a, b) => (a.r + a.c) - (b.r + b.c)).forEach(o => pintarPie(g, T, o, dry));
   }
-  if (rios.length) pintarRio(g, T, zona, dry); // el río entero de una vez: orilla curva, sin escalones de casilla
+  if (rios.length || tiles.some(t => t.d < 2.6)) pintarRio(g, T, zona, dry); // el río entero de una vez: orilla curva, sin escalones de casilla
 
   // (Las curvas de nivel se quitaron en el pulido visual: el relieve ya se lee con la luz y se veían como rayas.)
 
@@ -364,14 +447,19 @@ function peñas(g, cx, cy, rng, n) {
 // Charco o laguna de borde irregular (cantos cortos, más ancho que alto): orilla de lodo oscuro, agua y un reflejo
 // del cielo en la parte de atrás, y unos juncos en punta.
 function charco(g, x, y, w, rng, agua) {
-  const L = [], k = 9;
-  for (let i = 0; i < k; i++) { const a = i / k * 6.283 + (rng() - .5) * .4, f = .7 + rng() * .4; L.push([x + Math.cos(a) * w * f, y + Math.sin(a) * w * .4 * f]); }
-  const trazo = (esc, dy) => { g.beginPath(); L.forEach(([px, py], i) => { const X = x + (px - x) * esc, Y = y + (py - y) * esc + dy; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.closePath(); };
-  g.globalAlpha = .55; g.fillStyle = '#5E4E36'; trazo(1.12, .3); g.fill();
-  g.globalAlpha = .95; g.fillStyle = agua; trazo(1, 0); g.fill();
-  g.globalAlpha = .55; g.fillStyle = '#D8E6E4'; g.beginPath(); g.moveTo(x - w * .5, y - w * .16); g.lineTo(x + w * .2, y - w * .22); g.lineTo(x + w * .05, y - w * .12); g.lineTo(x - w * .45, y - w * .08); g.closePath(); g.fill();
+  // Paso 3 de la fase visual: borde curvo y mordido, lodo mojado alrededor, agua más honda al centro y el reflejo
+  // del cielo hacia atrás (antes era una placa plana de un solo color).
+  const L = [], k = 14, f0 = rng() * 6.3;
+  for (let i = 0; i < k; i++) { const a = i / k * 6.283, f = .72 + .22 * Math.sin(a * 2 + f0) + rng() * .2; L.push([Math.cos(a) * w * f, Math.sin(a) * w * .42 * f]); }
+  const trazo = (esc, dx = 0, dy = 0) => { g.beginPath(); for (let i = 0; i <= k; i++) { const p = L[i % k], q = L[(i + 1) % k], m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; const X = (u, v) => [x + dx + u * esc, y + dy + v * esc]; i ? g.quadraticCurveTo(...X(p[0], p[1]), ...X(m[0], m[1])) : g.moveTo(...X(m[0], m[1])); } g.closePath(); };
+  g.globalAlpha = .45; g.fillStyle = '#6E5A3E'; trazo(1.28, .3, .3); g.fill();   // lodo mojado
+  g.globalAlpha = .9; g.fillStyle = shade(agua, -.12); trazo(1, 0, 0); g.fill();  // agua
+  g.globalAlpha = .7; g.fillStyle = shade(agua, -.3); trazo(.55, .5, .35); g.fill(); // lo hondo, corrido adelante
+  g.save(); trazo(1); g.clip();
+  g.globalAlpha = .45; g.fillStyle = '#E4EEEA'; g.beginPath(); g.ellipse(x - w * .25, y - w * .28, w * .6, w * .12, -.08, 0, 7); g.fill(); // cielo reflejado atrás
+  g.restore();
   g.globalAlpha = 1; g.fillStyle = '#5C7A3A'; g.beginPath();
-  for (let q = 0; q < 5; q++) { const bx = x + w * (.55 + rng() * .3) * (rng() < .5 ? -1 : 1), by = y + (rng() - .3) * w * .3, h = 2 + rng() * 2.5; g.moveTo(bx - .4, by); g.lineTo(bx + (rng() - .5) * 1.2, by - h); g.lineTo(bx + .4, by); g.closePath(); }
+  for (let q = 0; q < 5; q++) { const a = rng() * 6.283, bx = x + Math.cos(a) * w * .85, by = y + Math.sin(a) * w * .36, h = 2 + rng() * 2.5; g.moveTo(bx - .4, by); g.lineTo(bx + (rng() - .5) * 1.2, by - h); g.lineTo(bx + .4, by); g.closePath(); }
   g.fill();
 }
 // Mancha suave de bordes difusos (sin contorno), para que el suelo no parezca un mosaico.
