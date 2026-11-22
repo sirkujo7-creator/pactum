@@ -36,6 +36,8 @@ const ZOOM_MAX = 2.6; // más cerca, el terreno pintado se vería pixelado
 // Pedido de Juan (12 de octubre): cada edificio ocupa el 82% de su casilla, así queda aire (solar, patio, suelo)
 // entre uno y otro y es más fácil tocar la casilla correcta; la cámara arranca un poco más cerca para compensar.
 // Las fincas, el cafetal, el parque y la plaza de fundación son suelo y siguen llenando la casilla.
+const CLARO = new Set(['casa', 'mercado', 'escuela', 'hospital', 'taller', 'agora', 'banco', 'universidad', 'molino', 'aserradero', 'estudio', 'puerto', 'fundacion', 'cementerio', 'iglesia', 'teatro', 'biblioteca', 'cuartel', 'policia', 'estadio', 'cancha', 'museo']);
+const ARBOL_GRANDE = new Set(['arbol', 'mango', 'saman', 'ceiba', 'guayacan', 'ocobo', 'cambulo', 'yarumo', 'arbolNiebla', 'palma', 'guadua']);
 const ESP = .82, A_SUELO = new Set(['cultivo', 'cafetal', 'parque', 'fundacion']);
 const PROF_FONDO = -3000, PROF_TERRENO = -2000, PROF_BRILLO = -900, PROF_POSIBLES = -850, PROF_MARCA = -800, PROF_NIEBLA = 50000;
 
@@ -81,6 +83,11 @@ export class Mapa extends Phaser.Scene {
     this.plantasPorCasilla = {};
     for (const o of this.plantasMundo) (this.plantasPorCasilla[o.i] = this.plantasPorCasilla[o.i] || []).push(o);
 
+    // Las figuras van antes que el terreno: el suelo pinta la sombra de cada edificio (paso 2 de la fase visual).
+    this.prepararHojas();
+    this.plantas = {}; this.obras = {}; this.humos = {};
+    for (let i = 0; i < N * N; i++) { this.ponerPlantas(i); this.ponerObra(i); }
+
     // Terreno por sectores, de atrás hacia adelante, repartido en varios cuadros para no congelar la pantalla.
     const n = Math.ceil(N / LADO_SECTOR), cola = [];
     for (let sr = 0; sr < n; sr++) for (let sc = 0; sc < n; sc++) cola.push([sr, sc]);
@@ -98,9 +105,6 @@ export class Mapa extends Phaser.Scene {
     });
     this.tiempoPintura = Math.round(performance.now() - t0);
 
-    this.prepararHojas();
-    this.plantas = {}; this.obras = {}; this.humos = {};
-    for (let i = 0; i < N * N; i++) { this.ponerPlantas(i); this.ponerObra(i); }
     this.huellasVistas = this.S.map.map((x, i) => this.huella(x, i));
     this.ponerVida();
     this.pob = new Pobladores(this);
@@ -147,7 +151,7 @@ export class Mapa extends Phaser.Scene {
   // ---------- Terreno ----------
   pintarSector(sr, sc) {
     const clave = `sector-${sr}-${sc}`, previo = this.sectores[clave];
-    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, plantas: this.plantasPorCasilla, dry: this.dry, calles: this.dibCalles, anio: this.S.year, subida: this.subidaVista || 0 });
+    const s = pintarSector(this.T, sr, sc, { escala: this.escalaSector, mapa: this.S.map, plantas: this.plantasPorCasilla, plantasDe: i => this.plantasDecorativas(i), dry: this.dry, calles: this.dibCalles, anio: this.S.year, subida: this.subidaVista || 0, etapa: this.S.stage, sombras: this.sombrasCerca(sr, sc), fuenteSombras: this.textures.exists('edificios') ? this.textures.get('edificios').getSourceImage() : null });
     if (previo) { previo.destroy(); this.textures.remove(clave); }
     this.textures.addCanvas(clave, s.canvas);
     this.sectores[clave] = this.add.image(s.x, s.y, clave).setOrigin(0).setScale(1 / s.escala).setDepth(PROF_TERRENO + (sr + sc) * .01);
@@ -188,11 +192,31 @@ export class Mapa extends Phaser.Scene {
     if (x.b || x.t === 'rio' || x.dr > 0 || x.er >= 2 || (x.mk && GRANDES.has(x.mk.t))) lista = []; // obra, derrumbe, ladera muy erosionada o huella grande
     else if (x.q > 0) lista = toconesDe(this.T, i);                       // cenizas de un incendio
     else if (x.t === 'bosque' && t.b !== 'niebla') lista = arbolesDeBosque(this.T, i); // bosque que volvió
-    else if (!(t.b === 'niebla' && x.t !== 'bosque')) lista = (this.plantasPorCasilla[i] || []).filter(o => !Vida.esAnimal(o.k));
+    else if (!(t.b === 'niebla' && x.t !== 'bosque')) lista = this.plantasDecorativas(i).filter(o => !Vida.esAnimal(o.k));
     // El bosque joven crece poco a poco durante sus primeros años.
     const edad = x.t === 'bosque' && x.nb ? this.S.year - x.nb : 9, crece = edad <= 1 ? .55 : edad === 2 ? .8 : 1;
     // Las vacas y garzas las mueve Vida.js; los árboles guardan cuánto se mecen.
     this.plantas[i] = lista.map(o => { const im = this.figura('naturaleza', o.k + (o.v || ''), o.r, o.c, this.T.hf(o.r, o.c), o.s * crece).setData('arbol', Vida.vaiven(o.k)); if (o.tn) im.setTint(o.tn); return im; }); // cada árbol con su versión y su tono
+  }
+  // Claro alrededor del pueblo (paso 2 de la fase visual): junto a una obra de pie no crecen árboles grandes (la
+  // gente los tumbó para hacer su casa); quedan arbustos, plátanos y matas.
+  plantasDecorativas(i) {
+    const L = this.plantasPorCasilla[i] || [], N = this.T.N, r = Math.floor(i / N), c = i % N;
+    let junto = false;
+    for (let dr = -1; dr <= 1 && !junto; dr++) for (let dc = -1; dc <= 1; dc++) { const R = r + dr, Cc = c + dc; if ((dr || dc) && R >= 0 && Cc >= 0 && R < N && Cc < N && CLARO.has(this.S.map[R * N + Cc].b)) { junto = true; break; } }
+    return junto ? L.filter(o => !ARBOL_GRANDE.has(o.k)) : L;
+  }
+  // Siluetas de los edificios cerca de un sector, para su sombra en el suelo.
+  sombrasCerca(sr, sc) {
+    if (!this.obras || !this.textures.exists('edificios')) return null;
+    const N = this.T.N, r0 = sr * LADO_SECTOR - 3, c0 = sc * LADO_SECTOR - 3, r1 = (sr + 1) * LADO_SECTOR + 1, c1 = (sc + 1) * LADO_SECTOR + 1, L = [];
+    for (let r = Math.max(0, r0); r < Math.min(N, r1); r++) for (let c = Math.max(0, c0); c < Math.min(N, c1); c++) {
+      for (const img of this.obras[r * N + c] || []) {
+        if (img.texture.key !== 'edificios' || !img.visible || img.isCropped) continue;
+        const f = img.frame; L.push({ fx: f.cutX, fy: f.cutY, fw: f.cutWidth, fh: f.cutHeight, x: img.x, y: img.y, ax: img.originX * f.cutWidth, ay: img.originY * f.cutHeight, s: Math.abs(img.scaleY), flip: img.flipX, largo: 2.6 });
+      }
+    }
+    return L;
   }
   ponerObra(i) {
     (this.obras[i] || []).forEach(p => p.destroy());
@@ -365,6 +389,7 @@ export class Mapa extends Phaser.Scene {
   // Tras un cambio en la casilla i: plantas, figuras y solo los sectores del terreno afectados.
   refrescarCasilla(i) {
     this.ponerPlantas(i); this.ponerObra(i); if (this.velados && this.velados.size) this.velo();
+    { const N = this.T.N, r = Math.floor(i / N), c = i % N; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const R = r + dr, Cc = c + dc; if ((dr || dc) && R >= 0 && Cc >= 0 && R < N && Cc < N) this.ponerPlantas(R * N + Cc); } } // el claro alrededor de la obra
     for (const [sr, sc] of sectoresAfectados(this.T, i)) this.pintarSector(sr, sc);
     this.revisarCambiosGenerales();
     this.dibujarCobertura();
@@ -390,6 +415,9 @@ export class Mapa extends Phaser.Scene {
     S.map.forEach((x, i) => { if (rio || this.huella(x, i) !== antes[i]) cambiadas.push(i); });
     this.huellasVistas = S.map.map((x, i) => this.huella(x, i));
     if (!cambiadas.length) return;
+    const N = this.T.N, vecinas = new Set();
+    for (const i of cambiadas) { const r = Math.floor(i / N), c = i % N; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const R = r + dr, Cc = c + dc; if (R >= 0 && Cc >= 0 && R < N && Cc < N) vecinas.add(R * N + Cc); } }
+    for (const j of vecinas) if (!cambiadas.includes(j)) this.ponerPlantas(j); // el claro alrededor de las obras
     for (const i of cambiadas) {
       this.ponerPlantas(i); this.ponerObra(i);
       for (const [sr, sc] of sectoresAfectados(this.T, i)) sectores.add(sr + '-' + sc);

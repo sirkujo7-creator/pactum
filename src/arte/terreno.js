@@ -5,6 +5,7 @@ import { P, TW, TH, EL, alturaEn } from './iso.js';
 import { yeso, FR } from './fresco.js';
 import { C } from '../core/contenido.js';
 import { pintarAguas, lodoOrilla } from './aguas.js';
+import { asentarObras, sombrasObras } from './asiento.js';
 
 export const LADO_SECTOR = 8;
 const BASE = -2.2; // profundidad de los costados del diorama
@@ -262,7 +263,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     for (const t of tiles) {
       const x = opciones.mapa[t.r * N + t.c];
       if (!x || x.b || x.dr > 0 || x.q > 0 || (t.b === 'niebla' && x.t !== 'bosque')) continue;
-      for (const o of opciones.plantas[t.r * N + t.c] || []) if (PIE[o.k]) pies.push(o);
+      for (const o of (opciones.plantasDe ? opciones.plantasDe(t.r * N + t.c) : opciones.plantas[t.r * N + t.c]) || []) if (PIE[o.k]) pies.push(o);
     }
     pies.sort((a, b) => (a.r + a.c) - (b.r + b.c)).forEach(o => pintarPie(g, T, o, dry));
   }
@@ -276,8 +277,9 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   if (opciones.mapa) {
     g.save(); recortar();
     pintarSuelo(g, T, opciones.mapa, k, dry);
-    pintarObras(g, T, opciones.mapa, k, dry, !!opciones.calles, opciones.anio);
+    pintarObras(g, T, opciones.mapa, k, dry, !!opciones.calles, opciones.anio, opciones.etapa || 0);
     if (opciones.calles) { pintarVeredas(g, T, opciones.mapa, opciones.calles, k); pintarCalles(g, T, opciones.calles, k); }
+    sombrasObras(g, opciones.sombras, opciones.fuenteSombras, k, esc); // la sombra de cada edificio, con el sol de los árboles
     g.restore();
   }
 
@@ -594,7 +596,7 @@ export function caminos(T, mapa) {
   return { segs, puentes };
 }
 
-function pintarObras(g, T, mapa, k, dry, conCalles, anio) {
+function pintarObras(g, T, mapa, k, dry, conCalles, anio, etapa = 0) {
   const N = T.N, cerca = t => t.r >= k.r0 - 2 && t.r < k.r1 + 2 && t.c >= k.c0 - 2 && t.c < k.c1 + 2;
   const lista = T.tiles.filter(t => mapa[t.r * N + t.c].b && cerca(t)).sort((a, b) => (a.r + a.c) - (b.r + b.c));
   const { segs, puentes } = conCalles ? { segs: [], puentes: [] } : caminos(T, mapa); // fase 9: con calles, el jugador traza los caminos
@@ -641,20 +643,8 @@ function pintarObras(g, T, mapa, k, dry, conCalles, anio) {
     g.lineWidth = 1.1; g.beginPath(); g.moveTo(pts[0][0], pts[0][1] - 4); g.lineTo(pts[3][0], pts[3][1] - 4); g.moveTo(pts[1][0], pts[1][1] - 4); g.lineTo(pts[2][0], pts[2][1] - 4); g.stroke();
     g.globalAlpha = 1;
   }
-  // Explanadas niveladas para los edificios (evitan que floten en las laderas).
-  for (const t of lista) {
-    const b = mapa[t.r * N + t.c].b;
-    if (!DE_PIE.has(b)) continue;
-    const rng = mulberry(t.r * 911 + t.c * 37 + T.seed), m = .07, h = t.h;
-    const esq = [[t.r + m, t.c + m], [t.r + m, t.c + 1 - m], [t.r + 1 - m, t.c + 1 - m], [t.r + 1 - m, t.c + m]];
-    const [A, B, C, D] = esq, tierra = ([r, c]) => T.hf(r, c);
-    const lado = (p, q, col) => { const hp = tierra(p), hq = tierra(q); if (hp >= h && hq >= h) return; wash(g, [P(p[0], p[1], h), P(q[0], q[1], h), P(q[0], q[1], Math.min(hq, h)), P(p[0], p[1], Math.min(hp, h))], col, rng, .95, .2); };
-    lado(D, C, '#A88B62'); lado(C, B, '#8C7250');
-    const top = esq.map(([r, c]) => P(r, c, h));
-    wash(g, top, b === 'parque' ? mix('#9CC57D', DRYC, dry * .5) : b === 'fundacion' ? '#DCCDA8' : b === 'cementerio' ? '#C2C29A' : '#CDBB93', rng, .95, .6);
-    if (b === 'parque') { const c = P(t.r + .5, t.c + .5, h); g.globalAlpha = .7; g.fillStyle = '#E7DDC4'; g.beginPath(); g.ellipse(c[0], c[1], 17, 7, 0, 0, 7); g.fill(); g.globalAlpha = 1; }
-    else { g.globalAlpha = .18; g.strokeStyle = '#8C7250'; g.lineWidth = .6; for (let s = 0; s < 5; s++) { const c = P(t.r + .2 + rng() * .6, t.c + .2 + rng() * .6, h); g.beginPath(); g.moveTo(c[0] - 3, c[1]); g.lineTo(c[0] + 3, c[1] + .5); g.stroke(); } g.globalAlpha = 1; }
-  }
+  // Asiento de las obras de pie (fase visual, paso 2): patios, atrio, plaza y terrazas con pirca (asiento.js).
+  asentarObras(g, T, mapa, lista, dry, etapa, tonosPasto);
 }
 
 // ---------- Calles en damero (fase 9) ----------
