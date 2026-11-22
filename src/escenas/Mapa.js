@@ -338,7 +338,7 @@ export class Mapa extends Phaser.Scene {
     }
     if (lutoVisible(S) && i === this.plazaLuto()) pon('velas', .28, -.05, .9);
     if (i === this.plazaLuto() && this.muroVisible()) pon('muroFotos', .36, -.3, .95); // la Comisión de la Verdad trabaja: el muro de las fotos
-    if (x.b !== 'casa' && aislada(S, i)) pon('sinCamino', .36, .3, .9); // obra aislada: letrero de «sin camino» al pie
+    if (x.b !== 'casa' && aislada(S, i)) pon('sinCamino', .4, -.34, .9); // obra aislada: letrero de «sin camino» al pie (lejos del puesto del trabajador de Oficios)
     if (x.b === 'casa' && i % 3 === 1 && epidemiaVisible(S)) pon('bandera-amarilla', .22, -.22, .9);
     // Paso 4: una obra quemada en la guerra o en una toma: muros ahumados y hollín.
     if (quemadaVisible(S, x)) { for (const im of this.obras[i]) if (im.texture.key === 'edificios') im.setTint(0x8C8076); pon('hollin', -.05, -.05, 1); }

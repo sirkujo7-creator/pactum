@@ -72,8 +72,7 @@ export class Pobladores {
     if ((f.destino === 'plaza' || f.destino === 'contento' || f.destino === 'tertulia' || f.destino === 'faroles' || f.mira) && GESTOS[tipo] && this.vecino(f)) return 'social';
     const u = Math.floor((this.t * .13 + p.semilla * 9)) % 12; // cambia de tarea cada rato
     // En la ganadería se ordeña de mañana y se desyerba el potrero el resto del día.
-    if (b === 'cultivo' && this.scene.S.map[p.trabajo].cv === 'ganaderia') { const k = this.reloj < .42 ? 'ordenar' : 'machete'; if (tiene(k)) return k; }
-    const por = { cultivo: ['sembrar', 'cosechar', 'machete', 'regar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'machete', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
+    const por = { cultivo: ['sembrar', 'cosechar', 'cosechar'], cafetal: ['cosechar', 'cosechar', 'cargar'], mina: ['picar'], cantera: ['picar'], taller: ['martillar', 'martillar', 'cargar'], molino: ['martillar', 'cargar'], aserradero: ['aserrar', 'cargar'], mercado: ['vender'], puerto: ['cargar'], escuela: ['leer'], biblioteca: ['leer'], iglesia: ['rezar'], universidad: ['leer'], banco: ['leer'] }[b];
     if (por) { const L = por.filter(tiene); if (L.length) return L[u % L.length]; }
     if (tipo === 'campesina' && b === null && f.destino === 'trabajo') return 'barrer';
     return null;
@@ -501,10 +500,9 @@ export class Pobladores {
       if (this.saludoCruce(f)) { this.dibujar(f, false); continue; }
       // De vez en cuando, quien camina sin afán se detiene un momento a mirar alrededor.
       if (f.pausa > this.t) { this.dibujar(f, false); continue; }
-      if (!f.prisa && !f.lento && f.p.tipo !== 'nino' && f.andado > 2 && f.ruta.length > 1 && Math.random() < dt / 35) { f.pausa = this.t + .7 + Math.random() * 1.1; f.voltear = !f.voltear; f.andado = 0; this.dibujar(f, false); continue; }
       // Esquiva a quien tiene justo adelante (se corre un poco de lado, sin salirse del camino).
       f.dr = dr / dist; f.dc = dc / dist;
-      if ((f._esqT || 0) <= this.t) { f._esqT = this.t + .25 + Math.random() * .1; f.latT = this.esquivar(f); }
+      f.latT = 0; // (esquivar de lado se quitó: Juan lo vio raro)
       if (f.ruta.length === 1 && dist < .35) f.latT = 0;
       f.lat = (f.lat || 0) + ((f.latT || 0) - (f.lat || 0)) * Math.min(1, dt * 5);
       // Arranca suave y anda a paso parejo, cada quien a su ritmo (que cambia un poco con el rato); el paso va con la
@@ -550,7 +548,7 @@ export class Pobladores {
     }
     if (clave && this.A.marcos[clave]) { if (f.tex !== 'acciones') { f.img.setTexture('acciones'); f.tex = 'acciones'; } f.img.setFrame(clave); }
     else { if (f.tex === 'acciones') { f.img.setTexture('personas'); f.tex = 'personas'; } f.img.setFrame(`${f.p.tipo}${this.ropa || ''}_${f.p.vi}_${f.frente}_${paso}`); }
-    const giro = andando && !f.prisa ? Math.sin(f.fase * Math.PI / 2) * .035 : 0; // vaivén suave del cuerpo al caminar
+    const giro = 0; // sin vaivén (Juan lo vio raro)
     f.img.setPosition(p[0], p[1]).setFlipX(f.voltear).setDepth(fr + fc + .01).setVisible(!f.oculto).setRotation(giro);
     // Lo que lleva: leña, racimo, tablas, canasto en la cabeza… (y el bebé de algunas campesinas al caminar).
     const ca = f.oculto ? null : f.carga || (f.p.tipo === 'campesina' && f.p.semilla > .88 && andando ? 'bebe' : null), ver = !!ca && (andando || !clave);
