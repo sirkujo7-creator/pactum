@@ -2,10 +2,10 @@
 // Celular: arrastrar con un dedo, pellizcar con dos, tocar una casilla para ver su ficha o construir.
 // Computador: arrastrar con el ratón, rueda para acercar, flechas para mover, + y − para el zoom, 0 para ver todo, B para construir, Esc para soltar.
 import { baleadaVisible, sabanaVisible, fincasAbandonadas, epocaVisual, barriosActivos, barrios, precioAlimento, coberturaActiva, puntosDe, serviciosDeCasa, SERVICIOS, porEtapas, reparar, nivelObra, lluvias, terrenoDe, desvios, build, undoBuild, demolish, whyNot, freeTiles, advance, choose, checkGuide, clamp, C, iniciarCalles, dibujoCalles, trazarCalle, costoCalle, construirCalle, quitarCalles, callesActivas, esquina, bordeBloqueado, fincasActivas, migrarFincas, subidaPisos, glaciar, industriaActiva, produccionFabrica, faltaFundar, avisoVecindad, tumbasDe, lutoVisible, epidemiaVisible, plazaFundacion, centroPueblo, leyesVisibles, quemadaVisible, aislada, obrasAisladas, rutaEnRed, estiloCasa } from '../core/index.js';
-import { pintarSector, pintarFondo, caminoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
+import { pintarSector, pintarFondo, caminoRio, geoRio, sectoresAfectados, LADO_SECTOR } from '../arte/terreno.js';
 import { hornearNaturaleza, colocarNaturaleza, arbolesDeBosque, toconesDe } from '../arte/naturaleza.js';
 import { hornearEdificios, figurasDeObra } from '../arte/edificios.js';
-import { pintarNiebla, lienzo } from '../arte/acuarela.js';
+import { pintarNiebla, lienzo, mulberry } from '../arte/acuarela.js';
 import { ES_CELULAR } from '../arte/fresco.js';
 import { P, TW, TH, EL, casillaEn } from '../arte/iso.js';
 import { DPR, tam, reducirMovimiento } from './pantalla.js';
@@ -703,14 +703,26 @@ export class Mapa extends Phaser.Scene {
     if (Math.abs(a - (this._nieblaA || 0)) > .01) { this._nieblaA = a; for (const n of this.nieblas) n.setAlpha(a); }
     const s = tiempo / 1000, quieto = reducirMovimiento();
     const g = this.brillo; g.clear();
-    const total = this.largoRio[this.largoRio.length - 1];
-    if (total > 0) {
-      for (const [des, dy, dx, al] of [[quieto ? 0 : s * 14, -1, 0, .55], [quieto ? 13 : s * 10 + 13, 3, -5, .3]]) {
-        g.lineStyle(1.3, 0xF2FAFC, al);
-        for (let d = des % 32; d < total; d += 32) this.trazo(g, d, d + 6, dx, dy);
-      }
-    }
+    this.corriente(g, s, quieto);
     for (const n of this.nubes) { const { izq, ancho, fase } = n.data.values; n.x = izq + ((s * 7 + fase) % ancho); }
+  }
+  // Corriente del río (paso 3 de la fase visual): rizos cortos y claros que bajan con el agua a distinta velocidad
+  // (más rápido en el medio), aparecen y se desvanecen; ya no son rayas blancas en fila.
+  corriente(g, s, quieto) {
+    const geo = geoRio(this.T), L = geo.L, n = L.length;
+    if (n < 4) return;
+    if (!this.rizos || this.rizosDe !== geo) {
+      this.rizosDe = geo; const R = mulberry(this.T.seed * 31 + 7);
+      this.rizos = Array.from({ length: Math.round(n * (ES_CELULAR ? .16 : .28)) }, () => ({ i: R() * (n - 2), f: (R() - .5) * 1.5, v: .9 + R() * .9, fase: R() * 6.3, l: .8 + R() * 1.4 }));
+    }
+    const baja = this.dry > .5 ? .78 : 1;
+    for (const z of this.rizos) {
+      const vel = z.v * (1 - Math.abs(z.f) * .45), pos = quieto ? z.i : (z.i + s * vel * 1.2) % (n - 2), i = Math.floor(pos), t = pos - i, o = L[i], q = L[i + 1];
+      const ancho = z.f < 0 ? o.a : o.b, d = z.f * ancho * baja * .55, al = quieto ? .25 : .32 * Math.max(0, Math.sin(s * .9 + z.fase));
+      if (al < .03) continue;
+      const A = geo.pt(o, d), B = geo.pt(q, d), x = A[0] + (B[0] - A[0]) * t, y = A[1] + (B[1] - A[1]) * t, dx = (B[0] - A[0]) * z.l * .5, dy = (B[1] - A[1]) * z.l * .5;
+      g.lineStyle(.9, 0xEAF4F2, al); g.beginPath(); g.moveTo(x - dx, y - dy); g.lineTo(x, y - .5); g.lineTo(x + dx, y + dy); g.strokePath();
+    }
   }
   trazo(g, a, b, dx, dy) {
     const L = this.largoRio, R = this.rio, pos = d => {

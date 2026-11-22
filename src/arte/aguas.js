@@ -86,22 +86,30 @@ export function pintarAguas(g, T, k, mapa, dry) {
     q.forEach((p, i) => { if (libre(p.r, p.c)) actual.push({ ...p, i }); else { if (actual.length > 1) tramos.push(actual); actual = []; } });
     if (actual.length > 1) tramos.push(actual);
     const R = mulberry(q.length * 31 + Math.round(q[0].r * 97));
-    for (const L of tramos) {
-      // Centro de la quebrada en pantalla y su perpendicular; cada orilla con su propio ruido de ancho.
+    for (const L0 of tramos) {
+      // Más puntos (4 por tramo) para que la orilla sea curva y mordida, no de segmentos rectos.
+      const L = []; for (let j = 0; j < L0.length - 1; j++) for (let u = 0; u < 4; u++) { const a = L0[j], b = L0[j + 1], f = u / 4; L.push({ r: a.r + (b.r - a.r) * f, c: a.c + (b.c - a.c) * f, i: a.i + (b.i - a.i) * f }); }
+      L.push(L0[L0.length - 1]);
+      // Centro de la quebrada en pantalla y su perpendicular (para los juncos y las piedras de más abajo).
       const C0 = L.map(p => P(p.r, p.c, T.hf(clamp(p.r, 0, N), clamp(p.c, 0, N)))), n = C0.length;
       if (n < 2) continue;
       const nor = C0.map((p, j) => { const a = C0[Math.max(0, j - 1)], b = C0[Math.min(n - 1, j + 1)], dx = b[0] - a[0], dy = b[1] - a[1], m = Math.hypot(dx, dy) || 1; return [-dy / m, dx / m]; });
-      const ruido = (j, sal) => .45 + 1.1 * T.vary((L[j].i + sal * 37) * .11, sal * 1.7);
-      const banda = (w0, w1, sal) => { const izq = [], der = []; for (let j = 0; j < n; j++) { const f = L[j].i / q.length, w = (w0 + (w1 - w0) * f), [nx, ny] = nor[j]; izq.push([C0[j][0] + nx * w * ruido(j, sal), C0[j][1] + ny * w * ruido(j, sal) * .9]); der.push([C0[j][0] - nx * w * ruido(j, sal + 5), C0[j][1] - ny * w * ruido(j, sal + 5) * .9]); } return [...izq, ...der.reverse()]; };
+      const ruido = (j, sal) => .3 + .9 * T.vary((L[j].i + sal * 37) * .13, sal * 1.7) + .55 * T.vary((L[j].i + sal * 53) * .45, sal * 2.9);
+      // Paso 3 de la fase visual: las orillas se abren en el terreno (filas y columnas), no en la pantalla, con un
+      // ancho que cambia mucho: pozos, recodos anchos y tramos donde el agua corre angosta entre piedras.
+      const nw = L.map((p, j) => { const a = L[Math.max(0, j - 1)], b = L[Math.min(n - 1, j + 1)], dr = b.r - a.r, dc = b.c - a.c, m = Math.hypot(dr, dc) || 1; return [-dc / m, dr / m]; });
+      const ancho = (j, sal) => { const f = L[j].i / q.length, v1 = T.vary((L[j].i + sal * 41) * .28, sal * 1.3), v2 = T.vary((L[j].i + sal * 29) * .9, sal * 3.7); return (.04 + .07 * f) * (.2 + 2.4 * v1 * v1 + .7 * v2); };
+      const banda = (k, sal) => { const izq = [], der = []; for (let j = 0; j < n; j++) { const p = L[j], [nr, nc] = nw[j], h = T.hf(clamp(p.r, 0, N), clamp(p.c, 0, N)), wa = ancho(j, sal) * k, wb = ancho(j, sal + 7) * k; izq.push(P(p.r + nr * wa, p.c + nc * wa, h)); der.push(P(p.r - nr * wb, p.c - nc * wb, h)); } return [...izq, ...der.reverse()]; };
       const capa = (pts, col, al) => { g.globalAlpha = al; g.fillStyle = col; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill(); };
-      capa(banda(3.4, 6, 1), mix('#4E6A34', '#7A7040', dry), .3);   // pasto húmedo
-      capa(banda(2.6, 4.4, 2), mix('#5E4E36', '#8A7656', dry), .55); // barro y arena de la orilla
-      capa(banda(1.4, 3, 3), mix('#4F7F8C', '#7E9496', dry), .95); // agua
-      capa(banda(.6, 1.5, 4).map(([x, y]) => [x - .4, y - .35]), '#86B0B6', .8); // agua clara del lado de la luz
+      capa(banda(2.2, 1), mix('#4E6A34', '#7A7040', dry), .18);   // pasto húmedo
+      capa(banda(1.5, 2), mix('#7A6A4C', '#8A7656', dry), .25);   // barro de la orilla, a ratos
+      capa(banda(1.2, 3), mix('#CDBB92', '#D8C79C', dry), .4);  // arena y cascajo
+      capa(banda(1, 4), mix('#84AEA8', '#97B2A2', dry), .95);     // agua baja
+      capa(banda(.55, 6), mix('#5F92A0', '#7E9E98', dry), .8);    // pozos hondos
       // Brillos cortos y espuma donde hay piedras (no una línea continua).
       for (let j = 1; j < n - 1; j++) {
-        if (R() < .25) { const [x, y] = C0[j]; g.globalAlpha = .7; g.fillStyle = '#E2EEEE'; g.fillRect(x - .9 - R(), y - .4, 1.6 + R() * 1.4, .35); }
-        if (R() < .09) { // piedra en el agua con su espuma
+        if (R() < .07) { const [x, y] = C0[j]; g.globalAlpha = .7; g.fillStyle = '#E2EEEE'; g.fillRect(x - .9 - R(), y - .4, 1.6 + R() * 1.4, .35); }
+        if (R() < .03) { // piedra en el agua con su espuma
           const [x, y] = C0[j], w = .9 + R() * 1.1;
           g.globalAlpha = .9; g.fillStyle = '#F2F6F4'; g.beginPath(); g.ellipse(x + .6, y + .3, w * 1.3, w * .45, 0, 0, 7); g.fill();
           g.globalAlpha = 1; g.fillStyle = '#8E867A'; g.beginPath(); g.moveTo(x - w, y); g.lineTo(x - w * .2, y - w * .7); g.lineTo(x + w, y - .1); g.closePath(); g.fill();
@@ -111,10 +119,10 @@ export function pintarAguas(g, T, k, mapa, dry) {
       // Pasto y juncos que tapan el borde a lado y lado, y piedras secas en la orilla.
       for (const col of [mix('#3F6A2E', '#7E7C3E', dry), mix('#6E9A44', '#A99A58', dry)]) {
         g.globalAlpha = 1; g.fillStyle = col; g.beginPath();
-        for (let j = 0; j < n; j++) if (R() < .5) { const lado = R() < .5 ? 1 : -1, f = L[j].i / q.length, w = (1.1 + 1.3 * f) * ruido(j, lado > 0 ? 3 : 8), [nx, ny] = nor[j], x = C0[j][0] + nx * w * lado, y = C0[j][1] + ny * w * lado; for (let m = 0; m < 3; m++) hojaJunco(g, x + (R() - .5) * 1.5, y + (R() - .3), 1.8 + R() * 2.4, (R() - .5) * 1); }
+        for (let j = 0; j < n; j++) if (R() < .15) { const lado = R() < .5 ? 1 : -1, f = L[j].i / q.length, w = (1.1 + 1.3 * f) * ruido(j, lado > 0 ? 3 : 8), [nx, ny] = nor[j], x = C0[j][0] + nx * w * lado, y = C0[j][1] + ny * w * lado; for (let m = 0; m < 3; m++) hojaJunco(g, x + (R() - .5) * 1.5, y + (R() - .3), 1.8 + R() * 2.4, (R() - .5) * 1); }
         g.fill();
       }
-      for (let j = 2; j < n; j += 4) if (R() < .5) {
+      for (let j = 2; j < n; j += 14) if (R() < .5) {
         const lado = R() < .5 ? 1 : -1, [nx, ny] = nor[j], w = .7 + R() * 1, o = 2.6 + L[j].i / q.length * 2.4, x = C0[j][0] + nx * o * lado, y = C0[j][1] + ny * o * lado;
         g.globalAlpha = .3; g.fillStyle = '#2E281E'; g.fillRect(x, y + .4, w * 1.6, w * .45);
         g.globalAlpha = 1; g.fillStyle = R() < .5 ? '#9C9384' : '#B2AA9A'; g.beginPath(); g.moveTo(x - w, y); g.lineTo(x - w * .3, y - w * .7); g.lineTo(x + w * .8, y - w * .4); g.lineTo(x + w, y + .3); g.closePath(); g.fill();
