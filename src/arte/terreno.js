@@ -778,15 +778,78 @@ function pintarCalles(g, T, dib, k) {
     }
     g.restore();
   }
-  if (dib.era === 'empedrado') { g.save(); g.fillStyle = shade(E.color, -.25); g.globalAlpha = .55; for (const t of geo) { const R = mulberry(t.a * 31 + t.b); for (let j = 0; j < 16; j++) { const p = enLinea(t.L, R()); g.beginPath(); g.ellipse(p[0] + (R() - .5) * 4, p[1] + (R() - .5) * 2.4, 1, .65, 0, 0, 7); g.fill(); } } g.restore(); }
-  if (dib.era === 'carretera') capa(.7, '#D9C9A0', .6, [4, 5]);
-  if (dib.era === 'herradura') { g.save(); g.fillStyle = '#7A6447'; g.globalAlpha = .18; for (const t of geo) for (let j = 1; j < 6; j++) { const p = enLinea(t.L, j / 6); g.beginPath(); g.arc(p[0], p[1], .6, 0, 7); g.fill(); } g.restore(); }
+  // Relieve del camino (pedido de Juan: «sigue así con todo lo demás»): se recorre cada tramo a pasos cortos con
+  // su dirección, y a lo ancho se ponen piedras, surcos, grava o grietas según la época del camino.
+  const recorrer = (L, paso, fn) => { for (let i = 0; i < L.length - 1; i++) { const [x0, y0] = L[i], [x1, y1] = L[i + 1], d = Math.hypot(x1 - x0, y1 - y0) || 1, ux = (x1 - x0) / d, uy = (y1 - y0) / d; for (let s = 0; s < d; s += paso) fn(x0 + ux * s, y0 + uy * s, ux, uy); } };
+  if (dib.era === 'empedrado') { // piedra de río redonda, cada una con su luz arriba a la izquierda y su sombra
+    g.save();
+    for (const t of geo) {
+      if (t.agua) continue;
+      const R = mulberry(t.a * 31 + t.b);
+      recorrer(t.L, 1.9, (x, y, ux, uy) => {
+        for (let o = -E.ancho * .5; o <= E.ancho * .5; o += 1.8) {
+          const px = x - uy * o * .5 + (R() - .5) * .8, py = y + ux * o * .5 + (R() - .5) * .6, rx = .75 + R() * .35, ry = rx * .62, borde = Math.abs(o) > E.ancho * .42;
+          g.globalAlpha = .55; g.fillStyle = '#5E564A'; g.beginPath(); g.ellipse(px + .25, py + .3, rx, ry, 0, 0, 7); g.fill();
+          g.globalAlpha = .95; g.fillStyle = borde ? mix('#9A9284', '#8A8274', R()) : mix('#B8AE9C', '#A39886', R()); g.beginPath(); g.ellipse(px, py, rx, ry, 0, 0, 7); g.fill();
+          g.globalAlpha = .55; g.fillStyle = '#E4DCCB'; g.beginPath(); g.ellipse(px - rx * .3, py - ry * .35, rx * .45, ry * .35, 0, 0, 7); g.fill();
+        }
+        if (R() < .05) { g.globalAlpha = .5; g.fillStyle = '#7C9A4E'; g.beginPath(); g.ellipse(x + (R() - .5) * E.ancho * .6, y, 1.2, .5, 0, 0, 7); g.fill(); } // hierba entre las piedras
+      });
+    }
+    g.restore();
+  }
+  if (dib.era === 'carretera') { // asfalto gastado: huellas más claras de las llantas, bermas de grava, grietas y parches
+    g.save();
+    for (const t of geo) {
+      if (t.agua) continue;
+      const R = mulberry(t.a * 13 + t.b * 7);
+      g.globalAlpha = .18; g.strokeStyle = '#9A948A'; g.lineWidth = 1.3; g.lineCap = 'round';
+      for (const o of [-.28, .28]) { g.beginPath(); t.L.forEach((p, j) => { const q = t.L[Math.min(t.L.length - 1, j + 1)], w = t.L[Math.max(0, j - 1)], dx = q[0] - w[0], dy = q[1] - w[1], n = Math.hypot(dx, dy) || 1, X = p[0] - dy / n * o * E.ancho * .5 * 2, Y = p[1] + dx / n * o * E.ancho * .5; j ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke(); }
+      recorrer(t.L, 2.2, (x, y, ux, uy) => {
+        for (const lado of [-1, 1]) { const o = lado * E.ancho * (.5 + R() * .12); g.globalAlpha = .6; g.fillStyle = mix('#A89E8C', '#8A8072', R()); g.beginPath(); g.ellipse(x - uy * o * .5 + (R() - .5), y + ux * o * .5, .5 + R() * .5, .35, 0, 0, 7); g.fill(); } // grava de la berma
+        if (R() < .05) { g.globalAlpha = .4; g.strokeStyle = '#3E3A34'; g.lineWidth = .35; g.beginPath(); g.moveTo(x, y); g.lineTo(x + (R() - .5) * 3, y + (R() - .5) * 1.5); g.lineTo(x + (R() - .5) * 4, y + (R() - .5) * 2); g.stroke(); } // grieta
+        if (R() < .03) { g.globalAlpha = .35; g.fillStyle = R() < .5 ? '#4E4A44' : '#7E786E'; g.beginPath(); g.ellipse(x, y, 2 + R() * 2, 1 + R(), 0, 0, 7); g.fill(); } // parche
+      });
+    }
+    g.restore();
+    capa(.7, '#D9C9A0', .6, [4, 5]);
+  }
+  if (dib.era === 'herradura') { // tierra pisada: dos surcos de cascos y ruedas, pasto en el lomo del medio y charcos
+    g.save();
+    for (const t of geo) {
+      if (t.agua) continue;
+      const R = mulberry(t.a * 7 + t.b * 29);
+      recorrer(t.L, 1.6, (x, y, ux, uy) => {
+        for (const o of [-.3, .3]) { const X = x - uy * o * E.ancho * .5, Y = y + ux * o * E.ancho * .5 * .5; g.globalAlpha = .22; g.fillStyle = '#6E583C'; g.beginPath(); g.ellipse(X, Y, .9, .5, 0, 0, 7); g.fill(); }
+        if (R() < .35) { g.globalAlpha = .5; g.strokeStyle = mix('#6E8E3E', '#8AA650', R()); g.lineWidth = .4; const X = x + (R() - .5) * 1.2; g.beginPath(); g.moveTo(X, y); g.lineTo(X + (R() - .5) * 1.2, y - 1 - R()); g.stroke(); } // pasto del medio
+        if (R() < .03) { g.globalAlpha = .35; g.fillStyle = '#7A5E3E'; g.beginPath(); g.ellipse(x, y + .3, 2.4, 1, 0, 0, 7); g.fill(); g.globalAlpha = .45; g.fillStyle = '#9DB4BE'; g.beginPath(); g.ellipse(x - .3, y, 1.6, .6, 0, 0, 7); g.fill(); } // charco
+        if (R() < .1) { const o = (R() < .5 ? -1 : 1) * E.ancho * .55; g.globalAlpha = .55; g.strokeStyle = '#6E8E3E'; g.lineWidth = .45; const X = x - uy * o, Y = y + ux * o * .5; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(X + k * .6, Y); g.lineTo(X + k * .6 + (R() - .5), Y - 1.5 - R()); g.stroke(); } } // mata de la orilla
+      });
+    }
+    g.restore();
+  }
   // Puentes: tramos sobre el agua y esquinas por donde pasa el río.
+  // Puentes: de guadua y tablas con baranda en los caminos de herradura, de cal y canto con pretil en el empedrado,
+  // de concreto con baranda metálica en la carretera. Las tablas o el pretil van de través, con su sombra en el agua.
   const puente = (p, q) => {
+    const dx = q[0] - p[0], dy = q[1] - p[1], d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d, nx = -uy, ny = ux, w = (E.ancho + 4) / 2;
+    const borde = (o, z = 0) => [[p[0] + nx * o, p[1] + ny * o - z], [q[0] + nx * o, q[1] + ny * o - z]];
     g.save(); g.lineCap = 'butt';
-    g.strokeStyle = FR.siena; g.globalAlpha = .55; g.lineWidth = E.ancho + 6; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke();
-    g.globalAlpha = 1; g.strokeStyle = dib.era === 'herradura' ? FR.sienaClara : FR.cal; g.lineWidth = E.ancho + 4; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke();
-    g.strokeStyle = E.color; g.lineWidth = E.ancho - .5; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); g.restore();
+    g.globalAlpha = .3; g.fillStyle = '#1E2A2E'; g.beginPath(); g.moveTo(p[0] + nx * w + 2, p[1] + ny * w + 3); g.lineTo(q[0] + nx * w + 2, q[1] + ny * w + 3); g.lineTo(q[0] - nx * w + 2, q[1] - ny * w + 3); g.lineTo(p[0] - nx * w + 2, p[1] - ny * w + 3); g.fill(); // sombra en el agua
+    g.globalAlpha = 1;
+    const madera = dib.era === 'herradura', piso = madera ? '#8A6A44' : dib.era === 'empedrado' ? '#B4AA98' : '#8E8A84', canto = madera ? '#5E4428' : dib.era === 'empedrado' ? '#8A8070' : '#6E6A64';
+    g.fillStyle = canto; g.beginPath(); g.moveTo(p[0] + nx * w, p[1] + ny * w); g.lineTo(q[0] + nx * w, q[1] + ny * w); g.lineTo(q[0] + nx * w, q[1] + ny * w + 2); g.lineTo(p[0] + nx * w, p[1] + ny * w + 2); g.fill(); // canto de la losa
+    g.fillStyle = piso; g.beginPath(); g.moveTo(p[0] + nx * w, p[1] + ny * w); g.lineTo(q[0] + nx * w, q[1] + ny * w); g.lineTo(q[0] - nx * w, q[1] - ny * w); g.lineTo(p[0] - nx * w, p[1] - ny * w); g.fill();
+    if (madera) { g.strokeStyle = '#5A4026'; g.lineWidth = .4; for (let s = 1; s < d; s += 1.6) { const x = p[0] + ux * s, y = p[1] + uy * s; g.beginPath(); g.moveTo(x + nx * w, y + ny * w); g.lineTo(x - nx * w, y - ny * w); g.stroke(); } }
+    else { g.globalAlpha = .25; g.strokeStyle = '#5E564A'; g.lineWidth = .35; for (let s = 2; s < d; s += 3) { const x = p[0] + ux * s, y = p[1] + uy * s; g.beginPath(); g.moveTo(x + nx * w * .9, y + ny * w * .9); g.lineTo(x - nx * w * .9, y - ny * w * .9); g.stroke(); } g.globalAlpha = 1; }
+    for (const lado of [-1, 1]) { // baranda o pretil a cada lado
+      const [a, b] = borde(lado * w), alto = madera ? 2.6 : dib.era === 'empedrado' ? 1.8 : 2.2;
+      if (dib.era === 'empedrado') { g.fillStyle = lado < 0 ? '#D2C8B4' : '#A89E8A'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.lineTo(b[0], b[1] - alto); g.lineTo(a[0], a[1] - alto); g.fill(); g.strokeStyle = '#E8E0D0'; g.lineWidth = .5; g.beginPath(); g.moveTo(a[0], a[1] - alto); g.lineTo(b[0], b[1] - alto); g.stroke(); continue; }
+      g.strokeStyle = madera ? '#4A3420' : '#5E646A'; g.lineWidth = madera ? .6 : .45;
+      for (let s = 0; s <= d; s += madera ? 3 : 2.5) { const x = a[0] + ux * s, y = a[1] + uy * s; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y - alto); g.stroke(); }
+      g.lineWidth = madera ? .7 : .55; g.beginPath(); g.moveTo(a[0], a[1] - alto); g.lineTo(b[0], b[1] - alto); g.stroke();
+    }
+    g.restore();
   };
   const alargar = (p, q, f) => { const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; return [[m[0] + (p[0] - m[0]) * f, m[1] + (p[1] - m[1]) * f], [m[0] + (q[0] - m[0]) * f, m[1] + (q[1] - m[1]) * f]]; };
   for (const t of geo) if (t.agua) puente(...alargar(t.L[0], t.L[1], 1.1));
