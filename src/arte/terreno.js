@@ -85,35 +85,72 @@ export function cajaSector(T, sr, sc) {
 // Color y luz del terreno en una imagen pequeña del sector (S muestras por casilla, más una casilla de margen).
 // La luz viene siempre del mismo punto, arriba a la izquierda (la misma de las sombras de árboles y animales): las
 // laderas que miran hacia allá se aclaran y las otras se oscurecen, con un paso suave entre una y otra.
-function campoDeColor(T, k, dry, sub, S = 4) {
+// Pulido visual (pedido de Juan: «el suelo no parece terreno»): además del relieve de la partida, la luz lee un
+// relieve fino que solo existe en la pintura (lomitas, ondulaciones y, en la montaña, filos y cañadas). Las
+// hondonadas guardan humedad (más oscuras y verdes) y los lomos se secan; en las pendientes fuertes asoma la tierra
+// rojiza del Tolima. El ruido va girado en cada escala para que nada siga la cuadrícula de las casillas.
+const GIROS = [[.88, .48], [.36, .93], [-.6, .8], [.97, -.24]];
+function relieveFino(T, r, c, h) {
+  const n = T.vary, g = (k, x, y, esc, o) => { const [co, si] = GIROS[k]; return n((x * co - y * si) / esc + o, (x * si + y * co) / esc + o * .7); };
+  const d = T.riverD(r, c), cerca = clamp((d - .9) / 1.6, .2, 1);
+  const monte = smooth(clamp((h - 3.2) / 3.2, 0, 1)), amp = (.36 + .26 * smooth(clamp((h - 1.2) / 3, 0, 1))) * cerca;
+  let m = (g(0, c, r, 1.9, 300) - .5) * .62 + (g(1, c, r, .85, 410) - .5) * .26 + (g(2, c, r, .4, 520) - .5) * .12;
+  m *= amp;
+  if (monte > 0) { const q = 1 - Math.abs(2 * g(3, c, r, 1.3, 630) - 1); m += monte * (q * q - .35) * .7; } // filos y cañadas
+  return m;
+}
+function campoDeColor(T, k, dry, sub, S = 8) {
   const N = T.N, r0 = k.r0 - 1, c0 = k.c0 - 1, filas = (k.r1 - k.r0 + 2) * S, cols = (k.c1 - k.c0 + 2) * S;
   const cv = lienzo(cols, filas), g = cv.getContext('2d'), im = g.createImageData(cols, filas), d = im.data;
-  // Alturas de una sola vez (con un borde de una muestra) y pendientes por diferencias entre vecinas.
-  const W = cols + 2, alt = new Float32Array(W * (filas + 2));
-  for (let y = -1; y <= filas; y++) for (let x = -1; x <= cols; x++) alt[(y + 1) * W + x + 1] = T.hf(clamp(r0 + (y + .5) / S, 0, N), clamp(c0 + (x + .5) / S, 0, N));
+  // Alturas de una sola vez (con un borde de dos muestras): la del juego para el color y la fina para la luz.
+  const B = 2, W = cols + 2 * B, F = filas + 2 * B, alt = new Float32Array(W * F), base = new Float32Array(W * F);
+  for (let y = -B; y < filas + B; y++) for (let x = -B; x < cols + B; x++) {
+    const r = clamp(r0 + (y + .5) / S, 0, N), c = clamp(c0 + (x + .5) / S, 0, N), h = T.hf(r, c), j = (y + B) * W + x + B;
+    base[j] = h; alt[j] = h + relieveFino(T, r, c, h);
+  }
   const tono = (v, f) => f < 0 ? v * (1 + f) : v + (255 - v) * f; // como shade(), pero con números
+  const pasto = teñir(mix('#C9B27A', '#D6BC80', dry)), lodo = mix('#8A6E4E', '#B49A72', dry), rojiza = teñir(mix('#A9774E', '#B98A5C', dry * .5));
+  const verdeA = teñir(mix('#9DAE62', '#BDB676', dry * .6)), verdeB = teñir(mix('#7F9C6A', '#A9AA78', dry * .6)), hondo = teñir(mix('#6E8C4C', '#9A9A62', dry * .5));
   for (let y = 0; y < filas; y++) for (let x = 0; x < cols; x++) {
-    const r = r0 + (y + .5) / S, c = c0 + (x + .5) / S, i = (y + 1) * W + x + 1, h = alt[i];
+    const r = r0 + (y + .5) / S, c = c0 + (x + .5) / S, i = (y + B) * W + x + B, h = base[i];
     const hx = (alt[i + 1] - alt[i - 1]) * S / 2, hy = (alt[i + W] - alt[i - W]) * S / 2;
-    const Lq = clamp(1 + .24 * hx - .13 * hy, .6, 1.3), luz = Lq >= 1 ? (Lq - 1) * .8 : (Lq - 1) * .9;
-    let cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, Math.hypot(hx, hy), dry);
+    const Lq = clamp(1 + .24 * hx - .13 * hy, .58, 1.32), luz = Lq >= 1 ? (Lq - 1) * .8 : (Lq - 1) * .9;
+    // Curvatura (a dos muestras): positiva en hondonadas, negativa en lomos.
+    const curv = (alt[i + 2] + alt[i - 2] + alt[i + 2 * W] + alt[i - 2 * W] - 4 * alt[i]) * S * S / 4;
+    const slope = Math.hypot((base[i + 1] - base[i - 1]) * S / 2, (base[i + W] - base[i - W]) * S / 2), pend = Math.hypot(hx, hy);
+    let cc = colorAt(T, clamp(r, 0, N), clamp(c, 0, N), h - sub, slope, dry);
     const vr = (T.vary(c / 4, r / 4) - .5) * .1, bruma = (1 - (r + c) / (2 * N)) * .2, o = (y * cols + x) * 4;
-    // Pasto seco y lodo como tono continuo del suelo (antes eran óvalos sueltos que se veían como manchones):
-    // ruido en dos escalas, así los bordes son irregulares y cruzan casillas sin costuras.
     const t = T.tiles[clamp(Math.floor(r), 0, N - 1) * N + clamp(Math.floor(c), 0, N - 1)];
+    let sombra = 0;
     if (t && t.b !== 'agua' && t.b !== 'nieve') {
+      const verde = HIERBA.has(t.b) && t.b !== 'paramo';
+      if (verde) {
+        // Potreros de varios verdes (unos más amarillos, otros más azulados), en manchones grandes e irregulares.
+        const nv = .7 * T.vary((c * .88 - r * .48) / 2.6 + 200, (c * .48 + r * .88) / 2.6 + 150) + .3 * T.vary(c / 1.1 + 71, r / 1.1 + 9);
+        cc = mix(cc, nv > .5 ? verdeA : verdeB, Math.min(.38, Math.abs(nv - .5) * 1.3) * (t.b === 'niebla' ? .4 : 1));
+      }
       if (HIERBA.has(t.b) && t.b !== 'niebla') {
         const n = .65 * T.vary(c / 3.1 + 40, r / 3.1 + 40) + .35 * T.vary(c / 1.05 + 13, r / 1.05 + 5);
         const f = suave(clamp((n - .5 + dry * .2) / .22, 0, 1));
-        if (f > 0) cc = mix(cc, teñir(mix('#C9B27A', '#D6BC80', dry)), f * .42);
+        if (f > 0) cc = mix(cc, pasto, f * .36);
       }
       if (t.d < 2.6 && t.b !== 'arrozal') {
         const n = .65 * T.vary(c / 2.6 + 90, r / 2.6 + 12) + .35 * T.vary(c / .9 + 31, r / .9 + 77);
         const f = suave(clamp((n - .52) / .2, 0, 1)) * clamp((2.6 - t.d) / 1.2, 0, 1);
-        if (f > 0) cc = mix(cc, mix('#8A6E4E', '#B49A72', dry), f * .32);
+        if (f > 0) cc = mix(cc, lodo, f * .32);
+      }
+      // Hondonadas: guardan agua, más verdes y en sombra; lomos: secos y con más luz.
+      if (curv > 0) { const f = clamp(curv * .09, 0, 1); if (verde || t.b === 'seco') cc = mix(cc, hondo, f * .3); sombra = f * .1; }
+      else { const f = clamp(-curv * .09, 0, 1); if (verde) cc = mix(cc, pasto, f * .22); sombra = -f * .05; }
+      // Pendiente fuerte: la tierra rojiza asoma en cárcavas (menos en el bosque de niebla y nada en la roca).
+      if (pend > 1 && h > .8 && t.b !== 'roca' && t.b !== 'paramo') {
+        const gate = T.vary((c * .36 - r * .93) / .9 + 333, (c * .93 + r * .36) / .9 + 77);
+        const f = smooth(clamp((pend - 1) / 1.1, 0, 1)) * smooth(clamp((gate - .42) / .25, 0, 1)) * (t.b === 'niebla' ? .45 : 1);
+        if (f > 0) cc = mix(cc, rojiza, f * .42);
       }
     }
-    for (let j = 0; j < 3; j++) { const v = tono(tono(parseInt(cc.slice(1 + j * 2, 3 + j * 2), 16), vr), luz); d[o + j] = v + ([230, 226, 214][j] - v) * bruma; }
+    const grano = (((x * 73856093) ^ (y * 19349663)) % 997 / 997 - .5) * .025; // grano fino de pincel
+    for (let j = 0; j < 3; j++) { const v = tono(tono(parseInt(cc.slice(1 + j * 2, 3 + j * 2), 16), vr + grano - sombra), luz); d[o + j] = v + ([230, 226, 214][j] - v) * bruma; }
     d[o + 3] = 255;
   }
   g.putImageData(im, 0, 0);
@@ -132,17 +169,11 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   const rngB = mulberry(T.seed * 3 + sr * 31 + sc);
   const zona = [];
 
-  // Costados del diorama (tierra con estratos), solo en los sectores del borde delantero.
-  const costado = (a, b, col) => { wash(g, [a[0], b[0], b[1], a[1]], col, rngB, .97, 0); zona.push([a[0], b[0], b[1], a[1]]); };
-  if (k.r1 === N) for (let c = k.c0; c < k.c1; c++) costado([P(N, c, T.hv(N, c)), P(N, c, BASE)], [P(N, c + 1, T.hv(N, c + 1)), P(N, c + 1, BASE)], '#9E805C');
-  if (k.c1 === N) for (let r = k.r0; r < k.r1; r++) costado([P(r, N, T.hv(r, N)), P(r, N, BASE)], [P(r + 1, N, T.hv(r + 1, N)), P(r + 1, N, BASE)], '#7D6347');
-  [[.35, '#B69770'], [.7, '#6C543C']].forEach(([f, col]) => {
-    g.globalAlpha = .4; g.strokeStyle = col; g.lineWidth = 1.3; g.beginPath();
-    if (k.r1 === N) for (let c = k.c0; c <= k.c1; c++) { const p = P(N, c, T.hv(N, c) * (1 - f) + BASE * f); c === k.c0 ? g.moveTo(...p) : g.lineTo(...p); }
-    if (k.c1 === N) for (let r = k.r1; r >= k.r0; r--) { const p = P(r, N, T.hv(r, N) * (1 - f) + BASE * f); (r === k.r1 && k.r1 !== N) ? g.moveTo(...p) : g.lineTo(...p); }
-    g.stroke();
-  });
-  g.globalAlpha = 1;
+  // Costados del diorama, solo en los sectores del borde delantero. Pulido visual: un solo corte de tierra por lado
+  // (antes un trozo por casilla, con rayas entre trozos), con capa de suelo oscuro, estratos ondulados de arcilla y
+  // piedra, piedras incrustadas, raíces y el pasto que cuelga del borde.
+  if (k.r1 === N) zona.push(pintarCostado(g, T, k.c0, k.c1, c => [N, c], '#9E805C', dry));
+  if (k.c1 === N) zona.push(pintarCostado(g, T, k.r0, k.r1, r => [r, N], '#7D6347', dry));
 
   // Casillas del sector, de atrás hacia adelante, con subdivisiones para que la luz sea continua.
   const tiles = [];
@@ -161,14 +192,22 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
     col = L2 >= 1 ? shade(col, (L2 - 1) * .8) : shade(col, (L2 - 1) * .9);
     // Relieve suave (pedido de Juan, 6 de octubre: el suelo se veía pixelado): el color y la luz se calculan en una
     // imagen pequeña de todo el sector y cada casilla la pinta estirada y suavizada sobre su rombo, sin cuadritos.
-    g.save(); poly(g, qx); g.clip(); g.fillStyle = col; g.fill();
+    g.save(); poly(g, qx); g.clip(); g.fillStyle = col; g.fill(); g.restore();
+    // Dos triángulos por casilla, cada uno con su propia transformación exacta en sus tres esquinas: así la
+    // imagen de color y luz encaja sin rayas entre casillas vecinas (con una sola transformación por casilla la
+    // cuarta esquina quedaba corrida y el relieve fino mostraba los bordes de la cuadrícula).
     const ox = (t.c - campo.c0) * campo.S, oy = (t.r - campo.r0) * campo.S, S = campo.S;
-    const p00 = P(t.r, t.c, t.h00), p01 = P(t.r, t.c + 1, t.h01), p10 = P(t.r + 1, t.c, t.h10);
-    const ta = (p01[0] - p00[0]) / S, tb = (p01[1] - p00[1]) / S, tc = (p10[0] - p00[0]) / S, td = (p10[1] - p00[1]) / S;
-    g.transform(ta, tb, tc, td, p00[0] - ta * ox - tc * oy, p00[1] - tb * ox - td * oy);
-    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
-    g.drawImage(campo.canvas, ox - 1.5, oy - 1.5, S + 3, S + 3, ox - 1.5, oy - 1.5, S + 3, S + 3);
-    g.restore();
+    const p00 = P(t.r, t.c, t.h00), p01 = P(t.r, t.c + 1, t.h01), p10 = P(t.r + 1, t.c, t.h10), p11 = P(t.r + 1, t.c + 1, t.h11);
+    const crecer = (L, f) => { const cx = (L[0][0] + L[1][0] + L[2][0]) / 3, cy = (L[0][1] + L[1][1] + L[2][1]) / 3; return L.map(p => [cx + (p[0] - cx) * f, cy + (p[1] - cy) * f]); };
+    for (const [A, Bv, Cv, u0, v0, su, sv] of [[p00, p01, p10, ox, oy, 1, 1], [p11, p10, p01, ox + S, oy + S, -1, -1]]) {
+      // A es la esquina de origen; Bv avanza en columnas (u) y Cv en filas (v), con el signo de cada triángulo.
+      g.save(); poly(g, crecer([A, Bv, Cv], 1.06)); g.clip();
+      const ta = (Bv[0] - A[0]) / S * su, tb = (Bv[1] - A[1]) / S * su, tc = (Cv[0] - A[0]) / S * sv, td = (Cv[1] - A[1]) / S * sv;
+      g.transform(ta, tb, tc, td, A[0] - ta * u0 - tc * v0, A[1] - tb * u0 - td * v0);
+      g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+      g.drawImage(campo.canvas, ox - 1.5, oy - 1.5, S + 3, S + 3, ox - 1.5, oy - 1.5, S + 3, S + 3);
+      g.restore();
+    }
     if (t.b === 'agua') rios.push(qx); // el río se pinta al final: nada de la orilla se le monta encima
     // Suelo natural (renovación colonial): manchas agrupadas de pasto seco, lodo y piedra, y pinceladas finas de pasto.
     const cx = qc[0], cy = qc[1];
@@ -180,21 +219,7 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
 
   if (rios.length) pintarRio(g, T, zona, dry); // el río entero de una vez: orilla curva, sin escalones de casilla
 
-  // Curvas de nivel suaves: ayudan a leer la altura.
-  g.lineWidth = .7; g.strokeStyle = '#5E4B33';
-  for (const t of tiles) {
-    if (t.b === 'agua') continue;
-    const hs = [t.h00, t.h01, t.h11, t.h10], ps = [[t.r, t.c], [t.r, t.c + 1], [t.r + 1, t.c + 1], [t.r + 1, t.c]];
-    for (let L0 = 1; L0 < 7; L0++) {
-      const pts = [];
-      for (let e = 0; e < 4; e++) {
-        const a = hs[e], b = hs[(e + 1) % 4];
-        if ((a - L0) * (b - L0) < 0) { const f = (L0 - a) / (b - a), pa = ps[e], pb = ps[(e + 1) % 4]; pts.push(P(lerp(pa[0], pb[0], f), lerp(pa[1], pb[1], f), L0)); }
-      }
-      if (pts.length === 2) { g.globalAlpha = .13; g.beginPath(); g.moveTo(...pts[0]); g.lineTo(...pts[1]); g.stroke(); }
-    }
-  }
-  g.globalAlpha = 1;
+  // (Las curvas de nivel se quitaron en el pulido visual: el relieve ya se lee con la luz y se veían como rayas.)
 
   const recortar = () => { g.beginPath(); zona.forEach(z => { z.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); }); g.clip(); };
 
@@ -215,6 +240,56 @@ export function pintarSector(T, sr, sc, opciones = {}, lienzoPrevio = null) {
   g.fillRect(k.x, k.y, k.w, k.h);
   g.restore();
   return { canvas: cv, x: k.x, y: k.y, w: k.w, h: k.h, escala: esc };
+}
+
+// Corte de tierra de un costado del diorama entre a y b (posición a lo largo del borde); rc(u) da [fila, columna].
+function pintarCostado(g, T, a, b, rc, col, dry) {
+  const pt = (r, c, h) => P(r, c, h), tramo = (u0, u1) => { const L = []; for (let u = u0; u < u1 - 1e-6; u += .25) L.push(u); L.push(u1); return L; };
+  const en = u => { const [r, c] = rc(clamp(u, 0, T.N)); return [r, c, T.hf(r, c)]; };
+  // Fondo opaco un poco más ancho (tapa la unión con el sector vecino); las capas, exactamente en el tramo.
+  const ancho = tramo(a - .06, b + .06).map(en), fondo = [...ancho.map(([r, c, h]) => pt(r, c, h)), ...ancho.map(([r, c]) => pt(r, c, BASE)).reverse()];
+  g.globalAlpha = 1; g.fillStyle = col; g.beginPath(); fondo.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
+  const us = tramo(a - .06, b + .06), arriba = us.map(en); // todo con la misma anchura: el vecino pinta encima lo mismo y no queda raya
+  const sup = arriba.map(([r, c, h]) => pt(r, c, h)), inf = arriba.map(([r, c]) => pt(r, c, BASE));
+  const zona = [...sup, ...inf.slice().reverse()];
+  const zonaGrano = zona;
+  const R = mulberry(Math.round(a * 13 + b * 7) + T.seed);
+  g.save(); g.beginPath(); zona.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.clip();
+  const y1 = Math.max(...inf.map(p => p[1]));
+  // Franja a una profundidad (0 arriba, 1 abajo) que ondula con el ruido del mundo.
+  const linea = (f, amp, o) => arriba.map(([r, c, h], j) => { const w = (T.vary(us[j] / 1.3 + o, o) - .5) * amp; return pt(r, c, h * (1 - f) + BASE * f + w - f * h * .5); });
+  const banda = (f1, f2, color, al, o) => { const A = linea(f1, .35, o), Bq = linea(f2, .35, o + 9).reverse(); g.globalAlpha = al; g.fillStyle = color; g.beginPath(); [...A, ...Bq].forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill(); };
+  banda(.5, 1.05, shade(col, -.3), .35, 51);                         // más oscura abajo
+  banda(.78, 1.05, shade(col, -.4), .3, 57);
+  banda(.42, .62, shade(mix(col, '#B5764A', .35), .05), .55, 11);   // arcilla rojiza
+  banda(.7, .86, mix(col, '#8F8A80', .45), .5, 23);                  // capa de piedra
+  // Capa de suelo oscuro bajo el pasto.
+  const capa = linea(.16, .18, 37);
+  g.globalAlpha = .5; g.fillStyle = shade(col, -.35); g.beginPath(); [...sup, ...capa.slice().reverse()].forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill();
+  // Piedras incrustadas en las capas de abajo.
+  for (let j = 0; j < arriba.length * .9; j++) {
+    const k = Math.floor(R() * arriba.length), [r, c, h] = arriba[k], f = .3 + R() * .62, p = pt(r, c, h * (1 - f) + BASE * f - f * h * .5), w = 1.2 + R() * 2.6;
+    g.globalAlpha = .5; g.fillStyle = shade(col, -.4); g.beginPath(); g.ellipse(p[0] + .5, p[1] + .6, w, w * .6, 0, 0, 7); g.fill();
+    g.globalAlpha = .9; g.fillStyle = mix('#A69C8C', col, R() * .5); g.beginPath(); g.ellipse(p[0], p[1], w, w * .58, 0, 0, 7); g.fill();
+    g.globalAlpha = .55; g.fillStyle = '#D8D0C2'; g.beginPath(); g.ellipse(p[0] - w * .3, p[1] - w * .22, w * .4, w * .18, 0, 0, 7); g.fill();
+  }
+  // Raíces que bajan del pasto.
+  g.strokeStyle = shade(col, -.5); g.lineWidth = .6; g.globalAlpha = .45; g.beginPath();
+  for (let j = 0; j < arriba.length * .6; j++) { const k = Math.floor(R() * arriba.length), [r, c, h] = arriba[k]; let [x, y] = pt(r, c, h); y += 1; g.moveTo(x, y); for (let s2 = 0; s2 < 4; s2++) { x += (R() - .5) * 2.2; y += 1.2 + R() * 1.6; g.lineTo(x, y); } }
+  g.stroke();
+  // Sombra suave al pie.
+  const gp = g.createLinearGradient(0, y1 - 10, 0, y1); gp.addColorStop(0, 'rgba(40,28,18,0)'); gp.addColorStop(1, 'rgba(40,28,18,.25)');
+  g.globalAlpha = 1; g.fillStyle = gp; g.fillRect(-1e4, y1 - 10, 2e4, 12);
+  g.restore();
+  // Borde de arriba: pasto que cuelga sobre el corte (fuera del recorte para que sobresalga un poco).
+  g.lineCap = 'round';
+  for (const [tono, al, L] of [[mix('#5E7A3E', '#9C8650', dry * .7), .7, 3.2], [mix('#93A85E', '#C9B27A', dry * .7), .6, 2.2]]) {
+    g.globalAlpha = al; g.strokeStyle = tono; g.lineWidth = .7; g.beginPath();
+    for (let j = 0; j < sup.length - 1; j++) for (let q = 0; q < 5; q++) { const f = R(), x = lerp(sup[j][0], sup[j + 1][0], f), y = lerp(sup[j][1], sup[j + 1][1], f); g.moveTo(x, y - .8); g.lineTo(x + (R() - .5) * 1.6, y + .5 + R() * L); }
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+  return zonaGrano;
 }
 
 // Mancha suave de bordes difusos (sin contorno), para que el suelo no parezca un mosaico.
@@ -252,16 +327,44 @@ function sueloNatural(g, T, t, col, dry, rng) {
     }
     g.globalAlpha = 1;
   }
-  // Pinceladas finas de pasto, en tres tonos cercanos y en un solo trazo por tono (rápido de pintar).
-  if (!HIERBA.has(t.b)) return;
-  const tonos = t.b === 'paramo' ? ['#B5A66A', '#9E9A62', '#C9B880'] : t.b === 'seco' ? [shade(col, -.18), mix(col, '#B89A5E', .4), shade(col, .12)] : t.b === 'niebla' ? [shade(col, -.2), shade(col, .1)] : [shade(col, -.2), mix(col, '#6F8E4A', .35), shade(col, .14)];
-  const n = t.b === 'niebla' ? 10 : 30;
-  g.lineWidth = .6; g.lineCap = 'round';
-  tonos.forEach((tono, k) => {
-    g.globalAlpha = .42; g.strokeStyle = tono; g.beginPath();
-    for (let j = 0; j < n / tonos.length; j++) { const p = en(), L = 1.4 + rng() * 2.4; g.moveTo(p[0], p[1]); g.lineTo(p[0] + (rng() - .5) * 1.4, p[1] - L); }
+  // Grano del suelo: puntitos de tierra oscura y clara (de cerca el suelo deja de verse liso).
+  const nG = t.b === 'niebla' ? 10 : t.b === 'seco' || t.b === 'paramo' ? 46 : 28;
+  for (const [tono, al] of [[shade(col, -.3), .2], [mix(col, '#F2E6C8', .45), .26]]) {
+    g.globalAlpha = al; g.fillStyle = tono; g.beginPath();
+    for (let j = 0; j < nG / 2; j++) { const p = en(), w = .35 + rng() * .55; g.rect(p[0], p[1], w * 1.4, w); }
+    g.fill();
+  }
+  // Tierra seca agrietada: rayitas quebradas (en el bosque seco y con la sequía).
+  if ((t.b === 'seco' && nA > .45) || (dry > .55 && HIERBA.has(t.b) && nA > .6)) {
+    g.globalAlpha = .22 + .2 * dry; g.strokeStyle = shade(col, -.38); g.lineWidth = .45; g.beginPath();
+    for (let j = 0; j < 4; j++) { let [x, y] = en(); g.moveTo(x, y); for (let s2 = 0; s2 < 3; s2++) { x += (rng() - .3) * 3.2; y += (rng() - .5) * 1.4; g.lineTo(x, y); } }
     g.stroke();
-  });
+  }
+  g.globalAlpha = 1;
+  if (!HIERBA.has(t.b)) return;
+  // Matas de pasto: hojas que salen en abanico de un mismo pie, con la base oscura y la punta clara (la luz viene
+  // de arriba a la izquierda). Más matas donde hay humedad; en lo seco, pocas y amarillas.
+  const seco = t.b === 'seco' || t.b === 'paramo', hum = clamp(T.moistAt(t.r + .5, t.c + .5), 0, 1);
+  const base = t.b === 'paramo' ? '#8E8A55' : seco ? mix(shade(col, -.25), '#9C8650', .4) : mix(shade(col, -.28), '#5E7E3E', .35 * (1 - dry));
+  const punta = t.b === 'paramo' ? '#C9BC86' : seco ? mix(col, '#D9C48C', .5) : mix(shade(col, .16), '#A9BE6E', .3 * (1 - dry));
+  const matas = Math.round((t.b === 'niebla' ? 5 : seco ? 8 : 14 + 10 * hum) * (1 - dry * .4));
+  const hojas = [];
+  // Las matas se juntan en manchones (donde el ruido del mundo es alto) y dejan claros de tierra entre ellos.
+  const donde = () => { for (let k = 0; k < 6; k++) { const u = .05 + rng() * .9, v = .05 + rng() * .9, nm = T.vary((t.c + u) / .75 + 17, (t.r + v) / .75 + 61); if (nm > .42 + rng() * .3) return pt(u, v); } return null; };
+  for (let j = 0; j < matas; j++) {
+    const lugar = donde(); if (!lugar) continue;
+    const [x, y] = lugar, n = 3 + Math.floor(rng() * 4), alto = (seco ? 2.2 : 2.9) + rng() * 2.3;
+    for (let q = 0; q < n; q++) { const a = (q / (n - 1 || 1) - .5) * 1.5 + (rng() - .5) * .3; hojas.push([x + (q - n / 2) * .35, y, x + Math.sin(a) * alto * .7, y - Math.cos(a) * alto * (.8 + rng() * .4)]); }
+  }
+  // Hojas sueltas entre las matas.
+  for (let j = 0; j < (t.b === 'niebla' ? 8 : seco ? 10 : 18); j++) { const [x, y] = en(), L = 1.3 + rng() * 2.2; hojas.push([x, y, x + (rng() - .5) * 1.4, y - L]); }
+  g.lineCap = 'round';
+  g.lineWidth = .8; g.globalAlpha = .62; g.strokeStyle = base; g.beginPath();
+  for (const [x0, y0, x1, y1] of hojas) { g.moveTo(x0, y0); g.lineTo((x0 + x1) / 2, (y0 + y1) / 2); }
+  g.stroke();
+  g.lineWidth = .6; g.globalAlpha = .6; g.strokeStyle = punta; g.beginPath();
+  for (const [x0, y0, x1, y1] of hojas) { g.moveTo((x0 + x1) / 2, (y0 + y1) / 2); g.lineTo(x1, y1); }
+  g.stroke();
   g.globalAlpha = 1;
 }
 

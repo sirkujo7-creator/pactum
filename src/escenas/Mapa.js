@@ -64,7 +64,7 @@ export class Mapa extends Phaser.Scene {
     this.T = terrenoDe(this.S, desvios(this.S)); // fase 6: con los cambios de curso del río
     this.desviosVistos = desvios(this.S).length;
     // Resolución del terreno: alta en pantallas nítidas; en mapas grandes se baja para no llenar la memoria.
-    this.escalaSector = (DPR > 2.5 ? 1.6 : DPR > 1.5 ? 1.8 : 1.5) * Math.min(1, 32 / this.S.n); // fase 8: algo menos en pantallas muy nítidas (iPhone), para dar margen de memoria
+    this.escalaSector = (ES_CELULAR ? (DPR > 2.5 ? 1.6 : 1.8) : 2.2) * Math.min(1, 32 / this.S.n); // fase 8: algo menos en pantallas muy nítidas (iPhone), para dar margen de memoria
     this.dry = sequedad(this.S);
     this.vistaInicial();
 
