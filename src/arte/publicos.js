@@ -3271,6 +3271,91 @@ function parqueNevadosGrande(g, h) {
   porteriaU(g, .97, .1, .48, 'PARQUE NACIONAL LOS NEVADOS', '#8A6A44', 9);
 }
 
+// ---------- Detalles pequeños redibujados con volumen (andamio, cimientos, material, ruina, tumba, velas, fuente,
+// maleza, chimenea, nave, cargas de las fábricas, ciprés y banderas del régimen) ----------
+function sacoV(g, x, y, col, s = 1) { // bulto de fique o costal con volumen: cuerpo, luz arriba a la izquierda, amarre
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.fillStyle = 'rgba(30,24,18,.25)'; g.beginPath(); g.ellipse(1.4, .4, 4.4, 1.4, 0, 0, 7); g.fill();
+  g.fillStyle = SOM(col, .18); g.beginPath(); g.ellipse(0, -2.6, 4, 3, 0, 0, 7); g.fill();
+  g.fillStyle = col; g.beginPath(); g.ellipse(-.4, -3, 3.4, 2.6, 0, 0, 7); g.fill();
+  g.fillStyle = LUZ(col, .25); g.beginPath(); g.ellipse(-1.4, -4, 1.6, 1, -.4, 0, 7); g.fill();
+  g.fillStyle = SOM(col, .3); g.beginPath(); g.moveTo(-1, -5.4); g.lineTo(0, -7); g.lineTo(1, -5.4); g.closePath(); g.fill(); // la boca amarrada
+  g.strokeStyle = SOM(col, .35); g.lineWidth = .25; for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(k, -5); g.lineTo(k * 1.2, -.6); g.stroke(); } // trama del fique
+  g.restore();
+}
+function andamioV(g) {
+  const M = '#B89A5A', cols = [[-.42, -.42], [-.42, .42], [.42, .42], [.42, -.42], [0, -.42], [0, .42], [.42, 0]];
+  for (const [r, c] of cols) cajaPx(g, ...P(r, c), .025, .025, 52, M, { izq: LUZ(M, .14), borde: 'rgba(60,45,25,.35)' }); // guaduas de pie
+  for (const z of [14, 28, 42]) { // plataformas de tablas con su travesaño
+    for (const [a, b] of [[[.42, -.42], [.42, .42]], [[-.42, .42], [.42, .42]]]) { const p = P(a[0], a[1], z), q = P(b[0], b[1], z); g.strokeStyle = '#8A6A3A'; g.lineWidth = 1; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
+    rellena(g, [P(.3, -.42, z + .6), P(.3, .42, z + .6), P(.46, .42, z + .6), P(.46, -.42, z + .6)], '#C8A870', 'rgba(70,50,25,.45)', .3);
+    g.strokeStyle = 'rgba(90,65,35,.45)'; g.lineWidth = .25; for (let k = 1; k < 8; k++) { g.beginPath(); g.moveTo(...P(.3, -.42 + k * .105, z + .6)); g.lineTo(...P(.46, -.42 + k * .105, z + .6)); g.stroke(); }
+    rellena(g, [P(.46, -.42, z + .6), P(.46, .42, z + .6), P(.46, .42, z - .4), P(.46, -.42, z - .4)], '#A88850', null);
+  }
+  g.strokeStyle = '#9A7A44'; g.lineWidth = .6; for (const [a, b] of [[P(.42, -.42, 0), P(.42, 0, 28)], [P(.42, 0, 14), P(.42, .42, 42)], [P(-.42, .42, 0), P(.42, .42, 28)]]) { g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } // riostras
+  g.strokeStyle = 'rgba(60,45,30,.6)'; g.lineWidth = .3; for (const z of [14, 28, 42]) for (const [r, c] of cols) { const p = P(r, c, z); g.beginPath(); g.arc(p[0], p[1], .7, 0, 7); g.stroke(); } // amarres
+}
+function cimientosV(g) {
+  const L = .46, z = 1.4;
+  rellena(g, [P(-L, -L), P(-L, L), P(L, L), P(L, -L)], '#8A7458', null); // tierra removida
+  for (const [a, b] of [[[-L + .08, -L + .08], [-L + .08, L - .08]], [[-L + .08, L - .08], [L - .08, L - .08]], [[L - .08, L - .08], [L - .08, -L + .08]], [[L - .08, -L + .08], [-L + .08, -L + .08]], [[0, -L + .08], [0, L - .08]]]) { // vigas de cimiento
+    const rr = [a[0], b[0]], cc = [a[1], b[1]], w = .035; const pts = rr[0] === rr[1] ? [P(rr[0] - w, cc[0], z), P(rr[0] - w, cc[1], z), P(rr[0] + w, cc[1], z), P(rr[0] + w, cc[0], z)] : [P(rr[0], cc[0] - w, z), P(rr[1], cc[0] - w, z), P(rr[1], cc[0] + w, z), P(rr[0], cc[0] + w, z)];
+    rellena(g, pts, '#B8B2A6', 'rgba(60,55,50,.45)', .3); }
+  g.strokeStyle = '#7A4E2E'; g.lineWidth = .35; for (let k = 0; k < 9; k++) { const p = P(-L + .08 + (k % 3) * (L - .08), -L + .08 + Math.floor(k / 3) * (L - .08), z); g.beginPath(); g.moveTo(...p); g.lineTo(p[0], p[1] - 5); g.stroke(); } // hierros de las columnas
+  for (const [r, c] of [[-L, -L], [-L, L], [L, L], [L, -L]]) { const p = P(r - .02, c - .02); g.strokeStyle = '#8A6A44'; g.lineWidth = .7; g.beginPath(); g.moveTo(...p); g.lineTo(p[0], p[1] - 5); g.stroke(); } // estacas
+  g.strokeStyle = 'rgba(240,240,230,.8)'; g.lineWidth = .25; g.beginPath(); g.moveTo(...P(-L - .02, -L - .02, 4)); g.lineTo(...P(-L - .02, L - .02, 4)); g.lineTo(...P(L - .02, L - .02, 4)); g.stroke(); // el hilo del maestro
+}
+function materialV(g) {
+  for (let f = 0; f < 3; f++) for (let k = 0; k < 4 - f; k++) cajaPx(g, -6 + k * 2.6 + f * 1.3, 1 - f * 1.6, .07, .035, 1.5, '#B5654A', { z0: f * 1.5, izq: '#C4785A', borde: 'rgba(80,40,25,.5)' }); // ladrillos
+  for (let k = 0; k < 3; k++) cajaPx(g, 5 - k * .2, -1 + k * .1, .3, .04, .8, '#B89A5A', { z0: k * .8, izq: '#C8AA6A', borde: 'rgba(70,50,25,.45)' }); // tablas
+  g.fillStyle = '#C8B48A'; g.beginPath(); g.ellipse(3, 4, 5, 2, 0, Math.PI, 0); g.lineTo(8, 4); g.quadraticCurveTo(3, -1.5, -2, 4); g.fill(); g.fillStyle = 'rgba(255,240,200,.35)'; g.beginPath(); g.ellipse(1.6, 2.4, 1.6, .7, -.3, 0, 7); g.fill(); // arena
+  sacoV(g, -8, 4, '#D8D4C8', .7); // cemento
+}
+function ruinaV(g) {
+  const R = mulberry(7);
+  for (let k = 0; k < 24; k++) { const p = P((R() - .5) * .8, (R() - .5) * .8); rellena(g, [[p[0] - 1.6, p[1]], [p[0], p[1] - 1], [p[0] + 1.6, p[1] - .2], [p[0] + .4, p[1] + .8]], R() < .5 ? '#B5654A' : '#C8BCA6', 'rgba(60,40,25,.4)', .2); } // escombros
+  const muro = (pts, col) => { rellena(g, pts, col, 'rgba(60,45,30,.5)', .35); };
+  muro([P(-.3, -.36, 0), P(-.3, .1, 0), P(-.3, .1, 6), P(-.3, -.04, 11), P(-.3, -.2, 8), P(-.3, -.36, 14)], '#E2D6BE'); // muro roto con la cal caída
+  muro([P(-.3, .1, 0), P(.1, .1, 0), P(.1, .1, 4), P(-.1, .1, 7), P(-.3, .1, 6)], '#BFB09A');
+  for (const [r, c, z] of [[-.2, -.3, 9], [-.24, -.1, 6]]) { const p = P(r, c, z); g.fillStyle = '#B5654A'; g.fillRect(p[0], p[1], 2.2, 1); } // ladrillo a la vista
+  g.strokeStyle = '#5A3A22'; g.lineWidth = 1.2; for (const [a, b] of [[P(-.28, -.3, 10), P(.24, .2, 0)], [P(-.28, .06, 6), P(.3, -.2, 0)]]) { g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } // vigas caídas
+  for (let k = 0; k < 8; k++) { const p = P(.1 + (k % 4) * .06, -.1 + Math.floor(k / 4) * .12); rellena(g, [[p[0] - 1.6, p[1]], [p[0] + 1.6, p[1] + .8], [p[0] + 1.6, p[1] - .6], [p[0] - 1.6, p[1] - 1.4]], k % 2 ? '#B9552F' : '#A04A2E', 'rgba(60,30,20,.4)', .2); } // tejas
+  for (let k = 0; k < 5; k++) hojaP(g, ...P(.3, -.3 + k * .12), -Math.PI / 2 + (k - 2) * .3, 3, .5, '#7E8F4A', false); // maleza
+}
+function tumbaV(g) { cajaPx(g, 0, 0, .1, .06, 1.2, '#B8B0A0', { izq: '#CCC4B4' }); cajaPx(g, 0, -1.2, .06, .03, 7, '#D8D2C4', { izq: '#E8E2D6' }); const p = [0, -8.2]; g.fillStyle = '#E8E2D6'; g.fillRect(p[0] - 2, p[1] + 1.6, 4, 1); g.fillStyle = '#C04A5A'; g.beginPath(); g.arc(1.8, -.6, .6, 0, 7); g.fill(); }
+function velasV(g) {
+  for (const [x, y, h] of [[-8, 1, 6], [-4, 3, 4], [0, 0, 7], [4, 2.6, 5], [8, .6, 4.4]]) { cilindroV(g, x, y, .7, h, '#F4EEDC', { tapa: '#FBF6E8' }); g.fillStyle = 'rgba(255,200,90,.35)'; g.beginPath(); g.arc(x, y - h - 1.4, 2.6, 0, 7); g.fill(); g.fillStyle = '#F2B84A'; g.beginPath(); g.ellipse(x, y - h - 1.2, .55, 1.1, 0, 0, 7); g.fill(); g.fillStyle = '#FFF4C8'; g.beginPath(); g.ellipse(x, y - h - .9, .25, .5, 0, 0, 7); g.fill(); }
+  for (const [x, y, c] of [[-10, 4, '#E04A5A'], [10, 4, '#F2D04A'], [2, 5, '#F4F1E8']]) { for (let k = 0; k < 5; k++) { g.fillStyle = c; g.beginPath(); g.arc(x + Math.cos(k * 1.26) * .9, y - .6 + Math.sin(k * 1.26) * .5, .6, 0, 7); g.fill(); } hojaP(g, x, y, 0, 2, .5, '#5E8B42', false); }
+}
+function fuenteV(g) {
+  cilindroV(g, 0, 2, 14, 3, '#C8BCA6', { tapa: '#6E9EB4' }); // pila baja con agua
+  g.strokeStyle = 'rgba(230,245,250,.5)'; g.lineWidth = .3; for (const r of [4, 8, 11]) { g.beginPath(); g.ellipse(0, -1, r, r / 2, 0, 0, 7); g.stroke(); }
+  cilindroV(g, 0, -1, 1.6, 6, '#D8CDB6'); cilindroV(g, 0, -7, 5, 1.4, '#D8CDB6', { tapa: '#7EAEC4' }); cilindroV(g, 0, -8.4, .8, 3, '#E2D8C2');
+  g.strokeStyle = 'rgba(220,240,250,.8)'; g.lineWidth = .5; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(0, -11.4); g.quadraticCurveTo(s * 3, -14, s * 4.4, -8.6); g.stroke(); g.beginPath(); g.moveTo(s * 4.6, -8.4); g.quadraticCurveTo(s * 7, -9, s * 8.4, -1.8); g.stroke(); } // chorros
+}
+function malezaV(g) { const cols = ['#7E8F4A', '#93A052', '#6E7E40', '#A8A060']; for (let k = 0; k < 7; k++) { const x = -7 + k * 2.3, y = (k % 2) * 1.2; for (let h = 0; h < 4; h++) hojaP(g, x, y, -Math.PI / 2 + (h - 1.5) * .4, 3 + (k % 3), .5, cols[(k + h) % 4], false); } }
+function chimeneaV(g) {
+  cilindroV(g, 0, 0, 4.4, 4, '#A8604A', { tapa: '#8A4E3A' }); cilindroV(g, 0, -4, 3.4, 40, '#B5654A', { arriba: 2.6, tapa: '#2A2220' });
+  g.strokeStyle = 'rgba(80,40,25,.35)'; g.lineWidth = .3; for (let z = 7; z < 42; z += 2.2) { g.beginPath(); g.ellipse(0, -z, 3.2 - z * .015, 1, 0, 0, Math.PI); g.stroke(); } // hiladas de ladrillo
+  for (const z of [16, 30]) { g.strokeStyle = '#4A4E52'; g.lineWidth = .9; g.beginPath(); g.ellipse(0, -z, 3.2, 1.1, 0, 0, Math.PI); g.stroke(); } // zunchos de hierro
+  cilindroV(g, 0, -44, 3.4, 2.2, '#8A4E3A', { tapa: '#1E1A18' }); g.fillStyle = 'rgba(30,24,20,.35)'; g.fillRect(-1.6, -46.6, 3.2, 3); // corona con hollín
+}
+function naveV(g) {
+  const F = caras(.6, .3, 10, 0, 0); sombraCasa(g, F); muros(g, F, '#A7ADB0', '#5E6670'); aleroYdesgaste(g, F, 1.4); for (const u of [.2, .5, .8]) vidrio(g, F, 'izq', u - .1, u + .1, 3, 7.4, { montantes: 2 }); hueco(g, F, 'der', .3, .7, 0, 7, '#4A4E52');
+  for (let k = 0; k < 4; k++) { const c0 = F.a + (F.b - F.a) * k / 4, c1 = F.a + (F.b - F.a) * (k + 1) / 4, z = 10; rellena(g, [P(F.f, c0, z), P(F.f, c1, z), P(F.t, c1, z + 5), P(F.t, c0, z + 5)], '#9AA4A8', 'rgba(50,55,60,.5)', .3); rellena(g, [P(F.t, c0, z + 5), P(F.t, c1, z + 5), P(F.t, c1, z), P(F.t, c0, z)], '#8FB8CC', null); } // techo en dientes de sierra
+}
+function cargaV(g, pr) {
+  const sacos = (cols) => cols.forEach(([x, y, c, s]) => sacoV(g, x, y, c, s || 1));
+  if (pr === 'trilladora' || pr === 'molino') return sacos([[-5, 2, pr === 'molino' ? '#F2EEE4' : '#A88A5E'], [2, 2, pr === 'molino' ? '#E8E2D6' : '#9C7E54'], [-1.6, -1.6, pr === 'molino' ? '#F4F1EA' : '#B0946A', .9]]);
+  if (pr === 'trapiche') { for (const [x, y, z] of [[-5, 1, 0], [0, 1, 0], [5, 1, 0], [-2.4, -.6, 2.2], [2.4, -.6, 2.2]]) cajaPx(g, x, y, .1, .07, 2.2, '#8A5A2E', { z0: z, izq: '#A06A36', top: '#B07A40', borde: 'rgba(60,35,15,.5)' }); return; } // panelas envueltas
+  if (pr === 'cigarreria') { for (const [x, y, z] of [[-4, 1, 0], [3, 1, 0], [-.5, -.6, 2.6]]) { cajaPx(g, x, y, .16, .1, 2.6, '#7A5A36', { z0: z, izq: '#8A6A42', top: '#C9A86A', borde: 'rgba(60,35,15,.5)' }); } return; } // cajas de cigarros
+  if (pr === 'chocolate') return sacos([[-4, 2, '#5A3A22'], [3, 2, '#6A4A2E'], [-.5, -1.6, '#4E3220', .9]]);
+  if (pr === 'textiles') { for (const [x, y, c] of [[-5, 1, '#B9442F'], [0, 1, '#2F5D8A'], [5, 1, '#E8C23A'], [-2.6, -1.6, '#3E8A4A'], [2.6, -1.6, '#F4F1E8']]) { g.save(); g.translate(x, y); cilindroV(g, 0, 0, 2.2, 3, c, { tapa: LUZ(c, .2) }); g.restore(); } return; } // rollos de tela
+  if (pr === 'fundicion') { for (const [x, y, z] of [[-5, 1, 0], [0, 1, 0], [5, 1, 0], [-2.5, 1, 1.4], [2.5, 1, 1.4]]) cajaPx(g, x, y, .18, .05, 1.4, '#6E7276', { z0: z, izq: '#8A8E92', top: '#A8ACB0', borde: 'rgba(30,30,30,.5)' }); return; } // lingotes
+  sacos([[-3, 2, '#C9A86A'], [3, 2, '#B89A5A']]);
+}
+function cipresV(g) { cipresG(g, 0, 0, 1.15); }
+
 export function recetasGrandes(e = 1, h = [0, 1, 2, 5][e]) {
   return [
     ['estadioG', 156, 150, 78, 108, g => estadioGrande(g, h)],
@@ -3303,6 +3388,8 @@ export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
     ['m_museo', 104, 104, 52, 76, g => museoN(g)],
     ['m_mv_jardin', 100, 96, 50, 64, jardinBotanico], ['m_mv_conservatorio', 100, 110, 50, 78, conservatorio], ['m_mv_tunel', 100, 70, 50, 52, tunel], ['m_mv_parque', 100, 76, 50, 58, parqueNevados],
     ['m_monumento', 40, 70, 20, 56, monumentoVictimas],
+    ['andamio', 60, 64, 30, 56, andamioV], ['cimientos', 68, 36, 34, 19, cimientosV], ['material', 30, 22, 15, 15, materialV], ['ruina', 64, 46, 32, 30, ruinaV], ['tumba', 12, 16, 6, 13, tumbaV], ['velas', 30, 22, 15, 15, velasV], ['fuente', 44, 34, 22, 24, fuenteV], ['maleza', 22, 16, 11, 12, malezaV], ['chimenea', 16, 58, 8, 54, chimeneaV], ['nave', 48, 40, 24, 26, naveV], ['cipres', 18, 46, 9, 42, cipresV],
+    ...['trilladora', 'trapiche', 'cigarreria', 'molino', 'chocolate', 'textiles', 'fundicion', 'artesanias'].map(pr => ['carga-' + pr, 28, 20, 14, 16, g => cargaV(g, pr)]),
     ['m_estandarte', 40, 60, 16, 48, estandarte], ['m_valla', 50, 52, 25, 40, valla], ['m_placa', 34, 40, 17, 30, placaConmemorativa], ['m_pancarta', 60, 54, 30, 40, pancartas], ['m_vivero', 64, 54, 32, 36, vivero], ['sinCamino', 30, 34, 13, 28, sinCaminoNuevo],
     ['m_colono', 72, 60, 36, 40, g => ranchoColono(g, 'colono')], ['m_arriendo', 72, 60, 36, 40, g => ranchoColono(g, 'arriendo')], ['m_sorteo', 72, 60, 36, 40, g => ranchoColono(g, 'sorteo')], ['m_resguardo', 64, 64, 30, 44, bohio], ['m_trinchera', 64, 44, 32, 28, trincheraNueva], ['m_madrevieja', 64, 40, 32, 22, madrevieja],
     ['m_telegrafo', 64, 54, 32, 36, telegrafo], ['m_radio', 44, 70, 18, 56, torreRadio], ['m_internet', 44, 62, 18, 50, antenaInternet], ['m_acta', 34, 30, 17, 20, actaPiedra], ['m_tratado', 40, 50, 20, 38, mojonTratado], ['m_ferrocarril', 96, 82, 48, 56, estacionTren], ['m_aeropuerto', 100, 72, 50, 44, aeropuerto],
