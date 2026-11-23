@@ -20,6 +20,7 @@ import { Efectos } from './Efectos.js';
 import { Vida } from './Vida.js';
 import { Trafico } from './Trafico.js';
 import { Logistica } from './Logistica.js';
+import { Redes } from './Redes.js';
 import { Cine } from './Cine.js';
 import { Frontera } from './Frontera.js';
 import { Ferrovia } from './Ferrovia.js';
@@ -116,6 +117,7 @@ export class Mapa extends Phaser.Scene {
     this.vida = new Vida(this);
     this.efectos = new Efectos(this);
     this.trafico = new Trafico(this);
+    this.redes = new Redes(this); // postes, cables, canal de guadua e hidrantes
     this.logistica = new Logistica(this); // paso 3 de Anno: la materia prima y los productos viajan por los caminos
     this.cine = new Cine(this);
     this.frontera = new Frontera(this);
@@ -665,6 +667,7 @@ export class Mapa extends Phaser.Scene {
     if (this.frente) this.frente.actualizar();
     if (this.mitin) this.mitin.actualizar();
     if (this.logistica && this.logistica.firmaActual() !== this.logistica.firma) this.logistica.poner(); // fábricas nuevas: viajes nuevos
+    if (this.redes && this.redes.firmaActual() !== this.redes.firma) this.redes.poner(); // obras o caminos nuevos: la red crece
     if (this.oficios) this.oficios.actualizar();
     if (this.mob) this.mob.actualizar();
     this.dibujarCobertura();
@@ -733,7 +736,7 @@ export class Mapa extends Phaser.Scene {
     this.vida.update(Math.min(.05, delta / 1000), tiempo / 1000);
     this.efectos.update(Math.min(.05, delta / 1000));
     this.trafico.update(Math.min(.05, delta / 1000));
-    this.logistica.update(Math.min(.05, delta / 1000));
+    this.logistica.update(Math.min(.05, delta / 1000)); this.redes.update(Math.min(.05, delta / 1000));
     this.ferrovia.update(Math.min(.05, delta / 1000));
     this.navegacion.update(Math.min(.05, delta / 1000));
     this.transporte.update(Math.min(.05, delta / 1000));

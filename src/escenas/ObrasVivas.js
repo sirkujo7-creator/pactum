@@ -71,7 +71,7 @@ export class ObrasVivas {
     const L = this.porCasilla[i] || (this.porCasilla[i] = []), sx = img.scaleX * H.escala, flip = img.flipX ? -1 : 1;
     if (this.marcosLuz && this.marcosLuz[k]) {
       const luz = this.scene.add.image(img.x, img.y, 'lucesNoche', k).setOrigin(img.originX, img.originY).setFlipX(img.flipX).setDepth(40000.5 + img.depth * 1e-4).setBlendMode('ADD').setAlpha(this.alpha || 0).setVisible((this.alpha || 0) > 0);
-      luz.setDisplaySize(img.displayWidth, img.displayHeight); luz.setData('luz', 1); L.push(luz);
+      luz.setDisplaySize(img.displayWidth, img.displayHeight); luz.setData('luz', 1); L.push(luz); this.nuevas = true;
     }
     if (m.banderas && H.vivas) for (const b of m.banderas) {
       const clave = this.tela(b.cols), ancho = b.ancho * b.s * sx;
@@ -85,6 +85,9 @@ export class ObrasVivas {
     this.t += dt;
     if (!reducirMovimiento()) for (const t of this.telas) { const f = Math.floor(this.t * t.getData('vel') + t.getData('fase')) % CUADROS; if (f !== t.getData('f')) { t.setData('f', f); t.setFrame(f); } }
     const a = Math.round(noche * 20) / 20 * .85;
-    if (a !== this.alpha) { this.alpha = a; for (const L of Object.values(this.porCasilla)) for (const o of L) if (o.getData('luz')) o.setAlpha(a).setVisible(a > 0); } // de día las luces no se dibujan
+    const R = this.scene.redes, fr = R && R.firma;
+    if (a !== this.alpha || fr !== this.firmaRed || this.nuevas) { this.alpha = a; this.firmaRed = fr; this.nuevas = false; // de día las luces no se dibujan
+      for (const [i, L] of Object.entries(this.porCasilla)) { const f = R && R.luz ? R.luz(+i) : 1, vela = R && R.vela ? R.vela(+i) : false; // luz eléctrica con la red; de vela sin ella
+        for (const o of L) if (o.getData('luz')) { o.setAlpha(a * f).setVisible(a * f > 0); if (vela) o.setTint(0xFFB070); else o.clearTint(); } } }
   }
 }
