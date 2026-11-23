@@ -110,7 +110,19 @@
     "cancha",
     "biblioteca",
     "teatro",
-    "estadio"
+    "estadio",
+    "chicheria",
+    "gallera",
+    "kiosco",
+    "circo",
+    "cine",
+    "billar",
+    "feria",
+    "balneario",
+    "centroComercial",
+    "discoteca",
+    "ecoparque",
+    "parqueTematico"
   ],
   "inseguridadMax": 45,
   "efectos": {

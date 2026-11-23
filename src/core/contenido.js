@@ -28,7 +28,7 @@ function opcion(o, donde) {
   return sinVacios({
     l: o.texto, fx: efectos(o.efectos, donde), f: o.filosofia || null, why: o.porque,
     later: o.despues ? (o.despues.probabilidad === undefined ? [o.despues.anios, o.despues.id] : [o.despues.anios, o.despues.id, o.despues.probabilidad]) : undefined,
-    vista: o.vista, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza, huella: o.huella, colonos: o.colonos,
+    vista: o.vista, vistaA: o.vistaMapa, promesa: o.promesa, ex: o.aQuien, fuerza: o.fuerza, huella: o.huella, colonos: o.colonos,
     riesgo: o.riesgo ? { p: o.riesgo.probabilidad, t: o.riesgo.texto, fx: efectos(o.riesgo.efectos, `${donde} (riesgo)`) } : undefined
   });
 }
@@ -38,7 +38,7 @@ export function usarContenido(d) {
   C.B = Object.fromEntries(Object.entries(d.edificios).map(([k, b]) => [k, sinVacios({
     e: b.icono, n: b.nombre, a: b.articulo, cost: b.costo, up: b.mantenimiento, st: b.etapa, ok: b.terrenos,
     hmin: b.alturaMinima, river: b.juntoAlRio, jc: b.empleosCampesinos, ja: b.empleosArtesanos, fee: b.tasas,
-    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra, es: b.especial, cul: b.cultura, tam: b.casillas
+    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra, es: b.especial, cul: b.cultura, tam: b.casillas, ep: b.epocas, ef: b.efectos, dura: b.dura
   })]));
   C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
   C.EV = d.dilemas.map(e => sinVacios({

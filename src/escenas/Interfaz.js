@@ -11,7 +11,8 @@ import {
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
-  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
+  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes,
+  deSuEpoca,
 } from '../core/index.js';
 import { montarCarta, fichaLugar } from './mundo.js';
 import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
@@ -304,7 +305,7 @@ export class Interfaz {
   }
   renderConstruir() {
     const S = this.S;
-    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S)) && ((k !== 'aserradero' && k !== 'cantera' && k !== 'estudio') || materialesActivos(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
+    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S)) && ((k !== 'aserradero' && k !== 'cantera' && k !== 'estudio') || materialesActivos(S)) && (!C.B[k].ep || deSuEpoca(S, k))).map(([k, b]) => { // fase 10: el café se siembra en la finca
       const tope = topeDe(S, k), cuantos = S.map.reduce((n, x) => n + (x.b === k ? 1 : 0), 0), alTope = tope !== Infinity && cuantos >= tope && b.st <= S.stage;
       const bloqueada = b.st > S.stage || alTope;
       return el('button', {

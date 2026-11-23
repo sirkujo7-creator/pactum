@@ -8,6 +8,7 @@ import { climaActivo } from './clima.js';
 import { counts, hasLaw, epocaHistorica } from './reglas.js';
 import { dejarMarca } from './marcas.js';
 import { efectoExterior } from './exterior.js';
+import { efectoOcio } from './ocio.js';
 
 const K = () => C.CIV;
 export function civismoActivo(S) { return climaActivo(S) && !!C.CIV; }
@@ -81,6 +82,7 @@ export function efectoLeyes(S, clave) {
   for (const r of rasgosElegidos(S)) suma(r.efectos); // paso 2: los rasgos del pueblo usan las mismas claves
   const T = S.terr && C.TERR && C.TERR.territorios[S.terr]; if (T && T.efectos) suma(T.efectos); // fase 14: lo que da y lo que cuesta cada territorio
   v += efectoExterior(S, k, sub); // fase 15: tratados y ligas con el mundo
+  v += efectoOcio(S, k, sub); // lugares de entretenimiento: lo bueno y lo malo de cada uno
   return v;
 }
 // Costo anual de las leyes nuevas (por habitante y fijo), antes de multiplicar por S.price.

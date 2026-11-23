@@ -140,6 +140,7 @@ export function petition(S) {
 export function choose(S, i) {
   const ev = S.pend, o = ev.opts[i], leg = S.tr;
   if (o.vista) S.vis = { k: o.vista, y: S.year };
+  if (o.vistaA && climaActivo(S)) S.vis = { k: o.vistaA, y: S.year }; // las vistas nuevas solo en acuarela (la v9 no las tenía)
   const real = applyFx(S, o.fx);
   if (o.f) { S.phil[o.f]++; S.corr = clamp(S.corr + (o.f === 'real' ? 9 : o.f === 'util' ? 1 : -4), 0, 100); }
   if (o.promise) S.promises.push({ k: o.promise, base: counts(S)[o.promise], dl: S.year + C.PET.plazo });

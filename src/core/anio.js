@@ -23,6 +23,7 @@ import { drawEvent } from './dilemas.js';
 import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, interesFondo } from './clima.js';
 import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
+import { ocioDelAnio } from './ocio.js';
 import { avanzarObras } from './construccion.js';
 import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
@@ -117,6 +118,7 @@ export function advance(S) {
   news.push(...sueloDelAnio(S));
   // Fase 1: las obras se gastan según el mantenimiento que se paga.
   news.push(...desgasteDelAnio(S));
+  news.push(...ocioDelAnio(S)); // el circo de paso se va
 
   // Déficit y cesación de pagos.
   S.deficit = F.net < 0 ? S.deficit + 1 : 0;

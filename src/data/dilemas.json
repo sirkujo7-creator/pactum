@@ -818,7 +818,7 @@
             "igualdad": -3
           }
         },
-        "vista": "crowd"
+        "vistaMapa": "crowd"
       }
     ]
   },
@@ -1551,7 +1551,7 @@
         "filosofia": "util",
         "porque": "Convertir lo que sobra en recursos para todos.",
         "aQuien": "Los campesinos venden su trabajo a buen precio y el tesoro cobra su parte.",
-        "vista": "crowd"
+        "vistaMapa": "crowd"
       },
       {
         "texto": "Repartirlo en una fiesta de la cosecha",
@@ -1589,7 +1589,7 @@
         "filosofia": "util",
         "porque": "El intercambio beneficia a ambas partes.",
         "aQuien": "Los artesanos venden más y el mercado cobra tasas.",
-        "vista": "festival"
+        "vistaMapa": "festival"
       },
       {
         "texto": "Cobrarles un peaje",
@@ -2576,7 +2576,7 @@
         "filosofia": "util",
         "porque": "La cultura sale sin gastar del tesoro, pero queda en manos de pocos.",
         "aQuien": "Los ricos pagan y deciden quién toca: la música llega, pero no para todos.",
-        "vista": "festival"
+        "vistaMapa": "festival"
       },
       {
         "texto": "No es el momento",
@@ -5203,7 +5203,7 @@
         "filosofia": "real",
         "porque": "La economía no puede detenerse.",
         "aQuien": "Se reactiva el comercio; hay más contagios y desconfianza.",
-        "vista": "crowd"
+        "vistaMapa": "crowd"
       }
     ],
     "hito": {

@@ -32,6 +32,7 @@ export function whyNot(S, k, i) {
   if (k === 'mina' && climaActivo(S) && S.decisiones && S.decisiones.h_cajamarca === 0) return 'Una consulta popular prohibió la minería de metales en tu territorio.';
   if (k === 'estudio' && S.map.some(y => y.b === 'estudio')) return C.MIN.textos.yaHay;
   const gr = motivoGrande(S, k, i, j => { const y = S.map[j]; return y.t === 'rio' ? 'hay río' : y.b || y.pt !== undefined ? 'hay otra obra' : y.oc ? 'están ocupadas' : (y.mk && (y.mk.t === 'resguardo' || y.mk.t === 'asentamiento')) || esColono(y) ? 'hay gente viviendo ahí' : !(b.ok || []).includes(y.t) ? 'el terreno no sirve' : ''; }); if (gr) return gr; // obras de varias casillas
+  const ep = motivoEpoca(S, k); if (ep) return ep; // lugares de entretenimiento: solo en su época
   const tp = motivoTope(S, k); if (tp) return tp; // fase 17: el tope de la plaza
   const pago = cuotaInicial(S, k, cost(S, k));
   if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
@@ -130,6 +131,7 @@ import { avanzarFundacion } from './estado.js';
 import { motivoFundacion, esColono } from './huellas.js';
 import { motivoTope } from './plaza.js';
 import { motivoGrande, ocuparGrande, liberarGrande } from './grandes.js';
+import { motivoEpoca } from './ocio.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
