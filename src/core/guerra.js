@@ -5,7 +5,7 @@
 // pierde el frente ve ocupadas casillas de su borde hasta recuperarlas. Al final se firma un tratado de paz.
 // Solo en el terreno en acuarela, desde Ciudad.
 import { C } from './contenido.js';
-import { registrarMuertes, quemar, dejarRuinas, noticiaRuinas, cavarTrincheras } from './huellas.js';
+import { registrarMuertes, quemar, dejarRuinas, noticiaRuinas, cavarTrincheras, cicatriz } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { counts } from './reglas.js';
 import { climaActivo, marcarCrisis } from './clima.js';
@@ -197,6 +197,7 @@ function anioDeGuerra(S) {
   const obras = S.map.map((x, i) => x.b && !x.ob ? i : -1).filter(i => i >= 0).sort((a, b) => (borde.has(b) ? 1 : 0) - (borde.has(a) ? 1 : 0) || distBorde(S, id, a, N) - distBorde(S, id, b, N));
   for (const i of obras.slice(0, X.obrasDanadas)) { const x = S.map[i]; x.u = Math.min(100, (x.u || 0) + X.dano); x.sin = S.year; }
   quemar(S, obras.slice(0, X.obrasDanadas)); const ru = dejarRuinas(S, 'guerra', obras.slice(0, X.obrasDanadas)); if (ru) news.push(noticiaRuinas(ru)); // huellas: casas quemadas y en ruinas
+  cicatriz(S, 'crater', casillasBorde(S, id).filter((i, k) => k % 2 === S.year % 2).slice(0, 10)); // cráteres en el borde
   news.push(...cavarTrincheras(S, casillasBorde(S, id)));
   // El frente: quien lo pierde ve ocupadas casillas del borde; quien lo gana recupera las suyas.
   if (W.frente <= P.ocupar.frente) {

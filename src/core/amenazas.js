@@ -3,7 +3,7 @@
 // frecuentes El Niño y La Niña. Son crisis mayores: respetan los años de respiro y siempre se pueden preparar.
 // Solo en el terreno en acuarela.
 import { C } from './contenido.js';
-import { registrarMuertes, dejarRuinas, noticiaRuinas, factorEpidemia } from './huellas.js';
+import { registrarMuertes, dejarRuinas, noticiaRuinas, factorEpidemia, cicatriz } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { counts, epocaHistorica } from './reglas.js';
 import { marcarCrisis } from './clima.js';
@@ -65,7 +65,7 @@ export function amenazasDelAnio(S, libre) {
     const perdidos = Math.round(S.pop * V.perdida * (1 + laderasPeladas(S)));
     S.pop = Math.max(1, S.pop - perdidos);
     A.ultAven = S.year; marcarCrisis(S); registrarMuertes(S, perdidos, 'avenida');
-    const ruinas = dejarRuinas(S, 'avenida', tocadas);
+    const ruinas = dejarRuinas(S, 'avenida', tocadas); cicatriz(S, 'lodo', tocadas);
     S.amenEv = { tipo: 'avenida', danadas, perdidos, ruinas, peladas: Math.round(laderasPeladas(S) * 100) };
     news.push(`${V.icono} ${V.nombre}: ${danadas} obras dañadas.`);
     if (ruinas) news.push(noticiaRuinas(ruinas));

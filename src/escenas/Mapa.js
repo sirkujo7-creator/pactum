@@ -22,6 +22,7 @@ import { Trafico } from './Trafico.js';
 import { Logistica } from './Logistica.js';
 import { Redes } from './Redes.js';
 import { capaDano, ruinaPropia } from './Danos.js';
+import { Cicatrices } from './Cicatrices.js';
 import { Cine } from './Cine.js';
 import { Frontera } from './Frontera.js';
 import { Ferrovia } from './Ferrovia.js';
@@ -118,6 +119,7 @@ export class Mapa extends Phaser.Scene {
     this.vida = new Vida(this);
     this.efectos = new Efectos(this);
     this.trafico = new Trafico(this);
+    this.cicatrices = new Cicatrices(this); this.cicatrices.poner(); // lodo, grietas, ceniza y cráteres que dejan los desastres y la guerra
     this.redes = new Redes(this); // postes, cables, canal de guadua e hidrantes
     this.logistica = new Logistica(this); // paso 3 de Anno: la materia prima y los productos viajan por los caminos
     this.cine = new Cine(this);
@@ -674,6 +676,7 @@ export class Mapa extends Phaser.Scene {
     if (this.mitin) this.mitin.actualizar();
     if (this.logistica && this.logistica.firmaActual() !== this.logistica.firma) this.logistica.poner(); // fábricas nuevas: viajes nuevos
     if (this.redes && this.redes.firmaActual() !== this.redes.firma) this.redes.poner(); // obras o caminos nuevos: la red crece
+    if (this.cicatrices) this.cicatrices.revisar();
     if (this.oficios) this.oficios.actualizar();
     if (this.mob) this.mob.actualizar();
     this.dibujarCobertura();
