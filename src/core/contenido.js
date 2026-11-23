@@ -38,7 +38,7 @@ export function usarContenido(d) {
   C.B = Object.fromEntries(Object.entries(d.edificios).map(([k, b]) => [k, sinVacios({
     e: b.icono, n: b.nombre, a: b.articulo, cost: b.costo, up: b.mantenimiento, st: b.etapa, ok: b.terrenos,
     hmin: b.alturaMinima, river: b.juntoAlRio, jc: b.empleosCampesinos, ja: b.empleosArtesanos, fee: b.tasas,
-    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra, es: b.especial, cul: b.cultura
+    water: b.agua, energy: b.energia, d: b.descripcion, anios: b.aniosDeObra, es: b.especial, cul: b.cultura, tam: b.casillas
   })]));
   C.STAGES = d.etapas.map(s => sinVacios({ n: s.nombre, req: s.requisito, lesson: s.leccion }));
   C.EV = d.dilemas.map(e => sinVacios({

@@ -7,7 +7,7 @@ import { lado } from './mundo.js';
 import { centroPueblo } from './cobertura.js';
 
 export const HUERTA_COMIDA = 2, POZO_AGUA = 10, MAX_HUERTAS = 5, MAX_POZOS = 3;
-const libre = x => !x.b && x.t !== 'rio' && x.t !== 'bosque' && !(x.q > 0);
+const libre = x => !x.b && x.pt === undefined && x.t !== 'rio' && x.t !== 'bosque' && !(x.q > 0);
 let CACHE = { k: null, v: null };
 // { huertas: [{ i, casa }], pozos: [{ i, casa }] } en casillas libres; cada casilla se usa una sola vez.
 export function huertasYPozos(S) {

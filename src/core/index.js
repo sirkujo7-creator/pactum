@@ -1,5 +1,6 @@
 // Lógica pura de Pactum: sin DOM ni Phaser, para que funcione igual en el navegador y en Node.
 export * from './azar.js';
+export * from './grandes.js';
 export * from './contenido.js';
 export * from './cargar.js';
 export * from './mundo.js';

@@ -860,7 +860,7 @@ export class Interfaz {
         el('span', { class: 'small', style: G, text: esColono(x) ? C.HUELLAS.colonos.textos.bloquea + ' ' + C.HUELLAS.colonos.textos.leccion : `${x.mk.t === 'acta' ? 'Permanece mientras gobiernes.' : `Se borrará hacia el año ${x.mk.y + M.anios}.`} Si construyes aquí, la huella desaparece. ${C.MARCAS.leccion}` }));
     }
     if (x.oc && C.GUERRA) hijos.push(el('span', { class: 'neg', style: 'grid-column:1/-1', text: C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre) })); // fase 9
-    if (!x.b && x.t === 'llano' && suelosActivos(S)) hijos.push(el('span', { class: 'especial', style: 'grid-column:1/-1', html: this.notaSuelo(i).replace(/^<br>/, '') }));
+    if (!x.b && x.pt === undefined && x.t === 'llano' && suelosActivos(S)) hijos.push(el('span', { class: 'especial', style: 'grid-column:1/-1', html: this.notaSuelo(i).replace(/^<br>/, '') }));
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: this.descripcion(x.b) }),
         ...(C.B[x.b].es && climaActivo(S) && !(x.b === 'cultivo' && fincasActivas(S)) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
@@ -2214,7 +2214,7 @@ export class Interfaz {
     const mn = x && x.t === 'montana' && estudioHecho(S) ? ` ${datosMineral(mineralDe(S, sel)).icono} Subsuelo: ${datosMineral(mineralDe(S, sel)).nombre.toLowerCase()}.` : '';
     const suelo = mn || (x && x.t === 'llano' && suelosActivos(S) ? ` ${datosSuelo(claseSuelo(S, sel)).icono} Suelo: ${datosSuelo(claseSuelo(S, sel)).nombre}.` : '');
     const que = (!x ? 'Toca una casilla para ver qué hay.' : x.b ? `<b>${usoDe(x.b).nombre}:</b> ${this.nombre(x.b)}${x.ob ? ' (en obra)' : ''}.` : `<b>${{ llano: 'Llano', bosque: 'Bosque', montana: 'Montaña', rio: 'Río' }[x.t] || 'Terreno'}</b>, sin obra.`) + suelo;
-    const construir = x && k && k !== 'calle' && k !== 'quitarCalle' && !x.b ? `<button class="opt" id="planoC"><b>Construir aquí: ${this.nombre(k)}</b></button>` : '';
+    const construir = x && k && k !== 'calle' && k !== 'quitarCalle' && !x.b && x.pt === undefined ? `<button class="opt" id="planoC"><b>Construir aquí: ${this.nombre(k)}</b></button>` : '';
     this.tarjeta(`<div class="big">🗺️</div><h3>Vista de plano</h3><p class="small">El territorio visto desde arriba: sin relieve, un color por uso. La línea punteada es el casco urbano; la estrella, la plaza.</p>
       <canvas class="plano" aria-label="Plano del territorio"></canvas>
       <div class="subs capas">${capasPlano(S).map(c => `<button class="sub${c.id === capa ? ' on' : ''}" data-capa="${c.id}"><span class="sn">${c.nombre}</span></button>`).join('')}</div>

@@ -392,7 +392,7 @@ export class Pobladores {
       if (r < 0 || c < 0 || r >= N || c >= N) return -1;
       const i = r * N + c, x = S.map[i];
       if (x.t === 'rio') return !conCalles && this.puentes.has(i) ? 0 : 2;
-      return !x.b || ['cultivo', 'cafetal', 'parque'].includes(x.b) ? 0 : 1;
+      return (!x.b && x.pt === undefined) || ['cultivo', 'cafetal', 'parque'].includes(x.b) ? 0 : 1;
     };
     const juntar = L => { const v = L.filter(x => x >= 0); return v.some(x => x === 0) ? 1 : v.some(x => x === 1) ? 1.5 : Infinity; };
     for (let R = 0; R < G; R++) for (let C = 0; C < G; C++) {

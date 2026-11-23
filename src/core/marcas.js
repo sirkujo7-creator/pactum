@@ -41,7 +41,7 @@ export function dejarMarca(S, tipo, d) {
   // Obras de las decisiones (diques, reservorios, escuelas rurales…): cada una va en su lugar lógico.
   const rio = i => { const r = Math.floor(i / N), c = i % N; return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => r + a >= 0 && c + b >= 0 && r + a < N && c + b < N && S.map[(r + a) * N + c + b].t === 'rio'); };
   const sitio = i => T.lugar === 'rio' ? rio(i) : T.lugar === 'ladera' ? (S.map[i].h || 0) >= 1 : T.lugar === 'vereda' ? Math.hypot(Math.floor(i / N) - cr, i % N - cc) >= 4 : true;
-  const libre = i => { const x = S.map[i]; return !x.b && !x.mk && x.t === 'llano'; };
+  const libre = i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && x.t === 'llano'; };
   let cand = S.map.map((x, i) => i).filter(i => libre(i) && sitio(i));
   if (!cand.length) cand = S.map.map((x, i) => i).filter(libre); // sin orilla, ladera o vereda libre: cerca del pueblo
   const base = cand
@@ -62,7 +62,7 @@ export function dejarMarca(S, tipo, d) {
 // Árboles sembrados: las casillas libres de ladera más cercanas al pueblo vuelven a ser bosque (si no hay ladera, llano).
 function reforestar(S, n, tipo, d, cr, cc) {
   const N = lado(S), dist = i => Math.hypot(Math.floor(i / N) - cr, i % N - cc);
-  const libres = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && !x.mk && x.t === 'llano' && dist(i) >= 2; });
+  const libres = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && x.t === 'llano' && dist(i) >= 2; });
   const L = libres.filter(i => (S.map[i].h || 0) >= 1).sort((a, b) => dist(a) - dist(b)), elegidas = (L.length ? L : libres.sort((a, b) => dist(a) - dist(b))).slice(0, n);
   for (const i of elegidas) { const x = S.map[i]; x.t = 'bosque'; x.nb = S.year; x.er = 0; delete x.tl; }
   if (!elegidas.length) return -1;

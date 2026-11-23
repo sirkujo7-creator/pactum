@@ -3,6 +3,7 @@
 // puente donde cruza el río). Las obras junto a una calle rinden más, los servicios llegan más lejos y las casas
 // evaden menos. Las calles cambian con la época: camino de herradura, calle empedrada y carretera.
 // Se guardan como bordes "a|b" entre esquinas (índice r * (N + 1) + c). Solo en el terreno en acuarela.
+import { partesObra } from './grandes.js';
 import { C } from './contenido.js';
 import { climaActivo } from './clima.js';
 import { epocaHistorica } from './reglas.js';
@@ -62,7 +63,7 @@ function casillasDeBorde(N, a, b) {
   return out;
 }
 export function hayCalle(S, a, b) { return datos(S).set.has(claveBorde(a, b)); }
-export function conectada(S, i) { return callesActivas(S) && listaCalles(S).length > 0 && datos(S).con[i] === 1; }
+export function conectada(S, i) { return callesActivas(S) && listaCalles(S).length > 0 && partesObra(S, i).some(j => datos(S).con[j] === 1); } // una obra grande vale si cualquiera de sus casillas toca el camino
 export function salidaAlBorde(S) { return callesActivas(S) && datos(S).salida; }
 
 // ---------- Terreno de los bordes ----------
@@ -145,7 +146,7 @@ export function factorCalle(S, i) { const b = S.map[i].b; if (!K().conComercio.i
 export function aislada(S, i) {
   const x = S.map[i], A = K().aislada;
   if (!callesActivas(S) || !A || !x.b || x.ob || A.exentas.includes(x.b) || plazaRed(S) < 0) return false;
-  return !datos(S).red[i];
+  return !partesObra(S, i).some(j => datos(S).red[j]);
 }
 // Las casas sin camino no se cuentan ni llevan letrero (no venden ni prestan servicio): lo dicen sus habitantes.
 export function obrasAisladas(S) { return callesActivas(S) && K().aislada ? S.map.map((x, i) => i).filter(i => S.map[i].b !== 'casa' && aislada(S, i)) : []; }

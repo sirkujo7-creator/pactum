@@ -48,7 +48,7 @@ export function freshState(diff, guide, seed, reg, opciones = {}) {
     for (const j of neigh(S, i)) {
       if (seen.has(j)) continue;
       seen.add(j);
-      if (want.length && S.map[j].t === 'llano' && !S.map[j].b) S.map[j].b = want.shift();
+      if (want.length && S.map[j].t === 'llano' && !S.map[j].b && S.map[j].pt === undefined) S.map[j].b = want.shift();
       q.push(j);
     }
   }

@@ -4,7 +4,7 @@
 import { mulberry, shade, mix, poly, lienzo } from './acuarela.js';
 import { FR, pintar, ovalo, urlDe, RES_HOJA, ES_CELULAR } from './fresco.js';
 import { recetasCasas, CAPTURA } from './casas.js';
-import { recetasPublicos } from './publicos.js';
+import { recetasPublicos, recetasGrandes } from './publicos.js';
 
 // Pinceles del fresco con la misma firma de los de acuarela (así todas las obras cambian de estilo a la vez).
 function wash(g, pts, col, rng, al = .9) { g.save(); g.globalAlpha = Math.min(1, al + .05); pintar(g, pts, col, rng, { n: 2, al: .1, bw: .45, bal: .6 }); g.restore(); }
@@ -408,6 +408,19 @@ export function hornearEdificios(era, hist, op = {}) {
   }
   CAPTURA.quads = CAPTURA.banderas = null; CAPTURA.sinTela = false;
   return (HOJA = { canvas: cv, marcos, escala: ESCALA, era, hist, vivas: !!op.banderasVivas });
+}
+
+
+// Obras de varias casillas (estadio, universidad, cuartel y cementerio): hoja aparte, para no agrandar la de edificios.
+let HOJA_G = null;
+export function hornearGrandes(era, hist) {
+  if (HOJA_G && HOJA_G.era === era && HOJA_G.hist === hist) return HOJA_G;
+  const lista = recetasGrandes(era, hist), sep = 4, ancho = 2048, marcos = {};
+  let x = sep, y = sep, fila = 0;
+  for (const [k, w, h, ax, ay] of lista) { const W = Math.ceil(w * ESCALA), H = Math.ceil(h * ESCALA); if (x + W > ancho) { x = sep; y += fila + sep; fila = 0; } marcos[k] = { x, y, w: W, h: H, ax: ax * ESCALA, ay: ay * ESCALA }; x += W + sep; fila = Math.max(fila, H); }
+  const cv = lienzo(ancho, y + fila + sep), g = cv.getContext('2d');
+  for (const [k, , , , , pintar] of lista) { const m = marcos[k]; g.save(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(ESCALA, ESCALA); pintar(g, mulberry(k.length * 97)); g.restore(); }
+  return (HOJA_G = { canvas: cv, marcos, escala: ESCALA, era, hist });
 }
 
 // Qué figuras lleva cada obra en una casilla: [{ k (figura), du, dv (desplazamiento en la casilla), s (escala), humo }].

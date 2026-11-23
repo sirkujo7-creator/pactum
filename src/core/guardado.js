@@ -1,5 +1,6 @@
 // Guardado con número de versión y migraciones: una actualización nunca debe borrar una partida.
 // Aquí solo se convierte el estado a texto y de vuelta; guardar en el aparato lo hace la interfaz.
+import { ampliarGrandes } from './grandes.js';
 import { C } from './contenido.js';
 import { LADO_V9, LADO_INICIAL, genMundo } from './mundo.js';
 import { whyNot } from './obras.js';
@@ -79,6 +80,7 @@ export function desempaquetar(texto) {
   S = JSON.parse(JSON.stringify(S));
   if (v > VERSION_GUARDADO) throw new Error('Esta partida es de una versión más nueva del juego.');
   for (; v < VERSION_GUARDADO; v++) S = MIGRACIONES[v](S);
+  ampliarGrandes(S); // estadio, universidad, cuartel y cementerio de partidas viejas: se amplían si caben
   return S;
 }
 

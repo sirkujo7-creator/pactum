@@ -61,7 +61,7 @@ export class Mobiliario {
     if (pz < 0) return;
     const rc = i => [Math.floor(i / N), i % N], r0 = Math.floor(pz / N), c0 = pz % N;
     const usadas = new Set();
-    const libre = i => { if (i < 0 || i >= N * N || usadas.has(i)) return false; const x = S.map[i]; return !x.b && x.t !== 'rio' && x.t !== 'bosque' && !(x.q > 0); };
+    const libre = i => { if (i < 0 || i >= N * N || usadas.has(i)) return false; const x = S.map[i]; return !x.b && x.pt === undefined && x.t !== 'rio' && x.t !== 'bosque' && !(x.q > 0); };
     const vecinos = i => { const [r, c] = rc(i), L = []; for (const [dr, dc] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) { const r2 = r + dr, c2 = c + dc; if (r2 >= 0 && c2 >= 0 && r2 < N && c2 < N) L.push(r2 * N + c2); } return L; };
     const cerca = (i, rad) => { const [r, c] = rc(i), L = []; for (let r2 = r - rad; r2 <= r + rad; r2++) for (let c2 = c - rad; c2 <= c + rad; c2++) if (r2 >= 0 && c2 >= 0 && r2 < N && c2 < N) L.push(r2 * N + c2); return L.sort((a, b) => { const [ra, ca] = rc(a), [rb, cb] = rc(b); return Math.hypot(ra - r, ca - c) - Math.hypot(rb - r, cb - c); }); };
     const libreCerca = (i, rad) => cerca(i, rad).find(libre);

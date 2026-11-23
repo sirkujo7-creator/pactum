@@ -218,7 +218,11 @@
     ],
     "empleosArtesanos": 4,
     "aniosDeObra": 2,
-    "especial": "Crea el Ejército: orden y seguridad si está contento; golpe de Estado si no."
+    "especial": "Crea el Ejército: orden y seguridad si está contento; golpe de Estado si no.",
+    "casillas": [
+      2,
+      2
+    ]
   },
   "cafetal": {
     "icono": "☕",
@@ -329,7 +333,11 @@
     ],
     "empleosArtesanos": 5,
     "aniosDeObra": 3,
-    "especial": "Sube la igualdad y los salarios; los estudiantes la exigen desde que eres Ciudad."
+    "especial": "Sube la igualdad y los salarios; los estudiantes la exigen desde que eres Ciudad.",
+    "casillas": [
+      2,
+      2
+    ]
   },
   "teatro": {
     "icono": "🎭",
@@ -360,7 +368,11 @@
     "empleosArtesanos": 4,
     "aniosDeObra": 2,
     "cultura": 5,
-    "especial": "El que más baja la exigencia de cultura y sentido, pero los días de partido sube un poco la inseguridad. Abre el dilema de «pan y circo»."
+    "especial": "El que más baja la exigencia de cultura y sentido, pero los días de partido sube un poco la inseguridad. Abre el dilema de «pan y circo».",
+    "casillas": [
+      2,
+      2
+    ]
   },
   "cementerio": {
     "icono": "🪦",
@@ -374,7 +386,11 @@
       "llano",
       "bosque"
     ],
-    "especial": "Da sepultura a 40 muertos. Las tumbas se ven crecer con cada muerte."
+    "especial": "Da sepultura a 40 muertos. Las tumbas se ven crecer con cada muerte.",
+    "casillas": [
+      1,
+      2
+    ]
   },
   "aserradero": {
     "icono": "🪵",
