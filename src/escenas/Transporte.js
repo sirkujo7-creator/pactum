@@ -38,9 +38,12 @@ export class Transporte {
   actualizar() {
     const { S, T } = this.scene, N = T.N, ep = epocaHistorica(S); let pla = S.map.findIndex(x => x.b === 'fundacion'); if (pla < 0) pla = S.map.findIndex(x => x.b === 'casa' && !x.ob);
     const comercio = S.map.filter(x => (x.b === 'mercado' || x.b === 'puerto' || x.b === 'taller') && !x.ob).length;
-    const camion = pla >= 0 && ['violencia', 'modernizacion', 'paz', 'digital'].includes(ep) && comercio > 0 ? Math.min(3, 1 + Math.floor(comercio / 3)) : 0;
+    // (La carretera que se pintaba sola hasta el borde se quitó, pedido de Juan: lo que se ve informa. Los camiones y las
+    // chivas ahora van por los caminos que construye el jugador: Trafico.js.)
+    const camion = 0; void comercio; void ep;
     const cable = !!(S.decisiones && (S.decisiones.h_cable === 0 || S.decisiones.h_cable === 1));
-    const firma = `${pla}|${camion}|${cable}`; if (firma === this.firma) return; this.firma = firma;
+    const cafe = S.map.map((x, i) => (x.b === 'cafetal' || (x.b === 'cultivo' && x.cv === 'cafe')) && !x.ob ? i : '').join('');
+    const firma = `${pla}|${camion}|${cable}|${cafe}`; if (firma === this.firma) return; this.firma = firma;
     this.limpiar();
     if (camion) this.carretera(pla, N, camion);
     if (cable) this.cable(N);
@@ -59,10 +62,11 @@ export class Transporte {
     for (let k = 0; k < n; k++) this.camiones.push({ img: this.scene.add.image(0, 0, 'camion').setScale(.8 / E).setOrigin(.5, .85).setVisible(false), s: largo * k / n, dir: 1, espera: 0, v: .9 + k * .25 });
     this.objetos.push(...this.camiones.map(c => c.img));
   }
-  // Cable aéreo: de la cima más alta hasta el borde más cercano, con torres y dos cabinas.
+  // Cable aéreo: saca el café de los cafetales (el más alto) hasta el borde más cercano, con torres y dos cabinas.
   cable(N) {
-    const { T } = this.scene, pla = this.scene.S.map.findIndex(x => x.b === 'fundacion');
-    let mejor = null; for (const t of T.tiles) if (!mejor || t.h > mejor.h) mejor = t;
+    const { T } = this.scene, S = this.scene.S, pla = S.map.findIndex(x => x.b === 'fundacion');
+    let mejor = null; S.map.forEach((x, i) => { if ((x.b === 'cafetal' || (x.b === 'cultivo' && x.cv === 'cafe')) && !x.ob && (!mejor || T.tiles[i].h > mejor.h)) mejor = T.tiles[i]; });
+    if (!mejor) return; // sin cafetales no hay café que sacar
     const r0 = mejor.r + .5, c0 = mejor.c + .5, opc = [[1, 0, N - r0], [-1, 0, r0], [0, 1, N - c0], [0, -1, c0]].sort((a, b) => a[2] - b[2])[0], [dr, dc, largo] = opc;
     const pts = [], torres = []; for (let s = 0; s <= largo; s += .5) pts.push({ x: pos(T, r0 + dr * s, c0 + dc * s)[0], y: pos(T, r0 + dr * s, c0 + dc * s)[1] - 22, d: r0 + dr * s + c0 + dc * s });
     this.capa.lineStyle(1, 0x2A2118, .85); this.capa.beginPath(); pts.forEach((p, i) => i ? this.capa.lineTo(p.x, p.y) : this.capa.moveTo(p.x, p.y)); this.capa.strokePath();
