@@ -21,6 +21,7 @@ import { Vida } from './Vida.js';
 import { Trafico } from './Trafico.js';
 import { Logistica } from './Logistica.js';
 import { Redes } from './Redes.js';
+import { capaDano, ruinaPropia } from './Danos.js';
 import { Cine } from './Cine.js';
 import { Frontera } from './Frontera.js';
 import { Ferrovia } from './Ferrovia.js';
@@ -286,7 +287,14 @@ export class Mapa extends Phaser.Scene {
     }
     // Huellas, paso 1: una obra derrumbada por un desastre se ve en ruinas hasta reconstruirla.
     if (x.ru && nivel === 3) {
-      this.obras[i].push(this.figura('edificios', 'ruina', t.r + .5, t.c + .5, t.h, (x.b === 'casa' ? .9 : 1.1) * ESP).setDepth(t.r + t.c + 1));
+      // La ruina del mismo edificio (Danos.js); si no se puede, la ruina genérica.
+      const kObra0 = x.b === 'cultivo' && x.cv ? null : x.b === 'taller' && (x.pr || x.nv) ? `taller-${x.pr || 'artesanias'}-${x.nv || 0}` : x.b;
+      const f0 = kObra0 && figurasDeObra(kObra0, i, this.S.stage, this.S.reg, epocaVisual(this.S)).find(f => !f.n && !f.k.startsWith('bandera'));
+      if (f0 && x.b === 'casa' && /^casa\d-\d$/.test(f0.k)) { const k2 = estiloCasa(this.S, epocaVisual(this.S), i, f0.k.slice(-1)); if (k2) f0.k = k2; }
+      const H = this.hojas.edificios, kr = f0 && H.marcos[f0.k] && !A_SUELO.has(x.b) ? ruinaPropia(this, H, f0.k) : null;
+      if (kr) { const m = H.marcos[f0.k], e = ESP, p = P(t.r + .5 + (f0.dv || 0) * e, t.c + .5 + (f0.du || 0) * e, t.h);
+        this.obras[i].push(this.add.image(p[0], p[1], kr).setOrigin(m.ax / m.w, m.ay / m.h).setScale((f0.s || 1) * e / H.escala).setDepth(t.r + t.c + 1)); }
+      else this.obras[i].push(this.figura('edificios', 'ruina', t.r + .5, t.c + .5, t.h, (x.b === 'casa' ? .9 : 1.1) * ESP).setDepth(t.r + t.c + 1));
       this.desgasteVisible(i, 3);
       return;
     }
@@ -394,12 +402,10 @@ export class Mapa extends Phaser.Scene {
   // Grietas en el muro y maleza al pie de una obra descuidada.
   desgasteVisible(i, nivel, soloMaleza = false) {
     const t = this.T.tiles[i], H = this.hojas.edificios, base = !soloMaleza && this.obras[i].find(im => im.texture.key === 'edificios');
-    if (base) for (let k = 0; k < nivel - 1 + (i % 2); k++) {
-      const w = base.displayWidth, h = base.displayHeight, lado = (k % 2 ? 1 : -1) * (.1 + (i * 13 + k * 7) % 10 / 100);
-      // En los muros (la parte baja del dibujo), no en el techo.
-      const img = this.add.image(base.x + (base.flipX ? -lado : lado) * w, base.y - h * (.13 + (k % 2) * .05), 'edificios', 'grieta')
-        .setScale(.5 / H.escala).setDepth(base.depth + .01).setAlpha(nivel === 3 ? .95 : .75);
-      this.obras[i].push(img);
+    // El daño se pinta sobre la silueta de cada dibujo de la obra (Danos.js): humedad, pañete caído, grietas, vidrios rotos.
+    if (base && !this.S.map[i].ru) for (const im of this.obras[i].filter(o => o.texture.key === 'edificios' && !/^(grieta|maleza|humo|velas|sinCamino|bandera)/.test(o.frame.name))) {
+      const kd = capaDano(this, H, im.frame.name, nivel); if (!kd) continue;
+      this.obras[i].push(this.add.image(im.x, im.y, kd).setOrigin(im.originX, im.originY).setScale(im.scaleX, im.scaleY).setFlipX(im.flipX).setDepth(im.depth + .004));
     }
     // Maleza en los bordes de la casilla (sin tapar la fachada).
     const sitios = [[.9, .12], [.12, .9], [.55, .92], [.92, .55], [.1, .3], [.3, .1]];
