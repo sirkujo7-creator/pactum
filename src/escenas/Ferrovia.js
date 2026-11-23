@@ -8,41 +8,65 @@ import { reducirMovimiento } from './pantalla.js';
 const E = 3;
 const sen = p => Math.sin(p * Math.PI / 2), cos1 = p => 1 - Math.cos(p * Math.PI / 2);
 
-// Tren hacia abajo y a la derecha (eje de las columnas); el de las filas es su espejo.
+// Tren hacia abajo y a la derecha (eje de las columnas); el de las filas es su espejo. Redibujado con volumen (pedido de
+// Juan: redibujar los vehículos): vagón de carga de tablas con su puerta corrediza y bultos de café, coche de
+// pasajeros con ventanas y gente, locomotora con caldera de bandas, domo, chimenea de campana, cabina con techo,
+// barredera adelante y ruedas de radios con su biela. Luz arriba a la izquierda, como las casas.
 function hornearTren(tx) {
   if (tx.exists('tren')) return;
   const W = 150, H = 64, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E);
   const a = [.894, .447], b = [-.894, .447], x0 = 70, y0 = 44;
   const pt = (u, v, z = 0) => [x0 + a[0] * u + b[0] * v, y0 + a[1] * u + b[1] * v - z];
-  const poli = (pts, col) => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fillStyle = col; g.fill(); g.strokeStyle = 'rgba(40,30,20,.55)'; g.lineWidth = .5; g.stroke(); };
-  g.globalAlpha = .22; g.fillStyle = '#2A2118'; g.beginPath(); g.ellipse(x0 - 8, y0 + 2, 34, 5.5, .45, 0, 7); g.fill(); g.globalAlpha = 1; // sombra
-  const caja = (u0, u1, w, z0, h, cl, cr, ct, cf) => { // cara de frente-izquierda (v+), cara de frente (u+), techo
-    poli([pt(u0, w, z0), pt(u1, w, z0), pt(u1, w, z0 + h), pt(u0, w, z0 + h)], cl);
-    poli([pt(u1, -w, z0), pt(u1, w, z0), pt(u1, w, z0 + h), pt(u1, -w, z0 + h)], cr);
-    poli([pt(u0, -w, z0 + h), pt(u1, -w, z0 + h), pt(u1, w, z0 + h), pt(u0, w, z0 + h)], ct);
-  };
-  // vagones (de atrás hacia el frente): carga de café, pasajeros, locomotora
-  caja(-38, -22, 5.5, 3, 9, '#8E3B2E', '#6F2C22', '#A5503F');
-  caja(-20, -4, 5.5, 3, 9, '#C9A44A', '#A58733', '#DDBB62');
-  const u = (u0, u1, v, z) => [pt(u0, v, z), pt(u1, v, z)];
-  g.strokeStyle = '#4A3A24'; g.lineWidth = .8; for (const [p, q] of [u(-36, -24, 5.5, 8), u(-18, -6, 5.5, 8)]) { g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]); g.stroke(); }
-  caja(-1, 22, 5, 3, 7, '#2E3A28', '#202A1C', '#3E4D36'); // caldera
-  caja(-1, 8, 5.6, 3, 12, '#3A2A24', '#2A1D18', '#4C3B33'); // cabina
-  const ch = pt(17, 0, 10); g.fillStyle = '#1F1B18'; g.fillRect(ch[0] - 1.6, ch[1] - 8, 3.2, 8); g.fillStyle = '#C0392B'; g.fillRect(ch[0] - 2.4, ch[1] - 9, 4.8, 1.6); // chimenea
-  const fa = pt(22.4, 0, 6); g.fillStyle = '#F2D98A'; g.beginPath(); g.arc(fa[0], fa[1], 1.4, 0, 7); g.fill(); // farol
-  g.fillStyle = '#1F1B18'; for (const uu of [-30, -12, 4, 14]) { const w = pt(uu, 5.6, 2); g.beginPath(); g.arc(w[0], w[1], 2.2, 0, 7); g.fill(); }
+  const poli = (pts, col, borde = 'rgba(40,30,20,.55)') => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fillStyle = col; g.fill(); if (borde) { g.strokeStyle = borde; g.lineWidth = .4; g.stroke(); } };
+  const mez = (h, f) => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).map(x => Math.round(f < 0 ? x * (1 + f) : x + (255 - x) * f)); return '#' + v.map(x => Math.max(0, Math.min(255, x)).toString(16).padStart(2, '0')).join(''); };
+  // Caja: cara de lado (v = +w, con luz), cara de frente (u1) en sombra y techo.
+  const caja = (u0, u1, w, z0, h, col) => { const L = [pt(u0, w, z0), pt(u1, w, z0), pt(u1, w, z0 + h), pt(u0, w, z0 + h)]; poli(L, mez(col, .08)); poli([pt(u1, -w, z0), pt(u1, w, z0), pt(u1, w, z0 + h), pt(u1, -w, z0 + h)], mez(col, -.25)); poli([pt(u0, -w, z0 + h), pt(u1, -w, z0 + h), pt(u1, w, z0 + h), pt(u0, w, z0 + h)], mez(col, .22)); return L; };
+  const enLado = (L, u, v) => { const Lp = (p, q, f) => [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]; return Lp(Lp(L[0], L[1], u), Lp(L[3], L[2], u), v); };
+  const rect = (L, u0, u1, v0, v1, col, borde) => poli([enLado(L, u0, v0), enLado(L, u1, v0), enLado(L, u1, v1), enLado(L, u0, v1)], col, borde);
+  const rueda = (u, v, r) => { const p = pt(u, v, r); g.fillStyle = '#1E1A18'; g.beginPath(); g.ellipse(p[0], p[1], r * .9, r, -.46, 0, 7); g.fill(); g.strokeStyle = '#6A6E74'; g.lineWidth = .3; for (let k = 0; k < 6; k++) { const t = k / 6 * Math.PI * 2; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0] + Math.cos(t) * r * .8, p[1] + Math.sin(t) * r * .85); g.stroke(); } g.fillStyle = '#8A8E94'; g.beginPath(); g.arc(p[0], p[1], .5, 0, 7); g.fill(); };
+  g.globalAlpha = .22; g.fillStyle = '#2A2118'; g.beginPath(); g.ellipse(x0 - 8, y0 + 2, 36, 6, .45, 0, 7); g.fill(); g.globalAlpha = 1; // sombra
+  // Ruedas del lado de allá (asoman bajo la caja).
+  for (const u of [-35, -25, -17, -7, 3, 9, 15, 20]) rueda(u, -4.6, 2);
+  // Vagón de carga: tablas, puerta corrediza, techo curvo y bultos de café asomando.
+  { const L = caja(-38, -22, 5.5, 3.4, 9, '#8E3B2E'); for (let k = 1; k < 8; k++) rect(L, k / 8 - .005, k / 8 + .005, 0, 1, 'rgba(50,20,15,.5)', null); rect(L, .35, .65, .08, .9, '#7A2E24'); rect(L, .48, .52, .4, .6, '#C9A44A', null); poli([pt(-38, -5.5, 12.4), pt(-22, -5.5, 12.4), pt(-22, 0, 13.6), pt(-38, 0, 13.6)], '#5A2A22'); }
+  // Coche de pasajeros: crema y verde, ventanas con gente y techo con su linterna.
+  { const L = caja(-20, -4, 5.5, 3.4, 9.4, '#E8DCB8'); rect(L, 0, 1, 0, .32, '#3E6B4A', null); for (let k = 0; k < 5; k++) { const u0 = .07 + k * .18; rect(L, u0, u0 + .12, .5, .85, '#3A3A40'); const m = enLado(L, u0 + .06, .62); g.fillStyle = ['#C98E62', '#A8734C', '#E0B08A'][k % 3]; g.beginPath(); g.arc(m[0], m[1], .9, 0, 7); g.fill(); } caja(-17, -7, 2, 12.8, 1.2, '#5A4A3A'); }
+  // Enganches.
+  for (const u of [-21, -3]) { const p = pt(u, 0, 5); g.fillStyle = '#2A2A2E'; g.fillRect(p[0] - 1, p[1] - .6, 2, 1.2); }
+  // Tender con carbón.
+  { const L = caja(-1, 6, 5, 3.4, 6.5, '#2E3A28'); rect(L, 0, 1, .82, 1, '#B8A060', null); for (let k = 0; k < 7; k++) { const p = pt(-.4 + k, (k % 3 - 1) * 2.4, 10.4); g.fillStyle = '#1A1A1C'; g.beginPath(); g.ellipse(p[0], p[1], 1.4, .8, 0, 0, 7); g.fill(); } }
+  // Cabina del maquinista con techo voladizo y ventana.
+  { const L = caja(6, 11, 5.6, 3.4, 11.5, '#3A2A24'); rect(L, .2, .8, .55, .85, '#E8C870'); caja(5.4, 11.8, 6.2, 14.9, .7, '#22201E'); }
+  // Caldera con bandas de bronce, domo y chimenea de campana.
+  { const L = caja(11, 22, 4.4, 3.4, 7.8, '#26302A'); for (const u of [.2, .5, .8]) rect(L, u - .02, u + .02, 0, 1, '#B8964A', null); const d = pt(15, 0, 11.2); g.fillStyle = '#B8964A'; g.beginPath(); g.ellipse(d[0], d[1] - 1.2, 2, 1.6, 0, 0, 7); g.fill(); }
+  { const ch = pt(19.5, 0, 11.2); g.fillStyle = '#1F1B18'; g.fillRect(ch[0] - 1.3, ch[1] - 6, 2.6, 6); g.beginPath(); g.moveTo(ch[0] - 1.3, ch[1] - 6); g.lineTo(ch[0] - 2.8, ch[1] - 8.6); g.lineTo(ch[0] + 2.8, ch[1] - 8.6); g.lineTo(ch[0] + 1.3, ch[1] - 6); g.closePath(); g.fill(); g.fillStyle = '#B5392B'; g.fillRect(ch[0] - 2.8, ch[1] - 9.2, 5.6, .8); }
+  { const fa = pt(22.2, 0, 8.6); g.fillStyle = '#F2D98A'; g.beginPath(); g.arc(fa[0], fa[1], 1.3, 0, 7); g.fill(); g.fillStyle = 'rgba(255,240,180,.35)'; g.beginPath(); g.arc(fa[0], fa[1], 2.4, 0, 7); g.fill(); } // farol
+  poli([pt(22, -4, 3), pt(22, 4, 3), pt(25, 0, .4)], '#8A2E24'); // barredera
+  // Ruedas del lado de acá, con la biela de la locomotora.
+  for (const u of [-35, -25, -17, -7, 3]) rueda(u, 5.6, 2);
+  for (const u of [9, 15, 20]) rueda(u, 5.6, 2.6);
+  { const p1 = pt(9, 5.6, 2.6), p2 = pt(20, 5.6, 2.6); g.strokeStyle = '#9A9EA4'; g.lineWidth = .7; g.beginPath(); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); g.stroke(); }
   tx.addCanvas('tren', c);
 }
-// Avión de hélice visto de lado, hacia la derecha.
+// Avión de hélice de lado, hacia la derecha: fuselaje plateado con franja, ventanillas, cabina, cola con la bandera,
+// ala con su motor y la hélice como un disco borroso, y el tren de aterrizaje.
 function hornearAvion(tx) {
   if (tx.exists('avion')) return;
   const W = 60, H = 30, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E);
-  g.strokeStyle = 'rgba(40,30,20,.6)'; g.lineWidth = .6;
-  g.fillStyle = '#E7DFC9'; g.beginPath(); g.ellipse(30, 15, 17, 4.2, 0, 0, 7); g.fill(); g.stroke();
-  g.fillStyle = '#B5392B'; g.beginPath(); g.moveTo(13, 14); g.lineTo(7, 7); g.lineTo(11, 7); g.lineTo(19, 13); g.closePath(); g.fill(); g.stroke(); // cola
-  g.fillStyle = '#C9B98E'; g.beginPath(); g.moveTo(26, 15); g.lineTo(34, 24); g.lineTo(40, 24); g.lineTo(37, 14); g.closePath(); g.fill(); g.stroke(); // ala
-  g.fillStyle = '#6E8FA6'; g.beginPath(); g.ellipse(35, 12.6, 4, 2, 0, 0, 7); g.fill();
-  g.strokeStyle = '#3A2A1C'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(47.5, 11); g.lineTo(47.5, 19); g.stroke(); // hélice
+  g.strokeStyle = 'rgba(40,30,20,.55)'; g.lineWidth = .4;
+  g.fillStyle = '#9AA2A8'; g.beginPath(); g.moveTo(27, 15.6); g.lineTo(18, 20.5); g.lineTo(21, 20.8); g.lineTo(33, 16); g.closePath(); g.fill(); g.stroke(); // ala de allá
+  const gr = g.createLinearGradient(0, 10, 0, 20); gr.addColorStop(0, '#F4F4F2'); gr.addColorStop(.5, '#D8DCDE'); gr.addColorStop(1, '#A8B0B4');
+  g.fillStyle = gr; g.beginPath(); g.moveTo(8, 13.6); g.quadraticCurveTo(20, 10.8, 40, 11.6); g.quadraticCurveTo(48, 12, 49.4, 15); g.quadraticCurveTo(48, 18, 40, 18.4); g.quadraticCurveTo(20, 19, 8, 15.8); g.closePath(); g.fill(); g.stroke(); // fuselaje
+  g.fillStyle = '#B5392B'; g.fillRect(12, 15, 34, .9); // franja
+  g.fillStyle = '#2E4A5E'; for (let k = 0; k < 7; k++) { g.beginPath(); g.ellipse(18 + k * 3.4, 13.6, .9, .7, 0, 0, 7); g.fill(); } // ventanillas
+  g.fillStyle = '#3E6A86'; g.beginPath(); g.moveTo(43, 12.4); g.quadraticCurveTo(46.6, 12.2, 47.8, 14); g.lineTo(43.4, 14); g.closePath(); g.fill(); // cabina
+  g.fillStyle = '#D8DCDE'; g.beginPath(); g.moveTo(9, 13.8); g.lineTo(5, 5.6); g.lineTo(9, 5.6); g.lineTo(15, 13); g.closePath(); g.fill(); g.stroke(); // cola
+  [['#E8B828', 6.6], ['#2E6BA0', 7.9], ['#C8283A', 9.2]].forEach(([col, y]) => { g.fillStyle = col; g.fillRect(6.1 + (y - 5.6) * .4, y, 3.6, 1.2); }); // bandera
+  g.fillStyle = '#C4CACE'; g.beginPath(); g.moveTo(5, 14.6); g.lineTo(13, 14.4); g.lineTo(12, 16.2); g.closePath(); g.fill(); g.stroke(); // estabilizador
+  g.fillStyle = '#C4CACE'; g.beginPath(); g.moveTo(26, 16); g.lineTo(32, 24.6); g.lineTo(37, 24.6); g.lineTo(35, 16.2); g.closePath(); g.fill(); g.stroke(); // ala de acá
+  g.fillStyle = '#8A9298'; g.beginPath(); g.ellipse(34, 18.8, 3.4, 1.6, 0, 0, 7); g.fill(); g.stroke(); // motor
+  g.fillStyle = 'rgba(60,60,64,.25)'; g.beginPath(); g.ellipse(37.6, 18.8, .7, 3.6, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(60,60,64,.25)'; g.beginPath(); g.ellipse(49.8, 15, .6, 3.4, 0, 0, 7); g.fill(); // hélices girando
+  g.strokeStyle = '#3A3A3E'; g.lineWidth = .5; for (const x of [22, 36]) { g.beginPath(); g.moveTo(x, 18.6); g.lineTo(x, 22.4); g.stroke(); g.fillStyle = '#1E1E22'; g.beginPath(); g.arc(x, 22.8, .9, 0, 7); g.fill(); } // tren de aterrizaje
   tx.addCanvas('avion', c);
 }
 
@@ -113,3 +137,4 @@ export class Ferrovia {
     v.sombra.setPosition(x, y).setScale(1 - h / 300).setDepth(t.r + t.c + .5).setAlpha(.3 * (1 - h / 220));
   }
 }
+export { hornearTren, hornearAvion }; // para la página de prueba

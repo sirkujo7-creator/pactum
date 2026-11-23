@@ -4,6 +4,7 @@ import { FR, mulberry, shade, mix, lienzo, pintar, cajaIso, urlDe, RES_HOJA } fr
 import { hornearGente } from './gente.js';
 import { P } from './iso.js';
 import { ESTILO_CALLE } from './terreno.js';
+import { cajaPx, ruedaIso, rellena, mezcla, sombraPie, cilindro } from './casas.js';
 
 // Caja de un vehículo orientada por su eje ('c' o 'r'), en el punto (r, c) del mundo.
 function caja(g, r, c, eje, largo, ancho, alto, z0, cols, rng) {
@@ -66,6 +67,75 @@ function carretaBueyes(g, paso) {
   g.fillStyle = '#3A2A1E'; g.beginPath(); g.arc(cx, cy, .9, 0, 7); g.fill();
 }
 
+// ---------- Camión y chiva con volumen (pedido de Juan: «un camión súper mal dibujado») ----------
+// Cada uno se arma con cajas isométricas (luz arriba a la izquierda) a lo largo de su eje, con el frente hacia donde va:
+// s es la posición a lo largo (en casillas, + adelante) y t al través (+ hacia el que mira). Se pintan de atrás hacia
+// adelante según la profundidad, con las ruedas del lado de allá primero y las de acá al final.
+function armar(g, eje, dir) {
+  const Sg = s => s * dir, PP = (r, c, z = 0) => [(c - r) * 32, (c + r) * 16 - z];
+  const at = (s, t, z = 0) => eje === 'c' ? PP(t, Sg(s), z) : PP(Sg(s), t, z);
+  const caja = (s, t, ls, lt, h, z0, col, op = {}) => { const p = at(s, t); return eje === 'c' ? cajaPx(g, p[0], p[1], ls, lt, h, col, { z0, ...op }) : cajaPx(g, p[0], p[1], lt, ls, h, col, { z0, ...op }); };
+  const lado = B => eje === 'c' ? B.izq : B.der, frente = B => dir > 0 ? (eje === 'c' ? B.der : B.izq) : null;
+  const atras = B => dir < 0 ? (eje === 'c' ? B.der : B.izq) : null;
+  // Pedazo de una cara: u a lo largo (0..1 en el orden de la cara), v de abajo (0) a arriba (1).
+  const sub = (F, u0, u1, v0, v1) => { const Lp = (a, b, f) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f], q = (u, v) => Lp(Lp(F[0], F[1], u), Lp(F[3], F[2], u), v); return [q(u0, v0), q(u1, v0), q(u1, v1), q(u0, v1)]; };
+  // En la cara de lado, u crece hacia +c (eje c) o hacia −r (eje r): «hacia adelante» depende de dir.
+  const uAdel = u => (eje === 'c' ? dir > 0 : dir < 0) ? u : 1 - u;
+  const rueda = (s, t, r, op = {}) => { const p = at(s, t, 0); ruedaIso(g, p[0], p[1] - r * .95, r, { llanta: '#232326', rin: op.rin || '#9A9EA2', dir: eje === 'c' ? 1 : -1 }); };
+  return { at, caja, lado, frente, atras, sub, uAdel, rueda, Sg };
+}
+function camionIso(g, eje, dir) {
+  const A = armar(g, eje, dir), cab = '#2F6BA0', cabL = '#4A86BA';
+  sombraPie(g, 0, 0, 13, 4.6, .22);
+  for (const s of [-.15, .14]) A.rueda(s, -.085, 2);
+  const partes = [
+    [-.06, () => { // platón de estacas con la carga de café
+      const B = A.caja(-.06, 0, .32, .17, 4.6, 2.6, '#9A7046', { izq: '#B0824E', top: '#5E4228' });
+      for (const F of [A.lado(B), A.atras(B)]) if (F) { for (let k = 1; k < 6; k++) rellena(g, A.sub(F, k / 6 - .01, k / 6 + .01, 0, 1), 'rgba(60,40,22,.55)', null); rellena(g, A.sub(F, 0, 1, .46, .52), 'rgba(60,40,22,.45)', null); }
+      for (let k = 0; k < 6; k++) { const s = -.18 + (k % 3) * .08, t = (Math.floor(k / 3) - .5) * .07, p = A.at(s, t, 7.6); g.fillStyle = k % 2 ? '#C9B48A' : '#BFA87C'; g.beginPath(); g.ellipse(p[0], p[1], 3, 1.8, 0, 0, 7); g.fill(); g.strokeStyle = 'rgba(110,80,40,.6)'; g.lineWidth = .3; g.stroke(); g.beginPath(); g.moveTo(p[0] - 2.4, p[1] + .1); g.lineTo(p[0] + 2.4, p[1] - .1); g.stroke(); } // bultos de café
+      const p = A.at(-.06, 0, 9); for (let k = 0; k < 3; k++) { g.strokeStyle = 'rgba(80,60,30,.55)'; g.lineWidth = .3; g.beginPath(); g.moveTo(p[0] - 5 + k * 2, p[1] - 1); g.lineTo(p[0] - 3 + k * 2, p[1] + 2); g.stroke(); } // cabuya
+    }],
+    [.17, () => { // cabina con vidrio, puerta y techo
+      const B = A.caja(.17, 0, .11, .16, 7, 2.6, cab, { izq: cabL, top: '#6A9CC8' });
+      const L = A.lado(B); rellena(g, A.sub(L, A.uAdel(.2) < .5 ? .15 : .1, A.uAdel(.2) < .5 ? .9 : .85, .55, .9), '#BFD8E4', 'rgba(30,40,50,.6)'); rellena(g, A.sub(L, .2, .26, .1, .5), 'rgba(20,30,40,.45)', null); // ventana y manija
+      const F = A.frente(B); if (F) { rellena(g, A.sub(F, .08, .92, .55, .92), '#CFE4EE', 'rgba(30,40,50,.6)'); rellena(g, A.sub(F, .1, .5, .62, .88), 'rgba(255,255,255,.35)', null); }
+    }],
+    [.25, () => { // trompa con persiana, farolas y bómper
+      const B = A.caja(.255, 0, .06, .15, 3.8, 2.4, cab, { izq: cabL, top: '#5A8EBC' });
+      const F = A.frente(B); if (F) { rellena(g, A.sub(F, .25, .75, .25, .85), '#2A3036', null); for (let k = 0; k < 4; k++) rellena(g, A.sub(F, .27, .73, .32 + k * .14, .37 + k * .14), '#8A9298', null); for (const u of [.12, .88]) { const q = A.sub(F, u - .07, u + .07, .5, .75); rellena(g, q, '#F4E8B8', 'rgba(60,50,30,.6)'); } }
+      A.caja(.29, 0, .012, .16, .9, 1.6, '#B8BCC0', { borde: null });
+    }]
+  ].sort((a, b) => A.Sg(a[0]) - A.Sg(b[0]));
+  for (const [, f] of partes) f();
+  for (const s of [-.15, .14]) A.rueda(s, .085, 2);
+}
+// Chiva: bus de madera de colores con ventanas abiertas, pasajeros, parrilla en el techo con bultos y racimos, y la
+// escalera de atrás.
+function chivaIso(g, eje, dir) {
+  const A = armar(g, eje, dir), colores = ['#C8283A', '#E8B828', '#2E6BA0', '#2E9A4A'];
+  sombraPie(g, 0, 0, 14, 4.8, .22);
+  for (const s of [-.17, .15]) A.rueda(s, -.09, 2.1, { rin: '#C8283A' });
+  const partes = [
+    [-.03, () => {
+      const B = A.caja(-.03, 0, .38, .18, 8.4, 2.4, '#F2E6C8', { izq: '#FAF0D8', top: '#E8DCC0' });
+      for (const F of [A.lado(B), A.atras(B)]) if (!F) continue; else { colores.forEach((col, k) => rellena(g, A.sub(F, 0, 1, .06 + k * .06, .12 + k * .06), col, null)); }
+      const L = A.lado(B);
+      for (let k = 0; k < 5; k++) { const u0 = .06 + k * .18; rellena(g, A.sub(L, u0, u0 + .13, .5, .86), '#3A3028', 'rgba(30,20,10,.6)'); const m = A.sub(L, u0 + .03, u0 + .1, .55, .72); g.fillStyle = ['#C98E62', '#A8734C', '#E0B08A'][k % 3]; const c = [(m[0][0] + m[2][0]) / 2, (m[0][1] + m[2][1]) / 2]; g.beginPath(); g.arc(c[0], c[1], 1, 0, 7); g.fill(); if (k % 2) { g.fillStyle = '#F4EFE2'; g.beginPath(); g.ellipse(c[0], c[1] - 1, 1.5, .5, 0, 0, 7); g.fill(); } } // ventanas con pasajeros
+      rellena(g, A.sub(L, 0, 1, .92, 1), '#C8283A', null);
+      const Ab = A.atras(B); if (Ab) for (let k = 0; k < 5; k++) rellena(g, A.sub(Ab, .44, .56, .2 + k * .16, .24 + k * .16), '#5A3A22', null); // escalera
+      const T = A.caja(-.03, 0, .34, .16, .4, 10.8, '#6E4529', { top: '#8A5A36', borde: null }); void T; // parrilla
+      for (let k = 0; k < 5; k++) { const s = -.17 + k * .07, p = A.at(s, (k % 2 - .5) * .06, 12.2); g.fillStyle = k === 2 ? '#8FAE4A' : k % 2 ? '#C9B48A' : '#BFA87C'; g.beginPath(); g.ellipse(p[0], p[1], 2.6, 1.8, 0, 0, 7); g.fill(); g.strokeStyle = 'rgba(90,60,30,.5)'; g.lineWidth = .3; g.stroke(); } // bultos y un racimo
+    }],
+    [.21, () => {
+      const B = A.caja(.215, 0, .07, .16, 4.2, 2.2, '#C8283A', { izq: '#D84050', top: '#E8B828' });
+      const F = A.frente(B); if (F) { rellena(g, A.sub(F, .25, .75, .25, .85), '#2A3036', null); for (const u of [.12, .88]) rellena(g, A.sub(F, u - .07, u + .07, .5, .75), '#F4E8B8', 'rgba(60,50,30,.6)'); }
+      { const p = A.at(.19, 0, 9.6); rellena(g, [[p[0] - 4, p[1] - .4], [p[0] + 4, p[1] - .4], [p[0] + 4, p[1] + 1.2], [p[0] - 4, p[1] + 1.2]], '#2E6BA0', null); } // letrero del destino
+    }]
+  ].sort((a, b) => A.Sg(a[0]) - A.Sg(b[0]));
+  for (const [, f] of partes) f();
+  for (const s of [-.17, .15]) A.rueda(s, .09, 2.1, { rin: '#C8283A' });
+}
+
 // Dibuja un vehículo en el origen. eje 'c' o 'r'; dir +1 o −1; paso 0..3 (patas de la mula y del arriero).
 function vehiculo(g, era, eje, dir, paso, vi) {
   const rng = mulberry(7), adelante = (eje === 'c' ? [0, .14] : [.14, 0]).map(x => x * dir);
@@ -81,29 +151,15 @@ function vehiculo(g, era, eje, dir, paso, vi) {
   } else if (era === 'carreta') {
     const derecha = (eje === 'c') === (dir > 0);
     g.save(); if (!derecha) g.scale(-1, 1); g.scale(.95, .95); g.translate(-2, 0); carretaBueyes(g, paso); g.restore();
-  } else if (era === 'empedrado') {
-    // Chiva: bus de madera pintado de colores, con carga en el techo.
-    const { B, up } = caja(g, 0, 0, eje, .36, .16, 9, 2, [FR.ocre, shade(FR.ocre, -.15), FR.rojo], rng);
-    for (const [cara, sh] of [[B.izq, 0], [B.der, -.15]]) {
-      for (const [v0, v1, col] of [[.15, .32, FR.rojo], [.32, .48, FR.azul], [.48, .6, FR.verde]]) pintar(g, [L(cara[0], cara[3], v0), L(cara[1], cara[2], v0), L(cara[1], cara[2], v1), L(cara[0], cara[3], v1)].map(up), shade(col, sh), rng, { n: 0, borde: false });
-      for (let k = 0; k < 4; k++) { const u0 = .1 + k * .21; pintar(g, [L(L(cara[0], cara[1], u0), L(cara[3], cara[2], u0), .66), L(L(cara[0], cara[1], u0 + .14), L(cara[3], cara[2], u0 + .14), .66), L(L(cara[0], cara[1], u0 + .14), L(cara[3], cara[2], u0 + .14), .92), L(L(cara[0], cara[1], u0), L(cara[3], cara[2], u0), .92)].map(up), '#3A3532', rng, { n: 0, bw: .3 }); }
-    }
-    caja(g, 0, 0, eje, .22, .1, 2.5, 11, [FR.cal, shade(FR.cal, -.15), FR.ocreClaro], rng);
-    ruedas(g, B, up, [.15, .85]);
-  } else {
-    // Camión: platón con carga y cabina azul adelante.
-    const { B, up } = caja(g, -adelante[0] * .5, -adelante[1] * .5, eje, .26, .15, 6, 2, ['#8A7A5A', '#6E6048', '#9C8C6A'], rng);
-    caja(g, -adelante[0] * .5, -adelante[1] * .5, eje, .22, .12, 4, 8, [FR.ocreClaro, shade(FR.ocreClaro, -.15), FR.ocre], rng);
-    caja(g, adelante[0] * .9, adelante[1] * .9, eje, .1, .15, 8, 2, [FR.azul, shade(FR.azul, -.2), shade(FR.azul, .2)], rng);
-    ruedas(g, B, up, [.2, .8]);
-  }
+  } else if (era === 'empedrado') chivaIso(g, eje, dir); // chiva de colores
+  else camionIso(g, eje, dir); // camión de estacas
 }
 
 // Hoja de vehículos: claves `${era}_${eje}_${+|-}_${paso}` (los carros tienen solo el paso 0).
 let HOJA = null;
 export function hornearVehiculos() {
   if (HOJA) return HOJA;
-  const E = RES_HOJA, w = 44, h = 34, ax = 22, ay = 24, claves = [];
+  const E = RES_HOJA, w = 52, h = 40, ax = 26, ay = 28, claves = [];
   // Cada arriero conserva su ropa (vi) en los cuatro pasos; antes cambiaba de color en cada paso.
   for (const era of ['herradura', 'carreta', 'empedrado', 'carretera']) for (const eje of ['c', 'r']) for (const dir of [1, -1]) for (let p = 0; p < (era === 'herradura' || era === 'carreta' ? 4 : 1); p++) for (let vi = 0; vi < (era === 'herradura' ? 3 : 1); vi++) claves.push([era, eje, dir, p, vi]);
   const cols = 8, cv = lienzo(cols * w * E, Math.ceil(claves.length / cols) * h * E), g = cv.getContext('2d'), marcos = {};

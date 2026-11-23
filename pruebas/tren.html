@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Tren y avión</title>
+<style>body{background:#9FB070;margin:0;padding:10px}canvas{margin:6px;width:auto;height:240px;image-rendering:auto}</style>
+<script type="module">
+// Página de prueba: tren, avión, torre y cabina del cable aéreo, tal como se hornean.
+import { hornearTren, hornearAvion } from '../src/escenas/Ferrovia.js';
+import { hornearTransporte } from '../src/escenas/Transporte.js';
+const tx = { exists: () => false, addCanvas: (k, c) => document.body.appendChild(c) };
+hornearTren(tx); hornearAvion(tx); hornearTransporte(tx);
+</script>
