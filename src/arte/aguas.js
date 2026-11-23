@@ -78,7 +78,7 @@ function hojaJunco(g, x, y, h, a) { g.moveTo(x - .35, y); g.lineTo(x + Math.sin(
 // Pinta lagos, quebradas, lodo de orilla y charcos de las casillas del sector k (el llamador recorta a su zona).
 export function pintarAguas(g, T, k, mapa, dry) {
   const N = T.N, { lagos, quebradas } = aguasDe(T), dentro = (r, c, m = 2) => r >= k.r0 - m && r <= k.r1 + m && c >= k.c0 - m && c <= k.c1 + m;
-  const libre = (r, c) => { const R = Math.floor(r), C = Math.floor(c); if (R < 0 || C < 0 || R >= N || C >= N) return true; const x = mapa && mapa[R * N + C]; return !x || (!x.b && x.pt === undefined); };
+  const libre = (r, c) => { const R = Math.floor(r), C = Math.floor(c); if (R < 0 || C < 0 || R >= N || C >= N) return true; const x = mapa && mapa[R * N + C]; return !x || (!x.b && x.pt === undefined && !(x.mk && x.mk.g)); };
   // Quebradas: orilla húmeda, lodo, agua que se ensancha aguas abajo, brillos y piedras.
   for (const q of quebradas) {
     if (!q.some(p => dentro(p.r, p.c))) continue;

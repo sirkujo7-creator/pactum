@@ -211,7 +211,7 @@ export class Mapa extends Phaser.Scene {
   plantasDecorativas(i) {
     const L = this.plantasPorCasilla[i] || [], N = this.T.N, r = Math.floor(i / N), c = i % N;
     let junto = false;
-    for (let dr = -1; dr <= 1 && !junto; dr++) for (let dc = -1; dc <= 1; dc++) { const R = r + dr, Cc = c + dc; if ((dr || dc) && R >= 0 && Cc >= 0 && R < N && Cc < N && CLARO.has(this.S.map[R * N + Cc].b)) { junto = true; break; } }
+    for (let dr = -1; dr <= 1 && !junto; dr++) for (let dc = -1; dc <= 1; dc++) { const R = r + dr, Cc = c + dc; if ((dr || dc) && R >= 0 && Cc >= 0 && R < N && Cc < N) { const y = this.S.map[R * N + Cc]; if (CLARO.has(y.b) || y.pt !== undefined || (y.mk && y.mk.g)) { junto = true; break; } } } // tampoco junto a las obras y huellas grandes
     return junto ? L.filter(o => !ARBOL_GRANDE.has(o.k)) : L;
   }
   // Siluetas de los edificios cerca de un sector, para su sombra en el suelo.

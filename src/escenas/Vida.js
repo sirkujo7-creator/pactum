@@ -260,8 +260,8 @@ export class Vida {
   }
   // Perro: recorre el pueblo por casillas libres y se sienta a ratos.
   perro(a, dt, N, S) {
-    if (a.ruta) { this.mover(a, dt, .5); a.img.setFrame(a.ruta ? 'perro' + (Math.floor(a.fase) % 12) : 'perroS'); this.dibujar(a); return; }
-    a.img.setFrame('perroS'); // descansa sentado
+    if (a.ruta) { this.mover(a, dt, .5); a.img.setFrame(a.ruta ? 'perro' + (Math.floor(a.fase) % 12) : 'perroS'); if (!a.ruta) a.echado = azar(0, 1) < .4; this.dibujar(a); return; }
+    a.img.setFrame(a.echado ? 'perroE' : 'perroS'); // descansa sentado o echado
     a.espera -= dt;
     if (a.espera > 0) return;
     for (let k = 0; k < 10; k++) {

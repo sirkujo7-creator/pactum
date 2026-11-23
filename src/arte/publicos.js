@@ -3209,7 +3209,7 @@ function cementerioLargo(g, h) {
 function genteC(g, pts) { const ropas = ['#2F5D8A', '#C9A86A', '#B9442F', '#3E6B4A', '#E8E4DA']; pts.forEach(([r, c], k) => chico(g, r, c, (x, y) => personaM(g, x, y, ropas[k % ropas.length], null, ['#C98E62', '#A8704A', '#8A5A3A'][k % 3]), .72)); }
 function pastoHuella(g, col) { rellena(g, [P(-.96, -.96), P(-.96, .96), P(.96, .96), P(.96, -.96)], col, null); }
 function aeropuertoGrande(g, h) {
-  h = Math.max(3, h); sombraHuella(g, .96, .96); pastoHuella(g, '#93B266');
+  h = Math.max(3, h); // sin base verde: se ve el suelo natural del mapa (pedido de Juan)
   // pista a lo largo, al frente
   rellena(g, [P(.24, -.96), P(.24, .96), P(.5, .96), P(.5, -.96)], '#4A4E52', 'rgba(30,30,30,.4)', .3);
   g.strokeStyle = '#F4F1E8'; g.lineWidth = .8; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(...P(.37, -.86)); g.lineTo(...P(.37, .86)); g.stroke(); g.setLineDash([]);
@@ -3232,7 +3232,7 @@ function aeropuertoGrande(g, h) {
   // hangar y avioneta guardada
   bovedaLamina(g, -.58, .72, .36, .4, 6, 7, h === 5 ? '#B8C4CC' : '#A8B0B4');
   // camión de combustible y manga de viento
-  { const c = P(.08, -.12); camion(g, c[0], c[1], '#E8C23A', '#D8DCDE', false); }
+  { const c = P(.08, -.12); g.save(); g.translate(c[0], c[1]); g.scale(.6, .6); camion(g, 0, 0, '#E8C23A', '#D8DCDE', false); g.restore(); }
   { const p = P(.6, .9); cajaPx(g, p[0], p[1], .012, .012, 10, '#8A8E92', { borde: null }); for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#F4F1E8' : '#E86A2A'; g.beginPath(); g.moveTo(p[0] + k * 2, p[1] - 10 + k * .3); g.lineTo(p[0] + (k + 1) * 2, p[1] - 10 + (k + 1) * .3); g.lineTo(p[0] + (k + 1) * 2, p[1] - 8 - (k + 1) * .1); g.lineTo(p[0] + k * 2, p[1] - 8 - k * .1); g.closePath(); g.fill(); } }
   genteC(g, [[-.1, .3], [-.08, .36]]);
   const b = P(-.3, -.86); bandera(g, b[0], b[1], 22, TRICOLOR);
@@ -3245,7 +3245,7 @@ function frailejon(g, r, c, s = 1) {
   g.fillStyle = '#E8C23A'; g.beginPath(); g.arc(.6, -12.4, .7, 0, 7); g.arc(-1.2, -11.8, .6, 0, 7); g.fill(); g.restore();
 }
 function jardinGrande(g, h) {
-  h = Math.max(2, h); sombraHuella(g, .96, .96); pastoHuella(g, '#8AB062');
+  h = Math.max(2, h);
   g.strokeStyle = '#D8CDB4'; g.lineWidth = 2; { const c = P(.1, .1); g.beginPath(); g.ellipse(c[0], c[1], 34, 17, 0, 0, 7); g.stroke(); } g.beginPath(); g.moveTo(...P(.96, .3)); g.lineTo(...P(.5, .3)); g.stroke(); // sendero en anillo
   bovedaLamina(g, -.56, -.12, .9, .4, 7, 8, '#B8DCD4', '#E8ECE8'); // invernadero de vidrio y hierro
   { const c = P(.16, .44); g.fillStyle = '#5E8EA2'; g.beginPath(); g.ellipse(c[0], c[1], 16, 7, 0, 0, 7); g.fill(); g.strokeStyle = 'rgba(80,70,50,.5)'; g.lineWidth = .8; g.stroke(); for (let k = 0; k < 8; k++) { g.fillStyle = '#5E8A3E'; g.beginPath(); g.ellipse(c[0] - 10 + k * 3, c[1] - 2 + (k % 3) * 1.6, 1.4, .6, 0, 0, 7); g.fill(); if (k % 3 === 0) { g.fillStyle = '#F4C0D0'; g.beginPath(); g.arc(c[0] - 10 + k * 3, c[1] - 2.6 + (k % 3) * 1.6, .6, 0, 7); g.fill(); } }
@@ -3259,13 +3259,16 @@ function jardinGrande(g, h) {
   porteriaU(g, .97, .1, .5, 'JARDÍN BOTÁNICO MUTIS', '#C8B896', 10);
 }
 function parqueNevadosGrande(g, h) {
-  h = Math.max(2, h); sombraHuella(g, .96, .96); pastoHuella(g, '#9AA26A');
+  h = Math.max(2, h);
   for (let k = 0; k < 40; k++) { const r = -.9 + ((k * 29) % 100) / 100 * 1.8, c = -.9 + ((k * 53) % 100) / 100 * 1.8, p = P(r, c); for (let h2 = 0; h2 < 4; h2++) hojaP(g, p[0], p[1], -Math.PI / 2 + (h2 - 1.5) * .35, 2.4, .4, h2 % 2 ? '#B8A86A' : '#9A9A5A', false); } // pajonal del páramo
-  for (const [r, c, w] of [[-.7, -.5, 9], [-.5, .5, 7], [.4, -.7, 6]]) { const p = P(r, c); rellena(g, [[p[0] - w, p[1]], [p[0] - w * .6, p[1] - w * .5], [p[0] + w * .3, p[1] - w * .62], [p[0] + w, p[1] - w * .1], [p[0] + w * .3, p[1] + w * .2]], '#8A8478', 'rgba(50,45,40,.5)', .3); rellena(g, [[p[0] - w * .6, p[1] - w * .5], [p[0] + w * .3, p[1] - w * .62], [p[0] + w * .1, p[1] - w * .2]], '#A8A296', null); } // peñas
-  { const c = P(.0, .3); g.fillStyle = '#2E5E7A'; g.beginPath(); g.ellipse(c[0], c[1], 20, 9, -.1, 0, 7); g.fill(); g.fillStyle = 'rgba(220,240,250,.35)'; g.beginPath(); g.ellipse(c[0] - 6, c[1] - 2, 8, 1.6, 0, 0, 7); g.fill(); g.strokeStyle = '#7A6A4A'; g.lineWidth = .8; g.beginPath(); g.ellipse(c[0], c[1], 20, 9, -.1, 0, 7); g.stroke(); } // laguna
+  { const c = P(.0, .3), forma = (s, dy = 0) => { g.beginPath(); for (let k = 0; k <= 24; k++) { const a = k / 24 * Math.PI * 2, rr = 1 + .12 * Math.sin(a * 3 + 1) + .07 * Math.cos(a * 5); const x = c[0] + Math.cos(a) * 20 * s * rr, y = c[1] + dy + Math.sin(a) * 9 * s * rr; k ? g.lineTo(x, y) : g.moveTo(x, y); } g.closePath(); };
+    g.save(); g.globalAlpha = .35; forma(1.22, .6); g.fillStyle = '#7A6E50'; g.fill(); g.globalAlpha = .55; forma(1.1, .3); g.fillStyle = '#6E6448'; g.fill(); g.restore(); // orilla de turba que se funde con el pajonal
+    const gr = g.createRadialGradient(c[0] - 4, c[1] - 1, 2, c[0], c[1], 22); gr.addColorStop(0, '#2A5670'); gr.addColorStop(.7, '#3E7088'); gr.addColorStop(1, '#6E9AA2'); forma(1); g.fillStyle = gr; g.fill();
+    g.fillStyle = 'rgba(220,240,250,.32)'; g.beginPath(); g.ellipse(c[0] - 6, c[1] - 2, 8, 1.4, 0, 0, 7); g.ellipse(c[0] + 5, c[1] + 2, 5, .9, 0, 0, 7); g.fill(); // cielo reflejado
+    for (let k = 0; k < 14; k++) { const a = .3 + k / 14 * 2.6, x = c[0] + Math.cos(a) * 21, y = c[1] + Math.sin(a) * 9.6; for (let j = 0; j < 3; j++) hojaP(g, x + j * .6, y, -Math.PI / 2 + (j - 1) * .3, 3 + (k % 3), .4, j % 2 ? '#6E7A42' : '#8A8E52', false); } } // juncos de la orilla de adelante
   for (let k = 0; k < 16; k++) { const r = -.5 + ((k * 37) % 100) / 100 * 1.3, c = -.5 + ((k * 61) % 100) / 100 * 1.4; if (Math.hypot(r - .0, c - .3) < .3) continue; frailejon(g, r, c, 1 + ((k * 13) % 5) * .1); }
   for (const [r, c] of [[.4, -.6], [-.2, .7], [.7, .2]]) { const p = P(r, c); rellena(g, [[p[0] - 4, p[1]], [p[0] - 2, p[1] - 3.4], [p[0] + 2, p[1] - 4], [p[0] + 4.4, p[1] - .6], [p[0] + 1, p[1] + 1.4]], '#9A9488', 'rgba(50,45,40,.5)', .3); } // piedras
-  g.strokeStyle = '#C8B48A'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(...P(.96, .5)); g.quadraticCurveTo(...P(.5, .0), ...P(-.3, -.2)); g.stroke(); // sendero
+  for (const [w, col] of [[3.2, 'rgba(200,180,140,.25)'], [1.6, 'rgba(196,176,134,.55)']]) { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(...P(.96, .5)); g.quadraticCurveTo(...P(.5, .0), ...P(-.3, -.2)); g.stroke(); } // sendero pisado, de borde suave
   { const Ca = caras(.24, .2, 7, .56, .6); sombraCasa(g, Ca); muros(g, Ca, '#8A6A44', null); hueco(g, Ca, 'izq', .35, .65, 0, 5, '#3A2A1E'); ventana(g, Ca, 'der', .5, 3, .3, 2.6, '#5A3A22', {}); dosAguas(g, Ca, 4, MAT.zinc); letreroAncho(g, Ca, .05, .95, 6.2, '#3E6B4A', 'GUARDAPARQUES'); } // cabaña
   for (const [r, c] of [[.3, .2], [.34, .26]]) chico(g, r, c, (x, y) => { personaM(g, x, y, '#C0392B', null); g.fillStyle = '#2F5D8A'; g.fillRect(x - 2.6, y - 9, 2, 3.4); }, .72); // caminantes con morral
   porteriaU(g, .97, .1, .48, 'PARQUE NACIONAL LOS NEVADOS', '#8A6A44', 9);
