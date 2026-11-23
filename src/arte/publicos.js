@@ -2356,6 +2356,135 @@ function aeropuerto(g) {
   { const p = P(-.02, .44); cajaPx(g, p[0], p[1], .01, .01, 8, '#8A8E92', { borde: null }); for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#F4F1E8' : '#E86A2A'; g.beginPath(); g.moveTo(p[0] + k * 1.4, p[1] - 8 + k * .15); g.lineTo(p[0] + (k + 1) * 1.4, p[1] - 7.8 + (k + 1) * .2); g.lineTo(p[0] + (k + 1) * 1.4, p[1] - 6.8 + (k + 1) * .1); g.lineTo(p[0] + k * 1.4, p[1] - 6.4); g.closePath(); g.fill(); } }
 }
 
+// ---------- Huellas pequeñas redibujadas con volumen (pedido de Juan: «sigue con los dibujos») ----------
+const posteV = (g, x, y, h, col = K.madera, w = .022) => cajaPx(g, x, y, w, w, h, col, { izq: mezcla(col, '#FFFFFF', .14), borde: null });
+const texto = (g, x, y, t, tam = 1.8, col = '#F4F1E8', incl = 0) => { g.save(); g.translate(x, y); if (incl) g.transform(1, incl, 0, 1, 0, 0); g.fillStyle = col; g.font = `bold ${tam}px Georgia, serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, 0, 0); g.restore(); };
+// Tablero en el plano de c (de cara al jugador por la izquierda): cuatro puntos desde el centro p, ancho w y alto h.
+const tablero = (g, p, w, h, col, borde = 'rgba(50,35,20,.6)') => { const pts = [[p[0] - w / 2, p[1] - h / 2 - w * .25], [p[0] + w / 2, p[1] - h / 2 + w * .25], [p[0] + w / 2, p[1] + h / 2 + w * .25], [p[0] - w / 2, p[1] + h / 2 - w * .25]]; rellena(g, pts, col, borde, .35); return pts; };
+function estandarte(g) {
+  sombraPie(g, 1, 1, 6, 2, .24);
+  cajaPx(g, 0, 0, .14, .14, 1.4, '#A39A88', { izq: '#B4AC9C', top: '#C2BAAA' }); cajaPx(g, 0, 0, .08, .08, 2, '#B4AC9C', { z0: 1.4, izq: '#C8C0B0', top: '#D0C8B8' });
+  bandera(g, 0, -3.2, 24, ['#9C2F25'], 11);
+  { const c = [4.8, -24]; g.fillStyle = '#E8C23A'; g.beginPath(); g.arc(c[0], c[1], 1.4, 0, 7); g.fill(); g.strokeStyle = '#7A1E16'; g.lineWidth = .3; g.stroke(); } // el emblema
+}
+function valla(g) {
+  sombraPie(g, 2, 1, 12, 3, .22);
+  for (const c of [-.16, .16]) { const q = P(0, c); posteV(g, q[0], q[1], 9, K.maderaOsc); }
+  const m = P(0, 0, 15), T = tablero(g, m, 24, 10, '#F2E8CC');
+  rellena(g, [[T[0][0] + 1.4, T[0][1] + 1.6], [T[0][0] + 11, T[0][1] + 4.1], [T[0][0] + 11, T[0][1] + 10], [T[0][0] + 1.4, T[0][1] + 7.6]], '#C9A24A', null); // la imagen pintada
+  for (let k = 0; k < 3; k++) { g.fillStyle = '#E8C23A'; g.beginPath(); g.ellipse(T[0][0] + 6 + k * .3, T[0][1] + 7 - k * 1.2, 2.2, .9, 0, 0, 7); g.fill(); g.strokeStyle = '#9A7A2A'; g.lineWidth = .3; g.stroke(); } // monedas
+  texto(g, m[0] + 5.6, m[1] - .4, 'PROGRESO', 2, '#8E2F22', .5); texto(g, m[0] + 5.6, m[1] + 2.4, 'para todos', 1.4, '#3A2A1E', .5);
+  g.strokeStyle = 'rgba(60,40,20,.35)'; g.lineWidth = .25; g.beginPath(); g.moveTo(T[3][0], T[3][1]); g.lineTo(T[2][0], T[2][1]); g.stroke();
+}
+function placaConmemorativa(g) {
+  sombraPie(g, 1, 1, 5, 1.8, .24);
+  cajaPx(g, 0, 0, .14, .12, 1.2, '#A39A88', { izq: '#B4AC9C', top: '#C2BAAA' });
+  const S2 = cajaPx(g, 0, 0, .12, .07, 12, '#B8B0A0', { z0: 1.2, izq: '#CCC4B4', top: '#DAD2C2' });
+  const q = S2.izq; rellena(g, [[q[0][0] + .6, q[0][1] - 4], [q[1][0] - .6, q[1][1] - 4], [q[1][0] - .6, q[1][1] - 10.6], [q[0][0] + .6, q[0][1] - 10.6]], '#A07A3A', 'rgba(60,40,20,.6)', .3);
+  g.strokeStyle = 'rgba(255,230,160,.6)'; g.lineWidth = .2; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(q[0][0] + 1.2, q[0][1] - 5 - k); g.lineTo(q[1][0] - 1.2, q[1][1] - 5 - k); g.stroke(); }
+  materas(g, [P(.12, .1)]);
+}
+function pancartas(g) {
+  sombraPie(g, 0, 1, 14, 3, .2);
+  const a = P(.06, -.24), b = P(.06, .24); posteV(g, a[0], a[1], 12); posteV(g, b[0], b[1], 12);
+  { const pts = [[a[0], a[1] - 12], [b[0], b[1] - 12], [b[0], b[1] - 7], [a[0], a[1] - 7]]; rellena(g, pts, '#F4EFE4', 'rgba(60,40,20,.5)', .3); texto(g, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 9.5, 'JUSTICIA', 2.2, '#B83A2E', (b[1] - a[1]) / (b[0] - a[0])); } // la tela
+  for (const [r, c, col, t, ropa] of [[.34, -.3, '#E8C23A', 'NO MÁS', '#5C7C9A'], [.4, .1, '#F4EFE4', 'TIERRA', '#8A5A3A']]) { const p = P(r, c); personaM(g, p[0], p[1], ropa, '#3A3A3A'); linea2(g, [p[0] + 2, p[1] - 4], [p[0] + 2, p[1] - 12], .45); tablero(g, [p[0] + 2, p[1] - 13], 7, 3.8, col); texto(g, p[0] + 2, p[1] - 13, t, 1.3, '#3A2A1E', .5); }
+}
+function linea2(g, a, b, w = .5, col = K.maderaOsc) { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+function vivero(g) {
+  const R = mulberry(17);
+  sombraPie(g, 2, 1, 18, 5, .18);
+  for (const [r, c] of [[-.12, -.12], [.14, -.12], [-.12, .16], [.14, .16]]) { const q = P(r, c); cajaPx(g, q[0], q[1], .22, .2, 1.4, '#7A5A3A', { top: '#5E4228' }); for (let k = 0; k < 9; k++) { const p = P(r - .07 + (k % 3) * .07, c - .07 + Math.floor(k / 3) * .07, 1.4); cilindroV(g, p[0], p[1], .7, 1.2, '#2A2A2E', { tapa: '#4A3A2A' }); for (let h = 0; h < 4; h++) hojaP(g, p[0], p[1] - 1.4, -Math.PI / 2 + (h - 1.5) * .6, 1.6 + R(), .6, R() < .5 ? '#4E7A3A' : '#6F9C4C'); } } // eras con plántulas en bolsas
+  const pts = [P(-.3, -.3), P(-.3, .34), P(.32, .34), P(.32, -.3)]; for (const p of pts) posteV(g, p[0], p[1], 9, '#9A8A4E', .015);
+  g.fillStyle = 'rgba(30,40,30,.22)'; g.beginPath(); pts.forEach((p, k) => k ? g.lineTo(p[0], p[1] - 9) : g.moveTo(p[0], p[1] - 9)); g.closePath(); g.fill(); g.strokeStyle = 'rgba(30,40,30,.4)'; g.lineWidth = .3; g.stroke(); // polisombra
+  const v = P(.3, -.1); cilindroV(g, v[0], v[1], 1, 1.6, '#3E7A5A', { tapa: '#5E9A7A' }); // regadera
+}
+function sinCaminoNuevo(g) {
+  const p = [0, 0];
+  for (const [dx, dy] of [[-2, .5], [1.6, .8], [.2, 1.4]]) { g.fillStyle = '#8E8676'; g.beginPath(); g.ellipse(dx, dy, 1.2, .7, 0, 0, 7); g.fill(); g.fillStyle = '#B4AC9C'; g.beginPath(); g.ellipse(dx - .3, dy - .3, .6, .3, 0, 0, 7); g.fill(); } // piedras al pie
+  posteV(g, p[0], p[1], 12, K.maderaOsc, .02);
+  const T = tablero(g, [p[0] + 1, p[1] - 12.4], 12, 5.4, '#E8D9B0'); void T;
+  linea2(g, [p[0] - 3, p[1] - 10.4], [p[0] + 5, p[1] - 12.4], 1.4, '#9A7A52'); // el camino pintado
+  linea2(g, [p[0] - 2, p[1] - 14.6], [p[0] + 4.4, p[1] - 9.4], .9, '#B0402C'); linea2(g, [p[0] + 4.4, p[1] - 13.4], [p[0] - 2, p[1] - 10.6], .9, '#B0402C'); // la X
+}
+// Rancho de colono: bahareque con techo de paja, el maizal, la cerca y el hacha en el tocón. tipo: 'colono',
+// 'arriendo' (letrero de se arrienda y alambre) o 'sorteo' (estacas numeradas de los lotes).
+function ranchoColono(g, tipo) {
+  const R = mulberry(tipo.length * 13);
+  sombraPie(g, 4, 1, 22, 6, .18);
+  for (let k = 0; k < 18; k++) { const r = -.34 + (k % 6) * .06, c = -.4 + Math.floor(k / 6) * .07, p = P(r, c); linea2(g, p, [p[0], p[1] - 5 - R() * 2], .5, '#7A9A3A'); for (let h = 0; h < 3; h++) hojaP(g, p[0], p[1] - 2 - h * 1.4, h % 2 ? -.5 : -2.6, 2.2, .45, '#6F9C4C', false); if (k % 3 === 0) { g.fillStyle = '#E8C23A'; g.fillRect(p[0] - .3, p[1] - 6.6, .6, 1.4); } } // maizal
+  const F = caras(.3, .22, 6.4, .06, .16); sombraCasa(g, F); muros(g, F, '#C9AA84', null); puerta(g, F, 'izq', .4, .2, 5, '#4A2E1C', false); ventana(g, F, 'der', .5, 2.6, .2, 2.4, '#6B4A2B');
+  dosAguas(g, F, 4.6, { teja: '#C2A15E', luz: '#D6B874', osc: '#94763E', tipo: 'paja' });
+  const t = P(.3, -.06); cilindroV(g, t[0], t[1], 1.4, 1.4, '#8A6A44', { tapa: '#C9AA7A' }); linea2(g, [t[0] - .2, t[1] - 1.4], [t[0] + 2.2, t[1] - 4.4], .5, K.madera); g.fillStyle = '#8A8E94'; g.beginPath(); g.moveTo(t[0] + 1.6, t[1] - 4.8); g.lineTo(t[0] + 3.2, t[1] - 4); g.lineTo(t[0] + 2.6, t[1] - 3.4); g.closePath(); g.fill(); // tocón con el hacha
+  const cerca = (a, b) => { const n = 6; for (let k = 0; k <= n; k++) { const p = [a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]; linea2(g, p, [p[0], p[1] - 3.4], .5, tipo === 'arriendo' ? '#5A5A5E' : '#8A6A44'); } for (const z of [1.4, 2.8]) linea2(g, [a[0], a[1] - z], [b[0], b[1] - z], .3, tipo === 'arriendo' ? '#7A7E84' : '#9A7A52'); };
+  cerca(P(.46, -.46), P(.46, .46)); cerca(P(-.46, .46), P(.46, .46));
+  if (tipo === 'arriendo') { const p = P(.4, .3); posteV(g, p[0], p[1], 6); tablero(g, [p[0], p[1] - 7], 7, 2.8, '#F4EFE4'); texto(g, p[0], p[1] - 7, 'SE ARRIENDA', .9, '#8E2F22', .5); }
+  if (tipo === 'sorteo') for (const [r, c, n] of [[-.4, -.4, '1'], [-.4, .4, '2'], [.4, .4, '3'], [.4, -.4, '4']]) { const p = P(r, c); posteV(g, p[0], p[1], 4, '#F4EFE4', .015); texto(g, p[0] + 1.6, p[1] - 4.4, n, 1.6, '#8E2F22'); }
+}
+// Bohío pijao del resguardo: muro redondo de bahareque, techo cónico de paja en capas con su remate, el humo del fogón,
+// un cultivo de maíz y una tinaja de barro.
+function bohio(g) {
+  const R = mulberry(9);
+  sombraPie(g, 4, 1, 18, 6, .2);
+  for (let k = 0; k < 10; k++) { const p = P(.34 - (k % 5) * .05, -.38 + Math.floor(k / 5) * .08); linea2(g, p, [p[0], p[1] - 5], .5, '#7A9A3A'); for (let h = 0; h < 3; h++) hojaP(g, p[0], p[1] - 2 - h * 1.2, h % 2 ? -.5 : -2.6, 2, .45, '#6F9C4C', false); }
+  cilindroV(g, 2, 0, 9, 6, '#B89A72', { tapa: '#A08462' });
+  { const pd = P(.18, .04); rellena(g, [[pd[0] - 1.4, pd[1]], [pd[0] + 1.4, pd[1] + .2], [pd[0] + 1.4, pd[1] - 4.6], [pd[0] - 1.4, pd[1] - 4.8]], '#4A2E1C', 'rgba(30,20,10,.5)', .3); } // puerta
+  const cono = (rx, z0, z1, col, luz) => { g.fillStyle = col; g.beginPath(); g.moveTo(2 - rx, -z0); g.quadraticCurveTo(2, -z0 + rx * .32, 2 + rx, -z0); g.lineTo(2, -z1); g.closePath(); g.fill(); g.fillStyle = luz; g.beginPath(); g.moveTo(2 - rx, -z0); g.quadraticCurveTo(2 - rx * .4, -z0 + rx * .24, 2 - rx * .1, -z0 + rx * .3); g.lineTo(2, -z1); g.closePath(); g.fill(); g.strokeStyle = 'rgba(110,80,40,.35)'; g.lineWidth = .25; for (let k = 1; k < 14; k++) { const u = k / 14, x = 2 - rx + u * rx * 2, y = -z0 + Math.sin(u * Math.PI) * rx * .32; g.beginPath(); g.moveTo(x, y); g.lineTo(2 + (x - 2) * .25, y + (-z1 - y) * .75); g.stroke(); } g.strokeStyle = 'rgba(90,60,30,.55)'; g.lineWidth = .4; g.beginPath(); g.moveTo(2 - rx, -z0); g.quadraticCurveTo(2, -z0 + rx * .32, 2 + rx, -z0); g.stroke(); };
+  cono(11.8, 5, 20, '#B89652', '#D2B272'); cono(7.4, 12.6, 20.4, '#C2A15E', '#DABC7E');
+  linea2(g, [2, -19.6], [2, -22], .7, '#5A3A22'); // remate
+  g.strokeStyle = 'rgba(225,220,210,.45)'; g.lineWidth = .8; g.beginPath(); g.moveTo(2, -22); g.bezierCurveTo(0, -25, 4, -27, 1.6, -31); g.stroke(); // humo
+  { const p = P(.3, .32); cilindroV(g, p[0], p[1], 1.6, 2.6, '#A85E3A', { arriba: 1, tapa: '#5A3020' }); } // tinaja
+  void R;
+}
+function trincheraNueva(g) {
+  sombraPie(g, 0, 1, 20, 5, .2);
+  { const a = P(-.12, -.42), b = P(-.12, .42); g.strokeStyle = '#4A3A2A'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } // la zanja
+  for (let fila = 0; fila < 2; fila++) for (let k = 0; k < 9; k++) { const p = P(.02 - fila * .02, -.4 + k * .1 + (fila ? .05 : 0), fila * 1.6); g.fillStyle = k % 2 ? '#B8A880' : '#A8986E'; g.beginPath(); g.ellipse(p[0], p[1] - 1, 3, 1.5, .46, 0, 7); g.fill(); g.strokeStyle = 'rgba(80,60,30,.5)'; g.lineWidth = .3; g.stroke(); g.strokeStyle = 'rgba(80,60,30,.35)'; g.beginPath(); g.moveTo(p[0] - 1.2, p[1] - 1.4); g.lineTo(p[0] + 1.6, p[1] - .2); g.stroke(); } // sacos de arena
+  for (let k = 0; k < 5; k++) { const p = P(.3, -.4 + k * .2); posteV(g, p[0], p[1], 4, '#5A4A3A', .012); } // estacas del alambre de púas
+  g.strokeStyle = 'rgba(90,90,96,.85)'; g.lineWidth = .3; for (const z of [1.6, 3]) { g.beginPath(); for (let k = 0; k <= 16; k++) { const p = P(.3, -.4 + k * .05, z + Math.sin(k * 1.7) * .4); k ? g.lineTo(...p) : g.moveTo(...p); } g.stroke(); }
+}
+function madrevieja(g) {
+  const R = mulberry(41);
+  const borde = []; for (let k = 0; k < 24; k++) { const t = k / 24 * Math.PI * 2, rr = .3 + Math.sin(t * 2) * .06 + (R() - .5) * .04, c = Math.cos(t) * rr * 1.3, r = Math.sin(t) * rr * .7; borde.push(P(r, c)); }
+  g.fillStyle = '#7A6A4A'; g.beginPath(); borde.forEach((p, k) => k ? g.lineTo(p[0], p[1] + 1) : g.moveTo(p[0], p[1] + 1)); g.closePath(); g.fill(); // orilla de lodo
+  const gr = g.createLinearGradient(0, -10, 0, 10); gr.addColorStop(0, '#5E8EA8'); gr.addColorStop(1, '#3E6E88'); g.fillStyle = gr; g.beginPath(); borde.forEach((p, k) => k ? g.lineTo(p[0] * .9, p[1] * .9) : g.moveTo(p[0] * .9, p[1] * .9)); g.closePath(); g.fill();
+  g.fillStyle = 'rgba(220,240,250,.4)'; g.beginPath(); g.ellipse(-4, -2, 6, 1, 0, 0, 7); g.fill(); // reflejo
+  for (let k = 0; k < 9; k++) { const p = [(R() - .5) * 16, (R() - .5) * 6]; g.fillStyle = '#5E8A3E'; g.beginPath(); g.ellipse(p[0], p[1], 1.2, .5, 0, 0, 7); g.fill(); } // buchón de agua
+  for (let k = 0; k < 14; k++) { const p = borde[(k * 5) % borde.length]; for (let h = 0; h < 3; h++) hojaP(g, p[0], p[1], -Math.PI / 2 + (h - 1) * .25, 3 + R() * 2, .35, '#6F8A3E', false); } // juncos
+  { const p = [6, -1]; linea2(g, p, [p[0], p[1] - 3], .3, '#2A2420'); g.fillStyle = '#FBF8F2'; g.beginPath(); g.ellipse(p[0] - .4, p[1] - 4.2, 1.6, .9, -.2, 0, 7); g.fill(); linea2(g, [p[0] + .8, p[1] - 4.6], [p[0] + 1.2, p[1] - 7], .5, '#FBF8F2'); linea2(g, [p[0] + 1.2, p[1] - 7], [p[0] + 2.8, p[1] - 6.8], .3, '#E3B23C'); } // una garza
+}
+function telegrafo(g) {
+  const pts = [P(.3, -.4), P(0, 0), P(-.3, .4)];
+  for (const p of pts) { sombraPie(g, p[0], p[1], 1.6, .6, .25); posteV(g, p[0], p[1], 14, '#6E4529', .02); linea2(g, [p[0] - 3, p[1] - 12.6], [p[0] + 3, p[1] - 13.6], .7, '#5A3A22'); for (const dx of [-2.4, 2.4]) { g.fillStyle = '#F4F1E8'; g.beginPath(); g.ellipse(p[0] + dx, p[1] - 13.6 - dx * .17, .45, .6, 0, 0, 7); g.fill(); } } // postes con cruceta y aisladores
+  g.strokeStyle = 'rgba(40,40,44,.85)'; g.lineWidth = .3; for (const dx of [-2.4, 2.4]) { g.beginPath(); for (let k = 0; k < pts.length - 1; k++) { const a = [pts[k][0] + dx, pts[k][1] - 14 - dx * .17], b = [pts[k + 1][0] + dx, pts[k + 1][1] - 14 - dx * .17]; if (!k) g.moveTo(...a); g.quadraticCurveTo((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 2.6, ...b); } g.stroke(); } // alambres con su comba
+}
+function torreRadio(g) {
+  sombraPie(g, 2, 1, 6, 2, .24);
+  const h = 44, base = 4;
+  for (const [s, col] of [[-1, '#B83A2E'], [1, '#8E2F22']]) linea2(g, [s * base, 0], [s * .6, -h], .8, col);
+  for (let k = 0; k < 11; k++) { const z = k * h / 11, w = base - (base - .6) * z / h, w2 = base - (base - .6) * (z + h / 11) / h; g.strokeStyle = k % 2 ? '#F4F1E8' : '#B83A2E'; g.lineWidth = .4; g.beginPath(); g.moveTo(-w, -z); g.lineTo(w2, -z - h / 11); g.moveTo(w, -z); g.lineTo(-w2, -z - h / 11); g.moveTo(-w2, -z - h / 11); g.lineTo(w2, -z - h / 11); g.stroke(); } // celosía de rojo y blanco
+  g.fillStyle = '#C8283A'; g.beginPath(); g.arc(0, -h - 1, .8, 0, 7); g.fill(); g.fillStyle = 'rgba(255,80,60,.3)'; g.beginPath(); g.arc(0, -h - 1, 2, 0, 7); g.fill(); // luz roja
+  g.strokeStyle = 'rgba(80,80,84,.5)'; g.lineWidth = .2; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(0, -h * .7); g.lineTo(s * 14, 3); g.stroke(); } // tensores
+  const F = caras(.14, .12, 5, .2, .2); sombraCasa(g, F); muros(g, F, '#E8E4D8', null); puerta(g, F, 'izq', .5, .3, 3.6, '#4A4E52', false); techoPlano(g, F, '#D4D0C4'); // caseta
+}
+function antenaInternet(g) {
+  sombraPie(g, 2, 1, 6, 2, .24);
+  cilindroV(g, 0, 0, 1.3, 34, '#B8BCC0', { arriba: .9, tapa: '#D8DCE0' });
+  for (const [z, dx] of [[30, -2.6], [30, 2.6], [24, -2.4]]) { const p = [dx, -z]; rellena(g, [[p[0] - 1, p[1] - 2.6], [p[0] + 1, p[1] - 2.2], [p[0] + 1, p[1] + 2.2], [p[0] - 1, p[1] + 1.8]], '#F4F4F2', 'rgba(60,64,70,.6)', .3); } // paneles
+  { g.fillStyle = '#E8E8EA'; g.beginPath(); g.ellipse(1.8, -20, 2, 2.4, -.3, 0, 7); g.fill(); g.strokeStyle = 'rgba(60,64,70,.6)'; g.lineWidth = .3; g.stroke(); } // parabólica
+  g.strokeStyle = 'rgba(70,140,200,.7)'; g.lineWidth = .4; for (const r of [2.4, 4, 5.6]) { g.beginPath(); g.arc(0, -35, r, -2.4, -.7); g.stroke(); } // señal
+  const F = caras(.14, .1, 4, .22, .2); sombraCasa(g, F); muros(g, F, '#D8DCE0', null); techoPlano(g, F, '#C8CCD0'); // gabinete
+  for (let k = 0; k < 6; k++) { const p = P(.36, -.1 + k * .08); posteV(g, p[0], p[1], 3.6, '#8A8E92', .008); } g.strokeStyle = 'rgba(120,124,130,.6)'; g.lineWidth = .25; for (const z of [1.2, 2.4, 3.4]) { g.beginPath(); g.moveTo(...P(.36, -.1, z)); g.lineTo(...P(.36, .3, z)); g.stroke(); } // malla
+}
+function actaPiedra(g) {
+  sombraPie(g, 1, 1, 8, 2.6, .24);
+  rellena(g, [[-7, 0], [-7.6, -6], [-4, -11], [2, -12], [7, -8], [7.4, -1], [0, .8]], '#A8A094', 'rgba(60,50,40,.5)');
+  rellena(g, [[-7.6, -6], [-4, -11], [2, -12], [-1, -6]], '#C4BCB0', null); rellena(g, [[2, -12], [7, -8], [7.4, -1], [3, -2], [-1, -6]], '#8E867A', null); // facetas con luz y sombra
+  rellena(g, [[-5.4, -8.6], [1.2, -9.6], [1.4, -3.6], [-5, -2.8]], '#D0C8BA', 'rgba(60,50,40,.4)', .3); // cara labrada
+  g.strokeStyle = 'rgba(60,50,40,.6)'; g.lineWidth = .3; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(-4.4, -7.6 + k * 1.3); g.lineTo(.4, -8.2 + k * 1.3); g.stroke(); }
+  g.fillStyle = '#7E9A5A'; g.beginPath(); g.ellipse(5, -1, 2.4, 1, 0, 0, 7); g.fill(); materas(g, [[-6, 2]]);
+}
+
 export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela6],
@@ -2374,7 +2503,10 @@ export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
     ['estadio', 148, 124, 74, 94, estadioN],
     ['m_museo', 104, 104, 52, 76, g => museoN(g)],
     ['m_mv_jardin', 100, 96, 50, 64, jardinBotanico], ['m_mv_conservatorio', 100, 110, 50, 78, conservatorio], ['m_mv_tunel', 100, 70, 50, 52, tunel], ['m_mv_parque', 100, 76, 50, 58, parqueNevados],
-    ['m_monumento', 40, 70, 20, 56, monumentoVictimas], ['m_tratado', 40, 50, 20, 38, mojonTratado], ['m_ferrocarril', 96, 82, 48, 56, estacionTren], ['m_aeropuerto', 100, 72, 50, 44, aeropuerto],
+    ['m_monumento', 40, 70, 20, 56, monumentoVictimas],
+    ['m_estandarte', 40, 60, 16, 48, estandarte], ['m_valla', 50, 52, 25, 40, valla], ['m_placa', 34, 40, 17, 30, placaConmemorativa], ['m_pancarta', 60, 54, 30, 40, pancartas], ['m_vivero', 64, 54, 32, 36, vivero], ['sinCamino', 30, 34, 13, 28, sinCaminoNuevo],
+    ['m_colono', 72, 60, 36, 40, g => ranchoColono(g, 'colono')], ['m_arriendo', 72, 60, 36, 40, g => ranchoColono(g, 'arriendo')], ['m_sorteo', 72, 60, 36, 40, g => ranchoColono(g, 'sorteo')], ['m_resguardo', 64, 64, 30, 44, bohio], ['m_trinchera', 64, 44, 32, 28, trincheraNueva], ['m_madrevieja', 64, 40, 32, 22, madrevieja],
+    ['m_telegrafo', 64, 54, 32, 36, telegrafo], ['m_radio', 44, 70, 18, 56, torreRadio], ['m_internet', 44, 62, 18, 50, antenaInternet], ['m_acta', 34, 30, 17, 20, actaPiedra], ['m_tratado', 40, 50, 20, 38, mojonTratado], ['m_ferrocarril', 96, 82, 48, 56, estacionTren], ['m_aeropuerto', 100, 72, 50, 44, aeropuerto],
     ['m_dique', 76, 52, 38, 34, dique], ['m_reservorio', 72, 52, 36, 30, reservorio], ['m_tanques', 70, 56, 35, 36, tanques],
     ['m_granero', 64, 70, 32, 50, granero], ['m_cooperativa', 84, 86, 42, 60, cooperativa], ['m_escuelita', 80, 88, 40, 62, escuelita],
     ['m_parcela', 72, 60, 36, 38, parcela], ['m_reten', 64, 56, 32, 38, reten], ['m_campamento', 64, 50, 32, 34, campamento],
