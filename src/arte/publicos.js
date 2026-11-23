@@ -3796,13 +3796,21 @@ function inauguracion(g) {
   chico(g, .26, -.3, (x, y) => { personaM(g, x, y, '#2F3E5C', '#1E1E24'); g.fillStyle = '#D8B04A'; g.fillRect(x + 1.2, y - 7, 3.4, .7); }, .66);
 }
 
+function hallazgoPijao(g) { // excavación con cuadrícula de cuerdas, vasijas y una urna funeraria pijao, y el maestro que la mira
+  const q = P(.12, -.12); g.fillStyle = '#7A5A3E'; g.beginPath(); g.ellipse(q[0], q[1], 16, 7, 0, 0, 7); g.fill(); g.fillStyle = '#5E4430'; g.beginPath(); g.ellipse(q[0] + 1, q[1] + 1, 12, 5, 0, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(240,236,220,.85)'; g.lineWidth = .3; for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(q[0] - 13, q[1] + k * 2); g.lineTo(q[0] + 13, q[1] + k * 2); g.stroke(); g.beginPath(); g.moveTo(q[0] + k * 5, q[1] - 5.6); g.lineTo(q[0] + k * 5, q[1] + 5.6); g.stroke(); }
+  for (const [dx, dy, s, col] of [[-6, 1, 1, '#B8703E'], [3, -1, 1.3, '#A05A32'], [8, 2, .8, '#C88A52']]) { cilindroV(g, q[0] + dx, q[1] + dy, 1.6 * s, 2.6 * s, col, { arriba: 1 * s }); g.strokeStyle = 'rgba(60,30,15,.6)'; g.lineWidth = .25; g.beginPath(); g.moveTo(q[0] + dx - 1.2 * s, q[1] + dy - 1.4 * s); g.lineTo(q[0] + dx + 1.2 * s, q[1] + dy - 1 * s); g.stroke(); } // vasijas con su franja pintada
+  for (const [r, c] of [[-.12, -.4], [-.12, .16], [.36, .16], [.36, -.4]]) { const p = P(r, c); g.strokeStyle = '#8A6440'; g.lineWidth = .7; g.beginPath(); g.moveTo(...p); g.lineTo(p[0], p[1] - 3); g.stroke(); }
+  chico(g, .42, .26, (x, y) => personaM(g, x, y, '#E8E4DA', '#2E2A28'), .7); chico(g, .3, -.46, (x, y) => personaM(g, x, y, '#6E4A3A', '#C9A86A'), .7);
+}
+
 export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   HIST = h;
   const L = [
     ['chicheria', 96, 96, 48, 64, chicheria], ['gallera', 96, 100, 48, 66, gallera], ['kiosco', 96, 100, 48, 66, kiosco], ['circo', 100, 104, 50, 70, circo],
     ['cine', 100, 104, 50, 70, cine], ['billar', 96, 92, 48, 62, billar], ['feria', 104, 110, 52, 74, feria], ['balneario', 104, 90, 52, 56, balneario],
     ['centroComercial', 108, 96, 54, 62, centroComercial], ['discoteca', 100, 120, 50, 86, discoteca], ['ecoparque', 104, 110, 52, 76, ecoparque], ['parqueTematico', 108, 110, 54, 76, parqueTematico],
-    ['estacas', 80, 60, 40, 40, estacasObra], ['inaug', 80, 64, 40, 42, inauguracion],
+    ['estacas', 80, 60, 40, 40, estacasObra], ['hallazgo', 80, 56, 40, 36, hallazgoPijao], ['inaug', 80, 64, 40, 42, inauguracion],
     ['escuela', 96, 96, 48, 68, escuela6],
     ['hospital', 112, 124, 56, 94, hospital6],
     ['taller', 96, 92, 48, 66, (g, e, h) => h === 5 ? naveIndustrial(g) : taller6(g, e, h)],

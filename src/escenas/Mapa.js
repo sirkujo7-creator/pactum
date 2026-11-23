@@ -285,6 +285,7 @@ export class Mapa extends Phaser.Scene {
         }
       }
       if (gris && ob.det >= C.OBRAS.aniosElefante) this.desgasteVisible(i, 3);
+      if (ob.imp === 'hallazgo' && this.S.procImp && this.S.procImp.i === i || ob.imp === 'hallazgo' && ob.esp) this.obras[i].push(this.figura('edificios', 'hallazgo', t.r + .5, t.c + .5, t.h, 1).setDepth(t.r + t.c + 1.06)); // hallazgo pijao en la excavación
       if (ob.y === this.S.year && !ob.det) this.obras[i].push(this.figura('edificios', 'estacas', t.r + .5, t.c + .5, t.h, 1).setDepth(t.r + t.c + 1.05)); // el primer año: estudio y trazado
       return;
     }
@@ -435,7 +436,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x, i) { return `${x.pt ?? ''}${x.g ? 'G' : ''}|${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}|${x.vida ?? ''}|${x.ob && x.ob.y === this.S.year ? 'e' : ''}${x.inaug !== undefined && this.S.year - x.inaug <= 1 ? 'i' : ''}`; } // fase 10: el cultivo y si ya produce
+  huella(x, i) { return `${x.pt ?? ''}${x.g ? 'G' : ''}|${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) + (x.ob.imp || '') + (x.ob.esp ? 'w' : '') : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}|${x.vida ?? ''}|${x.ob && x.ob.y === this.S.year ? 'e' : ''}${x.inaug !== undefined && this.S.year - x.inaug <= 1 ? 'i' : ''}`; } // fase 10: el cultivo y si ya produce
   // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
   revisarRio() {
     const n = desvios(this.S).length;

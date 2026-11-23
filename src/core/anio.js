@@ -24,7 +24,7 @@ import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, in
 import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
 import { ocioDelAnio } from './ocio.js';
-import { personalDelAnio } from './proceso.js';
+import { personalDelAnio, imprevistosDelAnio } from './proceso.js';
 import { avanzarObras } from './construccion.js';
 import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
@@ -66,7 +66,7 @@ export function advance(S) {
   S.bonds = S.bonds.filter(b => b.due > S.year);
   // Fase 2: las cuotas de las obras se pagan una por una, solo si alcanza el oro.
   S.gold += F.net + F.obras; S.rev = F.rev;
-  news.push(...avanzarObras(S).news);
+  news.push(...imprevistosDelAnio(S)); news.push(...avanzarObras(S).news); // imprevistos de las obras (antes de avanzar) y lo que vuelve
   if (climaActivo(S)) S.fondo = (S.fondo || 0) + F.fondo + interesFondo(S);
   S.food += F.fprod - F.cons;
   if (materialesActivos(S)) producirMat(S, F.trab === undefined ? 1 : F.trab); // fase 17: aserraderos, canteras y minas

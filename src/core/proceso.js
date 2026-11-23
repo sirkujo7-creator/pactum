@@ -90,3 +90,54 @@ export function personalDelAnio(S) {
   }
   return news;
 }
+
+// ---------- Imprevistos de obra (tanda 3) ----------
+// Cada año, una obra en curso puede tener un imprevisto (una sola vez por obra): lluvias que la atrasan (solo
+// noticia), sobrecosto, accidente o hallazgo pijao (decisiones, que llegan como suceso del año). Algunas decisiones
+// vuelven años después (S.procLater): la demanda de la familia, el museo con lo rescatado o el escándalo de lo tapado.
+import { EFECTOS } from './contenido.js';
+import { azar } from './azar.js';
+import { registrarMuertes, cicatriz } from './huellas.js';
+import { dejarMarca } from './marcas.js';
+const KI = () => K() && K().imprevistos;
+const fxDe = (ef, c) => { const fx = {}; for (const [k, v] of Object.entries(ef || {})) fx[EFECTOS[k]] = k === 'oro' ? v * c : v; return fx; };
+export function imprevistosDelAnio(S) {
+  if (!procesoActivo(S) || !KI()) return [];
+  const I = KI(), news = [];
+  // Lo que vuelve.
+  S.procLater = (S.procLater || []).filter(l => {
+    if (l.y > S.year) return true;
+    const V = I.vuelven[l.t], c = Math.round(l.c || 0), nombre = C.B[l.k] ? C.B[l.k].a : 'la obra';
+    if (l.t === 'accidente') S.gold -= c; if (l.t === 'rescate') S.gold += c;
+    for (const [k, v] of Object.entries(V.efectos || {})) if (k === 'confianza') S.tr = clamp(S.tr + v, 0, 100);
+    news.push(V.texto.replace('{obra}', nombre).replace('{c}', c));
+    if (l.t === 'rescate') dejarMarca(S, 'museo', `Año ${S.year}: museo con lo rescatado en ${nombre}.`);
+    return false;
+  });
+  // Lo nuevo: una obra al año como máximo.
+  if (S.procImp) return news;
+  const obras = S.map.map((x, i) => x.b && x.ob && !x.ob.det && !x.ob.imp ? i : -1).filter(i => i >= 0);
+  for (const i of obras) {
+    if (azar() >= I.prob) continue;
+    const x = S.map[i], tipos = ['lluvias', 'sobrecosto', 'accidente', ...(['llano', 'bosque'].includes(x.t) ? ['hallazgo'] : [])], t = tipos[Math.floor(azar() * tipos.length)];
+    x.ob.imp = t;
+    if (t === 'lluvias') { x.ob.esp = 1; cicatriz(S, 'lodo', [i]); news.push(I.lluvias.texto.replace('{obra}', C.B[x.b].a)); }
+    else { S.procImp = { t, i, k: x.b, c: x.ob.c, y: S.year }; if (t === 'accidente') registrarMuertes(S, 1, 'obra'); }
+    break;
+  }
+  return news;
+}
+// Suceso del año con el imprevisto pendiente (para drawEvent).
+export function sucesoImprevisto(S) {
+  const P0 = S.procImp; if (!P0 || !procesoActivo(S)) return null;
+  const I = KI()[P0.t], nombre = C.B[P0.k] ? C.B[P0.k].a : 'la obra', c = Math.max(5, Math.round(P0.c * (P0.t === 'sobrecosto' ? .6 : .35)));
+  return { id: 'obra_' + P0.t, e: I.e, title: I.titulo, text: I.texto.replace('{obra}', nombre).replace('{c}', c), opts: I.opciones.map((o, j) => ({ l: o.l, fx: fxDe(o.efectos, c), f: null, why: o.porque, imp: { ...P0, j, cc: c } })) };
+}
+// Lo que pasa después de decidir.
+export function resolverImprevisto(S, imp) {
+  delete S.procImp; const x = S.map[imp.i]; if (!x || !x.ob) return;
+  const vuelve = (t, c) => { const A = KI().vuelven[t].anios; S.procLater = [...(S.procLater || []), { t, y: S.year + A[0] + Math.floor(azar() * (A[1] - A[0] + 1)), k: imp.k, c }]; };
+  if (imp.t === 'sobrecosto' && imp.j === 1) x.ob.esp = 1;
+  if (imp.t === 'accidente' && imp.j === 1) vuelve('accidente', imp.cc * 2);
+  if (imp.t === 'hallazgo') { if (imp.j === 0) { x.ob.esp = 1; vuelve('rescate', imp.cc); } else vuelve('tapado', 0); }
+}
