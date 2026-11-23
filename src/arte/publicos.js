@@ -3772,12 +3772,37 @@ function parqueTematico(g, e, h) {
   { const q = P(.4, .44); g.strokeStyle = '#E8E4DA'; g.lineWidth = .3; g.beginPath(); g.moveTo(...q); g.lineTo(q[0] + 1, q[1] - 10); g.stroke(); for (const [dx, col] of [[-1, '#C8302E'], [2, '#2F7AC8'], [.6, '#E8C23A']]) { g.fillStyle = col; g.beginPath(); g.ellipse(q[0] + dx, q[1] - 12, 1.3, 1.6, 0, 0, 7); g.fill(); } }
 }
 
+// El proceso de construir, visible: estacas con cinta y cuerda del trazado, el topógrafo con su teodolito (primer año
+// de la obra) e inauguración con cinta roja, moño, banderines tricolor y los vecinos (el año en que se termina).
+function estacasObra(g) {
+  const pts = [[-.34, -.34], [-.34, .34], [.34, .34], [.34, -.34]];
+  g.strokeStyle = 'rgba(240,236,220,.9)'; g.lineWidth = .4; g.beginPath(); pts.forEach(([r, c], k) => { const q = P(r, c, 2); k ? g.lineTo(...q) : g.moveTo(...q); }); g.closePath(); g.stroke(); // cuerda del trazado
+  for (const [r, c] of pts) { const q = P(r, c); g.strokeStyle = '#8A6440'; g.lineWidth = .8; g.beginPath(); g.moveTo(...q); g.lineTo(q[0], q[1] - 4); g.stroke(); g.fillStyle = '#E8487A'; g.beginPath(); g.moveTo(q[0], q[1] - 4); g.lineTo(q[0] + 2.2, q[1] - 3.6); g.lineTo(q[0], q[1] - 3); g.fill(); }
+  const t = P(.36, -.02); sombraPie(g, t[0], t[1], 3, 1, .2); g.strokeStyle = '#5A4A3A'; g.lineWidth = .5; for (const dx of [-2, 0, 2]) { g.beginPath(); g.moveTo(t[0], t[1] - 6); g.lineTo(t[0] + dx, t[1] + (dx ? 0 : .6)); g.stroke(); } // trípode
+  cajaPx(g, t[0], t[1], .03, .02, 1.6, '#E8C23A', { z0: 6 }); g.fillStyle = '#2E3A44'; g.beginPath(); g.arc(t[0] + 1.4, t[1] - 7, .5, 0, 7); g.fill(); // teodolito
+  chico(g, .42, -.2, (x, y) => personaM(g, x, y, '#E8E4DA', '#C9A86A'), .7);
+  chico(g, -.1, .44, (x, y) => { personaM(g, x, y, '#2F5D8A', null); g.strokeStyle = '#E86A2A'; g.lineWidth = .5; g.beginPath(); g.moveTo(x + 1.6, y - 2); g.lineTo(x + 1.6, y - 13); g.stroke(); g.fillStyle = '#E86A2A'; for (let k = 0; k < 3; k++) g.fillRect(x + 1.3, y - 12 + k * 3, .6, 1.4); }, .7); // el cadenero con la mira
+}
+function inauguracion(g) {
+  const a = P(.42, -.22), b = P(.42, .22);
+  for (const q of [a, b]) { sombraPie(g, q[0], q[1], 1.4, .5, .2); g.strokeStyle = '#C9A24A'; g.lineWidth = .8; g.beginPath(); g.moveTo(...q); g.lineTo(q[0], q[1] - 7); g.stroke(); g.fillStyle = '#C9A24A'; g.beginPath(); g.arc(q[0], q[1] - 7.4, .6, 0, 7); g.fill(); }
+  g.strokeStyle = '#C8202A'; g.lineWidth = 1; g.beginPath(); g.moveTo(a[0], a[1] - 5); g.quadraticCurveTo((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 3.6, b[0], b[1] - 5); g.stroke(); // la cinta
+  const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 4.2]; g.fillStyle = '#C8202A'; g.beginPath(); g.ellipse(m[0] - 1.4, m[1], 1.4, .9, -.4, 0, 7); g.ellipse(m[0] + 1.4, m[1], 1.4, .9, .4, 0, 7); g.fill(); g.fillRect(m[0] - .8, m[1], .5, 2.4); g.fillRect(m[0] + .3, m[1], .5, 2.6); // el moño
+  const c0 = P(.1, -.46, 16), c1 = P(.1, .46, 16); g.strokeStyle = '#3A3A3A'; g.lineWidth = .25; g.beginPath(); g.moveTo(...c0); g.quadraticCurveTo((c0[0] + c1[0]) / 2, (c0[1] + c1[1]) / 2 + 5, ...c1); g.stroke();
+  for (let k = 1; k < 10; k++) { const t = k / 10, x = c0[0] + (c1[0] - c0[0]) * t, y = c0[1] + (c1[1] - c0[1]) * t + 5 * 4 * t * (1 - t) * .5; g.fillStyle = TRICOLOR[k % 3]; g.beginPath(); g.moveTo(x - 1, y); g.lineTo(x + 1, y + .5); g.lineTo(x, y + 2.6); g.fill(); } // banderines
+  chico(g, .5, -.02, (x, y) => { personaM(g, x, y, '#2A2A30', null); g.strokeStyle = '#B8BCC0'; g.lineWidth = .4; g.beginPath(); g.moveTo(x - 1.4, y - 6); g.lineTo(x - 3, y - 6.8); g.stroke(); }, .72); // el alcalde con las tijeras
+  genteC(g, [[.56, -.3], [.6, .26], [.52, .36], [.62, -.12]]);
+  chico(g, .3, -.42, (x, y) => { personaM(g, x, y, '#2F3E5C', '#1E1E24'); g.fillStyle = '#D8B04A'; g.beginPath(); g.ellipse(x + 2.4, y - 7.2, 1.8, 1.8, 0, 0, 7); g.fill(); }, .66); // la banda
+  chico(g, .26, -.3, (x, y) => { personaM(g, x, y, '#2F3E5C', '#1E1E24'); g.fillStyle = '#D8B04A'; g.fillRect(x + 1.2, y - 7, 3.4, .7); }, .66);
+}
+
 export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   HIST = h;
   const L = [
     ['chicheria', 96, 96, 48, 64, chicheria], ['gallera', 96, 100, 48, 66, gallera], ['kiosco', 96, 100, 48, 66, kiosco], ['circo', 100, 104, 50, 70, circo],
     ['cine', 100, 104, 50, 70, cine], ['billar', 96, 92, 48, 62, billar], ['feria', 104, 110, 52, 74, feria], ['balneario', 104, 90, 52, 56, balneario],
     ['centroComercial', 108, 96, 54, 62, centroComercial], ['discoteca', 100, 120, 50, 86, discoteca], ['ecoparque', 104, 110, 52, 76, ecoparque], ['parqueTematico', 108, 110, 54, 76, parqueTematico],
+    ['estacas', 80, 60, 40, 40, estacasObra], ['inaug', 80, 64, 40, 42, inauguracion],
     ['escuela', 96, 96, 48, 68, escuela6],
     ['hospital', 112, 124, 56, 94, hospital6],
     ['taller', 96, 92, 48, 66, (g, e, h) => h === 5 ? naveIndustrial(g) : taller6(g, e, h)],

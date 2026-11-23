@@ -12,7 +12,7 @@ import {
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes,
-  deSuEpoca,
+  deSuEpoca, consultaDe, faltanRequisitos,
 } from '../core/index.js';
 import { montarCarta, fichaLugar } from './mundo.js';
 import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
@@ -307,14 +307,14 @@ export class Interfaz {
     const S = this.S;
     this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S)) && ((k !== 'aserradero' && k !== 'cantera' && k !== 'estudio') || materialesActivos(S)) && (!C.B[k].ep || deSuEpoca(S, k))).map(([k, b]) => { // fase 10: el café se siembra en la finca
       const tope = topeDe(S, k), cuantos = S.map.reduce((n, x) => n + (x.b === k ? 1 : 0), 0), alTope = tope !== Infinity && cuantos >= tope && b.st <= S.stage;
-      const bloqueada = b.st > S.stage || alTope;
+      const falta = b.st <= S.stage && !alTope ? faltanRequisitos(S, k) : [], bloqueada = b.st > S.stage || alTope || falta.length > 0;
       return el('button', {
         class: 'tool' + (this.herramienta === k ? ' on' : ''), 'aria-pressed': String(this.herramienta === k),
         ...(bloqueada ? { disabled: '' } : {}), on: { click: () => this.elegir(k) }
       }, [
-        bloqueada ? el('span', { class: 'candado', text: alTope ? '⛲' : '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
+        bloqueada ? el('span', { class: 'candado', text: alTope ? '⛲' : falta.length ? '🔗' : '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
         this.nombre(k),
-        el('small', { html: alTope ? `Tope ${tope}` : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}${this.textoMat(k)}` })
+        el('small', { html: alTope ? `Tope ${tope}` : falta.length ? 'Antes: ' + falta.map(f => (f.n > 1 ? f.n + ' ' : '') + this.nombre(f.obra).toLowerCase()).join(', ') : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}${this.textoMat(k)}` })
       ]);
     }));
     // Fase 9: calles en damero (van por los bordes de las casillas); van primero para que se vean en el celular.
@@ -1084,12 +1084,24 @@ export class Interfaz {
         <tr class="tot"><td>Se recupera</td><td>${e.recupera ? `en ${e.recupera} años` : 'no, en dinero'}</td></tr></table></div>
       <p class="small"><b>Cuando esté lista:</b> ${C.B[k].d}</p>${this.efectos(e)}
       <div class="phil"><b>Lo que enseña</b><br>${O.leccionProyecto}</div>
+      ${this.bloqueConsulta(k)}
       <h3>Licitación: elige contratista</h3>${ofs}
       <p class="small">${O.leccionLicitacion}</p>
       <button class="btn" id="noB">Cancelar</button>`);
     this.alCerrar = () => this.mapa.marcar(null);
-    this.card.querySelectorAll('[data-of]').forEach(b => b.onclick = () => { const id = b.dataset.of; this.alCerrar = null; this.cerrarTarjeta(); alElegir(id); });
+    this.modoConsulta = 'compensar';
+    this.card.querySelectorAll('[data-cons]').forEach(b => b.onclick = () => { this.modoConsulta = b.dataset.cons; this.card.querySelectorAll('[data-cons]').forEach(o => { o.classList.toggle('on', o === b); o.setAttribute('aria-pressed', String(o === b)); }); });
+    this.card.querySelectorAll('[data-of]').forEach(b => b.onclick = () => { const id = b.dataset.of; this.alCerrar = null; this.cerrarTarjeta(); alElegir(id, this.modoConsulta); });
     this.boton('noB', () => this.cerrarTarjeta());
+  }
+  // Consulta a la comunidad (el proceso de construir): a favor, o en contra con dos salidas.
+  bloqueConsulta(k) {
+    const c = consultaDe(this.S, k), T = C.PROCESO && C.PROCESO.textos; if (!c) return '';
+    if (c.aprueba) return `<h3>${T.consulta}</h3><p class="small">✅ ${T.aFavor.replace('{p}', c.apoyo)}</p>`;
+    const l = Math.abs(C.PROCESO.contra.legitimidad);
+    return `<h3>${T.consulta}</h3><p class="small">✋ ${T.enContra.replace('{p}', c.apoyo).replace('{porque}', c.porque)}</p>
+      <button class="opt on" data-cons="compensar" aria-pressed="true">${T.compensar.replace('{c}', c.compensar)}</button>
+      <button class="opt" data-cons="igual" aria-pressed="false">${T.igual.replace('{l}', l)}</button>`;
   }
   chips(fx) {
     const ks = Object.keys(fx);

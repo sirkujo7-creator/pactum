@@ -1,0 +1,47 @@
+{
+  "leccion": "Las obras públicas tienen un orden: un hospital sin agua limpia no cura, una universidad sin escuelas no tiene estudiantes. Y las obras que cambian la vida de un barrio se le consultan a la gente: la licencia social es tan necesaria como la plata.",
+  "requisitos": {
+    "hospital": { "acueducto": 1 },
+    "biblioteca": { "escuela": 1 },
+    "universidad": { "escuela": 2, "biblioteca": 1 },
+    "banco": { "mercado": 1 },
+    "puerto": { "mercado": 1 },
+    "teatro": { "escuela": 1 },
+    "estadio": { "cancha": 1 },
+    "cuartel": { "policia": 1 }
+  },
+  "porque": {
+    "hospital": "sin agua limpia no hay salud",
+    "biblioteca": "los lectores salen de la escuela",
+    "universidad": "los estudiantes salen de las escuelas y leen en la biblioteca",
+    "banco": "el crédito vive del comercio",
+    "puerto": "lo que llega por el río se vende en el mercado",
+    "teatro": "el público se forma en la escuela",
+    "estadio": "primero se juega en la cancha del barrio",
+    "cuartel": "el orden empieza por la policía"
+  },
+  "consulta": {
+    "mina": { "ajuste": -18, "porque": "teme por el agua y los cultivos" },
+    "cuartel": { "ajuste": -8, "porque": "no quiere soldados en el pueblo" },
+    "puerto": { "ajuste": 8, "porque": "espera trabajo en los muelles" },
+    "molino": { "ajuste": -4, "porque": "duda de desviar la quebrada" },
+    "taller": { "ajuste": 4, "porque": "espera empleo, pero teme el humo" },
+    "estadio": { "ajuste": 6, "porque": "quiere fútbol, pero no gastar tanto" },
+    "universidad": { "ajuste": 10, "porque": "sueña con que sus hijos estudien" }
+  },
+  "aprueba": { "legitimidad": 1 },
+  "contra": { "legitimidad": -4 },
+  "compensacion": 0.18,
+  "textos": {
+    "falta": "{obra}: primero necesitas {lista} ({porque}).",
+    "consulta": "Consulta a la comunidad",
+    "aFavor": "La comunidad está a favor ({p}%).",
+    "enContra": "La comunidad está en contra: solo {p}% la apoya; {porque}.",
+    "compensar": "Compensar a la comunidad (+{c} de oro): huertas, vías y empleo para los vecinos",
+    "igual": "Construir de todos modos (−{l} de legitimidad, habrá protesta)",
+    "aprobada": "La comunidad aprobó la obra en la consulta.",
+    "compensada": "Compensaste a la comunidad ({c} de oro) y aprobó la obra.",
+    "impuesta": "Construiste {obra} contra la consulta: hay protesta en la plaza.",
+    "inaugura": "Inauguraste {obra}: cinta, banda y vecinos en la puerta."
+  }
+}

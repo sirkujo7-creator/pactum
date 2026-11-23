@@ -285,6 +285,7 @@ export class Mapa extends Phaser.Scene {
         }
       }
       if (gris && ob.det >= C.OBRAS.aniosElefante) this.desgasteVisible(i, 3);
+      if (ob.y === this.S.year && !ob.det) this.obras[i].push(this.figura('edificios', 'estacas', t.r + .5, t.c + .5, t.h, 1).setDepth(t.r + t.c + 1.05)); // el primer año: estudio y trazado
       return;
     }
     // Huellas, paso 1: una obra derrumbada por un desastre se ve en ruinas hasta reconstruirla.
@@ -361,6 +362,7 @@ export class Mapa extends Phaser.Scene {
   }
   // Huellas, paso 1: tumbas en el cementerio, velas de luto en la plaza y banderas amarillas en una epidemia.
   huellasDeObra(i, x, t) {
+    if (x.inaug !== undefined && this.S.year - x.inaug <= 1 && this.hojas.edificios.marcos.inaug) this.obras[i].push(this.figura('edificios', 'inaug', t.r + .5, t.c + .5, t.h, 1).setDepth(t.r + t.c + 1.1)); // inauguración: cinta, banda y vecinos
     const S = this.S, pon = (k, dv, du, s = 1) => { const r = t.r + .5 + dv, c = t.c + .5 + du, img = this.figura('edificios', k, r, c, t.h, s).setDepth(t.r + t.c + 1 + dv + du + .02); this.obras[i].push(img); return img; };
     if (x.b === 'cementerio') {
       const n = Math.min(12, Math.ceil(tumbasDe(S, i) * 12 / C.HUELLAS.cementerio.capacidad));
@@ -433,7 +435,7 @@ export class Mapa extends Phaser.Scene {
     if (this.vida) this.vida.poner();
   }
   // Huella de una casilla: si cambia al cerrar el año (bosque, cenizas, erosión, derrumbe, obra), se redibuja.
-  huella(x, i) { return `${x.pt ?? ''}${x.g ? 'G' : ''}|${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}|${x.vida ?? ''}`; } // fase 10: el cultivo y si ya produce
+  huella(x, i) { return `${x.pt ?? ''}${x.g ? 'G' : ''}|${this.huellaExtra(x, i)}|${x.ru ? 'r' : ''}|${x.mk ? x.mk.t + x.mk.y + (x.mk.perm ? 'p' : '') : ''}|${x.t}|${x.b}|${x.q || 0}|${x.er || 0}|${x.dr || 0}|${x.nb ? Math.min(3, this.S.year - x.nb) : ''}|${x.b && x.u ? nivelObra(x) : 0}|${x.ob ? x.ob.p + '-' + Math.min(2, x.ob.det) : ''}|${x.cv ? x.cv + (C.CULTIVOS && x.cvDesde !== undefined && this.S.year < x.cvDesde + C.CULTIVOS.cultivos[x.cv].madura ? 'j' : '') : ''}|${x.pr || ''}${x.nv || ''}|${x.vida ?? ''}|${x.ob && x.ob.y === this.S.year ? 'e' : ''}${x.inaug !== undefined && this.S.year - x.inaug <= 1 ? 'i' : ''}`; } // fase 10: el cultivo y si ya produce
   // Fase 6: si el río cambió de curso, el terreno se vuelve a generar con el desvío y se repinta todo.
   revisarRio() {
     const n = desvios(this.S).length;
@@ -543,8 +545,8 @@ export class Mapa extends Phaser.Scene {
       this.posibles.fillPoints(q, true).strokePoints(q, true);
     }
   }
-  construir(k, i, ofertaElegida) {
-    const antes = this.S.map[i].b, r = build(this.S, k, i, ofertaElegida);
+  construir(k, i, ofertaElegida, modo) {
+    const antes = this.S.map[i].b, r = build(this.S, k, i, ofertaElegida, modo);
     if (this.S.map[i].b !== k || antes === k) { this.ui.toast(typeof r === 'string' ? r : 'No se puede construir ahí.'); return; }
     this.refrescarCasilla(i);
     for (const j of partesObra(this.S, i)) if (j !== i) this.refrescarCasilla(j); // las casillas de atrás de una obra grande
@@ -916,7 +918,7 @@ export class Mapa extends Phaser.Scene {
     if ((k === 'calle' || k === 'quitarCalle') && !this.S.over) { this.tocarEsquina(cam.scrollX + px / this.escala, cam.scrollY + py / this.escala, k); return; }
     if (k && !this.S.over) {
       // Fase 2: las obras grandes pasan primero por la ficha del proyecto y la licitación.
-      if (porEtapas(this.S, k) && !whyNot(this.S, k, i)) { this.marcar(i); this.ui.licitacion(k, i, id => this.construir(k, i, id)); return; }
+      if (porEtapas(this.S, k) && !whyNot(this.S, k, i)) { this.marcar(i); this.ui.licitacion(k, i, (id, modo) => this.construir(k, i, id, modo)); return; }
       this.construir(k, i); return;
     }
     if (this.ui.hojaAbierta()) { this.ui.cerrarHojas(); return; }

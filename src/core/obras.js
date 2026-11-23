@@ -33,6 +33,7 @@ export function whyNot(S, k, i) {
   if (k === 'estudio' && S.map.some(y => y.b === 'estudio')) return C.MIN.textos.yaHay;
   const gr = motivoGrande(S, k, i, j => { const y = S.map[j]; return y.t === 'rio' ? 'hay río' : y.b || y.pt !== undefined ? 'hay otra obra' : y.oc ? 'están ocupadas' : (y.mk && (y.mk.t === 'resguardo' || y.mk.t === 'asentamiento')) || esColono(y) ? 'hay gente viviendo ahí' : !(b.ok || []).includes(y.t) ? 'el terreno no sirve' : ''; }); if (gr) return gr; // obras de varias casillas
   const ep = motivoEpoca(S, k); if (ep) return ep; // lugares de entretenimiento: solo en su época
+  const rq = motivoRequisito(S, k); if (rq) return rq; // el proceso: obras que necesitan otras antes
   const tp = motivoTope(S, k); if (tp) return tp; // fase 17: el tope de la plaza
   const pago = cuotaInicial(S, k, cost(S, k));
   if (S.gold < pago) return `Te faltan ${pago - Math.floor(S.gold)} de oro.`;
@@ -54,7 +55,7 @@ function cercaDeMateria(S, k, i) {
 }
 // Devuelve true, un mensaje (si taló bosque) o el motivo por el que no se pudo.
 // ofertaElegida (fase 2): contratista de la licitación; sin ella, la oferta de buena reputación.
-export function build(S, k, i, ofertaElegida) {
+export function build(S, k, i, ofertaElegida, consultaModo) {
   const r = whyNot(S, k, i);
   if (r) return r;
   const x = S.map[i], o = porEtapas(S, k) ? oferta(S, k, ofertaElegida, i) : null, total = o ? o.total : cost(S, k), pago = o ? o.cuota : cuotaInicial(S, k, total);
@@ -72,6 +73,7 @@ export function build(S, k, i, ofertaElegida) {
   if (k === 'taller' && industriaActiva(S)) x.nuevaF = true; // fase 11: el primer producto va incluido
   empezarObra(S, i, k, total, o ? o.anios : undefined);
   const nLater = S.later.length, aviso = aplicarOferta(S, i, k, o);
+  const cons = aplicarConsulta(S, i, k, consultaModo); if (cons) { aviso.push(cons.msg); S.undo[S.undo.length - 1].cons = cons.deshacer; } // consulta a la comunidad
   // Deshacer también devuelve el soborno (y borra el escándalo pendiente).
   if (o && o.sob) Object.assign(S.undo[S.undo.length - 1], { sob: o.sob, rumbo: o.rumbo || 0, escandalo: S.later.length > nLater });
   if (aviso.length) msg = [msg, ...aviso].filter(Boolean).join(' ');
@@ -96,6 +98,7 @@ export function undoBuild(S) {
   x.b = null; delete x.ob; delete x.mt; delete x.u; delete x.ya; delete x.cv; delete x.cvDesde; delete x.nueva; delete x.pr; delete x.nuevaF; delete x.nv; delete x.mn; delete x.mj; delete x.dd; S.gold += u.paid; devolverMat(S, u.mat);
   if (u.sob) { S.gold -= u.sob; S.corr = Math.max(0, S.corr - u.rumbo); if (u.escandalo) S.later.pop(); }
   if (u.acta) deshacerFaltas(S, u.acta);
+  if (u.cons) deshacerConsulta(S, u.cons);
   if (u.rel) restaurarRelaciones(S, u.rel);
   if (u.mk) x.mk = u.mk;
   if (u.k === 'fundacion' && S.fundando) { S.fundando.plaza = 1; delete S.centro; } // deshacer la plaza: se vuelve a elegir el centro
@@ -132,6 +135,7 @@ import { motivoFundacion, esColono } from './huellas.js';
 import { motivoTope } from './plaza.js';
 import { motivoGrande, ocuparGrande, liberarGrande } from './grandes.js';
 import { motivoEpoca } from './ocio.js';
+import { motivoRequisito, aplicarConsulta, deshacerConsulta } from './proceso.js';
 export function vistaPrevia(S, k, iElegida) {
   let t = iElegida !== undefined ? [iElegida].filter(i => !whyNot(S, k, i)) : freeTiles(S, k);
   if (!t.length) return { motivo: S.gold < cuotaInicial(S, k, cost(S, k)) ? `Te faltan ${cuotaInicial(S, k, cost(S, k)) - Math.floor(S.gold)} de oro.` : 'No hay terreno disponible.' };
