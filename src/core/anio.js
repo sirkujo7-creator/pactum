@@ -24,6 +24,7 @@ import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, in
 import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
 import { ocioDelAnio } from './ocio.js';
+import { personalDelAnio } from './proceso.js';
 import { avanzarObras } from './construccion.js';
 import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
@@ -119,6 +120,7 @@ export function advance(S) {
   // Fase 1: las obras se gastan según el mantenimiento que se paga.
   news.push(...desgasteDelAnio(S));
   news.push(...ocioDelAnio(S)); // el circo de paso se va
+  news.push(...personalDelAnio(S)); // médicos y maestros: se forman, llegan y se retiran
 
   // Déficit y cesación de pagos.
   S.deficit = F.net < 0 ? S.deficit + 1 : 0;

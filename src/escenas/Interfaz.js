@@ -12,7 +12,7 @@ import {
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes,
-  deSuEpoca, consultaDe, faltanRequisitos,
+  deSuEpoca, consultaDe, faltanRequisitos, personalActivo, necesidadPersonal, personal, factorPersonal, costoContratar, contratar,
 } from '../core/index.js';
 import { montarCarta, fichaLugar } from './mundo.js';
 import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
@@ -73,7 +73,7 @@ function teñirEmojis(nodo) {
 // Pestañas pequeñas de cada pantalla: [id, título, secciones (un prefijo termina en «-»)].
 const PESTANAS = {
   hacienda: [['cuentas', '💰 Cuentas', ['h-cuentas', 'h-fondo', 'h-bonos', 'h-mant', 'h-mega']], ['produccion', '🏭 Producción', ['h-economia', 'h-canasta', 'h-industria', 'h-almacen', 'h-consumo']], ['riesgos', '⚠️ Riesgos', ['h-riesgo', 'h-clima', 'h-ciclos', 'h-ejercito']]],
-  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
+  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida', 'so-personal']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
   leyes: [['leyes', '📜 Leyes', ['ley-']], ['regimen', '🏛️ Régimen', ['gob-regimen']], ['oposicion', '🗣️ Oposición', ['c-oposicion']], ['seguridad', '🛡️ Seguridad', ['so-seguridad', 'so-conflicto']]],
   mundo: [['carta', '🗺️ Carta', ['m-carta']], ['vecinos', '🏘️ Vecinos', ['so-vecinos']], ['noticias', '📰 Noticias', ['m-noticias']]],
   cronica: [['resumen', '📈 Resumen', ['c-identidad', 'c-graficas', 'c-legado']], ['cartas', '✉️ Cartas', ['c-album']], ['memoria', '🕯️ Memoria', ['c-comision', 'c-lugares', 'c-maravillas']], ['epoca', '🌍 Época', ['c-contexto', 'c-almanaque']], ['registro', '📜 Registro', ['c-log']]]
@@ -436,8 +436,9 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a, gestoDe(v))}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.seccionPersonal() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
+    this.sociedad.querySelectorAll('[data-contratar]').forEach(b => b.onclick = () => { const m = contratar(this.S, b.dataset.contratar, 1); if (m) { this.toast(m); this.mapa.cambio(true); this.render(); } });
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
@@ -1983,6 +1984,19 @@ export class Interfaz {
     this.boton('cPlano', () => { this.cerrarTarjeta(); this.tarjetaPlano(); });
     this.boton('cCob', () => { if (this.mapa.listo) this.mapa.alternarCobertura(); this.cerrarTarjeta(); });
     this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Personal (el proceso de construir, tanda 2): médicos y maestros que tiene el pueblo frente a los que necesitan sus obras.
+  seccionPersonal() {
+    const S = this.S; if (!personalActivo(S)) return '';
+    const KP = C.PROCESO.personal, filas = Object.entries(KP.tipos).map(([t, T]) => {
+      const n = necesidadPersonal(S, t), h = personal(S, t), f = Math.round(factorPersonal(S, t) * 100), c = costoContratar(S, t);
+      if (!n && !h) return '';
+      return `<div class="cls"><div style="font-size:26px;line-height:1">${T.icono}</div><div><div class="lab"><span>${T.nombre[0].toUpperCase() + T.nombre.slice(1)} <b>${h}</b> de ${n}</span><span class="${f < 100 ? 'neg' : ''}">rinden ${f}%</span></div>
+        <div class="track"><div class="fill" style="width:${n ? Math.min(100, h / n * 100) : 100}%"></div></div>
+        ${h < n ? `<button class="opt" data-contratar="${t}" ${S.gold < c ? 'disabled' : ''}>${KP.textos.contratar.replace('{n}', 1).replace('{c}', c)}</button>` : ''}</div></div>`; }).join('');
+    if (!filas) return '';
+    return this.pleg('so-personal', `${filas}<p class="small">Se forman solos: la escuela forma maestros y la universidad médicos y maestros; cuando faltan, llegan algunos de otros pueblos.</p>
+      <div class="phil"><b>Lo que enseña</b><br>${KP.leccion}</div>`, '👩‍⚕️ Personal', Object.keys(KP.tipos).map(t => `${personal(S, t)}/${necesidadPersonal(S, t)} ${KP.tipos[t].icono}`).join(' · '));
   }
   // Nivel de vida del pueblo (en Sociedad): cuántas casas hay en cada nivel, lo que más falta y su efecto.
   seccionVida() {

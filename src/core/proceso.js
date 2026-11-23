@@ -45,3 +45,48 @@ export function aplicarConsulta(S, i, k, modo) {
   return { msg: T.impuesta.replace('{obra}', C.B[k].a), deshacer: { tr: K().contra.legitimidad } };
 }
 export function deshacerConsulta(S, d) { if (!d) return; if (d.tr) S.tr = clamp(S.tr - d.tr, 0, 100); if (d.oro) S.gold += d.oro; }
+
+// ---------- Personal (tanda 2): médicos y maestros ----------
+// Cada hospital necesita médicos y enfermeras, y cada escuela, universidad o biblioteca, maestros. Se forman solos
+// (la escuela normal y la universidad) y llegan algunos de otros pueblos cuando faltan; también se pueden traer de
+// afuera pagando. Sin el personal completo la obra rinde menos (nunca menos del piso): cobertura de escuela y salud.
+const KP = () => K() && K().personal;
+export const personalActivo = S => procesoActivo(S) && !!KP();
+export function necesidadPersonal(S, t) {
+  const T = KP().tipos[t]; let n = 0;
+  for (const x of S.map) if (x.b && !x.ob && T.por[x.b]) n += T.por[x.b];
+  return n;
+}
+function iniciarPersonal(S) {
+  if (S.personal) return S.personal;
+  S.personal = {}; for (const t of Object.keys(KP().tipos)) S.personal[t] = necesidadPersonal(S, t); // las partidas guardadas empiezan con su personal completo
+  return S.personal;
+}
+export function personal(S, t) { return personalActivo(S) ? Math.floor(iniciarPersonal(S)[t] || 0) : 0; }
+export function factorPersonal(S, t) {
+  if (!personalActivo(S)) return 1;
+  const n = necesidadPersonal(S, t); if (!n) return 1;
+  return KP().piso + (1 - KP().piso) * Math.min(1, personal(S, t) / n);
+}
+export function costoContratar(S, t) { return Math.round(KP().tipos[t].precio * (S.price || 1)); }
+export function contratar(S, t, n = 1) {
+  if (!personalActivo(S)) return '';
+  const c = costoContratar(S, t) * n; if (S.gold < c) return '';
+  S.gold -= c; iniciarPersonal(S)[t] += n;
+  return KP().textos.contratados.replace('{n}', n).replace('{nombre}', KP().tipos[t].nombre);
+}
+// Cierre del año: se forman, llegan y se retiran.
+export function personalDelAnio(S) {
+  if (!personalActivo(S)) return [];
+  const P0 = iniciarPersonal(S), news = [];
+  for (const [t, T] of Object.entries(KP().tipos)) {
+    const antes = Math.floor(P0[t]), n = necesidadPersonal(S, t);
+    let v = P0[t] * (1 - KP().retiro);
+    for (const [o, f] of Object.entries(T.forma)) v += S.map.filter(x => x.b === o && !x.ob).length * f;
+    if (v < n) v += T.llegan; // cuando faltan, llegan algunos de otros pueblos
+    P0[t] = Math.min(v, n * 1.5 + 2); // no sobran más de la cuenta: los que sobran se van a otra parte
+    const ahora = Math.floor(P0[t]);
+    if (ahora > antes && n) news.push(KP().textos.llegan.replace('{icono}', T.icono).replace('{n}', ahora - antes).replace('{nombre}', T.nombre).replace('{total}', ahora));
+  }
+  return news;
+}
