@@ -2227,8 +2227,7 @@ function universidadDeco(g) {
   const b = P(F.f - .06, 0, 40); bandera(g, b[0], b[1], 14, TRICOLOR);
   arbolito(g, ...P(F.f + .2, F.a + .06), .9, '#4E7A3A'); arbolito(g, ...P(F.f + .2, F.b - .06), .9, '#5E8B42');
 }
-function universidad6(g, e, h) {
-  if (h === 2) return universidadDeco(g); if (h === 5) return campusModerno(g); if (h === 3 || h === 4) return universidadBloques(g, h === 4); universidad(g, Math.min(h, 3)); if (h === 5) solares(g, caras(.92, .7, 30, -.04), 2); }
+function universidad6(g, e, h) { if (h <= 1) return claustroU(g, h); if (h === 2) return universidadClasica(g); if (h <= 4) return campusBloques(g, h); return campusDigital(g); }
 function policia6(g, e, h) { if (h === 3) return estacionModerna(g); if (h === 4) return estacionFortificada(g); if (h === 5) return caiNuevo(g); policia(g, h, h); }
 function cuartel6(g, e, h) {
   if (h === 3) { basaBarracas(g, false, false); for (let k = 0; k < 5; k++) soldadoM(g, ...P(.46, -.34 + k * .15)); personaM(g, ...P(.56, .0), '#2F3E24', '#2E2A28', '#C98E62'); const q = P(.2, .46, 0); g.strokeStyle = '#2E2A28'; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(q[0] - 5, q[1] - 2); g.lineTo(q[0] + 4, q[1] - 5.4); g.stroke(); return; } // base con su formación
@@ -2947,6 +2946,128 @@ function sedeModerna2(g, muro, zocalo) {
   return F;
 }
 
+// ---------- Universidad en las seis épocas (Juan: «parece de todo menos una universidad») ----------
+// Lo que la hace reconocible: el claustro o el campus (varias alas alrededor de un patio o un prado), el pórtico de
+// columnas con frontón, la torre del reloj, la portería con el nombre y los estudiantes con libros.
+function estudiantesU(g, pts, h) {
+  const ropas = h <= 1 ? ['#2A2624', '#3A3430', '#2A2624'] : h === 2 ? ['#3E4A5E', '#E8E4DA', '#5E4A3A', '#2F3E5A'] : ['#2F5D8A', '#C0392B', '#E8C23A', '#3E6B4A', '#E8E4DA', '#7A4E8A'];
+  pts.forEach(([r, c], k) => { const q = P(r, c); g.save(); g.translate(q[0], q[1]); g.scale(.72, .72); const p = [0, 0]; personaM(g, p[0], p[1], ropas[k % ropas.length], h <= 1 && k % 2 ? '#1E1A18' : null, ['#C98E62', '#A8704A', '#8A5A3A'][k % 3]); g.fillStyle = ['#8E2F22', '#2F5D8A', '#3E6B4A'][k % 3]; g.fillRect(p[0] + 1.2, p[1] - 6.4, 1.6, 2); g.fillStyle = '#F4F1E8'; g.fillRect(p[0] + 1.3, p[1] - 6.3, .3, 1.8); g.restore(); }); // con su libro (a la escala de la gente del mapa)
+}
+// Pórtico de columnas con frontón sobre la fachada izq (de u0 a u1), con escalinata.
+function porticoU(g, F, u0, u1, n, alto, col, frontis = true) {
+  const e = .09, a = F.a + (F.b - F.a) * u0, b = F.a + (F.b - F.a) * u1, f = F.f, Z = F.z0;
+  for (let k = 0; k < 3; k++) rellena(g, [P(f + e + .05 - k * .02, a - .03, Z + k * .9), P(f + e + .05 - k * .02, b + .03, Z + k * .9), P(f + e + .05 - k * .02, b + .03, Z + k * .9 + .9), P(f + e + .05 - k * .02, a - .03, Z + k * .9 + .9)], LUZ(col, .1 - k * .03), 'rgba(60,50,40,.35)', .25); // escalinata
+  rellena(g, [P(f, a, Z + alto), P(f, b, Z + alto), P(f + e, b, Z + alto), P(f + e, a, Z + alto)], SOM(col, .2), null); // sombra del techo del pórtico
+  for (let k = 0; k <= n; k++) { const c = a + (b - a) * k / n; cajaPx(g, ...P(f + e - .02, c, Z + 2.7), .045, .045, alto - 2.7, LUZ(col, .06), { izq: LUZ(col, .16), borde: 'rgba(60,50,40,.3)' }); }
+  rellena(g, [P(f + e, a, Z + alto), P(f + e, b, Z + alto), P(f + e, b, Z + alto + 2.4), P(f + e, a, Z + alto + 2.4)], LUZ(col, .1), 'rgba(60,50,40,.4)', .3); // entablamento
+  rellena(g, [P(f, b, Z + alto), P(f + e, b, Z + alto), P(f + e, b, Z + alto + 2.4), P(f, b, Z + alto + 2.4)], SOM(col, .2), null);
+  if (frontis) { const m = (a + b) / 2; rellena(g, [P(f + e, a, Z + alto + 2.4), P(f + e, b, Z + alto + 2.4), P(f + e, m, Z + alto + 2.4 + (b - a) * 14)], LUZ(col, .14), 'rgba(60,50,40,.45)', .35); rellena(g, [P(f + e, a + .06, Z + alto + 3.2), P(f + e, b - .06, Z + alto + 3.2), P(f + e, m, Z + alto + 2.4 + (b - a) * 11)], SOM(col, .08), null); }
+}
+// Torre del reloj con cúpula pequeña o remate, sobre el punto (r, c) del techo a la altura z.
+function torreReloj(g, r, c, z, alto, col, remate = 'cupula') {
+  const T = caras(.14, .14, alto, r, c, z); muros(g, T, col, null); aleroYdesgaste(g, T, 1.2);
+  hueco(g, T, 'izq', .25, .75, alto * .25, alto * .55, '#3A2A1E', true); reloj(g, ...T.en('izq', .5, alto * .78), 2.4); reloj(g, ...T.en('der', .5, alto * .78), 2);
+  const top = P(r, c, z + alto);
+  if (remate === 'cupula') { g.fillStyle = '#B9552F'; g.beginPath(); g.ellipse(top[0], top[1], 4.6, 2.3, 0, Math.PI, 0); g.lineTo(top[0] + 4.6, top[1]); g.quadraticCurveTo(top[0] + 4, top[1] - 6, top[0], top[1] - 7); g.quadraticCurveTo(top[0] - 4, top[1] - 6, top[0] - 4.6, top[1]); g.fill(); g.fillStyle = 'rgba(255,220,180,.35)'; g.beginPath(); g.ellipse(top[0] - 1.6, top[1] - 3.6, 1.2, 2.2, -.3, 0, 7); g.fill(); g.strokeStyle = '#5A3A22'; g.lineWidth = .5; g.beginPath(); g.moveTo(top[0], top[1] - 7); g.lineTo(top[0], top[1] - 10); g.stroke(); }
+  else pretil(g, T, col);
+  return T;
+}
+// Portería con el nombre: dos pilares y el dintel con letras, de c0 a c1 sobre la fila r.
+function porteriaU(g, r, c0, c1, texto, col, alto = 12) {
+  for (const c of [c0, c1]) cajaPx(g, ...P(r, c), .07, .07, alto, col, { izq: LUZ(col, .1) });
+  const a = P(r, c0, alto), b = P(r, c1, alto);
+  rellena(g, [a, b, [b[0], b[1] - 4], [a[0], a[1] - 4]], LUZ(col, .08), 'rgba(50,40,30,.5)', .35);
+  g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 2); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0);
+  g.font = 'bold 10px Georgia, serif'; const L = Math.abs(b[0] - a[0]) * .9, t = Math.min(2.8, 10 * L / g.measureText(texto).width); g.font = `bold ${t}px Georgia, serif`;
+  g.fillStyle = '#3A2A1E'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(texto, 0, .2); g.restore();
+}
+function prado(g, r0, r1, c0, c1, col = '#8AAE62') {
+  rellena(g, [P(r0, c0), P(r0, c1), P(r1, c1), P(r1, c0)], col, null);
+  g.strokeStyle = '#D8CDB4'; g.lineWidth = 1.2; const rm = (r0 + r1) / 2, cm = (c0 + c1) / 2; g.beginPath(); g.moveTo(...P(r0, cm)); g.lineTo(...P(r1, cm)); g.moveTo(...P(rm, c0)); g.lineTo(...P(rm, c1)); g.stroke(); // senderos en cruz
+}
+// Fundación: Colegio Mayor, claustro colonial de una planta con corredor de arcos alrededor del patio, capilla con
+// espadaña, pila y naranjo en el patio, portada con el nombre; estudiantes de manteo negro.
+// Café: Colegio de San Simón (Ibagué, 1822): el mismo claustro de dos plantas, con galería de balaustres arriba y torre
+// del reloj con cúpula.
+function claustroU(g, h) {
+  const dos = h === 1, H = dos ? 19 : 11, muro = K.cal, zoc = h === 0 ? '#8A6A48' : '#7A2E2A';
+  const B = caras(.76, .22, H, -.36, -.06); sombraCasa(g, B); muros(g, B, muro, zoc); aleroYdesgaste(g, B);
+  arcada(g, B, 'izq', 6, 0, 7.4, .04, .96, '#4A3A2C');
+  if (dos) { balcon(g, B, .04, .96, 10.4, .05, K.maderaLuz); fila(g, B, 'izq', 6, 11.4, .07, 5.6, { carp: K.madera, vent: {} }, .04, .96); fila(g, B, 'der', 2, 11.4, .14, 5.6, { carp: K.madera, vent: {} }); }
+  dosAguas(g, B, dos ? 7 : 6, MAT.tejaVieja);
+  if (dos) torreReloj(g, -.36, -.06, H + 4, 10, muro, 'cupula');
+  const L = caras(.22, .58, H, .05, -.33); sombraCasa(g, L); muros(g, L, muro, zoc); aleroYdesgaste(g, L);
+  arcada(g, L, 'der', 4, 0, 7.4, .06, .94, '#4A3A2C'); if (dos) { fila(g, L, 'der', 4, 11.4, .1, 5.6, { carp: K.madera, vent: {} }, .06, .94); } ventana(g, L, 'izq', .5, 4, .3, 5, K.madera, {});
+  dosAguasR(g, L, dos ? 6 : 5, MAT.tejaVieja);
+  if (!dos) { const C = caras(.18, .22, 16, -.36, .4); sombraCasa(g, C); muros(g, C, muro, zoc); puerta(g, C, 'izq', .5, .3, 8, K.madera); dosAguas(g, C, 5, MAT.tejaVieja); espadana(g, C, .5, 16 + 4, 9); } // capilla
+  prado(g, -.2, .34, -.18, .42, h === 0 ? '#A8A06A' : '#8AAE62');
+  { const p = P(.07, .12); cilindroV(g, p[0], p[1], 3.4, 2.2, '#C8C0B0', { tapa: '#6E9EAE' }); cilindroV(g, p[0], p[1] - 2.2, .8, 3, '#D8D0C0'); }
+  arbolito(g, ...P(-.12, .3), .8, '#4E7A3A'); arbolito(g, ...P(.24, -.06), .75, '#5E8B42');
+  estudiantesU(g, [[.14, .02], [.17, .06], [-.04, .2], [.2, .24], [.0, -.06]], h);
+  { const T = caras(.4, .04, 5, .44, .2); muros(g, T, muro, zoc); hueco(g, T, 'izq', .3, .7, 0, 4.4, '#3A2A1E', true); rellena(g, [T.en('izq', .26, 5), T.en('izq', .74, 5), T.en('izq', .5, 8)], muro, 'rgba(60,50,40,.4)', .3); } // tapia con portada
+  { const T = caras(.04, .4, 5, .2, .44); muros(g, T, muro, zoc); } // tapia del costado
+  { const a = P(.44, .08, 9.4), b = P(.44, .32, 9.4); rellena(g, [a, b, [b[0], b[1] - 3], [a[0], a[1] - 3]], '#F2ECE0', 'rgba(60,50,40,.5)', .3); g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 1.5); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0); g.fillStyle = '#3A2A1E'; g.font = 'bold 1.7px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(dos ? 'COLEGIO DE SAN SIMÓN' : 'COLEGIO MAYOR', 0, .1); g.restore(); } // letrero sobre la portada
+  const b = P(.42, -.2); bandera(g, b[0], b[1], 20, h === 0 ? ['#F4F1E8', '#B9442F'] : TRICOLOR);
+}
+// La Violencia: la Universidad del Tolima (fundada en 1945): edificio blanco de tres pisos con pilastras, pórtico de
+// columnas y torre del reloj; un ala de aulas al lado, prado con senderos, palmas, portería con el nombre.
+function universidadClasica(g) {
+  const B = caras(.78, .26, 24, -.34, -.04); sombraCasa(g, B); muros(g, B, '#EEE8DA', '#7A6A58'); aleroYdesgaste(g, B);
+  pilares(g, B, 'izq', [0, .14, .28, .72, .86, 1], '#F6F2E8', .016, .02);
+  for (let p = 0; p < 3; p++) for (const u of [.07, .21, .79, .93]) hueco(g, B, 'izq', u - .05, u + .05, 2.6 + p * 7.6, 6.6 + p * 7.6, '#6E94AA');
+  for (let p = 0; p < 3; p++) for (const u of [.25, .5, .75]) hueco(g, B, 'der', u - .1, u + .1, 2.6 + p * 7.6, 6.6 + p * 7.6, '#5E8498');
+  hueco(g, B, 'izq', .4, .6, 0, 9, '#4A3A2C', true); pretil(g, B, '#E4DED0');
+  porticoU(g, B, .32, .68, 4, 15, '#F2ECE0');
+  torreReloj(g, -.4, -.04, 26.4, 12, '#F4F0E6', 'plano');
+  const L = caras(.22, .46, 16, .12, -.37); sombraCasa(g, L); muros(g, L, '#EEE8DA', '#7A6A58'); aleroYdesgaste(g, L); for (let p = 0; p < 2; p++) for (const u of [.2, .5, .8]) hueco(g, L, 'der', u - .1, u + .1, 2.6 + p * 7.6, 6.6 + p * 7.6, '#6E94AA'); pretil(g, L, '#E4DED0');
+  prado(g, -.08, .46, -.22, .46);
+  for (const [r, c] of [[-.12, .42], [.42, -.18]]) arbolito(g, ...P(r, c), .85, '#4E7A3A');
+  estudiantesU(g, [[.1, .06], [.13, .1], [.2, .24], [.04, .3], [.26, .0]], 2);
+  porteriaU(g, .47, .12, .42, 'UNIVERSIDAD DEL TOLIMA', '#E8E2D4');
+  const b = P(-.4, -.04, 46); bandera(g, b[0], b[1], 10, TRICOLOR);
+}
+// Modernización y conflicto: campus de bloques alrededor de una plazoleta: el bloque de aulas de cinco pisos con
+// quiebrasoles, la biblioteca baja de vidrio, el auditorio de cubierta inclinada y la portería. En el conflicto, el
+// mural estudiantil, las pancartas y un mitin en la plazoleta.
+function campusBloques(g, h) {
+  const conflicto = h === 4;
+  const A = caras(.4, .3, 42, -.3, -.28); sombraCasa(g, A); muros(g, A, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, A);
+  for (let p = 0; p < 5; p++) { vidrio(g, A, 'izq', .06, .94, p * 8.4 + 2.6, p * 8.4 + 6.8, { montantes: 5 }); vidrio(g, A, 'der', .08, .92, p * 8.4 + 2.6, p * 8.4 + 6.8, { montantes: 4 }); }
+  losas(g, A, [8.4, 16.8, 25.2, 33.6], '#E8E2D4', .03, 1.3); pilares(g, A, 'izq', [.17, .33, .5, .67, .83], '#E8E2D4', .01, .05, 0, 42);
+  pretil(g, A, '#E2DCCE'); cuartoTecho(g, A, A.t + .1, A.a + .12, .14, .12, 4, '#E2DCCE');
+  if (conflicto) { const Lp = (u, z) => A.en('izq', u, z); rellena(g, [Lp(.06, 1.2), Lp(.94, 1.2), Lp(.94, 8), Lp(.06, 8)], '#E8D49A', null); rellena(g, [Lp(.06, 1.2), Lp(.4, 1.2), Lp(.3, 8), Lp(.06, 8)], '#B9442F', null); rellena(g, [Lp(.6, 1.2), Lp(.94, 1.2), Lp(.94, 8), Lp(.7, 8)], '#2F6E8E', null); const s = Lp(.5, 4.6); g.fillStyle = '#F2C531'; g.beginPath(); g.arc(s[0], s[1], 2.2, 0, 7); g.fill(); // mural
+    const a = Lp(.1, 30), b = Lp(.9, 30); rellena(g, [a, b, [b[0], b[1] + 5], [a[0], a[1] + 5]], '#F4F1E8', 'rgba(60,40,30,.4)', .3); g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 2.5); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0); g.fillStyle = '#B9442F'; g.font = 'bold 2.2px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('EDUCACIÓN PÚBLICA', 0, 0); g.restore(); }
+  const Bi = caras(.36, .28, 11, -.3, .28); sombraCasa(g, Bi); muros(g, Bi, '#E8E4DA', null); cortina(g, Bi, 'izq', 1, 11, '#E8E4DA'); cortina(g, Bi, 'der', 1, 11, '#E8E4DA'); losas(g, Bi, [11], '#E8E4DA', .06, 1.4); pretil(g, Bi, '#DCD8CE'); letreroAncho(g, Bi, .1, .9, 9.4, '#2F5D8A', 'BIBLIOTECA'); // biblioteca
+  rellena(g, [P(.0, -.42), P(.0, .44), P(.44, .44), P(.44, -.42)], '#CFC6B4', 'rgba(80,70,60,.3)', .3); // plazoleta
+  g.strokeStyle = 'rgba(150,130,100,.35)'; g.lineWidth = .3; for (let k = 1; k < 9; k++) { g.beginPath(); g.moveTo(...P(k * .05, -.42)); g.lineTo(...P(k * .05, .44)); g.stroke(); }
+  for (const [r, c] of [[-.04, .44], [.44, -.04]]) arbolito(g, ...P(r, c), .85, '#4E7A3A');
+  { const Au = caras(.26, .34, 9, .28, -.3); sombraCasa(g, Au); muros(g, Au, '#D8D2C4', null); aleroYdesgaste(g, Au); hueco(g, Au, 'izq', .3, .7, 0, 6, '#4A4E52');
+    const z = 9, hh = 6, e = .03; rellena(g, [P(Au.f + e, Au.a - e, z), P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.a - e, z + hh)], '#9A9E9C', 'rgba(40,40,40,.45)', .35); rellena(g, [P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.b + e, z)], SOM('#D8D2C4', .2), null); letreroAncho(g, Au, .1, .9, 7, '#7A4E2E', 'AUDITORIO'); }
+  estudiantesU(g, conflicto ? [[.08, .08], [.12, .12], [.1, .18], [.16, .06], [.18, .16], [.26, .3]] : [[.08, .08], [.12, .12], [.2, .26], [.02, .2]], h);
+  if (conflicto) { const p = P(.12, .12); g.strokeStyle = '#5E4A36'; g.lineWidth = .4; g.beginPath(); g.moveTo(p[0] - 4, p[1] - 4); g.lineTo(p[0] - 4, p[1] - 12); g.moveTo(p[0] + 4, p[1] - 2); g.lineTo(p[0] + 4, p[1] - 10); g.stroke(); rellena(g, [[p[0] - 4, p[1] - 12], [p[0] + 4, p[1] - 10], [p[0] + 4, p[1] - 7], [p[0] - 4, p[1] - 9]], '#F4F1E8', 'rgba(60,40,30,.4)', .3); g.fillStyle = '#B9442F'; g.font = 'bold 1.4px sans-serif'; g.fillText('¡NO MÁS!', p[0] - 3, p[1] - 8.6); } // mitin
+  porteriaU(g, .47, .14, .44, 'UNIVERSIDAD', '#D8D2C4', 11);
+  const b = P(.42, .04); bandera(g, b[0], b[1], 22, TRICOLOR);
+}
+// Era digital: campus moderno: torre de concreto con caja de vidrio en voladizo, edificio de laboratorios de vidrio,
+// auditorio con cubierta verde, prado con estudiantes y portería con letras de acero.
+function campusDigital(g) {
+  const T = caras(.34, .3, 44, -.3, -.3); sombraCasa(g, T); muros(g, T, '#B8B4AC', null); aleroYdesgaste(g, T);
+  g.save(); for (const cara of ['izq', 'der']) { poli(g, T[cara]); g.clip(); g.fillStyle = 'rgba(60,56,50,.4)'; for (let z = 4; z < 44; z += 4) for (let u = .08; u < 1; u += .16) { const p = T.en(cara, u, z); g.fillRect(p[0], p[1], .5, .5); } } g.restore();
+  for (let p = 0; p < 5; p++) { vidrio(g, T, 'izq', .1, .5, p * 8.6 + 2.6, p * 8.6 + 7, { montantes: 3 }); vidrio(g, T, 'der', .5, .9, p * 8.6 + 2.6, p * 8.6 + 7, { montantes: 3 }); }
+  pretil(g, T, '#C4C0B8');
+  const V = caras(.3, .28, 12, -.3, .0, 28); { const q = P(V.f, V.a + .3, 28), b = P(V.f, V.a + .02, 12); g.strokeStyle = '#8A8680'; g.lineWidth = 1; g.beginPath(); g.moveTo(...b); g.lineTo(...q); g.stroke(); }
+  muros(g, V, '#E8ECEE', null); cortina(g, V, 'izq', 1, 12, '#2E3A44'); cortina(g, V, 'der', 1, 12, '#2E3A44'); pretil(g, V, '#D8DCE0');
+  const Lb = caras(.3, .28, 16, -.3, .32); sombraCasa(g, Lb); muros(g, Lb, '#ECEEEE', null); cortina(g, Lb, 'izq', 2, 8, '#3E6B4A'); cortina(g, Lb, 'der', 2, 8, '#3E6B4A'); pretil(g, Lb, '#E0E4E6'); solares(g, Lb, 1); // laboratorios
+  prado(g, -.1, .46, -.12, .46, '#86AE5E');
+  { const Au = caras(.24, .32, 8, .28, -.32); sombraCasa(g, Au); muros(g, Au, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, Au); cortina(g, Au, 'izq', 1, 4, '#5E4A3A');
+    const z = 8, hh = 6, e = .03; rellena(g, [P(Au.f + e, Au.a - e, z), P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.a - e, z + hh)], '#7E9A6A', 'rgba(40,50,30,.5)', .35); rellena(g, [P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.b + e, z)], SOM(K.ladrillo, .2), null); }
+  for (const [r, c] of [[-.06, .44], [.44, -.08]]) arbolito(g, ...P(r, c), .8, '#4E7A3A');
+  estudiantesU(g, [[.08, .08], [.12, .12], [.2, .24], [.04, .22], [.24, .02]], 5);
+  for (let k = 0; k < 3; k++) { const p = P(.1 + k * .04, .1 + k * .02); g.fillStyle = '#E8E4DA'; g.fillRect(p[0] - .6, p[1] - 3.4, 1.2, .5); } // portátiles
+  porteriaU(g, .47, .14, .44, 'UNIVERSIDAD', '#8A9094', 10);
+  const b = P(.42, .04); bandera(g, b[0], b[1], 22, TRICOLOR);
+}
+
 export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   HIST = h;
   const L = [
@@ -2960,7 +3081,7 @@ export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
     ['policia', 88, 92, 44, 70, policia6],
     ['cuartel', 136, 124, 68, 92, (g, e, h) => h === 5 ? batallonModerno(g) : cuartel6(g, e, h)],
     ['banco', 124, 150, 62, 118, banco6],
-    ['universidad', 108, 120, 54, 88, universidad6],
+    ['universidad', 128, 124, 64, 88, universidad6],
     ['acueducto', 92, 76, 46, 50, (g, e, h) => h === 5 ? plantaAgua(g, h) : acueducto6(g, e, h)],
     ['plaza0', 100, 80, 50, 56, g => plazaN(g, 0)], ['plaza1', 100, 82, 50, 58, g => plazaN(g, 1)], ['plaza2', 100, 84, 50, 60, g => plazaN(g, 2)], ['plaza3', 100, 90, 50, 66, g => plazaN(g, 3)],
     ['estadio', 148, 132, 74, 102, (g, e, h) => h === 5 ? estadioModerno(g) : estadioN(g, e)],
