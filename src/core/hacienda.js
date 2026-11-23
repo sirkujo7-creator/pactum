@@ -38,6 +38,7 @@ import { efectoLeyes, costoLeyesNuevas } from './civismo.js';
 import { efectoVida } from './necesidades.js';
 import { bonoMercado } from './vecindad.js';
 import { comidaHuertas } from './huertas.js';
+import { graneroComida } from './marcas.js';
 export function finance(S) {
   const c = counts(S), so = society(S), w = S.price * (1 + .1 * c.universidad) * (hasLaw(S, 'jornada') ? .95 : 1);
   // Fase 2: el ciclo económico mueve los ingresos, y los campesinos ganan más cuando la comida está cara.
@@ -64,7 +65,7 @@ export function finance(S) {
   let fcap = 0;
   S.map.forEach((x, i) => { if (finca) { if (x.b === 'cultivo') fcap += produccionFinca(S, i).comida; } else if (x.b === 'cultivo') fcap += (nearRiver(S, i) ? 16 : 12) * rindeObra(S, x); });
   fcap += comidaHuertas(S); // huertas junto a las casas (solo en acuarela)
-  if (climaActivo(S)) fcap *= factorCosecha(S); // fase 1: las lluvias del año
+  if (climaActivo(S)) { const G = graneroComida(S, fcap, factorCosecha(S)); fcap = fcap * G.factor + G.extra; } // fase 1: las lluvias del año; el granero comunal guarda para los años malos
   const fprod = so.jc ? Math.round(fcap * so.camp / so.jc) : 0, cons = Math.max(0, Math.ceil(S.pop * .5) - comidaColonos(S)); // huellas: los colonos siembran su comida
   const post = { c: inc.c * (1 - S.tx.c / 100), a: inc.a * (1 - S.tx.a / 100), e: inc.e * (1 - S.tx.e / 100), u: inc.u };
   return { so, taxC, taxA, taxE, fee, up, admin, pensiones, lawCost, interest, pay, cpn, mat, rev, net, fprod, cons, post, rate, fondo, obras, evadido, militar, calles, trab: fT };

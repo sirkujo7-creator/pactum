@@ -10,6 +10,17 @@ import { recordar } from './memoria.js';
 const K = () => C.MARCAS;
 export function marcasActivas(S) { return climaActivo(S) && !!C.MARCAS; }
 
+// Obras de las decisiones que sirven (pedido de Juan): el granero guarda comida, el reservorio agua y el dique ataja la avenida.
+export function casillasMarca(S, tipo) { if (!marcasActivas(S)) return []; const r = []; S.map.forEach((x, i) => { if (x.mk && x.mk.t === tipo && !x.b) r.push(i); }); return r; }
+const datoMarca = (tipo, k) => ((C.MARCAS.tipos[tipo] || {})[k]) || 0;
+// Comida extra del granero: un poco cada año y, en un año de mala cosecha, recupera parte de lo perdido.
+export function graneroComida(S, base, factor) { const n = casillasMarca(S, 'granero').length; if (!n) return { extra: 0, factor }; return { extra: n * datoMarca('granero', 'comida'), factor: factor < 1 ? factor + (1 - factor) * datoMarca('granero', 'salvaCosecha') : factor }; }
+// Agua extra del reservorio y menos pérdida en la sequía.
+export function reservorioAgua(S) { return casillasMarca(S, 'reservorio').length * datoMarca('reservorio', 'agua'); }
+export function reservorioSequia(S, f) { return casillasMarca(S, 'reservorio').length && f < 1 ? f + (1 - f) * datoMarca('reservorio', 'salvaSequia') : f; }
+// ¿El dique protege esta casilla de la avenida? Devuelve el factor de daño (1 = sin protección).
+export function diqueProtege(S, i) { const d = casillasMarca(S, 'dique'); if (!d.length) return 1; const N = lado(S), R = datoMarca('dique', 'radio'); return d.some(j => Math.max(Math.abs(Math.floor(i / N) - Math.floor(j / N)), Math.abs(i % N - j % N)) <= R) ? 1 - datoMarca('dique', 'protege') : 1; }
+
 // Tipo de huella de una opción de dilema (la de los datos, o según la corriente filosófica).
 export function marcaDeOpcion(ev, o) {
   if (o.huella) return o.huella;

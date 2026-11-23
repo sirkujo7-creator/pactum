@@ -8,7 +8,7 @@
 //   piedra con rueda hidráulica; puerto: bodega, muelle de madera y champán; mercado: toldos o plaza cubierta. La sede del gobierno cambia con el
 //   régimen: cabildo de portales (república), palacio con torreones (monarquía), casona con escudo (aristocracia),
 //   fortaleza (tiranía), casa de comercio de ladrillo (oligarquía) y tribuna popular (demagogia).
-import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, bancoMadera, cajaPx, cilindro as cilindroV, hojaP, sombraPie } from './casas.js';
+import { P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, bancoMadera, cajaPx, cilindro as cilindroV, hojaP, sombraPie, ruedaIso } from './casas.js';
 import { mulberry } from './fresco.js';
 import { CAPTURA, capturarQuad } from './casas.js';
 
@@ -112,14 +112,6 @@ function rueda(g, cx, cy, R) {
   g.fillStyle = 'rgba(160,200,215,.65)'; for (let k = 0; k < 4; k++) { const p = pt(-1.2 - k * .25); g.beginPath(); g.ellipse(p[0] + 1, p[1] + 1.5, .7, 1.4, 0, 0, 7); g.fill(); }
 }
 function sacos(g, x, y) { for (const [dx, dy, c] of [[0, 0, '#C9B48A'], [4, 1.5, '#BFA87C'], [2, -2.8, '#D2BE95']]) { g.fillStyle = c; g.beginPath(); g.ellipse(x + dx, y + dy, 2.4, 1.8, .2, 0, 7); g.fill(); g.strokeStyle = 'rgba(90,60,35,.5)'; g.lineWidth = .3; g.stroke(); } }
-function canoa(g, x, y) {
-  rellena(g, [[x - 14, y - 7], [x + 10, y + 5], [x + 12, y + 3.5], [x - 10, y - 9.5]], '#6E4529');
-  rellena(g, [[x - 10, y - 9.5], [x + 12, y + 3.5], [x + 11, y + 1.8], [x - 11, y - 10.6]], '#8A5A36');
-  // Toldo de palma del champán.
-  rellena(g, [[x - 6, y - 6], [x + 4, y - 1], [x + 4, y - 6], [x - 6, y - 11]], '#B79A5A'); rellena(g, [[x - 6, y - 11], [x + 4, y - 6], [x + 2, y - 8.5], [x - 8, y - 13]], '#D2B470');
-  g.strokeStyle = '#3A2A1E'; g.lineWidth = .7; g.beginPath(); g.moveTo(x + 9, y + 1); g.lineTo(x + 16, y - 10); g.stroke(); // pértiga del boga
-}
-
 // Patios y jardines (identidad de cada obra).
 // Árbol de plaza o de patio (samán, mango): tronco que se abre en la raíz y se bifurca, con tres tonos; copa
 // armada con racimos de hojas en punta, oscuros por dentro y abajo a la derecha, con luz arriba a la izquierda
@@ -426,7 +418,7 @@ function molino(g, e) {
   const F = caras(.5, .46, 16, -.06, .1);
   sombraCasa(g, F);
   if (e === 3) { // pequeña central hidroeléctrica: casa de máquinas, tubería de presión y transformador
-    g.strokeStyle = '#6E7378'; g.lineWidth = 3; g.beginPath(); g.moveTo(...P(F.t - .3, F.a - .3, 22)); g.lineTo(...P(F.f - .02, F.a - .2, 3)); g.stroke(); // la tubería de presión, detrás de la casa
+    tuberia(g, F); // la tubería de presión baja por el suelo hasta la casa de máquinas
     muros(g, F, '#D6D2CA', '#8A8478'); franjasVidrio(g, F, 1); azotea(g, F, '#BDB8AE');
     const tr = P(F.f + .16, F.b - .06); rellena(g, [[tr[0] - 3, tr[1]], [tr[0] + 3, tr[1] + 1.5], [tr[0] + 3, tr[1] - 6], [tr[0] - 3, tr[1] - 7.5]], '#8A8E92'); g.strokeStyle = '#3A3A3A'; g.lineWidth = .5; g.beginPath(); g.moveTo(tr[0], tr[1] - 7); g.lineTo(tr[0], tr[1] - 14); g.moveTo(tr[0] - 3, tr[1] - 13); g.lineTo(tr[0] + 3, tr[1] - 13); g.stroke();
     return;
@@ -438,14 +430,44 @@ function molino(g, e) {
   const c = P(F.f - .12, F.a - .14, 9); rueda(g, c[0], c[1], 10);
   const s = P(F.f + .16, F.b - .04); sacos(g, s[0], s[1]);
 }
-function vapor(g, x, y) { // vapor de rueda del Magdalena
-  rellena(g, [[x - 18, y - 9], [x + 12, y + 6], [x + 14, y + 4], [x - 15, y - 11]], '#F4F1E8');
-  rellena(g, [[x - 15, y - 11], [x + 14, y + 4], [x + 14, y - 1], [x - 15, y - 16]], '#E6E0D2'); rellena(g, [[x - 15, y - 16], [x + 14, y - 1], [x + 16, y - 2], [x - 13, y - 17]], '#B9442F');
-  for (let k = 0; k < 5; k++) { const p = [x - 12 + k * 5.5, y - 13 + k * 2.6]; g.fillStyle = '#3A2A1E'; g.fillRect(p[0], p[1], 1.6, 2.2); }
-  rellena(g, [[x - 2, y - 15], [x + 1, y - 13.6], [x + 1, y - 26], [x - 2, y - 27.4]], '#2E2A28');
-  g.strokeStyle = K.maderaOsc; g.lineWidth = .8; g.beginPath(); g.ellipse(x - 16, y - 7, 2.4, 4.8, -.4, 0, 7); g.stroke();
+// Barcos del puerto con volumen (casco a lo largo de c, proa hacia abajo a la derecha): sobre un remanso de agua.
+const ptB = (x, y) => (c, r, z = 0) => [x + c * 16 - r * 16, y + c * 8 + r * 8 - z];
+function remanso(g, x, y, L) {
+  const p = ptB(x, y), pts = []; for (let k = 0; k < 20; k++) { const t = k / 20 * Math.PI * 2; pts.push(p(Math.cos(t) * L * .72, Math.sin(t) * L * .3)); }
+  rellena(g, pts, '#5E8EA2', 'rgba(40,70,85,.35)', .4);
+  g.strokeStyle = 'rgba(230,245,250,.5)'; g.lineWidth = .35; for (const [c, r, w] of [[-.5, .18, .3], [.3, .22, .24], [-.1, -.2, .2], [.5, -.12, .18]].map(([a, b, w]) => [a * L, b * L, w * L])) { const a = p(c - w, r), b = p(c + w, r); g.beginPath(); g.moveTo(...a); g.quadraticCurveTo((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + .8, ...b); g.stroke(); }
 }
-function lancha(g, x, y) { rellena(g, [[x - 10, y - 5], [x + 6, y + 3], [x + 9, y + 1], [x - 7, y - 7]], '#F4F1E8'); rellena(g, [[x - 4, y - 5], [x + 3, y - 1.5], [x + 3, y - 4.5], [x - 4, y - 8]], '#2F5D8A'); g.fillStyle = '#3A3A3A'; g.fillRect(x - 11, y - 6, 2, 3); }
+function casco(g, x, y, L, W, H, col, dentro) {
+  const p = ptB(x, y), l = L / 2, w = W / 2;
+  rellena(g, [p(-l, w, H), p(l * .5, w, H), p(l, 0, H), p(l * .84, 0, 0), p(l * .5, w * .6, 0), p(-l + .02, w * .6, 0)], col, 'rgba(40,30,20,.55)', .35);
+  rellena(g, [p(l * .5, -w, H), p(l, 0, H), p(l * .84, 0, 0), p(l * .5, -w * .6, 0)], mezcla(col, '#000000', .3), 'rgba(40,30,20,.55)', .35);
+  rellena(g, [p(-l, w, H), p(l * .5, w, H), p(l, 0, H), p(l * .5, -w, H), p(-l, -w, H)], dentro, 'rgba(40,30,20,.6)', .35);
+  g.strokeStyle = mezcla(col, '#FFFFFF', .35); g.lineWidth = .4; g.beginPath(); g.moveTo(...p(-l, w, H - .4)); g.lineTo(...p(l * .5, w, H - .4)); g.lineTo(...p(l, 0, H - .4)); g.stroke(); // borda con luz
+  g.strokeStyle = 'rgba(230,245,250,.6)'; g.lineWidth = .5; g.beginPath(); g.moveTo(...p(-l, w * .7, .2)); g.lineTo(...p(l * .8, w * .2, .2)); g.stroke(); // línea de agua
+  return p;
+}
+function canoa(g, x, y) { // champán: canoa larga con toldo de palma en arco y el boga con su pértiga
+  remanso(g, x, y, 1.1);
+  const p = casco(g, x, y, 1.3, .2, 2.6, '#7A4E2E', '#4A2E1C');
+  for (let k = 0; k < 7; k++) { const c = -.36 + k * .06; rellena(g, [p(c, .1, 2.6), p(c + .06, .1, 2.6), p(c + .06, .05, 6.4), p(c + .06, 0, 7.2), p(c, 0, 7.2), p(c, .05, 6.4)], k % 2 ? '#C9A85E' : '#B8964E', 'rgba(110,80,40,.4)', .25); } // toldo: arcos de palma
+  rellena(g, [p(-.36, 0, 7.2), p(.06, 0, 7.2), p(.06, -.1, 2.6), p(-.36, -.1, 2.6)], '#9A7A3E', 'rgba(110,80,40,.4)', .25);
+  const b = p(.42, 0, 2.6); g.strokeStyle = '#3A2A1E'; g.lineWidth = .6; g.beginPath(); g.moveTo(b[0] + 3, b[1] - 9); g.lineTo(b[0] - 2, b[1] + 5); g.stroke(); // la pértiga del boga
+}
+function vapor(g, x, y) { // vapor de rueda del Magdalena: casco blanco, dos cubiertas, chimenea y rueda en la popa
+  remanso(g, x, y, 1.05);
+  const p = casco(g, x, y, 1.2, .3, 3.2, '#F2EEE4', '#B9A88A');
+  const C1 = cajaPx(g, ...p(-.06, 0, 0), .8, .24, 5, '#F4F1E8', { z0: 3.2, izq: '#FBF8F0' }); const C2 = cajaPx(g, ...p(-.1, 0, 0), .56, .2, 4, '#F4F1E8', { z0: 8.2, izq: '#FBF8F0', top: '#B9442F' });
+  for (const [F, z] of [[C1, 1.4], [C2, 1.2]]) for (let k = 0; k < 6; k++) { const u = (k + .5) / 6, a = F.izq[0], b = F.izq[1]; g.fillStyle = '#2E3A44'; g.fillRect(a[0] + (b[0] - a[0]) * u - .6, a[1] + (b[1] - a[1]) * u - z - 2.6, 1.2, 1.8); }
+  const ch = p(.06, 0, 12.2); cilindroV(g, ch[0], ch[1], 1.3, 9, '#2E2A28', { tapa: '#1E1A18' }); g.fillStyle = 'rgba(70,66,62,.35)'; g.beginPath(); g.arc(ch[0] - 2, ch[1] - 12, 2.4, 0, 7); g.arc(ch[0] - 5, ch[1] - 15, 3, 0, 7); g.fill(); // chimenea con humo
+  const r = p(-.66, 0, 3.6); ruedaIso(g, r[0], r[1], 4.2, { dir: 1 }); rellena(g, [p(-.6, .16, 2), p(-.6, .16, 7.4), p(-.6, -.16, 7.4)], '#B9442F', 'rgba(40,30,20,.5)', .3); // la rueda de paletas con su caja
+}
+function lancha(g, x, y) { // lancha de motor con capota azul y motor fuera de borda
+  remanso(g, x, y, .9);
+  const p = casco(g, x, y, .95, .26, 2.8, '#F2EEE4', '#C8C0B0');
+  cajaPx(g, ...p(.06, 0, 0), .34, .2, 3.4, '#2F5D8A', { z0: 2.8, izq: '#3E6E9A', top: '#2F5D8A' });
+  const v = p(.2, .1, 4.6); g.fillStyle = 'rgba(180,215,235,.7)'; g.fillRect(v[0] - 1, v[1] - 1, 3, 1.4);
+  const m = p(-.5, 0, 1); cajaPx(g, m[0], m[1], .06, .06, 4, '#3A3A3E', { z0: 1 }); g.strokeStyle = 'rgba(230,245,250,.7)'; g.lineWidth = .5; g.beginPath(); g.moveTo(m[0] - 2, m[1] - 1); g.lineTo(m[0] - 7, m[1] - 3.2); g.stroke(); // estela
+}
 function puerto(g, e) {
   // Embarcadero de guadua, bodega con muelle y champán, muelle de vapor y muelle de concreto con lanchas.
   const F = caras(.5, .42, e === 0 ? 10 : 14, -.16, .16);
@@ -460,7 +482,7 @@ function puerto(g, e) {
   g.strokeStyle = e === 3 ? '#8A8478' : K.maderaOsc; g.lineWidth = 1; for (const [r, c] of [[.12, -.48], [.3, -.48], [.12, -.2], [.3, -.2]]) { const p = P(r, c, -2), q = P(r, c, 2.2); g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); }
   rellena(g, [P(.1, -.5, 2.2), P(.1, .05, 2.2), P(.32, .05, 2.2), P(.32, -.5, 2.2)], piso);
   if (e < 3) { g.strokeStyle = 'rgba(60,40,25,.5)'; g.lineWidth = .35; for (let k = 1; k < 9; k++) { const c = -.5 + k * .06, a = P(.1, c, 2.3), b = P(.32, c, 2.3); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } }
-  const c = P(.42, -.42); if (e === 2) vapor(g, c[0], c[1]); else if (e === 3) lancha(g, c[0], c[1]); else canoa(g, c[0], c[1]);
+  const c = P(.42, -.42); if (e === 2) { const v = P(.46, -.3); vapor(g, v[0], v[1]); } else if (e === 3) lancha(g, c[0], c[1]); else canoa(g, c[0], c[1]);
   if (e === 3) { const gr = P(.2, -.42, 2.2); g.strokeStyle = '#E7B23C'; g.lineWidth = 1; g.beginPath(); g.moveTo(gr[0], gr[1]); g.lineTo(gr[0], gr[1] - 20); g.lineTo(gr[0] + 12, gr[1] - 20); g.stroke(); g.strokeStyle = '#3A3A3A'; g.lineWidth = .4; g.beginPath(); g.moveTo(gr[0] + 11, gr[1] - 20); g.lineTo(gr[0] + 11, gr[1] - 10); g.stroke(); } // grúa
   const s = P(.2, -.1, 2.2); sacos(g, s[0], s[1]);
 }
@@ -1947,13 +1969,24 @@ function taller6(g, e, h) {
 // Energía: rueda hidráulica (fundación y café), planta hidroeléctrica municipal de ladrillo con su tubería de presión
 // (La Violencia), casa de máquinas moderna (modernización), subestación con transformadores y torre de alta tensión
 // (conflicto) y granja solar con su inversor (era digital).
+// Tubería de presión: baja por la ladera desde la bocatoma (tanque de piedra) hasta la casa de máquinas, apoyada en
+// silletas de concreto a ras del suelo (antes era una barra que flotaba en el aire).
+function tuberia(g, F) {
+  const r = (F.t + F.f) / 2, c0 = F.a - .42, c1 = F.a - .02, z0 = 7, z1 = 1.6;
+  const B = P(r, c0 - .06); cajaPx(g, B[0], B[1], .18, .2, z0 + 2.4, '#A8A090', { izq: '#BCB4A4', top: '#5E8EA2' }); // bocatoma con agua
+  for (const u of [.2, .5, .8]) { const c = c0 + (c1 - c0) * u, z = z0 + (z1 - z0) * u, q = P(r, c); cajaPx(g, q[0], q[1], .06, .08, z - .8, '#B8B2A6', { izq: '#CCC6BA' }); }
+  const a = P(r, c0, z0), b = P(r, c1, z1); g.lineCap = 'butt';
+  g.strokeStyle = '#3E4246'; g.lineWidth = 3.2; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+  g.strokeStyle = '#6E767C'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(a[0], a[1] - .7); g.lineTo(b[0], b[1] - .7); g.stroke();
+  g.strokeStyle = 'rgba(220,226,230,.6)'; g.lineWidth = .5; g.beginPath(); g.moveTo(a[0], a[1] - 1.2); g.lineTo(b[0], b[1] - 1.2); g.stroke();
+  g.strokeStyle = '#2E3236'; g.lineWidth = .5; for (const u of [.33, .66]) { const x = a[0] + (b[0] - a[0]) * u, y = a[1] + (b[1] - a[1]) * u; g.beginPath(); g.moveTo(x - .8, y - 1.6); g.lineTo(x + .8, y + 1.6); g.stroke(); } // bridas
+}
 function molino6(g, e, h) {
   if (h <= 1) return molino(g, h);
   if (h === 3) return molino(g, 3);
   if (h === 2) {
     const F = caras(.5, .44, 15, -.06, .1);
-    const a = P(F.t - .3, F.a - .3, 26), b = P(F.f - .02, F.a - .22, 2); g.strokeStyle = '#4A4E52'; g.lineWidth = 3.4; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); g.strokeStyle = '#7E868C'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(a[0] - 1, a[1]); g.lineTo(b[0] - 1, b[1]); g.stroke();
-    for (const t of [.25, .5, .75]) { const x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t; rellena(g, [[x - 2, y + 2], [x + 2, y + 2], [x + 2, y - 1], [x - 2, y - 1]], '#B8B2A6', K.contorno, .3); }
+    tuberia(g, F);
     sombraCasa(g, F); muros(g, F, K.ladrillo, '#5A3A2A', { ladrillo: true }); aleroYdesgaste(g, F);
     for (const u of [.25, .75]) ventana(g, F, 'izq', u, 4, .12, 7, '#2E2A28', { marco: '#F4EEE2' }); ventana(g, F, 'der', .5, 4, .16, 7, '#2E2A28', { marco: '#F4EEE2' });
     dosAguas(g, F, 7, MAT.zinc); letrero(g, F, .5, 12.2, '#2F5D8A', 'PLANTA');

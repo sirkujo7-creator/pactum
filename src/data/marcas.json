@@ -217,20 +217,26 @@
       "icono": "🧱",
       "anios": 999,
       "lugar": "rio",
-      "texto": "Un dique de piedra y sacos de arena protege las casas de la orilla."
+      "texto": "Un dique de piedra y sacos de arena protege las casas de la orilla: las obras a 3 casillas sufren 60% menos daño en una avenida.",
+      "protege": 0.6,
+      "radio": 3
     },
     "reservorio": {
       "nombre": "Reservorio",
       "icono": "💧",
       "anios": 999,
       "lugar": "ladera",
-      "texto": "Un reservorio en la ladera guarda el agua de las lluvias para los años secos."
+      "texto": "Un reservorio en la ladera guarda el agua de las lluvias para los años secos: +15 de agua y, con El Niño, la mitad de la pérdida.",
+      "agua": 15,
+      "salvaSequia": 0.5
     },
     "granero": {
       "nombre": "Granero comunal",
       "icono": "🌾",
       "anios": 999,
-      "texto": "El granero comunal guarda la cosecha para los años malos."
+      "texto": "El granero comunal guarda la cosecha para los años malos: +6 de comida y, en un año de mala cosecha, recupera la mitad de lo perdido.",
+      "comida": 6,
+      "salvaCosecha": 0.5
     },
     "cooperativa": {
       "nombre": "Cooperativa campesina",
