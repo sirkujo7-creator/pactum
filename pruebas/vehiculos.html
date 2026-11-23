@@ -2,10 +2,10 @@
 <style>body{background:#9FB070;margin:0}canvas{display:block}</style>
 <canvas id="c"></canvas>
 <script type="module">
-// Página de prueba de los vehículos del tráfico en sus cuatro direcciones (?z= zoom).
+// Página de prueba de los vehículos del tráfico en sus 8 direcciones (?z= zoom, ?p= cuadro de las ruedas).
 import { hornearVehiculos } from '../src/arte/calles.js';
-const Z = +(new URLSearchParams(location.search).get('z') || 3), H = hornearVehiculos(), cv = document.getElementById('c'), g = cv.getContext('2d');
-const eras = ['herradura', 'carreta', 'empedrado', 'carretera'], dirs = [['c', '+'], ['c', '-'], ['r', '+'], ['r', '-']], cw = 60 * Z, ch = 46 * Z;
-cv.width = cw * 4; cv.height = ch * eras.length;
-eras.forEach((e, f) => dirs.forEach(([eje, d], k) => { const m = H.marcos[`${e}_${eje}_${d}_0_0`]; if (!m) return; const s = Z / H.escala; g.drawImage(H.canvas, m.x, m.y, m.w, m.h, k * cw + cw / 2 - m.ax * s, f * ch + ch * .7 - m.ay * s, m.w * s, m.h * s); }));
+const q = new URLSearchParams(location.search), Z = +(q.get('z') || 3), P = q.get('p') || 0, H = hornearVehiculos(), cv = document.getElementById('c'), g = cv.getContext('2d');
+const eras = ['herradura', 'carreta', 'empedrado', 'carretera'], dirs = [['c', '+'], ['x', '+'], ['r', '-'], ['d', '-'], ['c', '-'], ['x', '-'], ['r', '+'], ['d', '+']], cw = 56 * Z, ch = 44 * Z;
+cv.width = cw * 8; cv.height = ch * eras.length;
+eras.forEach((e, f) => dirs.forEach(([eje, d], k) => { const m = H.marcos[`${e}_${eje}_${d}_${P}_0`]; if (!m) return; const s = Z / H.escala; g.drawImage(H.canvas, m.x, m.y, m.w, m.h, k * cw + cw / 2 - m.ax * s, f * ch + ch * .7 - m.ay * s, m.w * s, m.h * s); }));
 </script>

@@ -64,8 +64,10 @@ function hornearAvion(tx) {
   [['#E8B828', 6.6], ['#2E6BA0', 7.9], ['#C8283A', 9.2]].forEach(([col, y]) => { g.fillStyle = col; g.fillRect(6.1 + (y - 5.6) * .4, y, 3.6, 1.2); }); // bandera
   g.fillStyle = '#C4CACE'; g.beginPath(); g.moveTo(5, 14.6); g.lineTo(13, 14.4); g.lineTo(12, 16.2); g.closePath(); g.fill(); g.stroke(); // estabilizador
   g.fillStyle = '#C4CACE'; g.beginPath(); g.moveTo(26, 16); g.lineTo(32, 24.6); g.lineTo(37, 24.6); g.lineTo(35, 16.2); g.closePath(); g.fill(); g.stroke(); // ala de acá
-  g.fillStyle = '#8A9298'; g.beginPath(); g.ellipse(34, 18.8, 3.4, 1.6, 0, 0, 7); g.fill(); g.stroke(); // motor
-  g.fillStyle = 'rgba(60,60,64,.25)'; g.beginPath(); g.ellipse(37.6, 18.8, .7, 3.6, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(60,60,64,.25)'; g.beginPath(); g.ellipse(49.8, 15, .6, 3.4, 0, 0, 7); g.fill(); // hélices girando
+  // Motor en el borde del ala: góndola alargada en la dirección del vuelo, con su capó y la hélice girando delante.
+  { const gm = g.createLinearGradient(0, 15.6, 0, 18.4); gm.addColorStop(0, '#C8CED2'); gm.addColorStop(1, '#7E868C'); g.fillStyle = gm; g.beginPath(); g.moveTo(31, 16.2); g.quadraticCurveTo(33, 15.4, 38.4, 15.8); g.lineTo(38.4, 18); g.quadraticCurveTo(33, 18.4, 31, 17.4); g.closePath(); g.fill(); g.stroke(); }
+  g.fillStyle = '#3A3E42'; g.fillRect(38.2, 15.8, .7, 2.2); // capó
+  g.fillStyle = 'rgba(70,70,74,.22)'; g.beginPath(); g.ellipse(39.4, 16.9, .45, 3, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(49.8, 15, .45, 3.2, 0, 0, 7); g.fill(); // hélices girando
   g.strokeStyle = '#3A3A3E'; g.lineWidth = .5; for (const x of [22, 36]) { g.beginPath(); g.moveTo(x, 18.6); g.lineTo(x, 22.4); g.stroke(); g.fillStyle = '#1E1E22'; g.beginPath(); g.arc(x, 22.8, .9, 0, 7); g.fill(); } // tren de aterrizaje
   tx.addCanvas('avion', c);
 }

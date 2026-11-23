@@ -10,6 +10,17 @@ import { enPotencia } from '../arte/fresco.js';
 import { listaCalles, eraCalle, aislada, plaza as plazaDe } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
 
+// Rumbo en 8 direcciones: por el eje del tramo y, al acercarse a una esquina, por la diagonal entre el tramo de ahora y
+// el siguiente (o el anterior al salir de ella), para que el vehículo doble en vez de girar de golpe.
+export function rumbo(L, k, u, M) {
+  const d = (i, j) => [Math.sign(Math.floor(L[j] / M) - Math.floor(L[i] / M)), Math.sign(L[j] % M - L[i] % M)];
+  let [dr, dc] = d(k, k + 1);
+  const otro = u > .78 && L[k + 2] !== undefined ? d(k + 1, k + 2) : u < .22 && k > 0 ? d(k - 1, k) : null;
+  if (otro && (otro[0] !== dr || otro[1] !== dc)) { dr += otro[0]; dc += otro[1]; }
+  dr = Math.sign(dr); dc = Math.sign(dc);
+  if (dr && dc) return dr === dc ? ['d', dr > 0 ? '+' : '-'] : ['x', dc > 0 ? '+' : '-'];
+  return dr ? ['r', dr > 0 ? '+' : '-'] : ['c', dc > 0 ? '+' : '-'];
+}
 export class Trafico {
   constructor(scene) {
     this.scene = scene;
@@ -85,7 +96,7 @@ export class Trafico {
       const q = Math.max(0, Math.min(tramos - 1e-6, R.pos - m.atras)), k = Math.floor(q), u = q - k, a = R.L[k], b = R.L[k + 1];
       if (R.pos - m.atras < 0) { m.img.setVisible(false); continue; }
       const r1 = Math.floor(a / M), c1 = a % M, r2 = Math.floor(b / M), c2 = b % M, r = r1 + (r2 - r1) * u, c = c1 + (c2 - c1) * u, p = P(r, c, T.hf(Math.min(N, r), Math.min(N, c)));
-      const herr = this.era === 'herradura', eje = r1 === r2 ? 'c' : 'r', dir = (r2 - r1) + (c2 - c1) > 0 ? '+' : '-', key = `${this.era}_${eje}_${dir}_${herr ? paso : 0}_${herr ? m.vi : 0}`, mm = this.H.marcos[key];
+      const herr = this.era === 'herradura', [eje, dir] = rumbo(R.L, k, u, M), key = `${this.era}_${eje}_${dir}_${paso}_${herr ? m.vi : 0}`, mm = this.H.marcos[key];
       m.img.setVisible(true).setFrame(key).setOrigin(mm.ax / mm.w, mm.ay / mm.h).setPosition(p[0], p[1]).setDepth(r + c + .03);
     }
   }
