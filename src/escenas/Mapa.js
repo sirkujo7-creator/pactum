@@ -234,6 +234,9 @@ export class Mapa extends Phaser.Scene {
     this.obras[i] = [];
     if (x.pt !== undefined) return; // casilla de atrás de una obra grande: la dibuja su casilla principal
     // Fase 4: huella de una decisión en una casilla libre.
+    if (!x.b && x.mk && x.mk.g && this.hojas.grandes && this.hojas.grandes.marcos['m_' + x.mk.t + 'G']) { // huella grande (aeropuerto, maravillas): un dibujo centrado en su huella de 2×2
+      const t = this.T.tiles[i], r = t.r, c = t.c; this.obras[i].push(this.figura('grandes', 'm_' + x.mk.t + 'G', r, c, this.T.hf(r, c)).setDepth(t.r + t.c + .7)); return;
+    }
     if (!x.b && x.mk) {
       const t = this.T.tiles[i]; this.obras[i].push(this.figura('edificios', 'm_' + ((C.MARCAS && C.MARCAS.tipos[x.mk.t] || {}).arte || x.mk.t), t.r + .5, t.c + .5, t.h, .9).setDepth(t.r + t.c + 1));
       if (sabanaVisible(this.S, x)) this.obras[i].push(this.figura('edificios', 'sabana', t.r + .82, t.c + .3, t.h, .9).setDepth(t.r + t.c + 1.2)); // el velorio en el camino

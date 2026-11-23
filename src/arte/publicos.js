@@ -3205,12 +3205,81 @@ function cementerioLargo(g, h) {
   { const a = P(R, .02, 0), b = P(R, .26, 0); for (const p of [a, b]) cajaPx(g, p[0], p[1], .05, .05, 9, col); rellena(g, [P(R, .02, 9), P(R, .26, 9), P(R, .14, 12)], col, 'rgba(60,50,40,.4)', .3); cruz(g, ...P(R, .14, 12), .7); } // portada
 }
 
+// --- Huellas grandes de 2×2: aeropuerto (Polis), Jardín Botánico y Parque de Los Nevados (Ciudad) ---
+function genteC(g, pts) { const ropas = ['#2F5D8A', '#C9A86A', '#B9442F', '#3E6B4A', '#E8E4DA']; pts.forEach(([r, c], k) => chico(g, r, c, (x, y) => personaM(g, x, y, ropas[k % ropas.length], null, ['#C98E62', '#A8704A', '#8A5A3A'][k % 3]), .72)); }
+function pastoHuella(g, col) { rellena(g, [P(-.96, -.96), P(-.96, .96), P(.96, .96), P(.96, -.96)], col, null); }
+function aeropuertoGrande(g, h) {
+  h = Math.max(3, h); sombraHuella(g, .96, .96); pastoHuella(g, '#93B266');
+  // pista a lo largo, al frente
+  rellena(g, [P(.24, -.96), P(.24, .96), P(.5, .96), P(.5, -.96)], '#4A4E52', 'rgba(30,30,30,.4)', .3);
+  g.strokeStyle = '#F4F1E8'; g.lineWidth = .8; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(...P(.37, -.86)); g.lineTo(...P(.37, .86)); g.stroke(); g.setLineDash([]);
+  for (const c0 of [-.92, .82]) for (let k = 0; k < 5; k++) { const r = .27 + k * .045; g.lineWidth = 1; g.beginPath(); g.moveTo(...P(r, c0)); g.lineTo(...P(r, c0 + .08)); g.stroke(); } // umbrales
+  for (let k = 0; k <= 16; k++) for (const r of [.25, .49]) { const p = P(r, -.94 + k * .1175); g.fillStyle = k % 2 ? '#F2D04A' : '#F4F1E8'; g.beginPath(); g.arc(p[0], p[1], .6, 0, 7); g.fill(); } // luces de borde
+  rellena(g, [P(-.22, -.34), P(-.22, .62), P(.06, .62), P(.06, -.34)], '#6A6E72', 'rgba(30,30,30,.3)', .3); // plataforma
+  rellena(g, [P(.06, .12), P(.06, .24), P(.24, .24), P(.24, .12)], '#5A5E62', null); // calle de rodaje
+  g.strokeStyle = '#E8C23A'; g.lineWidth = .5; g.beginPath(); g.moveTo(...P(.3, .18)); g.lineTo(...P(-.08, .18)); g.lineTo(...P(-.08, .4)); g.stroke();
+  // terminal
+  const Te = caras(.86, .26, 11, -.42, .14); sombraCasa(g, Te); muros(g, Te, h === 5 ? '#ECEEEE' : '#E8E4DA', null); aleroYdesgaste(g, Te);
+  if (h === 5) { cortina(g, Te, 'izq', 1, 11, '#3E6E8E'); cortina(g, Te, 'der', 1, 11, '#3E6E8E'); const z = 11; for (let k = 0; k < 10; k++) { const c0 = Te.a + (Te.b - Te.a) * k / 10, c1 = Te.a + (Te.b - Te.a) * (k + 1) / 10; rellena(g, [P(Te.f + .04, c0, z), P(Te.f + .04, c1, z), P(Te.t - .04, c1, z + 3.4), P(Te.t - .04, c0, z + 3.4)], k % 2 ? '#D8DCE0' : '#C8CCD0', 'rgba(60,60,60,.35)', .25); } } // cubierta ondulada
+  else { pilares(g, Te, 'izq', [0, .2, .4, .6, .8, 1], '#F2EEE6', .016, .03); vidrio(g, Te, 'izq', .03, .97, 2.4, 8.6, { montantes: 14 }); vidrio(g, Te, 'der', .1, .9, 2.4, 8.6, { montantes: 3 }); pretil(g, Te, '#E0DCD0'); }
+  marquesina(g, Te, .05, .95, 8.8, .1, h === 5 ? '#D8DCE0' : '#E8E4DA', false);
+  letreroTecho(g, Te, 'AEROPUERTO PERALES', '#2F5D8A', .15, .85);
+  // torre de control
+  { const S0 = caras(.1, .1, 30, -.62, -.66); sombraCasa(g, S0); muros(g, S0, '#E8E4D8', null); for (let z = 4; z < 28; z += 6) hueco(g, S0, 'izq', .3, .7, z, z + 2, '#5E6670');
+    const V = caras(.18, .18, 5, -.62, -.66, 30); rellena(g, V.izq, 'rgba(150,200,220,.9)', 'rgba(30,40,50,.6)', .3); rellena(g, V.der, 'rgba(110,160,190,.9)', 'rgba(30,40,50,.6)', .3);
+    const R = caras(.22, .22, 1.2, -.62, -.66, 35); rellena(g, [P(R.f, R.a, 36.2), P(R.f, R.b, 36.2), P(R.t, R.b, 36.2), P(R.t, R.a, 36.2)], '#D8D4C8', 'rgba(60,60,60,.4)', .3); rellena(g, R.izq, '#C8C4B8', null); rellena(g, R.der, '#A8A498', null);
+    const c = P(-.62, -.66, 36.2); g.strokeStyle = '#6A6E74'; g.lineWidth = .5; g.beginPath(); g.moveTo(...c); g.lineTo(c[0], c[1] - 7); g.stroke(); g.fillStyle = '#E03A2E'; g.beginPath(); g.arc(c[0], c[1] - 7, .6, 0, 7); g.fill(); }
+  // hangar y avioneta guardada
+  bovedaLamina(g, -.58, .72, .36, .4, 6, 7, h === 5 ? '#B8C4CC' : '#A8B0B4');
+  // camión de combustible y manga de viento
+  { const c = P(.08, -.12); camion(g, c[0], c[1], '#E8C23A', '#D8DCDE', false); }
+  { const p = P(.6, .9); cajaPx(g, p[0], p[1], .012, .012, 10, '#8A8E92', { borde: null }); for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#F4F1E8' : '#E86A2A'; g.beginPath(); g.moveTo(p[0] + k * 2, p[1] - 10 + k * .3); g.lineTo(p[0] + (k + 1) * 2, p[1] - 10 + (k + 1) * .3); g.lineTo(p[0] + (k + 1) * 2, p[1] - 8 - (k + 1) * .1); g.lineTo(p[0] + k * 2, p[1] - 8 - k * .1); g.closePath(); g.fill(); } }
+  genteC(g, [[-.1, .3], [-.08, .36]]);
+  const b = P(-.3, -.86); bandera(g, b[0], b[1], 22, TRICOLOR);
+}
+function frailejon(g, r, c, s = 1) {
+  const q = P(r, c); g.save(); g.translate(q[0], q[1]); g.scale(s, s);
+  g.fillStyle = 'rgba(30,40,25,.22)'; g.beginPath(); g.ellipse(2, .4, 3, 1, 0, 0, 7); g.fill();
+  g.fillStyle = '#6E5A40'; g.fillRect(-.9, -8, 1.8, 8); g.fillStyle = '#9A8462'; for (let k = 0; k < 6; k++) { g.beginPath(); g.ellipse(-.2 + (k % 2 ? .6 : -.6), -1.4 - k * 1.2, 1.5, .8, k % 2 ? .4 : -.4, 0, 7); g.fill(); } // la falda de hojas secas
+  for (let k = 0; k < 9; k++) { const a = -Math.PI / 2 + (k - 4) * .34; hojaP(g, 0, -8.4, a, 4.2, .9, k % 2 ? '#A8B48A' : '#C0C8A0', false); } // la roseta lanuda
+  g.fillStyle = '#E8C23A'; g.beginPath(); g.arc(.6, -12.4, .7, 0, 7); g.arc(-1.2, -11.8, .6, 0, 7); g.fill(); g.restore();
+}
+function jardinGrande(g, h) {
+  h = Math.max(2, h); sombraHuella(g, .96, .96); pastoHuella(g, '#8AB062');
+  g.strokeStyle = '#D8CDB4'; g.lineWidth = 2; { const c = P(.1, .1); g.beginPath(); g.ellipse(c[0], c[1], 34, 17, 0, 0, 7); g.stroke(); } g.beginPath(); g.moveTo(...P(.96, .3)); g.lineTo(...P(.5, .3)); g.stroke(); // sendero en anillo
+  bovedaLamina(g, -.56, -.12, .9, .4, 7, 8, '#B8DCD4', '#E8ECE8'); // invernadero de vidrio y hierro
+  { const c = P(.16, .44); g.fillStyle = '#5E8EA2'; g.beginPath(); g.ellipse(c[0], c[1], 16, 7, 0, 0, 7); g.fill(); g.strokeStyle = 'rgba(80,70,50,.5)'; g.lineWidth = .8; g.stroke(); for (let k = 0; k < 8; k++) { g.fillStyle = '#5E8A3E'; g.beginPath(); g.ellipse(c[0] - 10 + k * 3, c[1] - 2 + (k % 3) * 1.6, 1.4, .6, 0, 0, 7); g.fill(); if (k % 3 === 0) { g.fillStyle = '#F4C0D0'; g.beginPath(); g.arc(c[0] - 10 + k * 3, c[1] - 2.6 + (k % 3) * 1.6, .6, 0, 7); g.fill(); } }
+    rellena(g, [P(.06, .36, 1.4), P(.06, .52, 1.4), P(.12, .52, 1.4), P(.12, .36, 1.4)], '#8A6A44', 'rgba(50,35,20,.5)', .3); } // laguna con lotos y puentecito
+  const flores = ['#E04A5A', '#F2D04A', '#B864C8', '#F08A3A', '#F4F1E8'];
+  for (let k = 0; k < 5; k++) { const r = .5 + (k % 2) * .16, c0 = -.8 + k * .22; rellena(g, [P(r, c0), P(r, c0 + .16), P(r + .1, c0 + .16), P(r + .1, c0)], '#6E5238', null); for (let j = 0; j < 10; j++) { const p = P(r + .02 + (j % 2) * .05, c0 + .02 + Math.floor(j / 2) * .03); g.fillStyle = flores[k]; g.beginPath(); g.arc(p[0], p[1] - .8, .8, 0, 7); g.fill(); } } // eras de flores
+  for (const [r, c, s] of [[-.1, -.7, .9], [.3, -.6, .8], [-.3, .78, .9], [.72, .74, .85], [-.05, .2, .75]]) arbolito(g, ...P(r, c), s, '#4E7A3A');
+  for (const [r, c] of [[.0, -.4], [-.2, .5]]) { const q = P(r, c); g.strokeStyle = '#8A8478'; g.lineWidth = 1; g.beginPath(); g.moveTo(...q); g.lineTo(q[0] + 1, q[1] - 26); g.stroke(); for (let k = 0; k < 7; k++) hojaP(g, q[0] + 1, q[1] - 26, -Math.PI / 2 + (k - 3) * .5, 7, 1.2, k % 2 ? '#5E8B42' : '#7EA05A', false); } // palmas de cera
+  { const p = P(.5, .0); cajaPx(g, p[0], p[1], .08, .08, 4, '#B8B0A0', { izq: '#CCC4B4' }); chico(g, .5, .0, (x, y) => personaM(g, x, y - 4 / .8, '#7A5A3A', '#2E2A28'), .8); } // Mutis en su pedestal
+  genteC(g, [[.36, .1], [.4, .16], [.66, .3]]);
+  porteriaU(g, .97, .1, .5, 'JARDÍN BOTÁNICO MUTIS', '#C8B896', 10);
+}
+function parqueNevadosGrande(g, h) {
+  h = Math.max(2, h); sombraHuella(g, .96, .96); pastoHuella(g, '#9AA26A');
+  for (let k = 0; k < 40; k++) { const r = -.9 + ((k * 29) % 100) / 100 * 1.8, c = -.9 + ((k * 53) % 100) / 100 * 1.8, p = P(r, c); for (let h2 = 0; h2 < 4; h2++) hojaP(g, p[0], p[1], -Math.PI / 2 + (h2 - 1.5) * .35, 2.4, .4, h2 % 2 ? '#B8A86A' : '#9A9A5A', false); } // pajonal del páramo
+  for (const [r, c, w] of [[-.7, -.5, 9], [-.5, .5, 7], [.4, -.7, 6]]) { const p = P(r, c); rellena(g, [[p[0] - w, p[1]], [p[0] - w * .6, p[1] - w * .5], [p[0] + w * .3, p[1] - w * .62], [p[0] + w, p[1] - w * .1], [p[0] + w * .3, p[1] + w * .2]], '#8A8478', 'rgba(50,45,40,.5)', .3); rellena(g, [[p[0] - w * .6, p[1] - w * .5], [p[0] + w * .3, p[1] - w * .62], [p[0] + w * .1, p[1] - w * .2]], '#A8A296', null); } // peñas
+  { const c = P(.0, .3); g.fillStyle = '#2E5E7A'; g.beginPath(); g.ellipse(c[0], c[1], 20, 9, -.1, 0, 7); g.fill(); g.fillStyle = 'rgba(220,240,250,.35)'; g.beginPath(); g.ellipse(c[0] - 6, c[1] - 2, 8, 1.6, 0, 0, 7); g.fill(); g.strokeStyle = '#7A6A4A'; g.lineWidth = .8; g.beginPath(); g.ellipse(c[0], c[1], 20, 9, -.1, 0, 7); g.stroke(); } // laguna
+  for (let k = 0; k < 16; k++) { const r = -.5 + ((k * 37) % 100) / 100 * 1.3, c = -.5 + ((k * 61) % 100) / 100 * 1.4; if (Math.hypot(r - .0, c - .3) < .3) continue; frailejon(g, r, c, 1 + ((k * 13) % 5) * .1); }
+  for (const [r, c] of [[.4, -.6], [-.2, .7], [.7, .2]]) { const p = P(r, c); rellena(g, [[p[0] - 4, p[1]], [p[0] - 2, p[1] - 3.4], [p[0] + 2, p[1] - 4], [p[0] + 4.4, p[1] - .6], [p[0] + 1, p[1] + 1.4]], '#9A9488', 'rgba(50,45,40,.5)', .3); } // piedras
+  g.strokeStyle = '#C8B48A'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(...P(.96, .5)); g.quadraticCurveTo(...P(.5, .0), ...P(-.3, -.2)); g.stroke(); // sendero
+  { const Ca = caras(.24, .2, 7, .56, .6); sombraCasa(g, Ca); muros(g, Ca, '#8A6A44', null); hueco(g, Ca, 'izq', .35, .65, 0, 5, '#3A2A1E'); ventana(g, Ca, 'der', .5, 3, .3, 2.6, '#5A3A22', {}); dosAguas(g, Ca, 4, MAT.zinc); letreroAncho(g, Ca, .05, .95, 6.2, '#3E6B4A', 'GUARDAPARQUES'); } // cabaña
+  for (const [r, c] of [[.3, .2], [.34, .26]]) chico(g, r, c, (x, y) => { personaM(g, x, y, '#C0392B', null); g.fillStyle = '#2F5D8A'; g.fillRect(x - 2.6, y - 9, 2, 3.4); }, .72); // caminantes con morral
+  porteriaU(g, .97, .1, .48, 'PARQUE NACIONAL LOS NEVADOS', '#8A6A44', 9);
+}
+
 export function recetasGrandes(e = 1, h = [0, 1, 2, 5][e]) {
   return [
     ['estadioG', 156, 150, 78, 108, g => estadioGrande(g, h)],
     ['universidadG', 156, 150, 78, 108, g => universidadGrande(g, h)],
     ['cuartelG', 156, 150, 78, 108, g => cuartelGrande(g, h)],
     ['cementerioG', 128, 96, 64, 64, g => cementerioLargo(g, h)],
+    ['m_aeropuertoG', 156, 150, 78, 108, g => aeropuertoGrande(g, h)],
+    ['m_mv_jardinG', 156, 150, 78, 108, g => jardinGrande(g, h)],
+    ['m_mv_parqueG', 156, 150, 78, 108, g => parqueNevadosGrande(g, h)],
   ];
 }
 

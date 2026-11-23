@@ -1,6 +1,7 @@
 // Megaproyectos (fase 6): desde Polis, represa, ferrocarril y aeropuerto. Ficha financiera (inversión, cuota, beneficio,
 // VPN, TIR, recuperación), consulta previa con las comunidades (un año; puede aprobar o rechazar) y obra de varios años
 // que se paga por cuotas. Saltarse la consulta dispara el conflicto. Solo en el terreno en acuarela.
+import { cabeMarca, ocuparMarca, partesMarca, tamMarca } from './grandes.js';
 import { C } from './contenido.js';
 import { azar, clamp } from './azar.js';
 import { climaActivo } from './clima.js';
@@ -51,9 +52,11 @@ export function puedeIniciar(S, id) {
 }
 function sitio(S, id) {
   const N = lado(S), c = centroPueblo(S), cr = Math.floor(c / N), cc = c % N;
-  const cand = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; if (x.b || x.mk || x.t !== 'llano') return false; const d = Math.hypot(Math.floor(i / N) - cr, i % N - cc); return d >= 4 && d <= 10 && (id !== 'represa' || nearRiver(S, i)); });
+  const cand = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; if (x.b || x.mk || x.t !== 'llano') return false; const d = Math.hypot(Math.floor(i / N) - cr, i % N - cc); return d >= 4 && d <= 10 && (id !== 'represa' || nearRiver(S, i)) && cabeMarca(S, K().proyectos[id].marca, i) && (x.pt === undefined); });
   return cand.length ? cand[(S.year * 13 + id.length) % cand.length] : -1;
 }
+// ¿Las casillas de atrás ya están reservadas por esta obra?
+function huellaReservada(S, i) { return S.map.some(y => y.pt === i); }
 // Empezar la obra. Sin consulta aprobada: conflicto, legitimidad, cabildo y movimientos.
 export function iniciarMega(S, id) {
   if (puedeIniciar(S, id)) return false;
@@ -62,6 +65,7 @@ export function iniciarMega(S, id) {
   S.gold -= ev.cuota;
   (S.mega = S.mega || {})[id] = { estado: 'obra', desde: S.year, pagado: 1, cuota: ev.cuota, i, sinConsulta };
   S.map[i].mk = { t: 'megaobra', y: S.year, d: `Año ${S.year}: empieza la obra de ${P.nombre.toLowerCase()}.` };
+  ocuparMarca(S, P.marca, i); // el aeropuerto reserva su terreno de 2×2 desde que empieza la obra
   if (sinConsulta) {
     const Q = K().sinConsulta;
     if (S.conf) S.conf.nivel = clamp(S.conf.nivel + Q.conflicto, 0, 100); else S.conf = { nivel: Q.conflicto, grupo: false, estrategia: 'ninguna', camp: -1 };
@@ -95,7 +99,7 @@ export function megaDelAnio(S) {
     } else if (e.estado === 'obra') {
       if (e.pagado >= P.anios) {
         e.estado = 'listo'; e.listo = S.year;
-        if (e.i >= 0) S.map[e.i].mk = { t: P.marca, y: S.year, d: `Año ${S.year}: se inaugura ${P.nombre.toLowerCase()}.` };
+        if (e.i >= 0) { S.map[e.i].mk = { t: P.marca, y: S.year, d: `Año ${S.year}: se inaugura ${P.nombre.toLowerCase()}.` }; if (partesMarca(S, e.i).length > 1 || tamMarca(S, P.marca)) { if (cabeMarca(S, P.marca, e.i) || huellaReservada(S, e.i)) ocuparMarca(S, P.marca, e.i); } }
         if (P.efectos.vecinos && S.vecinos) for (const v of Object.values(S.vecinos)) v.rel = clamp(v.rel + P.efectos.vecinos, 0, 100);
         ev.push({ id, tipo: 'termina' }); news.push(`${P.icono} ${T.termina.replace('{p}', P.nombre)}`);
       } else if (S.gold >= e.cuota) { S.gold -= e.cuota; e.pagado++; e.det = 0; }

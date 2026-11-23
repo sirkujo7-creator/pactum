@@ -85,7 +85,7 @@ export class Ferrovia {
     const firma = f + '|' + a; if (firma === this.firma) return; this.firma = firma;
     this.capa.clear(); this.quitar();
     if (f >= 0) this.rieles(T.tiles[f]);
-    this.tilePista = a >= 0 ? T.tiles[a] : null; this.estacion = f >= 0 ? T.tiles[f] : null;
+    this.tilePista = a >= 0 ? T.tiles[a] : null; this.pistaGrande = a >= 0 && !!S.map[a].mk.g; // en 2×2 la pista corre a lo largo de la huella this.estacion = f >= 0 ? T.tiles[f] : null;
   }
   quitar() {
     if (this.tren) { this.tren.img.destroy(); this.tren.humo.destroy(); this.tren = null; }
@@ -124,12 +124,12 @@ export class Ferrovia {
     v.humo.emitting = v.img.visible && (v.fase !== 1 || v.t < 3.5);
   }
   moverAvion(dt) {
-    const sc = this.scene, t = this.tilePista, c0 = P(t.r + .5, t.c + .5, t.h), A = [c0[0] - 23, c0[1] - 6], B = [c0[0] + 26, c0[1] + 3];
+    const sc = this.scene, t = this.tilePista, c0 = P(t.r + .5, t.c + .5, t.h), G = this.pistaGrande, h0 = G ? this.scene.T.hf(t.r + .36, t.c) : 0, A = G ? P(t.r + .36, t.c - .78, h0) : [c0[0] - 23, c0[1] - 6], B = G ? P(t.r + .36, t.c + .78, h0) : [c0[0] + 26, c0[1] + 3];
     if (!this.avion) {
       this.esperaAvion -= dt; if (this.esperaAvion > 0) return;
       this.avion = { img: sc.add.image(0, 0, 'avion').setScale(1 / E).setOrigin(.5, .5), sombra: sc.add.ellipse(0, 0, 26, 6, 0x2A2118, .3), fase: 0, t: 0 };
     }
-    const v = this.avion, D = [1, .18], alto = 150, L = 330;
+    const v = this.avion, D = [1, (B[1] - A[1]) / (B[0] - A[0])], alto = 150, L = 330;
     v.t += dt; let x, y, h;
     if (v.fase === 0) { const p = Math.min(1, v.t / 6); x = A[0] - L + L * sen(p); y = A[1] - L * D[1] + L * D[1] * sen(p); h = alto * (1 - sen(p)); if (p >= 1) { v.fase = 1; v.t = 0; } }
     else if (v.fase === 1) { const p = Math.min(1, v.t / 1.6); x = A[0] + (B[0] - A[0]) * .5 * sen(p); y = A[1] + (B[1] - A[1]) * .5 * sen(p); h = 0; if (p >= 1) { v.fase = 2; v.t = 0; } }

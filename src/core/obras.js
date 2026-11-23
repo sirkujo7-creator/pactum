@@ -16,6 +16,7 @@ export function whyNot(S, k, i) {
   const x = S.map[i], b = C.B[k];
   if (x.t === 'rio') return 'No se puede construir sobre el río.';
   if (x.b || x.pt !== undefined) return 'Esa casilla ya está ocupada.';
+  if (x.mk && x.mk.g && C.MARCAS) return `Ahí está ${(C.MARCAS.tipos[x.mk.t] || { nombre: 'una obra' }).nombre.toLowerCase()}.`; // huellas grandes: aeropuerto, maravillas
   if (x.oc && C.GUERRA) return C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre); // fase 9
   if (x.mk && x.mk.t === 'resguardo' && C.HUELLAS) return C.HUELLAS.textos.resguardo;
   if (esColono(x) && C.HUELLAS) return C.HUELLAS.colonos.textos.bloquea; // huellas: la parcela de unos colonos

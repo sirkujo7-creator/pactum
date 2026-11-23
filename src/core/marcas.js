@@ -2,6 +2,7 @@
 // (mural, retén, valla, placa, olla comunitaria, pancartas, vivero). Duran unos años; si se construye encima,
 // desaparecen. Se guardan en la casilla (x.mk). Solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { cabeMarca, ocuparMarca } from './grandes.js';
 import { climaActivo } from './clima.js';
 import { lado } from './mundo.js';
 import { centroPueblo } from './cobertura.js';
@@ -41,7 +42,7 @@ export function dejarMarca(S, tipo, d) {
   // Obras de las decisiones (diques, reservorios, escuelas rurales…): cada una va en su lugar lógico.
   const rio = i => { const r = Math.floor(i / N), c = i % N; return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => r + a >= 0 && c + b >= 0 && r + a < N && c + b < N && S.map[(r + a) * N + c + b].t === 'rio'); };
   const sitio = i => T.lugar === 'rio' ? rio(i) : T.lugar === 'ladera' ? (S.map[i].h || 0) >= 1 : T.lugar === 'vereda' ? Math.hypot(Math.floor(i / N) - cr, i % N - cc) >= 4 : true;
-  const libre = i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && x.t === 'llano'; };
+  const libre = i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && x.t === 'llano' && (!T.casillas || cabeMarca(S, tipo, i)); };
   let cand = S.map.map((x, i) => i).filter(i => libre(i) && sitio(i));
   if (!cand.length) cand = S.map.map((x, i) => i).filter(libre); // sin orilla, ladera o vereda libre: cerca del pueblo
   const base = cand
@@ -55,6 +56,7 @@ export function dejarMarca(S, tipo, d) {
   if (con.length >= K().maximo) { const viejo = con.filter(i => !S.map[i].mk.perm && (K().tipos[S.map[i].mk.t] || { anios: 0 }).anios < 999).sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
   const i = libres[0][0];
   S.map[i].mk = { t: tipo, y: S.year, d };
+  ocuparMarca(S, tipo, i); // huellas grandes: ocupan también las casillas de atrás
   recordar(S, tipo); // fase 5: la huella queda en la memoria del pueblo
   return i;
 }

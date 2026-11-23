@@ -52,3 +52,21 @@ export function ampliarGrandes(S) {
     if (L && L.every(j => j === i || (casillaLibre(S.map[j]) && S.map[j].t !== 'rio' && (C.B[x.b].ok || []).includes(S.map[j].t) && !S.map[j].oc))) ocuparGrande(S, x.b, i);
   });
 }
+
+// Huellas grandes (aeropuerto, Jardín Botánico, Parque de Los Nevados): la huella va en la casilla principal con
+// mk.g = 1 y las de atrás llevan x.pt, igual que las obras grandes.
+export function tamMarca(S, t) { const T = C.MARCAS && C.MARCAS.tipos[t]; return T && T.casillas && climaActivo(S) ? T.casillas : null; }
+function huellaTam(S, t, i) {
+  if (!t) return [i];
+  const N = lado(S), r = Math.floor(i / N), c = i % N, L = [];
+  for (let a = 0; a < t[0]; a++) for (let b = 0; b < t[1]; b++) { const rr = r - a, cc = c - b; if (rr < 0 || cc < 0) return null; L.push(rr * N + cc); }
+  return L;
+}
+// ¿Cabe la huella grande t con su casilla principal en i? (las de atrás, libres y en llano)
+export function cabeMarca(S, t, i) { const L = huellaTam(S, tamMarca(S, t), i); return !!L && L.every(j => j === i || (casillaLibre(S.map[j]) && !S.map[j].mk && S.map[j].t === 'llano' && !S.map[j].oc)); }
+export function ocuparMarca(S, t, i) {
+  const L = huellaTam(S, tamMarca(S, t), i); if (!L || L.length < 2) return;
+  const x = S.map[i]; if (x.mk) x.mk.g = 1;
+  for (const j of L) if (j !== i) S.map[j].pt = i;
+}
+export function partesMarca(S, i) { const x = S.map[i]; return x && x.mk && x.mk.g ? (huellaTam(S, tamMarca(S, x.mk.t), i) || [i]) : [i]; }

@@ -120,7 +120,11 @@
       "nombre": "Aeropuerto",
       "icono": "✈️",
       "anios": 999,
-      "texto": "La pista y la torre del aeropuerto."
+      "texto": "La pista y la torre del aeropuerto.",
+      "casillas": [
+        2,
+        2
+      ]
     },
     "megaobra": {
       "nombre": "Megaproyecto en obra",
@@ -186,7 +190,11 @@
       "nombre": "Jardín Botánico Mutis",
       "icono": "🌿",
       "anios": 999,
-      "texto": "Una de las grandes obras de tu territorio."
+      "texto": "Una de las grandes obras de tu territorio.",
+      "casillas": [
+        2,
+        2
+      ]
     },
     "mv_conservatorio": {
       "nombre": "Conservatorio del Tolima",
@@ -204,7 +212,11 @@
       "nombre": "Parque Natural de Los Nevados",
       "icono": "🏔️",
       "anios": 999,
-      "texto": "Una de las grandes obras de tu territorio."
+      "texto": "Una de las grandes obras de tu territorio.",
+      "casillas": [
+        2,
+        2
+      ]
     },
     "cruz": {
       "nombre": "Cruz del camino",
