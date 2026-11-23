@@ -3068,6 +3068,59 @@ function campusDigital(g) {
   const b = P(.42, .04); bandera(g, b[0], b[1], 22, TRICOLOR);
 }
 
+// ---------- Propuesta (borrador, sin usar en el juego): universidad baja y verde para las épocas modernas ----------
+// Edificios de 2 y 3 pisos alrededor de un prado grande con árboles, corredores cubiertos que los unen, auditorio con
+// cubierta plegada (años 60), y nada de torres.
+function samán(g, r, c, s = 1) { arbolito(g, ...P(r, c), 1.15 * s, '#4E7A3A'); }
+function corredorCubierto(g, r0, c0, r1, c1, col = '#E2DCCE') { // marquesina larga sobre columnas, de (r0,c0) a (r1,c1)
+  const n = Math.max(2, Math.round(Math.hypot(r1 - r0, c1 - c0) / .1)), z = 7;
+  for (let k = 0; k <= n; k++) { const r = r0 + (r1 - r0) * k / n, c = c0 + (c1 - c0) * k / n; cajaPx(g, ...P(r, c), .025, .025, z, '#D8D2C4', { izq: '#E8E2D4' }); }
+  const dr = (c1 - c0) ? .06 : 0, dc = (r1 - r0) ? .06 : 0;
+  rellena(g, [P(r0 - dr, c0 - dc, z + 1.4), P(r1 - dr, c1 - dc, z + 1.4), P(r1 + dr, c1 + dc, z + 1.4), P(r0 + dr, c0 + dc, z + 1.4)], LUZ(col, .1), 'rgba(60,50,40,.4)', .3);
+  rellena(g, [P(r0 + dr, c0 + dc, z), P(r1 + dr, c1 + dc, z), P(r1 + dr, c1 + dc, z + 1.4), P(r0 + dr, c0 + dc, z + 1.4)], SOM(col, .12), null);
+}
+function bloqueAulas(g, w, d, pisos, r0, c0, h) { // aulas de ladrillo a la vista con losas de concreto y ventanas corridas
+  const H = pisos * 8.4, F = caras(w, d, H, r0, c0); sombraCasa(g, F);
+  const verde = h === 5;
+  muros(g, F, verde ? '#ECE8DE' : K.ladrillo, null, { ladrillo: !verde }); aleroYdesgaste(g, F);
+  for (let p = 0; p < pisos; p++) for (const cara of ['izq', 'der']) vidrio(g, F, cara, .05, .95, p * 8.4 + 2.6, p * 8.4 + 6.6, { montantes: cara === 'izq' ? Math.round(w * 14) : Math.round(d * 14) });
+  if (verde) for (const cara of ['izq', 'der']) { g.save(); poli(g, F[cara]); g.clip(); g.strokeStyle = cara === 'izq' ? '#B88A5A' : '#8E6A44'; g.lineWidth = .6; const n = Math.round((cara === 'izq' ? w : d) * 50); for (let k = 0; k < n; k++) { const u = (k + .5) / n; if (k % 3 === 0) continue; g.beginPath(); g.moveTo(...F.en(cara, u, 2.4)); g.lineTo(...F.en(cara, u, H - .6)); g.stroke(); } g.restore(); } // lamas de madera
+  losas(g, F, Array.from({ length: pisos - 1 }, (_, k) => (k + 1) * 8.4), verde ? '#F2F0EA' : '#E8E2D4', .03, 1.3);
+  if (verde) { pretil(g, F, '#E8E6DE'); const z = F.H + 2.4; rellena(g, [P(F.f - .03, F.a + .03, z), P(F.f - .03, F.b - .03, z), P(F.t + .03, F.b - .03, z), P(F.t + .03, F.a + .03, z)], '#7EA05A', null); for (let k = 0; k < Math.round(w * 10); k++) arbolito(g, ...P(F.t + .06 + (k % 2) * (d - .12), F.a + .06 + k * .1, z), .3, '#5E9A52'); } // techo verde
+  else dosAguas(g, F, 4, { ...ETERNIT, sale: .04, hastial: '#D8D2C4' });
+  return F;
+}
+function auditorioPlegado(g, w, d, r0, c0, col = '#E8E2D4') { // muros bajos y cubierta plegada en zigzag (años 60)
+  const F = caras(w, d, 8, r0, c0); sombraCasa(g, F); muros(g, F, col, SOM(col, .3)); aleroYdesgaste(g, F); hueco(g, F, 'izq', .35, .65, 0, 6, '#4A4E52');
+  const n = 5, z = 8, e = .04; for (let k = 0; k < n; k++) { const c0b = F.a - e + (F.b - F.a + 2 * e) * k / n, c1b = F.a - e + (F.b - F.a + 2 * e) * (k + 1) / n, cm = (c0b + c1b) / 2;
+    rellena(g, [P(F.f + e, c0b, z), P(F.f + e, cm, z + 4), P(F.t - e, cm, z + 4), P(F.t - e, c0b, z)], LUZ(col, .12), 'rgba(60,50,40,.35)', .3);
+    rellena(g, [P(F.f + e, cm, z + 4), P(F.f + e, c1b, z), P(F.t - e, c1b, z), P(F.t - e, cm, z + 4)], SOM(col, .14), 'rgba(60,50,40,.35)', .3);
+    rellena(g, [P(F.f + e, c0b, z), P(F.f + e, cm, z + 4), P(F.f + e, c1b, z)], SOM(col, .05), 'rgba(60,50,40,.4)', .3); }
+  letreroAncho(g, F, .15, .85, 7, '#7A4E2E', 'AUDITORIO');
+}
+function universidadVerde(g, h) {
+  rellena(g, [P(-.48, -.48), P(-.48, .48), P(.48, .48), P(.48, -.48)], '#8AB062', null); // todo el campus es prado
+  { g.strokeStyle = '#D8CDB4'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(...P(.48, .3)); g.lineTo(...P(.06, .06)); g.lineTo(...P(-.12, .06)); g.moveTo(...P(.06, .06)); g.lineTo(...P(.06, -.2)); g.stroke(); } // senderos
+  // fondo: bloque largo de aulas; izquierda: bloque de laboratorios; unidos por un corredor cubierto
+  const A = bloqueAulas(g, .56, .18, h === 5 ? 2 : 3, -.39, .1, h);
+  const B = bloqueAulas(g, .18, .3, 2, -.1, -.39, h);
+  corredorCubierto(g, -.22, -.29, -.22, -.17, h === 5 ? '#C8A878' : '#E2DCCE');
+  if (h === 4) { const Lp = (u, z) => A.en('izq', u, z); rellena(g, [Lp(.55, .8), Lp(.95, .8), Lp(.95, 7.6), Lp(.55, 7.6)], '#E8D49A', null); rellena(g, [Lp(.55, .8), Lp(.72, .8), Lp(.66, 7.6), Lp(.55, 7.6)], '#B9442F', null); rellena(g, [Lp(.8, .8), Lp(.95, .8), Lp(.95, 7.6), Lp(.86, 7.6)], '#2F6E8E', null); const s = Lp(.76, 4.2); g.fillStyle = '#F2C531'; g.beginPath(); g.arc(s[0], s[1], 2, 0, 7); g.fill(); // mural
+    const a = A.en('izq', .1, 22), b = A.en('izq', .5, 22); rellena(g, [a, b, [b[0], b[1] + 4.4], [a[0], a[1] + 4.4]], '#F4F1E8', 'rgba(60,40,30,.4)', .3); g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 2.2); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0); g.fillStyle = '#B9442F'; g.font = 'bold 1.8px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('EDUCACIÓN PÚBLICA', 0, 0); g.restore(); }
+  if (h === 5) { const Bi = caras(.26, .24, 11, .32, -.34); sombraCasa(g, Bi); muros(g, Bi, '#ECEEEE', null); cortina(g, Bi, 'izq', 1, 11, '#B88A5A'); cortina(g, Bi, 'der', 1, 11, '#B88A5A'); pretil(g, Bi, '#E0E4E6'); letreroAncho(g, Bi, .1, .9, 9.4, '#3E6B4A', 'BIBLIOTECA');
+    { const p = [P(-.12, .26, 7), P(-.12, .44, 7), P(.02, .44, 7), P(.02, .26, 7)]; for (const q of [P(-.12, .26), P(-.12, .44), P(.02, .44), P(.02, .26)]) cajaPx(g, q[0], q[1], .02, .02, 7, '#8A8E92'); rellena(g, p, '#2C4A6E', 'rgba(30,40,55,.7)', .3); g.strokeStyle = 'rgba(140,180,215,.5)'; g.lineWidth = .25; for (let k = 1; k < 5; k++) { g.beginPath(); g.moveTo(...P(-.12, .26 + k * .036, 7)); g.lineTo(...P(.02, .26 + k * .036, 7)); g.stroke(); } } } // biblioteca de vidrio y pérgola solar
+  else auditorioPlegado(g, .28, .24, .32, -.34, h === 4 ? '#DCD4C4' : '#E8E2D4');
+  // árboles grandes alrededor del prado
+  for (const [r, c, s] of h === 5 ? [[.16, .44, .75], [.36, .44, .7]] : [[-.1, .42, .75], [.16, .44, .75], [.36, .44, .7]]) samán(g, r, c, s);
+  // estudiantes en el prado: grupos sentados y caminando
+  estudiantesU(g, h === 4 ? [[.1, .04], [.13, .08], [.07, .1], [.2, .2], [.0, .0], [.24, .0]] : [[.1, .04], [.13, .08], [.2, .2], [.0, .0], [.24, .0]], h);
+  if (h === 4) { const p = P(.11, .06); g.strokeStyle = '#5E4A36'; g.lineWidth = .4; g.beginPath(); g.moveTo(p[0] - 3, p[1] - 2); g.lineTo(p[0] - 3, p[1] - 9); g.moveTo(p[0] + 3, p[1]); g.lineTo(p[0] + 3, p[1] - 7); g.stroke(); rellena(g, [[p[0] - 3, p[1] - 9], [p[0] + 3, p[1] - 7], [p[0] + 3, p[1] - 4.6], [p[0] - 3, p[1] - 6.6]], '#F4F1E8', 'rgba(60,40,30,.4)', .3); }
+  for (const [r, c] of [[.3, .26], [.0, .2]]) { const q = P(r, c); g.save(); g.translate(q[0], q[1]); g.scale(.6, .6); bancoMadera(g, 0, 0); g.restore(); }
+  if (h === 5) for (let k = 0; k < 4; k++) { const p = P(.44, -.04 + k * .04); g.strokeStyle = '#3A3E42'; g.lineWidth = .4; g.beginPath(); g.ellipse(p[0], p[1] - 1.4, 1.3, 1.3, 0, 0, 7); g.stroke(); } // bicicletas
+  porteriaU(g, .48, .2, .4, 'UNIVERSIDAD', h === 5 ? '#B88A5A' : '#D8D2C4', 9);
+  const b = P(.06, .46); bandera(g, b[0], b[1], 22, TRICOLOR);
+}
+
 export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   HIST = h;
   const L = [
@@ -3081,7 +3134,7 @@ export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
     ['policia', 88, 92, 44, 70, policia6],
     ['cuartel', 136, 124, 68, 92, (g, e, h) => h === 5 ? batallonModerno(g) : cuartel6(g, e, h)],
     ['banco', 124, 150, 62, 118, banco6],
-    ['universidad', 128, 124, 64, 88, universidad6],
+    ['universidad', 128, 124, 64, 88, universidad6], ['uniPropuesta', 128, 124, 64, 88, (g, e, h) => universidadVerde(g, Math.max(3, h))],
     ['acueducto', 92, 76, 46, 50, (g, e, h) => h === 5 ? plantaAgua(g, h) : acueducto6(g, e, h)],
     ['plaza0', 100, 80, 50, 56, g => plazaN(g, 0)], ['plaza1', 100, 82, 50, 58, g => plazaN(g, 1)], ['plaza2', 100, 84, 50, 60, g => plazaN(g, 2)], ['plaza3', 100, 90, 50, 66, g => plazaN(g, 3)],
     ['estadio', 148, 132, 74, 102, (g, e, h) => h === 5 ? estadioModerno(g) : estadioN(g, e)],
