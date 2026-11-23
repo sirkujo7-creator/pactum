@@ -2227,7 +2227,7 @@ function universidadDeco(g) {
   const b = P(F.f - .06, 0, 40); bandera(g, b[0], b[1], 14, TRICOLOR);
   arbolito(g, ...P(F.f + .2, F.a + .06), .9, '#4E7A3A'); arbolito(g, ...P(F.f + .2, F.b - .06), .9, '#5E8B42');
 }
-function universidad6(g, e, h) { if (h <= 1) return claustroU(g, h); if (h === 2) return universidadClasica(g); if (h <= 4) return campusBloques(g, h); return campusDigital(g); }
+function universidad6(g, e, h) { if (h <= 1) return claustroU(g, h); if (h === 2) return universidadClasica(g); return universidadVerde(g, h); } // épocas modernas: campus bajo y verde (aprobado por Juan)
 function policia6(g, e, h) { if (h === 3) return estacionModerna(g); if (h === 4) return estacionFortificada(g); if (h === 5) return caiNuevo(g); policia(g, h, h); }
 function cuartel6(g, e, h) {
   if (h === 3) { basaBarracas(g, false, false); for (let k = 0; k < 5; k++) soldadoM(g, ...P(.46, -.34 + k * .15)); personaM(g, ...P(.56, .0), '#2F3E24', '#2E2A28', '#C98E62'); const q = P(.2, .46, 0); g.strokeStyle = '#2E2A28'; g.lineWidth = 2; g.lineCap = 'round'; g.beginPath(); g.moveTo(q[0] - 5, q[1] - 2); g.lineTo(q[0] + 4, q[1] - 5.4); g.stroke(); return; } // base con su formación
@@ -3026,49 +3026,8 @@ function universidadClasica(g) {
   porteriaU(g, .47, .12, .42, 'UNIVERSIDAD DEL TOLIMA', '#E8E2D4');
   const b = P(-.4, -.04, 46); bandera(g, b[0], b[1], 10, TRICOLOR);
 }
-// Modernización y conflicto: campus de bloques alrededor de una plazoleta: el bloque de aulas de cinco pisos con
-// quiebrasoles, la biblioteca baja de vidrio, el auditorio de cubierta inclinada y la portería. En el conflicto, el
-// mural estudiantil, las pancartas y un mitin en la plazoleta.
-function campusBloques(g, h) {
-  const conflicto = h === 4;
-  const A = caras(.4, .3, 42, -.3, -.28); sombraCasa(g, A); muros(g, A, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, A);
-  for (let p = 0; p < 5; p++) { vidrio(g, A, 'izq', .06, .94, p * 8.4 + 2.6, p * 8.4 + 6.8, { montantes: 5 }); vidrio(g, A, 'der', .08, .92, p * 8.4 + 2.6, p * 8.4 + 6.8, { montantes: 4 }); }
-  losas(g, A, [8.4, 16.8, 25.2, 33.6], '#E8E2D4', .03, 1.3); pilares(g, A, 'izq', [.17, .33, .5, .67, .83], '#E8E2D4', .01, .05, 0, 42);
-  pretil(g, A, '#E2DCCE'); cuartoTecho(g, A, A.t + .1, A.a + .12, .14, .12, 4, '#E2DCCE');
-  if (conflicto) { const Lp = (u, z) => A.en('izq', u, z); rellena(g, [Lp(.06, 1.2), Lp(.94, 1.2), Lp(.94, 8), Lp(.06, 8)], '#E8D49A', null); rellena(g, [Lp(.06, 1.2), Lp(.4, 1.2), Lp(.3, 8), Lp(.06, 8)], '#B9442F', null); rellena(g, [Lp(.6, 1.2), Lp(.94, 1.2), Lp(.94, 8), Lp(.7, 8)], '#2F6E8E', null); const s = Lp(.5, 4.6); g.fillStyle = '#F2C531'; g.beginPath(); g.arc(s[0], s[1], 2.2, 0, 7); g.fill(); // mural
-    const a = Lp(.1, 30), b = Lp(.9, 30); rellena(g, [a, b, [b[0], b[1] + 5], [a[0], a[1] + 5]], '#F4F1E8', 'rgba(60,40,30,.4)', .3); g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 2.5); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0); g.fillStyle = '#B9442F'; g.font = 'bold 2.2px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('EDUCACIÓN PÚBLICA', 0, 0); g.restore(); }
-  const Bi = caras(.36, .28, 11, -.3, .28); sombraCasa(g, Bi); muros(g, Bi, '#E8E4DA', null); cortina(g, Bi, 'izq', 1, 11, '#E8E4DA'); cortina(g, Bi, 'der', 1, 11, '#E8E4DA'); losas(g, Bi, [11], '#E8E4DA', .06, 1.4); pretil(g, Bi, '#DCD8CE'); letreroAncho(g, Bi, .1, .9, 9.4, '#2F5D8A', 'BIBLIOTECA'); // biblioteca
-  rellena(g, [P(.0, -.42), P(.0, .44), P(.44, .44), P(.44, -.42)], '#CFC6B4', 'rgba(80,70,60,.3)', .3); // plazoleta
-  g.strokeStyle = 'rgba(150,130,100,.35)'; g.lineWidth = .3; for (let k = 1; k < 9; k++) { g.beginPath(); g.moveTo(...P(k * .05, -.42)); g.lineTo(...P(k * .05, .44)); g.stroke(); }
-  for (const [r, c] of [[-.04, .44], [.44, -.04]]) arbolito(g, ...P(r, c), .85, '#4E7A3A');
-  { const Au = caras(.26, .34, 9, .28, -.3); sombraCasa(g, Au); muros(g, Au, '#D8D2C4', null); aleroYdesgaste(g, Au); hueco(g, Au, 'izq', .3, .7, 0, 6, '#4A4E52');
-    const z = 9, hh = 6, e = .03; rellena(g, [P(Au.f + e, Au.a - e, z), P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.a - e, z + hh)], '#9A9E9C', 'rgba(40,40,40,.45)', .35); rellena(g, [P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.b + e, z)], SOM('#D8D2C4', .2), null); letreroAncho(g, Au, .1, .9, 7, '#7A4E2E', 'AUDITORIO'); }
-  estudiantesU(g, conflicto ? [[.08, .08], [.12, .12], [.1, .18], [.16, .06], [.18, .16], [.26, .3]] : [[.08, .08], [.12, .12], [.2, .26], [.02, .2]], h);
-  if (conflicto) { const p = P(.12, .12); g.strokeStyle = '#5E4A36'; g.lineWidth = .4; g.beginPath(); g.moveTo(p[0] - 4, p[1] - 4); g.lineTo(p[0] - 4, p[1] - 12); g.moveTo(p[0] + 4, p[1] - 2); g.lineTo(p[0] + 4, p[1] - 10); g.stroke(); rellena(g, [[p[0] - 4, p[1] - 12], [p[0] + 4, p[1] - 10], [p[0] + 4, p[1] - 7], [p[0] - 4, p[1] - 9]], '#F4F1E8', 'rgba(60,40,30,.4)', .3); g.fillStyle = '#B9442F'; g.font = 'bold 1.4px sans-serif'; g.fillText('¡NO MÁS!', p[0] - 3, p[1] - 8.6); } // mitin
-  porteriaU(g, .47, .14, .44, 'UNIVERSIDAD', '#D8D2C4', 11);
-  const b = P(.42, .04); bandera(g, b[0], b[1], 22, TRICOLOR);
-}
-// Era digital: campus moderno: torre de concreto con caja de vidrio en voladizo, edificio de laboratorios de vidrio,
-// auditorio con cubierta verde, prado con estudiantes y portería con letras de acero.
-function campusDigital(g) {
-  const T = caras(.34, .3, 44, -.3, -.3); sombraCasa(g, T); muros(g, T, '#B8B4AC', null); aleroYdesgaste(g, T);
-  g.save(); for (const cara of ['izq', 'der']) { poli(g, T[cara]); g.clip(); g.fillStyle = 'rgba(60,56,50,.4)'; for (let z = 4; z < 44; z += 4) for (let u = .08; u < 1; u += .16) { const p = T.en(cara, u, z); g.fillRect(p[0], p[1], .5, .5); } } g.restore();
-  for (let p = 0; p < 5; p++) { vidrio(g, T, 'izq', .1, .5, p * 8.6 + 2.6, p * 8.6 + 7, { montantes: 3 }); vidrio(g, T, 'der', .5, .9, p * 8.6 + 2.6, p * 8.6 + 7, { montantes: 3 }); }
-  pretil(g, T, '#C4C0B8');
-  const V = caras(.3, .28, 12, -.3, .0, 28); { const q = P(V.f, V.a + .3, 28), b = P(V.f, V.a + .02, 12); g.strokeStyle = '#8A8680'; g.lineWidth = 1; g.beginPath(); g.moveTo(...b); g.lineTo(...q); g.stroke(); }
-  muros(g, V, '#E8ECEE', null); cortina(g, V, 'izq', 1, 12, '#2E3A44'); cortina(g, V, 'der', 1, 12, '#2E3A44'); pretil(g, V, '#D8DCE0');
-  const Lb = caras(.3, .28, 16, -.3, .32); sombraCasa(g, Lb); muros(g, Lb, '#ECEEEE', null); cortina(g, Lb, 'izq', 2, 8, '#3E6B4A'); cortina(g, Lb, 'der', 2, 8, '#3E6B4A'); pretil(g, Lb, '#E0E4E6'); solares(g, Lb, 1); // laboratorios
-  prado(g, -.1, .46, -.12, .46, '#86AE5E');
-  { const Au = caras(.24, .32, 8, .28, -.32); sombraCasa(g, Au); muros(g, Au, K.ladrillo, null, { ladrillo: true }); aleroYdesgaste(g, Au); cortina(g, Au, 'izq', 1, 4, '#5E4A3A');
-    const z = 8, hh = 6, e = .03; rellena(g, [P(Au.f + e, Au.a - e, z), P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.a - e, z + hh)], '#7E9A6A', 'rgba(40,50,30,.5)', .35); rellena(g, [P(Au.f + e, Au.b + e, z), P(Au.t - e, Au.b + e, z + hh), P(Au.t - e, Au.b + e, z)], SOM(K.ladrillo, .2), null); }
-  for (const [r, c] of [[-.06, .44], [.44, -.08]]) arbolito(g, ...P(r, c), .8, '#4E7A3A');
-  estudiantesU(g, [[.08, .08], [.12, .12], [.2, .24], [.04, .22], [.24, .02]], 5);
-  for (let k = 0; k < 3; k++) { const p = P(.1 + k * .04, .1 + k * .02); g.fillStyle = '#E8E4DA'; g.fillRect(p[0] - .6, p[1] - 3.4, 1.2, .5); } // portátiles
-  porteriaU(g, .47, .14, .44, 'UNIVERSIDAD', '#8A9094', 10);
-  const b = P(.42, .04); bandera(g, b[0], b[1], 22, TRICOLOR);
-}
 
-// ---------- Propuesta (borrador, sin usar en el juego): universidad baja y verde para las épocas modernas ----------
+// ---------- Universidad baja y verde para las épocas modernas (aprobada por Juan) ----------
 // Edificios de 2 y 3 pisos alrededor de un prado grande con árboles, corredores cubiertos que los unen, auditorio con
 // cubierta plegada (años 60), y nada de torres.
 function samán(g, r, c, s = 1) { arbolito(g, ...P(r, c), 1.15 * s, '#4E7A3A'); }
@@ -3134,7 +3093,7 @@ export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
     ['policia', 88, 92, 44, 70, policia6],
     ['cuartel', 136, 124, 68, 92, (g, e, h) => h === 5 ? batallonModerno(g) : cuartel6(g, e, h)],
     ['banco', 124, 150, 62, 118, banco6],
-    ['universidad', 128, 124, 64, 88, universidad6], ['uniPropuesta', 128, 124, 64, 88, (g, e, h) => universidadVerde(g, Math.max(3, h))],
+    ['universidad', 128, 124, 64, 88, universidad6],
     ['acueducto', 92, 76, 46, 50, (g, e, h) => h === 5 ? plantaAgua(g, h) : acueducto6(g, e, h)],
     ['plaza0', 100, 80, 50, 56, g => plazaN(g, 0)], ['plaza1', 100, 82, 50, 58, g => plazaN(g, 1)], ['plaza2', 100, 84, 50, 60, g => plazaN(g, 2)], ['plaza3', 100, 90, 50, 66, g => plazaN(g, 3)],
     ['estadio', 148, 132, 74, 102, (g, e, h) => h === 5 ? estadioModerno(g) : estadioN(g, e)],
