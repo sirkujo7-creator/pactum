@@ -2203,6 +2203,159 @@ function cuartel6(g, e, h) {
   cuartel(g, h); cuartelExtra(g, h); cuartelVida(g, h);
 }
 
+// ---------- Maravillas, memoria e infraestructura redibujadas (pedido de Juan: «sigue con los dibujos») ----------
+// Techo plano sin tanque ni antena (para los edificios patrimoniales y la torre de control), con su remate.
+function techoPlano(g, F, col) {
+  const H = F.z0 + F.H, o = .015; rellena(g, [P(F.f + o, F.a - o, H), P(F.f + o, F.b + o, H), P(F.t - o, F.b + o, H), P(F.t - o, F.a - o, H)], col, K.contorno, .3);
+  rellena(g, [P(F.f + o, F.a - o, H), P(F.f + o, F.b + o, H), P(F.f + o, F.b + o, H - .8), P(F.f + o, F.a - o, H - .8)], mezcla(col, '#FFFFFF', .2), null);
+}
+// Jardín Botánico Mutis: invernadero de hierro y vidrio con bóveda, palmas adentro, eras de flores, sendero de
+// gravilla, una pila pequeña y el letrero.
+function jardinBotanico(g) {
+  const R = mulberry(77);
+  sombraPie(g, 4, 2, 34, 12, .2);
+  // Eras de flores y sendero.
+  for (const [r, c, col] of [[.32, -.3, '#D8433A'], [.32, .3, '#E7B23C'], [-.3, -.36, '#C2407A'], [.1, .42, '#F4EFE4']]) { const q = P(r, c); cajaPx(g, q[0], q[1], .22, .14, 1, '#7A5A3A', { top: '#5E8B42', borde: null }); for (let k = 0; k < 8; k++) { const u = (k + .5) / 8 - .5; g.fillStyle = col; g.beginPath(); g.arc(q[0] + u * 6, q[1] - 1.4 + u * 3 + (R() - .5), .55, 0, 7); g.fill(); } }
+  { const a = P(.46, 0), b = P(.06, 0); g.strokeStyle = 'rgba(214,200,170,.9)'; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  // Invernadero: zócalo de ladrillo, armazón de hierro con vidrios y bóveda de cañón a lo largo de c.
+  const F = caras(.56, .34, 9, -.08, 0, 2.4);
+  const Z = caras(.58, .36, 2.4, -.08, 0, 0); muros(g, Z, K.ladrillo, null, { ladrillo: true });
+  rellena(g, F.izq, 'rgba(190,225,230,.55)', 'rgba(40,50,50,.7)', .4); rellena(g, F.der, 'rgba(150,190,200,.55)', 'rgba(40,50,50,.7)', .4);
+  // Palmas adentro, vistas a través del vidrio.
+  for (const [u, h] of [[.25, 12], [.62, 15]]) { const b = F.en('izq', u, 0), t = [b[0] - 2, b[1] - h]; g.strokeStyle = '#8A7A5A'; g.lineWidth = .9; g.beginPath(); g.moveTo(b[0] - 2, b[1] - 1); g.lineTo(...t); g.stroke(); for (let k = 0; k < 7; k++) hojaP(g, t[0], t[1], -Math.PI / 2 + (k - 3) * .5, 4.6, 1, k % 2 ? '#4E7A3A' : '#6F9C4C'); }
+  g.strokeStyle = '#2E3A34'; g.lineWidth = .45;
+  for (let k = 0; k <= 8; k++) { const a = F.en('izq', k / 8, 0), b = F.en('izq', k / 8, 9); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  for (let k = 0; k <= 4; k++) { const a = F.en('der', k / 4, 0), b = F.en('der', k / 4, 9); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
+  for (const z of [3, 6]) { g.beginPath(); g.moveTo(...F.en('izq', 0, z)); g.lineTo(...F.en('izq', 1, z)); g.lineTo(...F.en('der', 1, z)); g.stroke(); }
+  // Bóveda: arcos de hierro a lo largo y vidrios curvos.
+  const H = F.z0 + F.H, arco = (c, u) => { const r = F.f + (F.t - F.f) * u; return P(r, c, H + Math.sin(u * Math.PI) * 6); };
+  const lomo = []; for (let k = 0; k <= 12; k++) lomo.push(arco(F.b, k / 12));
+  g.beginPath(); g.moveTo(...P(F.f, F.a, H)); for (let k = 0; k <= 12; k++) g.lineTo(...arco(F.a, k / 12)); for (let k = 12; k >= 0; k--) g.lineTo(...arco(F.b, k / 12)); g.closePath(); g.fillStyle = 'rgba(205,232,236,.65)'; g.fill(); g.stroke();
+  g.beginPath(); lomo.forEach((q, k) => k ? g.lineTo(...q) : g.moveTo(...q)); g.closePath(); g.fillStyle = 'rgba(170,205,215,.6)'; g.fill(); g.stroke();
+  for (let k = 1; k < 8; k++) { const c = F.a + (F.b - F.a) * k / 8; g.beginPath(); for (let q = 0; q <= 12; q++) { const pt = arco(c, q / 12); q ? g.lineTo(...pt) : g.moveTo(...pt); } g.stroke(); }
+  g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = .6; g.beginPath(); g.moveTo(...arco(F.a + .05, .3)); g.lineTo(...arco(F.b - .1, .3)); g.stroke(); // reflejo
+  puerta(g, F, 'izq', .5, .1, 6.5, '#2E3A34', true);
+  { const q = P(.34, -.04); cilindroV(g, q[0], q[1], 2.6, 1.6, '#B4AC9C', { tapa: '#6E9FB4' }); } // pila
+  { const a = P(.5, -.36), lt = [a[0], a[1]]; cajaPx(g, lt[0], lt[1], .02, .02, 5, K.maderaOsc, { borde: null }); rellena(g, [[lt[0] - 6, lt[1] - 8.6], [lt[0] + 6, lt[1] - 5.6], [lt[0] + 6, lt[1] - 3], [lt[0] - 6, lt[1] - 6]], '#3E6B4A', K.contorno, .3); g.save(); g.translate(lt[0], lt[1] - 5.8); g.transform(1, .25, 0, 1, 0, 0); g.fillStyle = '#F4F1E8'; g.font = 'bold 1.7px Georgia, serif'; g.textAlign = 'center'; g.fillText('JARDÍN BOTÁNICO', 0, -.3); g.fillText('JOSÉ C. MUTIS', 0, 1.7); g.restore(); }
+  arbolito(g, ...P(-.38, .4), 1.1, '#4E7A3A');
+}
+// Conservatorio del Tolima: edificio republicano de dos pisos con pórtico de columnas, frontón con la lira, ventanas
+// de arco, balaustrada en la azotea, escalinata y faroles.
+function conservatorio(g) {
+  const F = caras(.74, .5, 22, -.04); sombraCasa(g, F); muros(g, F, '#EDE0C4', '#B9A27A'); aleroYdesgaste(g, F);
+  for (let k = 0; k < 5; k++) { const u = .1 + k * .2; if (k !== 2) ventana(g, F, 'izq', u, 3.4, .09, 6.5, '#3E6B4A', { marco: '#F4EEE2' }); ventana(g, F, 'izq', u, 13, .09, 6, '#3E6B4A', { marco: '#F4EEE2' }); }
+  for (const u of [.3, .7]) { ventana(g, F, 'der', u, 3.4, .14, 6.5, '#3E6B4A', { marco: '#F4EEE2' }); ventana(g, F, 'der', u, 13, .14, 6, '#3E6B4A', { marco: '#F4EEE2' }); }
+  rellena(g, [F.en('izq', 0, 10.6), F.en('izq', 1, 10.6), F.en('izq', 1, 11.6), F.en('izq', 0, 11.6)], '#F4EEE2', K.contorno, .25); // cornisa del primer piso
+  techoPlano(g, F, '#E4D6B8');
+  for (let k = 0; k <= 14; k++) { const a = F.en('izq', k / 14, 22), b = F.en('izq', k / 14, 24.2); g.strokeStyle = '#F4EEE2'; g.lineWidth = .7; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } // balaustrada
+  // Pórtico: cuatro columnas, entablamento y frontón con la lira.
+  const fr = F.f + .1, a = -.14, b = .14;
+  for (const c of [-.13, -.045, .045, .13]) { const p = P(fr, c); cilindroV(g, p[0], p[1], 1.1, 15, '#F4EEE2', { tapa: '#E4D6B8' }); cajaPx(g, p[0], p[1], .04, .04, 1, '#D8CCB0', { borde: null }); }
+  rellena(g, [P(fr, a, 15), P(fr, b, 15), P(fr, b, 17.4), P(fr, a, 17.4)], '#F4EEE2', K.contorno, .3);
+  rellena(g, [P(fr, a, 17.4), P(fr, b, 17.4), P(fr, 0, 22.6)], '#E9DCC0', K.contorno, .3);
+  { const m = P(fr, 0, 19.2); g.strokeStyle = '#B8964A'; g.lineWidth = .5; g.beginPath(); g.moveTo(m[0] - 1.2, m[1] + 1.2); g.quadraticCurveTo(m[0] - 1.6, m[1] - 1.6, m[0], m[1] - 1.8); g.quadraticCurveTo(m[0] + 1.6, m[1] - 1.6, m[0] + 1.2, m[1] + 1.2); g.stroke(); for (const dx of [-.5, 0, .5]) { g.beginPath(); g.moveTo(m[0] + dx, m[1] + 1); g.lineTo(m[0] + dx, m[1] - 1.4); g.stroke(); } } // la lira
+  puerta(g, F, 'izq', .5, .1, 9, '#5A3A22', true);
+  for (let k = 0; k < 3; k++) { const p = P(fr + .05 + k * .03, 0, 0); cajaPx(g, p[0], p[1] + k * .3, .3, .03, .7, '#CFC6B4', { top: '#DDD6C8', borde: 'rgba(60,50,40,.3)' }); } // escalinata
+  for (const c of [-.24, .24]) farol(g, ...P(F.f + .12, c), 11);
+  { const t = F.en('izq', .5, 20.6); g.save(); g.fillStyle = '#7A5A30'; g.font = 'bold 1.6px Georgia, serif'; g.textAlign = 'center'; g.fillText('CONSERVATORIO DEL TOLIMA', t[0], t[1]); g.restore(); }
+}
+// Túnel de La Línea: la montaña de roca con monte encima, el portal de concreto con su visera, luces adentro, la
+// carretera que entra, el letrero y un camión que sale.
+function tunel(g) {
+  const R = mulberry(31);
+  sombraPie(g, 0, 2, 40, 10, .18);
+  // Montaña en facetas, con luz a la izquierda.
+  const cima = [[-44, 2], [-32, -18], [-18, -30], [-2, -34], [14, -28], [30, -16], [44, 2]];
+  rellena(g, cima, '#8A8070', null);
+  rellena(g, [[-44, 2], [-32, -18], [-18, -30], [-2, -34], [-6, -8], [-20, 2]], '#A89E8C', null);
+  rellena(g, [[14, -28], [30, -16], [44, 2], [20, 2], [10, -10]], '#6E665A', null);
+  for (let k = 0; k < 40; k++) { const x = -38 + R() * 76, y = -30 + R() * 22; if (y > -34 + Math.abs(x) * .5 + 4) for (let q = 0; q < 3; q++) hojaP(g, x + q, y, -Math.PI / 2 + (q - 1) * .5, 2.6 + R() * 2, .9, R() < .5 ? '#4E7A3A' : '#6F9C4C', false); } // monte encima
+  // Carretera que entra.
+  rellena(g, [[-10, 2], [10, 2], [5, -6], [-5, -6]], '#4A4E52', null); g.strokeStyle = '#E8D27A'; g.lineWidth = .5; g.setLineDash([1.6, 1.4]); g.beginPath(); g.moveTo(0, 2); g.lineTo(0, -6); g.stroke(); g.setLineDash([]);
+  // Portal: marco de concreto en arco con visera.
+  rellena(g, [[-11, -4], [11, -4], [11, -18], [-11, -18]], '#C8C4BA', K.contorno, .4);
+  g.fillStyle = '#1E1C1A'; g.beginPath(); g.moveTo(-7.4, -4); g.lineTo(-7.4, -10); g.quadraticCurveTo(0, -18.6, 7.4, -10); g.lineTo(7.4, -4); g.closePath(); g.fill();
+  for (let k = 0; k < 4; k++) { const x = -3 + k * 2, y = -11 + Math.abs(k - 1.5) * .6; g.fillStyle = '#F2D98A'; g.beginPath(); g.arc(x, y, .5, 0, 7); g.fill(); g.fillStyle = 'rgba(255,230,160,.25)'; g.beginPath(); g.arc(x, y, 1.2, 0, 7); g.fill(); } // luces de adentro
+  rellena(g, [[-12.4, -18], [12.4, -18], [12.4, -20], [-12.4, -20]], '#DAD6CC', K.contorno, .3); // visera
+  g.save(); g.fillStyle = '#3A3A3E'; g.font = 'bold 1.7px sans-serif'; g.textAlign = 'center'; g.fillText('TÚNEL DE LA LÍNEA', 0, -15.4); g.restore();
+  // Letrero verde de carretera y un camión que sale.
+  cajaPx(g, -16, 1, .02, .02, 7, '#8A8E92', { borde: null }); rellena(g, [[-21, -11], [-11, -9], [-11, -5.6], [-21, -7.6]], '#2E7D4F', K.contorno, .3);
+  g.save(); g.translate(-16, -8); g.transform(1, .2, 0, 1, 0, 0); g.fillStyle = '#F4F1E8'; g.font = 'bold 1.5px sans-serif'; g.textAlign = 'center'; g.fillText('ARMENIA', 0, 0); g.restore();
+}
+// Parque Natural de Los Nevados: el nevado con su glaciar al fondo, la laguna, frailejones, la cabaña de los
+// guardaparques y el letrero de madera.
+function parqueNevados(g) {
+  const R = mulberry(53);
+  sombraPie(g, 0, 2, 38, 10, .16);
+  rellena(g, [[-40, 0], [-22, -22], [-8, -34], [4, -36], [18, -26], [40, 0]], '#7E7468', null); // el volcán
+  rellena(g, [[-40, 0], [-22, -22], [-8, -34], [4, -36], [-2, -10], [-18, 0]], '#9A9084', null);
+  rellena(g, [[-14, -27], [-8, -34], [4, -36], [12, -30], [6, -27], [0, -29], [-6, -25]], '#F4F6F8', 'rgba(150,170,190,.6)'); // glaciar
+  rellena(g, [[4, -36], [12, -30], [6, -27], [2, -31]], '#C8D4DE', null);
+  { g.fillStyle = '#4E7FA0'; g.beginPath(); g.ellipse(-12, -2, 11, 3.4, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(200,225,240,.5)'; g.beginPath(); g.ellipse(-14, -2.6, 5, 1, 0, 0, 7); g.fill(); } // laguna
+  for (let k = 0; k < 14; k++) { // frailejones: tronco peludo y roseta de hojas plateadas
+    const x = -32 + R() * 64, y = -1 + R() * 6; if (Math.abs(x + 12) < 11 && y < 2) continue;
+    const h = 3 + R() * 3; g.fillStyle = '#6E5A3E'; g.fillRect(x - .6, y - h, 1.2, h); for (let q = 0; q < 9; q++) hojaP(g, x, y - h, -Math.PI / 2 + (q - 4) * .38, 2.2, .7, q % 2 ? '#A8B48A' : '#C4CCA4', false);
+  }
+  // Cabaña de los guardaparques.
+  const F = caras(.18, .14, 6, .26, .3); sombraCasa(g, F); muros(g, F, '#8A5A36', null); puerta(g, F, 'izq', .5, .3, 4.4, '#4A2E1C', false); dosAguas(g, F, 3.4, { teja: '#5E646C', luz: '#747A82', osc: '#454A52', tipo: 'lamina' });
+  { const a = P(.4, -.3); cajaPx(g, a[0], a[1], .02, .02, 4.4, K.maderaOsc, { borde: null }); cajaPx(g, a[0] + 3, a[1] + 1.5, .02, .02, 4.4, K.maderaOsc, { borde: null }); rellena(g, [[a[0] - 1, a[1] - 7.6], [a[0] + 4.4, a[1] - 5], [a[0] + 4.4, a[1] - 2.6], [a[0] - 1, a[1] - 5.2]], '#8A5A36', K.contorno, .3); g.save(); g.translate(a[0] + 1.7, a[1] - 4.6); g.transform(1, .48, 0, 1, 0, 0); g.fillStyle = '#F4E8C8'; g.font = 'bold 1.1px Georgia, serif'; g.textAlign = 'center'; g.fillText('LOS NEVADOS', 0, 0); g.restore(); }
+}
+// Monumento a las víctimas: obelisco de piedra en su pedestal de gradas, placa de bronce con los nombres, flores,
+// velas y una corona.
+function monumentoVictimas(g) {
+  sombraPie(g, 2, 1, 9, 3, .24);
+  for (const [lc, h, z] of [[.3, 1.2, 0], [.22, 1.2, 1.2], [.16, 3.6, 2.4]]) { const t = cajaPx(g, 0, 0, lc, lc, h, '#B4AC9C', { z0: z, izq: '#C8C0B0', top: '#D4CCBC' }); void t; }
+  { const a = P(.08, -.05, 2.9), b = P(.08, .05, 2.9); rellena(g, [a, b, [b[0], b[1] - 2.4], [a[0], a[1] - 2.4]], '#A07A3A', 'rgba(60,40,20,.6)', .3); g.strokeStyle = 'rgba(255,230,160,.6)'; g.lineWidth = .2; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(a[0] + .4, a[1] - .7 - k * .6); g.lineTo(b[0] - .4, b[1] - .7 - k * .6); g.stroke(); } } // placa con los nombres
+  // Obelisco de cuatro caras que se adelgaza, con punta.
+  const base = 6, alto = 34, w0 = 2.6, w1 = 1.4;
+  rellena(g, [[-w0, -base], [0, -base + w0 * .5], [0, -alto + w1 * .5], [-w1, -alto]], '#D8D0C0', 'rgba(60,50,40,.4)', .3);
+  rellena(g, [[0, -base + w0 * .5], [w0, -base], [w1, -alto], [0, -alto + w1 * .5]], '#ABA394', 'rgba(60,50,40,.4)', .3);
+  rellena(g, [[-w1, -alto], [0, -alto + w1 * .5], [w1, -alto], [0, -alto - 3]], '#E4DCCC', 'rgba(60,50,40,.4)', .3);
+  g.strokeStyle = 'rgba(80,70,60,.35)'; g.lineWidth = .25; for (let k = 1; k < 9; k++) { const y = -base - k * 3.2, w = w0 + (w1 - w0) * (k * 3.2) / (alto - base); g.beginPath(); g.moveTo(-w, y); g.lineTo(0, y + w * .5); g.lineTo(w, y); g.stroke(); } // hiladas
+  // Corona de flores, velas y flores sueltas al pie.
+  { const p = P(.2, .1); g.strokeStyle = '#3E6B3A'; g.lineWidth = 1.2; g.beginPath(); g.ellipse(p[0], p[1] - 3, 2.2, 2.4, 0, 0, 7); g.stroke(); for (let k = 0; k < 8; k++) { const t = k / 8 * Math.PI * 2; g.fillStyle = k % 2 ? '#F4EFE4' : '#D8433A'; g.beginPath(); g.arc(p[0] + Math.cos(t) * 2.2, p[1] - 3 + Math.sin(t) * 2.4, .55, 0, 7); g.fill(); } }
+  for (const [r, c] of [[.22, -.12], [.26, -.02], [.2, .22]]) { const p = P(r, c); cilindroV(g, p[0], p[1], .5, 2.2, '#F4EFE4', { tapa: '#E8E0CC' }); g.fillStyle = '#FFB040'; g.beginPath(); g.ellipse(p[0], p[1] - 3, .35, .7, 0, 0, 7); g.fill(); } // velas
+}
+// Mojón del tratado: piedra labrada en la raya con la placa del tratado y las banderas de las dos partes.
+function mojonTratado(g) {
+  sombraPie(g, 1, 1, 6, 2, .24);
+  cajaPx(g, 0, 0, .14, .14, 1, '#A39A88', { izq: '#B4AC9C', top: '#C2BAAA' });
+  const M = cajaPx(g, 0, 0, .08, .08, 8, '#C8C0B0', { z0: 1, izq: '#D8D0C0', top: '#E0D8C8' });
+  rellena(g, [[M.izq[0][0] + .5, M.izq[0][1] - 4], [M.izq[1][0] - .5, M.izq[1][1] - 4], [M.izq[1][0] - .5, M.izq[1][1] - 7], [M.izq[0][0] + .5, M.izq[0][1] - 7]], '#A07A3A', 'rgba(60,40,20,.6)', .3);
+  bandera(g, ...P(.1, -.24), 15, TRICOLOR, 6); bandera(g, ...P(-.06, .22), 15, ['#F4F1E8', '#3E6B4A'], 6);
+}
+// Estación del ferrocarril: edificio de dos pisos con alero sobre el andén, el reloj, el letrero, bancas, bultos y
+// los rieles con sus durmientes.
+function estacionTren(g) {
+  { const a = P(.46, -.5), b = P(.46, .5); g.strokeStyle = '#6E5236'; g.lineWidth = 1.4; for (let k = 0; k <= 12; k++) { const p = P(.46, -.5 + k / 12, 0); g.beginPath(); g.moveTo(p[0] - 2.4, p[1] - 1.2); g.lineTo(p[0] + 2.4, p[1] + 1.2); g.stroke(); } for (const d of [-.05, .05]) { const p = P(.46 + d, -.5), q = P(.46 + d, .5); g.strokeStyle = '#6A6E74'; g.lineWidth = .6; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); } void a; void b; } // rieles
+  { const a = P(.3, -.42), b = P(.3, .42), c = P(.38, .42), d = P(.38, -.42); rellena(g, [a, b, c, d], '#B4AC9C', 'rgba(60,50,40,.4)', .3); } // andén
+  const F = caras(.6, .3, 16, -.06); sombraCasa(g, F); muros(g, F, '#EAD9A8', '#8E2F22');
+  for (const u of [.15, .35, .65, .85]) { ventana(g, F, 'izq', u, 3, .08, 6, '#8E2F22'); ventana(g, F, 'izq', u, 10.4, .08, 4.4, '#8E2F22'); }
+  puerta(g, F, 'izq', .5, .1, 7.6, '#5A3A22', true);
+  dosAguas(g, F, 6, { sale: .12 });
+  for (const c of [-.25, 0, .25]) { const p = P(F.f + .14, c); cajaPx(g, p[0], p[1], .015, .015, 8, K.madera, { borde: null }); } // pies del alero
+  // El reloj y el letrero van en el costado (cara der), que el alero no tapa.
+  { const t = F.en('der', .5, 12); g.fillStyle = '#F4F1E8'; g.beginPath(); g.arc(t[0], t[1] - 1.4, 1.6, 0, 7); g.fill(); g.strokeStyle = '#3A2A1E'; g.lineWidth = .3; g.stroke(); g.beginPath(); g.moveTo(t[0], t[1] - 1.4); g.lineTo(t[0], t[1] - 2.6); g.moveTo(t[0], t[1] - 1.4); g.lineTo(t[0] + .8, t[1] - 1.2); g.stroke(); } // reloj
+  { const q = [F.en('der', .12, 6.4), F.en('der', .88, 6.4), F.en('der', .88, 9), F.en('der', .12, 9)]; rellena(g, q, '#3E6B4A', K.contorno, .3); g.save(); const m = [(q[0][0] + q[2][0]) / 2, (q[0][1] + q[2][1]) / 2]; g.translate(m[0], m[1]); g.transform(1, (q[1][1] - q[0][1]) / (q[1][0] - q[0][0]), 0, 1, 0, 0); g.fillStyle = '#F4F1E8'; g.font = 'bold 1.6px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ESTACIÓN', 0, 0); g.restore(); }
+  bancoMadera(g, ...P(.32, -.22)); { const p = P(.34, .28); for (const [dx, col] of [[0, '#C9B48A'], [2.2, '#BFA87C']]) { g.fillStyle = col; g.beginPath(); g.ellipse(p[0] + dx, p[1] - 1.6, 1.7, 1.4, 0, 0, 7); g.fill(); } } // bultos esperando el tren
+}
+// Aeropuerto: pista de asfalto con sus marcas, la torre de control con su cabina de vidrio, el hangar de lámina y la
+// manga de viento.
+function aeropuerto(g) {
+  const a = P(.3, -.5), b = P(.3, .5), c = P(.02, .5), d = P(.02, -.5); rellena(g, [a, b, c, d], '#4A4E52', null);
+  g.strokeStyle = '#F4F1E8'; g.lineWidth = .7; g.setLineDash([3, 2.4]); g.beginPath(); g.moveTo(...P(.16, -.46)); g.lineTo(...P(.16, .46)); g.stroke(); g.setLineDash([]);
+  for (let k = 0; k < 4; k++) { const p = P(.06 + k * .065, -.44), q = P(.06 + k * .065, -.36); g.strokeStyle = '#F4F1E8'; g.lineWidth = .9; g.beginPath(); g.moveTo(...p); g.lineTo(...q); g.stroke(); } // cebra de la cabecera
+  // Hangar de lámina en arco.
+  const H = caras(.32, .22, 6, -.28, -.2); sombraCasa(g, H); muros(g, H, '#B8BCC0', null); hueco(g, H, 'izq', .15, .85, 0, 5, '#3A3E42');
+  { const top = H.z0 + H.H; g.beginPath(); g.moveTo(...P(H.f, H.a, top)); for (let k = 0; k <= 10; k++) { const r = H.f + (H.t - H.f) * k / 10; g.lineTo(...P(r, H.a, top + Math.sin(k / 10 * Math.PI) * 4)); } g.lineTo(...P(H.t, H.b, top)); for (let k = 10; k >= 0; k--) { const r = H.f + (H.t - H.f) * k / 10; g.lineTo(...P(r, H.b, top + Math.sin(k / 10 * Math.PI) * 4)); } g.closePath(); g.fillStyle = '#C8CCD0'; g.fill(); g.strokeStyle = 'rgba(60,64,70,.6)'; g.lineWidth = .3; g.stroke(); }
+  // Torre de control.
+  const T = caras(.08, .08, 16, -.3, .3); sombraCasa(g, T); muros(g, T, '#E8E4D8', null);
+  const V = caras(.12, .12, 3.6, -.3, .3, 16); rellena(g, V.izq, 'rgba(150,200,220,.85)', 'rgba(30,40,50,.6)', .3); rellena(g, V.der, 'rgba(110,160,190,.85)', 'rgba(30,40,50,.6)', .3); capturarQuad(g, V.izq);
+  techoPlano(g, V, '#D8D4C8'); { const c = P(-.3, .3, V.z0 + V.H); g.strokeStyle = '#6A6E74'; g.lineWidth = .4; g.beginPath(); g.moveTo(c[0], c[1]); g.lineTo(c[0], c[1] - 5); g.stroke(); g.fillStyle = '#C8283A'; g.beginPath(); g.arc(c[0], c[1] - 5, .5, 0, 7); g.fill(); } // antena con su luz roja
+  // Manga de viento.
+  { const p = P(-.02, .44); cajaPx(g, p[0], p[1], .01, .01, 8, '#8A8E92', { borde: null }); for (let k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#F4F1E8' : '#E86A2A'; g.beginPath(); g.moveTo(p[0] + k * 1.4, p[1] - 8 + k * .15); g.lineTo(p[0] + (k + 1) * 1.4, p[1] - 7.8 + (k + 1) * .2); g.lineTo(p[0] + (k + 1) * 1.4, p[1] - 6.8 + (k + 1) * .1); g.lineTo(p[0] + k * 1.4, p[1] - 6.4); g.closePath(); g.fill(); } }
+}
+
 export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
   const L = [
     ['escuela', 96, 96, 48, 68, escuela6],
@@ -2220,6 +2373,8 @@ export function recetasPublicos(e = 1, h = [0, 1, 2, 5][e]) {
     ['plaza0', 100, 80, 50, 56, g => plazaN(g, 0)], ['plaza1', 100, 82, 50, 58, g => plazaN(g, 1)], ['plaza2', 100, 84, 50, 60, g => plazaN(g, 2)], ['plaza3', 100, 90, 50, 66, g => plazaN(g, 3)],
     ['estadio', 148, 124, 74, 94, estadioN],
     ['m_museo', 104, 104, 52, 76, g => museoN(g)],
+    ['m_mv_jardin', 100, 96, 50, 64, jardinBotanico], ['m_mv_conservatorio', 100, 110, 50, 78, conservatorio], ['m_mv_tunel', 100, 70, 50, 52, tunel], ['m_mv_parque', 100, 76, 50, 58, parqueNevados],
+    ['m_monumento', 40, 70, 20, 56, monumentoVictimas], ['m_tratado', 40, 50, 20, 38, mojonTratado], ['m_ferrocarril', 96, 82, 48, 56, estacionTren], ['m_aeropuerto', 100, 72, 50, 44, aeropuerto],
     ['m_dique', 76, 52, 38, 34, dique], ['m_reservorio', 72, 52, 36, 30, reservorio], ['m_tanques', 70, 56, 35, 36, tanques],
     ['m_granero', 64, 70, 32, 50, granero], ['m_cooperativa', 84, 86, 42, 60, cooperativa], ['m_escuelita', 80, 88, 40, 62, escuelita],
     ['m_parcela', 72, 60, 36, 38, parcela], ['m_reten', 64, 56, 32, 38, reten], ['m_campamento', 64, 50, 32, 34, campamento],
