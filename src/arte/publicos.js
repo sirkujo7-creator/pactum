@@ -2973,13 +2973,43 @@ function torreReloj(g, r, c, z, alto, col, remate = 'cupula') {
   return T;
 }
 // Portería con el nombre: dos pilares y el dintel con letras, de c0 a c1 sobre la fila r.
-function porteriaU(g, r, c0, c1, texto, col, alto = 12) {
-  for (const c of [c0, c1]) cajaPx(g, ...P(r, c), .07, .07, alto, col, { izq: LUZ(col, .1) });
-  const a = P(r, c0, alto), b = P(r, c1, alto);
-  rellena(g, [a, b, [b[0], b[1] - 4], [a[0], a[1] - 4]], LUZ(col, .08), 'rgba(50,40,30,.5)', .35);
-  g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 2); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0);
-  g.font = 'bold 10px Georgia, serif'; const L = Math.abs(b[0] - a[0]) * .9, t = Math.min(2.8, 10 * L / g.measureText(texto).width); g.font = `bold ${t}px Georgia, serif`;
-  g.fillStyle = '#3A2A1E'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(texto, 0, .2); g.restore();
+// Portería de entrada (pedido de Juan: antes eran tres rectángulos mal puestos). Dos pilares de mampostería con
+// zócalo, cornisa y remate de bola, un arco de hierro con el letrero colgado y tapias bajas a los lados; con
+// op.rustico, la portada de un parque natural: dos troncos con corteza, travesaño de madera y el letrero tallado
+// bajo un tejadillo.
+function letreroPorteria(g, a, b, alto, texto, fondo, tinta) {
+  rellena(g, [a, b, [b[0], b[1] - alto], [a[0], a[1] - alto]], fondo, 'rgba(40,28,18,.7)', .4);
+  poli(g, [[a[0] + .6, a[1] - .5], [b[0] - .6, b[1] - .5], [b[0] - .6, b[1] - alto + .5], [a[0] + .6, a[1] - alto + .5]]); g.strokeStyle = 'rgba(255,240,215,.35)'; g.lineWidth = .3; g.stroke();
+  g.save(); g.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - alto / 2); g.transform(1, (b[1] - a[1]) / (b[0] - a[0]), 0, 1, 0, 0);
+  g.font = 'bold 10px Georgia, serif'; const L = Math.abs(b[0] - a[0]) * .86, t = Math.min(alto * .62, 10 * L / g.measureText(texto).width); g.font = `bold ${t}px Georgia, serif`;
+  g.fillStyle = tinta; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(texto, 0, .25); g.restore();
+}
+function porteriaU(g, r, c0, c1, texto, col, alto = 12, op = {}) {
+  const w = c1 - c0, ci = c0 + w * .14, cd = c1 - w * .14; // los pilares van un poco adentro: a los lados, tapias
+  if (op.rustico) {
+    const tronco = c => { const q = P(r, c); sombraPie(g, q[0], q[1], 2.6, 1, .25); cilindroV(g, q[0], q[1], 1.5, alto + 3, '#6B4A2E', { arriba: 1.3 });
+      g.strokeStyle = 'rgba(40,26,14,.55)'; g.lineWidth = .3; for (let k = 0; k < 5; k++) { g.beginPath(); g.moveTo(q[0] - 1 + k * .5, q[1] - 1 - k * 2.4); g.lineTo(q[0] - .6 + k * .5, q[1] - 3.6 - k * 2.4); g.stroke(); } };
+    tronco(ci); tronco(cd);
+    const a = P(r, ci - w * .1, alto + 3), b = P(r, cd + w * .1, alto + 3); // travesaño que sobresale
+    g.strokeStyle = '#5A3E26'; g.lineWidth = 2.2; g.lineCap = 'round'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); g.strokeStyle = 'rgba(200,160,110,.5)'; g.lineWidth = .6; g.beginPath(); g.moveTo(a[0], a[1] - .7); g.lineTo(b[0], b[1] - .7); g.stroke();
+    const s0 = P(r, ci + w * .08, alto - 1.4), s1 = P(r, cd - w * .08, alto - 1.4);
+    g.strokeStyle = '#3A3A3A'; g.lineWidth = .3; for (const q of [s0, s1]) { g.beginPath(); g.moveTo(q[0], q[1] - 4.4); g.lineTo(q[0], q[1] + .2); g.stroke(); } // cadenas
+    letreroPorteria(g, [s0[0], s0[1] + 1.6], [s1[0], s1[1] + 1.6], 4.4, texto, '#8A6440', '#F2E6CC');
+    return;
+  }
+  // Tapias bajas a los lados, con su caballete.
+  for (const [u0, u1] of [[c0, ci], [cd, c1]]) { const F = caras(u1 - u0, .04, 5, r, (u0 + u1) / 2); muros(g, F, col, SOM(col, .3)); rellena(g, [P(F.f + .02, F.a, 5), P(F.f + .02, F.b, 5), P(F.t - .02, F.b, 5), P(F.t - .02, F.a, 5)], SOM(col, .12), 'rgba(50,40,30,.4)', .3); }
+  // Pilares: zócalo, fuste, cornisa y bola.
+  for (const c of [ci, cd]) { const q = P(r, c); sombraPie(g, q[0], q[1], 3.4, 1.2, .25);
+    cajaPx(g, q[0], q[1], .09, .09, 2.2, SOM(col, .15)); cajaPx(g, q[0], q[1], .07, .07, alto - 1.2, col, { z0: 2.2, izq: LUZ(col, .12) });
+    cajaPx(g, q[0], q[1], .095, .095, 1.4, LUZ(col, .05), { z0: alto + 1 }); cajaPx(g, q[0], q[1], .05, .05, 1, col, { z0: alto + 2.4 });
+    g.fillStyle = SOM(col, .1); g.beginPath(); g.arc(q[0], q[1] - alto - 5, 1.5, 0, 7); g.fill(); g.fillStyle = LUZ(col, .3); g.beginPath(); g.arc(q[0] - .5, q[1] - alto - 5.5, .6, 0, 7); g.fill(); }
+  // Arco de hierro con volutas y el letrero colgado.
+  const a = P(r, ci, alto + 1), b = P(r, cd, alto + 1), m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 1.5];
+  g.strokeStyle = '#2E3230'; g.lineWidth = .8; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo(m[0], m[1] - 3, ...b); g.stroke();
+  g.lineWidth = .4; g.beginPath(); g.moveTo(a[0], a[1] - 1.4); g.quadraticCurveTo(m[0], m[1] - 3.6, b[0], b[1] - 1.4); g.stroke(); // arco doble
+  const s0 = P(r, ci + w * .06, alto - 1), s1 = P(r, cd - w * .06, alto - 1);
+  letreroPorteria(g, [s0[0], s0[1] + 1], [s1[0], s1[1] + 1], 4, texto, LUZ(col, .2), '#3A2A1E');
 }
 function prado(g, r0, r1, c0, c1, col = '#8AAE62') {
   rellena(g, [P(r0, c0), P(r0, c1), P(r1, c1), P(r1, c0)], col, null);
@@ -3250,8 +3280,15 @@ function jardinGrande(g, h) {
   bovedaLamina(g, -.56, -.12, .9, .4, 7, 8, '#B8DCD4', '#E8ECE8'); // invernadero de vidrio y hierro
   { const c = P(.16, .44); g.fillStyle = '#5E8EA2'; g.beginPath(); g.ellipse(c[0], c[1], 16, 7, 0, 0, 7); g.fill(); g.strokeStyle = 'rgba(80,70,50,.5)'; g.lineWidth = .8; g.stroke(); for (let k = 0; k < 8; k++) { g.fillStyle = '#5E8A3E'; g.beginPath(); g.ellipse(c[0] - 10 + k * 3, c[1] - 2 + (k % 3) * 1.6, 1.4, .6, 0, 0, 7); g.fill(); if (k % 3 === 0) { g.fillStyle = '#F4C0D0'; g.beginPath(); g.arc(c[0] - 10 + k * 3, c[1] - 2.6 + (k % 3) * 1.6, .6, 0, 7); g.fill(); } }
     rellena(g, [P(.06, .36, 1.4), P(.06, .52, 1.4), P(.12, .52, 1.4), P(.12, .36, 1.4)], '#8A6A44', 'rgba(50,35,20,.5)', .3); } // laguna con lotos y puentecito
+  // Eras de flores (antes tres rectángulos sueltos): canteros ovalados con borde de ladrillo, tierra y matas en flor.
   const flores = ['#E04A5A', '#F2D04A', '#B864C8', '#F08A3A', '#F4F1E8'];
-  for (let k = 0; k < 5; k++) { const r = .5 + (k % 2) * .16, c0 = -.8 + k * .22; rellena(g, [P(r, c0), P(r, c0 + .16), P(r + .1, c0 + .16), P(r + .1, c0)], '#6E5238', null); for (let j = 0; j < 10; j++) { const p = P(r + .02 + (j % 2) * .05, c0 + .02 + Math.floor(j / 2) * .03); g.fillStyle = flores[k]; g.beginPath(); g.arc(p[0], p[1] - .8, .8, 0, 7); g.fill(); } } // eras de flores
+  [[-.3, -.66, 0], [.18, -.7, 1], [.64, -.42, 2]].forEach(([r, c, k]) => { const q = P(r, c), R = mulberry(k * 37 + 5);
+    g.fillStyle = 'rgba(30,40,25,.2)'; g.beginPath(); g.ellipse(q[0] + 1.4, q[1] + .7, 8.4, 3.9, 0, 0, 7); g.fill();
+    g.fillStyle = '#A0583E'; g.beginPath(); g.ellipse(q[0], q[1], 8.4, 4, 0, 0, 7); g.fill(); g.fillStyle = '#B86A4A'; g.beginPath(); g.ellipse(q[0], q[1] - .6, 8.4, 4, 0, 0, 7); g.fill(); // borde de ladrillo
+    g.fillStyle = '#6E5238'; g.beginPath(); g.ellipse(q[0], q[1] - .8, 7.2, 3.3, 0, 0, 7); g.fill(); // tierra
+    for (let n = 0; n < 18; n++) { const a = R() * Math.PI * 2, rr = Math.sqrt(R()), x = q[0] + Math.cos(a) * rr * 6.2, y = q[1] - .8 + Math.sin(a) * rr * 2.7;
+      for (let h = 0; h < 3; h++) hojaP(g, x, y, -Math.PI / 2 + (h - 1) * .6, 2.2, .7, h % 2 ? '#4E7A3A' : '#6E9A4A', false);
+      g.fillStyle = flores[(k + (n % 3 === 0 ? 1 : 0)) % 5]; g.beginPath(); g.arc(x, y - 2.2, .9, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.45)'; g.beginPath(); g.arc(x - .3, y - 2.5, .35, 0, 7); g.fill(); } });
   for (const [r, c, s] of [[-.1, -.7, .9], [.3, -.6, .8], [-.3, .78, .9], [.72, .74, .85], [-.05, .2, .75]]) arbolito(g, ...P(r, c), s, '#4E7A3A');
   for (const [r, c] of [[.0, -.4], [-.2, .5]]) { const q = P(r, c); g.strokeStyle = '#8A8478'; g.lineWidth = 1; g.beginPath(); g.moveTo(...q); g.lineTo(q[0] + 1, q[1] - 26); g.stroke(); for (let k = 0; k < 7; k++) hojaP(g, q[0] + 1, q[1] - 26, -Math.PI / 2 + (k - 3) * .5, 7, 1.2, k % 2 ? '#5E8B42' : '#7EA05A', false); } // palmas de cera
   { const p = P(.5, .0); cajaPx(g, p[0], p[1], .08, .08, 4, '#B8B0A0', { izq: '#CCC4B4' }); chico(g, .5, .0, (x, y) => personaM(g, x, y - 4 / .8, '#7A5A3A', '#2E2A28'), .8); } // Mutis en su pedestal
@@ -3271,7 +3308,7 @@ function parqueNevadosGrande(g, h) {
   for (const [w, col] of [[3.2, 'rgba(200,180,140,.25)'], [1.6, 'rgba(196,176,134,.55)']]) { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(...P(.96, .5)); g.quadraticCurveTo(...P(.5, .0), ...P(-.3, -.2)); g.stroke(); } // sendero pisado, de borde suave
   { const Ca = caras(.24, .2, 7, .56, .6); sombraCasa(g, Ca); muros(g, Ca, '#8A6A44', null); hueco(g, Ca, 'izq', .35, .65, 0, 5, '#3A2A1E'); ventana(g, Ca, 'der', .5, 3, .3, 2.6, '#5A3A22', {}); dosAguas(g, Ca, 4, MAT.zinc); letreroAncho(g, Ca, .05, .95, 6.2, '#3E6B4A', 'GUARDAPARQUES'); } // cabaña
   for (const [r, c] of [[.3, .2], [.34, .26]]) chico(g, r, c, (x, y) => { personaM(g, x, y, '#C0392B', null); g.fillStyle = '#2F5D8A'; g.fillRect(x - 2.6, y - 9, 2, 3.4); }, .72); // caminantes con morral
-  porteriaU(g, .97, .1, .48, 'PARQUE NACIONAL LOS NEVADOS', '#8A6A44', 9);
+  porteriaU(g, .97, .1, .48, 'PARQUE NACIONAL LOS NEVADOS', '#8A6A44', 9, { rustico: true });
 }
 
 // ---------- Detalles pequeños redibujados con volumen (andamio, cimientos, material, ruina, tumba, velas, fuente,
