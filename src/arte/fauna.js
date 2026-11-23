@@ -55,20 +55,21 @@ function cuadrupedo(g, f, P) {
 function vaca(g, f, pasta = false) { // vaca blanca orejinegra, la criolla del Tolima
   cuadrupedo(g, f, { L: 24, H: 17, D: 10, w: 3.4, amp: .28, pasta, bajaCabeza: 1.3,
     c: { lomo: '#F4F0E8', panza: '#DCD5C7', anca: '#E6E0D4', paleta: '#ECE6DA', cerca: '#E2DCCF', lejos: '#C4BCAD', casco: '#3A3330' },
-    manchas: g2 => { pol(g2, [[-6, -17.6], [-1.6, -18], [-.4, -15.4], [-4, -14.2], [-6.4, -15.4]], '#E2DBCD'); pol(g2, [[-3.6, -9], [-1, -9], [-1.6, -7.6], [-3.2, -7.6]], '#E6B4A6'); },
-    cola: (g2, x, y, ph) => { g2.strokeStyle = '#CFC6B6'; g2.lineWidth = .9; g2.lineCap = 'round'; g2.beginPath(); g2.moveTo(x, y); g2.quadraticCurveTo(x - 2 + Math.sin(ph) * .5, y + 4, x - 1 + Math.sin(ph) * .4, y + 9); g2.stroke(); elip(g2, x - 1 + Math.sin(ph) * .4, y + 9.6, .9, 1.5, '#2A2420'); },
+    manchas: g2 => { pol(g2, [[-6, -17.6], [-1.6, -18], [-.4, -15.4], [-4, -14.2], [-6.4, -15.4]], '#E2DBCD'); pol(g2, [[-4.4, -8.6], [-.6, -8.6], [-1, -6.8], [-2.6, -6.2], [-4, -6.8]], '#E8B8AA'); pol(g2, [[-4.4, -8.6], [-2.6, -8.6], [-3, -6.4], [-4, -6.8]], '#F2CABE'); for (const x2 of [-3.8, -2.8, -1.8, -1.1]) pol(g2, [[x2 - .25, -6.6], [x2 + .25, -6.6], [x2 + .15, -5.6], [x2 - .15, -5.6]], '#D89A8C'); }, // la ubre con sus pezones
+    cola: (g2, x, y, ph) => { g2.strokeStyle = '#CFC6B6'; g2.lineWidth = .9; g2.lineCap = 'round'; g2.beginPath(); g2.moveTo(x, y); g2.quadraticCurveTo(x - 2 + Math.sin(ph) * .5, y + 4, x - 1 + Math.sin(ph) * .4, y + 9); g2.stroke(); pol(g2, [[x - 1.6 + Math.sin(ph) * .4, y + 8.4], [x - .4 + Math.sin(ph) * .4, y + 8.4], [x - .6 + Math.sin(ph) * .4, y + 11], [x - 1.4 + Math.sin(ph) * .4, y + 11.2]], '#2A2420'); g2.stroke(); elip(g2, x - 1 + Math.sin(ph) * .4, y + 9.6, .9, 1.5, '#2A2420'); },
     cabeza: (g2, x, y) => {
       pol(g2, [[x - 2, y - .2], [x + 1.6, y - .4], [x + 3.4, y + 3.8], [x + 1, y + 7], [x - 1.6, y + 6]], '#E8E2D6'); // cuello
       pol(g2, [[x + 1, y - 1.6], [x + 4.8, y - 1.4], [x + 6.2, y + 2.2], [x + 3, y + 3.4]], '#F4F0E8');
       pol(g2, [[x + 3, y + 3.4], [x + 6.2, y + 2.2], [x + 7.6, y + 5.8], [x + 5.6, y + 7.2], [x + 3.4, y + 5.8]], '#DCD5C7');
       pol(g2, [[x + 5.6, y + 7.2], [x + 7.6, y + 5.8], [x + 8.2, y + 7], [x + 6.8, y + 8.2]], '#2E2724');
       pol(g2, [[x + 1, y - 1], [x - 1.8, y - 2.6], [x - 1.2, y - .6]], '#2A2420'); pol(g2, [[x + 2.6, y - 1.4], [x + 2.8, y - 4], [x + 3.6, y - 3.6], [x + 3.4, y - 1.4]], '#E6DCC0');
-      ojoF(g2, x + 4.4, y + 1.6); } });
+      pol(g2, [[x + .6, y - 1], [x - 1, y - 2], [x - .6, y - .9]], '#C88A80'); // dentro de la oreja
+      elip(g2, x + 4.4, y + 1.7, .75, .55, '#8A7E74'); ojoF(g2, x + 4.4, y + 1.6); elip(g2, x + 7, y + 6.6, .35, .25, '#0E0C0A'); } });
 }
 function cebu(g, f, pasta = false) { // cebú de los potreros del valle: giba, papada y orejas caídas
   cuadrupedo(g, f, { L: 24, H: 17.6, D: 10, w: 3.2, amp: .26, giba: 4, pasta, bajaCabeza: 1.3,
     c: { lomo: '#DEDAD3', panza: '#C2BDB4', anca: '#D0CBC2', cerca: '#D6D1C8', lejos: '#AFA9A0', casco: '#3A3330' },
-    cola: (g2, x, y, ph) => { g2.strokeStyle = '#B8B2A8'; g2.lineWidth = .8; g2.lineCap = 'round'; g2.beginPath(); g2.moveTo(x, y); g2.quadraticCurveTo(x - 2 + Math.sin(ph) * .5, y + 4, x - 1 + Math.sin(ph) * .4, y + 9.4); g2.stroke(); elip(g2, x - 1 + Math.sin(ph) * .4, y + 10, .8, 1.4, '#3A3330'); },
+    cola: (g2, x, y, ph) => { g2.strokeStyle = '#B8B2A8'; g2.lineWidth = .8; g2.lineCap = 'round'; g2.beginPath(); g2.moveTo(x, y); g2.quadraticCurveTo(x - 2 + Math.sin(ph) * .5, y + 4, x - 1 + Math.sin(ph) * .4, y + 9.4); g2.stroke(); pol(g2, [[x - 1.6 + Math.sin(ph) * .4, y + 8.8], [x - .4 + Math.sin(ph) * .4, y + 8.8], [x - .6 + Math.sin(ph) * .4, y + 11.4], [x - 1.4 + Math.sin(ph) * .4, y + 11.6]], '#3A3430'); g2.stroke(); elip(g2, x - 1 + Math.sin(ph) * .4, y + 10, .8, 1.4, '#3A3330'); },
     cabeza: (g2, x, y) => {
       pol(g2, [[x - 2, y - .2], [x + 1.6, y - .4], [x + 3.4, y + 3.8], [x + 2, y + 9], [x - 1, y + 9.4], [x - 1.6, y + 6]], '#CFCAC1'); // cuello y papada
       pol(g2, [[x + 1, y - 1.4], [x + 4.6, y - 1.2], [x + 6, y + 2.4], [x + 3, y + 3.6]], '#DEDAD3');
@@ -76,20 +77,23 @@ function cebu(g, f, pasta = false) { // cebú de los potreros del valle: giba, p
       pol(g2, [[x + 5.4, y + 7.6], [x + 7.4, y + 6.2], [x + 7.8, y + 7.2], [x + 6.6, y + 8.2]], '#5E5852');
       pol(g2, [[x + 1.4, y], [x - .4, y + 4.6], [x - 1.4, y + 4], [x + .4, y - .2]], '#A8A298'); // oreja caída
       pol(g2, [[x + 2.4, y - 1.2], [x + 2.6, y - 3.4], [x + 3.4, y - 3], [x + 3.2, y - 1.2]], '#BDB4A0');
-      ojoF(g2, x + 4.2, y + 1.8); } });
+      g2.strokeStyle = 'rgba(90,85,78,.45)'; g2.lineWidth = .3; for (let k = 0; k < 3; k++) { g2.beginPath(); g2.moveTo(x - .6 + k * .5, y + 5 + k * 1.2); g2.quadraticCurveTo(x + .8 + k * .4, y + 6 + k * 1.2, x + 1.6 + k * .2, y + 4.6 + k * 1.4); g2.stroke(); } // pliegues de la papada
+      ojoF(g2, x + 4.2, y + 1.8); elip(g2, x + 7.1, y + 7.1, .32, .22, '#1E1A18'); } });
 }
 function caballo(g, f, pasta = false) { // caballo criollo castaño, crin y cola negras
   const N = '#2A1E18';
   cuadrupedo(g, f, { L: 22, H: 20, D: 8.4, w: 2.9, amp: .34, pasta, bajaCabeza: 1.25,
     c: { lomo: '#9A6440', panza: '#7A4A2C', anca: '#8A5636', cerca: '#8E5A38', lejos: '#6A4026', casco: N },
-    cola: (g2, x, y, ph) => pol(g2, [[x + .6, y - .6], [x - 1.6, y + 1], [x - 3 + Math.sin(ph) * .6, y + 8], [x - 1.4 + Math.sin(ph) * .6, y + 12], [x - .2, y + 5]], N),
+    cola: (g2, x, y, ph) => { pol(g2, [[x + .6, y - .6], [x - 1.6, y + 1], [x - 3 + Math.sin(ph) * .6, y + 8], [x - 1.4 + Math.sin(ph) * .6, y + 12], [x - .2, y + 5]], N); g2.strokeStyle = '#4A3428'; g2.lineWidth = .25; for (let k = 0; k < 3; k++) { g2.beginPath(); g2.moveTo(x - .6 - k * .3, y + 1); g2.lineTo(x - 2.2 - k * .2 + Math.sin(ph) * .6, y + 10 - k); g2.stroke(); } },
     cabeza: (g2, x, y) => {
       pol(g2, [[x - 3, y + 1.6], [x - .4, y - .6], [x + 2.6, y - 5.6], [x + 5, y - 7.2], [x + 4.6, y - 3], [x + 2.4, y + 3], [x - .6, y + 5]], '#9A6440'); // cuello largo
       pol(g2, [[x - 1.4, y - .6], [x + 2.2, y - 5.8], [x + 4.6, y - 8], [x + 3.6, y - 6.6], [x + .6, y - 1.6], [x - .6, y + 1]], N); // crin
       pol(g2, [[x + 3.4, y - 7.4], [x + 6, y - 7.6], [x + 9.4, y - 3.6], [x + 8.4, y - 2], [x + 5.6, y - 3.6]], '#8A5636');
       pol(g2, [[x + 8.4, y - 2], [x + 9.4, y - 3.6], [x + 10, y - 2.6], [x + 9.2, y - 1.4]], '#4A2E1E');
       pol(g2, [[x + 4.4, y - 7.6], [x + 4.8, y - 10], [x + 5.6, y - 7.6]], '#7A4A2C');
-      ojoF(g2, x + 6, y - 5.8, .45); } });
+      pol(g2, [[x + 5.6, y - 7.2], [x + 6.4, y - 7], [x + 8.6, y - 3.4], [x + 8, y - 3]], '#F2ECE0'); // el lucero en la cara
+      g2.strokeStyle = '#4A3428'; g2.lineWidth = .3; for (let k = 0; k < 5; k++) { g2.beginPath(); g2.moveTo(x - .6 + k * .9, y + .4 - k * 1.6); g2.lineTo(x - 1.4 + k * .8, y + 1.6 - k * 1.4); g2.stroke(); } // mechones de la crin
+      elip(g2, x + 9.2, y - 2.4, .32, .22, '#1E1410'); ojoF(g2, x + 6, y - 5.8, .45); } });
 }
 // Perro criollo canela. Pedido de Juan: un torso natural, con pecho hondo, cintura recogida y anca delgada.
 const PERRO = { C: '#BC8C58', S: '#9A6E40', O: '#7A5430', L: '#CFA472' };
@@ -106,6 +110,7 @@ function torsoPerro(g, h, H, D, k) {
   // Muslo de atrás y paleta, delgados y altos, como en un perro de verdad.
   pol(g, [[-h - .2 * k, y + 1.4 * k], [-h + 2.8 * k, y + .9 * k], [-h + 4.6 * k, y + 3.4 * k], [-h + 3.8 * k, y + D + .6 * k], [-h + 2 * k, y + D + .6 * k], [-h - .4 * k, y + D * .5]], S);
   pol(g, [[h - 4.6 * k, y + .6 * k], [h - 2.6 * k, y + .4 * k], [h - 1.8 * k, y + 3.4 * k], [h - 2.6 * k, y + D + .8 * k], [h - 4.4 * k, y + D + .8 * k], [h - 5 * k, y + 3 * k]], C);
+  pol(g, [[h - 1.6 * k, y + 2.2 * k], [h - .4 * k, y + 2.6 * k], [h - 1 * k, y + D * .9], [h - 2.2 * k, y + D * .8]], '#EDE0C8'); // el pecho claro
 }
 function perro(g, f, sentado = false) {
   const { C, S, O } = PERRO;
@@ -126,6 +131,7 @@ function perro(g, f, sentado = false) {
       pol(g2, [[x - 2.2, y + .8], [x - .4, y - 1.4], [x + 2.2, y - 3], [x + 2.6, y + .8], [x + .2, y + 3]], C); // cuello
       pol(g2, [[x + .6, y - 3.2], [x + 3.4, y - 3.8], [x + 5.8, y - 2], [x + 6.8, y - 1.2], [x + 6, y + .4], [x + 3, y + .8], [x + 1.4, y]], C);
       pol(g2, [[x + 3, y + .8], [x + 6, y + .4], [x + 6.8, y - 1.2], [x + 5, y + 1.2]], S);
+      pol(g2, [[x - 1.6, y + .6], [x - .8, y - .6], [x + .4, y + 2.4], [x - .6, y + 3]], '#B8352A'); // collar
       pol(g2, [[x + 1.4, y - 3.2], [x + 1.6, y - 5.4], [x + 2.8, y - 3.4]], O); ojoF(g2, x + 3.6, y - 2, .4); elip(g2, x + 6.7, y - 1.1, .55, .45, '#1E1A18'); } });
 }
 function gato(g, cola = 0) { // gato atigrado sentado; cola mece la punta de la cola
@@ -140,12 +146,12 @@ function gato(g, cola = 0) { // gato atigrado sentado; cola mece la punta de la 
 function cerdo(g, f) { // cerdo criollo de los solares: barrigón, de patas cortas (pedido de Juan)
   cuadrupedo(g, f, { L: 15, H: 10, D: 7.2, w: 2.3, amp: .3, barriga: 1.4,
     c: { lomo: '#E8B2A8', panza: '#C98E84', anca: '#D9A096', cerca: '#E0A69C', lejos: '#B8807A', casco: '#6A4640' },
-    manchas: g2 => pol(g2, [[-4, -9.6], [-.6, -9.8], [-.2, -6.6], [-3.6, -6.2]], '#4A3A36'),
+    manchas: g2 => { pol(g2, [[-4, -9.6], [-.6, -9.8], [-.2, -6.6], [-3.6, -6.2]], '#4A3A36'); pol(g2, [[2.4, -9.4], [4.2, -9.6], [4, -8], [2.6, -7.8]], '#5A4440'); },
     cola: (g2, x, y) => { g2.strokeStyle = '#E0A69C'; g2.lineWidth = .7; g2.beginPath(); g2.arc(x - .8, y + .8, 1, 0, 5); g2.stroke(); },
     cabeza: (g2, x, y) => {
       pol(g2, [[x - 1, y - .2], [x + 2.6, y - .6], [x + 4.6, y + 1.6], [x + 4.8, y + 3.6], [x + 2, y + 4.8], [x - .6, y + 4.2]], '#E8B2A8');
       pol(g2, [[x + 2, y + 4.8], [x + 4.8, y + 3.6], [x + 4.6, y + 1.6], [x + 3, y + 3]], '#C98E84');
-      pol(g2, [[x + 4.4, y + 1.4], [x + 5.6, y + 1.6], [x + 5.6, y + 3.6], [x + 4.6, y + 3.6]], '#D49A90');
+      pol(g2, [[x + 4.4, y + 1.4], [x + 5.6, y + 1.6], [x + 5.6, y + 3.6], [x + 4.6, y + 3.6]], '#D49A90'); elip(g2, x + 5.2, y + 2.2, .22, .3, '#8A5A52'); elip(g2, x + 5.2, y + 3, .22, .3, '#8A5A52'); // la ñata
       pol(g2, [[x + .6, y - .4], [x + 1.6, y - 2.6], [x + 2.4, y - .4]], '#C98E84'); ojoF(g2, x + 2.6, y + 1.2, .38); } });
 }
 function chivo(g, f, pasta = false) { // chivo blanco de barba y cuernos
@@ -157,6 +163,8 @@ function chivo(g, f, pasta = false) { // chivo blanco de barba y cuernos
       pol(g2, [[x + 2, y - 4.4], [x + 4.4, y - 5], [x + 6.4, y - 2.4], [x + 5.4, y - .6], [x + 3.4, y - .8]], '#F0ECE2');
       pol(g2, [[x + 4.6, y - .8], [x + 5.4, y - .6], [x + 5, y + 2.4], [x + 4.2, y + 1.4]], '#C9C0B0'); // barba
       g2.strokeStyle = '#8A7A62'; g2.lineWidth = 1; g2.lineCap = 'round'; g2.beginPath(); g2.moveTo(x + 3, y - 4.8); g2.quadraticCurveTo(x + 1.6, y - 7.4, x - .2, y - 6.6); g2.stroke();
+      g2.strokeStyle = '#6E6050'; g2.beginPath(); g2.moveTo(x + 3.6, y - 4.8); g2.quadraticCurveTo(x + 2.4, y - 7.8, x + .6, y - 7.4); g2.stroke(); // el otro cuerno, detrás
+      g2.strokeStyle = '#B8AE9C'; g2.lineWidth = .3; for (let k = 0; k < 3; k++) { g2.beginPath(); g2.moveTo(x + 4.6 + k * .3, y - .4); g2.lineTo(x + 4.4 + k * .3, y + 2.2); g2.stroke(); }
       pol(g2, [[x + 2.4, y - 4], [x + .2, y - 3.6], [x + 1.6, y - 2.8]], '#D2CBBE'); ojoF(g2, x + 4.2, y - 3, .38); } });
 }
 // Gallina criolla y gallo de cola tornasolada. pico: 0 cabeza arriba a 1 picando el suelo (en pasos suaves).
@@ -170,6 +178,7 @@ function gallina(g, gallo = false, pico = 0) {
   pol(g, [[-4.6, -8.4], [-1, -9.6], [2.6, -9], [4.2, -7], [-1, -6.6], [-5, -6.4]], Lz);
   pol(g, [[-5, -6.4], [-1, -6.6], [4.2, -7], [3.6, -4], [0, -3], [-3.6, -3.6]], C);
   pol(g, [[-3, -7.2], [1.4, -7.6], [.4, -5], [-2.6, -5]], O); // ala
+  pol(g, [[-1.4, -4.2], [2.6, -4.6], [2, -3.4], [-.6, -3.2]], sh(C, .24)); // pechuga clara
   g.translate(3.4, -8.4); g.rotate(pico * 1.15); g.translate(-3.4, 8.4);
   pol(g, [[2.6, -8.4], [3.4, -11.6], [5.6, -12], [6.6, -9.8], [5, -7.6]], Lz); pol(g, [[5, -7.6], [6.6, -9.8], [6.2, -8]], C);
   pol(g, [[3.4, -11.8], [3.8, -13.6], [4.6, -12.4], [5.2, -13.8], [5.8, -12.4], [6.4, -12.8], [6.2, -11.4]], '#C8352A'); pol(g, [[5.6, -8.8], [6.4, -8.6], [6, -7.2]], '#C8352A');
