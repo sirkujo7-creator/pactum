@@ -143,8 +143,10 @@ export class Vida {
 
   mover(a, dt, vel) {
     const d = a.ruta, dr = d.r - a.r, dc = d.c - a.c, dist = Math.hypot(dr, dc);
-    if (dist < .02) { a.ruta = null; a.bob = 0; return 0; }
-    const v = Math.min(dist, vel * dt);
+    if (dist < .02) { a.ruta = null; a.bob = 0; a.vel = 0; return 0; }
+    // Arranca y se detiene suave: acelera al salir y frena al llegar (sin saltos de velocidad).
+    a.vel = Math.min(vel, (a.vel || 0) + vel * dt * 1.6); const lento = Math.max(.3, Math.min(1, dist / .15));
+    const v = Math.min(dist, a.vel * lento * dt);
     a.r += dr / dist * v; a.c += dc / dist * v;
     if (Math.abs(dc - dr) > dist * .3) a.img.setFlipX((dc - dr) < 0); // sin voltearse de un lado al otro
     // Las patas y el cuerpo se mueven en los 12 cuadros del dibujo; solo las aves de corral dan saltitos.
@@ -169,7 +171,16 @@ export class Vida {
       if (agua) { a.ruta = agua; a.bebiendo = true; a.alta = false; a.espera = azar(8, 14); }
       else { a.bebiendo = false; a.ruta = { r: a.casa.r + azar(-.35, .35), c: a.casa.c + azar(-.35, .35) }; a.espera = azar(5, 14); }
     }
-    else a.img.setFrame(a.alta && !a.bebiendo ? a.k : a.k + 'Pasta');
+    else if (a.echada > 0) a.img.setFrame(a.k + 'E');
+    else {
+      // La cola espanta las moscas a ratos (6 cuadros, ida y vuelta), de pie o pastando.
+      a.moscas = (a.moscas ?? azar(2, 7)) - dt; const pasta = !(a.alta && !a.bebiendo);
+      if (a.moscas < 0 && !reducirMovimiento()) { const n = Math.floor(-a.moscas * 7) % 6; a.img.setFrame(a.k + (pasta ? 'PQ' : 'Q') + n); if (a.moscas < -1.7) a.moscas = azar(3, 9); }
+      else a.img.setFrame(pasta ? a.k + 'Pasta' : a.k);
+    }
+    // El ganado vacuno se echa a rumiar un buen rato (y se levanta antes de caminar).
+    if (a.echada > 0) { a.echada -= dt; a.espera = Math.max(a.espera, .5); }
+    else if ((a.k === 'vaca' || a.k === 'cebu') && !a.bebiendo && a.espera > 2 && Math.random() < dt * .012) a.echada = azar(14, 30);
   }
   // Punto en la orilla del río más cercana al potrero (a tres casillas como máximo), o null.
   orilla(a) {

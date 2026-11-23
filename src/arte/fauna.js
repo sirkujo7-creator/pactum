@@ -19,7 +19,10 @@ function pataF(g, x, y, largo, ancho, col, casco, ang, doblez) {
 }
 // Cuadrúpedo genérico. f: momento del paso (0 a 1) o null quieto. P.pasta baja la cabeza a comer.
 // Lomo, panza y anca como facetas de tres tonos; P.torso reemplaza el cuerpo de barril (el perro tiene el suyo).
-function cuadrupedo(g, f, P) {
+let EXTRA = {}; // poses de reposo que se hornean aparte (cola que espanta moscas, echado)
+function cuadrupedo(g, f, P0) {
+  const P = { ...P0, ...EXTRA };
+  if (P.echado) return echado(g, P);
   const { L, H, D, w, c } = P, h = L / 2, k = L / 24, anda = f !== null, ph = anda ? f * Math.PI * 2 : 0, amp = anda ? P.amp : 0;
   const piso = -H + D + .8 * k; // las patas salen bajo la panza
   // El cuerpo sube y baja un poco con cada pisada (dos veces por ciclo), sin saltar.
@@ -28,7 +31,7 @@ function cuadrupedo(g, f, P) {
   const leg = (x, fase, col) => { const s = Math.sin(ph + fase); pataF(g, x, piso - 1.2 * k - alza, -piso + 1.2 * k + alza, w, col, c.casco, s * amp, Math.max(0, Math.cos(ph + fase)) * amp * 1.4); };
   leg(-h + 3.6 * k, Math.PI, c.lejos); leg(h - 3.4 * k, 0, c.lejos); // patas del lado de allá, en sombra
   g.save(); g.translate(0, -alza);
-  if (P.cola) P.cola(g, -h, -H + 1.4 * k, ph);
+  if (P.cola) { const gx = -h, gy = -H + 1.4 * k; g.save(); if (P.colaGiro) { g.translate(gx, gy); g.rotate(P.colaGiro); g.translate(-gx, -gy); } P.cola(g, gx, gy, ph); g.restore(); } // la cola espanta las moscas
   if (P.torso) P.torso(g, h, H, D, k);
   else {
     // Cuerpo como un barril: lomo con luz y panza en sombra que baja en el medio (P.barriga la hace más honda).
@@ -52,6 +55,19 @@ function cuadrupedo(g, f, P) {
   g.restore();
 }
 
+// Echado (rumiando): el cuerpo en el suelo, las patas recogidas bajo el pecho y la cabeza alta.
+function echado(g, P) {
+  const { L, D, c } = P, h = L / 2 * .84, k = L / 24, Y = -D * 1.22;
+  sombraSuave(g, h + 1.5 * k, 0, h, .3);
+  if (P.cola) P.cola(g, -h, Y + 1.6 * k, 0);
+  pol(g, [[h - 3 * k, -.4], [h + 1.4 * k, -.6], [h + 2 * k, 0], [h - 3 * k, .2]], c.cerca); // mano recogida que asoma
+  camino(g, [[-h, -.2], [-h - .4 * k, Y + 3 * k], [-h + 2.6 * k, Y], [0, Y + .8 * k], [h - 3 * k, Y - .2 * k], [h, Y + 2 * k], [h - .4 * k, -.4], [0, .2]], true); g.fillStyle = c.lomo; g.fill();
+  pol(g, [[-h + 1 * k, Y + D * .55], [h - 1 * k, Y + D * .5], [h - 1.4 * k, -.3], [-h + 1.4 * k, -.2]], c.panza);
+  if (P.giba) pol(g, [[h - 7 * k, Y + .2], [h - 5 * k, Y - P.giba], [h - 2.6 * k, Y - P.giba * .6], [h - k, Y + .8 * k]], c.lomo);
+  camino(g, [[-h + .2 * k, -.2], [-h - .2 * k, Y + 2.6 * k], [-h + 3.4 * k, Y + 1.2 * k], [-h + 6.4 * k, Y + 3.6 * k], [-h + 5.6 * k, -.2]], true); g.fillStyle = c.anca; g.fill(); // anca
+  pol(g, [[-h + 5 * k, -.6], [-h + 9.6 * k, -.8], [-h + 10 * k, .2], [-h + 5 * k, .3]], c.cerca); // pata de atrás doblada
+  P.cabeza(g, h - .6 * k, Y - .8 * k, 0);
+}
 function vaca(g, f, pasta = false) { // vaca blanca orejinegra, la criolla del Tolima
   cuadrupedo(g, f, { L: 24, H: 17, D: 10, w: 3.4, amp: .28, pasta, bajaCabeza: 1.3,
     c: { lomo: '#F4F0E8', panza: '#DCD5C7', anca: '#E6E0D4', paleta: '#ECE6DA', cerca: '#E2DCCF', lejos: '#C4BCAD', casco: '#3A3330' },
@@ -301,7 +317,10 @@ const doce = k => k / 12, ocho = k => k / 8;
 const andador = (nombre, pinta, caja, esc, pasta = true) => [
   [nombre, ...caja, a_escala(esc, g => pinta(g, null, false))],
   ...(pasta ? [[nombre + 'Pasta', ...caja, a_escala(esc, g => pinta(g, null, true))]] : []),
-  ...Array.from({ length: 12 }, (_, k) => [nombre + 'A' + k, ...caja, a_escala(esc, g => pinta(g, doce(k), false))])
+  ...Array.from({ length: 12 }, (_, k) => [nombre + 'A' + k, ...caja, a_escala(esc, g => pinta(g, doce(k), false))]),
+  // Reposo: la cola se mece en 6 cuadros (de pie y pastando) y, en el ganado vacuno, echado rumiando.
+  ...(pasta ? Array.from({ length: 6 }, (_, k) => [[nombre + 'Q' + k, false], [nombre + 'PQ' + k, true]]).flat().map(([cl, pa], j) => [cl, ...caja, a_escala(esc, g => { EXTRA = { colaGiro: Math.sin(Math.floor(j / 2) / 6 * Math.PI * 2) * .34 }; pinta(g, null, pa); EXTRA = {}; })]) : []),
+  ...(nombre === 'vaca' || nombre === 'cebu' ? [[nombre + 'E', ...caja, a_escala(esc, g => { EXTRA = { echado: true }; pinta(g, null, false); EXTRA = {}; })]] : [])
 ];
 
 // [clave, ancho, alto, anclaX, anclaY, pintura]. Los marcos dejan lugar a la sombra, que cae a la derecha.
