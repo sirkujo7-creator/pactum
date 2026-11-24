@@ -59,11 +59,24 @@ export function planearPobladores(S) {
   const resto = lista.filter(p => p.clase !== 'e');
   resto.forEach((p, k) => { p.casa = cerca[(h + k) % cerca.length]; });
   lista.forEach(p => { p.plaza = pz; p.oficio = p.sexo === 'm' ? femenino(oficioDe(p, S)) : oficioDe(p, S); });
+  // Habitantes con vida propia: cada figura es una persona del padrón (su nombre, su edad y su casa).
+  if (S.hab) {
+    const V = S.hab.L.filter(h => !h.m && !h.f), usados = new Set(), edad = h => S.year - h.y;
+    const pool = (cl, sx) => V.filter(h => !usados.has(h.i) && (cl === 'n' ? edad(h) < 18 : edad(h) >= 18 && (h.c === cl || (cl === 'u' && !h.c))) && (!sx || h.s === (sx === 'm' ? 'm' : 'h')));
+    for (const p of lista) {
+      const sx = p.sexo === 'n' ? null : p.sexo, h = pool(p.clase, sx)[0] || pool(p.clase)[0] || V.find(x => !usados.has(x.i) && (p.clase === 'n') === (edad(x) < 18));
+      if (!h) continue;
+      usados.add(h.i); p.hab = h.i; p.nombre = `${h.n} ${h.a}`; p.edad = edad(h);
+      if (p.sexo !== 'n' && (h.s === 'm') !== (p.sexo === 'm')) { p.sexo = h.s === 'm' ? 'm' : 'h'; if (p.tipo === 'campesino' || p.tipo === 'campesina') p.tipo = h.s === 'm' ? 'campesina' : 'campesino'; }
+      if (casas.includes(h.k)) p.casa = h.k;
+      p.oficio = p.sexo === 'm' ? femenino(oficioDe(p, S)) : oficioDe(p, S);
+    }
+  }
   // Fase 13: algunos pobladores son miembros de las familias que escriben cartas.
   for (const r of representantes(S)) {
     const p = lista.find(x => !x.familia && (x.clase === r.clase || (r.clase === 'u' && x.clase === 'c')));
     if (!p) continue;
-    p.nombre = r.nombre; p.familia = r.familia;
+    p.nombre = r.nombre; p.familia = r.familia; delete p.hab; // los de las cartas tienen su propia historia
     const mujer = /^(Rosa|Mercedes|Marta|Beatriz|Elvira|Luz|Yuli)/.test(r.nombre);
     if (p.tipo !== 'elite') p.tipo = r.clase === 'c' || r.clase === 'u' ? (mujer ? 'campesina' : 'campesino') : p.tipo;
     p.sexo = mujer ? 'm' : 'h'; p.oficio = mujer ? femenino(oficioDe(p, S)) : oficioDe(p, S);

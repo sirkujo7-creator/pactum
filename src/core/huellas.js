@@ -8,6 +8,7 @@ import { azar } from './azar.js';
 import { climaActivo } from './clima.js';
 import { epocaHistorica } from './reglas.js';
 import { marcarTala } from './suelo.js';
+import { anotarMuertes } from './habitantes.js';
 
 const K = () => C.HUELLAS && C.HUELLAS.fundacion;
 const plazaPendiente = S => !!(S.fundando && S.fundando.plaza);
@@ -46,7 +47,7 @@ export function distanciaPlaza(S, i) {
 // Las muertes trágicas (desastres, epidemias, hambre, guerra) se cuentan en S.muertos y piden sepultura.
 export function registrarMuertes(S, n, causa) {
   if (!huellasActivas(S) || !(n > 0)) return;
-  S.muertos = (S.muertos || 0) + n;
+  S.muertos = (S.muertos || 0) + n; anotarMuertes(S, n, causa); // los muertos tienen nombre
   if (n >= C.HUELLAS.luto.minimo) S.luto = { anio: S.year, n: (S.luto && S.luto.anio === S.year ? S.luto.n : 0) + n, causa };
   if (causa === 'epidemia') S.epiVis = S.year;
 }
