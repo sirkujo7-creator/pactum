@@ -278,7 +278,7 @@ export function hornearMobiliario() {
   const E = ES_CELULAR ? 3 : 4, sep = 2, ancho = 1024, marcos = {}, L = recetas();
   let x = sep, y = sep, fila = 0;
   for (const [k, w, h, ax, ay] of L) { const W = Math.ceil(w * E), H = Math.ceil(h * E); if (x + W > ancho) { x = sep; y += fila + sep; fila = 0; } marcos[k] = { x, y, w: W, h: H, ax: ax * E, ay: ay * E }; x += W + sep; fila = Math.max(fila, H); }
-  const cv = lienzo(ancho, y + fila + sep), g = cv.getContext('2d');
+  const alto = y + fila + sep, cv = lienzo(ancho, ES_CELULAR ? alto : 2 ** Math.ceil(Math.log2(alto))), g = cv.getContext('2d'); // en computador, lados potencia de dos (nítido al verse pequeño)
   for (const [k, , , , , f] of L) { const m = marcos[k]; g.save(); g.beginPath(); g.rect(m.x, m.y, m.w, m.h); g.clip(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(E, E); f(g); g.restore(); }
   HOJA = { canvas: cv, marcos, escala: E }; return HOJA;
 }

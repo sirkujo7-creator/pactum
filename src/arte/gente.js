@@ -256,8 +256,8 @@ export function hornearGente(mod) {
   for (const tipo in TIPOS_GENTE) for (let vi = 0; vi < 3; vi++) for (const fr of [1, 0]) for (let f = 0; f < 12; f++) claves.push([`${tipo}_${vi}_${fr}_${f}`, tipo, vi, fr, f]);
   const cols = Math.floor(2048 / W), filas = Math.ceil((claves.length + 1) / cols);
   if (!HOJA) {
-    // Lados potencia de dos (sin temblor al moverse); en celular, solo el ancho justo.
-    const alto = ES_CELULAR ? filas * H : pot2(filas * H), cv = lienzo(2048, alto), marcos = {};
+    // Lados potencia de dos: versiones reducidas suaves (nítidas y sin temblor al verse pequeñas), también en celular.
+    const alto = pot2(filas * H), cv = lienzo(2048, alto), marcos = {};
     claves.forEach(([k], n) => { const m = { x: (n % cols) * W, y: Math.floor(n / cols) * H, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E }; marcos[k] = m; const [t, ...resto] = k.split('_'); marcos[`${t}M_${resto.join('_')}`] = m; });
     const n = claves.length, x0 = (n % cols) * W, y = Math.floor(n / cols) * H;
     marcos.luz = { x: x0, y, w: 48, h: 48, ax: 24, ay: 24 };
@@ -440,12 +440,12 @@ function brazosAccion(g, pz, manga, piel) {
 // Hoja de acciones: se hornea con la ropa de la época (mod) y se vuelve a pintar sobre el mismo lienzo si cambia.
 let HOJA_A = null;
 export function hornearAcciones(mod) {
-  const E = ES_CELULAR ? 2.8 : 4, w = 22, h = 34, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = []; // en celular, algo menos (cuida la memoria: la hoja no pasa de 2048 de alto)
+  const E = ES_CELULAR ? 2 : 4, w = 22, h = 34, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = []; // en celular, algo menos: la hoja cabe en 2048×2048 (cuida la memoria)
   for (const tipo in ACCIONES) for (let vi = 0; vi < 3; vi++) for (const [acc, N] of Object.entries(ACCIONES[tipo])) for (let n = 0; n < N; n++) claves.push([`${tipo}_${vi}_${acc}_${n}`, tipo, vi, acc, n, N]);
   if (!HOJA_A) {
     const ancho = ES_CELULAR ? 2048 : 4096, cols = Math.floor(ancho / W), filas = Math.ceil(claves.length / cols), marcos = {};
     claves.forEach(([k], i) => { marcos[k] = { x: (i % cols) * W, y: Math.floor(i / cols) * H, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E }; });
-    HOJA_A = { canvas: lienzo(ancho, filas * H), marcos, escala: E, mod: null }; // alto justo (ninguna hoja pasa de 4096)
+    HOJA_A = { canvas: lienzo(ancho, Math.min(4096, pot2(filas * H))), marcos, escala: E, mod: null }; // lados potencia de dos: la tarjeta de video hace versiones reducidas suaves y la figura se ve nítida aunque esté lejos
   } else if (HOJA_A.mod === mod) return HOJA_A;
   const g = HOJA_A.canvas.getContext('2d'); g.clearRect(0, 0, HOJA_A.canvas.width, HOJA_A.canvas.height);
   for (const [k, tipo, vi, acc, n, N] of claves) { const m = HOJA_A.marcos[k]; g.save(); g.beginPath(); g.rect(m.x, m.y, m.w, m.h); g.clip(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(E, E); figura(g, tipo, vi, true, acc === 'cargar' ? PASOS12[Math.floor(n * 12 / N)] : 0, !!mod, { k: acc, n, N }); g.restore(); }
@@ -476,7 +476,7 @@ let HOJA_C = null;
 export function hornearCargas() {
   if (HOJA_C) return HOJA_C;
   const E = ES_CELULAR ? 3.2 : 4, w = 22, h = 40, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = Object.keys(DIB_CARGA);
-  const cv = lienzo(W * claves.length, H), g = cv.getContext('2d'), marcos = {};
+  const cv = ES_CELULAR ? lienzo(W * claves.length, H) : lienzo(pot2(W * claves.length), pot2(H)), g = cv.getContext('2d'), marcos = {};
   claves.forEach((k, i) => { const m = { x: i * W, y: 0, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E }; marcos[k] = m; g.save(); g.translate(m.x + m.ax, m.ay); g.scale(E, E); DIB_CARGA[k](g); g.restore(); });
   HOJA_C = { canvas: cv, marcos, escala: E }; return HOJA_C;
 }
