@@ -1,0 +1,235 @@
+{
+  "leccion": "Las obras públicas tienen un orden: un hospital sin agua limpia no cura, una universidad sin escuelas no tiene estudiantes. Y las obras que cambian la vida de un barrio se le consultan a la gente: la licencia social es tan necesaria como la plata.",
+  "requisitos": {
+    "hospital": {
+      "acueducto": 1
+    },
+    "biblioteca": {
+      "escuela": 1
+    },
+    "universidad": {
+      "escuela": 2,
+      "biblioteca": 1
+    },
+    "banco": {
+      "mercado": 1
+    },
+    "puerto": {
+      "mercado": 1
+    },
+    "teatro": {
+      "escuela": 1
+    },
+    "estadio": {
+      "cancha": 1
+    },
+    "cuartel": {
+      "policia": 1
+    }
+  },
+  "porque": {
+    "hospital": "sin agua limpia no hay salud",
+    "biblioteca": "los lectores salen de la escuela",
+    "universidad": "los estudiantes salen de las escuelas y leen en la biblioteca",
+    "banco": "el crédito vive del comercio",
+    "puerto": "lo que llega por el río se vende en el mercado",
+    "teatro": "el público se forma en la escuela",
+    "estadio": "primero se juega en la cancha del barrio",
+    "cuartel": "el orden empieza por la policía"
+  },
+  "consulta": {
+    "mina": {
+      "ajuste": -18,
+      "porque": "teme por el agua y los cultivos"
+    },
+    "cuartel": {
+      "ajuste": -8,
+      "porque": "no quiere soldados en el pueblo"
+    },
+    "puerto": {
+      "ajuste": 8,
+      "porque": "espera trabajo en los muelles"
+    },
+    "molino": {
+      "ajuste": -4,
+      "porque": "duda de desviar la quebrada"
+    },
+    "taller": {
+      "ajuste": 4,
+      "porque": "espera empleo, pero teme el humo"
+    },
+    "estadio": {
+      "ajuste": 6,
+      "porque": "quiere fútbol, pero no gastar tanto"
+    },
+    "universidad": {
+      "ajuste": 10,
+      "porque": "sueña con que sus hijos estudien"
+    }
+  },
+  "aprueba": {
+    "legitimidad": 1
+  },
+  "contra": {
+    "legitimidad": -4
+  },
+  "compensacion": 0.18,
+  "textos": {
+    "falta": "{obra}: primero necesitas {lista} ({porque}).",
+    "consulta": "Consulta a la comunidad",
+    "aFavor": "La comunidad está a favor ({p}%).",
+    "enContra": "La comunidad está en contra: solo {p}% la apoya; {porque}.",
+    "compensar": "Compensar a la comunidad (+{c} de oro): huertas, vías y empleo para los vecinos",
+    "igual": "Construir de todos modos (−{l} de legitimidad, habrá protesta)",
+    "aprobada": "La comunidad aprobó la obra en la consulta.",
+    "compensada": "Compensaste a la comunidad ({c} de oro) y aprobó la obra.",
+    "impuesta": "Construiste {obra} contra la consulta: hay protesta en la plaza.",
+    "inaugura": "Inauguraste {obra}: cinta, banda y vecinos en la puerta."
+  },
+  "personal": {
+    "leccion": "Una obra sin personal es un cascarón: el hospital necesita médicos y la escuela maestros. Formarlos toma años (escuela normal, universidad); traerlos de afuera es rápido pero caro. Eso es el capital humano.",
+    "tipos": {
+      "medicos": {
+        "nombre": "médicos y enfermeras",
+        "icono": "🩺",
+        "por": {
+          "hospital": 3
+        },
+        "forma": {
+          "universidad": 1.2,
+          "hospital": 0.25
+        },
+        "llegan": 0.8,
+        "precio": 20
+      },
+      "maestros": {
+        "nombre": "maestros",
+        "icono": "📚",
+        "por": {
+          "escuela": 2,
+          "universidad": 4,
+          "biblioteca": 1
+        },
+        "forma": {
+          "escuela": 0.35,
+          "universidad": 1.5
+        },
+        "llegan": 1,
+        "precio": 12
+      }
+    },
+    "piso": 0.4,
+    "retiro": 0.03,
+    "textos": {
+      "falta": "{icono} Faltan {n} {nombre}: las obras rinden al {p}%.",
+      "llegan": "{icono} Ahora hay {total} {nombre} ({n} más este año).",
+      "contratar": "Traer {n} de afuera ({c} de oro)",
+      "contratados": "Contrataste {n} {nombre} de afuera."
+    }
+  },
+  "imprevistos": {
+    "prob": 0.22,
+    "lluvias": {
+      "texto": "🌧️ Las lluvias pararon la obra de {obra}: se atrasa un año (sin costo extra)."
+    },
+    "sobrecosto": {
+      "e": "💸",
+      "titulo": "Sobrecosto en la obra",
+      "texto": "El contratista de {obra} dice que el terreno era más blando de lo previsto y pide {c} de oro más para terminar.",
+      "opciones": [
+        {
+          "l": "Pagar el sobrecosto",
+          "efectos": {
+            "oro": -1
+          },
+          "porque": "La obra sigue a tiempo, pero las cuentas públicas lo sienten."
+        },
+        {
+          "l": "Negarse y esperar un año a renegociar",
+          "efectos": {
+            "confianza": -1
+          },
+          "porque": "La obra se atrasa un año; el contratista queda resentido y la gente ve la obra quieta."
+        }
+      ]
+    },
+    "accidente": {
+      "e": "🦺",
+      "titulo": "Accidente en la obra",
+      "texto": "Un obrero cayó del andamio de {obra}. Su familia espera en la puerta de la alcaldía.",
+      "opciones": [
+        {
+          "l": "Indemnizar a la familia y exigir arneses",
+          "efectos": {
+            "oro": -1,
+            "artesanos": 2,
+            "confianza": 1
+          },
+          "porque": "Cuesta oro, pero los obreros sienten que su vida vale."
+        },
+        {
+          "l": "Fue mala suerte: seguir la obra",
+          "efectos": {
+            "artesanos": -4,
+            "confianza": -1
+          },
+          "porque": "No cuesta hoy. La familia no olvida: años después puede volver."
+        }
+      ]
+    },
+    "hallazgo": {
+      "e": "🏺",
+      "titulo": "Hallazgo en la obra",
+      "texto": "Al excavar los cimientos de {obra} aparecieron vasijas y tumbas pijao. Los obreros pararon y llamaron al cura y al maestro.",
+      "opciones": [
+        {
+          "l": "Detener la obra y rescatar el hallazgo",
+          "efectos": {
+            "confianza": 2
+          },
+          "porque": "La obra se atrasa un año; lo rescatado puede volverse museo."
+        },
+        {
+          "l": "Tapar y seguir construyendo",
+          "efectos": {
+            "oro": 0
+          },
+          "porque": "La obra no se atrasa. Pero la historia enterrada a veces sale a la luz."
+        }
+      ]
+    },
+    "vuelven": {
+      "accidente": {
+        "anios": [
+          4,
+          9
+        ],
+        "texto": "⚖️ La familia del obrero del accidente en {obra} ganó la demanda contra el municipio: hay que pagar {c} de oro.",
+        "efectos": {
+          "confianza": -2
+        }
+      },
+      "rescate": {
+        "anios": [
+          3,
+          6
+        ],
+        "texto": "🏺 Las vasijas pijao rescatadas en {obra} ya están en un museo: llegan visitantes y estudiantes (+{c} de oro).",
+        "efectos": {
+          "confianza": 1
+        }
+      },
+      "tapado": {
+        "anios": [
+          5,
+          12
+        ],
+        "texto": "📰 Un periodista reveló que en {obra} se taparon tumbas pijao. Escándalo en El Pregonero.",
+        "efectos": {
+          "confianza": -4
+        }
+      }
+    },
+    "leccion": "Ninguna obra sale exactamente como se planeó: la lluvia, los costos, los accidentes y la historia enterrada cambian el plan. Gobernar es decidir con lo que aparece, y las decisiones de hoy vuelven mañana."
+  }
+}

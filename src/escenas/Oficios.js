@@ -2,6 +2,7 @@
 // sencilla: azadón en la finca, pico en la mina y la cantera, sierra en el aserradero, martillo en el taller o fábrica,
 // y un pastor que camina en la ganadería. Con «reducir movimiento» quedan quietos. Máximo 36 trabajadores.
 import { P, alturaEn } from '../arte/iso.js';
+import { factorTrabajo } from '../core/sociedad.js';
 import { lienzo } from '../arte/acuarela.js';
 import { reducirMovimiento } from './pantalla.js';
 import { ACCIONES, ritmo, TAM_GENTE } from '../arte/gente.js';
@@ -33,6 +34,10 @@ export class Oficios {
       if (!o && !ganado) return;
       lista.push({ i, o: ganado ? 'pastor' : o });
     });
+    // Coherencia con el juego (pedido de Juan): solo trabaja gente donde de verdad hay trabajadores. Si faltan brazos,
+    // las obras rinden en proporción a los puestos ocupados (y nada bajo el mínimo): se ven tantas obras con gente como
+    // puestos ocupados, y las demás quedan solas.
+    const fac = factorTrabajo(S); lista.splice(Math.round(lista.length * Math.min(1, fac)));
     const firma = lista.map(l => l.i + l.o).join(',') + '|' + ropa; if (firma === this.firma) return; this.firma = firma;
     this.quitar();
     for (const { i, o } of lista.slice(0, 36)) {

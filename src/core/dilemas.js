@@ -11,6 +11,7 @@ import { contradecir, contradecirMovimiento } from './acta.js';
 import { reaccionar, reaccionarMovimiento } from './figuras.js';
 import { marcaDeOpcion, dejarMarca } from './marcas.js';
 import { resolverMision } from './misiones.js';
+import { sucesoImprevisto, resolverImprevisto } from './proceso.js';
 
 // Aplica los efectos de una decisión, ajustados por la dificultad. Devuelve los efectos reales.
 // Lo que valdría el efecto en oro de una opción, con los mismos multiplicadores de dificultad que se aplican al decidir
@@ -65,6 +66,7 @@ export function drawEvent(S) {
     const mr = resolverMision(S, hito.hito); // hitos con misión: la obra pedida (para la escena) o la consecuencia de no tenerla
     return { id: hito.id, e: hito.e, title: hito.title, text: mr && !mr.ok ? `${mr.fallo} ${hito.text}` : hito.text, opts: hito.opts, hito: hito.hito, ...(mr ? { mision: mr } : {}) };
   }
+  const imp = sucesoImprevisto(S); if (imp) return imp; // imprevisto de una obra: decide el gobernante (después de los hitos)
   const crisis = !!(S.clima.fenomeno || (S.eco && S.eco.fase === 'recesion')), racha = (S.racha || 0) + (crisis ? 1 : 0);
   // Fase 4 (más exigencia): la racha que corta depende de la dificultad, y el corte es un suceso bueno solo a veces;
   // si no, es un año tranquilo.
@@ -140,6 +142,8 @@ export function petition(S) {
 export function choose(S, i) {
   const ev = S.pend, o = ev.opts[i], leg = S.tr;
   if (o.vista) S.vis = { k: o.vista, y: S.year };
+  if (o.imp) resolverImprevisto(S, o.imp); // el proceso de construir: lo que pasa después
+  if (o.vistaA && climaActivo(S)) S.vis = { k: o.vistaA, y: S.year }; // las vistas nuevas solo en acuarela (la v9 no las tenía)
   const real = applyFx(S, o.fx);
   if (o.f) { S.phil[o.f]++; S.corr = clamp(S.corr + (o.f === 'real' ? 9 : o.f === 'util' ? 1 : -4), 0, 100); }
   if (o.promise) S.promises.push({ k: o.promise, base: counts(S)[o.promise], dl: S.year + C.PET.plazo });

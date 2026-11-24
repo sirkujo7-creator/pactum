@@ -62,7 +62,7 @@ export class Frontera {
       }
       if (!v.tropas && !guerra) continue;
       // Campamento en el borde: dos carpas, bandera, fogata y tres soldados de verde oliva.
-      const libres = casillasBorde(S, id).filter(i => !S.map[i].b && !S.map[i].oc && S.map[i].t !== 'montana').slice(0, 2);
+      const libres = casillasBorde(S, id).filter(i => !S.map[i].b && S.map[i].pt === undefined && !S.map[i].oc && S.map[i].t !== 'montana').slice(0, 2);
       libres.forEach((i, k) => {
         const r = Math.floor(i / N) + .5, c = i % N + .5;
         for (const [dr, dc] of [[-.2, -.15], [.18, .2]]) { const q = this.punto(r + dr, c + dc); this.objetos.push(sc.add.image(q[0], q[1], 'carpa-' + id).setOrigin(.5, 20 / 24).setScale(.36).setDepth(r + dr + c + dc + .5)); }

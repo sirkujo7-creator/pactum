@@ -54,7 +54,7 @@ export class Guerra extends Conflicto {
     // Centinelas en las tierras ocupadas.
     for (const id of Object.keys(S.vecinos)) ocupadasPor(S, id).slice(0, 3).forEach((i, k) => { const q = this.rc(i); this.fijos.push(this.figura('soldado', k % 3, TINTE[id], false, { r: q.r + .25, c: q.c - .2, quieto: true, mira: this.pueblo })); });
     // Tropas en la frontera sin guerra: dos soldados rondan su campamento.
-    if (!W) for (const id of tropas) { const q = this.rc(casillasBorde(S, id).find(i => !S.map[i].b && !S.map[i].oc && S.map[i].t !== 'montana') ?? casillasBorde(S, id)[0]); for (let k = 0; k < 2; k++) this.fijos.push(this.figura('soldado', k, TINTE[id], false, { r: q.r + .3, c: q.c + k * .3, centro: q, radio: .9 })); }
+    if (!W) for (const id of tropas) { const q = this.rc(casillasBorde(S, id).find(i => !S.map[i].b && S.map[i].pt === undefined && !S.map[i].oc && S.map[i].t !== 'montana') ?? casillasBorde(S, id)[0]); for (let k = 0; k < 2; k++) this.fijos.push(this.figura('soldado', k, TINTE[id], false, { r: q.r + .3, c: q.c + k * .3, centro: q, radio: .9 })); }
     this.fijos.forEach(a => a.r !== undefined && this.dibujar(a));
   }
   // Un fogonazo (o el humo de un cañonazo) en un punto del frente.

@@ -2,6 +2,7 @@
 // (mural, retén, valla, placa, olla comunitaria, pancartas, vivero). Duran unos años; si se construye encima,
 // desaparecen. Se guardan en la casilla (x.mk). Solo en el terreno en acuarela.
 import { C } from './contenido.js';
+import { cabeMarca, ocuparMarca } from './grandes.js';
 import { climaActivo } from './clima.js';
 import { lado } from './mundo.js';
 import { centroPueblo } from './cobertura.js';
@@ -9,6 +10,17 @@ import { recordar } from './memoria.js';
 
 const K = () => C.MARCAS;
 export function marcasActivas(S) { return climaActivo(S) && !!C.MARCAS; }
+
+// Obras de las decisiones que sirven (pedido de Juan): el granero guarda comida, el reservorio agua y el dique ataja la avenida.
+export function casillasMarca(S, tipo) { if (!marcasActivas(S)) return []; const r = []; S.map.forEach((x, i) => { if (x.mk && x.mk.t === tipo && !x.b) r.push(i); }); return r; }
+const datoMarca = (tipo, k) => ((C.MARCAS.tipos[tipo] || {})[k]) || 0;
+// Comida extra del granero: un poco cada año y, en un año de mala cosecha, recupera parte de lo perdido.
+export function graneroComida(S, base, factor) { const n = casillasMarca(S, 'granero').length; if (!n) return { extra: 0, factor }; return { extra: n * datoMarca('granero', 'comida'), factor: factor < 1 ? factor + (1 - factor) * datoMarca('granero', 'salvaCosecha') : factor }; }
+// Agua extra del reservorio y menos pérdida en la sequía.
+export function reservorioAgua(S) { return casillasMarca(S, 'reservorio').length * datoMarca('reservorio', 'agua'); }
+export function reservorioSequia(S, f) { return casillasMarca(S, 'reservorio').length && f < 1 ? f + (1 - f) * datoMarca('reservorio', 'salvaSequia') : f; }
+// ¿El dique protege esta casilla de la avenida? Devuelve el factor de daño (1 = sin protección).
+export function diqueProtege(S, i) { const d = casillasMarca(S, 'dique'); if (!d.length) return 1; const N = lado(S), R = datoMarca('dique', 'radio'); return d.some(j => Math.max(Math.abs(Math.floor(i / N) - Math.floor(j / N)), Math.abs(i % N - j % N)) <= R) ? 1 - datoMarca('dique', 'protege') : 1; }
 
 // Tipo de huella de una opción de dilema (la de los datos, o según la corriente filosófica).
 export function marcaDeOpcion(ev, o) {
@@ -30,7 +42,7 @@ export function dejarMarca(S, tipo, d) {
   // Obras de las decisiones (diques, reservorios, escuelas rurales…): cada una va en su lugar lógico.
   const rio = i => { const r = Math.floor(i / N), c = i % N; return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => r + a >= 0 && c + b >= 0 && r + a < N && c + b < N && S.map[(r + a) * N + c + b].t === 'rio'); };
   const sitio = i => T.lugar === 'rio' ? rio(i) : T.lugar === 'ladera' ? (S.map[i].h || 0) >= 1 : T.lugar === 'vereda' ? Math.hypot(Math.floor(i / N) - cr, i % N - cc) >= 4 : true;
-  const libre = i => { const x = S.map[i]; return !x.b && !x.mk && x.t === 'llano'; };
+  const libre = i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && x.t === 'llano' && (!T.casillas || cabeMarca(S, tipo, i)); };
   let cand = S.map.map((x, i) => i).filter(i => libre(i) && sitio(i));
   if (!cand.length) cand = S.map.map((x, i) => i).filter(libre); // sin orilla, ladera o vereda libre: cerca del pueblo
   const base = cand
@@ -44,6 +56,7 @@ export function dejarMarca(S, tipo, d) {
   if (con.length >= K().maximo) { const viejo = con.filter(i => !S.map[i].mk.perm && (K().tipos[S.map[i].mk.t] || { anios: 0 }).anios < 999).sort((a, b) => S.map[a].mk.y - S.map[b].mk.y)[0]; if (viejo !== undefined) delete S.map[viejo].mk; }
   const i = libres[0][0];
   S.map[i].mk = { t: tipo, y: S.year, d };
+  ocuparMarca(S, tipo, i); // huellas grandes: ocupan también las casillas de atrás
   recordar(S, tipo); // fase 5: la huella queda en la memoria del pueblo
   return i;
 }
@@ -51,7 +64,7 @@ export function dejarMarca(S, tipo, d) {
 // Árboles sembrados: las casillas libres de ladera más cercanas al pueblo vuelven a ser bosque (si no hay ladera, llano).
 function reforestar(S, n, tipo, d, cr, cc) {
   const N = lado(S), dist = i => Math.hypot(Math.floor(i / N) - cr, i % N - cc);
-  const libres = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && !x.mk && x.t === 'llano' && dist(i) >= 2; });
+  const libres = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && x.t === 'llano' && dist(i) >= 2; });
   const L = libres.filter(i => (S.map[i].h || 0) >= 1).sort((a, b) => dist(a) - dist(b)), elegidas = (L.length ? L : libres.sort((a, b) => dist(a) - dist(b))).slice(0, n);
   for (const i of elegidas) { const x = S.map[i]; x.t = 'bosque'; x.nb = S.year; x.er = 0; delete x.tl; }
   if (!elegidas.length) return -1;

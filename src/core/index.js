@@ -1,5 +1,8 @@
 // Lógica pura de Pactum: sin DOM ni Phaser, para que funcione igual en el navegador y en Node.
 export * from './azar.js';
+export * from './grandes.js';
+export * from './ocio.js';
+export * from './proceso.js';
 export * from './contenido.js';
 export * from './cargar.js';
 export * from './mundo.js';
@@ -74,3 +77,4 @@ export * from './comision.js';
 export * from './maravillas.js';
 export * from './opositores.js';
 export * from './necesidades.js';
+export * from './huertas.js';

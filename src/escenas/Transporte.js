@@ -8,25 +8,24 @@ import { reducirMovimiento } from './pantalla.js';
 
 const E = 3;
 function hornear(tx) {
-  if (!tx.exists('camion')) {
-    const W = 56, H = 30, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E); g.strokeStyle = 'rgba(40,30,20,.6)'; g.lineWidth = .6;
-    g.globalAlpha = .25; g.fillStyle = '#2A2118'; g.beginPath(); g.ellipse(28, 25, 24, 2.6, 0, 0, 7); g.fill(); g.globalAlpha = 1;
-    g.fillStyle = '#9C6B3A'; g.fillRect(6, 10, 28, 11); g.strokeRect(6, 10, 28, 11); // carga con costales de café
-    g.fillStyle = '#C9A44A'; for (let k = 0; k < 4; k++) { g.beginPath(); g.ellipse(11 + k * 6.4, 9.4, 3.4, 2.6, 0, 0, 7); g.fill(); g.stroke(); }
-    g.fillStyle = '#B5392B'; g.fillRect(35, 7, 14, 14); g.strokeRect(35, 7, 14, 14); g.fillStyle = '#6E8FA6'; g.fillRect(41, 9, 6.5, 5); g.fillStyle = '#E7DFC9'; g.fillRect(48, 17, 2.4, 3);
-    g.fillStyle = '#1F1B18'; for (const x of [13, 27, 42]) { g.beginPath(); g.arc(x, 22.5, 3, 0, 7); g.fill(); }
-    tx.addCanvas('camion', c);
-  }
+  // Torre del cable aéreo: castillete de madera con sus patas abiertas, travesaños en cruz y la polea arriba.
   if (!tx.exists('torre')) {
-    const W = 16, H = 40, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E); g.strokeStyle = '#4A3A24'; g.lineWidth = 1.3;
-    g.beginPath(); g.moveTo(2, 38); g.lineTo(7, 4); g.moveTo(14, 38); g.lineTo(9, 4); g.moveTo(4, 26); g.lineTo(12, 26); g.moveTo(5.5, 15); g.lineTo(10.5, 15); g.moveTo(3, 32); g.lineTo(11, 20); g.stroke();
-    g.fillStyle = '#6B4A2B'; g.fillRect(4, 3, 8, 2.4);
+    const W = 16, H = 40, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E); g.lineCap = 'round';
+    g.globalAlpha = .22; g.fillStyle = '#2A2118'; g.beginPath(); g.ellipse(10, 38.6, 6, 1.4, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+    g.strokeStyle = '#5A3E24'; g.lineWidth = 1.3; g.beginPath(); g.moveTo(2.4, 38); g.lineTo(7, 5); g.moveTo(13.6, 38); g.lineTo(9, 5); g.stroke(); // patas
+    g.strokeStyle = '#7A5634'; g.lineWidth = .5; g.beginPath(); g.moveTo(3, 37) ; g.lineTo(7.4, 5.6); g.stroke(); // luz en la pata de la izquierda
+    g.strokeStyle = '#4A3420'; g.lineWidth = .8; for (const [y0, y1] of [[34, 24], [24, 15], [15, 8]]) { const x = t => 2.4 + (7 - 2.4) * (38 - t) / 33, xr = t => 13.6 - (13.6 - 9) * (38 - t) / 33; g.beginPath(); g.moveTo(x(y0), y0); g.lineTo(xr(y1), y1); g.moveTo(xr(y0), y0); g.lineTo(x(y1), y1); g.moveTo(x(y1), y1); g.lineTo(xr(y1), y1); g.stroke(); } // travesaños en cruz
+    g.fillStyle = '#6B4A2B'; g.fillRect(3.4, 3.4, 9.2, 2); g.fillStyle = '#3A3A3E'; for (const x of [4.6, 11.4]) { g.beginPath(); g.arc(x, 3.6, 1, 0, 7); g.fill(); } // cruceta con poleas
     tx.addCanvas('torre', c);
   }
+  // Cabina del cable: vagoneta de tablas colgada de su gancho, con bultos de café.
   if (!tx.exists('cabina')) {
-    const W = 16, H = 20, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E); g.strokeStyle = '#2A2118'; g.lineWidth = .8;
-    g.beginPath(); g.moveTo(8, 0); g.lineTo(8, 6); g.stroke(); g.fillStyle = '#9C6B3A'; g.fillRect(2, 6, 12, 9); g.strokeRect(2, 6, 12, 9);
-    g.fillStyle = '#C9A44A'; g.fillRect(3, 4.4, 10, 2); g.strokeStyle = '#4A3A24'; g.beginPath(); g.moveTo(5, 6); g.lineTo(5, 15); g.moveTo(11, 6); g.lineTo(11, 15); g.stroke();
+    const W = 16, H = 20, c = lienzo(W * E, H * E), g = c.getContext('2d'); g.scale(E, E); g.lineCap = 'round';
+    g.strokeStyle = '#3A3A3E'; g.lineWidth = .7; g.beginPath(); g.moveTo(8, .5); g.lineTo(8, 5.6); g.stroke(); g.fillStyle = '#3A3A3E'; g.beginPath(); g.arc(8, 1.2, 1, 0, 7); g.fill(); // gancho y rueda
+    g.fillStyle = '#9C6B3A'; g.beginPath(); g.moveTo(2.4, 6.4); g.lineTo(11.6, 6.4); g.lineTo(13.6, 8.4); g.lineTo(13.6, 15.4); g.lineTo(4.4, 15.4); g.lineTo(2.4, 13.4); g.closePath(); g.fill(); // caja
+    g.fillStyle = '#7A5230'; g.beginPath(); g.moveTo(11.6, 6.4); g.lineTo(13.6, 8.4); g.lineTo(13.6, 15.4); g.lineTo(11.6, 13.4); g.closePath(); g.fill(); // costado en sombra
+    g.strokeStyle = 'rgba(50,30,15,.6)'; g.lineWidth = .3; for (const y of [8.6, 10.8, 13]) { g.beginPath(); g.moveTo(2.4, y); g.lineTo(11.6, y); g.stroke(); }
+    for (const [x, col] of [[5, '#C9B48A'], [8, '#BFA87C'], [10.6, '#C9B48A']]) { g.fillStyle = col; g.beginPath(); g.ellipse(x, 6.2, 1.6, 1.1, 0, 0, 7); g.fill(); } // bultos de café
     tx.addCanvas('cabina', c);
   }
 }
@@ -38,31 +37,20 @@ export class Transporte {
   actualizar() {
     const { S, T } = this.scene, N = T.N, ep = epocaHistorica(S); let pla = S.map.findIndex(x => x.b === 'fundacion'); if (pla < 0) pla = S.map.findIndex(x => x.b === 'casa' && !x.ob);
     const comercio = S.map.filter(x => (x.b === 'mercado' || x.b === 'puerto' || x.b === 'taller') && !x.ob).length;
-    const camion = pla >= 0 && ['violencia', 'modernizacion', 'paz', 'digital'].includes(ep) && comercio > 0 ? Math.min(3, 1 + Math.floor(comercio / 3)) : 0;
+    // (La carretera que se pintaba sola hasta el borde se quitó, pedido de Juan: lo que se ve informa. Los camiones y las
+    // chivas ahora van por los caminos que construye el jugador: Trafico.js.)
+    const camion = 0; void comercio; void ep;
     const cable = !!(S.decisiones && (S.decisiones.h_cable === 0 || S.decisiones.h_cable === 1));
-    const firma = `${pla}|${camion}|${cable}`; if (firma === this.firma) return; this.firma = firma;
+    const cafe = S.map.map((x, i) => (x.b === 'cafetal' || (x.b === 'cultivo' && x.cv === 'cafe')) && !x.ob ? i : '').join('');
+    const firma = `${pla}|${camion}|${cable}|${cafe}`; if (firma === this.firma) return; this.firma = firma;
     this.limpiar();
-    if (camion) this.carretera(pla, N, camion);
     if (cable) this.cable(N);
   }
-  // Carretera de tierra hasta el borde más cercano, con camiones.
-  carretera(pla, N, n) {
-    const { T } = this.scene, r0 = Math.floor(pla / N) + .5, c0 = pla % N + .5;
-    const opc = [[1, 0, N - r0], [-1, 0, r0], [0, 1, N - c0], [0, -1, c0]].sort((a, b) => a[2] - b[2])[0], [dr, dc, largo] = opc;
-    const pts = []; for (let s = 0; s <= largo; s += .5) pts.push(pos(T, r0 + dr * s, c0 + dc * s));
-    // Carretera destapada: orilla difusa, cuerpo de tierra, dos huellas de llantas y el lomo del medio más claro
-    // (antes era una franja lisa con una raya en el centro).
-    const trazo = (ancho, col, al, o = 0) => { const a = pts[0], b = pts[pts.length - 1], d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / d * o, ny = (b[0] - a[0]) / d * o; this.capa.lineStyle(ancho, col, al); this.capa.beginPath(); pts.forEach((p, i) => i ? this.capa.lineTo(p[0] + nx, p[1] + ny) : this.capa.moveTo(p[0] + nx, p[1] + ny)); this.capa.strokePath(); };
-    trazo(9, 0x8C7656, .16); trazo(6.5, 0xA88A60, .55); trazo(2.2, 0xC2A87E, .45);
-    for (const o of [-1.7, 1.7]) trazo(1, 0x6E5638, .38, o);
-    this.ruta = { r0, c0, dr, dc, largo };
-    for (let k = 0; k < n; k++) this.camiones.push({ img: this.scene.add.image(0, 0, 'camion').setScale(.8 / E).setOrigin(.5, .85).setVisible(false), s: largo * k / n, dir: 1, espera: 0, v: .9 + k * .25 });
-    this.objetos.push(...this.camiones.map(c => c.img));
-  }
-  // Cable aéreo: de la cima más alta hasta el borde más cercano, con torres y dos cabinas.
+  // Cable aéreo: saca el café de los cafetales (el más alto) hasta el borde más cercano, con torres y dos cabinas.
   cable(N) {
-    const { T } = this.scene, pla = this.scene.S.map.findIndex(x => x.b === 'fundacion');
-    let mejor = null; for (const t of T.tiles) if (!mejor || t.h > mejor.h) mejor = t;
+    const { T } = this.scene, S = this.scene.S, pla = S.map.findIndex(x => x.b === 'fundacion');
+    let mejor = null; S.map.forEach((x, i) => { if ((x.b === 'cafetal' || (x.b === 'cultivo' && x.cv === 'cafe')) && !x.ob && (!mejor || T.tiles[i].h > mejor.h)) mejor = T.tiles[i]; });
+    if (!mejor) return; // sin cafetales no hay café que sacar
     const r0 = mejor.r + .5, c0 = mejor.c + .5, opc = [[1, 0, N - r0], [-1, 0, r0], [0, 1, N - c0], [0, -1, c0]].sort((a, b) => a[2] - b[2])[0], [dr, dc, largo] = opc;
     const pts = [], torres = []; for (let s = 0; s <= largo; s += .5) pts.push({ x: pos(T, r0 + dr * s, c0 + dc * s)[0], y: pos(T, r0 + dr * s, c0 + dc * s)[1] - 22, d: r0 + dr * s + c0 + dc * s });
     this.capa.lineStyle(1, 0x2A2118, .85); this.capa.beginPath(); pts.forEach((p, i) => i ? this.capa.lineTo(p.x, p.y) : this.capa.moveTo(p.x, p.y)); this.capa.strokePath();
@@ -89,3 +77,4 @@ export class Transporte {
     }
   }
 }
+export { hornear as hornearTransporte }; // para la página de prueba

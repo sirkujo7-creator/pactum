@@ -63,9 +63,11 @@ export function figura(g, tipo, vi, frente, paso, mod = false, acc = null) {
   const caderas = [[-1, -11.2, P1], [1, -11.2, P2]];
   // La pierna de atrás primero.
   const orden = sw >= 0 ? [1, 0] : [0, 1];
+  if (pz && pz.suelo) SUELOS[pz.suelo](g);
   if (pz && pz.sienta) {
-    if (pz.prop && pz.prop.k === 'banca') PROPS.banca(g); // la banca de piedra va detrás de las piernas
-    if (pz.prop && pz.prop.k === 'cajon') PROPS.banquito(g); // el lustrabotas, sentado en su banquito
+    if ((pz.prop && pz.prop.k === 'banca') || pz.banca) PROPS.banca(g); // la banca de piedra va detrás de las piernas
+    if ((pz.prop && pz.prop.k === 'cajon') || pz.banquito) PROPS.banquito(g); // sentado en su banquito
+    if (pz.silla) PROPS.sillaRecostada(g); // la silla inclinada contra la pared
     for (const hx of [1, -1]) { miembro(g, [hx, -6.4], [hx * 1.2 + 2.2, -5.8], [hx * 1.1 + 2.6, -.8], 1.75, hx > 0 ? shade(pantalon, -.18) : pantalon); elipse(g, hx * 1.1 + 3.1, -.4, 1.25, .65, zapato); }
   } else for (const i of orden) {
     const [hx, hy, Pp] = caderas[i], x = hx + Pp.x;
@@ -281,23 +283,23 @@ const GESTOS_ADULTO = { asentir: 3, barbilla: 3, senalar: 3, manos: 3, sombrero:
 const GESTOS_MUJER = { asentir: 3, barbilla: 3, senalar: 3, manos: 3, saludo: 3 };
 export const GESTOS = { campesino: Object.keys(GESTOS_ADULTO), campesina: Object.keys(GESTOS_MUJER), artesano: Object.keys(GESTOS_ADULTO), elite: Object.keys(GESTOS_ADULTO), nino: ['asentir', 'senalar', 'manos', 'saludo'] };
 export const ACCIONES = {
-  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4, ...GESTOS_ADULTO },
-  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1, ...GESTOS_MUJER },
-  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, rezar: 4, sentado: 1, esperar: 1, tocar: 4, ...GESTOS_ADULTO },
-  elite: { leer: 4, rezar: 4, ...GESTOS_ADULTO },
-  nino: { saltar: 6, leer: 4, lustrar: 4, balde: 1, asentir: 3, senalar: 3, manos: 3, saludo: 3 }
+  campesino: { sembrar: 8, cosechar: 6, cargar: 8, vender: 6, picar: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, tocar: 4, machete: 4, regar: 3, ordenar: 2, tinto: 2, sentarse: 2, migas: 3, jugarMesa: 3, recostado: 2, tejo: 4, sacarAgua: 4, ...GESTOS_ADULTO },
+  campesina: { cosechar: 6, cargar: 8, vender: 6, barrer: 6, rezar: 4, sentado: 1, balde: 1, esperar: 1, foto: 1, lavar: 4, tender: 3, gallinas: 4, tinto: 2, sentarse: 2, migas: 3, sacarAgua: 4, huerta: 4, restregar: 4, ...GESTOS_MUJER },
+  artesano: { martillar: 6, picar: 6, aserrar: 6, cargar: 8, vender: 6, rezar: 4, sentado: 1, esperar: 1, tocar: 4, tinto: 2, sentarse: 2, jugarMesa: 3, recostado: 2, tejo: 4, ...GESTOS_ADULTO },
+  elite: { leer: 4, rezar: 4, periodico: 2, tinto: 2, sentarse: 2, migas: 3, jugarMesa: 3, recostado: 2, ...GESTOS_ADULTO },
+  nino: { saltar: 6, leer: 4, lustrar: 4, balde: 1, trompo: 3, sentarse: 2, sacarAgua: 4, asentir: 3, senalar: 3, manos: 3, saludo: 3 }
 };
 const T2 = Math.PI * 2;
 // Postura de cada acción en el momento n de N: inclinación del cuerpo, posición de las manos y la herramienta.
 function poseAccion(k, n, N) {
   const t = n / N, s = Math.sin(t * T2), c = Math.cos(t * T2), u = (1 - c) / 2, u2 = (1 - Math.cos(t * T2 + 1.3)) / 2;
   switch (k) {
-    case 'sembrar': return { lean: .08 + u * .5, L: [1.2 + u * 3, -24.4 + u * 15], R: [3 + u * 3.4, -23.2 + u * 14], prop: { k: 'azadon', off: [(1 - u) * -4.5 + u * 4.2, (1 - u) * -9.5 + u * 11.6] } };
-    case 'cosechar': return { lean: -.04, L: [-2.6, -27 + u * 15], R: [2.8, -26 + u2 * 14], prop: { k: 'canasto' } };
+    case 'sembrar': return { lean: .12 + u * .24, L: [1.6 + u * 1.6, -17.6 + u * 5], R: [3 + u * 1.8, -16.6 + u * 5.4], prop: { k: 'azadon', off: [-1.6 + u * 5.6, -7.4 + u * 16.4] } }; // azadón: sube hasta el pecho y baja a la tierra (sin pasar sobre la cabeza)
+    case 'cosechar': return { lean: .04, L: [-2.6, -12.4], R: [3.4 + u * 1.4, -18 + u * 3.6], prop: { k: 'canasto' } }; // coge el grano a la altura del pecho y lo echa al canasto
     case 'cargar': return { lean: .1, L: [-1.2, -26.4], R: [2.6, -25.2], prop: { k: 'saco' } };
-    case 'vender': return { lean: 0, L: [-4.2 + s * .5, -15.8 + c * .9], R: [4.6 + c * .6, -17.6 + s * 1.6], prop: { k: 'fruta' } };
-    case 'martillar': { const v = u * u; return { lean: .12 + v * .15, L: [-.5, -13.6], R: [3 + v * 2.6, -26.5 + v * 14.5], prop: { k: 'martillo', off: [3.6 - v * 1.4, -1.8 + v * 7] } }; }
-    case 'picar': return { lean: .15 + u * .35, L: [.4 + u * 3, -27 + u * 15], R: [2.8 + u * 3.2, -26 + u * 14.4], prop: { k: 'pico', off: [(1 - u) * -5 + u * 5.6, (1 - u) * -8 + u * 9.5] } };
+    case 'vender': return { lean: 0, L: [-3.6, -14.6], R: [4.2 + u * .6, -16.2 + u * .8], prop: { k: 'fruta' } }; // ofrece la fruta, sin dar vueltas
+    case 'martillar': { const v = u * u; return { lean: .12 + v * .1, L: [-.5, -13.6], R: [3 + v * 1.6, -19.6 + v * 7], prop: { k: 'martillo', off: [3.2 - v, -2 + v * 5] } }; }
+    case 'picar': return { lean: .15 + u * .25, L: [1 + u * 1.8, -18.2 + u * 6], R: [2.6 + u * 2, -17.2 + u * 6.4], prop: { k: 'pico', off: [-2 + u * 6.5, -8 + u * 16.5] } };
     case 'aserrar': return { lean: .1, L: [1.6 + s * 2.3, -14.6], R: [3 + s * 2.3, -15.8], prop: { k: 'sierra' } };
     case 'barrer': return { lean: .1, L: [1 + s * 2.2, -13.6], R: [2.6 + s * 2.2, -16.4], prop: { k: 'escoba' } };
     case 'rezar': return { lean: .12 + s * .015, L: [-.7, -17.2], R: [.7, -17.6], prop: null };
@@ -309,7 +311,7 @@ function poseAccion(k, n, N) {
     case 'manos': { const k = n / (N - 1); return { lean: .02, L: [-3 - k * .6, -12.8 - k * 2.6], R: [3 + k * .6, -12.8 - k * 2.8], prop: null }; } // abre las manos al explicar
     case 'sombrero': { const k = n / (N - 1); return { lean: .03 * k, L: [-3, -12.8], R: [3 - k * 1.2, -12.8 - k * 12.6], prop: null }; } // se toca el sombrero: buenos días
     case 'saludo': { const k = Math.min(1, n / (N - 2)), w = n === N - 1 ? .8 : 0; return { lean: 0, L: [-3, -12.8], R: [3 + k * 1.2 + w, -12.8 - k * 11.6], prop: null }; } // la mano en alto
-    case 'saltar': { const a = Math.abs(s); return { lean: 0, lift: a * 3.2, L: [-4.4, -26 + a * 1.2], R: [4.4, -26 + a * 1.2], prop: null }; }
+    case 'saltar': { const a = Math.abs(s); return { lean: 0, lift: a * 3.2, L: [-3.8, -13.4 + a * .6], R: [3.8, -13.4 + a * .6], prop: null }; } // brazos a los lados (antes arriba)
     // Voces del pueblo: sentado sin trabajo (cabizbajo, manos en las rodillas), con el balde del agua, esperando en
     // la fila con el canasto vacío y el niño lustrabotas agachado sobre su cajón.
     case 'sentado': return { lean: .16 + n * .03, lift: -5, sienta: true, L: [-2.2, -12.2], R: [2.4, -12], prop: { k: 'banca' } };
@@ -317,11 +319,36 @@ function poseAccion(k, n, N) {
     case 'esperar': return { lean: n * .02, L: [-2.8, -15.6], R: [3, -12.8], prop: { k: 'canastoVacio' } };
     case 'tocar': return { lean: .02, L: [-3.4 + u * .3, -17.6], R: [1.6 + s * .9, -14.6 + c * .5], prop: { k: 'tiple' } }; // serenata con tiple
     case 'foto': return { lean: .03, L: [-2.6, -15.6], R: [2.6, -15.4], prop: { k: 'foto' } }; // madre que muestra la foto de su desaparecido
+    // Actividades del pueblo (pedido de Juan: una ciudad más natural, cada quien con lo suyo).
+    case 'machete': return { lean: .3 + u * .14, L: [1.8, -10.8], R: [2.2 + u * 3.8, -17.4 + u * 7.8], prop: { k: 'machete', ang: -1 + u * 1.6 } }; // desyerba con el machete, agachado
+    case 'regar': return { lean: .08, L: [-2.8, -13], R: [4, -15.6], prop: { k: 'regadera', n } };
+    case 'ordenar': return { lean: .14, lift: -5, sienta: true, banquito: true, suelo: 'baldeLeche', L: [4.4, -7.4 + s * .9], R: [5.6, -6.8 - s * .9], prop: null }; // ordeña sentado en su banquito
+    case 'tinto': return { lean: .02, lift: -5, sienta: true, banca: true, L: [3, -11], R: n ? [1.7, -21.4] : [2.4, -13.4], prop: { k: 'pocillo', sorbo: n } }; // el tinto de la tarde en la puerta
+    case 'periodico': return { lean: .04, lift: -5, sienta: true, banca: true, L: [-1.6, -17.2 + n * .5], R: [3.9, -17.5 + n * .3], prop: { k: 'periodico', n } };
+    case 'lavar': return { lean: .16 + u * .07, lift: -6, sienta: true, suelo: 'piedraLavar', L: [3.4, -10.6 - u * 4.4], R: [4.8, -10.2 - u * 4.8], prop: { k: 'trapo', u } }; // golpea la ropa contra la piedra del río
+    case 'tender': { const k = n / (N - 1); return { lean: -.05 * k, L: [1.2 + k * 1.2, -15 - k * 11.6], R: [4 + k * 2.4, -15.4 - k * 10.8], prop: { k: 'sabana', k2: k } }; } // cuelga la ropa en la cuerda
+    case 'gallinas': { const R = [[.4, -14.4], [-1, -15.4], [5.2, -16.6], [6, -15.2]][n]; return { lean: .05, L: [-.8, -13.6], R, prop: { k: 'maiz', n } }; } // echa maíz a las gallinas
+    case 'trompo': { const R = [[-1.6, -24], [5.2, -13.4], [3.4, -12.6]][n]; return { lean: n === 2 ? .16 : n ? .1 : -.04, L: [-2.8, -13.4], R, prop: { k: 'trompo', n }, suelo: n === 2 ? 'trompoGira' : null }; }
+    // Con las cosas del pueblo (bancas, mesa de dominó, silla recostada, tejo, pozo, huerta, alberca).
+    case 'sentarse': return { lean: .03 + n * .02, lift: -5, sienta: true, L: [2.8, -11.2], R: [3.4, -10.9 + n * .2], prop: null }; // descansa en la banca
+    case 'migas': return { lean: .06, lift: -5, sienta: true, L: [1.6, -12.6], R: [[2.8, -12.2], [5.2, -11.4], [4, -12.4]][n], prop: { k: 'migas', n } }; // migas a las palomas
+    case 'jugarMesa': return { lean: .14, lift: -5, sienta: true, L: [4.6, -13.6], R: [[5, -13.4], [6.4, -14.4], [5.6, -13.8]][n], prop: { k: 'ficha', n } }; // pone la ficha en la mesa
+    case 'recostado': return { lean: -.2, lift: -5, sienta: true, silla: true, L: [1.4, -14.4], R: [2.2, -14 + n * .25], prop: null }; // la silla recostada contra la pared
+    case 'tejo': { const R = [[2.8, -16.6], [-2.4, -10.8], [6, -14.8], [5.4, -18.4]][n]; return { lean: [0, .12, .06, 0][n], L: [-3, -12.8], R, prop: n < 2 ? { k: 'tejo' } : null }; } // lanza el tejo por debajo
+    case 'sacarAgua': return { lean: .1, L: [3.2, -16.4 + s * 1.2], R: [4, -15.8 - s * 1.2], prop: null }; // da vuelta a la manivela del pozo
+    case 'huerta': return { lean: .32, lift: -6, sienta: true, L: [3.6, -9.6 - u * 1.2], R: [4.6, -9.2 - u * 1.8], prop: { k: 'manojo', u } }; // recoge cebolla y cilantro
+    case 'restregar': return { lean: .22, L: [3.2 + s * 1.2, -12.6], R: [4.4 + s * 1.2, -12.2], prop: { k: 'trapito' } }; // restriega la ropa en el lavadero
     case 'lustrar': return { lean: .18, lift: -6, sienta: true, L: [2.4 + s * 1.4, -11.6], R: [4 + c * 1.2, -11], prop: { k: 'cajon' } };
   }
   return { lean: 0, L: [-3, -12.8], R: [3, -12.8], prop: null };
 }
 const MADERA = '#6B4A2B', ACERO = '#7A7F86';
+// Cosas en el suelo junto a quien trabaja (no se inclinan con el cuerpo).
+const SUELOS = {
+  baldeLeche(g) { forma(g, [[4.4, -4.2], [7.6, -4.2], [7.2, -.4], [4.8, -.4]], '#9AA2A8', false); elipse(g, 6, -4.2, 1.6, .5, '#F4F1E8'); },
+  piedraLavar(g) { elipse(g, 7.4, -.4, 4.2, 1.2, 'rgba(110,160,180,.55)'); forma(g, [[3.6, -1.6], [8.6, -2.2], [10, -.8], [5, -.2]], '#8C8A80'); elipse(g, 6.6, -1.6, 2, .5, '#A8A69C'); },
+  trompoGira(g) { const x = 7.2; elipse(g, x, -.3, 1.3, .4, 'rgba(40,30,20,.25)'); g.fillStyle = '#B8452E'; g.beginPath(); g.moveTo(x - 1.1, -2.2); g.lineTo(x + 1.1, -2.2); g.lineTo(x, -.2); g.closePath(); g.fill(); elipse(g, x, -2.2, 1.1, .45, '#D9A64A'); g.strokeStyle = 'rgba(90,60,30,.45)'; g.lineWidth = .25; g.beginPath(); g.ellipse(x, -1.7, 1.9, .7, 0, .3, 2.6); g.stroke(); }
+};
 function linea(g, a, b, w, col) { g.lineCap = 'round'; g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); }
 // Herramientas y cosas en la mano. R es la mano de adelante.
 const PROPS = {
@@ -340,6 +367,65 @@ const PROPS = {
   banquito(g) { forma(g, [[-3.2, -6.4], [1.2, -6.4], [1.2, -5], [-3.2, -5]], '#8A6A48', false); forma(g, [[-2.8, -5], [-2, -5], [-2, 0], [-2.8, 0]], '#6B4A2B', false); forma(g, [[.2, -5], [1, -5], [1, 0], [.2, 0]], '#5B3E24', false); },
   cajon(g) { forma(g, [[1.6, -5.4], [6.4, -5.4], [6.4, -2.2], [1.6, -2.2]], '#7A5634', false); forma(g, [[3.4, -7.4], [4.6, -7.4], [4.6, -5.4], [3.4, -5.4]], '#5B4330', false); elipse(g, 7.6, -.9, 1.5, .7, '#2A2420'); },
   foto(g, pz) { const m = [(pz.L[0] + pz.R[0]) / 2, (pz.L[1] + pz.R[1]) / 2 - 1.2]; forma(g, [[m[0] - 2.6, m[1] - 2.8], [m[0] + 2.6, m[1] - 2.8], [m[0] + 2.6, m[1] + 2.8], [m[0] - 2.6, m[1] + 2.8]], '#F2EDE0', false); forma(g, [[m[0] - 1.9, m[1] - 2.1], [m[0] + 1.9, m[1] - 2.1], [m[0] + 1.9, m[1] + 2.1], [m[0] - 1.9, m[1] + 2.1]], '#BDB29C', false); elipse(g, m[0], m[1] - .5, .9, 1.05, '#5E5446'); elipse(g, m[0], m[1] + 1.7, 1.6, .8, '#5E5446'); }, // la foto a la altura del pecho, sin tapar la cara
+  machete(g, pz) {
+    const [x, y] = pz.R; g.save(); g.translate(x, y); g.rotate(pz.prop.ang);
+    forma(g, [[-1.3, -.5], [.9, -.5], [.9, .5], [-1.3, .5]], '#3A2A1E', false); // cacha
+    g.fillStyle = '#C9CED4'; g.beginPath(); g.moveTo(.9, -.55); g.quadraticCurveTo(5, -1.25, 8.8, -.2); g.quadraticCurveTo(9, .6, 8.2, .9); g.quadraticCurveTo(4.6, .65, .9, .55); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(60,64,70,.35)'; g.beginPath(); g.moveTo(.9, .1); g.quadraticCurveTo(4.6, .45, 8.5, .6); g.lineTo(8.2, .9); g.quadraticCurveTo(4.6, .65, .9, .55); g.closePath(); g.fill();
+    g.restore();
+  },
+  regadera(g, pz) {
+    const [x, y] = pz.R;
+    g.strokeStyle = '#6E777E'; g.lineWidth = .45; g.beginPath(); g.arc(x - .2, y + 1, 1.3, Math.PI, 0); g.stroke(); // asa
+    forma(g, [[x - 2.2, y + 1], [x + 1.8, y + 1], [x + 1.6, y + 4.4], [x - 2, y + 4.4]], '#8E979E', false);
+    linea(g, [x + 1.5, y + 3.6], [x + 5.4, y + 1.2], .6, '#8E979E'); elipse(g, x + 5.7, y + 1.1, .7, .45, '#6E777E', .6);
+    g.fillStyle = 'rgba(160,205,230,.9)'; const n = pz.prop.n;
+    for (let k = 0; k < 6; k++) { const t = (k / 6 + n / 3) % 1, x0 = x + 6 + (k % 3 - 1) * .5 + t * 1.4, y0 = y + 1.4 + t * (-.4 - (y + 1.4)); g.beginPath(); g.arc(x0, y0, .3, 0, 7); g.fill(); }
+  },
+  pocillo(g, pz) {
+    const [x, y] = pz.R; forma(g, [[x - .9, y - 1.7], [x + .9, y - 1.7], [x + .7, y - .1], [x - .7, y - .1]], '#F2EEE4', false); elipse(g, x, y - 1.7, .9, .3, '#3A2418');
+    g.strokeStyle = '#E4DED0'; g.lineWidth = .35; g.beginPath(); g.arc(x + 1.05, y - .95, .5, -1.3, 1.3); g.stroke();
+    if (!pz.prop.sorbo) { g.strokeStyle = 'rgba(245,245,240,.55)'; g.lineWidth = .3; g.beginPath(); g.moveTo(x, y - 2.1); g.quadraticCurveTo(x - .7, y - 3.4, x + .2, y - 4.8); g.stroke(); } // el humito del tinto
+  },
+  periodico(g, pz) {
+    const L = pz.L, R = pz.R, y0 = Math.min(L[1], R[1]) - 2.6, y1 = y0 + 5.6, xm = (L[0] + R[0]) / 2 + (pz.prop.n ? .4 : 0);
+    forma(g, [[L[0] - .6, y0 + .3], [xm, y0 + .7], [xm, y1 + .5], [L[0] - .6, y1]], '#EDE8DA', false);
+    forma(g, [[xm, y0 + .7], [R[0] + .6, y0], [R[0] + .6, y1 - .3], [xm, y1 + .5]], '#E2DCCB', false);
+    g.fillStyle = 'rgba(40,36,30,.7)'; g.fillRect(L[0] - .1, y0 + 1, xm - L[0] - .3, .7); // el titular
+    g.fillStyle = 'rgba(60,54,46,.35)'; for (let k = 0; k < 4; k++) { g.fillRect(L[0] - .1, y0 + 2.2 + k * .8, xm - L[0] - .3, .3); g.fillRect(xm + .3, y0 + 1 + k * .9, R[0] - xm, .3); }
+  },
+  trapo(g, pz) {
+    const L = pz.L, R = pz.R, u = pz.prop.u, x0 = Math.min(L[0], R[0]) - .4, x1 = Math.max(L[0], R[0]) + .5, y = Math.max(L[1], R[1]), l = 3.4 + u * 2.6;
+    forma(g, [[x0, y], [x1, y], [x1 + 1.2 + u * .6, y + l], [x0 + 1.6, y + l + .6]], '#D8E2E6');
+    g.save(); g.globalAlpha = .5; g.strokeStyle = '#5F8FB0'; g.lineWidth = .4; g.beginPath(); g.moveTo(x0 + .4, y + 1.2); g.lineTo(x1 + .6, y + 1.4); g.stroke(); g.restore();
+  },
+  sabana(g, pz) {
+    const L = pz.L, R = pz.R, k = pz.prop.k2, y = Math.min(L[1], R[1]), l = 3 + k * 4.4, x0 = L[0] - .6, x1 = R[0] + .6;
+    forma(g, [[x0, L[1] - .2], [x1, R[1] - .2], [x1 + .2, y + l], [x0 + .3, y + l + .4]], '#ECE6D6', false);
+    g.save(); g.globalAlpha = .55; g.strokeStyle = '#4F7FA6'; g.lineWidth = .45; for (const f of [.35, .7]) { g.beginPath(); g.moveTo(x0, L[1] + l * f); g.lineTo(x1, R[1] + l * f); g.stroke(); } g.restore();
+    if (k > .9) { g.fillStyle = '#8A6A48'; for (const h of [L, R]) g.fillRect(h[0] - .2, h[1] - 1.4, .5, .9); } // ganchos de ropa
+  },
+  maiz(g, pz) {
+    const L = pz.L, n = pz.prop.n;
+    g.fillStyle = '#9A6A3A'; g.beginPath(); g.ellipse(L[0] - .4, L[1] - .3, 2, .9, 0, 0, Math.PI); g.fill(); elipse(g, L[0] - .4, L[1] - .3, 2, .45, '#E8C04A'); // totuma con maíz
+    if (n >= 2) { g.fillStyle = '#F0C840'; for (let k = 0; k < 9; k++) { const t = (k * .37 + n * .2) % 1, x = pz.R[0] + 1 + t * 6 + (k % 3) * .4, y = pz.R[1] + t * t * 12 + (k % 2) * .5; if (y < 0) { g.beginPath(); g.arc(x, y, .32, 0, 7); g.fill(); } } }
+  },
+  trompo(g, pz) {
+    if (pz.prop.n === 2) { g.strokeStyle = '#C9B48A'; g.lineWidth = .3; g.beginPath(); g.moveTo(...pz.R); g.quadraticCurveTo(pz.R[0] + .8, pz.R[1] + 3, pz.R[0] + .3, pz.R[1] + 4); g.stroke(); return; } // la piola suelta
+    const [x, y] = pz.R; g.fillStyle = '#B8452E'; g.beginPath(); g.moveTo(x - 1.1, y - .6); g.lineTo(x + 1.1, y - .6); g.lineTo(x, y + 1.6); g.closePath(); g.fill(); elipse(g, x, y - .6, 1.1, .45, '#D9A64A');
+  },
+  migas(g, pz) { const L = pz.L; forma(g, [[L[0] - .9, L[1] - 1.2], [L[0] + .9, L[1] - 1.2], [L[0] + .8, L[1] + .8], [L[0] - .8, L[1] + .8]], '#E2D2A8', false); if (pz.prop.n === 1) { g.fillStyle = '#E8D9A8'; for (const [dx, dy] of [[1.2, 1], [2, 2.4], [.8, 3.4], [2.4, 4.4]]) { g.beginPath(); g.arc(pz.R[0] + dx, pz.R[1] + dy, .25, 0, 7); g.fill(); } } },
+  ficha(g, pz) { if (pz.prop.n === 1) forma(g, [[pz.R[0] - .3, pz.R[1] - .9], [pz.R[0] + .4, pz.R[1] - .9], [pz.R[0] + .4, pz.R[1] + .3], [pz.R[0] - .3, pz.R[1] + .3]], '#F4F1E8', false); },
+  tejo(g, pz) { elipse(g, pz.R[0] + .3, pz.R[1] - .2, 1, .55, '#5A5A60'); elipse(g, pz.R[0], pz.R[1] - .4, .5, .25, '#8A8A90'); },
+  manojo(g, pz) { if (pz.prop.u < .4) return; for (let k = 0; k < 4; k++) linea(g, [pz.R[0], pz.R[1]], [pz.R[0] - 1 + k * .6, pz.R[1] - 3.2], .35, k % 2 ? '#5E9A3E' : '#7AB04E'); },
+  trapito(g, pz) { forma(g, [[pz.R[0] - 1.2, pz.R[1] - .2], [pz.R[0] + 1.4, pz.R[1] - .4], [pz.R[0] + 1.6, pz.R[1] + 1], [pz.R[0] - 1, pz.R[1] + 1.2]], '#5F8FB0', false); },
+  sillaRecostada(g) { // taburete de cuero inclinado contra la pared de atrás: patas de adelante al aire
+    g.save(); g.translate(-1.2, 0); g.rotate(-.24);
+    linea(g, [-2.6, 0], [-2.4, -6.4], .8, MADERA); linea(g, [2, -1.2], [2, -6.4], .8, MADERA); // patas
+    forma(g, [[-3, -6.8], [2.6, -6.8], [2.6, -5.8], [-3, -5.8]], '#8A5A36', false); // asiento de cuero
+    linea(g, [-2.8, -6.6], [-3.2, -14.6], .8, MADERA); forma(g, [[-3.6, -14.8], [-2.6, -14.8], [-2.4, -10.4], [-3.4, -10.4]], '#8A5A36', false); // espaldar
+    g.restore();
+  },
   saco(g) { g.save(); g.translate(.6, -27.4); g.rotate(-.35); g.fillStyle = '#C9B48A'; g.beginPath(); g.ellipse(0, 0, 4.6, 2.9, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(80,55,30,.25)'; g.beginPath(); g.ellipse(1.6, .6, 3, 1.8, 0, 0, 7); g.fill(); g.strokeStyle = '#8A6A3A'; g.lineWidth = .4; g.beginPath(); g.moveTo(-4, -.2); g.lineTo(-5.4, -.6); g.stroke(); g.restore(); }
 };
 function brazosAccion(g, pz, manga, piel) {
@@ -357,14 +443,42 @@ export function hornearAcciones(mod) {
   const E = ES_CELULAR ? 2.8 : 4, w = 22, h = 34, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = []; // en celular, algo menos (cuida la memoria: la hoja no pasa de 2048 de alto)
   for (const tipo in ACCIONES) for (let vi = 0; vi < 3; vi++) for (const [acc, N] of Object.entries(ACCIONES[tipo])) for (let n = 0; n < N; n++) claves.push([`${tipo}_${vi}_${acc}_${n}`, tipo, vi, acc, n, N]);
   if (!HOJA_A) {
-    const cols = Math.floor(2048 / W), filas = Math.ceil(claves.length / cols), marcos = {};
+    const ancho = ES_CELULAR ? 2048 : 4096, cols = Math.floor(ancho / W), filas = Math.ceil(claves.length / cols), marcos = {};
     claves.forEach(([k], i) => { marcos[k] = { x: (i % cols) * W, y: Math.floor(i / cols) * H, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E }; });
-    let alto = 256; while (alto < filas * H) alto *= 2;
-    HOJA_A = { canvas: lienzo(2048, alto), marcos, escala: E, mod: null };
+    HOJA_A = { canvas: lienzo(ancho, filas * H), marcos, escala: E, mod: null }; // alto justo (ninguna hoja pasa de 4096)
   } else if (HOJA_A.mod === mod) return HOJA_A;
   const g = HOJA_A.canvas.getContext('2d'); g.clearRect(0, 0, HOJA_A.canvas.width, HOJA_A.canvas.height);
   for (const [k, tipo, vi, acc, n, N] of claves) { const m = HOJA_A.marcos[k]; g.save(); g.beginPath(); g.rect(m.x, m.y, m.w, m.h); g.clip(); g.translate(m.x + m.ax, m.y + m.ay); g.scale(E, E); figura(g, tipo, vi, true, acc === 'cargar' ? PASOS12[Math.floor(n * 12 / N)] : 0, !!mod, { k: acc, n, N }); g.restore(); }
   HOJA_A.mod = mod; return HOJA_A;
+}
+// ---------- Cargas (pedido de Juan: interacción según el oficio) ----------
+// Lo que la gente lleva al caminar: leña, racimo de plátano, tablas, bulto, canasto en la cabeza, ropa, múcura de agua,
+// el bebé en el pañolón y los cuadernos de la escuela. Cada carga es un dibujo aparte con el mismo ancla que la persona
+// (los pies), así se pone en su sitio, se voltea con ella y sirve de frente y de espaldas. Las de la espalda y el hombro
+// van detrás de la figura cuando camina de frente (se ven sus puntas) y delante cuando va de espaldas.
+export const CARGAS_ESPALDA = new Set(['lena', 'racimo', 'tablas', 'bulto', 'bebe']);
+const DIB_CARGA = {
+  lena(g) { for (let k = 0; k < 6; k++) { const dy = (k % 3) * .9 - .9, dx = (k % 2) * .6; linea(g, [-6 + dx, -21.6 + dy], [5.6 + dx, -24.6 + dy], 1.1, k % 2 ? '#6B4A2B' : '#85603A'); } linea(g, [-1.6, -24.6], [-1, -21.2], .5, '#C9B48A'); linea(g, [2.2, -25.4], [2.6, -22.2], .5, '#C9B48A'); },
+  racimo(g) { forma(g, [[1.6, -26.2], [5.6, -25.4], [6.4, -20.8], [4.6, -18.4], [2, -19.6], [1, -23]], '#6E8E3A'); g.fillStyle = '#8FAE4A'; for (let k = 0; k < 7; k++) { g.beginPath(); g.ellipse(2.4 + (k % 3) * 1.3, -24.6 + Math.floor(k / 3) * 1.9, .55, 1.1, -.4, 0, 7); g.fill(); } linea(g, [3.4, -26.4], [3.2, -28], .6, '#6B5A30'); },
+  tablas(g) { for (let k = 0; k < 3; k++) { const d = k * .8; forma(g, [[-8, -20.6 - d], [8.4, -25.4 - d], [8.6, -24.6 - d], [-7.8, -19.8 - d]], k % 2 ? '#C49A62' : '#B0844E', false); } },
+  bulto(g) { g.save(); g.translate(1.2, -24.2); g.rotate(-.2); elipse(g, 0, 0, 4.4, 2.8, '#C9B48A'); g.fillStyle = 'rgba(80,55,30,.25)'; g.beginPath(); g.ellipse(1.5, .6, 2.8, 1.7, 0, 0, 7); g.fill(); g.restore(); },
+  bebe(g) { forma(g, [[-3.4, -21.6], [2.4, -21.2], [2.8, -15], [-2.8, -14.4]], '#B23A2E'); elipse(g, -2.4, -22.8, 1.3, 1.35, '#C98E62'); elipse(g, -2.5, -23.4, 1.3, .8, '#231C17'); },
+  canasto(g) { forma(g, [[-3.2, -29.4], [3.2, -29.4], [2.4, -26.6], [-2.4, -26.6]], '#B58A4E', false); g.strokeStyle = 'rgba(90,60,30,.5)'; g.lineWidth = .3; for (const y of [-28.4, -27.4]) { g.beginPath(); g.moveTo(-2.9, y); g.lineTo(2.9, y); g.stroke(); } for (const [x, y, c] of [[-2, -30, '#D9622B'], [-.6, -30.6, '#E8C04A'], [.9, -30.1, '#6E9A3A'], [2.1, -29.9, '#B32B2B'], [.2, -29.6, '#D9622B']]) elipse(g, x, y, .9, .8, c); },
+  canastoV(g) { forma(g, [[-3.2, -29.4], [3.2, -29.4], [2.4, -26.6], [-2.4, -26.6]], '#B58A4E', false); elipse(g, 0, -29.4, 3.2, .7, '#5E4628'); g.strokeStyle = 'rgba(90,60,30,.5)'; g.lineWidth = .3; for (const y of [-28.4, -27.4]) { g.beginPath(); g.moveTo(-2.9, y); g.lineTo(2.9, y); g.stroke(); } },
+  ropa(g) { elipse(g, 0, -27.6, 3.4, 1.6, '#ECE6D6'); elipse(g, -.8, -28.6, 2.4, 1.2, '#5F8FB0'); elipse(g, 1, -29.2, 1.8, .9, '#D9B54A'); },
+  cantaro(g) { elipse(g, 0, -26.8, 1.8, .5, '#ECE6D6'); g.fillStyle = '#A85E3A'; g.beginPath(); g.ellipse(0, -29.4, 2.4, 2.2, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(60,30,15,.3)'; g.beginPath(); g.ellipse(.9, -29.2, 1.3, 1.9, 0, 0, 7); g.fill(); forma(g, [[-.9, -31.4], [.9, -31.4], [.7, -32.6], [-.7, -32.6]], '#94522F', false); elipse(g, 0, -32.6, .9, .3, '#5A3020'); },
+  raspado(g) { forma(g, [[2.4, -15.6], [4.4, -15.6], [4, -12.8], [2.8, -12.8]], '#F4F1E8', false); elipse(g, 3.4, -15.8, 1.2, .7, '#D8344A'); elipse(g, 3.1, -16.1, .5, .3, '#F2A0A8'); linea(g, [3.8, -16.6], [4.4, -18], .25, '#E8C840'); },
+  mazorca(g) { g.save(); g.translate(3.4, -15); g.rotate(-.9); elipse(g, 0, 0, 2.2, .85, '#E2B23C'); g.fillStyle = 'rgba(120,70,20,.5)'; for (let q = 0; q < 5; q++) g.fillRect(-1.6 + q * .7, -.4 + (q % 2) * .3, .35, .35); linea(g, [2, 0], [3.4, 0], .5, '#B49A5E'); g.restore(); },
+  bolsa(g) { forma(g, [[2.4, -15], [5, -15.2], [5.2, -11.4], [2.6, -11.2]], '#C9A878', false); forma(g, [[2.4, -15], [5, -15.2], [4.8, -14.4], [2.6, -14.2]], '#B08E60', false); },
+  cuaderno(g) { forma(g, [[2.2, -16.4], [5.2, -16.9], [5.4, -12.6], [2.4, -12.1]], '#2F5D8A', false); forma(g, [[2.4, -16.1], [5, -16.5], [5.1, -16], [2.5, -15.6]], '#F2EDE0', false); }
+};
+let HOJA_C = null;
+export function hornearCargas() {
+  if (HOJA_C) return HOJA_C;
+  const E = ES_CELULAR ? 3.2 : 4, w = 22, h = 40, W = Math.ceil(w * E), H = Math.ceil(h * E), claves = Object.keys(DIB_CARGA);
+  const cv = lienzo(W * claves.length, H), g = cv.getContext('2d'), marcos = {};
+  claves.forEach((k, i) => { const m = { x: i * W, y: 0, w: W, h: H, ax: w / 2 * E, ay: (h - 3) * E }; marcos[k] = m; g.save(); g.translate(m.x + m.ax, m.ay); g.scale(E, E); DIB_CARGA[k](g); g.restore(); });
+  HOJA_C = { canvas: cv, marcos, escala: E }; return HOJA_C;
 }
 export { contorno };
 

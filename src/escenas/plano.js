@@ -68,7 +68,7 @@ export function pintarPlano(cv, S, sel, capa = 'uso') {
   }
   // Obras: un cuadro de color por uso (en las capas de suelo, solo un punto, para no tapar el color), con la inicial de la obra cuando cabe.
   for (let i = 0; i < N * N; i++) {
-    const x = S.map[i]; if (!x.b) continue;
+    const x0 = S.map[i], x = x0.pt !== undefined ? S.map[x0.pt] : x0; if (!x || !x.b) continue; // las casillas de atrás de una obra grande se pintan con su color
     const r = Math.floor(i / N), c = i % N, u = usoDe(x.b), m = capa === 'uso' ? q * .1 : q * .3;
     g.fillStyle = u.col; g.fillRect(c * q + m, r * q + m, q - 2 * m, q - 2 * m);
     if (x.ob) { g.strokeStyle = '#F7F1E3'; g.setLineDash([2, 2]); g.lineWidth = 1; g.strokeRect(c * q + m, r * q + m, q - 2 * m, q - 2 * m); g.setLineDash([]); }

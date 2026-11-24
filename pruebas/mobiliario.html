@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><title>Mobiliario</title>
+<style>body{background:#9FB070;margin:0}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+// Página de prueba de las cosas del pueblo (?z= zoom, ?k= claves). Junto a cada una, una persona para la escala.
+import { PINCELES_MOBILIARIO } from '../src/arte/mobiliario.js';
+import { figura, TAM_GENTE } from '../src/arte/gente.js';
+const q = new URLSearchParams(location.search), Z = +(q.get('z') || 6), L = (q.get('k') || Object.keys(PINCELES_MOBILIARIO).join(',')).split(',');
+const col = 4, cw = 50 * Z, ch = 38 * Z, cv = document.getElementById('c'); cv.width = cw * col; cv.height = ch * Math.ceil(L.length / col); const g = cv.getContext('2d');
+g.font = '13px sans-serif';
+L.forEach((k, i) => { const r = PINCELES_MOBILIARIO[k]; if (!r) return; const x = (i % col) * cw, y = Math.floor(i / col) * ch; g.fillStyle = '#223'; g.fillText(k, x + 6, y + 16);
+  g.save(); g.translate(x + cw * .45, y + ch * .72); g.scale(Z, Z); r[5](g); g.restore();
+  g.save(); g.translate(x + cw * .88, y + ch * .72); g.scale(Z * TAM_GENTE, Z * TAM_GENTE); figura(g, 'campesino', 0, true, 0, false); g.restore(); });
+</script>

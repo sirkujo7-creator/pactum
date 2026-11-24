@@ -17,11 +17,14 @@ import { factorAguaClima } from './biomas.js';
 import { industriaActiva, empleoIndustria, ambienteIndustria } from './industria.js';
 import { efectoLeyes } from './civismo.js';
 import { vecindad } from './vecindad.js';
+import { aguaPozos } from './huertas.js';
+import { reservorioAgua, reservorioSequia } from './marcas.js';
+import { factorPersonal } from './proceso.js';
 
 export function energy(S, c) { return (S.stage >= 1 && (!S.clima || S.energiaGratis) ? 1 : 0) + c.molino * 3 + efectoMega(S, 'energia'); } // fase 6: la represa
 export function poweredT(S, c) { return S.stage >= 1 ? Math.min(c.taller, energy(S, c)) : c.taller; }
 // En El Niño (fase 1) el río baja y los acueductos entregan menos.
-export function waterCap(S, c) { if (S.stage < 1) return 9999; const w = 40 + c.acueducto * 70; return climaActivo(S) ? Math.round(w * factorAgua(S) * factorAguaClima(S)) : w; } // fase 10: deshielo y páramo
+export function waterCap(S, c) { if (S.stage < 1) return 9999; const w = 40 + c.acueducto * 70; return climaActivo(S) ? Math.round(w * reservorioSequia(S, factorAgua(S) * factorAguaClima(S))) + aguaPozos(S) + reservorioAgua(S) : w; } // pozos junto a las casas mientras no haya acueducto // fase 10: deshielo y páramo
 
 // Reparte la población en élite, campesinos, artesanos y desempleados.
 export function society(S) {
@@ -70,7 +73,7 @@ export function satTargets(S, c, hunger) {
   const P = Math.max(1, S.pop), so = society(S), ur = so.un / Math.max(1, so.P), ip = S.infl * 100;
   // Fase 2: además de los cupos, cuenta la distancia: solo se atiende a las casas dentro del radio.
   const cob = cobertura(S), sinMercado = coberturaActiva(S) ? C.COB.animoSinMercado * (1 - cob.mercado) : 0;
-  const sc = S.stage >= 1 ? Math.min(1, c.escuela * 50 / P, cob.escuela) : .8, hc = S.stage >= 1 ? Math.min(1, c.hospital * 60 / P, cob.hospital) : .8;
+  const sc = S.stage >= 1 ? Math.min(1, c.escuela * 50 / P, cob.escuela) * factorPersonal(S, 'maestros') : .8, hc = S.stage >= 1 ? Math.min(1, c.hospital * 60 / P, cob.hospital) * factorPersonal(S, 'medicos') : .8; // el proceso: sin personal la obra rinde menos
   const cov = (sc + hc) * 8;
   // Fase 5: en el terreno en acuarela, la cultura, el deporte y las fiestas también calman la exigencia.
   const expc = S.stage >= 1 ? Math.max(0, Math.min(20, S.year * D(S).exp) - (c.universidad * 5 + c.agora * 3 + Math.min(6, c.parque * 1.5)) - culturaTotal(S)) + efectoLeyes(S, 'exigencia') : 0; // fase 12: el sufragio exige más

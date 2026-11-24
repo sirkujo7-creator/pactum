@@ -218,7 +218,11 @@
     ],
     "empleosArtesanos": 4,
     "aniosDeObra": 2,
-    "especial": "Crea el Ejército: orden y seguridad si está contento; golpe de Estado si no."
+    "especial": "Crea el Ejército: orden y seguridad si está contento; golpe de Estado si no.",
+    "casillas": [
+      2,
+      2
+    ]
   },
   "cafetal": {
     "icono": "☕",
@@ -329,7 +333,11 @@
     ],
     "empleosArtesanos": 5,
     "aniosDeObra": 3,
-    "especial": "Sube la igualdad y los salarios; los estudiantes la exigen desde que eres Ciudad."
+    "especial": "Sube la igualdad y los salarios; los estudiantes la exigen desde que eres Ciudad.",
+    "casillas": [
+      2,
+      2
+    ]
   },
   "teatro": {
     "icono": "🎭",
@@ -360,7 +368,11 @@
     "empleosArtesanos": 4,
     "aniosDeObra": 2,
     "cultura": 5,
-    "especial": "El que más baja la exigencia de cultura y sentido, pero los días de partido sube un poco la inseguridad. Abre el dilema de «pan y circo»."
+    "especial": "El que más baja la exigencia de cultura y sentido, pero los días de partido sube un poco la inseguridad. Abre el dilema de «pan y circo».",
+    "casillas": [
+      2,
+      2
+    ]
   },
   "cementerio": {
     "icono": "🪦",
@@ -374,7 +386,11 @@
       "llano",
       "bosque"
     ],
-    "especial": "Da sepultura a 40 muertos. Las tumbas se ven crecer con cada muerte."
+    "especial": "Da sepultura a 40 muertos. Las tumbas se ven crecer con cada muerte.",
+    "casillas": [
+      1,
+      2
+    ]
   },
   "aserradero": {
     "icono": "🪵",
@@ -420,5 +436,317 @@
     ],
     "aniosDeObra": 1,
     "especial": "Muestra el subsuelo en el plano."
+  },
+  "chicheria": {
+    "icono": "🍺",
+    "nombre": "Chichería",
+    "articulo": "una chichería",
+    "descripcion": "La chicha de maíz, el tiple y la conversación después del trabajo.",
+    "costo": 20,
+    "mantenimiento": 0,
+    "etapa": 0,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 1,
+    "tasas": 2,
+    "cultura": 1,
+    "epocas": [
+      0,
+      2
+    ],
+    "efectos": {
+      "animo": {
+        "c": 3,
+        "a": 1
+      },
+      "conflicto": 2
+    },
+    "especial": "Alegra a campesinos y artesanos y deja tasas, pero trae riñas: sube un poco la presión del conflicto. La chicha se prohibió en Colombia en 1949 (por verificar): desde La Violencia ya no se puede abrir."
+  },
+  "gallera": {
+    "icono": "🐓",
+    "nombre": "Gallera",
+    "articulo": "una gallera",
+    "descripcion": "Peleas de gallos y apuestas los domingos.",
+    "costo": 25,
+    "mantenimiento": 1,
+    "etapa": 0,
+    "terrenos": [
+      "llano"
+    ],
+    "tasas": 3,
+    "cultura": 1,
+    "epocas": [
+      0,
+      3
+    ],
+    "efectos": {
+      "animo": {
+        "c": 2,
+        "e": 1
+      },
+      "legitimidad": -1
+    },
+    "especial": "Anima a campesinos y élite y deja tasas, pero las apuestas restan legitimidad."
+  },
+  "kiosco": {
+    "icono": "🎺",
+    "nombre": "Kiosco de retreta",
+    "articulo": "un kiosco de retreta",
+    "descripcion": "La banda municipal toca bambucos y pasillos los domingos en el parque.",
+    "costo": 35,
+    "mantenimiento": 2,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "cultura": 2,
+    "epocas": [
+      1,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "c": 1,
+        "a": 1,
+        "e": 1
+      }
+    },
+    "especial": "Cultura para todos y un poco de ánimo en las tres clases; solo cuesta su mantenimiento."
+  },
+  "circo": {
+    "icono": "🎪",
+    "nombre": "Circo de paso",
+    "articulo": "un circo de paso",
+    "descripcion": "Carpa, payasos y trapecistas que recorren los pueblos.",
+    "costo": 30,
+    "mantenimiento": 0,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "cultura": 3,
+    "epocas": [
+      1,
+      3
+    ],
+    "dura": 2,
+    "efectos": {
+      "animo": {
+        "c": 3,
+        "a": 3,
+        "e": 1
+      }
+    },
+    "especial": "Una gran fiesta, pero se va: a los dos años levanta la carpa y sigue su camino."
+  },
+  "cine": {
+    "icono": "🎬",
+    "nombre": "Cine",
+    "articulo": "un cine",
+    "descripcion": "Las películas mexicanas y de Hollywood en la pantalla grande.",
+    "costo": 70,
+    "mantenimiento": 3,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 2,
+    "tasas": 3,
+    "cultura": 2.5,
+    "epocas": [
+      2,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "a": 2,
+        "e": 1
+      }
+    },
+    "especial": "Cultura y ánimo de artesanos y élite. Quien controla lo que se proyecta puede censurar o hacer propaganda."
+  },
+  "billar": {
+    "icono": "🎱",
+    "nombre": "Billar",
+    "articulo": "un billar",
+    "descripcion": "Mesas de billar, cerveza y radio encendido.",
+    "costo": 30,
+    "mantenimiento": 1,
+    "etapa": 1,
+    "terrenos": [
+      "llano"
+    ],
+    "tasas": 2,
+    "cultura": 1,
+    "epocas": [
+      2,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "a": 2
+      },
+      "conflicto": 1
+    },
+    "especial": "Anima a los artesanos y deja tasas, pero de noche sube un poco la inseguridad."
+  },
+  "feria": {
+    "icono": "🎡",
+    "nombre": "Feria y parque de diversiones",
+    "articulo": "una feria",
+    "descripcion": "Rueda de Chicago, carros chocones y la feria del Festival Folclórico (Ibagué, desde 1959).",
+    "costo": 140,
+    "mantenimiento": 7,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 4,
+    "cultura": 3,
+    "epocas": [
+      3,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "c": 3,
+        "a": 3
+      },
+      "comercio": 0.04
+    },
+    "especial": "Mucho ánimo y visitantes que compran en el pueblo (más comercio), pero su mantenimiento es alto."
+  },
+  "balneario": {
+    "icono": "🏊",
+    "nombre": "Balneario",
+    "articulo": "un balneario",
+    "descripcion": "Piscinas públicas para el calor del valle.",
+    "costo": 80,
+    "mantenimiento": 4,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 2,
+    "cultura": 2,
+    "epocas": [
+      3,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "c": 2,
+        "a": 2,
+        "e": 1
+      },
+      "ambiente": -2
+    },
+    "especial": "Salud y ánimo para todos, pero gasta mucha agua: baja un poco el ambiente."
+  },
+  "centroComercial": {
+    "icono": "🛍️",
+    "nombre": "Centro comercial",
+    "articulo": "un centro comercial",
+    "descripcion": "Almacenes, plazoleta de comidas y salas de cine bajo un mismo techo.",
+    "costo": 180,
+    "mantenimiento": 6,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 6,
+    "tasas": 8,
+    "cultura": 2,
+    "epocas": [
+      4,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "e": 2,
+        "a": -2
+      }
+    },
+    "especial": "Empleo, tasas y ánimo de la élite, pero el mercado y las tiendas pierden clientes: baja el ánimo de los artesanos."
+  },
+  "discoteca": {
+    "icono": "🪩",
+    "nombre": "Discoteca",
+    "articulo": "una discoteca",
+    "descripcion": "Salsa, vallenato y luces hasta la madrugada.",
+    "costo": 60,
+    "mantenimiento": 2,
+    "etapa": 2,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 2,
+    "tasas": 4,
+    "cultura": 2,
+    "epocas": [
+      4,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "a": 2,
+        "c": 1
+      },
+      "conflicto": 2
+    },
+    "especial": "Los jóvenes la quieren y deja tasas, pero el ruido y las riñas suben la inseguridad."
+  },
+  "ecoparque": {
+    "icono": "🌿",
+    "nombre": "Ecoparque y canopy",
+    "articulo": "un ecoparque",
+    "descripcion": "Senderos, canopy y avistamiento de aves, como en el Cañón de Las Hermosas.",
+    "costo": 90,
+    "mantenimiento": 3,
+    "etapa": 2,
+    "terrenos": [
+      "llano",
+      "bosque"
+    ],
+    "empleosArtesanos": 3,
+    "cultura": 2,
+    "epocas": [
+      5,
+      5
+    ],
+    "efectos": {
+      "ambiente": 2,
+      "comercio": 0.03
+    },
+    "especial": "Turismo de naturaleza: más comercio y mejor ambiente."
+  },
+  "parqueTematico": {
+    "icono": "🎢",
+    "nombre": "Parque temático",
+    "articulo": "un parque temático",
+    "descripcion": "Montañas rusas y atracciones para turistas de todo el país.",
+    "costo": 260,
+    "mantenimiento": 12,
+    "etapa": 3,
+    "terrenos": [
+      "llano"
+    ],
+    "empleosArtesanos": 8,
+    "cultura": 4,
+    "epocas": [
+      5,
+      5
+    ],
+    "efectos": {
+      "animo": {
+        "c": 2,
+        "a": 2,
+        "e": 2
+      },
+      "comercio": 0.08
+    },
+    "especial": "Mucho turismo y comercio, pero cuesta muchísimo mantenerlo: puede ahogar las cuentas."
   }
 }

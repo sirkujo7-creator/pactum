@@ -3,7 +3,7 @@
 // mantenimiento y el fondo de emergencias; lección del Eje Cafetero, 1999). Son crisis mayores: respetan los años
 // de respiro. Solo en el terreno en acuarela.
 import { C } from './contenido.js';
-import { registrarMuertes, dejarRuinas, noticiaRuinas } from './huellas.js';
+import { registrarMuertes, dejarRuinas, noticiaRuinas, cicatriz } from './huellas.js';
 import { azar, clamp } from './azar.js';
 import { hasLaw } from './reglas.js';
 import { climaActivo, marcarCrisis } from './clima.js';
@@ -53,7 +53,7 @@ function erupcion(S) {
   S.tr = clamp(S.tr + (V.plan ? E.legitimidadConPlan : E.legitimidadSinPlan), 0, 100);
   if (!V.plan) reaccionar(S, 'ignorarVolcan');
   S.ceniza = S.year + 1; S.lahar = S.year;
-  registrarMuertes(S, perdidos, 'erupcion'); const ruinas = dejarRuinas(S, 'erupcion', fuertes); // huellas: muertos y ruinas
+  registrarMuertes(S, perdidos, 'erupcion'); const ruinas = dejarRuinas(S, 'erupcion', fuertes); cicatriz(S, 'ceniza', [-1]); // -1: en todo el mapa // huellas: muertos, ruinas y ceniza
   S.desastre = { tipo: 'erupcion', anio: S.year, plan: V.plan, perdidos, danadas, ruinas, nuevo: true };
   const conPlan = V.plan;
   V.nivel = 1; V.desde = S.year; V.plan = false; // tras la erupción, hay que volver a prepararse
@@ -86,7 +86,7 @@ export function desastresDelAnio(S) {
     const costo = Math.round(S.pop * Q.costoPorHabitante * S.price), cubierto = Math.min(S.fondo || 0, costo);
     S.fondo = (S.fondo || 0) - cubierto; S.gold -= costo - cubierto;
     if (!ley) S.tr = clamp(S.tr + Q.legitimidad, 0, 100);
-    registrarMuertes(S, perdidos, 'terremoto'); const ruinas = dejarRuinas(S, ley ? 'terremotoLey' : 'terremoto', tocadas);
+    registrarMuertes(S, perdidos, 'terremoto'); const ruinas = dejarRuinas(S, ley ? 'terremotoLey' : 'terremoto', tocadas); cicatriz(S, 'grieta', tocadas);
     S.desastre = { tipo: 'terremoto', anio: S.year, ley, perdidos, danadas, ruinas, costo, cubierto, nuevo: true };
     marcarCrisis(S);
     news.push(Q.textos.ocurre, ley ? Q.textos.conLey : Q.textos.sinLey);

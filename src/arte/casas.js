@@ -273,7 +273,7 @@ function cuatroAguas(g, F, rh, op = {}) {
 // Terraza plana de concreto con pretil y tanque de agua.
 // Azotea de concreto: pretil con grosor (se ve su cara de adentro en sombra y su remate con luz), placa con
 // manchas de humedad y de impermeabilizante, un sifón y la oclusión junto al pretil.
-function terraza(g, F, col) {
+function terraza(g, F, col, op = {}) {
   const H = F.z0 + F.H, a = F.a, b = F.b, f = F.f, t = F.t, e = .04, ph = 2.6;
   sombraAlero(g, F, 'izq', 2.2); sombraAlero(g, F, 'der', 2.2);
   const piso = [P(f, a, H), P(f, b, H), P(t, b, H), P(t, a, H)];
@@ -296,6 +296,7 @@ function terraza(g, F, col) {
   g.strokeStyle = 'rgba(40,30,20,.35)'; g.lineWidth = .5; g.beginPath(); g.moveTo(...P(f + .02, a - .02, r - .5)); g.lineTo(...P(f + .02, b + .02, r - .5)); g.lineTo(...P(t - .02, b + .02, r - .5)); g.stroke();
   // Chorreones de lluvia que bajan del remate por la fachada.
   for (const cara of ['izq', 'der']) { g.save(); poli(g, F[cara]); g.clip(); for (let k = 0; k < 5; k++) { const u = .05 + R() * .9, p = F.en(cara, u, F.H), L = 3 + R() * F.H * .3, gr = g.createLinearGradient(0, p[1], 0, p[1] + L); gr.addColorStop(0, 'rgba(70,64,56,.22)'); gr.addColorStop(1, 'rgba(70,64,56,0)'); g.fillStyle = gr; g.fillRect(p[0] - .5 - R() * .5, p[1], 1 + R(), L); } g.restore(); }
+  if (op.limpio) return; // cada edificio moderno pone lo suyo en el techo (antes todos llevaban tanque y antena)
   const q = P(t + .14, b - .16, r); cilindro(g, q[0], q[1], 3.8, 6, '#34485C', { arriba: 3.5, aros: 2, tapa: '#4A6074' }); g.fillStyle = '#26323E'; g.beginPath(); g.ellipse(q[0], q[1] - 6.2, 1.3, .55, 0, 0, 7); g.fill(); // tanque de agua con tapa
   const an = P(t + .14, a + .14, r); antenaTV(g, an[0], an[1]);
 }
@@ -748,4 +749,4 @@ export function recetasCasas(hist) {
 
 // Pinceles compartidos con los edificios públicos (src/arte/publicos.js).
 export { capturarQuad as capturarVentana };
-export { casa as casaColonial, P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera, cajaPx, cilindro, hojaP, sombraPie, ruedaIso };
+export { casa as casaColonial, P, K, MAT, mezcla, poli, rellena, grad, caras, muros, hiladas, hueco, ventana, puerta, balcon, tejas, dosAguas, cuatroAguas, terraza, sombraCasa, materas, caballo, carreta, banco as bancoMadera, cajaPx, cilindro, hojaP, sombraPie, ruedaIso, moto };

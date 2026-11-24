@@ -7,8 +7,8 @@ import { botYear, ESTRATEGIAS } from './robots.js';
 
 await cargarContenido();
 const DIF = process.env.DIF || 'normal', ETH = process.env.ETH || null, NG = +process.env.NG || 300, REG = process.env.REG || 'republica';
-const res = {};
-for (const strat of ESTRATEGIAS) {
+const res = {}, LISTA = process.env.STRAT ? process.env.STRAT.split(',') : ESTRATEGIAS; // STRAT=fair para medir solo una estrategia (más rápido)
+for (const strat of LISTA) {
   const out = { win: 0, end: {}, stage: [0, 0, 0, 0], years: [] };
   for (let g = 0; g < NG; g++) {
     const S = freshState(DIF, false, null, REG, process.env.TERR ? { terr: process.env.TERR } : {}); // fase 14: TERR=valle, ladera, canon, montana o sur
@@ -25,4 +25,4 @@ for (const strat of ESTRATEGIAS) {
 }
 console.log(JSON.stringify(res, null, 1));
 console.log(`\nResumen (${DIF}, ${REG}${ETH ? ', ética ' + ETH : ''}, ${NG} partidas): ` +
-  ESTRATEGIAS.map(s => `${s} ${Math.round(res[s].win / NG * 100)}%`).join(' · '));
+  LISTA.map(s => `${s} ${Math.round(res[s].win / NG * 100)}%`).join(' · '));

@@ -10,6 +10,17 @@ import { enPotencia } from '../arte/fresco.js';
 import { listaCalles, eraCalle, aislada, plaza as plazaDe } from '../core/index.js';
 import { reducirMovimiento } from './pantalla.js';
 
+// Rumbo en 8 direcciones: por el eje del tramo y, al acercarse a una esquina, por la diagonal entre el tramo de ahora y
+// el siguiente (o el anterior al salir de ella), para que el vehículo doble en vez de girar de golpe.
+export function rumbo(L, k, u, M) {
+  const d = (i, j) => [Math.sign(Math.floor(L[j] / M) - Math.floor(L[i] / M)), Math.sign(L[j] % M - L[i] % M)];
+  let [dr, dc] = d(k, k + 1);
+  const otro = u > .78 && L[k + 2] !== undefined ? d(k + 1, k + 2) : u < .22 && k > 0 ? d(k - 1, k) : null;
+  if (otro && (otro[0] !== dr || otro[1] !== dc)) { dr += otro[0]; dc += otro[1]; }
+  dr = Math.sign(dr); dc = Math.sign(dc);
+  if (dr && dc) return dr === dc ? ['d', dr > 0 ? '+' : '-'] : ['x', dc > 0 ? '+' : '-'];
+  return dr ? ['r', dr > 0 ? '+' : '-'] : ['c', dc > 0 ? '+' : '-'];
+}
 export class Trafico {
   constructor(scene) {
     this.scene = scene;
@@ -29,10 +40,13 @@ export class Trafico {
     for (const k of calles) { const [a, b] = k.split('|').map(Number); (this.red.get(a) || this.red.set(a, []).get(a)).push(b); (this.red.get(b) || this.red.set(b, []).get(b)).push(a); }
     this.nodos = [...this.red.keys()];
     this.nFincas = this.contarFincas();
-    if (this.era === 'herradura' && this.ponerRecuas()) return;
-    if (this.recuas) { this.lista.forEach(v => v.img.destroy()); this.lista = []; }
-    this.recuas = null;
-    const n = calles.length >= 4 ? Math.min(4, 1 + Math.floor(calles.length / 10)) : 0; // pocos: el camino no tiene que estar siempre ocupado
+    // Lo que se ve informa (pedido de Juan): nada da vueltas sin rumbo. En todas las épocas los viajes van por los
+    // caminos que el jugador construyó, desde donde se produce o se comercia hasta la salida del mapa (o la plaza si
+    // el camino aún no llega al borde): recuas de mulas en la época de herradura, chivas y camiones después.
+    this.M = M;
+    if (this.ponerRecuas()) return;
+    this.lista.forEach(v => v.img.destroy()); this.lista = []; this.recuas = null;
+    const n = 0;
     while (this.lista.length > n) this.lista.pop().img.destroy();
     while (this.lista.length < n) {
       const k = this.lista.length, img = this.scene.add.image(0, 0, 'vehiculos', 'herradura_c_+_0_0').setScale(1 / this.H.escala);
@@ -45,7 +59,9 @@ export class Trafico {
   ponerRecuas() {
     const { S, T } = this.scene, N = T.N, M = N + 1, finca = x => x.b === 'cultivo' || x.b === 'cafetal';
     const esquinasDe = i => { const r = Math.floor(i / N), c = i % N; return [r * M + c, r * M + c + 1, (r + 1) * M + c, (r + 1) * M + c + 1]; };
-    const fincas = S.map.map((x, i) => finca(x) && !x.ob && !aislada(S, i) ? i : -1).filter(i => i >= 0);
+    const herr = this.era === 'herradura', comercia = x => x.b === 'mercado' || x.b === 'puerto' || x.b === 'taller' || x.b === 'molino';
+    const fincas = S.map.map((x, i) => (finca(x) || (!herr && comercia(x))) && !x.ob && !aislada(S, i) ? i : -1).filter(i => i >= 0);
+    const nComercio = S.map.filter(x => comercia(x) && !x.ob).length;
     const origenes = [...new Set(fincas.flatMap(i => esquinasDe(i).filter(e => this.red.has(e))))];
     if (!origenes.length) return false;
     const borde = this.nodos.filter(e => { const r = Math.floor(e / M), c = e % M; return r === 0 || c === 0 || r === N || c === N; });
@@ -55,13 +71,16 @@ export class Trafico {
     const ruta = o => { const prev = new Map([[o, -1]]), cola = [o], meta = new Set(destinos); while (cola.length) { const u = cola.shift(); if (meta.has(u) && u !== o) { const L = [u]; while (prev.get(L[0]) !== -1) L.unshift(prev.get(L[0])); return L; } for (const v of this.red.get(u) || []) if (!prev.has(v)) { prev.set(v, u); cola.push(v); } } return null; };
     const rutas = origenes.map(ruta).filter(L => L && L.length > 1);
     if (!rutas.length) return false;
-    const n = Math.min(4, 1 + Math.floor(fincas.length / 3));
+    // Recuas: una por cada tres fincas con camino. Chivas y camiones: según el comercio (mercados, puertos, talleres).
+    const n = herr ? Math.min(4, 1 + Math.floor(fincas.length / 3)) : nComercio ? Math.min(4, 1 + Math.floor(nComercio / 2)) : 0;
+    if (!n) return false;
     for (const v of this.lista) v.img.destroy();
     this.lista = [];
     this.recuas = [];
     for (let k = 0; k < n; k++) {
       const L = rutas[k % rutas.length], recua = { L, pos: 0, ida: true, vel: .32 + (k % 3) * .05, descanso: 1 + k * 6 + Math.random() * 4, mulas: [] };
-      for (let j = 0; j < 2; j++) { const img = this.scene.add.image(0, 0, 'vehiculos', 'herradura_c_+_0_0').setScale(1 / this.H.escala).setVisible(false); recua.mulas.push({ img, atras: j * .45, vi: (k + j) % 3 }); this.lista.push({ img }); }
+      for (let j = 0; j < (herr ? 2 : 1); j++) { const img = this.scene.add.image(0, 0, 'vehiculos', 'herradura_c_+_0_0').setScale(1 / this.H.escala).setVisible(false); recua.mulas.push({ img, atras: j * .45, vi: (k + j) % 3 }); this.lista.push({ img }); }
+      if (!herr) recua.vel = .45 + (k % 3) * .06; // las chivas y los camiones van más rápido que las mulas
       this.recuas.push(recua);
     }
     return true;
@@ -77,12 +96,12 @@ export class Trafico {
       const q = Math.max(0, Math.min(tramos - 1e-6, R.pos - m.atras)), k = Math.floor(q), u = q - k, a = R.L[k], b = R.L[k + 1];
       if (R.pos - m.atras < 0) { m.img.setVisible(false); continue; }
       const r1 = Math.floor(a / M), c1 = a % M, r2 = Math.floor(b / M), c2 = b % M, r = r1 + (r2 - r1) * u, c = c1 + (c2 - c1) * u, p = P(r, c, T.hf(Math.min(N, r), Math.min(N, c)));
-      const eje = r1 === r2 ? 'c' : 'r', dir = (r2 - r1) + (c2 - c1) > 0 ? '+' : '-', key = `herradura_${eje}_${dir}_${paso}_${m.vi}`, mm = this.H.marcos[key];
+      const herr = this.era === 'herradura', [eje, dir] = rumbo(R.L, k, u, M), key = `${this.era}_${eje}_${dir}_${paso}_${herr ? m.vi : 0}`, mm = this.H.marcos[key];
       m.img.setVisible(true).setFrame(key).setOrigin(mm.ax / mm.w, mm.ay / mm.h).setPosition(p[0], p[1]).setDepth(r + c + .03);
     }
   }
-  contarFincas() { return this.scene.S.map.filter(x => (x.b === 'cultivo' || x.b === 'cafetal') && !x.ob).length; }
-  revisar() { const { S } = this.scene; if (listaCalles(S) !== this.vista || eraCalle(S) !== this.era || (this.era === 'herradura' && this.contarFincas() !== this.nFincas)) this.poner(); }
+  contarFincas() { return this.scene.S.map.filter(x => ['cultivo', 'cafetal', 'mercado', 'puerto', 'taller', 'molino'].includes(x.b) && !x.ob).length; }
+  revisar() { const { S } = this.scene; if (listaCalles(S) !== this.vista || eraCalle(S) !== this.era || this.contarFincas() !== this.nFincas) this.poner(); }
   elegir(v) {
     if (!this.nodos.length) return false;
     if (v.de < 0 || !this.red.has(v.de)) { v.de = this.nodos[Math.floor(Math.random() * this.nodos.length)]; v.previo = -1; }

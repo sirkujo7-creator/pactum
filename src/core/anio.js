@@ -23,6 +23,8 @@ import { drawEvent } from './dilemas.js';
 import { climaActivo, climaDelAnioSiguiente, atenderEmergencia, marcarCrisis, interesFondo } from './clima.js';
 import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
+import { ocioDelAnio } from './ocio.js';
+import { personalDelAnio, imprevistosDelAnio } from './proceso.js';
 import { avanzarObras } from './construccion.js';
 import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
@@ -64,7 +66,7 @@ export function advance(S) {
   S.bonds = S.bonds.filter(b => b.due > S.year);
   // Fase 2: las cuotas de las obras se pagan una por una, solo si alcanza el oro.
   S.gold += F.net + F.obras; S.rev = F.rev;
-  news.push(...avanzarObras(S).news);
+  news.push(...imprevistosDelAnio(S)); news.push(...avanzarObras(S).news); // imprevistos de las obras (antes de avanzar) y lo que vuelve
   if (climaActivo(S)) S.fondo = (S.fondo || 0) + F.fondo + interesFondo(S);
   S.food += F.fprod - F.cons;
   if (materialesActivos(S)) producirMat(S, F.trab === undefined ? 1 : F.trab); // fase 17: aserraderos, canteras y minas
@@ -117,6 +119,8 @@ export function advance(S) {
   news.push(...sueloDelAnio(S));
   // Fase 1: las obras se gastan según el mantenimiento que se paga.
   news.push(...desgasteDelAnio(S));
+  news.push(...ocioDelAnio(S)); // el circo de paso se va
+  news.push(...personalDelAnio(S)); // médicos y maestros: se forman, llegan y se retiran
 
   // Déficit y cesación de pagos.
   S.deficit = F.net < 0 ? S.deficit + 1 : 0;

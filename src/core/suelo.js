@@ -2,6 +2,7 @@
 // se erosionan y, con La Niña, pueden derrumbarse. Solo actúa en el terreno en acuarela.
 // Marcas por casilla: tl (se taló alguna vez), er (erosión 0 a 3), q (años de ceniza),
 // dr (años de la huella de un derrumbe), nb (año en que nació el bosque).
+import { liberarGrande } from './grandes.js';
 import { azar, clamp } from './azar.js';
 import { C } from './contenido.js';
 import { lado } from './mundo.js';
@@ -74,7 +75,7 @@ export function sueloDelAnio(S) {
         perdidas.push(x.b === 'casa' ? 'una casa' : C.B[x.b].a);
         if (x.b === 'casa') S.pop = Math.max(1, S.pop - D.habitantesPorCasa);
         S.tr = clamp(S.tr - D.confianzaPorObra, 0, 100);
-        x.b = null; delete x.ob; delete x.mt; delete x.u;
+        liberarGrande(S, i); x.b = null; delete x.ob; delete x.mt; delete x.u;
       }
       x.er = 0; x.dr = D.anios;
     }

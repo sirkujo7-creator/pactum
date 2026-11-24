@@ -5,6 +5,7 @@
 // Con "reducir movimiento" los animales quedan quietos y no pasan pájaros.
 import { P } from '../arte/iso.js';
 import { reducirMovimiento } from './pantalla.js';
+import { lutoVisible } from '../core/index.js';
 
 // Cuánto se mece cada planta (en grados): poco, para que se vea viva sin que la sombra se mueva.
 const VAIVEN = { arbol: .5, saman: .3, ceiba: .3, guayacan: .5, ocobo: .5, cambulo: .5, yarumo: .6, mango: .4, arbolNiebla: .4, palma: .8, guadua: 1.1, platano: .9, arbusto: .4 };
@@ -42,10 +43,24 @@ export class Vida {
     this.animales.forEach(a => a.img.destroy());
     this.animales = [];
     const { S, T } = this.scene, N = T.N;
-    // Ganado, garzas y patos donde los puso la naturaleza, si la casilla sigue libre.
+    // Lo que se ve informa (pedido de Juan): el ganado solo donde hay ganadería (y unos chivos junto a las casas); las
+    // garzas solo cerca del río o de los arrozales; los patos, junto al agua.
+    const ganaderias = S.map.map((x, i) => x.b === 'cultivo' && !x.ob && x.cv === 'ganaderia' ? i : -1).filter(i => i >= 0);
+    const arrozales = S.map.map((x, i) => x.b === 'cultivo' && !x.ob && x.cv === 'arroz' ? i : -1).filter(i => i >= 0);
+    const cercaDe = (L, r, c, d) => L.some(i => Math.hypot(Math.floor(i / N) + .5 - r, i % N + .5 - c) <= d);
+    const rioCerca = (r, c) => { for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) { const j = (Math.floor(r) + dr) * N + Math.floor(c) + dc; if (S.map[j] && S.map[j].t === 'rio') return true; } return false; };
+    ganaderias.forEach((i, k) => {
+      const r = Math.floor(i / N), c = i % N, calido = T.tiles[i] && T.tiles[i].h < 2.2;
+      [[.3, .3, calido ? 'cebu' : 'vaca'], [.65, .45, calido ? 'cebu' : 'vaca'], [.45, .72, k % 2 ? 'caballo' : calido ? 'cebu' : 'vaca']].forEach(([dr, dc, kk]) => {
+        const a = { k: kk, casa: { r: r + dr, c: c + dc }, r: r + dr, c: c + dc, s: 1, espera: azar(0, 6), ruta: null, var: '' };
+        a.img = this.figura(kk, a.r, a.c, a.s); this.animales.push(a);
+      });
+    });
     for (const o of this.scene.plantasMundo) {
       const x = S.map[o.i];
       if (!ANIMALES.has(o.k) || x.b || x.t === 'bosque' || x.q > 0 || x.dr > 0) continue;
+      if (PASTAN.has(o.k)) continue; // el ganado ya no anda suelto por los potreros lejanos
+      if (o.k === 'garza' && !rioCerca(o.r, o.c) && !cercaDe(arrozales, o.r, o.c, 2)) continue;
       const a = { k: o.k, casa: { r: o.r, c: o.c }, r: o.r, c: o.c, s: o.s, espera: azar(0, 6), ruta: null, var: '' };
       a.img = this.figura(o.k, o.r, o.c, o.s);
       this.animales.push(a);
@@ -73,6 +88,11 @@ export class Vida {
         const a = { k: 'perro', casa: { r, c }, r, c, s: 1, espera: azar(1, 4), fase: 0 };
         a.img = this.figura('perro0', r, c); this.animales.push(a);
       }
+      // Un chivo amarrado junto a algunos ranchos.
+      if (k % 7 === 5 && S.map[i].vida === 0 && this.animales.filter(x => x.k === 'chivo').length < 3) {
+        const a = { k: 'chivo', casa: { r: r + .15, c: c + .7 }, r: r + .15, c: c + .7, s: 1, espera: azar(0, 6), ruta: null, var: '' };
+        a.img = this.figura('chivo', a.r, a.c); this.animales.push(a);
+      }
       // Un cerdo en el solar de algunas casas y un gato que descansa en otras.
       if (k % 5 === 3 && this.animales.filter(x => x.k === 'cerdo').length < 4) {
         const a = { k: 'cerdo', casa: { r: r + .1, c: c + .35 }, r: r + .1, c: c + .35, s: 1, espera: azar(2, 8), fase: 0 };
@@ -84,13 +104,16 @@ export class Vida {
       }
     });
     // Gallinazos: planean en círculos altos sobre el pueblo cuando ya hay unas cuantas casas.
-    if (casas.length >= 4) for (let j = 0; j < 2; j++) {
-      const i = casas[(j * 5) % casas.length], a = { k: 'chulo', cr: Math.floor(i / N) + .5, cc: i % N + .5, ang: j * 3, radio: 1.6 + j * .7, fase: j * 3, r: 0, c: 0 };
+    // Lo que se ve informa: sobre el cementerio cuando hay luto, o sobre el pueblo cuando el ambiente está sucio.
+    const cem = S.map.findIndex(x => x.b === 'cementerio' && !x.ob), sucio = (S.env ?? 60) < 35, luto = cem >= 0 && lutoVisible(S);
+    const centroChulo = luto ? cem : sucio && casas.length ? casas[0] : -1;
+    if (centroChulo >= 0) for (let j = 0; j < 2; j++) {
+      const i = centroChulo, a = { k: 'chulo', cr: Math.floor(i / N) + .5, cc: i % N + .5, ang: j * 3, radio: 1.2 + j * .6, fase: j * 3, r: 0, c: 0 };
       a.img = this.figura('chuloV0', a.cr, a.cc, .9); this.animales.push(a);
     }
     // Loros: parejas entre las palmas de cera.
     this.palmas = this.scene.plantasMundo.filter(o => o.k === 'palma' && !S.map[o.i].b && !S.map[o.i].q && !S.map[o.i].dr && !(T.tiles[o.i].b === 'niebla' && S.map[o.i].t !== 'bosque'));
-    for (let k = 0; k < Math.min(3, Math.floor(this.palmas.length / 4)); k++) {
+    for (let k = 0; k < ((S.env ?? 60) >= 45 ? Math.min(3, Math.floor(this.palmas.length / 4)) : 0); k++) { // con buen ambiente
       const pa = this.palmas[(k * 7) % this.palmas.length];
       for (let j = 0; j < 2; j++) {
         const a = { k: 'loro', r: pa.r, c: pa.c + j * .12, alto: 70 + j * 4, espera: azar(3, 12), fase: 0, vuela: null };
@@ -120,8 +143,10 @@ export class Vida {
 
   mover(a, dt, vel) {
     const d = a.ruta, dr = d.r - a.r, dc = d.c - a.c, dist = Math.hypot(dr, dc);
-    if (dist < .02) { a.ruta = null; a.bob = 0; return 0; }
-    const v = Math.min(dist, vel * dt);
+    if (dist < .02) { a.ruta = null; a.bob = 0; a.vel = 0; return 0; }
+    // Arranca y se detiene suave: acelera al salir y frena al llegar (sin saltos de velocidad).
+    a.vel = Math.min(vel, (a.vel || 0) + vel * dt * 1.6); const lento = Math.max(.3, Math.min(1, dist / .15));
+    const v = Math.min(dist, a.vel * lento * dt);
     a.r += dr / dist * v; a.c += dc / dist * v;
     if (Math.abs(dc - dr) > dist * .3) a.img.setFlipX((dc - dr) < 0); // sin voltearse de un lado al otro
     // Las patas y el cuerpo se mueven en los 12 cuadros del dibujo; solo las aves de corral dan saltitos.
@@ -146,7 +171,16 @@ export class Vida {
       if (agua) { a.ruta = agua; a.bebiendo = true; a.alta = false; a.espera = azar(8, 14); }
       else { a.bebiendo = false; a.ruta = { r: a.casa.r + azar(-.35, .35), c: a.casa.c + azar(-.35, .35) }; a.espera = azar(5, 14); }
     }
-    else a.img.setFrame(a.alta && !a.bebiendo ? a.k : a.k + 'Pasta');
+    else if (a.echada > 0) a.img.setFrame(a.k + 'E');
+    else {
+      // La cola espanta las moscas a ratos (6 cuadros, ida y vuelta), de pie o pastando.
+      a.moscas = (a.moscas ?? azar(2, 7)) - dt; const pasta = !(a.alta && !a.bebiendo);
+      if (a.moscas < 0 && !reducirMovimiento()) { const n = Math.floor(-a.moscas * 7) % 6; a.img.setFrame(a.k + (pasta ? 'PQ' : 'Q') + n); if (a.moscas < -1.7) a.moscas = azar(3, 9); }
+      else a.img.setFrame(pasta ? a.k + 'Pasta' : a.k);
+    }
+    // El ganado vacuno se echa a rumiar un buen rato (y se levanta antes de caminar).
+    if (a.echada > 0) { a.echada -= dt; a.espera = Math.max(a.espera, .5); }
+    else if ((a.k === 'vaca' || a.k === 'cebu') && !a.bebiendo && a.espera > 2 && Math.random() < dt * .012) a.echada = azar(14, 30);
   }
   // Punto en la orilla del río más cercana al potrero (a tres casillas como máximo), o null.
   orilla(a) {
@@ -211,7 +245,11 @@ export class Vida {
     }
     a.pico = (a.pico ?? azar(.3, 1)) - dt;
     if (a.pico <= 0) { a.pica = 0; a.pico = azar(.5, 2); }
-    if (a.espera <= 0) { a.ruta = { r: a.casa.r + azar(-.25, .25), c: a.casa.c + azar(-.3, .3) }; a.espera = azar(1.5, 4); }
+    if (a.espera <= 0) {
+      // Si la dueña les echa maíz, las gallinas van a sus pies.
+      const q = a.k === 'gallina' && this.scene.pob && this.scene.pob.comedero ? this.scene.pob.comedero(a.casa) : null;
+      a.ruta = q ? { r: q.r + azar(-.15, .15), c: q.c + azar(-.15, .15) } : { r: a.casa.r + azar(-.25, .25), c: a.casa.c + azar(-.3, .3) }; a.espera = q ? azar(.6, 1.6) : azar(1.5, 4);
+    }
   }
   // Cerdo: hoza en el solar y da unos pasos de vez en cuando.
   cerdo(a, dt) {
@@ -233,8 +271,8 @@ export class Vida {
   }
   // Perro: recorre el pueblo por casillas libres y se sienta a ratos.
   perro(a, dt, N, S) {
-    if (a.ruta) { this.mover(a, dt, .5); a.img.setFrame(a.ruta ? 'perro' + (Math.floor(a.fase) % 12) : 'perroS'); this.dibujar(a); return; }
-    a.img.setFrame('perroS'); // descansa sentado
+    if (a.ruta) { this.mover(a, dt, .5); a.img.setFrame(a.ruta ? 'perro' + (Math.floor(a.fase) % 12) : 'perroS'); if (!a.ruta) a.echado = azar(0, 1) < .4; this.dibujar(a); return; }
+    a.img.setFrame(a.echado ? 'perroE' : 'perroS'); // descansa sentado o echado
     a.espera -= dt;
     if (a.espera > 0) return;
     for (let k = 0; k < 10; k++) {
@@ -267,11 +305,13 @@ export class Vida {
     this.proximaBandada -= dt;
     if (this.proximaBandada <= 0) {
       this.proximaBandada = azar(14, 30);
+      if ((this.scene.S.env ?? 60) >= 50) { // las bandadas solo vuelven con buen ambiente
       const cam = this.scene.cameras.main, w = cam.width / cam.zoom, h = cam.height / cam.zoom;
       const x0 = cam.scrollX - 40, y0 = cam.scrollY + azar(.15, .6) * h, n = Math.floor(azar(4, 8)), vx = azar(35, 55), vy = azar(-8, 8);
       const aves = [];
       for (let k = 0; k < n; k++) aves.push({ img: this.figura('pajaro0', 0, 0).setDepth(46000), dx: -k * azar(8, 12), dy: (k % 2 ? 1 : -1) * k * 3.5, fase: Math.random() * 2 });
       this.bandadas.push({ x: x0, y: y0, vx, vy, aves, fin: cam.scrollX + w + 80 });
+      }
     }
     for (const b of this.bandadas) {
       b.x += b.vx * dt; b.y += b.vy * dt;

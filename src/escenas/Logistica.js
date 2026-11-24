@@ -4,6 +4,7 @@
 // vuelta, y de la fábrica al mercado (o a la plaza). Si la finca o la fábrica no están unidas a la red de caminos, no
 // hay viaje: así se ve por qué hace falta el camino. Pocos vehículos (uno por tramo, máximo seis). Con «reducir
 // movimiento» no salen.
+import { rumbo } from './Trafico.js';
 import { P } from '../arte/iso.js';
 import { hornearVehiculos } from '../arte/calles.js';
 import { enPotencia } from '../arte/fresco.js';
@@ -81,8 +82,8 @@ export class Logistica {
       if (v.pos >= tramos) { v.pos = 0; v.L = [...v.L].reverse(); v.descanso = 4 + Math.random() * 6; v.img.setVisible(false); continue; } // descarga y vuelve
       const k = Math.floor(v.pos), u = v.pos - k, a = v.L[k], b = v.L[k + 1];
       const r1 = Math.floor(a / M), c1 = a % M, r2 = Math.floor(b / M), c2 = b % M, r = r1 + (r2 - r1) * u, c = c1 + (c2 - c1) * u;
-      const p = P(r, c, T.hf(Math.min(N, r), Math.min(N, c))), eje = r1 === r2 ? 'c' : 'r', dir = (r2 - r1) + (c2 - c1) > 0 ? '+' : '-';
-      const pa = this.era === 'carretera' ? 0 : paso, vi = this.era === 'herradura' ? v.vi : 0, key = `${this.era}_${eje}_${dir}_${pa}_${vi}`, m = this.H.marcos[key];
+      const p = P(r, c, T.hf(Math.min(N, r), Math.min(N, c))), [eje, dir] = rumbo(v.L, k, u, M); // 8 direcciones: dobla en las esquinas
+      const pa = paso, vi = this.era === 'herradura' ? v.vi : 0, key = `${this.era}_${eje}_${dir}_${pa}_${vi}`, m = this.H.marcos[key];
       if (!m) continue;
       v.img.setVisible(true).setFrame(key).setOrigin(m.ax / m.w, m.ay / m.h).setPosition(p[0], p[1]).setDepth(r + c + .03);
     }

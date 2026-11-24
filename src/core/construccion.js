@@ -45,7 +45,7 @@ export function empezarObra(S, i, k, costoTotal, anios) {
   if (!porEtapas(S, k)) return;
   const n = anios === undefined ? C.B[k].anios : anios;
   if (n <= 0) return; // contratista rápido en una obra de un año: queda lista al instante
-  S.map[i].ob = { n, p: 1, c: Math.round(costoTotal / n), det: 0 };
+  S.map[i].ob = { n, p: 1, c: Math.round(costoTotal / n), det: 0, y: S.year }; // y: el primer año se ven las estacas del estudio
 }
 
 // Cierre del año: las obras con todas sus etapas pagadas se terminan; las demás pagan la siguiente etapa
@@ -57,7 +57,8 @@ export function avanzarObras(S) {
     if (!x.b || !x.ob) return;
     const o = x.ob, nombre = C.B[x.b].a;
     if (o.p >= o.n && !o.det && o.extra) { delete o.extra; o.n++; news.push(T.sobrecosto.replace('{obra}', nombre).replace('{c}', o.c)); }
-    if (o.p >= o.n && !o.det) { if (o.u0) x.u = o.u0; delete x.ob; terminadas.push(i); news.push(T.termina.replace('{obra}', nombre)); return; }
+    if (o.p >= o.n && !o.det) { if (o.u0) x.u = o.u0; delete x.ob; x.inaug = S.year; terminadas.push(i); news.push(T.termina.replace('{obra}', nombre)); return; }
+    if (o.esp) { delete o.esp; return; } // imprevisto: la obra espera un año sin pagar ni avanzar
     if (S.gold >= o.c) {
       S.gold -= o.c; o.p++;
       if (o.det) news.push(T.reanuda.replace('{obra}', nombre));

@@ -187,8 +187,18 @@ export function cavarTrincheras(S, casillasDelBorde) {
   const obras = S.map.map((x, i) => x.b ? i : -1).filter(i => i >= 0);
   const dB = i => Math.hypot(Math.floor(i / N) - Math.floor(b / N), i % N - b % N);
   const dObra = i => Math.min(...obras.map(j => Math.max(Math.abs(Math.floor(i / N) - Math.floor(j / N)), Math.abs(i % N - j % N))));
-  const L = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && !x.mk && !x.oc && x.t === 'llano'; })
+  const L = S.map.map((x, i) => i).filter(i => { const x = S.map[i]; return !x.b && x.pt === undefined && !x.mk && !x.oc && x.t === 'llano'; })
     .map(i => [i, dObra(i)]).filter(([, d]) => d >= 1 && d <= 3).sort((a, z) => dB(a[0]) - dB(z[0])).slice(0, Math.min(G.trincheras, G.maxTrincheras - hechas));
   for (const [i] of L) S.map[i].mk = { t: 'trinchera', y: S.year, d: `Año ${S.year}: trinchera de la guerra.` };
   return L.length ? [G.textos.trinchera] : [];
+}
+
+// ---------- Cicatrices en el suelo (pedido de Juan: que los desastres y la guerra cambien el terreno) ----------
+// Solo dibujo: lodo y troncos tras la avenida, grietas tras el terremoto, ceniza tras la erupción y cráteres en el
+// borde de la guerra. Se borran solas con los años (Cicatrices.js las desvanece); aquí solo se anota dónde y cuándo.
+export function cicatriz(S, t, L) {
+  if (!climaActivo(S) || !L || !L.length) return;
+  if (!S.cicat) S.cicat = [];
+  S.cicat.push({ t, y: S.year, L: [...new Set(L)].slice(0, 40) });
+  S.cicat = S.cicat.filter(c => S.year - c.y <= 14);
 }

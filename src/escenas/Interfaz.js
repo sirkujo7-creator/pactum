@@ -11,7 +11,8 @@ import {
   industriaActiva, productoDe, datosProducto, listaProductos, insumo, produccionFabrica, insumoSi, productoDisponible, requisitoProducto, costoCambio, puedeProducir, producir, nombreInsumo, mejorProducto, salarioActual, elegirSalario, precioCiclo, hayFabricas, nivelDe, datosNivel, nivelDisponible, costoNivel, puedeModernizar, modernizar,
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
-  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes
+  familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes,
+  deSuEpoca, consultaDe, faltanRequisitos, personalActivo, necesidadPersonal, personal, factorPersonal, costoContratar, contratar,
 } from '../core/index.js';
 import { montarCarta, fichaLugar } from './mundo.js';
 import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
@@ -72,7 +73,7 @@ function teñirEmojis(nodo) {
 // Pestañas pequeñas de cada pantalla: [id, título, secciones (un prefijo termina en «-»)].
 const PESTANAS = {
   hacienda: [['cuentas', '💰 Cuentas', ['h-cuentas', 'h-fondo', 'h-bonos', 'h-mant', 'h-mega']], ['produccion', '🏭 Producción', ['h-economia', 'h-canasta', 'h-industria', 'h-almacen', 'h-consumo']], ['riesgos', '⚠️ Riesgos', ['h-riesgo', 'h-clima', 'h-ciclos', 'h-ejercito']]],
-  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
+  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida', 'so-personal']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
   leyes: [['leyes', '📜 Leyes', ['ley-']], ['regimen', '🏛️ Régimen', ['gob-regimen']], ['oposicion', '🗣️ Oposición', ['c-oposicion']], ['seguridad', '🛡️ Seguridad', ['so-seguridad', 'so-conflicto']]],
   mundo: [['carta', '🗺️ Carta', ['m-carta']], ['vecinos', '🏘️ Vecinos', ['so-vecinos']], ['noticias', '📰 Noticias', ['m-noticias']]],
   cronica: [['resumen', '📈 Resumen', ['c-identidad', 'c-graficas', 'c-legado']], ['cartas', '✉️ Cartas', ['c-album']], ['memoria', '🕯️ Memoria', ['c-comision', 'c-lugares', 'c-maravillas']], ['epoca', '🌍 Época', ['c-contexto', 'c-almanaque']], ['registro', '📜 Registro', ['c-log']]]
@@ -304,16 +305,16 @@ export class Interfaz {
   }
   renderConstruir() {
     const S = this.S;
-    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S)) && ((k !== 'aserradero' && k !== 'cantera' && k !== 'estudio') || materialesActivos(S))).map(([k, b]) => { // fase 10: el café se siembra en la finca
+    this.tray.replaceChildren(...Object.entries(C.B).filter(([k]) => !(k === 'cafetal' && fincasActivas(S)) && (k !== 'fundacion' || ofrecerPlaza(S)) && (k !== 'cementerio' || huellasActivas(S)) && ((k !== 'aserradero' && k !== 'cantera' && k !== 'estudio') || materialesActivos(S)) && (!C.B[k].ep || deSuEpoca(S, k))).map(([k, b]) => { // fase 10: el café se siembra en la finca
       const tope = topeDe(S, k), cuantos = S.map.reduce((n, x) => n + (x.b === k ? 1 : 0), 0), alTope = tope !== Infinity && cuantos >= tope && b.st <= S.stage;
-      const bloqueada = b.st > S.stage || alTope;
+      const falta = b.st <= S.stage && !alTope ? faltanRequisitos(S, k) : [], bloqueada = b.st > S.stage || alTope || falta.length > 0;
       return el('button', {
         class: 'tool' + (this.herramienta === k ? ' on' : ''), 'aria-pressed': String(this.herramienta === k),
         ...(bloqueada ? { disabled: '' } : {}), on: { click: () => this.elegir(k) }
       }, [
-        bloqueada ? el('span', { class: 'candado', text: alTope ? '⛲' : '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
+        bloqueada ? el('span', { class: 'candado', text: alTope ? '⛲' : falta.length ? '🔗' : '🔒', 'aria-hidden': 'true' }) : el('img', { src: this.icono(k), alt: '' }),
         this.nombre(k),
-        el('small', { html: alTope ? `Tope ${tope}` : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}${this.textoMat(k)}` })
+        el('small', { html: alTope ? `Tope ${tope}` : falta.length ? 'Antes: ' + falta.map(f => (f.n > 1 ? f.n + ' ' : '') + this.nombre(f.obra).toLowerCase()).join(', ') : bloqueada ? C.STAGES[b.st].n : `${IC.gold.replace('class="ic"', 'class="ic" style="display:inline;width:13px;height:13px;vertical-align:-2px"')} ${cost(S, k)}${porEtapas(S, k) ? ` · ${anios(C.B[k].anios)}` : ''}${this.textoMat(k)}` })
       ]);
     }));
     // Fase 9: calles en damero (van por los bordes de las casillas); van primero para que se vean en el celular.
@@ -435,8 +436,9 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a, gestoDe(v))}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.seccionPersonal() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
+    this.sociedad.querySelectorAll('[data-contratar]').forEach(b => b.onclick = () => { const m = contratar(this.S, b.dataset.contratar, 1); if (m) { this.toast(m); this.mapa.cambio(true); this.render(); } });
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
     this.sociedad.querySelectorAll('[data-barrio]').forEach(b => b.onclick = () => this.explicarBarrio(b.dataset.barrio));
@@ -860,7 +862,7 @@ export class Interfaz {
         el('span', { class: 'small', style: G, text: esColono(x) ? C.HUELLAS.colonos.textos.bloquea + ' ' + C.HUELLAS.colonos.textos.leccion : `${x.mk.t === 'acta' ? 'Permanece mientras gobiernes.' : `Se borrará hacia el año ${x.mk.y + M.anios}.`} Si construyes aquí, la huella desaparece. ${C.MARCAS.leccion}` }));
     }
     if (x.oc && C.GUERRA) hijos.push(el('span', { class: 'neg', style: 'grid-column:1/-1', text: C.GUERRA.textos.ocupada.replace('{vecino}', C.VECINOS.vecinos[x.oc].nombre) })); // fase 9
-    if (!x.b && x.t === 'llano' && suelosActivos(S)) hijos.push(el('span', { class: 'especial', style: 'grid-column:1/-1', html: this.notaSuelo(i).replace(/^<br>/, '') }));
+    if (!x.b && x.pt === undefined && x.t === 'llano' && suelosActivos(S)) hijos.push(el('span', { class: 'especial', style: 'grid-column:1/-1', html: this.notaSuelo(i).replace(/^<br>/, '') }));
     if (x.b) {
       hijos.push(el('img', { src: this.icono(x.b), alt: '' }), el('b', { text: this.nombre(x.b) }), el('span', { text: this.descripcion(x.b) }),
         ...(C.B[x.b].es && climaActivo(S) && !(x.b === 'cultivo' && fincasActivas(S)) ? [el('span', { class: 'especial', text: `✦ ${C.B[x.b].es}` })] : []),
@@ -1083,12 +1085,24 @@ export class Interfaz {
         <tr class="tot"><td>Se recupera</td><td>${e.recupera ? `en ${e.recupera} años` : 'no, en dinero'}</td></tr></table></div>
       <p class="small"><b>Cuando esté lista:</b> ${C.B[k].d}</p>${this.efectos(e)}
       <div class="phil"><b>Lo que enseña</b><br>${O.leccionProyecto}</div>
+      ${this.bloqueConsulta(k)}
       <h3>Licitación: elige contratista</h3>${ofs}
       <p class="small">${O.leccionLicitacion}</p>
       <button class="btn" id="noB">Cancelar</button>`);
     this.alCerrar = () => this.mapa.marcar(null);
-    this.card.querySelectorAll('[data-of]').forEach(b => b.onclick = () => { const id = b.dataset.of; this.alCerrar = null; this.cerrarTarjeta(); alElegir(id); });
+    this.modoConsulta = 'compensar';
+    this.card.querySelectorAll('[data-cons]').forEach(b => b.onclick = () => { this.modoConsulta = b.dataset.cons; this.card.querySelectorAll('[data-cons]').forEach(o => { o.classList.toggle('on', o === b); o.setAttribute('aria-pressed', String(o === b)); }); });
+    this.card.querySelectorAll('[data-of]').forEach(b => b.onclick = () => { const id = b.dataset.of; this.alCerrar = null; this.cerrarTarjeta(); alElegir(id, this.modoConsulta); });
     this.boton('noB', () => this.cerrarTarjeta());
+  }
+  // Consulta a la comunidad (el proceso de construir): a favor, o en contra con dos salidas.
+  bloqueConsulta(k) {
+    const c = consultaDe(this.S, k), T = C.PROCESO && C.PROCESO.textos; if (!c) return '';
+    if (c.aprueba) return `<h3>${T.consulta}</h3><p class="small">✅ ${T.aFavor.replace('{p}', c.apoyo)}</p>`;
+    const l = Math.abs(C.PROCESO.contra.legitimidad);
+    return `<h3>${T.consulta}</h3><p class="small">✋ ${T.enContra.replace('{p}', c.apoyo).replace('{porque}', c.porque)}</p>
+      <button class="opt on" data-cons="compensar" aria-pressed="true">${T.compensar.replace('{c}', c.compensar)}</button>
+      <button class="opt" data-cons="igual" aria-pressed="false">${T.igual.replace('{l}', l)}</button>`;
   }
   chips(fx) {
     const ks = Object.keys(fx);
@@ -1971,6 +1985,19 @@ export class Interfaz {
     this.boton('cCob', () => { if (this.mapa.listo) this.mapa.alternarCobertura(); this.cerrarTarjeta(); });
     this.boton('okB', () => this.cerrarTarjeta());
   }
+  // Personal (el proceso de construir, tanda 2): médicos y maestros que tiene el pueblo frente a los que necesitan sus obras.
+  seccionPersonal() {
+    const S = this.S; if (!personalActivo(S)) return '';
+    const KP = C.PROCESO.personal, filas = Object.entries(KP.tipos).map(([t, T]) => {
+      const n = necesidadPersonal(S, t), h = personal(S, t), f = Math.round(factorPersonal(S, t) * 100), c = costoContratar(S, t);
+      if (!n && !h) return '';
+      return `<div class="cls"><div style="font-size:26px;line-height:1">${T.icono}</div><div><div class="lab"><span>${T.nombre[0].toUpperCase() + T.nombre.slice(1)} <b>${h}</b> de ${n}</span><span class="${f < 100 ? 'neg' : ''}">rinden ${f}%</span></div>
+        <div class="track"><div class="fill" style="width:${n ? Math.min(100, h / n * 100) : 100}%"></div></div>
+        ${h < n ? `<button class="opt" data-contratar="${t}" ${S.gold < c ? 'disabled' : ''}>${KP.textos.contratar.replace('{n}', 1).replace('{c}', c)}</button>` : ''}</div></div>`; }).join('');
+    if (!filas) return '';
+    return this.pleg('so-personal', `${filas}<p class="small">Se forman solos: la escuela forma maestros y la universidad médicos y maestros; cuando faltan, llegan algunos de otros pueblos.</p>
+      <div class="phil"><b>Lo que enseña</b><br>${KP.leccion}</div>`, '👩‍⚕️ Personal', Object.keys(KP.tipos).map(t => `${personal(S, t)}/${necesidadPersonal(S, t)} ${KP.tipos[t].icono}`).join(' · '));
+  }
   // Nivel de vida del pueblo (en Sociedad): cuántas casas hay en cada nivel, lo que más falta y su efecto.
   seccionVida() {
     const S = this.S; if (!necesidadesActivas(S) || !S.vidaIni) return '';
@@ -2214,7 +2241,7 @@ export class Interfaz {
     const mn = x && x.t === 'montana' && estudioHecho(S) ? ` ${datosMineral(mineralDe(S, sel)).icono} Subsuelo: ${datosMineral(mineralDe(S, sel)).nombre.toLowerCase()}.` : '';
     const suelo = mn || (x && x.t === 'llano' && suelosActivos(S) ? ` ${datosSuelo(claseSuelo(S, sel)).icono} Suelo: ${datosSuelo(claseSuelo(S, sel)).nombre}.` : '');
     const que = (!x ? 'Toca una casilla para ver qué hay.' : x.b ? `<b>${usoDe(x.b).nombre}:</b> ${this.nombre(x.b)}${x.ob ? ' (en obra)' : ''}.` : `<b>${{ llano: 'Llano', bosque: 'Bosque', montana: 'Montaña', rio: 'Río' }[x.t] || 'Terreno'}</b>, sin obra.`) + suelo;
-    const construir = x && k && k !== 'calle' && k !== 'quitarCalle' && !x.b ? `<button class="opt" id="planoC"><b>Construir aquí: ${this.nombre(k)}</b></button>` : '';
+    const construir = x && k && k !== 'calle' && k !== 'quitarCalle' && !x.b && x.pt === undefined ? `<button class="opt" id="planoC"><b>Construir aquí: ${this.nombre(k)}</b></button>` : '';
     this.tarjeta(`<div class="big">🗺️</div><h3>Vista de plano</h3><p class="small">El territorio visto desde arriba: sin relieve, un color por uso. La línea punteada es el casco urbano; la estrella, la plaza.</p>
       <canvas class="plano" aria-label="Plano del territorio"></canvas>
       <div class="subs capas">${capasPlano(S).map(c => `<button class="sub${c.id === capa ? ' on' : ''}" data-capa="${c.id}"><span class="sn">${c.nombre}</span></button>`).join('')}</div>

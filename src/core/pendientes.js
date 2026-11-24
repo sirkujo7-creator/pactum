@@ -6,6 +6,7 @@
 // La meta y la guía son fijas: siempre se ven en la lista, pero no encienden el contador. ir: { hoja } | { casilla } |
 // { mundo } | { tarjeta }. Lógica pura: la interfaz decide cómo mostrarlo.
 import { C } from './contenido.js';
+import { personalActivo, necesidadPersonal, personal, factorPersonal } from './proceso.js';
 import { counts } from './reglas.js';
 import { climaActivo } from './clima.js';
 import { finance } from './hacienda.js';
@@ -40,6 +41,7 @@ export function pendientes(S) {
   if (!ff && S.guide && C.GUIDE[S.gstep]) add('guia', '🧭', `Guía ${S.gstep + 1}/${C.GUIDE.length}: ${C.GUIDE[S.gstep].t}`, 0, { hoja: 'construir' }, true);
   // Lo urgente: comida, agua, oro.
   if (F.fprod - F.cons < 0 && S.food < 40) add('comida', '🌾', `Falta comida: se producen ${F.fprod} y se comen ${F.cons}. Construye fincas.`, 1, { hoja: 'construir' });
+  if (personalActivo(S)) for (const [t, T] of Object.entries(C.PROCESO.personal.tipos)) { const n = necesidadPersonal(S, t), h = personal(S, t); if (n && h < n) add('personal-' + t, T.icono, C.PROCESO.personal.textos.falta.replace('{icono} ', '').replace('{n}', n - h).replace('{nombre}', T.nombre).replace('{p}', Math.round(factorPersonal(S, t) * 100)) + ' Fórmalos o tráelos de afuera en Pueblo.', 2, { hoja: 'sociedad' }); }
   if (S.stage >= 1 && S.pop > waterCap(S, c) - 5) add('agua', '💧', `El agua alcanza para ${waterCap(S, c)} personas y hay ${S.pop}. Construye un acueducto junto al río.`, 1, { hoja: 'construir' });
   if (S.gold < 0 || F.net < -15) add('oro', '💰', `Las cuentas están en rojo (${Math.round(F.net)} de oro al año). Revisa impuestos y gastos.`, 1, { hoja: 'hacienda', seccion: 'h-cuentas' });
   if (S.guerra && S.guerra.activa) add('guerra', '⚔️', 'Estás en guerra: refuerza la defensa o busca la paz.', 1, { hoja: 'sociedad', seccion: 'so-vecinos' });

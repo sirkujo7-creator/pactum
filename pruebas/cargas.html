@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Cargas</title>
+<style>body{background:#B3BC82;margin:0}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+// Página de prueba: personas caminando con su carga, de frente y de espaldas (?z= zoom).
+import { figura, hornearCargas, CARGAS_ESPALDA } from '../src/arte/gente.js';
+const Z = +(new URLSearchParams(location.search).get('z') || 5), C = hornearCargas();
+const L = [['campesino', 'lena'], ['campesino', 'racimo'], ['artesano', 'tablas'], ['artesano', 'bulto'], ['campesina', 'bebe'], ['campesina', 'canasto'], ['campesina', 'canastoV'], ['campesina', 'ropa'], ['campesina', 'cantaro'], ['nino', 'cuaderno']];
+const cv = document.getElementById('c'), cw = 24 * Z, ch = 40 * Z; cv.width = cw * 4; cv.height = ch * L.length; const g = cv.getContext('2d');
+L.forEach(([t, k], fila) => [1, 1, 0, 0].forEach((fr, j) => {
+  const x = j * cw + cw / 2, y = fila * ch + ch - 3 * Z, m = C.marcos[k], s = Z / C.escala * (t === 'nino' ? .72 : 1);
+  const carga = () => g.drawImage(C.canvas, m.x, m.y, m.w, m.h, x - m.ax * s, y - m.ay * s, m.w * s, m.h * s);
+  const atras = CARGAS_ESPALDA.has(k) && fr;
+  if (atras) carga();
+  g.save(); g.translate(x, y); g.scale(Z, Z); figura(g, t, fila % 3, !!fr, j % 2 ? 2 : 0, false); g.restore();
+  if (!atras) carga();
+}));
+</script>

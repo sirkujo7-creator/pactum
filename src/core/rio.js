@@ -2,6 +2,7 @@
 // el río puede abrir un cauce nuevo. Las casillas que el agua ocupa pierden lo construido; donde corría queda una
 // madrevieja (humedal). Se previene con bosque de galería y sin construir en la ronda. El cambio se guarda como un
 // desvío del cauce (S.rio.desvios) que el terreno en acuarela vuelve a aplicar. Solo en el terreno en acuarela.
+import { liberarGrande } from './grandes.js';
 import { C } from './contenido.js';
 import { azar, clamp } from './azar.js';
 import { climaActivo } from './clima.js';
@@ -22,7 +23,7 @@ export function orillas(S) {
 }
 // Partes del riesgo: cuánta orilla conserva su vegetación (bosque, o sin obras ni tala), cuánta está erosionada
 // o talada, y cuántas obras hay en la ronda.
-const natural = x => x.t === 'bosque' || (!x.b && !x.tl && !(x.er > 0));
+const natural = x => x.t === 'bosque' || (!x.b && x.pt === undefined && !x.tl && !(x.er > 0));
 export function estadoOrillas(S) {
   const o = orillas(S), n = o.length || 1;
   const protegida = o.filter(i => natural(S.map[i])).length / n;
@@ -65,7 +66,8 @@ export function cambiarCurso(S, causa) {
   const R = K(), perdidas = [];
   for (const i of D.nuevas) {
     const x = S.map[i];
-    if (x.b) perdidas.push(C.B[x.b].n);
+    if (x.pt !== undefined) { const d = S.map[x.pt]; if (d && d.b) { perdidas.push(C.B[d.b].n); liberarGrande(S, x.pt); d.b = null; for (const k of ['ob', 'mt', 'u', 'ya']) delete d[k]; } delete x.pt; } // obra grande: se pierde entera
+    if (x.b) { perdidas.push(C.B[x.b].n); liberarGrande(S, i); }
     x.t = 'rio'; x.b = null; x.h = 0;
     for (const k of ['ob', 'mt', 'u', 'ya', 'mk', 'tl', 'er', 'q', 'nb', 'dr', 'sin']) delete x[k];
   }

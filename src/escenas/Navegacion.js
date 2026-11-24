@@ -73,7 +73,7 @@ export class Navegacion {
   }
   actualizar() {
     const { S } = this.scene, N = this.scene.T.N, rios = S.map.reduce((s, x, i) => s + (x.t === 'rio' ? i + 1 : 0), 0), puertos = S.map.filter(x => x.b === 'puerto' && !x.ob).length;
-    const ep = epocaHistorica(S), tipo = !ep || ep === 'fundacion' ? 'champan2' : 'vapor2', n = Math.min(3, 1 + puertos);
+    const ep = epocaHistorica(S), tipo = !ep || ep === 'fundacion' ? 'champan2' : 'vapor2', n = Math.min(3, puertos); // sin puerto no hay barcos (lo que se ve informa)
     const firma = `${rios}|${tipo}|${n}`; if (firma === this.firma) return; this.firma = firma;
     this.barcos.forEach(b => b.img.destroy()); this.barcos = [];
     this.trazar(); if (this.linea.length < 4) return;
