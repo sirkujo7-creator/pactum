@@ -22,9 +22,10 @@ const juego = new Phaser.Game({
   parent: 'juego',
   backgroundColor: '#ECEAE2',
   scale: { mode: Phaser.Scale.NONE, width: Math.round(window.innerWidth * DPR), height: Math.round(window.innerHeight * DPR), zoom: 1 / DPR },
-  // Mipmaps (versiones reducidas suaves) solo en computador: allí las figuras se ven pequeñas y temblaban al moverse.
-  // En celular gastan memoria que el iPhone no tiene y no hacen falta.
-  render: { antialias: true, roundPixels: false, ...(ES_CELULAR ? {} : { mipmapFilter: 'LINEAR_MIPMAP_LINEAR' }), powerPreference: 'high-performance' },
+  // Mipmaps (versiones reducidas suaves): las figuras se dibujan grandes y se ven 6 a 9 veces más pequeñas; sin ellas
+  // pierden detalle y chispean (Juan: «se ve muy poco definida la animación»). Solo las hojas con lados potencia de dos
+  // los usan; en celular son solo las de personas y acciones (las demás quedan igual, para cuidar la memoria).
+  render: { antialias: true, roundPixels: false, mipmapFilter: 'LINEAR_MIPMAP_LINEAR', powerPreference: 'high-performance' },
   input: { activePointers: 3 },
   banner: false,
   scene: [Arranque, Mapa]
