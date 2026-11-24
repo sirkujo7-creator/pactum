@@ -25,6 +25,7 @@ import { sueloDelAnio } from './suelo.js';
 import { desgasteDelAnio } from './desgaste.js';
 import { ocioDelAnio } from './ocio.js';
 import { personalDelAnio, imprevistosDelAnio } from './proceso.js';
+import { habitantesDelAnio } from './habitantes.js';
 import { avanzarObras } from './construccion.js';
 import { economiaDelAnio } from './economia.js';
 import { ejercitoDelAnio } from './ejercito.js';
@@ -255,6 +256,7 @@ export function advance(S) {
   if (eco.length) S.log[0].t += ' ' + eco.join(' ');
   const pron = climaDelAnioSiguiente(S);
   if (pron.length) S.log[0].t += ' ' + pron.join(' ');
+  const hb = habitantesDelAnio(S); if (hb.length && S.log[0]) S.log[0].t += ' ' + hb.join(' '); // nombres y vidas de los habitantes
   S.year++;
   if (!stageUp) S.pend = drawEvent(S);
   return { stageUp, end: null };

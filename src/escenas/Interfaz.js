@@ -12,7 +12,7 @@ import {
   civismoActivo, todasLasLeyes, ramaDe, prosContras, estadoCivismo, civismoAnual, abierta, puedeAbrir, abrirLey, faltaRequisito, opuestaDe,
   vecindadActiva, vecindarioDe, bonoFabrica, bonoMercado, rasgosActivos, rasgoPendiente, opcionesRasgo, elegirRasgo, rasgosElegidos, fiestaDelPueblo, todasLasLeyes as leyesTodas,
   familiasActivas, estadoFamilias, cartaRecibida, cartasRecibidas, datosFamilia, datosObjeto, miembrosFamilia, listaFamilias, listaObjetos, epilogo, representantes,
-  deSuEpoca, consultaDe, faltanRequisitos, personalActivo, necesidadPersonal, personal, factorPersonal, costoContratar, contratar,
+  deSuEpoca, consultaDe, faltanRequisitos, habitante, habitantesActivos, vivos, padron, biografia, suenoDe, familiaDe, oficioHabitante, edadDe, conocer, personalActivo, necesidadPersonal, personal, factorPersonal, costoContratar, contratar,
 } from '../core/index.js';
 import { montarCarta, fichaLugar } from './mundo.js';
 import { pintarPlano, casillaPlano, USOS, usoDe, capasPlano, leyendaPlano } from './plano.js';
@@ -73,7 +73,7 @@ function teñirEmojis(nodo) {
 // Pestañas pequeñas de cada pantalla: [id, título, secciones (un prefijo termina en «-»)].
 const PESTANAS = {
   hacienda: [['cuentas', '💰 Cuentas', ['h-cuentas', 'h-fondo', 'h-bonos', 'h-mant', 'h-mega']], ['produccion', '🏭 Producción', ['h-economia', 'h-canasta', 'h-industria', 'h-almacen', 'h-consumo']], ['riesgos', '⚠️ Riesgos', ['h-riesgo', 'h-clima', 'h-ciclos', 'h-ejercito']]],
-  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida', 'so-personal']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
+  sociedad: [['clases', '👥 Clases', ['so-clases', 'so-vida', 'so-personal']], ['padron', '📜 Padrón', ['so-padron']], ['grupos', '🤝 Grupos', ['so-figuras', 'so-grupos', 'so-mov']], ['vida', '🎉 Vida local', ['so-cultura', 'so-barrios']]],
   leyes: [['leyes', '📜 Leyes', ['ley-']], ['regimen', '🏛️ Régimen', ['gob-regimen']], ['oposicion', '🗣️ Oposición', ['c-oposicion']], ['seguridad', '🛡️ Seguridad', ['so-seguridad', 'so-conflicto']]],
   mundo: [['carta', '🗺️ Carta', ['m-carta']], ['vecinos', '🏘️ Vecinos', ['so-vecinos']], ['noticias', '📰 Noticias', ['m-noticias']]],
   cronica: [['resumen', '📈 Resumen', ['c-identidad', 'c-graficas', 'c-legado']], ['cartas', '✉️ Cartas', ['c-album']], ['memoria', '🕯️ Memoria', ['c-comision', 'c-lugares', 'c-maravillas']], ['epoca', '🌍 Época', ['c-contexto', 'c-almanaque']], ['registro', '📜 Registro', ['c-log']]]
@@ -436,8 +436,11 @@ export class Interfaz {
       const A = C.ADV[a], md = A.mood[v < 35 ? 0 : v < 62 ? 1 : 2];
       const cl = n === 'Campesinos' ? 'c' : n === 'Artesanos' ? 'a' : 'e', peor = desgloseClase(S, cl).partes.filter(x => x[1] < 0 && !/partida/.test(x[0]))[0];
       return `<div class="cls"><img src="${retrato(a, gestoDe(v))}" alt="${A.n}"><div><div class="lab"><span>${n} <b>${k}</b></span><span>${Math.round(v)}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${colorDe(v)}"></div></div><small>${sub}</small>${peor ? `<small class="neg">Lo que más le molesta: ${peor[0].toLowerCase()} (${signo(peor[1])}).</small>` : ''}<div class="quote">${A.n}: “${md}”</div><button class="btn porque" data-clase="${cl}">¿Por qué? Ver causas</button>${this.subgrupos(cl)}</div></div>`;
-    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.seccionPersonal() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
+    }).join(''), 'Clases sociales', `${so.camp + so.art + so.el} personas`, true) + this.seccionVida() + this.seccionPersonal() + this.seccionPadron() + this.pleg('so-figuras', this.seccionFiguras(), 'Personajes') + this.pleg('so-grupos', this.subgrupos('otros'), 'Otros grupos') + this.pleg('so-cultura', this.seccionCultura(), 'Cultura y fiestas') + this.pleg('so-barrios', this.seccionBarrios(), 'Barrios') + this.pleg('so-mov', this.seccionMovimientos(), 'Movimientos sociales') + `<p class="small ${so.un > 0 ? 'neg' : ''}">${so.un > 0 ? `${so.un} personas sin empleo. Construye cultivos, mercados o talleres.` : 'Todos tienen empleo.'}</p>`;
     this.sociedad.querySelectorAll('[data-clase]').forEach(b => b.onclick = () => this.explicarClase(b.dataset.clase));
+    this.sociedad.querySelectorAll('[data-hab]').forEach(b => b.onclick = () => this.fichaHabitante(+b.dataset.hab));
+    this.sociedad.querySelectorAll('[data-padron]').forEach(b => b.onclick = () => { this.padronM = b.dataset.padron === '1'; this.render(); });
+    { const q = this.sociedad.querySelector('[data-padronq]'); if (q) q.oninput = () => { this.padronQ = q.value; clearTimeout(this._tq); this._tq = setTimeout(() => { this.render(); const q2 = this.sociedad.querySelector('[data-padronq]'); if (q2) { q2.focus(); q2.setSelectionRange(q2.value.length, q2.value.length); } }, 350); }; }
     this.sociedad.querySelectorAll('[data-contratar]').forEach(b => b.onclick = () => { const m = contratar(this.S, b.dataset.contratar, 1); if (m) { this.toast(m); this.mapa.cambio(true); this.render(); } });
     this.sociedad.querySelectorAll('[data-grupo]').forEach(b => b.onclick = () => this.explicarGrupo(b.dataset.grupo));
     this.sociedad.querySelectorAll('[data-mov]').forEach(b => b.onclick = () => this.explicarMovimiento(b.dataset.mov));
@@ -936,9 +939,48 @@ export class Interfaz {
       ...this.vozPersona(p),
       ...(p.familia ? [el('span', { style: 'grid-column:1/-1', html: `<b>${datosFamilia(p.familia).icono} ${datosFamilia(p.familia).nombre}.</b> ${datosFamilia(p.familia).origen}` }),
         el('button', { class: 'btn', style: 'grid-column:1/-1', on: { click: () => { const r = representantes(S).find(x => x.familia === p.familia); if (r) this.tarjetaCarta(estadoFamilias(S).cartas.find(c => c.n === r.ultima.n), null, true); } } }, '✉️ Leer su última carta')] : []),
-      el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: p.familia ? 'Una de las familias que te escriben.' : 'Cada figura representa a unas dos personas del pueblo.' })
+      ...(p.hab && habitante(S, p.hab) ? this.vidaCorta(habitante(S, p.hab)) : []),
+      el('small', { style: 'grid-column:1/-1;color:var(--muted)', text: p.familia ? 'Una de las familias que te escriben.' : p.hab ? `Una de las ${S.pop} personas del pueblo: está en el padrón (Pueblo → Padrón).` : 'Cada figura representa a unas dos personas del pueblo.' })
     );
     this.ficha.hidden = false;
+  }
+  // Habitantes con vida propia: su sueño, su familia y el botón a su vida completa (en la ficha del mapa).
+  vidaCorta(h) {
+    const S = this.S, T = C.HAB.textos, col = { style: 'grid-column:1/-1' }, F = familiaDe(S, h); conocer(S, h.i);
+    const L = [el('span', { ...col, class: 'small', html: `💭 ${T.sueno.replace('{sueno}', suenoDe(S, h))}.` })];
+    if (F.pareja || F.hijos.length) L.push(el('span', { ...col, class: 'small', text: [F.pareja ? `${T.pareja}: ${F.pareja.n}` : '', F.hijos.length ? `${T.hijos}: ${F.hijos.map(x => x.n).join(', ')}` : ''].filter(Boolean).join(' · ') }));
+    L.push(el('button', { class: 'btn', ...col, on: { click: () => { this.ficha.hidden = true; this.fichaHabitante(h.i); } } }, '📜 Su vida'));
+    return L;
+  }
+  // Ficha completa de un habitante (desde el mapa o el padrón): datos, familia (se puede ir a cada uno), su vida año por año.
+  fichaHabitante(id) {
+    const S = this.S, h = habitante(S, id); if (!h) return;
+    conocer(S, id);
+    const T = C.HAB.textos, F = familiaDe(S, h), cl = { c: 'campesinos', a: 'artesanos', e: 'élite', u: 'sin empleo' }[h.c];
+    const vivo = !h.m && !h.f, sat = h.c && S.sat[h.c === 'u' ? 'c' : h.c], op = sat === undefined ? '' : T.opina[sat < 35 ? 'mal' : sat < 62 ? 'regular' : 'bien'];
+    const link = x => `<button class="enlace" data-hab="${x.i}">${x.n} ${x.a}</button>${x.m ? ' ✝' : x.f ? ' (se fue)' : ''}`;
+    const fam = [F.padres.length ? `<b>${T.padres}:</b> ${F.padres.map(link).join(', ')}` : '', F.pareja ? `<b>${T.pareja}:</b> ${link(F.pareja)}` : '', F.hijos.length ? `<b>${T.hijos}:</b> ${F.hijos.map(link).join(', ')}` : ''].filter(Boolean).join('<br>');
+    const fig = vivo && this.mapa.pob && this.mapa.pob.figuras.find(f => f.p && f.p.hab === id);
+    this.tarjeta(`<div class="big">${h.m ? '✝️' : h.f ? '🧳' : S.year - h.y < 18 ? '🧒' : h.s === 'm' ? '👩' : '👨'}</div><h3>${h.n} ${h.a}</h3>
+      <p class="small">${edadDe(S, h)} años · ${oficioHabitante(S, h)}${cl && vivo ? ` · clase: ${cl}` : ''}</p>
+      ${vivo ? `<p class="small">💭 ${T.sueno.replace('{sueno}', suenoDe(S, h))}.${op ? ` ${op}.` : ''}</p>` : ''}
+      ${fam ? `<p class="small">${fam}</p>` : ''}
+      <ul class="conds">${biografia(S, h).map(t => `<li>${t}</li>`).join('')}</ul>
+      ${vivo ? (fig ? `<button class="btn" id="verHab">${T.verMapa}</button>` : `<p class="small">${T.noEnMapa}</p>`) : ''}
+      <button class="main" id="okB">Cerrar</button>`);
+    this.card.querySelectorAll('[data-hab]').forEach(b => b.onclick = () => this.fichaHabitante(+b.dataset.hab));
+    if (fig) this.boton('verHab', () => { this.cerrarTarjeta(); this.cerrarHojas(); this.mapa.fijarCamara(Math.max(this.mapa.cameras.main.zoom, 2.4), fig.img.x, fig.img.y); this.abrirPersona(fig.p); });
+    this.boton('okB', () => this.cerrarTarjeta());
+  }
+  // Padrón del pueblo (en Pueblo): buscar a cualquiera, vivos o fallecidos.
+  seccionPadron() {
+    const S = this.S; if (!habitantesActivos(S) || !S.hab) return '';
+    const T = C.HAB.textos, q = this.padronQ || '', muertos = !!this.padronM, L = padron(S, q, muertos), n = vivos(S).length;
+    const filas = L.slice(0, 40).map(h => `<button class="opt" data-hab="${h.i}"><b>${h.n} ${h.a}</b> <span class="small">${muertos ? `✝ año ${h.m.y} · ${C.HAB.causas[h.m.c] || h.m.c}` : `${edadDe(S, h)} años · ${oficioHabitante(S, h)}`}</span></button>`).join('');
+    return this.pleg('so-padron', `<div class="dos"><button class="opt ${muertos ? '' : 'on'}" data-padron="0">👥 ${T.vivos.replace('{n}', n)}</button><button class="opt ${muertos ? 'on' : ''}" data-padron="1">✝️ ${T.fallecidos}</button></div>
+      <input type="search" data-padronq placeholder="${T.buscar}" value="${q.replace(/"/g, '')}" style="width:100%;margin:6px 0" aria-label="${T.buscar}">
+      ${filas || '<p class="small">Nadie con ese nombre.</p>'}${L.length > 40 ? `<p class="small">Y ${L.length - 40} más: escribe un nombre para buscar.</p>` : ''}
+      <div class="phil"><b>Lo que enseña</b><br>${C.HAB.leccion}</div>`, `📜 ${T.titulo}`, T.vivos.replace('{n}', n), true);
   }
   // Voces del pueblo: lo que le preocupa (con su frase), lo que agradece, de qué se acuerda, y «tomar nota».
   vozPersona(p) {

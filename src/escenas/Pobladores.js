@@ -4,7 +4,7 @@
 // Fase 9: caminan por una rejilla de medias casillas (centros, bordes y esquinas) y prefieren las calles; doblan
 // las esquinas en curva; se quedan más tiempo quietos y con sentido: corrillos en la plaza, vendedores en el
 // mercado y niños jugando en ronda.
-import { planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
+import { iniciarHabitantes, planearPobladores, ropaModerna, plaza as plazaDe, listaCalles, callesActivas, claveBorde, esquina, esquinaAgua, lutoVisible, busquedaVisible, epidemiaVisible, movilizados, problemaActivo, vocesActivas, inseguridad, epocaHistorica } from '../core/index.js';
 import { TAM_GENTE, hornearGente, PASOS12, hornearAcciones, ACCIONES, GESTOS, ritmo, hornearCargas, CARGAS_ESPALDA } from '../arte/gente.js';
 import { enPotencia } from '../arte/fresco.js';
 import { mezclar } from './Efectos.js';
@@ -114,7 +114,7 @@ export class Pobladores {
 
   // Vuelve a repartir casas y trabajos (tras construir, demoler o terminar el año).
   planear() {
-    const { S, T } = this.scene, plan = planearPobladores(S);
+    const { S, T } = this.scene; iniciarHabitantes(S); const plan = planearPobladores(S); // cada figura es un habitante del padrón
     this.ropa = ropaModerna(S) ? 'M' : ''; // fase 5: desde la época del ladrillo, ropa moderna
     if (this.H.mod !== !!this.ropa) { hornearGente(!!this.ropa); if (this.scene.textures.exists('personas')) this.scene.textures.get('personas').refresh(); } // cambió la época: se repinta la ropa
     this.ponerAcciones();
