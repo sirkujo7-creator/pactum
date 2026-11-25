@@ -38,6 +38,7 @@
     "carretera"
   ],
   "puente": 20,
+  "montana": 2,
   "comercio": 0.2,
   "conComercio": [
     "mercado",
@@ -57,12 +58,12 @@
   "textos": {
     "herramienta": "Calle",
     "quitar": "Quitar calles",
-    "ayuda": "Las calles van por los bordes de las casillas. Toca una esquina (los puntos) y luego otra: la ruta se traza sola, esquiva la montaña y pone puente donde cruza el río.",
+    "ayuda": "Las calles van por los bordes de las casillas. Toca una esquina (los puntos) y luego otra: la ruta se traza sola, sube la montaña solo si hace falta (allí cada tramo cuesta el doble) y pone puente donde cruza el río.",
     "efectos": "Las obras junto a una calle rinden más: mercados, cafetales, minas y talleres venden 15% más; escuelas, hospitales, mercados, policía y recaudo llegan una casilla más lejos; y las casas sobre una calle evaden menos impuestos. Si una calle llega al borde del mapa, sale el comercio hacia los vecinos. Abrirla por el bosque baja el ambiente.",
     "inicio": "Toca la esquina donde empieza la calle.",
     "destino": "Ahora toca la esquina de destino.",
     "quitarAyuda": "Toca una esquina para quitar las calles que llegan a ella (no se devuelve el oro).",
-    "sinRuta": "No hay ruta posible: la montaña la bloquea.",
+    "sinRuta": "No hay ruta posible entre esas dos esquinas.",
     "sinOro": "No alcanza el oro para esta calle.",
     "nueva": "Calle nueva: {n}.",
     "noLlega": "Ojo: este camino todavía no llega a la plaza. Únelo a una calle que llegue a ella para que las obras que toca dejen de estar aisladas.",

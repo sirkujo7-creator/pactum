@@ -331,7 +331,7 @@ export class Interfaz {
       const partes = [el('div', { html: `<b>${k === 'calle' ? E.nombre : T.quitar}.</b> ${k === 'calle' && !tr ? `${T.ayuda} <span class="prev small">${T.efectos} Mantenimiento: ${C.CALLES.eras[eraCalle(S)].mantenimiento.toLocaleString('es-CO')} de oro por tramo al año.</span>` : ''}` })];
       if (paso) partes.push(el('div', { class: 'prev', text: paso }));
       if (pre) {
-        partes.push(el('div', { class: 'prev', html: `${pre.tramos} tramo${pre.tramos === 1 ? '' : 's'} nuevo${pre.tramos === 1 ? '' : 's'}${pre.puentes ? ` y ${pre.puentes} puente${pre.puentes > 1 ? 's' : ''}` : ''}: <b>${pre.oro} de oro</b>.${pre.ambiente ? ` Cruza el bosque: −${pre.ambiente.toLocaleString('es-CO')} de ambiente.` : ''}${pre.oro > S.gold ? ` <span class="neg">${T.sinOro}</span>` : ''}` }));
+        partes.push(el('div', { class: 'prev', html: `${pre.tramos} tramo${pre.tramos === 1 ? '' : 's'} nuevo${pre.tramos === 1 ? '' : 's'}${pre.puentes ? ` y ${pre.puentes} puente${pre.puentes > 1 ? 's' : ''}` : ''}: <b>${pre.oro} de oro</b>.${pre.montana ? ` ${pre.montana} tramo${pre.montana === 1 ? '' : 's'} en la montaña (cuestan el doble).` : ''}${pre.ambiente ? ` Cruza el bosque: −${pre.ambiente.toLocaleString('es-CO')} de ambiente.` : ''}${pre.oro > S.gold ? ` <span class="neg">${T.sinOro}</span>` : ''}` }));
         partes.push(el('div', { class: 'dos' }, [
           el('button', { class: 'btn', ...(pre.oro > S.gold || !pre.tramos ? { disabled: '' } : {}), on: { click: () => this.mapa.confirmarCalle() } }, 'Construir la calle'),
           el('button', { class: 'btn', on: { click: () => this.mapa.cancelarCalle() } }, 'Cancelar')
