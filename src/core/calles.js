@@ -69,7 +69,10 @@ export function salidaAlBorde(S) { return callesActivas(S) && datos(S).salida; }
 // ---------- Terreno de los bordes ----------
 const tipo = (S, i) => S.map[i].t;
 export function bordeAgua(S, a, b) { const L = casillasDeBorde(lado(S), a, b); return L.length > 0 && L.every(i => tipo(S, i) === 'rio'); }
-export function bordeBloqueado(S, a, b) { const L = casillasDeBorde(lado(S), a, b); return L.every(i => tipo(S, i) === 'montana'); }
+// La montaña ya no bloquea (Juan: «¿cómo hago entonces con la cantera?»): el camino sube por ella, pero cada tramo
+// entre dos casillas de montaña cuesta más (`montana` en calles.json) y la ruta la esquiva si hay otra parecida.
+export function bordeMontana(S, a, b) { const L = casillasDeBorde(lado(S), a, b); return L.length > 0 && L.every(i => tipo(S, i) === 'montana'); }
+export function bordeBloqueado() { return false; }
 // El río pasa por una esquina cuando dos casillas de río se tocan en diagonal allí.
 export function esquinaAgua(S, e) {
   const N = lado(S), [r, c] = rcEsquina(N, e), rio = (R, Cc) => R >= 0 && Cc >= 0 && R < N && Cc < N && tipo(S, R * N + Cc) === 'rio';
@@ -96,7 +99,8 @@ export function trazarCalle(S, a, b) {
       if (bordeBloqueado(S, u, v)) continue;
       const ya = d.set.has(claveBorde(u, v)) ? .2 : 1, agua = bordeAgua(S, u, v) || esquinaAgua(S, v) ? 3 : 0;
       const giro = prev[u] >= 0 && v - u !== u - prev[u] ? .3 : 0; // prefiere tramos rectos (damero), no escalones
-      const nd = du + ya * (1 + agua) + giro;
+      const cuesta = bordeMontana(S, u, v) ? (K().montana || 2) - 1 : 0; // subir la montaña cuesta más
+      const nd = du + ya * (1 + agua + cuesta) + giro;
       if (nd < dist[v]) { dist[v] = nd; prev[v] = u; push([nd, v]); }
     }
   }
@@ -107,15 +111,16 @@ export function trazarCalle(S, a, b) {
 // Costo de una ruta: solo los tramos nuevos y los puentes nuevos.
 export function costoCalle(S, ruta) {
   const P = K(), E = P.eras[eraCalle(S)], d = datos(S), nuevo = k => !d.set.has(claveBorde(ruta[k - 1], ruta[k]));
-  let tramos = 0, puentes = 0, bosque = 0;
+  let tramos = 0, puentes = 0, bosque = 0, montana = 0;
   for (let k = 1; k < ruta.length; k++) {
     if (!nuevo(k)) continue;
     tramos++;
+    if (bordeMontana(S, ruta[k - 1], ruta[k])) montana++;
     if (casillasDeBorde(lado(S), ruta[k - 1], ruta[k]).some(i => S.map[i].t === 'bosque')) bosque++;
     if (bordeAgua(S, ruta[k - 1], ruta[k])) puentes++;
     else if (k < ruta.length - 1 && esquinaAgua(S, ruta[k])) puentes++;
   }
-  return { tramos, puentes, bosque, ambiente: Math.round(bosque * P.talaAmbiente * 10) / 10, oro: Math.round((tramos * E.costo + puentes * P.puente) * S.price), era: E.nombre };
+  return { tramos, puentes, bosque, montana, ambiente: Math.round(bosque * P.talaAmbiente * 10) / 10, oro: Math.round((tramos * E.costo + montana * E.costo * ((P.montana || 2) - 1) + puentes * P.puente) * S.price), era: E.nombre };
 }
 export function construirCalle(S, ruta) {
   if (!callesActivas(S) || !ruta || ruta.length < 2) return { ok: false };
